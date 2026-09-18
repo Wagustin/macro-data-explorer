@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="es" class="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MacroData Explorer | Minería, Mercados y Proyección TimesFM 2.5</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="description" content="MacroData Explorer - Series Macroeconómicas, BVL y Google TimesFM 2.5 Zero-Shot Forecasting con TypeSafe AI Jev" />
+  <title>MacroData Explorer · Apple Monochromatic · TimesFM 2.5 & TypeSafe AI</title>
+  
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -12,425 +15,447 @@
       theme: {
         extend: {
           colors: {
-            brand: {
-              50: '#f0fdf4',
-              100: '#dcfce7',
-              500: '#22c55e',
-              600: '#16a34a',
-              700: '#15803d',
-            }
+            appleLight: '#FFFFFF',
+            appleDark: '#0D0D0E',
+            appleCardDark: '#1C1C1E',
+            appleTextDark: '#F5F5F7',
+            appleSubDark: '#8E8E93',
+            appleBorderDark: '#2C2C2E',
+            appleBorderLight: '#E5E5EA',
           }
         }
       }
-    };
+    }
   </script>
+  
   <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <!-- SheetJS (XLSX) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- SheetJS (xlsx) for instant client-side Excel downloads -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <!-- Google Fonts: Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Inter', sans-serif; transition: background-color 0.2s, color 0.2s; }
-    html.dark body { background-color: #020617 !important; color: #f8fafc !important; }
-    html.light body { background-color: #f8fafc !important; color: #0f172a !important; }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-    .dark ::-webkit-scrollbar-thumb { background: #334155; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-    /* From Uiverse.io by andrew-demchenk0 */ 
-    .switch {
-      --input-focus: #4f46e5;
-      --bg-color: #fff;
-      --bg-color-alt: #666;
-      --main-color: #323232;
-      --input-out-of-focus: #cbd5e1;
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      letter-spacing: -0.011em;
+    }
+
+    /* Custom Switch provided by user 👇 */
+    .ui-switch {
+      /* switch */
+      --switch-bg: rgb(135, 150, 165);
+      --switch-width: 48px;
+      --switch-height: 20px;
+      /* circle */
+      --circle-diameter: 32px;
+      --circle-bg: rgb(0, 56, 146);
+      --circle-inset: calc((var(--circle-diameter) - var(--switch-height)) / 2);
+      display: inline-block;
       position: relative;
-      display: inline-flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      width: 66px;
-      height: 32px;
       cursor: pointer;
     }
 
-    .dark .switch {
-      --input-focus: #6366f1;
-      --bg-color: #1e293b;
-      --bg-color-alt: #94a3b8;
-      --main-color: #e2e8f0;
-      --input-out-of-focus: #334155;
-    }
-
-    .toggle {
-      opacity: 0;
-      width: 0;
-      height: 0;
-      position: absolute;
+    .ui-switch input {
+      display: none;
     }
 
     .slider {
-      box-sizing: border-box;
-      border-radius: 100px;
-      border: 2px solid var(--main-color);
-      box-shadow: 2px 2px var(--main-color);
-      position: absolute;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      width: var(--switch-width);
+      height: var(--switch-height);
+      background: var(--switch-bg);
+      border-radius: 999px;
+      position: relative;
       cursor: pointer;
-      top: 0;
+    }
+    .slider .circle {
+      top: calc(var(--circle-inset) * -1);
       left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: var(--input-out-of-focus);
-      transition: 0.3s;
-    }
-
-    .slider:before {
-      content: "off";
-      box-sizing: border-box;
-      height: 24px;
-      width: 24px;
+      width: var(--circle-diameter);
+      height: var(--circle-diameter);
       position: absolute;
-      left: 2px;
-      bottom: 2px;
-      border: 2px solid var(--main-color);
-      border-radius: 100px;
-      background-color: var(--bg-color);
-      color: var(--main-color);
-      font-size: 10px;
-      font-weight: 700;
-      text-align: center;
-      line-height: 20px;
-      text-transform: uppercase;
-      transition: 0.3s;
+      background: var(--circle-bg);
+      border-radius: inherit;
+      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHdpZHRoPSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj4KICAgIDxwYXRoIGZpbGw9IiNmZmYiCiAgICAgICAgZD0iTTkuMzA1IDEuNjY3VjMuNzVoMS4zODlWMS42NjdoLTEuMzl6bS00LjcwNyAxLjk1bC0uOTgyLjk4Mkw1LjA5IDYuMDcybC45ODItLjk4Mi0xLjQ3My0xLjQ3M3ptMTAuODAyIDBMMTMuOTI3IDUuMDlsLjk4Mi45ODIgMS40NzMtMS40NzMtLjk4Mi0uOTgyek0xMCA1LjEzOWE0Ljg3MiA0Ljg3MiAwIDAwLTQuODYyIDQuODZBNC44NzIgNC44NzIgMCAwMDEwIDE0Ljg2MiA0Ljg3MiA0Ljg3MiAwIDAwMTQuODYgMTAgNC44NzIgNC44NzIgMCAwMDEwIDUuMTM5em0wIDEuMzg5QTMuNDYyIDMuNDYyIDAgMDExMy40NzEgMTBhMy40NjIgMy40NjIgMCAwMS0zLjQ3MyAzLjQ3MkEzLjQ2MiAzLjQ2MiAwIDAxNi41MjcgMTAgMy40NjIgMCAwMTEwIDYuNTI4ek0xLjY2NSA5LjMwNXYxLjM5aDIuMDgzdi0xLjM5SDEuNjY2em0xNC41ODMgMHYxLjM5aDIuMDg0di0xLjM5aC0yLjA4NHpNNS4wOSAxMy45MjhMMy42MTYgMTUuNGwuOTgyLjk4MiAxLjQ3My0xLjQ3My0uOTgyLS45ODJ6bTkuODIgMGwtLjk4Mi45ODIgMS40NzMtMS40NzMuOTgyLS45ODItMS40NzMtMS40NzN6TTkuMzA1IDE2LjI1djIuMDgzaDEuMzg5VjE2LjI1aC0xLjM5eiIgLz4KPC9zdmc+");
+      background-repeat: no-repeat;
+      background-position: center center;
+      -webkit-transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, -webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+      -o-transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+      transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, -webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
     }
 
-    .toggle:checked + .slider {
-      background-color: var(--input-focus);
+    .slider .circle::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.75);
+      border-radius: inherit;
+      -webkit-transition: all 500ms;
+      -o-transition: all 500ms;
+      transition: all 500ms;
+      opacity: 0;
     }
 
-    .toggle:checked + .slider:before {
-      content: "on";
-      transform: translateX(34px);
+    /* actions */
+    .ui-switch input:checked+.slider .circle {
+      left: calc(100% - var(--circle-diameter));
+      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHdpZHRoPSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj4KICAgIDxwYXRoIGZpbGw9IiNmZmYiCiAgICAgICAgZD0iTTQuMiAyLjVsLS43IDEuOC0xLjguNyAxLjguNy43IDEuOC42LTEuOEw2LjcgNWwtMS45LS43LS42LTEuOHptMTUgOC4zYTYuNyA2LjcgMCAxMS02LjYtNi42IDUuOCA1LjggMCAwMDYuNiA2LjZ6IiAvPgo8L3N2Zz4=");
+    }
+
+    .ui-switch input:active+.slider .circle::before {
+      -webkit-transition: 0s;
+      -o-transition: 0s;
+      transition: 0s;
+      opacity: 1;
+      width: 0;
+      height: 0;
     }
   </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen antialiased">
+<body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200">
 
-  <!-- Header / Navigation -->
-  <header class="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0 z-30 shadow-sm transition-colors">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <!-- Logo -->
+  <!-- Apple Minimal Header -->
+  <header class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF]/90 dark:bg-[#0D0D0E]/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      
+      <!-- Brand & Badges -->
       <div class="flex items-center space-x-3">
-        <div class="w-9 h-9 rounded-xl bg-slate-900 dark:bg-emerald-500 flex items-center justify-center text-white dark:text-slate-950 font-black text-lg shadow-sm">
+        <div class="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm">
           M
         </div>
-        <div>
-          <div class="flex items-center space-x-2">
-            <span class="font-extrabold text-slate-900 dark:text-white tracking-tight text-base sm:text-lg">MacroData</span>
-            <span class="text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
-              TimesFM 2.5
-            </span>
-          </div>
-          <span class="hidden sm:block text-[11px] text-slate-500 dark:text-slate-400 font-medium">Minería, BVL, Commodities & Macro Perú</span>
+        <div class="flex items-center space-x-2">
+          <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg">MacroData</span>
+          <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#1D1D1F] dark:text-[#F5F5F7] border border-[#E5E5EA] dark:border-[#3A3A3C]">
+            TimesFM 2.5
+          </span>
+          <span class="hidden sm:inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#1D1D1F] dark:text-[#F5F5F7] border border-[#E5E5EA] dark:border-[#3A3A3C]">
+            TypeSafe AI Jev
+          </span>
         </div>
       </div>
 
-      <!-- Actions -->
-      <div class="flex items-center space-x-2 sm:space-x-3">
-        <!-- Live Badge -->
-        <span class="hidden md:inline-flex items-center text-xs text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800/80 font-medium">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
-          10Y Data Free
-        </span>
-
-        <!-- From Uiverse.io by andrew-demchenk0 --> 
-        <label class="switch" title="Cambiar modo claro / oscuro">
-          <input id="themeToggle" class="toggle" type="checkbox">
-          <span class="slider"></span>
-          <span class="card-side"></span>
+      <!-- Right Actions: Switch Toggle & Excel -->
+      <div class="flex items-center space-x-3 sm:space-x-4">
+        <!-- Switch Toggle Component Provided -->
+        <label class="ui-switch" title="Alternar modo claro / oscuro">
+          <input id="themeToggle" type="checkbox" />
+          <div class="slider">
+            <div class="circle"></div>
+          </div>
         </label>
 
-        <!-- Excel Top Button -->
-        <button id="btnExportExcelTop" class="inline-flex items-center text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-3 py-2 rounded-xl shadow-sm transition">
-          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-          <span class="hidden sm:inline">Descargar Excel</span>
-          <span class="sm:hidden">Excel</span>
+        <!-- Excel Export Top Button -->
+        <button id="btnExportExcelTop" class="inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-3.5 py-2 rounded-full transition shadow-sm">
+          <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          <span>Descargar Excel</span>
         </button>
       </div>
+
     </div>
   </header>
 
   <!-- Main Container -->
-  <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8">
 
-    <!-- Search Card & Quick Chips -->
-    <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-7 shadow-sm transition-colors">
-      <div class="max-w-3xl">
-        <h1 class="text-xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-          Análisis Macroeconómico & Pronóstico Cuantitativo
-        </h1>
-        <p class="mt-1.5 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-          Explora 10 años de series históricas de minería peruana, commodities globales y variables macroeconómicas. Proyecta escenarios probabilísticos con el modelo fundacional <strong>Google TimesFM 2.5</strong>.
-        </p>
+    <!-- Centered Hero & Search Section -->
+    <section class="text-center max-w-3xl mx-auto space-y-4">
+      <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#F5F5F7] dark:bg-[#1C1C1E] text-xs font-medium text-[#86868B] dark:text-[#8E8E93] border border-[#E5E5EA] dark:border-[#2C2C2E]">
+        <span>10 Años de Series Históricas</span>
+        <span>·</span>
+        <span>Inferencia Probabilística Zero-Shot</span>
       </div>
 
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-black dark:text-white">
+        Análisis Macroeconómico Cuantitativo
+      </h1>
+      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed max-w-2xl mx-auto">
+        Exploración de minería peruana, commodities globales y variables macroeconómicas con predicción multi-cuantil de Google TimesFM 2.5 e interpretación de TypeSafe AI Jev.
+      </p>
+
       <!-- Search Input Container -->
-      <div class="mt-5 relative" id="searchContainer">
-        <label for="companySearch" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-          Búsqueda Predictiva de Activo / Empresa
-        </label>
+      <div class="mt-6 relative max-w-xl mx-auto text-left" id="searchContainer">
         <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#86868B]">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
           </div>
           <input 
             type="text" 
             id="companySearch" 
             autocomplete="off"
-            placeholder="Escribe ticker o nombre (ej. Buenaventura, Southern Copper, Volcan, Cobre, Oro, USD/PEN...)" 
-            class="w-full pl-10 pr-10 py-3 bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100/70 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm sm:text-base rounded-xl border border-slate-300 dark:border-slate-700 focus:border-emerald-500 dark:focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition outline-none"
+            placeholder="Buscar activo o empresa (ej. Buenaventura, Southern Copper, Volcan, Cobre...)" 
+            class="w-full pl-10 pr-10 py-3 bg-[#F5F5F7] dark:bg-[#1C1C1E] focus:bg-white dark:focus:bg-[#161618] text-black dark:text-white placeholder-[#86868B] dark:placeholder-[#8E8E93] text-xs sm:text-sm rounded-2xl border border-[#E5E5EA] dark:border-[#2C2C2E] focus:border-black dark:focus:border-white focus:outline-none transition shadow-sm"
           />
           <div id="searchSpinner" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center">
-            <div class="w-4 h-4 border-2 border-slate-300 dark:border-slate-600 border-t-emerald-500 rounded-full animate-spin"></div>
+            <div class="w-4 h-4 border-2 border-[#86868B] border-t-black dark:border-t-white rounded-full animate-spin"></div>
           </div>
         </div>
 
         <!-- Dropdown Results -->
-        <div id="searchResults" class="hidden absolute left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl max-h-80 overflow-y-auto z-40 divide-y divide-slate-100 dark:divide-slate-800"></div>
+        <div id="searchResults" class="hidden absolute left-0 right-0 mt-2 bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl shadow-2xl max-h-80 overflow-y-auto z-40 divide-y divide-[#F5F5F7] dark:divide-[#2C2C2E]"></div>
       </div>
 
-      <!-- Quick Chips Filter -->
-      <div class="mt-4 flex items-center gap-1.5 overflow-x-auto pb-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap mr-1">Atajos:</span>
-        <button class="chip-btn text-xs font-medium px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition whitespace-nowrap" data-symbol="BVN">⛏️ Buenaventura (BVN)</button>
-        <button class="chip-btn text-xs font-medium px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition whitespace-nowrap" data-symbol="SCCO">⛏️ Southern Copper (SCCO)</button>
-        <button class="chip-btn text-xs font-medium px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition whitespace-nowrap" data-symbol="VOLCABC1.LM">⛏️ Volcan</button>
-        <button class="chip-btn text-xs font-medium px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition whitespace-nowrap" data-symbol="MINSURI1.LM">⛏️ Minsur</button>
-        <button class="chip-btn text-xs font-medium px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition whitespace-nowrap" data-symbol="BAP">🏦 Credicorp</button>
-        <button class="chip-btn text-xs font-medium px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition whitespace-nowrap" data-symbol="HG=F">🥉 Cobre Futuros</button>
-        <button class="chip-btn text-xs font-medium px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition whitespace-nowrap" data-symbol="GC=F">🥇 Oro Futuros</button>
-        <button class="chip-btn text-xs font-medium px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition whitespace-nowrap" data-symbol="PEN=X">🇵🇪 USD/PEN</button>
+      <!-- Quick Chips Shortcuts -->
+      <div class="mt-4 flex items-center justify-center gap-1.5 flex-wrap pt-2">
+        <span class="text-[11px] font-bold text-[#86868B] uppercase tracking-wider mr-1">Atajos:</span>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BVN">Buenaventura (BVN)</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="SCCO">Southern Copper (SCCO)</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="VOLCABC1.LM">Volcan</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="MINSURI1.LM">Minsur</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BAP">Credicorp</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="HG=F">Cobre Futuros</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="PEN=X">USD/PEN</button>
       </div>
     </section>
 
     <!-- Controls Bar: Time Range & Macro Overlay -->
-    <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4 transition-colors">
+    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4 transition-colors">
       <!-- Historical Range Selector -->
       <div class="flex flex-wrap items-center gap-2">
-        <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mr-1">Rango Histórico:</span>
-        <div class="inline-flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-medium">
-          <button class="range-btn px-3 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition" data-range="1y">1A</button>
-          <button class="range-btn px-3 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition" data-range="3y">3A</button>
-          <button class="range-btn px-3 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition" data-range="5y">5A</button>
-          <button class="range-btn px-3 py-1 rounded-md bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm font-bold transition" data-range="10y">10 Años (10Y)</button>
+        <span class="text-xs font-bold uppercase tracking-wider text-[#86868B] dark:text-[#8E8E93] mr-1">Rango Histórico:</span>
+        <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-xl border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-medium">
+          <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="1y">1A</button>
+          <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="3y">3A</button>
+          <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="5y">5A</button>
+          <button class="range-btn px-3 py-1 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition" data-range="10y">10 Años (10Y)</button>
         </div>
       </div>
 
       <!-- Macro Overlay Dropdown -->
       <div class="flex items-center space-x-2">
-        <label for="macroOverlay" class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap">
+        <label for="macroOverlay" class="text-xs font-bold uppercase tracking-wider text-[#86868B] dark:text-[#8E8E93] whitespace-nowrap">
           Cruce Macroeconómico:
         </label>
-        <select id="macroOverlay" class="bg-slate-50 dark:bg-slate-800 hover:bg-white dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 focus:border-emerald-500 text-slate-800 dark:text-slate-200 text-xs sm:text-sm rounded-lg px-3 py-1.5 outline-none font-medium transition cursor-pointer">
-          <option value="HG=F" selected>🥉 Cobre Futuros (HG=F)</option>
-          <option value="GC=F">🥇 Oro Futuros (GC=F)</option>
-          <option value="SI=F">🥈 Plata Futuros (SI=F)</option>
-          <option value="CL=F">🛢️ Petróleo Crudo WTI (CL=F)</option>
-          <option value="PEN=X">🇵🇪 Tipo de Cambio USD/PEN</option>
-          <option value="^TNX">💵 Bonos EE.UU. 10Y</option>
-          <option value="PERU_CPI">📊 Inflación Perú (Banco Mundial)</option>
-          <option value="PERU_GDP">🏛️ Crecimiento PBI Perú (Banco Mundial)</option>
-          <option value="none">🚫 Ninguno (Solo Empresa)</option>
+        <select id="macroOverlay" class="bg-[#F5F5F7] dark:bg-[#2C2C2E] hover:bg-white dark:hover:bg-[#3A3A3C] border border-[#E5E5EA] dark:border-[#3A3A3C] text-black dark:text-white text-xs sm:text-sm rounded-xl px-3 py-1.5 outline-none font-medium transition cursor-pointer">
+          <option value="HG=F" selected>Cobre Futuros (HG=F)</option>
+          <option value="GC=F">Oro Futuros (GC=F)</option>
+          <option value="SI=F">Plata Futuros (SI=F)</option>
+          <option value="CL=F">Petróleo WTI (CL=F)</option>
+          <option value="PEN=X">Tipo de Cambio USD/PEN</option>
+          <option value="^TNX">Bonos EE.UU. 10Y</option>
+          <option value="PERU_CPI">Inflación Perú (Banco Mundial)</option>
+          <option value="PERU_GDP">Crecimiento PBI Perú (Banco Mundial)</option>
+          <option value="none">Ninguno (Solo Empresa)</option>
         </select>
       </div>
     </section>
 
     <!-- Active Asset Header & KPI Summary Cards -->
     <section class="space-y-4">
-      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between border-b border-slate-200 dark:border-slate-800 pb-3 gap-2">
+      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between border-b border-[#E5E5EA] dark:border-[#2C2C2E] pb-3 gap-2 text-center sm:text-left">
         <div>
-          <div class="flex items-center space-x-3">
-            <h2 id="assetTitle" class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">Compañía de Minas Buenaventura</h2>
-            <span id="assetSymbolBadge" class="text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 bg-slate-900 dark:bg-emerald-500 text-white dark:text-slate-950 rounded-md">BVN</span>
+          <div class="flex items-center justify-center sm:justify-start space-x-3">
+            <h2 id="assetTitle" class="text-2xl sm:text-3xl font-black text-black dark:text-white">Compañía de Minas Buenaventura</h2>
+            <span id="assetSymbolBadge" class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 bg-black dark:bg-white text-white dark:text-black rounded-full">BVN</span>
           </div>
-          <p id="assetMeta" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Minería · Perú · Moneda: USD · NYSE / BVL</p>
+          <p id="assetMeta" class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] mt-1">Minería · Perú · Moneda: USD · 10 Años de Datos</p>
         </div>
-        <div class="text-left sm:text-right">
-          <div id="latestPrice" class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">$34.71 USD</div>
-          <div id="latestDate" class="text-xs text-slate-400">Último cierre registrado</div>
+        <div class="text-center sm:text-right">
+          <div id="latestPrice" class="text-2xl sm:text-3xl font-black text-black dark:text-white">$34.71 USD</div>
+          <div id="latestDate" class="text-xs text-[#86868B]">Último cierre registrado</div>
         </div>
       </div>
 
-      <!-- KPI Metrics Grid -->
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Retorno Histórico</div>
-          <div id="metricReturn" class="text-lg sm:text-xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">+184.2%</div>
-          <div class="text-[11px] text-slate-400 mt-0.5">En el rango seleccionado</div>
+      <!-- KPI Metrics Grid (Monochromatic Apple Style) -->
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4 text-center">
+        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Retorno Histórico</div>
+          <div id="metricReturn" class="text-lg sm:text-xl font-extrabold text-black dark:text-white mt-1">+184.2%</div>
+          <div class="text-[10px] text-[#86868B] mt-0.5">En el rango seleccionado</div>
         </div>
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Máximo Período</div>
-          <div id="metricHigh" class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white mt-1">$36.50</div>
-          <div id="metricHighDate" class="text-[11px] text-slate-400 mt-0.5">Pico histórico</div>
+        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Máximo Período</div>
+          <div id="metricHigh" class="text-lg sm:text-xl font-extrabold text-black dark:text-white mt-1">$36.50</div>
+          <div id="metricHighDate" class="text-[10px] text-[#86868B] mt-0.5">Pico histórico</div>
         </div>
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Mínimo Período</div>
-          <div id="metricLow" class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white mt-1">$4.10</div>
-          <div id="metricLowDate" class="text-[11px] text-slate-400 mt-0.5">Valle histórico</div>
+        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Mínimo Período</div>
+          <div id="metricLow" class="text-lg sm:text-xl font-extrabold text-black dark:text-white mt-1">$4.10</div>
+          <div id="metricLowDate" class="text-[10px] text-[#86868B] mt-0.5">Valle histórico</div>
         </div>
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Correlación (r)</div>
-          <div id="metricCorrelation" class="text-lg sm:text-xl font-extrabold text-indigo-600 dark:text-indigo-400 mt-1">+0.74</div>
-          <div id="metricCorrelationDesc" class="text-[11px] text-slate-400 mt-0.5">vs Cobre Futuros</div>
+        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Correlación (r)</div>
+          <div id="metricCorrelation" class="text-lg sm:text-xl font-extrabold text-black dark:text-white mt-1">+0.74</div>
+          <div id="metricCorrelationDesc" class="text-[10px] text-[#86868B] mt-0.5">vs Cobre Futuros</div>
         </div>
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm col-span-2 md:col-span-1">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Observaciones</div>
-          <div id="metricPoints" class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white mt-1">121</div>
-          <div class="text-[11px] text-slate-400 mt-0.5">Meses continuos</div>
+        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm col-span-2 md:col-span-1">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Observaciones</div>
+          <div id="metricPoints" class="text-lg sm:text-xl font-extrabold text-black dark:text-white mt-1">121</div>
+          <div class="text-[10px] text-[#86868B] mt-0.5">Meses continuos</div>
         </div>
       </div>
     </section>
 
-    <!-- TimesFM 2.5 Section: Controls, Skeletons & Metric Cards -->
-    <section class="bg-white dark:bg-slate-900 border border-purple-200 dark:border-purple-900/60 rounded-2xl p-5 sm:p-7 shadow-sm transition-colors relative overflow-hidden">
-      <!-- Glowing Background Accent -->
-      <div class="absolute -right-20 -top-20 w-64 h-64 bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-      <!-- TimesFM Header & Horizon Tabs -->
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-purple-100 dark:border-purple-950 gap-4">
+    <!-- Google TimesFM 2.5 Section: Clean Apple Card -->
+    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-5 sm:p-7 shadow-sm transition-colors relative">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-[#E5E5EA] dark:border-[#2C2C2E] gap-4">
         <div>
           <div class="flex items-center space-x-2.5">
-            <span class="flex h-3 w-3 relative">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-3 w-3 bg-purple-600"></span>
-            </span>
-            <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+            <span class="w-2.5 h-2.5 rounded-full bg-black dark:bg-white animate-pulse"></span>
+            <h3 class="text-base sm:text-lg font-bold text-black dark:text-white">
               Google TimesFM 2.5 — Proyección Cuantitativa Zero-Shot
             </h3>
-            <span class="hidden sm:inline-block text-[11px] font-semibold bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 px-2.5 py-0.5 rounded-full border border-purple-200 dark:border-purple-800">
-              RevIN + Transformers
+            <span class="hidden sm:inline-block text-[11px] font-semibold bg-[#F5F5F7] dark:bg-[#2C2C2E] text-black dark:text-white px-2.5 py-0.5 rounded-full border border-[#E5E5EA] dark:border-[#3A3A3C]">
+              RevIN Multi-Cuantil
             </span>
           </div>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Proyección multi-cuantil calibrada (P10, P50 mediana, P90) con normalización de instancias y momentum multi-escala.
+          <p class="text-xs text-[#86868B] dark:text-[#8E8E93] mt-1">
+            Proyección de trayectoria mediana P50 con cuantiles probabilísticos P10 y P90 sobre representaciones continuas.
           </p>
         </div>
 
-        <!-- Horizon Selection Buttons (1, 3, 6, 12 Meses) -->
+        <!-- Horizon Selection Buttons (1M, 3M, 6M, 12M) -->
         <div class="flex items-center space-x-2">
-          <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Horizonte:</span>
-          <div class="inline-flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold">
-            <button class="horizon-btn px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition" data-horizon="1">1M</button>
-            <button class="horizon-btn px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition" data-horizon="3">3M</button>
-            <button class="horizon-btn px-3 py-1.5 rounded-lg bg-purple-600 text-white shadow-sm transition" data-horizon="6">6M</button>
-            <button class="horizon-btn px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition" data-horizon="12">12M</button>
+          <span class="text-xs font-bold text-[#86868B] dark:text-[#8E8E93] uppercase tracking-wider">Horizonte:</span>
+          <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-xl border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-semibold">
+            <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="1">1M</button>
+            <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="3">3M</button>
+            <button class="horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black shadow-sm transition" data-horizon="6">6M</button>
+            <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="12">12M</button>
           </div>
         </div>
       </div>
 
-      <!-- Skeleton Loading State (Displayed while projecting) -->
+      <!-- Skeleton Loading State -->
       <div id="forecastSkeleton" class="hidden mt-6 animate-pulse space-y-4">
-        <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-1/3"></div>
+        <div class="h-4 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded w-1/3 mx-auto"></div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-          <div class="h-20 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
-          <div class="h-20 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
-          <div class="h-20 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
-          <div class="h-20 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
+          <div class="h-20 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-xl"></div>
+          <div class="h-20 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-xl"></div>
+          <div class="h-20 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-xl"></div>
+          <div class="h-20 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-xl"></div>
         </div>
-        <div class="h-10 bg-slate-200 dark:bg-slate-800 rounded-xl w-full"></div>
       </div>
 
       <!-- Active Forecast Results & Cards -->
       <div id="forecastContent" class="mt-5 space-y-4">
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <!-- Target Price P50 -->
-          <div class="bg-purple-50/50 dark:bg-purple-950/30 border border-purple-200/80 dark:border-purple-800/60 rounded-xl p-4">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300">Precio Esperado (P50)</div>
-            <div id="tfmP50" class="text-xl sm:text-2xl font-black text-purple-900 dark:text-purple-100 mt-1">$39.34</div>
-            <div id="tfmHorizonDate" class="text-[11px] text-purple-600 dark:text-purple-400 mt-0.5">Al horizonte de 6 meses</div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-center">
+          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-2xl p-4">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Precio Esperado (P50)</div>
+            <div id="tfmP50" class="text-xl sm:text-2xl font-black text-black dark:text-white mt-1">$39.34</div>
+            <div id="tfmHorizonDate" class="text-[10px] text-[#86868B] mt-0.5">Al horizonte de 6 meses</div>
           </div>
 
-          <!-- Expected Return % -->
-          <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Retorno Proyectado</div>
-            <div id="tfmReturn" class="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">+13.3%</div>
-            <div id="tfmTrend" class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Tendencia Alcista</div>
+          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-2xl p-4">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Retorno Proyectado</div>
+            <div id="tfmReturn" class="text-xl sm:text-2xl font-black text-black dark:text-white mt-1">+13.3%</div>
+            <div id="tfmTrend" class="text-[10px] text-[#86868B] mt-0.5">Tendencia Alcista</div>
           </div>
 
-          <!-- Calibrated Interval P10 - P90 -->
-          <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Rango Confianza (80%)</div>
-            <div id="tfmRange" class="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-200 mt-1">$21.97 — $56.71</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">Cuantiles P10 a P90</div>
+          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-2xl p-4">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Rango Probabilístico (80%)</div>
+            <div id="tfmRange" class="text-lg sm:text-xl font-bold text-black dark:text-white mt-1">$21.97 — $56.71</div>
+            <div class="text-[10px] text-[#86868B] mt-0.5">Cuantiles P10 a P90</div>
           </div>
 
-          <!-- Volatility & Methodology -->
-          <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Volatilidad Anualizada</div>
-            <div id="tfmVol" class="text-xl sm:text-2xl font-black text-indigo-600 dark:text-indigo-400 mt-1">48.7%</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">Difusión temporal √h</div>
+          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-2xl p-4">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Volatilidad Anualizada</div>
+            <div id="tfmVol" class="text-xl sm:text-2xl font-black text-black dark:text-white mt-1">48.7%</div>
+            <div class="text-[10px] text-[#86868B] mt-0.5">Difusión temporal √h</div>
           </div>
         </div>
 
         <!-- TimesFM Summary Banner -->
-        <div class="bg-purple-100/60 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-purple-900 dark:text-purple-200">
+        <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/40 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-black dark:text-[#F5F5F7]">
           <div class="flex items-center space-x-2">
-            <svg class="w-4 h-4 text-purple-600 dark:text-purple-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <svg class="w-4 h-4 text-[#86868B] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             <span id="tfmExplainText">
-              La gráfica inferior ha sido ampliada automáticamente con las fechas futuras proyectadas, mostrando la trayectoria esperada (línea punteada púrpura) y la banda de dispersión probabilística P10-P90.
+              La gráfica inferior ha sido ampliada con las fechas futuras proyectadas, mostrando la trayectoria P50 (línea discontinua) y el intervalo de confianza P10-P90.
             </span>
           </div>
-          <button id="btnToggleForecastChart" class="self-start sm:self-auto px-3 py-1 bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white rounded-lg font-medium text-xs shadow-sm transition whitespace-nowrap">
+          <button id="btnToggleForecastChart" class="self-start sm:self-auto px-3.5 py-1.5 bg-black dark:bg-white hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black rounded-full font-semibold text-xs transition whitespace-nowrap shadow-sm">
             Ocultar Proyección en Gráfico
           </button>
         </div>
       </div>
     </section>
 
-    <!-- Main Dual Chart Section (Expanded with TimesFM) -->
-    <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm transition-colors">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-100 dark:border-slate-800 gap-3">
-        <div class="flex items-center space-x-2">
-          <div class="w-2.5 h-2.5 rounded-full bg-slate-900 dark:bg-emerald-400"></div>
-          <span class="text-sm font-bold text-slate-800 dark:text-slate-200">Evolución Histórica & Proyección Ampliada</span>
+    <!-- TypeSafe AI · Jev System One Interpretation Section -->
+    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-6 sm:p-8 shadow-sm transition-colors text-center relative">
+      <div class="max-w-2xl mx-auto">
+        <div class="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-[#F5F5F7] dark:bg-[#2C2C2E] text-black dark:text-white text-xs font-semibold mb-3 border border-[#E5E5EA] dark:border-[#3A3A3C]">
+          <span class="w-2 h-2 rounded-full bg-black dark:bg-white animate-pulse"></span>
+          <span>TypeSafe AI · Jev System One</span>
+          <span class="text-[#86868B]">|</span>
+          <span id="tsConfidence" class="font-bold">Confianza Calibrada: 88.5%</span>
         </div>
         
-        <!-- Legend Items -->
-        <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400 font-medium">
+        <h3 class="text-xl sm:text-2xl font-bold tracking-tight text-black dark:text-white">
+          Interpretación Cuantitativa & Régimen Macroeconómico
+        </h3>
+        
+        <p id="tsTakeaway" class="mt-3 text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          Cargando análisis semántico validado por TypeSafe AI Jev...
+        </p>
+      </div>
+
+      <!-- Sub-Cards -->
+      <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-4xl mx-auto text-center">
+        <div class="p-4 rounded-2xl bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C]">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-[#86868B]">Sensibilidad Macro (Beta)</div>
+          <div id="tsBeta" class="text-sm sm:text-base font-bold text-black dark:text-white mt-1">Alta (+0.74)</div>
+        </div>
+        <div class="p-4 rounded-2xl bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C]">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-[#86868B]">Régimen de Volatilidad</div>
+          <div id="tsRegime" class="text-sm sm:text-base font-bold text-black dark:text-white mt-1">Cíclico Moderado</div>
+        </div>
+        <div class="p-4 rounded-2xl bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C]">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-[#86868B]">Verificación Formal</div>
+          <div id="tsEngine" class="text-sm sm:text-base font-bold text-black dark:text-white mt-1">RLCD / Jev Architecture</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Dual Chart Section (Expanded with TimesFM) -->
+    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 sm:p-6 shadow-sm transition-colors">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-[#E5E5EA] dark:border-[#2C2C2E] gap-3">
+        <div class="flex items-center space-x-2">
+          <div class="w-2.5 h-2.5 rounded-full bg-black dark:bg-white"></div>
+          <span class="text-sm font-bold text-black dark:text-white">Evolución Histórica & Proyección Ampliada</span>
+        </div>
+        
+        <!-- Legend Items (Monochromatic) -->
+        <div class="flex flex-wrap items-center gap-3 text-xs text-[#86868B] dark:text-[#8E8E93] font-medium">
           <span class="inline-flex items-center">
-            <span class="w-3 h-1 bg-slate-900 dark:bg-slate-100 rounded-sm mr-1.5"></span> Histórico
+            <span class="w-3 h-1 bg-black dark:bg-white rounded-sm mr-1.5"></span> Histórico
           </span>
-          <span id="legendForecast" class="inline-flex items-center text-purple-600 dark:text-purple-400 font-semibold">
-            <span class="w-3 h-0.5 border-t-2 border-dashed border-purple-600 dark:border-purple-400 mr-1.5"></span> TimesFM (P50)
+          <span id="legendForecast" class="inline-flex items-center text-black dark:text-white font-semibold">
+            <span class="w-3 h-0.5 border-t-2 border-dashed border-black dark:border-white mr-1.5"></span> TimesFM (P50)
           </span>
-          <span id="legendBand" class="inline-flex items-center text-purple-400 dark:text-purple-300">
-            <span class="w-3 h-2 bg-purple-500/20 border border-purple-400/40 rounded-sm mr-1.5"></span> Banda P10-P90
+          <span id="legendBand" class="inline-flex items-center text-[#86868B]">
+            <span class="w-3 h-2 bg-black/10 dark:bg-white/10 border border-black/20 dark:border-white/20 rounded-sm mr-1.5"></span> Banda P10-P90
           </span>
-          <span id="legendMacro" class="inline-flex items-center text-amber-600 dark:text-amber-400">
-            <span class="w-3 h-1 bg-amber-500 rounded-sm mr-1.5"></span> Indicador Macro
+          <span id="legendMacro" class="inline-flex items-center text-[#86868B]">
+            <span class="w-3 h-1 bg-[#86868B] rounded-sm mr-1.5"></span> Indicador Macro
           </span>
         </div>
       </div>
 
-      <!-- Chart Container -->
+      <!-- Chart Canvas -->
       <div class="relative w-full h-80 sm:h-[420px]">
         <canvas id="mainChart"></canvas>
       </div>
     </section>
 
     <!-- Historical & Projected Data Table -->
-    <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden transition-colors">
-      <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/70 dark:bg-slate-800/40">
+    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl shadow-sm overflow-hidden transition-colors">
+      <div class="p-4 sm:p-6 border-b border-[#E5E5EA] dark:border-[#2C2C2E] flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#F5F5F7] dark:bg-[#2C2C2E]/40">
         <div>
-          <h3 class="text-base font-bold text-slate-900 dark:text-white">Tabla de Datos Históricos y Proyectados</h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Observaciones mensuales correlacionadas con factores macroeconómicos y cuantiles TimesFM.</p>
+          <h3 class="text-base font-bold text-black dark:text-white">Tabla de Datos Históricos y Proyectados</h3>
+          <p class="text-xs text-[#86868B] dark:text-[#8E8E93] mt-0.5">Observaciones mensuales correlacionadas y cuantiles probabilísticos.</p>
         </div>
-        <button id="btnExportExcel" class="inline-flex items-center justify-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-sm transition">
+        <button id="btnExportExcel" class="inline-flex items-center justify-center px-4 py-2.5 bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black font-semibold text-xs sm:text-sm rounded-full transition shadow-sm">
           <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           Descargar Todo en Excel (.xlsx)
         </button>
@@ -438,7 +463,7 @@
 
       <div class="overflow-x-auto max-h-96">
         <table class="w-full text-left border-collapse text-xs sm:text-sm">
-          <thead class="bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 font-semibold border-b border-slate-200 dark:border-slate-700 sticky top-0 z-10">
+          <thead class="bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#1D1D1F] dark:text-[#F5F5F7] font-semibold border-b border-[#E5E5EA] dark:border-[#3A3A3C] sticky top-0 z-10">
             <tr>
               <th class="py-3 px-4">Fecha</th>
               <th class="py-3 px-4">Estado</th>
@@ -450,12 +475,12 @@
               <th class="py-3 px-4">Variación (%)</th>
             </tr>
           </thead>
-          <tbody id="tableBody" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300 font-normal">
+          <tbody id="tableBody" class="divide-y divide-[#E5E5EA] dark:divide-[#2C2C2E] text-black dark:text-[#F5F5F7] font-normal">
             <!-- Dynamically populated -->
           </tbody>
         </table>
       </div>
-      <div class="p-3.5 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 text-right">
+      <div class="p-3.5 bg-[#F5F5F7] dark:bg-[#2C2C2E]/40 border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-xs text-[#86868B] text-right">
         <span id="tableSummary">Cargando observaciones...</span>
       </div>
     </section>
@@ -463,15 +488,17 @@
   </main>
 
   <!-- Footer -->
-  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 mt-12 py-6 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+  <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#0D0D0E] mt-12 py-8 text-center text-xs text-[#86868B] transition-colors">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
       <div>
         <strong>MacroData Explorer</strong> &copy; 2026 · Desarrollado para Agustín Ventura Saldaña
       </div>
-      <div class="flex items-center space-x-4">
-        <span>Google TimesFM 2.5 Foundation Model</span>
+      <div class="flex items-center space-x-3 text-[#86868B]">
+        <span>Google TimesFM 2.5</span>
         <span>•</span>
-        <span>Zero-Shot Inference</span>
+        <span>TypeSafe AI Jev</span>
+        <span>•</span>
+        <span>100% Serverless Edge</span>
       </div>
     </div>
   </footer>
@@ -488,6 +515,7 @@
       primaryData: null,
       macroData: null,
       forecastData: null,
+      interpretationData: null,
       isForecasting: false,
       chartInstance: null
     };
@@ -503,6 +531,17 @@
     const forecastSkeleton = document.getElementById("forecastSkeleton");
     const forecastContent = document.getElementById("forecastContent");
     const btnToggleForecastChart = document.getElementById("btnToggleForecastChart");
+
+    // XSS Sanitization Helper
+    function escapeHTML(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
 
     // Initialize Theme
     function initTheme() {
@@ -536,6 +575,7 @@
         renderChart();
       }
     }
+
     // Initialize Application
     document.addEventListener("DOMContentLoaded", () => {
       initTheme();
@@ -597,21 +637,21 @@
       });
     }
 
-    // Render Search Results
+    // Render Search Results (Sanitized against XSS)
     function renderSearchResults(results) {
       if (!results || results.length === 0) {
-        searchResultsDiv.innerHTML = `<div class="p-3 text-xs text-slate-500 dark:text-slate-400">No se encontraron resultados coincidentes.</div>`;
+        searchResultsDiv.innerHTML = `<div class="p-3 text-xs text-[#86868B]">No se encontraron resultados coincidentes.</div>`;
         searchResultsDiv.classList.remove("hidden");
         return;
       }
 
       searchResultsDiv.innerHTML = results.map(item => `
-        <div class="search-item p-3 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer flex items-center justify-between transition" data-symbol="${item.symbol}">
+        <div class="search-item p-3 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] cursor-pointer flex items-center justify-between transition" data-symbol="${escapeHTML(item.symbol)}">
           <div>
-            <div class="font-semibold text-xs sm:text-sm text-slate-900 dark:text-white">${item.name}</div>
-            <div class="text-[11px] text-slate-500 dark:text-slate-400">${item.sector || 'Mercado'} · ${item.country || 'Global'}</div>
+            <div class="font-semibold text-xs sm:text-sm text-black dark:text-white">${escapeHTML(item.name)}</div>
+            <div class="text-[11px] text-[#86868B]">${escapeHTML(item.sector || 'Mercado')} · ${escapeHTML(item.country || 'Global')}</div>
           </div>
-          <span class="text-xs font-bold font-mono px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded border border-slate-200 dark:border-slate-700">${item.symbol}</span>
+          <span class="text-xs font-bold font-mono px-2 py-1 bg-[#F5F5F7] dark:bg-[#2C2C2E] text-black dark:text-white rounded border border-[#E5E5EA] dark:border-[#3A3A3C]">${escapeHTML(item.symbol)}</span>
         </div>
       `).join("");
 
@@ -644,9 +684,9 @@
       document.querySelectorAll(".range-btn").forEach(btn => {
         btn.addEventListener("click", () => {
           document.querySelectorAll(".range-btn").forEach(b => {
-            b.className = "range-btn px-3 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition";
+            b.className = "range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
           });
-          btn.className = "range-btn px-3 py-1 rounded-md bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm font-bold transition";
+          btn.className = "range-btn px-3 py-1 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition";
           const rng = btn.getAttribute("data-range");
           state.range = rng;
           loadAllData(state.primarySymbol, rng, state.macroSymbol, state.horizon);
@@ -659,9 +699,9 @@
       document.querySelectorAll(".horizon-btn").forEach(btn => {
         btn.addEventListener("click", () => {
           document.querySelectorAll(".horizon-btn").forEach(b => {
-            b.className = "horizon-btn px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition";
+            b.className = "horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
           });
-          btn.className = "horizon-btn px-3 py-1.5 rounded-lg bg-purple-600 text-white shadow-sm transition";
+          btn.className = "horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition";
           const h = parseInt(btn.getAttribute("data-horizon"), 10);
           state.horizon = h;
           fetchForecastOnly(state.primarySymbol, h);
@@ -722,6 +762,7 @@
         renderDashboardBasics();
         renderChart();
         renderTable();
+        fetchTypeSafeInterpretation();
       } catch (err) {
         console.error("Error updating macro indicator:", err);
       }
@@ -758,6 +799,45 @@
         renderForecastCards();
         renderChart();
         renderTable();
+        fetchTypeSafeInterpretation();
+      }
+    }
+
+    // Fetch TypeSafe AI (Jev System One) Interpretation
+    async function fetchTypeSafeInterpretation() {
+      const p = state.primaryData;
+      const m = state.macroData;
+      const f = state.forecastData;
+      if (!p || !f) return;
+
+      try {
+        const corrText = document.getElementById("metricCorrelation").textContent;
+        const res = await fetch("/api/interpret", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            symbol: p.symbol,
+            macroSymbol: m ? m.symbol : "none",
+            horizon: state.horizon,
+            forecast: f,
+            historical: p,
+            correlation: corrText
+          })
+        });
+        const data = await res.json();
+        state.interpretationData = data;
+
+        // Render TypeSafe AI UI elements
+        if (data.executiveTakeaway || data.interpretation) {
+          const interp = data.interpretation || data;
+          document.getElementById("tsConfidence").textContent = `Confianza Calibrada: ${interp.confidencePercentage || (interp.calibratedConfidencePct + '%')}`;
+          document.getElementById("tsTakeaway").textContent = interp.executiveTakeaway || "Análisis interpretativo generado.";
+          document.getElementById("tsBeta").textContent = interp.macroSensitivity || "Moderada";
+          document.getElementById("tsRegime").textContent = interp.regime || interp.marketRegime || "Cíclico";
+          document.getElementById("tsEngine").textContent = `${data.model || 'Jev 1.1'} (Verified)`;
+        }
+      } catch (err) {
+        console.error("Error fetching TypeSafe AI interpretation:", err);
       }
     }
 
@@ -806,7 +886,6 @@
       // Update Historical Metrics
       const returnEl = document.getElementById("metricReturn");
       returnEl.textContent = `${returnPct >= 0 ? '+' : ''}${returnPct.toFixed(1)}%`;
-      returnEl.className = `text-lg sm:text-xl font-extrabold mt-1 ${returnPct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`;
 
       document.getElementById("metricHigh").textContent = `${p.currency === 'PEN' ? 'S/' : '$'}${highVal.toFixed(2)}`;
       document.getElementById("metricHighDate").textContent = `En ${highDate.substring(0, 7)}`;
@@ -858,7 +937,6 @@
 
       const returnEl = document.getElementById("tfmReturn");
       returnEl.textContent = `${f.expectedReturnPct >= 0 ? '+' : ''}${f.expectedReturnPct.toFixed(1)}%`;
-      returnEl.className = `text-xl sm:text-2xl font-black mt-1 ${f.expectedReturnPct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`;
       document.getElementById("tfmTrend").textContent = `Tendencia ${f.trend}`;
 
       document.getElementById("tfmRange").textContent = `${currencyPrefix}${f.quantiles.p10.toFixed(2)} — ${currencyPrefix}${f.quantiles.p90.toFixed(2)}`;
@@ -866,7 +944,7 @@
       document.getElementById("tfmExplainText").textContent = `Proyección TimesFM 2.5 calculada exitosamente a ${f.horizonLabel}. La gráfica inferior amplía el horizonte temporal incorporando el intervalo probabilístico P10-P90.`;
     }
 
-    // Render Chart.js with Theme Awareness & TimesFM Forecast Expansion
+    // Render Chart.js with Monochromatic Apple Styling & TimesFM
     function renderChart() {
       const canvas = document.getElementById("mainChart");
       const ctx = canvas.getContext("2d");
@@ -894,7 +972,6 @@
 
       // Append Forecast Series if available & enabled
       if (f && f.forecastSeries && state.showForecastOnChart) {
-        // Connect forecast starting from the last historical point
         p50Data[lastHistIndex] = lastHistVal;
         p10Data[lastHistIndex] = lastHistVal;
         p90Data[lastHistIndex] = lastHistVal;
@@ -920,11 +997,12 @@
       }
       const macroDataPadded = allLabels.map(lbl => macroMap.has(lbl) ? macroMap.get(lbl) : null);
 
-      // Theme-specific colors
-      const textColor = isDark ? "#94a3b8" : "#64748b";
-      const gridColor = isDark ? "rgba(51, 65, 85, 0.4)" : "#f1f5f9";
-      const primaryLineColor = isDark ? "#38bdf8" : "#0f172a"; // Sky-400 or Slate-900
-      const primaryBgColor = isDark ? "rgba(56, 189, 248, 0.05)" : "rgba(15, 23, 42, 0.04)";
+      // Monochromatic Apple Colors
+      const textColor = isDark ? "#8E8E93" : "#86868B";
+      const gridColor = isDark ? "rgba(44, 44, 46, 0.6)" : "rgba(229, 229, 234, 0.7)";
+      const primaryLineColor = isDark ? "#F5F5F7" : "#000000";
+      const primaryBgColor = isDark ? "rgba(245, 245, 247, 0.04)" : "rgba(0, 0, 0, 0.03)";
+      const macroLineColor = isDark ? "#8E8E93" : "#86868B";
 
       const datasets = [
         // 1. Historical Asset Line
@@ -939,7 +1017,7 @@
           pointHoverBackgroundColor: primaryLineColor,
           fill: true,
           yAxisID: "yPrimary",
-          tension: 0.2
+          tension: 0.15
         }
       ];
 
@@ -949,42 +1027,42 @@
         datasets.push({
           label: "TimesFM P90 (Optimista)",
           data: p90Data,
-          borderColor: "rgba(168, 85, 247, 0.3)", // Purple-500 light
-          backgroundColor: isDark ? "rgba(168, 85, 247, 0.15)" : "rgba(168, 85, 247, 0.10)",
+          borderColor: isDark ? "rgba(245, 245, 247, 0.25)" : "rgba(0, 0, 0, 0.2)",
+          backgroundColor: isDark ? "rgba(245, 245, 247, 0.08)" : "rgba(0, 0, 0, 0.05)",
           borderWidth: 1,
           pointRadius: 0,
           fill: "+1", // Fill to P10 dataset below
           yAxisID: "yPrimary",
-          tension: 0.25
+          tension: 0.2
         });
 
         // P10 (Lower Bound)
         datasets.push({
           label: "TimesFM P10 (Pesimista)",
           data: p10Data,
-          borderColor: "rgba(168, 85, 247, 0.3)",
+          borderColor: isDark ? "rgba(245, 245, 247, 0.25)" : "rgba(0, 0, 0, 0.2)",
           backgroundColor: "transparent",
           borderWidth: 1,
           pointRadius: 0,
           fill: false,
           yAxisID: "yPrimary",
-          tension: 0.25
+          tension: 0.2
         });
 
         // P50 (Median Forecast Line)
         datasets.push({
           label: `TimesFM P50 (${f.horizonLabel})`,
           data: p50Data,
-          borderColor: "#9333ea", // Purple-600
+          borderColor: primaryLineColor,
           backgroundColor: "transparent",
-          borderWidth: 2.5,
+          borderWidth: 2.2,
           borderDash: [5, 4],
           pointRadius: 0,
           pointHoverRadius: 6,
-          pointHoverBackgroundColor: "#9333ea",
+          pointHoverBackgroundColor: primaryLineColor,
           fill: false,
           yAxisID: "yPrimary",
-          tension: 0.25
+          tension: 0.2
         });
       }
 
@@ -993,22 +1071,24 @@
         datasets.push({
           label: `${m.name} (${m.currency || ''})`,
           data: macroDataPadded,
-          borderColor: "#f59e0b", // Amber-500
+          borderColor: macroLineColor,
           borderDash: [3, 3],
           backgroundColor: "transparent",
-          borderWidth: 1.8,
+          borderWidth: 1.6,
           pointRadius: 0,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: "#f59e0b",
-          fill: false,
+          pointHoverRadius: 4,
+          pointHoverBackgroundColor: macroLineColor,
           yAxisID: "yMacro",
-          tension: 0.2
+          tension: 0.15
         });
       }
 
       state.chartInstance = new Chart(ctx, {
         type: "line",
-        data: { labels: allLabels, datasets },
+        data: {
+          labels: allLabels,
+          datasets: datasets
+        },
         options: {
           responsive: true,
           maintainAspectRatio: false,
@@ -1017,54 +1097,77 @@
             intersect: false
           },
           plugins: {
-            legend: { display: false },
+            legend: {
+              display: false
+            },
             tooltip: {
-              backgroundColor: isDark ? "rgba(15, 23, 42, 0.95)" : "rgba(15, 23, 42, 0.90)",
-              titleFont: { size: 12, family: 'Inter', weight: '700' },
-              bodyFont: { size: 12, family: 'Inter' },
+              backgroundColor: isDark ? "#1C1C1E" : "#FFFFFF",
+              titleColor: isDark ? "#F5F5F7" : "#000000",
+              bodyColor: isDark ? "#E5E5EA" : "#1D1D1F",
+              borderColor: isDark ? "#2C2C2E" : "#E5E5EA",
+              borderWidth: 1,
               padding: 10,
-              cornerRadius: 10,
-              boxPadding: 4,
-              borderColor: isDark ? "#334155" : "transparent",
-              borderWidth: isDark ? 1 : 0
+              displayColors: true,
+              callbacks: {
+                label: function(context) {
+                  const val = context.raw;
+                  if (val === null || val === undefined) return null;
+                  const label = context.dataset.label || "";
+                  return ` ${label}: ${val.toFixed(2)}`;
+                }
+              }
             }
           },
           scales: {
             x: {
-              grid: { color: gridColor, drawOnChartArea: false },
+              grid: {
+                color: gridColor,
+                drawBorder: false
+              },
               ticks: {
-                font: { family: 'Inter', size: 11 },
                 color: textColor,
+                font: { size: 10 },
                 maxTicksLimit: 14
               }
             },
             yPrimary: {
               type: "linear",
               position: "left",
-              grid: { color: gridColor },
+              grid: {
+                color: gridColor,
+                drawBorder: false
+              },
               ticks: {
-                font: { family: 'Inter', size: 11 },
-                color: textColor
+                color: textColor,
+                font: { size: 10 },
+                callback: function(value) {
+                  return (p.currency === "PEN" ? "S/ " : "$") + value.toFixed(1);
+                }
               }
             },
             yMacro: {
               type: "linear",
               position: "right",
-              grid: { drawOnChartArea: false },
-              ticks: {
-                font: { family: 'Inter', size: 11 },
-                color: "#f59e0b"
+              display: m && m.series ? true : false,
+              grid: {
+                drawOnChartArea: false,
+                drawBorder: false
               },
-              display: !!(m && m.series)
+              ticks: {
+                color: textColor,
+                font: { size: 10 },
+                callback: function(value) {
+                  return value.toFixed(1);
+                }
+              }
             }
           }
         }
       });
     }
 
-    // Render Table Rows (Historical + Forecast Steps)
+    // Render Historical & Projected Data Table
     function renderTable() {
-      const tbody = document.getElementById("tableBody");
       const p = state.primaryData;
       const m = state.macroData;
       const f = state.forecastData;
@@ -1072,30 +1175,28 @@
 
       const series = p.series;
       const currencySymbol = p.currency === "PEN" ? "S/ " : "$";
-      const macroMap = new Map();
-      if (m && m.series) {
-        m.series.forEach(it => macroMap.set(it.date.substring(0, 7), it.close));
-      }
-
+      const tbody = document.getElementById("tableBody");
       let html = "";
 
-      // 1. Forecast Future Rows (if available)
+      const macroMap = new Map();
+      if (m && m.series) {
+        m.series.forEach(item => macroMap.set(item.date.substring(0, 7), item.close));
+      }
+
+      // 1. Forecast Projections
       if (f && f.forecastSeries) {
         for (let i = f.forecastSeries.length - 1; i >= 0; i--) {
           const item = f.forecastSeries[i];
           html += `
-            <tr class="bg-purple-50/40 dark:bg-purple-950/20 hover:bg-purple-100/50 dark:hover:bg-purple-900/30 transition">
-              <td class="py-2.5 px-4 font-mono font-bold text-purple-700 dark:text-purple-300 flex items-center">
-                <span class="w-1.5 h-1.5 rounded-full bg-purple-500 mr-2"></span>
-                ${item.date}
-              </td>
-              <td class="py-2.5 px-4"><span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-purple-200 dark:bg-purple-900 text-purple-800 dark:text-purple-200">PROYECCIÓN TFM</span></td>
-              <td class="py-2.5 px-4 font-extrabold text-purple-900 dark:text-purple-100">${currencySymbol}${item.p50.toFixed(2)}</td>
-              <td class="py-2.5 px-4 text-slate-400">-</td>
-              <td class="py-2.5 px-4 font-semibold text-purple-600 dark:text-purple-400">${currencySymbol}${item.p90.toFixed(2)}</td>
-              <td class="py-2.5 px-4 font-semibold text-purple-600 dark:text-purple-400">${currencySymbol}${item.p10.toFixed(2)}</td>
-              <td class="py-2.5 px-4 text-slate-400">-</td>
-              <td class="py-2.5 px-4 font-bold text-purple-600 dark:text-purple-400">P50 (P10-P90)</td>
+            <tr class="bg-[#F5F5F7]/70 dark:bg-[#2C2C2E]/40 font-medium">
+              <td class="py-2.5 px-4 font-mono text-black dark:text-white font-bold">${escapeHTML(item.date)}</td>
+              <td class="py-2.5 px-4"><span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-black dark:bg-white text-white dark:text-black">TIMESFM P50</span></td>
+              <td class="py-2.5 px-4 font-bold text-black dark:text-white">${currencySymbol}${item.p50.toFixed(2)}</td>
+              <td class="py-2.5 px-4 text-[#86868B]">-</td>
+              <td class="py-2.5 px-4 text-[#86868B] font-mono">${currencySymbol}${item.p90.toFixed(2)}</td>
+              <td class="py-2.5 px-4 text-[#86868B] font-mono">${currencySymbol}${item.p10.toFixed(2)}</td>
+              <td class="py-2.5 px-4 text-[#86868B]">-</td>
+              <td class="py-2.5 px-4 font-bold text-black dark:text-white">Proyectado</td>
             </tr>
           `;
         }
@@ -1110,15 +1211,15 @@
         const macroVal = macroMap.has(ym) ? macroMap.get(ym) : "-";
 
         html += `
-          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition">
-            <td class="py-2.5 px-4 font-mono font-medium text-slate-900 dark:text-white">${item.date}</td>
-            <td class="py-2.5 px-4"><span class="px-2 py-0.5 text-[10px] font-semibold rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">HISTÓRICO</span></td>
-            <td class="py-2.5 px-4 font-bold text-slate-900 dark:text-white">${currencySymbol}${item.close.toFixed(2)}</td>
-            <td class="py-2.5 px-4 text-slate-500 dark:text-slate-400">${currencySymbol}${item.open.toFixed(2)}</td>
-            <td class="py-2.5 px-4 text-slate-500 dark:text-slate-400">${currencySymbol}${item.high.toFixed(2)}</td>
-            <td class="py-2.5 px-4 text-slate-500 dark:text-slate-400">${currencySymbol}${item.low.toFixed(2)}</td>
-            <td class="py-2.5 px-4 font-medium text-amber-600 dark:text-amber-400">${typeof macroVal === 'number' ? macroVal.toFixed(2) : macroVal}</td>
-            <td class="py-2.5 px-4 font-bold ${changePct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">
+          <tr class="hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E]/60 transition">
+            <td class="py-2.5 px-4 font-mono font-medium text-black dark:text-white">${escapeHTML(item.date)}</td>
+            <td class="py-2.5 px-4"><span class="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#86868B] dark:text-[#8E8E93] border border-[#E5E5EA] dark:border-[#3A3A3C]">HISTÓRICO</span></td>
+            <td class="py-2.5 px-4 font-bold text-black dark:text-white">${currencySymbol}${item.close.toFixed(2)}</td>
+            <td class="py-2.5 px-4 text-[#86868B]">${currencySymbol}${item.open.toFixed(2)}</td>
+            <td class="py-2.5 px-4 text-[#86868B]">${currencySymbol}${item.high.toFixed(2)}</td>
+            <td class="py-2.5 px-4 text-[#86868B]">${currencySymbol}${item.low.toFixed(2)}</td>
+            <td class="py-2.5 px-4 font-medium text-black dark:text-white">${typeof macroVal === 'number' ? macroVal.toFixed(2) : escapeHTML(macroVal)}</td>
+            <td class="py-2.5 px-4 font-bold ${changePct >= 0 ? 'text-black dark:text-white' : 'text-[#86868B]'}">
               ${prevItem ? (changePct >= 0 ? '+' : '') + changePct.toFixed(2) + '%' : '-'}
             </td>
           </tr>
@@ -1136,6 +1237,7 @@
         const p = state.primaryData;
         const m = state.macroData;
         const f = state.forecastData;
+        const interp = state.interpretationData?.interpretation;
         if (!p || !p.series) return;
 
         const wb = XLSX.utils.book_new();
@@ -1166,7 +1268,13 @@
           ["Precio Esperado (P50):", f ? f.predictedPrice : "N/A"],
           ["Retorno Proyectado (%):", f ? f.expectedReturnPct + "%" : "N/A"],
           ["Rango P10 - P90:", f ? `${f.quantiles.p10} - ${f.quantiles.p90}` : "N/A"],
-          ["Volatilidad Anualizada:", f ? f.volatilityAnnualized + "%" : "N/A"]
+          ["Volatilidad Anualizada:", f ? f.volatilityAnnualized + "%" : "N/A"],
+          [],
+          ["EVALUACIÓN TYPESAFE AI (JEV)"],
+          ["Confianza Calibrada:", interp ? interp.calibratedConfidencePct + "%" : "N/A"],
+          ["Sensibilidad Macro:", interp ? interp.macroSensitivity : "N/A"],
+          ["Régimen:", interp ? interp.marketRegime : "N/A"],
+          ["Síntesis Ejecutiva:", interp ? interp.executiveTakeaway : "N/A"]
         ];
         const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
         XLSX.utils.book_append_sheet(wb, wsSummary, "Resumen");
@@ -1211,7 +1319,7 @@
         const wsHistory = XLSX.utils.aoa_to_sheet(tableData);
         XLSX.utils.book_append_sheet(wb, wsHistory, "Historico_10Y");
 
-        // 3. Sheet: Proyección TimesFM 2.5 (si existe)
+        // 3. Sheet: Proyección TimesFM 2.5
         if (f && f.forecastSeries) {
           const tfmHeaders = ["Paso", "Mes Proyectado", "P10 (Pesimista)", "P25", "P50 (Mediana Esperada)", "P75", "P90 (Optimista)"];
           const tfmData = [tfmHeaders];

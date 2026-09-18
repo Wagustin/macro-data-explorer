@@ -1,16 +1,50 @@
 import { CATALOG } from "./search.js";
 
+const SYMBOL_REGEX = /^[A-Za-z0-9=._\-\^]{1,20}$/;
+const ALLOWED_RANGES = new Set(["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y", "10y", "max"]);
+const ALLOWED_INTERVALS = new Set(["1d", "1wk", "1mo", "1y"]);
+
 export default async function handler(req, res) {
-  const symbol = (req.query.symbol || "BVN").trim();
-  const range = (req.query.range || "10y").toLowerCase(); // 1y, 3y, 5y, 10y
-  const interval = (req.query.interval || "1mo").toLowerCase(); // 1d, 1wk, 1mo
+  // Security & CORS Headers
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("Cache-Control", "public, max-age=120, s-maxage=300, stale-while-revalidate=600");
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  const rawSymbol = (req.query.symbol || "BVN").trim();
+  const rawRange = (req.query.range || "10y").toLowerCase().trim();
+  const rawInterval = (req.query.interval || "1mo").toLowerCase().trim();
+
+  // Validate inputs
+  if (!SYMBOL_REGEX.test(rawSymbol)) {
+    return res.status(400).json({ error: "Símbolo de activo no válido." });
+  }
+
+  const symbol = rawSymbol;
+  const range = ALLOWED_RANGES.has(rawRange) ? rawRange : "10y";
+  const interval = ALLOWED_INTERVALS.has(rawInterval) ? rawInterval : "1mo";
 
   // Special handler for macroeconomic indicators (World Bank)
   if (symbol === "PERU_CPI" || symbol === "PERU_GDP") {
     try {
       const indicator = symbol === "PERU_CPI" ? "FP.CPI.TOTL.ZG" : "NY.GDP.MKTP.KD.ZG";
       const wbUrl = `https://api.worldbank.org/v2/country/PER/indicator/${indicator}?format=json&date=2014:2026&per_page=50`;
-      const wbRes = await fetch(wbUrl, { headers: { "User-Agent": "Mozilla/5.0" } });
+      const wbRes = await fetch(wbUrl, { 
+        headers: { "User-Agent": "MacroDataExplorer/2.5" },
+        signal: AbortSignal.timeout(6000)
+      });
+
+      if (!wbRes.ok) {
+        return res.status(502).json({ error: "Error consultando fuente macroeconómica." });
+      }
+
       const wbData = await wbRes.json();
       
       const records = (wbData[1] || [])
@@ -38,7 +72,7 @@ export default async function handler(req, res) {
         series: records
       });
     } catch (err) {
-      return res.status(500).json({ error: "Failed to fetch macro data: " + err.message });
+      return res.status(500).json({ error: "Falla temporal al consultar datos macroeconómicos." });
     }
   }
 
@@ -49,18 +83,19 @@ export default async function handler(req, res) {
       headers: {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "*/*"
-      }
+      },
+      signal: AbortSignal.timeout(7000)
     });
 
     if (!yfRes.ok) {
-      return res.status(yfRes.status).json({ error: `Yahoo Finance API error: ${yfRes.statusText}` });
+      return res.status(yfRes.status).json({ error: "Error de consulta en el proveedor financiero." });
     }
 
     const data = await yfRes.json();
     const result = data?.chart?.result?.[0];
 
     if (!result) {
-      return res.status(404).json({ error: "No chart data found for symbol: " + symbol });
+      return res.status(404).json({ error: "No se encontraron datos para el símbolo solicitado." });
     }
 
     const meta = result.meta || {};
@@ -110,6 +145,6 @@ export default async function handler(req, res) {
       series
     });
   } catch (err) {
-    return res.status(500).json({ error: "Internal error: " + err.message });
+    return res.status(500).json({ error: "Falla temporal al procesar la cotización histórica." });
   }
 }

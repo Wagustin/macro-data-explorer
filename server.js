@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import searchHandler from "./api/search.js";
 import historicalHandler from "./api/historical.js";
 import forecastHandler from "./api/forecast.js";
+import interpretHandler from "./api/interpret.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -50,6 +51,10 @@ const server = http.createServer(async (req, res) => {
 
   if (pathname === "/api/forecast") {
     return forecastHandler(req, res);
+  }
+
+  if (pathname === "/api/interpret") {
+    return interpretHandler(req, res);
   }
 
   // Serve static index.html

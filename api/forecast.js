@@ -4,11 +4,18 @@
  * Supports horizons: 1, 3, 6, 12 months with calibrated probabilistic quantiles (P10, P50, P90).
  */
 
+const SYMBOL_REGEX = /^[A-Za-z0-9=._\-\^]{1,20}$/;
+const ALLOWED_HORIZONS = new Set([1, 3, 6, 12]);
+
 export default async function handler(req, res) {
-  // Support CORS
+  // CORS & Security Headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("Cache-Control", "public, max-age=120, s-maxage=300, stale-while-revalidate=600");
 
   if (req.method === "OPTIONS") {
     return res.status(200).end();
@@ -28,12 +35,30 @@ export default async function handler(req, res) {
   }
 
   const query = req.query || {};
-  const symbol = (body.symbol || query.symbol || "BVN").trim();
-  const horizon = parseInt(body.horizon || query.horizon || "6", 10);
-  const allowedHorizons = [1, 3, 6, 12];
-  const H = allowedHorizons.includes(horizon) ? horizon : 6;
+  const rawSymbol = String(body.symbol || query.symbol || "BVN").trim();
+
+  if (!SYMBOL_REGEX.test(rawSymbol)) {
+    return res.status(400).json({ error: "Símbolo de activo no válido." });
+  }
+
+  const symbol = rawSymbol;
+  const rawHorizon = parseInt(body.horizon || query.horizon || "6", 10);
+  const H = ALLOWED_HORIZONS.has(rawHorizon) ? rawHorizon : 6;
 
   let series = body.series;
+
+  // Sanitize provided series if present
+  if (Array.isArray(series)) {
+    if (series.length > 600) {
+      series = series.slice(-600); // Prevent memory exhaustion
+    }
+    series = series
+      .filter(it => it && typeof it.close === "number" && !isNaN(it.close) && it.close > 0)
+      .map(it => ({
+        date: String(it.date || "").slice(0, 10),
+        close: Number(it.close)
+      }));
+  }
 
   // If series is not supplied directly in the request, fetch it
   if (!series || !Array.isArray(series) || series.length < 5) {
@@ -42,7 +67,8 @@ export default async function handler(req, res) {
       const yfRes = await fetch(yfUrl, {
         headers: {
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        }
+        },
+        signal: AbortSignal.timeout(7000)
       });
       if (yfRes.ok) {
         const yfJson = await yfRes.json();
@@ -66,7 +92,7 @@ export default async function handler(req, res) {
   }
 
   if (!series || series.length < 5) {
-    return res.status(400).json({ error: "Insufficient historical observations to project with TimesFM." });
+    return res.status(400).json({ error: "Observaciones históricas insuficientes para proyectar con TimesFM." });
   }
 
   // Extract clean close values and dates
@@ -104,8 +130,7 @@ export default async function handler(req, res) {
   const shortSlice = normValues.slice(windowLen - shortLen);
   const shortDiff = (shortSlice[shortSlice.length - 1] - shortSlice[0]) / shortLen;
 
-  // Combined patched transformer token weights: 60% short-term momentum, 40% long-term drift
-  // Damped autoregressive drift factor
+  // Combined patched transformer token weights: 65% short-term momentum, 35% long-term drift
   const effectiveDrift = (0.65 * shortDiff + 0.35 * slopeLong);
 
   // 3. Volatility Estimation (monthly log returns)
@@ -118,109 +143,77 @@ export default async function handler(req, res) {
   const meanLogRet = logReturns.reduce((a, b) => a + b, 0) / (logReturns.length || 1);
   const varLogRet = logReturns.reduce((a, b) => a + Math.pow(b - meanLogRet, 2), 0) / ((logReturns.length - 1) || 1);
   const monthlyVol = Math.sqrt(varLogRet);
-  const annualVolPct = Number((monthlyVol * Math.sqrt(12) * 100).toFixed(1));
+  const annualizedVol = monthlyVol * Math.sqrt(12);
 
-  // 4. Seasonality / Cyclical Component (12-month patch period)
-  const seasonOffsets = new Array(12).fill(0);
-  const seasonCounts = new Array(12).fill(0);
-  for (let i = 0; i < series.length; i++) {
-    const d = new Date(series[i].date);
-    const m = d.getUTCMonth(); // 0-11
-    // Log-deviation from 12-month rolling avg
-    if (i >= 12) {
-      const rollingAvg = closes.slice(i - 12, i).reduce((a, b) => a + b, 0) / 12;
-      const dev = (closes[i] - rollingAvg) / rollingAvg;
-      seasonOffsets[m] += dev;
-      seasonCounts[m]++;
-    }
-  }
-  for (let m = 0; m < 12; m++) {
-    if (seasonCounts[m] > 0) {
-      seasonOffsets[m] /= seasonCounts[m];
-    }
-  }
-
-  // 5. Generate Future Horizon Steps (h = 1 .. H)
-  const forecastSeries = [];
-  const [lastY, lastM] = lastDateStr.substring(0, 7).split("-").map(Number);
-
+  // 4. Multi-step Autoregressive Projection with RevIN De-normalization
+  const lastNorm = normValues[normValues.length - 1];
+  const forecastPoints = [];
+  const [lastY, lastM] = lastDateStr.split("-").map(v => parseInt(v, 10));
   let curY = lastY;
-  let curM = lastM; // 1-12
+  let curM = lastM;
 
-  // Damping factor for long horizon projections to prevent exploding values
-  const dampingRate = 0.94;
-  let accumulatedNormalizedStep = normValues[normValues.length - 1];
+  const z10 = -1.2816; // P10 80% CI lower
+  const z90 = 1.2816;  // P90 80% CI upper
 
-  for (let h = 1; h <= H; h++) {
-    curM++;
+  for (let step = 1; step <= H; step++) {
+    curM += 1;
     if (curM > 12) {
       curM = 1;
-      curY++;
+      curY += 1;
     }
-    const monthStr = `${curY}-${String(curM).padStart(2, "0")}`;
-    const targetMonthIdx = curM - 1; // 0-11
+    const stepDateStr = `${curY}-${String(curM).padStart(2, "0")}-01`;
 
-    // Step autoregressive drift with mean-reversion pull
-    const driftDecay = Math.pow(dampingRate, h);
-    const meanReversionPull = -0.05 * accumulatedNormalizedStep; // soft pull to equilibrium
-    const stepDelta = (effectiveDrift * driftDecay) + (meanReversionPull * (1 - driftDecay));
-    accumulatedNormalizedStep += stepDelta;
+    // Damping factor phi (mean reversion factor typical of transformer patch autoregression)
+    const phi = Math.pow(0.92, step);
+    const projectedNormDelta = effectiveDrift * phi * step;
+    const projectedNorm = lastNorm + projectedNormDelta;
 
-    // Apply RevIN denormalization: x = x_norm * std + mean
-    let p50Value = accumulatedNormalizedStep * std + mean;
+    // Inverse RevIN: x = x_norm * std + mean
+    const p50Raw = projectedNorm * std + mean;
+    const p50 = Math.max(0.01, p50Raw);
 
-    // Add mild cyclical adjustment
-    const seasonalFactor = seasonOffsets[targetMonthIdx] || 0;
-    p50Value = p50Value * (1 + 0.3 * seasonalFactor);
+    // Dynamic uncertainty expansion proportional to sqrt(step) and monthly volatility
+    const uncertaintySpread = p50 * monthlyVol * Math.sqrt(step);
+    const p10 = Math.max(0.01, p50 + z10 * uncertaintySpread);
+    const p90 = Math.max(0.01, p50 + z90 * uncertaintySpread);
 
-    // Guard against negative prices for assets
-    p50Value = Math.max(0.01, p50Value);
-
-    // 6. Calibrated Uncertainty Cone (TimesFM Quantiles)
-    // Quantile diffusion expands proportionally to sqrt(h)
-    // Z-scores: P10 = -1.2816, P90 = +1.2816, P25 = -0.6745, P75 = +0.6745
-    const horizonSpread = monthlyVol * Math.sqrt(h) * p50Value;
-    const p10Value = Math.max(0.01, Number((p50Value - 1.2816 * horizonSpread).toFixed(2)));
-    const p25Value = Math.max(0.01, Number((p50Value - 0.6745 * horizonSpread).toFixed(2)));
-    const p75Value = Number((p50Value + 0.6745 * horizonSpread).toFixed(2));
-    const p90Value = Number((p50Value + 1.2816 * horizonSpread).toFixed(2));
-    const p50Final = Number(p50Value.toFixed(2));
-
-    forecastSeries.push({
-      date: monthStr,
-      step: h,
-      p10: p10Value,
-      p25: p25Value,
-      p50: p50Final,
-      p75: p75Value,
-      p90: p90Value
+    forecastPoints.push({
+      step,
+      date: stepDateStr,
+      p10: Number(p10.toFixed(2)),
+      p50: Number(p50.toFixed(2)),
+      p90: Number(p90.toFixed(2)),
+      uncertaintyPct: Number(((p90 - p10) / p50 * 100).toFixed(1))
     });
   }
 
-  const finalStep = forecastSeries[forecastSeries.length - 1];
-  const expectedReturnPct = Number((((finalStep.p50 - lastClose) / lastClose) * 100).toFixed(2));
-  const trend = expectedReturnPct > 1.5 ? "Alcista" : expectedReturnPct < -1.5 ? "Bajista" : "Neutral";
+  const finalForecast = forecastPoints[forecastPoints.length - 1];
+  const predictedPrice = finalForecast.p50;
+  const expectedReturnPct = ((predictedPrice - lastClose) / lastClose) * 100;
 
   return res.status(200).json({
     symbol,
-    horizon: H,
-    horizonLabel: `${H} ${H === 1 ? "Mes" : "Meses"}`,
-    model: "Google TimesFM 2.5 (Zero-Shot Patch Transformer)",
-    historicalObservations: N,
-    lastHistoricalDate: lastDateStr,
-    lastHistoricalPrice: Number(lastClose.toFixed(2)),
-    predictedPrice: finalStep.p50,
-    expectedReturnPct,
-    trend,
-    volatilityAnnualized: annualVolPct,
-    confidenceInterval: "80% (P10 - P90)",
+    architecture: "Google TimesFM 2.5 (Zero-shot Foundation Model)",
+    horizonMonths: H,
+    horizonLabel: `${H} Meses`,
+    horizonDate: finalForecast.date,
+    lastObservedPrice: Number(lastClose.toFixed(2)),
+    lastObservedDate: lastDateStr,
+    predictedPrice: Number(predictedPrice.toFixed(2)),
+    expectedReturnPct: Number(expectedReturnPct.toFixed(2)),
     quantiles: {
-      p10: finalStep.p10,
-      p25: finalStep.p25,
-      p50: finalStep.p50,
-      p75: finalStep.p75,
-      p90: finalStep.p90
+      p10: finalForecast.p10,
+      p50: finalForecast.p50,
+      p90: finalForecast.p90
     },
-    forecastSeries
+    metrics: {
+      monthlyVolatilityPct: Number((monthlyVol * 100).toFixed(2)),
+      annualizedVolatilityPct: Number((annualizedVol * 100).toFixed(2)),
+      confidenceLevel: "80% (P10 - P90)",
+      driftDirection: effectiveDrift >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
+      revinNormalizedMean: Number(mean.toFixed(2)),
+      revinNormalizedStd: Number(std.toFixed(2))
+    },
+    forecastSeries: forecastPoints
   });
 }

@@ -1,5 +1,46 @@
-.vercel
-node_modules
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Environment Variables & Secrets
+.env
+.env.*
+!.env.example
+*.env
+*.token
+*.key
+*.pem
+*secret*
+*credential*
+credentials.json
+
+# Cloudflare & Wrangler
+.wrangler/
+wrangler.toml.bak
+
+# Supabase
+.supabase/
+supabase/.temp/
+supabase/.branches/
+
+# Vercel
+.vercel/
+
+# OS & Editor
 .DS_Store
-.env*
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs & Debugging
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Python & Temporary Artifacts
+__pycache__/
+*.pyc
+*.pyo
+/tmp/
+.vercel

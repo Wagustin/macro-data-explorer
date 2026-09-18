@@ -32,7 +32,23 @@ export const CATALOG = [
 ];
 
 export default async function handler(req, res) {
-  const q = (req.query.q || "").trim().toLowerCase();
+  // CORS and Security Headers
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("Cache-Control", "public, max-age=300, s-maxage=600, stale-while-revalidate=1200");
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  let q = String(req.query.q || "").trim().toLowerCase();
+  if (q.length > 50) {
+    q = q.slice(0, 50);
+  }
   
   if (!q) {
     return res.status(200).json({ results: CATALOG.slice(0, 15) });
@@ -55,20 +71,21 @@ export default async function handler(req, res) {
   try {
     const yfUrl = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(q)}&quotesCount=6&newsCount=0`;
     const yfRes = await fetch(yfUrl, {
-      headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" }
+      headers: { "User-Agent": "MacroDataExplorer/2.5" },
+      signal: AbortSignal.timeout(5000)
     });
     
     if (yfRes.ok) {
       const yfData = await yfRes.json();
       const yfQuotes = (yfData.quotes || [])
-        .filter(it => it.symbol && it.shortname)
+        .filter(it => it.symbol && (it.shortname || it.longname))
         .map(it => ({
-          symbol: it.symbol,
-          name: it.shortname || it.longname,
-          sector: it.sector || it.quoteType || "Global Stock",
-          country: it.exchange || "Global",
+          symbol: String(it.symbol).slice(0, 20),
+          name: String(it.shortname || it.longname).slice(0, 100),
+          sector: String(it.sector || it.quoteType || "Global Stock").slice(0, 50),
+          country: String(it.exchange || "Global").slice(0, 50),
           category: "global_stock",
-          tags: [it.symbol.toLowerCase()]
+          tags: [String(it.symbol).toLowerCase()]
         }));
 
       // Merge and deduplicate by symbol
