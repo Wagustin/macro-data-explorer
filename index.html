@@ -34,11 +34,89 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; transition: background-color 0.2s, color 0.2s; }
+    html.dark body { background-color: #020617 !important; color: #f8fafc !important; }
+    html.light body { background-color: #f8fafc !important; color: #0f172a !important; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
     .dark ::-webkit-scrollbar-thumb { background: #334155; }
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* From Uiverse.io by andrew-demchenk0 */ 
+    .switch {
+      --input-focus: #4f46e5;
+      --bg-color: #fff;
+      --bg-color-alt: #666;
+      --main-color: #323232;
+      --input-out-of-focus: #cbd5e1;
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 66px;
+      height: 32px;
+      cursor: pointer;
+    }
+
+    .dark .switch {
+      --input-focus: #6366f1;
+      --bg-color: #1e293b;
+      --bg-color-alt: #94a3b8;
+      --main-color: #e2e8f0;
+      --input-out-of-focus: #334155;
+    }
+
+    .toggle {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    .slider {
+      box-sizing: border-box;
+      border-radius: 100px;
+      border: 2px solid var(--main-color);
+      box-shadow: 2px 2px var(--main-color);
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--input-out-of-focus);
+      transition: 0.3s;
+    }
+
+    .slider:before {
+      content: "off";
+      box-sizing: border-box;
+      height: 24px;
+      width: 24px;
+      position: absolute;
+      left: 2px;
+      bottom: 2px;
+      border: 2px solid var(--main-color);
+      border-radius: 100px;
+      background-color: var(--bg-color);
+      color: var(--main-color);
+      font-size: 10px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 20px;
+      text-transform: uppercase;
+      transition: 0.3s;
+    }
+
+    .toggle:checked + .slider {
+      background-color: var(--input-focus);
+    }
+
+    .toggle:checked + .slider:before {
+      content: "on";
+      transform: translateX(34px);
+    }
   </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen antialiased">
@@ -70,17 +148,12 @@
           10Y Data Free
         </span>
 
-        <!-- Dark Mode Toggle Button -->
-        <button id="themeToggle" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition focus:outline-none" aria-label="Cambiar tema">
-          <!-- Sun Icon (shown in dark mode) -->
-          <svg id="sunIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 9h-1m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-          </svg>
-          <!-- Moon Icon (shown in light mode) -->
-          <svg id="moonIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-          </svg>
-        </button>
+        <!-- From Uiverse.io by andrew-demchenk0 --> 
+        <label class="switch" title="Cambiar modo claro / oscuro">
+          <input id="themeToggle" class="toggle" type="checkbox">
+          <span class="slider"></span>
+          <span class="card-side"></span>
+        </label>
 
         <!-- Excel Top Button -->
         <button id="btnExportExcelTop" class="inline-flex items-center text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-3 py-2 rounded-xl shadow-sm transition">
@@ -420,9 +493,7 @@
     };
 
     // DOM Elements
-    const themeToggleBtn = document.getElementById("themeToggle");
-    const sunIcon = document.getElementById("sunIcon");
-    const moonIcon = document.getElementById("moonIcon");
+    const themeToggle = document.getElementById("themeToggle");
     const companySearchInput = document.getElementById("companySearch");
     const searchResultsDiv = document.getElementById("searchResults");
     const searchSpinner = document.getElementById("searchSpinner");
@@ -437,37 +508,34 @@
     function initTheme() {
       const savedTheme = localStorage.getItem("theme");
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+      const isDark = savedTheme === "dark" || (!savedTheme && prefersDark);
+      
+      applyTheme(isDark);
+
+      if (themeToggle) {
+        themeToggle.addEventListener("change", (e) => {
+          applyTheme(e.target.checked);
+        });
+      }
+    }
+
+    function applyTheme(isDark) {
+      if (isDark) {
         document.documentElement.classList.add("dark");
         document.documentElement.classList.remove("light");
-        sunIcon.classList.remove("hidden");
-        moonIcon.classList.add("hidden");
+        localStorage.setItem("theme", "dark");
+        if (themeToggle) themeToggle.checked = true;
       } else {
         document.documentElement.classList.remove("dark");
         document.documentElement.classList.add("light");
-        sunIcon.classList.add("hidden");
-        moonIcon.classList.remove("hidden");
+        localStorage.setItem("theme", "light");
+        if (themeToggle) themeToggle.checked = false;
       }
 
-      themeToggleBtn.addEventListener("click", () => {
-        const isDark = document.documentElement.classList.toggle("dark");
-        if (isDark) {
-          document.documentElement.classList.remove("light");
-          localStorage.setItem("theme", "dark");
-          sunIcon.classList.remove("hidden");
-          moonIcon.classList.add("hidden");
-        } else {
-          document.documentElement.classList.add("light");
-          localStorage.setItem("theme", "light");
-          sunIcon.classList.add("hidden");
-          moonIcon.classList.remove("hidden");
-        }
-        if (state.chartInstance) {
-          renderChart();
-        }
-      });
+      if (state.chartInstance) {
+        renderChart();
+      }
     }
-
     // Initialize Application
     document.addEventListener("DOMContentLoaded", () => {
       initTheme();
