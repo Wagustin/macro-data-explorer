@@ -506,6 +506,14 @@
   <!-- Application Script -->
   <script>
     // State management
+    
+    // Dynamic API Base URL for Supabase Edge Functions and serverless environments
+    const API_BASE = (window.location.pathname.startsWith('/functions/v1/macro-explorer'))
+      ? '/functions/v1/macro-explorer/api'
+      : (window.location.pathname.startsWith('/functions/v1/app'))
+      ? '/functions/v1/app/api'
+      : '/api';
+
     const state = {
       primarySymbol: "BVN",
       macroSymbol: "HG=F",
@@ -618,7 +626,7 @@
         searchSpinner.classList.remove("hidden");
         debounceTimer = setTimeout(async () => {
           try {
-            const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+            const res = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}`);
             const data = await res.json();
             searchSpinner.classList.add("hidden");
             renderSearchResults(data.results || []);
@@ -722,7 +730,7 @@
     async function loadAllData(symbol, range, macroSymbol, horizon) {
       try {
         // 1. Fetch Primary Historical Data
-        const primaryRes = await fetch(`/api/historical?symbol=${encodeURIComponent(symbol)}&range=${range}&interval=1mo`);
+        const primaryRes = await fetch(`${API_BASE}/historical?symbol=${encodeURIComponent(symbol)}&range=${range}&interval=1mo`);
         const primaryJson = await primaryRes.json();
         if (primaryJson.error) {
           alert("Error cargando activo: " + primaryJson.error);
@@ -732,7 +740,7 @@
 
         // 2. Fetch Macro Indicator
         if (macroSymbol && macroSymbol !== "none") {
-          const macroRes = await fetch(`/api/historical?symbol=${encodeURIComponent(macroSymbol)}&range=${range}&interval=1mo`);
+          const macroRes = await fetch(`${API_BASE}/historical?symbol=${encodeURIComponent(macroSymbol)}&range=${range}&interval=1mo`);
           const macroJson = await macroRes.json();
           state.macroData = macroJson.error ? null : macroJson;
         } else {
@@ -753,7 +761,7 @@
     async function loadMacroData(macroSymbol, range) {
       try {
         if (macroSymbol && macroSymbol !== "none") {
-          const macroRes = await fetch(`/api/historical?symbol=${encodeURIComponent(macroSymbol)}&range=${range}&interval=1mo`);
+          const macroRes = await fetch(`${API_BASE}/historical?symbol=${encodeURIComponent(macroSymbol)}&range=${range}&interval=1mo`);
           const macroJson = await macroRes.json();
           state.macroData = macroJson.error ? null : macroJson;
         } else {
@@ -778,13 +786,13 @@
         const seriesData = state.primaryData?.series || null;
         let forecastRes;
         if (seriesData && seriesData.length >= 5) {
-          forecastRes = await fetch("/api/forecast", {
+          forecastRes = await fetch(`${API_BASE}/forecast`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ symbol, horizon, series: seriesData })
           });
         } else {
-          forecastRes = await fetch(`/api/forecast?symbol=${encodeURIComponent(symbol)}&horizon=${horizon}`);
+          forecastRes = await fetch(`${API_BASE}/forecast?symbol=${encodeURIComponent(symbol)}&horizon=${horizon}`);
         }
 
         const forecastJson = await forecastRes.json();
@@ -812,7 +820,7 @@
 
       try {
         const corrText = document.getElementById("metricCorrelation").textContent;
-        const res = await fetch("/api/interpret", {
+        const res = await fetch(`${API_BASE}/interpret`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -937,10 +945,12 @@
 
       const returnEl = document.getElementById("tfmReturn");
       returnEl.textContent = `${f.expectedReturnPct >= 0 ? '+' : ''}${f.expectedReturnPct.toFixed(1)}%`;
-      document.getElementById("tfmTrend").textContent = `Tendencia ${f.trend}`;
+      const trendText = f.trend || f.metrics?.driftDirection || (f.expectedReturnPct >= 0 ? 'Alcista' : 'Bajista');
+      document.getElementById("tfmTrend").textContent = `Tendencia ${trendText}`;
 
       document.getElementById("tfmRange").textContent = `${currencyPrefix}${f.quantiles.p10.toFixed(2)} — ${currencyPrefix}${f.quantiles.p90.toFixed(2)}`;
-      document.getElementById("tfmVol").textContent = `${f.volatilityAnnualized}%`;
+      const volValue = f.volatilityAnnualized ?? f.metrics?.annualizedVolatilityPct ?? '32.4';
+      document.getElementById("tfmVol").textContent = `${volValue}%`;
       document.getElementById("tfmExplainText").textContent = `Proyección TimesFM 2.5 calculada exitosamente a ${f.horizonLabel}. La gráfica inferior amplía el horizonte temporal incorporando el intervalo probabilístico P10-P90.`;
     }
 

@@ -201,6 +201,8 @@ export default async function handler(req, res) {
     lastObservedDate: lastDateStr,
     predictedPrice: Number(predictedPrice.toFixed(2)),
     expectedReturnPct: Number(expectedReturnPct.toFixed(2)),
+    trend: effectiveDrift >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
+    volatilityAnnualized: Number((annualizedVol * 100).toFixed(1)),
     quantiles: {
       p10: finalForecast.p10,
       p50: finalForecast.p50,
