@@ -34,6 +34,21 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <style>
+    html, body {
+      overflow-x: hidden !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+    }
+
+    main, section {
+      min-width: 0 !important;
+      max-width: 100% !important;
+    }
+
+    canvas {
+      max-width: 100% !important;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       letter-spacing: -0.011em;
@@ -454,7 +469,7 @@
       </div>
 
       <!-- Chart Canvas -->
-      <div class="relative w-full h-80 sm:h-[420px]">
+      <div class="relative w-full h-[280px] sm:h-[360px] md:h-[420px]">
         <canvas id="mainChart"></canvas>
       </div>
 
