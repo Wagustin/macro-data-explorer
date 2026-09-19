@@ -71,8 +71,16 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  res.writeHead(404, { "Content-Type": "text/plain" });
-  res.end("Not Found");
+  // Serve custom 404 page for clean routing & missing paths
+  const notFoundPath = path.join(__dirname, "404.html");
+  fs.readFile(notFoundPath, (err, content) => {
+    if (err) {
+      res.writeHead(404, { "Content-Type": "text/plain" });
+      return res.end("Not Found");
+    }
+    res.writeHead(404, { "Content-Type": "text/html; charset=utf-8" });
+    res.end(content);
+  });
 });
 
 server.listen(PORT, "0.0.0.0", () => {

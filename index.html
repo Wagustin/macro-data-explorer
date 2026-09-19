@@ -7,6 +7,21 @@
   <meta name="description" content="MacroData Explorer - Series Macroeconómicas, BVL y Google TimesFM 2.5 Zero-Shot Forecasting con TypeSafe AI Jev" />
   <title>MacroData Explorer · Apple Monochromatic · TimesFM 2.5 & TypeSafe AI</title>
   
+  <!-- Early Theme Init to avoid flash -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
+      } else {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.classList.add("light");
+      }
+    })();
+  </script>
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -208,8 +223,13 @@
         </div>
       </div>
 
-      <!-- Right Actions: Switch Toggle & Excel -->
-      <div class="flex items-center space-x-3 sm:space-x-4">
+      <!-- Right Actions: Switch Toggle, Terms & Excel -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <!-- Discreet Terms Link in Header -->
+        <button id="btnOpenTermsHeader" type="button" class="text-xs text-[#86868B] hover:text-black dark:hover:text-white transition font-medium hidden md:inline-flex items-center px-2.5 py-1.5 rounded-full border border-transparent hover:border-[#E5E5EA] dark:hover:border-[#2C2C2E]" title="Consultar Términos y Condiciones">
+          <span>Términos y Condiciones</span>
+        </button>
+
         <!-- Switch Toggle Component Provided -->
         <label class="ui-switch" title="Alternar modo claro / oscuro">
           <input id="themeToggle" type="checkbox" />
@@ -554,15 +574,119 @@
       <div>
         <strong>MacroData Explorer</strong> &copy; 2026 · Desarrollado para Agustín Ventura Saldaña
       </div>
-      <div class="flex items-center space-x-3 text-[#86868B]">
+      <div class="flex items-center space-x-2.5 sm:space-x-3 text-[#86868B] flex-wrap justify-center">
         <span>Google TimesFM 2.5</span>
         <span>•</span>
         <span>TypeSafe AI Jev</span>
+        <span>•</span>
+        <button id="btnOpenTermsFooter" type="button" class="underline hover:text-black dark:hover:text-white transition font-medium">Términos y Condiciones</button>
         <span>•</span>
         <span>100% Serverless Edge</span>
       </div>
     </div>
   </footer>
+
+  <!-- Modal / Pop-up de Términos y Condiciones -->
+  <div id="termsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
+    <div id="termsModalBox" class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden transition-all duration-300 transform scale-95">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-5 border-b border-[#E5E5EA] dark:border-[#2C2C2E] flex items-center justify-between bg-white dark:bg-[#1C1C1E] sticky top-0 z-10">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center font-black text-sm">
+            M
+          </div>
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-black dark:text-white tracking-tight">Términos y Condiciones de Uso</h2>
+            <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93]">Marco Legal · Descargo Cuantitativo · Versión 1.0 (2026)</p>
+          </div>
+        </div>
+        <button id="btnCloseTermsModal" type="button" class="text-[#86868B] hover:text-black dark:hover:text-white p-2 rounded-full hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] transition" title="Cerrar modal">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="overflow-y-auto px-6 py-5 space-y-5 text-xs sm:text-sm text-[#1D1D1F] dark:text-[#E5E5EA] leading-relaxed">
+        
+        <!-- Summary Alert -->
+        <div class="p-3.5 rounded-2xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] flex items-start space-x-3">
+          <svg class="w-5 h-5 text-[#86868B] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <div class="text-xs text-[#1D1D1F] dark:text-[#F5F5F7]">
+            <strong>Bienvenido a MacroData Explorer:</strong> Este entorno computacional provee herramientas de modelado de series temporales macroeconómicas y activos financieros. Por favor revise los términos antes de continuar.
+          </div>
+        </div>
+
+        <!-- Section 1: Disclaimer Financiero -->
+        <div class="space-y-1.5">
+          <div class="flex items-center space-x-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
+            <h3 class="font-bold text-black dark:text-white text-sm sm:text-base">1. Naturaleza Analítica y Descargo Financiero</h3>
+          </div>
+          <p class="text-[#86868B] dark:text-[#8E8E93] pl-3.5">
+            MacroData Explorer es una plataforma orientada exclusivamente a fines de investigación cuantitativa, análisis técnico y educación financiera. Ningún dato, métrica, gráfico o cálculo presentado constituye una oferta, solicitud ni asesoramiento financiero, tributario o recomendación para la compra o venta de instrumentos de renta variable, materias primas o divisas. Las decisiones de inversión recaen de manera única y exclusiva sobre el criterio y responsabilidad del usuario.
+          </p>
+        </div>
+
+        <!-- Section 2: Inferencia TimesFM 2.5 -->
+        <div class="space-y-1.5">
+          <div class="flex items-center space-x-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
+            <h3 class="font-bold text-black dark:text-white text-sm sm:text-base">2. Inferencia Probabilística y Google TimesFM 2.5</h3>
+          </div>
+          <p class="text-[#86868B] dark:text-[#8E8E93] pl-3.5">
+            Las proyecciones generadas utilizan el modelo fundacional zero-shot <strong>Google TimesFM 2.5</strong> junto a la arquitectura interpretativa <strong>TypeSafe AI Jev</strong>. Los resultados se estructuran en abanicos probabilísticos multi-cuantil: <strong>P10</strong> (escenario pesimista o soporte inferior), <strong>P50</strong> (mediana esperada) y <strong>P90</strong> (escenario optimista o resistencia superior) para modelar escenarios de volatilidad. El usuario reconoce que todo modelo matemático está sujeto a regímenes estocásticos y volatilidad de mercado, por lo que el comportamiento histórico de las series temporales no garantiza rendimientos futuros.
+          </p>
+        </div>
+
+        <!-- Section 3: Privacidad y Local Storage -->
+        <div class="space-y-1.5">
+          <div class="flex items-center space-x-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
+            <h3 class="font-bold text-black dark:text-white text-sm sm:text-base">3. Privacidad Local y Ausencia de Trackers</h3>
+          </div>
+          <p class="text-[#86868B] dark:text-[#8E8E93] pl-3.5">
+            En estricta adhesión a los principios de diseño minimalista y privacidad de Apple, la plataforma no emplea trackers publicitarios de terceros, scripts de telemetría invasiva ni perfiles de usuario remotos. Sus preferencias de visualización (modo claro/oscuro) y estado de aceptación de términos se almacenan íntegramente en el navegador de su dispositivo mediante <code class="bg-[#F5F5F7] dark:bg-[#2C2C2E] px-1 py-0.5 rounded text-[11px] font-mono">localStorage</code>.
+          </p>
+        </div>
+
+        <!-- Collapsible / Full legal text -->
+        <div class="pt-1">
+          <button id="btnToggleFullLegal" type="button" class="text-xs font-semibold text-black dark:text-white hover:underline inline-flex items-center space-x-1.5">
+            <span id="toggleLegalText">Ver articulado legal completo</span>
+            <svg id="toggleLegalIcon" class="w-3.5 h-3.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+
+          <div id="fullLegalSection" class="hidden mt-3 p-4 rounded-2xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] space-y-3 text-xs text-[#86868B] dark:text-[#8E8E93]">
+            <p>
+              <strong>Cláusula 4. Integridad de Fuentes de Información:</strong> Los datos históricos provienen de agregadores de mercado público, interfaces de BCRP y Yahoo Finance. La plataforma no asume responsabilidad civil ni contractual por eventuales discrepancias, latencias o interrupciones en la disponibilidad de feeds externos.
+            </p>
+            <p>
+              <strong>Cláusula 5. Propiedad Intelectual:</strong> El software, heurísticas de visualización, componentes de interfaz y canalización algorítmica son propiedad intelectual reservada de MacroData Explorer (2026).
+            </p>
+            <p>
+              <strong>Cláusula 6. Modificaciones de los Términos:</strong> Nos reservamos el derecho de actualizar estos términos para reflejar evoluciones metodológicas del modelo TimesFM o exigencias normativas vigentes.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-4 border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#1C1C1E] flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="text-[11px] text-[#86868B] flex items-center space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span id="termsStatusText">Consentimiento requerido para habilitar análisis</span>
+        </div>
+        <div class="flex items-center space-x-2 w-full sm:w-auto">
+          <button id="btnAcceptTerms" type="button" class="w-full sm:w-auto inline-flex items-center justify-center font-semibold text-xs sm:text-sm bg-black dark:bg-white text-white dark:text-black hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] px-6 py-2.5 rounded-full transition shadow-sm">
+            Aceptar y Continuar
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
 
   <!-- Application Script -->
   <script>
@@ -648,6 +772,7 @@
     // Initialize Application
     function initializeApp() {
       initTheme();
+      setupTermsModal();
       setupSearch();
       setupQuickChips();
       setupRangeButtons();
@@ -658,6 +783,116 @@
 
       // Initial Load
       loadAllData(state.primarySymbol, state.range, state.macroSymbol, state.horizon);
+    }
+
+    // Modal de Términos y Condiciones
+    function setupTermsModal() {
+      const modal = document.getElementById("termsModal");
+      const modalBox = document.getElementById("termsModalBox");
+      const btnClose = document.getElementById("btnCloseTermsModal");
+      const btnAccept = document.getElementById("btnAcceptTerms");
+      const btnOpenHeader = document.getElementById("btnOpenTermsHeader");
+      const btnOpenFooter = document.getElementById("btnOpenTermsFooter");
+      const btnToggleLegal = document.getElementById("btnToggleFullLegal");
+      const fullLegalSection = document.getElementById("fullLegalSection");
+      const toggleLegalIcon = document.getElementById("toggleLegalIcon");
+      const toggleLegalText = document.getElementById("toggleLegalText");
+      const termsStatusText = document.getElementById("termsStatusText");
+
+      const STORAGE_KEY = "mde_terms_accepted_v1";
+
+      function updateStatusDisplay(isAccepted) {
+        if (termsStatusText) {
+          if (isAccepted) {
+            termsStatusText.textContent = "Consentimiento registrado localmente";
+            termsStatusText.className = "text-[11px] text-emerald-600 dark:text-emerald-400 font-medium";
+          } else {
+            termsStatusText.textContent = "Consentimiento requerido para habilitar análisis";
+            termsStatusText.className = "text-[11px] text-[#86868B]";
+          }
+        }
+        if (btnAccept) {
+          btnAccept.textContent = isAccepted ? "Entendido" : "Aceptar y Continuar";
+        }
+      }
+
+      function openModal() {
+        if (!modal || !modalBox) return;
+        const isAccepted = localStorage.getItem(STORAGE_KEY) === "true";
+        updateStatusDisplay(isAccepted);
+        modal.classList.remove("opacity-0", "pointer-events-none");
+        modal.classList.add("opacity-100", "pointer-events-auto");
+        modalBox.classList.remove("scale-95");
+        modalBox.classList.add("scale-100");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal() {
+        if (!modal || !modalBox) return;
+        modal.classList.remove("opacity-100", "pointer-events-auto");
+        modal.classList.add("opacity-0", "pointer-events-none");
+        modalBox.classList.remove("scale-100");
+        modalBox.classList.add("scale-95");
+        document.body.style.overflow = "";
+      }
+
+      // Check on load: if not accepted, show modal automatically
+      if (localStorage.getItem(STORAGE_KEY) !== "true") {
+        setTimeout(() => {
+          openModal();
+        }, 400);
+      }
+
+      if (btnAccept) {
+        btnAccept.addEventListener("click", () => {
+          localStorage.setItem(STORAGE_KEY, "true");
+          closeModal();
+        });
+      }
+
+      if (btnClose) {
+        btnClose.addEventListener("click", closeModal);
+      }
+
+      if (btnOpenHeader) {
+        btnOpenHeader.addEventListener("click", openModal);
+      }
+
+      if (btnOpenFooter) {
+        btnOpenFooter.addEventListener("click", openModal);
+      }
+
+      // Backdrop click closes modal
+      if (modal) {
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) {
+            closeModal();
+          }
+        });
+      }
+
+      // Escape key closes modal
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal && !modal.classList.contains("pointer-events-none")) {
+          closeModal();
+        }
+      });
+
+      // Toggle legal details
+      if (btnToggleLegal && fullLegalSection) {
+        btnToggleLegal.addEventListener("click", () => {
+          const isHidden = fullLegalSection.classList.contains("hidden");
+          if (isHidden) {
+            fullLegalSection.classList.remove("hidden");
+            if (toggleLegalText) toggleLegalText.textContent = "Ocultar articulado legal completo";
+            if (toggleLegalIcon) toggleLegalIcon.classList.add("rotate-180");
+          } else {
+            fullLegalSection.classList.add("hidden");
+            if (toggleLegalText) toggleLegalText.textContent = "Ver articulado legal completo";
+            if (toggleLegalIcon) toggleLegalIcon.classList.remove("rotate-180");
+          }
+        });
+      }
     }
 
     if (document.readyState === "loading") {
