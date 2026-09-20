@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node local-dev-server.js"
+    "dev": "node local-dev-server.js",
+    "start": "node server.js"
   }
 }

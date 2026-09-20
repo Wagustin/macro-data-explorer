@@ -95,11 +95,14 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (targetFile) {
-    const filePath = path.join(__dirname, targetFile);
+    let filePath = path.join(process.cwd(), targetFile);
+    if (!fs.existsSync(filePath)) {
+      filePath = path.join(__dirname, targetFile);
+    }
     fs.readFile(filePath, (err, content) => {
       if (err) {
         res.writeHead(500, { "Content-Type": "text/plain" });
-        return res.end("Error loading " + targetFile);
+        return res.end("Error loading " + targetFile + ": " + (err.message || "File not found"));
       }
       const ext = path.extname(filePath).toLowerCase();
       const contentType = MIME_TYPES[ext] || "text/plain";
@@ -110,7 +113,10 @@ const server = http.createServer(async (req, res) => {
   }
 
   // Fallback to 404.html
-  const notFoundPath = path.join(__dirname, "404.html");
+  let notFoundPath = path.join(process.cwd(), "404.html");
+  if (!fs.existsSync(notFoundPath)) {
+    notFoundPath = path.join(__dirname, "404.html");
+  }
   fs.readFile(notFoundPath, (err, content) => {
     if (err) {
       res.writeHead(404, { "Content-Type": "text/plain" });

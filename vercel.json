@@ -1,10 +1,8 @@
 {
   "cleanUrls": true,
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/explorer", "destination": "/explorer.html" },
-    { "source": "/metodologia", "destination": "/metodologia.html" },
-    { "source": "/guia", "destination": "/guia.html" },
-    { "source": "/terms", "destination": "/terms.html" }
-  ]
+  "functions": {
+    "server.js": {
+      "includeFiles": ["*.html", "auth.js", "teleprompter.js", "data/**"]
+    }
+  }
 }
