@@ -74,7 +74,7 @@
         .teleprompter-track {
           display: inline-flex;
           white-space: nowrap;
-          animation: mdeMarqueeScroll 55s linear infinite;
+          animation: mdeMarqueeScroll 75s linear infinite;
           will-change: transform;
         }
         .teleprompter-container:hover .teleprompter-track,

@@ -44,12 +44,20 @@
       this.updateNavbar();
       this.updateGatedElements();
       window.dispatchEvent(new CustomEvent("mde-auth-changed", { detail: sessionData }));
+      window.dispatchEvent(new CustomEvent("mde:auth-change", { detail: sessionData }));
     },
 
     logout() {
       if (supabaseClient) {
         try { supabaseClient.auth.signOut(); } catch (e) {}
       }
+      try {
+        fetch("/api/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "signout" })
+        }).catch(() => {});
+      } catch (e) {}
       this.setSession(null);
     },
 
@@ -103,26 +111,6 @@
     },
 
     async signInWithEmail(email, password) {
-      if (supabaseClient) {
-        try {
-          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-          if (error) throw error;
-          this.setSession({
-            user: {
-              id: data.user.id,
-              email: data.user.email,
-              name: data.user.user_metadata?.full_name || email.split("@")[0],
-              provider: "email"
-            },
-            access_token: data.session?.access_token || "sb_token"
-          });
-          return { success: true };
-        } catch (err) {
-          return { success: false, error: err.message };
-        }
-      }
-
-      // Native fallback simulation / standalone validation
       if (!email || !email.includes("@")) {
         return { success: false, error: "Ingresa un correo electrónico válido." };
       }
@@ -130,41 +118,27 @@
         return { success: false, error: "La contraseña debe tener al menos 6 caracteres." };
       }
 
-      const user = {
-        id: "usr_" + Math.random().toString(36).substring(2, 9),
-        email: email.trim().toLowerCase(),
-        name: email.split("@")[0],
-        provider: "email",
-        created_at: new Date().toISOString()
-      };
-      this.setSession({ user, access_token: "mde_token_" + Date.now() });
-      return { success: true };
+      try {
+        const res = await fetch("/api/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "signin", email, password })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Credenciales incorrectas." };
+        }
+        this.setSession({
+          user: data.user,
+          access_token: data.token
+        });
+        return { success: true, user: data.user };
+      } catch (err) {
+        return { success: false, error: "Error conectando con el servidor de autenticación." };
+      }
     },
 
     async signUpWithEmail(email, password, fullName) {
-      if (supabaseClient) {
-        try {
-          const { data, error } = await supabaseClient.auth.signUp({
-            email,
-            password,
-            options: { data: { full_name: fullName } }
-          });
-          if (error) throw error;
-          this.setSession({
-            user: {
-              id: data.user?.id || "usr_new",
-              email: email,
-              name: fullName || email.split("@")[0],
-              provider: "email"
-            },
-            access_token: data.session?.access_token || "sb_token_new"
-          });
-          return { success: true };
-        } catch (err) {
-          return { success: false, error: err.message };
-        }
-      }
-
       if (!email || !email.includes("@")) {
         return { success: false, error: "Ingresa un correo institucional válido." };
       }
@@ -172,47 +146,50 @@
         return { success: false, error: "La contraseña debe tener un mínimo de 6 caracteres." };
       }
 
-      const user = {
-        id: "usr_" + Math.random().toString(36).substring(2, 9),
-        email: email.trim().toLowerCase(),
-        name: fullName ? fullName.trim() : email.split("@")[0],
-        provider: "email",
-        created_at: new Date().toISOString()
-      };
-      this.setSession({ user, access_token: "mde_token_" + Date.now() });
-      return { success: true };
+      try {
+        const res = await fetch("/api/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "signup",
+            email: email.trim().toLowerCase(),
+            password,
+            name: fullName ? fullName.trim() : email.split("@")[0]
+          })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "No se pudo registrar la cuenta." };
+        }
+        this.setSession({
+          user: data.user,
+          access_token: data.token
+        });
+        return { success: true, user: data.user };
+      } catch (err) {
+        return { success: false, error: "Error conectando con el servidor de autenticación." };
+      }
     },
 
     async signInWithOAuth(provider) {
-      if (supabaseClient) {
-        try {
-          const { error } = await supabaseClient.auth.signInWithOAuth({
-            provider: provider,
-            options: { redirectTo: window.location.origin + "/explorer" }
-          });
-          if (error) throw error;
-          return { success: true };
-        } catch (err) {
-          console.warn("Supabase OAuth error, falling back:", err);
+      try {
+        const res = await fetch("/api/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "sso", provider })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Error en autenticación institucional." };
         }
+        this.setSession({
+          user: data.user,
+          access_token: data.token
+        });
+        return { success: true, user: data.user };
+      } catch (err) {
+        return { success: false, error: "Error conectando con el proveedor institucional." };
       }
-
-      // Native Institutional SSO fallback
-      const providerNames = {
-        google: "Google Workspace",
-        apple: "Apple ID",
-        facebook: "Meta Business"
-      };
-      const providerLabel = providerNames[provider] || provider;
-      const user = {
-        id: `sso_${provider}_${Math.random().toString(36).substring(2, 8)}`,
-        email: `usuario@${provider}.institucional.pe`,
-        name: `Usuario (${providerLabel})`,
-        provider: provider,
-        created_at: new Date().toISOString()
-      };
-      this.setSession({ user, access_token: `sso_token_${provider}_${Date.now()}` });
-      return { success: true };
     },
 
     updateNavbar() {
@@ -265,57 +242,52 @@
     updateGatedElements() {
       const isAuth = this.isAuthenticated();
 
-      // Badges / Locks for 10Y range button
+      // Clean up any remaining legacy lock icons
+      document.querySelectorAll(".auth-lock-icon, .range-lock, .horizon-lock").forEach(el => el.remove());
+
+      // 10Y range button: attenuate font if not authenticated
       const btn10y = document.querySelector('.range-btn[data-range="10y"]');
       if (btn10y) {
-        let lock = btn10y.querySelector(".auth-lock-icon");
         if (!isAuth) {
-          if (!lock) {
-            btn10y.insertAdjacentHTML("beforeend", ' <span class="auth-lock-icon text-[10px] opacity-75">🔒</span>');
-          }
+          btn10y.classList.add("locked-option");
         } else {
-          if (lock) lock.remove();
+          btn10y.classList.remove("locked-option");
         }
       }
 
-      // Badges / Locks for Horizon 9M & 12M
-      [9, 12].forEach(h => {
-        const btnH = document.querySelector(`.horizon-btn[data-horizon="${h}"]`);
-        if (btnH) {
-          let lock = btnH.querySelector(".auth-lock-icon");
-          if (!isAuth) {
-            if (!lock) {
-              btnH.insertAdjacentHTML("beforeend", ' <span class="auth-lock-icon text-[10px] opacity-75">🔒</span>');
-            }
-          } else {
-            if (lock) lock.remove();
-          }
+      // Horizon buttons: 3M, 6M, 12M and Custom
+      const horizonGated = [
+        document.querySelector('.horizon-btn[data-horizon="3"]'),
+        document.querySelector('.horizon-btn[data-horizon="6"]'),
+        document.querySelector('.horizon-btn[data-horizon="12"]'),
+        document.getElementById("btnCustomHorizon")
+      ].filter(Boolean);
+
+      horizonGated.forEach(btn => {
+        if (!isAuth) {
+          btn.classList.add("locked-option");
+        } else {
+          btn.classList.remove("locked-option");
         }
       });
 
-      // Badges / Locks for Excel Export buttons
+      // Excel export buttons
       const excelButtons = [document.getElementById("btnExportExcel"), document.getElementById("btnExportExcelTop")].filter(Boolean);
       excelButtons.forEach(btn => {
-        let lock = btn.querySelector(".auth-lock-icon");
         if (!isAuth) {
-          if (!lock) {
-            btn.insertAdjacentHTML("beforeend", ' <span class="auth-lock-icon text-[11px] opacity-75">🔒</span>');
-          }
+          btn.classList.add("locked-option");
         } else {
-          if (lock) lock.remove();
+          btn.classList.remove("locked-option");
         }
       });
 
-      // Badges / Locks for Econometric Sensitivity Accordion
+      // Econometric Sensitivity Accordion
       const accordionHeader = document.getElementById("econometricAccordionHeader");
       if (accordionHeader) {
-        let lock = accordionHeader.querySelector(".auth-lock-icon");
         if (!isAuth) {
-          if (!lock) {
-            accordionHeader.insertAdjacentHTML("beforeend", ' <span class="auth-lock-icon text-xs px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-mono text-[10px] uppercase font-semibold">🔒 Requiere Cuenta</span>');
-          }
+          accordionHeader.classList.add("locked-option");
         } else {
-          if (lock) lock.remove();
+          accordionHeader.classList.remove("locked-option");
         }
       }
     },
@@ -354,7 +326,7 @@
           
           <!-- Close Button -->
           <button id="btnCloseAuthModal" type="button" class="absolute top-4 right-4 text-[#86868B] hover:text-black dark:hover:text-white w-8 h-8 rounded-full flex items-center justify-center transition">
-            ✕
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
 
           <!-- Banner / Prompt for Gated Features -->

@@ -116,7 +116,23 @@
       border-color: #2C2C2E !important;
     }
 
-    /* Custom Switch provided by user 👇 */
+    /* Locked / Restricted Option Attenuation Styling */
+    .locked-option {
+      color: #9ca3af !important; /* stone-400 */
+      opacity: 0.45 !important;
+      cursor: pointer !important;
+      font-weight: 500 !important;
+      transition: opacity 0.2s ease, color 0.2s ease !important;
+    }
+    html.dark .locked-option {
+      color: #71717a !important; /* stone-500 / zinc-500 */
+      opacity: 0.40 !important;
+    }
+    .locked-option:hover {
+      opacity: 0.75 !important;
+    }
+
+    /* Custom Switch provided by user */
     .ui-switch {
       /* switch */
       --switch-bg: rgb(135, 150, 165);
@@ -306,7 +322,6 @@
       <!-- Search Account Recommendation Banner (Intuitive Gating) -->
       <div id="searchAccountBanner" class="hidden mt-4 max-w-xl mx-auto p-3.5 bg-white dark:bg-[#18181A] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl flex items-center justify-between gap-3 text-xs shadow-sm transition-all duration-300">
         <div class="flex items-center gap-2.5 text-left text-[#1D1D1F] dark:text-[#E5E5EA]">
-          <span class="text-base shrink-0">💡</span>
           <span class="leading-snug">Para esta búsqueda podrías considerar <strong>crearte una cuenta</strong> y acceder a información más precisa, series de 10 años y horizontes extendidos.</span>
         </div>
         <button id="btnBannerSignUp" class="shrink-0 px-3.5 py-2 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-xl text-[11px] hover:opacity-90 transition shadow-sm">
@@ -324,7 +339,7 @@
           <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="1y">1A</button>
           <button class="range-btn px-3 py-1 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition" data-range="3y">3A</button>
           <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="5y">5A</button>
-          <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="10y">10 Años (10Y) <span class="range-lock text-[10px]">🔒</span></button>
+          <button class="range-btn locked-option px-3 py-1 rounded-lg text-stone-400 dark:text-stone-600 opacity-45 hover:opacity-75 font-medium cursor-pointer transition" data-range="10y">10 Años (10Y)</button>
         </div>
       </div>
 
@@ -416,11 +431,11 @@
           <span class="text-xs font-bold text-[#86868B] dark:text-[#8E8E93] uppercase tracking-wider">Horizonte:</span>
           <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-xl border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-semibold items-center">
             <button class="horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition" data-horizon="1">1M</button>
-            <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="3">3M <span class="horizon-lock text-[10px]">🔒</span></button>
-            <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="6">6M <span class="horizon-lock text-[10px]">🔒</span></button>
-            <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="12">12M <span class="horizon-lock text-[10px]">🔒</span></button>
-            <button id="btnCustomHorizon" class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition flex items-center gap-1" title="Definir cantidad libre de meses">
-              <span id="customHorizonBtnLabel">Custom</span> <span class="horizon-lock text-[10px]">🔒</span>
+            <button class="horizon-btn locked-option px-3 py-1.5 rounded-lg text-stone-400 dark:text-stone-600 opacity-45 hover:opacity-75 font-medium cursor-pointer transition" data-horizon="3">3M</button>
+            <button class="horizon-btn locked-option px-3 py-1.5 rounded-lg text-stone-400 dark:text-stone-600 opacity-45 hover:opacity-75 font-medium cursor-pointer transition" data-horizon="6">6M</button>
+            <button class="horizon-btn locked-option px-3 py-1.5 rounded-lg text-stone-400 dark:text-stone-600 opacity-45 hover:opacity-75 font-medium cursor-pointer transition" data-horizon="12">12M</button>
+            <button id="btnCustomHorizon" class="horizon-btn locked-option px-3 py-1.5 rounded-lg text-stone-400 dark:text-stone-600 opacity-45 hover:opacity-75 font-medium cursor-pointer transition flex items-center gap-1" title="Definir cantidad libre de meses">
+              <span id="customHorizonBtnLabel">Custom</span>
             </button>
           </div>
           <!-- Custom Horizon Interactive Input Popover/Bar -->
@@ -1032,14 +1047,33 @@
     function updateAuthLocks() {
       const isAuth = !!(window.MDE_Auth && window.MDE_Auth.isAuthenticated());
       const banner = document.getElementById("searchAccountBanner");
-      if (banner && isAuth) {
-        banner.classList.add("hidden");
+      if (banner) {
+        if (isAuth) {
+          banner.classList.add("hidden");
+        } else {
+          banner.classList.remove("hidden");
+        }
       }
-      document.querySelectorAll(".horizon-lock").forEach(lock => {
-        lock.style.display = isAuth ? "none" : "inline";
-      });
-      document.querySelectorAll(".range-lock").forEach(lock => {
-        lock.style.display = isAuth ? "none" : "inline";
+
+      const lockedElements = [
+        document.querySelector('.range-btn[data-range="10y"]'),
+        document.querySelector('.horizon-btn[data-horizon="3"]'),
+        document.querySelector('.horizon-btn[data-horizon="6"]'),
+        document.querySelector('.horizon-btn[data-horizon="12"]'),
+        document.getElementById("btnCustomHorizon"),
+        document.getElementById("btnExportExcel"),
+        document.getElementById("btnExportExcelTop")
+      ].filter(Boolean);
+
+      lockedElements.forEach(el => {
+        if (isAuth) {
+          el.classList.remove("locked-option");
+        } else {
+          // If button is not currently active, keep attenuated style
+          if (!el.classList.contains("bg-black") && !el.classList.contains("dark:bg-white")) {
+            el.classList.add("locked-option");
+          }
+        }
       });
     }
 
@@ -1054,6 +1088,7 @@
       }
       updateAuthLocks();
       window.addEventListener("mde:auth-change", updateAuthLocks);
+      window.addEventListener("mde-auth-changed", updateAuthLocks);
     }
 
     // Setup Range Buttons

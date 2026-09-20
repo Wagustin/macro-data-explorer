@@ -7,6 +7,7 @@ import historicalHandler from "./api/historical.js";
 import forecastHandler from "./api/forecast.js";
 import interpretHandler from "./api/interpret.js";
 import newsHandler from "./api/news.js";
+import authHandler from "./api/auth.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -70,6 +71,9 @@ const server = http.createServer(async (req, res) => {
   }
   if (pathname === "/api/news") {
     return newsHandler(req, res);
+  }
+  if (pathname === "/api/auth" || pathname.startsWith("/api/auth/")) {
+    return authHandler(req, res);
   }
 
   // --- Clean URL mappings to HTML subpages ---
