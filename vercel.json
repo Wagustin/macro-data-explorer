@@ -2,7 +2,7 @@
   "cleanUrls": true,
   "functions": {
     "server.js": {
-      "includeFiles": ["*.html", "auth.js", "teleprompter.js", "data/**"]
+      "includeFiles": "{*.html,*.js,data/**}"
     }
   }
 }
