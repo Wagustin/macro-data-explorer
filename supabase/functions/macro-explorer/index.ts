@@ -1599,7 +1599,7 @@ async function handleForecast(req, url) {
 
   const rawSymbol = String(body.symbol || url.searchParams.get("symbol") || "BVN").trim();
   const rawHorizon = parseInt(body.horizon || url.searchParams.get("horizon") || "6", 10);
-  const H = [1, 3, 6, 12].includes(rawHorizon) ? rawHorizon : 6;
+  const H = Math.max(1, Math.min(36, isNaN(rawHorizon) ? 6 : rawHorizon));
   let series = body.series;
 
   if (!series || !Array.isArray(series) || series.length < 5) {

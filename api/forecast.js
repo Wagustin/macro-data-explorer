@@ -5,7 +5,6 @@
  */
 
 const SYMBOL_REGEX = /^[A-Za-z0-9=._\-\^]{1,20}$/;
-const ALLOWED_HORIZONS = new Set([1, 3, 6, 9, 12]);
 
 export default async function handler(req, res) {
   // CORS & Security Headers
@@ -43,7 +42,7 @@ export default async function handler(req, res) {
 
   const symbol = rawSymbol;
   const rawHorizon = parseInt(body.horizon || query.horizon || "6", 10);
-  const H = ALLOWED_HORIZONS.has(rawHorizon) ? rawHorizon : 6;
+  const H = Math.max(1, Math.min(36, isNaN(rawHorizon) ? 6 : rawHorizon));
 
   let series = body.series;
 

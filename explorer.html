@@ -411,14 +411,25 @@
           </p>
         </div>
 
-        <!-- Horizon Selection Buttons (1M, 3M, 6M, 12M) -->
-        <div class="flex items-center space-x-2">
+        <!-- Horizon Selection Buttons (1M, 3M, 6M, 12M, Custom) -->
+        <div class="flex items-center flex-wrap gap-2">
           <span class="text-xs font-bold text-[#86868B] dark:text-[#8E8E93] uppercase tracking-wider">Horizonte:</span>
-          <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-xl border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-semibold">
+          <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-xl border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-semibold items-center">
             <button class="horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition" data-horizon="1">1M</button>
             <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="3">3M <span class="horizon-lock text-[10px]">🔒</span></button>
             <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="6">6M <span class="horizon-lock text-[10px]">🔒</span></button>
             <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="12">12M <span class="horizon-lock text-[10px]">🔒</span></button>
+            <button id="btnCustomHorizon" class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition flex items-center gap-1" title="Definir cantidad libre de meses">
+              <span id="customHorizonBtnLabel">Custom</span> <span class="horizon-lock text-[10px]">🔒</span>
+            </button>
+          </div>
+          <!-- Custom Horizon Interactive Input Popover/Bar -->
+          <div id="customHorizonContainer" class="hidden items-center gap-1.5 bg-[#F5F5F7] dark:bg-[#2C2C2E] px-2.5 py-1 rounded-xl border border-blue-400 dark:border-blue-600 transition-all">
+            <input id="customHorizonInput" type="number" min="1" max="36" value="18" placeholder="Meses" class="w-16 bg-white dark:bg-[#1C1C1E] text-black dark:text-white px-2 py-1 rounded-lg text-xs font-mono font-bold text-center border border-[#E5E5EA] dark:border-[#3A3A3C] focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white">
+            <span class="text-[11px] font-medium text-[#86868B]">meses</span>
+            <button id="btnApplyCustomHorizon" class="px-2.5 py-1 bg-black dark:bg-white text-white dark:text-black text-xs font-bold rounded-lg hover:opacity-90 transition">
+              Calcular
+            </button>
           </div>
         </div>
       </div>
@@ -1064,15 +1075,25 @@
       });
     }
 
-    // Setup Horizon Buttons (1M, 3M, 6M, 12M)
+    // Setup Horizon Buttons (1M, 3M, 6M, 12M, Custom)
     function setupHorizonButtons() {
+      const customContainer = document.getElementById("customHorizonContainer");
+      const customInput = document.getElementById("customHorizonInput");
+      const btnCustom = document.getElementById("btnCustomHorizon");
+      const btnApplyCustom = document.getElementById("btnApplyCustomHorizon");
+      const customLabel = document.getElementById("customHorizonBtnLabel");
+
       document.querySelectorAll(".horizon-btn").forEach(btn => {
+        if (btn.id === "btnCustomHorizon") return;
         btn.addEventListener("click", () => {
           const h = parseInt(btn.getAttribute("data-horizon"), 10);
           if (h > 1 && window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
             window.MDE_Auth.openModal(`Acceso a Horizontes Extendidos — La proyección de ${h} meses y análisis de cuantiles en profundidad requiere una cuenta gratuita. Regístrate para acceder a información más precisa.`);
             return;
           }
+          if (customContainer) customContainer.classList.add("hidden");
+          if (customLabel) customLabel.textContent = "Custom";
+
           document.querySelectorAll(".horizon-btn").forEach(b => {
             b.className = "horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
           });
@@ -1081,6 +1102,59 @@
           fetchForecastOnly(state.primarySymbol, h);
         });
       });
+
+      // Custom Horizon Handling
+      if (btnCustom) {
+        btnCustom.addEventListener("click", () => {
+          if (window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
+            window.MDE_Auth.openModal("Horizonte Personalizado en Tiempo Real — La ejecución interactiva de TimesFM a cualquier cantidad de meses a tu elección requiere una cuenta registrada gratuita.");
+            return;
+          }
+          if (customContainer) {
+            const isHidden = customContainer.classList.contains("hidden");
+            if (isHidden) {
+              customContainer.classList.remove("hidden");
+              customContainer.classList.add("flex");
+              if (customInput) customInput.focus();
+            } else {
+              customContainer.classList.add("hidden");
+              customContainer.classList.remove("flex");
+            }
+          }
+        });
+      }
+
+      function executeCustomHorizon() {
+        if (!customInput) return;
+        let val = parseInt(customInput.value, 10);
+        if (isNaN(val) || val < 1) val = 1;
+        if (val > 36) val = 36;
+        customInput.value = val;
+
+        document.querySelectorAll(".horizon-btn").forEach(b => {
+          b.className = "horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
+        });
+        if (btnCustom) {
+          btnCustom.className = "horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition flex items-center gap-1";
+        }
+        if (customLabel) {
+          customLabel.textContent = `Custom (${val}M)`;
+        }
+        state.horizon = val;
+        fetchForecastOnly(state.primarySymbol, val);
+      }
+
+      if (btnApplyCustom) {
+        btnApplyCustom.addEventListener("click", executeCustomHorizon);
+      }
+      if (customInput) {
+        customInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            executeCustomHorizon();
+          }
+        });
+      }
     }
 
     // Setup Macro Selector
