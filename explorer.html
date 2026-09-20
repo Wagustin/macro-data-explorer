@@ -302,6 +302,17 @@
         <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="HG=F">Cobre Futuros</button>
         <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="PEN=X">USD/PEN</button>
       </div>
+
+      <!-- Search Account Recommendation Banner (Intuitive Gating) -->
+      <div id="searchAccountBanner" class="hidden mt-4 max-w-xl mx-auto p-3.5 bg-white dark:bg-[#18181A] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl flex items-center justify-between gap-3 text-xs shadow-sm transition-all duration-300">
+        <div class="flex items-center gap-2.5 text-left text-[#1D1D1F] dark:text-[#E5E5EA]">
+          <span class="text-base shrink-0">💡</span>
+          <span class="leading-snug">Para esta búsqueda podrías considerar <strong>crearte una cuenta</strong> y acceder a información más precisa, series de 10 años y horizontes extendidos.</span>
+        </div>
+        <button id="btnBannerSignUp" class="shrink-0 px-3.5 py-2 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-xl text-[11px] hover:opacity-90 transition shadow-sm">
+          Crear cuenta
+        </button>
+      </div>
     </section>
 
     <!-- Controls Bar: Time Range & Macro Overlay -->
@@ -311,9 +322,9 @@
         <span class="text-xs font-bold uppercase tracking-wider text-[#86868B] dark:text-[#8E8E93] mr-1">Rango Histórico:</span>
         <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-xl border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-medium">
           <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="1y">1A</button>
-          <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="3y">3A</button>
+          <button class="range-btn px-3 py-1 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition" data-range="3y">3A</button>
           <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="5y">5A</button>
-          <button class="range-btn px-3 py-1 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition" data-range="10y">10 Años (10Y)</button>
+          <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="10y">10 Años (10Y) <span class="range-lock text-[10px]">🔒</span></button>
         </div>
       </div>
 
@@ -404,10 +415,10 @@
         <div class="flex items-center space-x-2">
           <span class="text-xs font-bold text-[#86868B] dark:text-[#8E8E93] uppercase tracking-wider">Horizonte:</span>
           <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-xl border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-semibold">
-            <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="1">1M</button>
-            <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="3">3M</button>
-            <button class="horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black shadow-sm transition" data-horizon="6">6M</button>
-            <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="12">12M</button>
+            <button class="horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition" data-horizon="1">1M</button>
+            <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="3">3M <span class="horizon-lock text-[10px]">🔒</span></button>
+            <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="6">6M <span class="horizon-lock text-[10px]">🔒</span></button>
+            <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="12">12M <span class="horizon-lock text-[10px]">🔒</span></button>
           </div>
         </div>
       </div>
@@ -705,8 +716,8 @@
     const state = {
       primarySymbol: "BVN",
       macroSymbol: "HG=F",
-      range: "10y",
-      horizon: 6,
+      range: "3y",
+      horizon: 1,
       showForecastOnChart: true,
       primaryData: null,
       macroData: null,
@@ -783,6 +794,7 @@
       setupMacroSelect();
       setupExportExcel();
       setupToggleForecast();
+      setupIntuitiveGating();
 
       // Initial Load
       loadAllData(state.primarySymbol, state.range, state.macroSymbol, state.horizon);
@@ -976,6 +988,7 @@
           companySearchInput.value = "";
           searchResultsDiv.classList.add("hidden");
           state.primarySymbol = sym;
+          checkSearchGatingBanner();
           loadAllData(sym, state.range, state.macroSymbol, state.horizon);
         });
       });
@@ -987,9 +1000,49 @@
         btn.addEventListener("click", () => {
           const sym = btn.getAttribute("data-symbol");
           state.primarySymbol = sym;
+          checkSearchGatingBanner();
           loadAllData(sym, state.range, state.macroSymbol, state.horizon);
         });
       });
+    }
+
+    // Dynamic Gating Recommendation Banner
+    function checkSearchGatingBanner() {
+      const banner = document.getElementById("searchAccountBanner");
+      if (!banner) return;
+      if (window.MDE_Auth && window.MDE_Auth.isAuthenticated()) {
+        banner.classList.add("hidden");
+      } else {
+        banner.classList.remove("hidden");
+      }
+    }
+
+    // Update Lock Indicators and Gating
+    function updateAuthLocks() {
+      const isAuth = !!(window.MDE_Auth && window.MDE_Auth.isAuthenticated());
+      const banner = document.getElementById("searchAccountBanner");
+      if (banner && isAuth) {
+        banner.classList.add("hidden");
+      }
+      document.querySelectorAll(".horizon-lock").forEach(lock => {
+        lock.style.display = isAuth ? "none" : "inline";
+      });
+      document.querySelectorAll(".range-lock").forEach(lock => {
+        lock.style.display = isAuth ? "none" : "inline";
+      });
+    }
+
+    function setupIntuitiveGating() {
+      const bannerBtn = document.getElementById("btnBannerSignUp");
+      if (bannerBtn) {
+        bannerBtn.addEventListener("click", () => {
+          if (window.MDE_Auth) {
+            window.MDE_Auth.openModal("Para esta búsqueda podrías considerar crearte una cuenta y acceder a información más precisa, series de 10 años y proyecciones completas.");
+          }
+        });
+      }
+      updateAuthLocks();
+      window.addEventListener("mde:auth-change", updateAuthLocks);
     }
 
     // Setup Range Buttons
@@ -1015,11 +1068,15 @@
     function setupHorizonButtons() {
       document.querySelectorAll(".horizon-btn").forEach(btn => {
         btn.addEventListener("click", () => {
+          const h = parseInt(btn.getAttribute("data-horizon"), 10);
+          if (h > 1 && window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
+            window.MDE_Auth.openModal(`Acceso a Horizontes Extendidos — La proyección de ${h} meses y análisis de cuantiles en profundidad requiere una cuenta gratuita. Regístrate para acceder a información más precisa.`);
+            return;
+          }
           document.querySelectorAll(".horizon-btn").forEach(b => {
             b.className = "horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
           });
           btn.className = "horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition";
-          const h = parseInt(btn.getAttribute("data-horizon"), 10);
           state.horizon = h;
           fetchForecastOnly(state.primarySymbol, h);
         });
