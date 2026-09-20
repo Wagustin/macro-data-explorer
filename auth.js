@@ -176,22 +176,13 @@
     },
 
     openOAuthPopup(provider) {
-      const w = 460;
-      const h = 640;
-      const left = Math.max(0, Math.round(window.screenX + (window.outerWidth - w) / 2));
-      const top = Math.max(0, Math.round(window.screenY + (window.outerHeight - h) / 2));
-      const popupUrl = `/auth-gateway.html?provider=${encodeURIComponent(provider)}&origin=${encodeURIComponent(window.location.origin)}`;
-
-      const popup = window.open(
-        popupUrl,
-        `perdata_oauth_${provider}`,
-        `width=${w},height=${h},left=${left},top=${top},menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=yes`
-      );
-
-      if (!popup || popup.closed || typeof popup.closed === "undefined") {
-        window.location.href = popupUrl;
-      }
-      return { success: true, pending: true };
+      // NOTE: Real OAuth requires backend credentials (client_id/secret)
+      // and proper registration at each provider's developer console.
+      // This placeholder shows the modal message until OAuth is configured.
+      const msg = "Autenticación social próximamente. Por ahora usa correo y contraseña.";
+      const statusEl = document.getElementById("authStatus");
+      if (statusEl) statusEl.textContent = msg;
+      console.warn("[PerData] OAuth SSO not yet configured for:", provider);
     },
 
     updateNavbar() {

@@ -88,8 +88,6 @@ const server = http.createServer(async (req, res) => {
     targetFile = "guia.html";
   } else if (pathname === "/terms" || pathname === "/terms.html") {
     targetFile = "terms.html";
-  } else if (pathname === "/auth-gateway" || pathname === "/auth-gateway.html") {
-    targetFile = "auth-gateway.html";
   } else {
     // Check if directly requesting an existing static file (e.g. auth.js, teleprompter.js)
     const relativePath = pathname.replace(/^\/+/, "");
