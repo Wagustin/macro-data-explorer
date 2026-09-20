@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="description" content="Guía operativa y casos de uso de MacroData Explorer. Casos prácticos de cobertura para minería andina, gestión de riesgo cambiario USD/PEN y modelado en Excel." />
+  <title>Guía de Uso & Casos Institucionales · MacroData Explorer</title>
+  
+  <!-- Early Theme Init -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
+      } else {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.classList.add("light");
+      }
+    })();
+  </script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            appleLight: '#FFFFFF',
+            appleDark: '#0D0D0E',
+            appleCardDark: '#1C1C1E',
+            appleTextDark: '#F5F5F7',
+            appleSubDark: '#8E8E93',
+            appleBorderDark: '#2C2C2E',
+            appleBorderLight: '#E5E5EA',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html, body {
+      overflow-x: hidden !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      letter-spacing: -0.011em;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .ui-switch {
+      --switch-bg: rgb(229, 229, 234);
+      --switch-checked-bg: rgb(0, 0, 0);
+      --circle-diameter: 18px;
+      --circle-bg: #FFFFFF;
+      --circle-inset: 2px;
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    html.dark .ui-switch {
+      --switch-bg: rgb(44, 44, 46);
+      --switch-checked-bg: rgb(255, 255, 255);
+      --circle-bg: #0D0D0E;
+    }
+
+    .ui-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--switch-bg);
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 9999px;
+    }
+
+    .slider .circle {
+      top: var(--circle-inset);
+      left: var(--circle-inset);
+      width: var(--circle-diameter);
+      height: var(--circle-diameter);
+      position: absolute;
+      background: var(--circle-bg);
+      border-radius: inherit;
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .ui-switch input:checked + .slider {
+      background-color: var(--switch-checked-bg);
+    }
+
+    .ui-switch input:checked + .slider .circle {
+      left: calc(100% - var(--circle-diameter) - var(--circle-inset));
+    }
+  </style>
+</head>
+<body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
+
+  <!-- Header -->
+  <header class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF]/90 dark:bg-[#0D0D0E]/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      
+      <!-- Brand & Navigation -->
+      <div class="flex items-center space-x-6">
+        <a href="/" class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm shadow-sm">
+            M
+          </div>
+          <div class="flex flex-col">
+            <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">MacroData</span>
+            <span class="text-[10px] text-[#86868B] uppercase tracking-wider font-semibold">Guía Operativa</span>
+          </div>
+        </a>
+
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-[#86868B]">
+          <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
+          <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
+          <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
+          <a href="/guia" class="text-black dark:text-white font-semibold transition border-b-2 border-black dark:border-white pb-0.5">Guía de Uso</a>
+          <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos</a>
+        </nav>
+      </div>
+
+      <!-- Right Actions -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <div id="navbarAuthContainer"></div>
+
+        <label class="ui-switch" title="Alternar modo claro / oscuro">
+          <input id="themeToggle" type="checkbox" />
+          <div class="slider">
+            <div class="circle"></div>
+          </div>
+        </label>
+
+        <a href="/explorer" class="inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-4 py-2 rounded-full transition shadow-sm">
+          <span>Abrir Terminal</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16 space-y-12 w-full">
+
+    <section class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#F5F5F7] dark:bg-[#1C1C1E] text-xs font-semibold text-[#86868B] border border-[#E5E5EA] dark:border-[#2C2C2E]">
+        <span>Playbooks Operativos</span>
+        <span>·</span>
+        <span>Tesorería & Portafolios</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-black dark:text-white">
+        Guía de Uso & Casos Prácticos
+      </h1>
+      
+      <p class="text-sm sm:text-base text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+        Estrategias prácticas de cobertura, análisis de sensibilidad y uso institucional de los conos probabilísticos para analistas de inversión y tesorerías corporativas.
+      </p>
+    </section>
+
+    <!-- CASE 1: MINERÍA ANDINA -->
+    <section class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] font-mono font-bold uppercase text-[#86868B]">Caso Práctico 01 · Equities vs Commodities</span>
+        <span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-semibold text-[10px]">Cobertura Activa</span>
+      </div>
+
+      <h2 class="text-xl font-bold text-black dark:text-white">
+        Cobertura de Portafolios Mineros (BVN / SCCO vs Cobre y Oro)
+      </h2>
+
+      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+        Las acciones mineras peruanas operan con un apalancamiento operativo natural respecto al precio internacional de los metales. Cuando el Cobre o el Oro suben, los márgenes EBITDA se expanden de forma no lineal.
+      </p>
+
+      <div class="p-4 rounded-xl bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-2 text-xs">
+        <h3 class="font-bold text-black dark:text-white">Procedimiento en la Terminal:</h3>
+        <ol class="space-y-1.5 list-decimal list-inside text-[#1D1D1F] dark:text-[#E5E5EA]">
+          <li>Selecciona <strong>BVN</strong> en el buscador o en la barra rápida.</li>
+          <li>Revisa el cono P10/P50/P90 para el horizonte de <strong>6 Meses</strong>. Si el cuantil P10 se sitúa por encima del costo de soporte histórico ($14.20), el riesgo de caída está acotado.</li>
+          <li>Compara la pendiente del cono de BVN frente al cono proyectado para el Cobre Grado A (<strong>HG=F</strong>). Si la acción presenta un rezago temporal, existe una oportunidad de arbitraje estadístico de valor relativo.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- CASE 2: GESTIÓN DE RIESGO CAMBIARIO -->
+    <section class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] font-mono font-bold uppercase text-[#86868B]">Caso Práctico 02 · Divisas Soberanas</span>
+        <span class="px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 font-semibold text-[10px]">Tesorería FX</span>
+      </div>
+
+      <h2 class="text-xl font-bold text-black dark:text-white">
+        Gestión de Riesgo Cambiario (USD / PEN vs Intervenciones BCRP)
+      </h2>
+
+      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+        El tipo de cambio Sol peruano / Dólar estadounidense (USD/PEN) se caracteriza por un régimen de flotación administrada con intervención activa del BCRP para mitigar la volatilidad extrema.
+      </p>
+
+      <div class="p-4 rounded-xl bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-2 text-xs">
+        <h3 class="font-bold text-black dark:text-white">Estrategia para Tesorerías Corporativas:</h3>
+        <p class="text-[#1D1D1F] dark:text-[#E5E5EA] leading-relaxed">
+          Al planificar pagos de deuda o importaciones a 3 y 6 meses:
+        </p>
+        <ul class="space-y-1.5 list-disc list-inside text-[#1D1D1F] dark:text-[#E5E5EA]">
+          <li><strong>Importadores:</strong> Si el cono P90 a 3 meses se aproxima a S/ 3.82, es prudente contratar coberturas de forwards bancarios en los niveles del P50 (S/ 3.75).</li>
+          <li><strong>Exportadores:</strong> Si el P10 a 6 meses toca el soporte psicológico de S/ 3.68, se recomienda fijar tipos de cambio mínimos para proteger los flujos de caja operativos.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CASE 3: HORIZONTES TEMPORALES -->
+    <section class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] font-mono font-bold uppercase text-[#86868B]">Caso Práctico 03 · Calibración Temporal</span>
+        <span class="px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-400 font-semibold text-[10px]">Comités de Inversión</span>
+      </div>
+
+      <h2 class="text-xl font-bold text-black dark:text-white">
+        Selección del Horizonte de Proyección Óptimo (1M a 12M)
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs pt-2">
+        <div class="p-4 rounded-xl bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-1.5">
+          <span class="font-bold text-black dark:text-white">Horizonte 1M – 3M (Táctico)</span>
+          <p class="text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            Indicado para rebalanceo mensual de liquidez, negociación de contratos a plazo y seguimiento de minutas de política monetaria del BCRP y la Reserva Federal.
+          </p>
+        </div>
+        <div class="p-4 rounded-xl bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-1.5">
+          <span class="font-bold text-black dark:text-white">Horizonte 6M – 12M (Estratégico)</span>
+          <p class="text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            Diseñado para presupuestos de Capex minero, valoración por descuento de flujos de caja y estructuración de emisiones de deuda corporativa.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CASE 4: AUDITORÍA EN EXCEL -->
+    <section class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] font-mono font-bold uppercase text-[#86868B]">Caso Práctico 04 · Datos Estructurados</span>
+        <span class="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 font-semibold text-[10px]">Excel (.xlsx)</span>
+      </div>
+
+      <h2 class="text-xl font-bold text-black dark:text-white">
+        Auditoría y Despliegue de Modelos en Hojas de Cálculo
+      </h2>
+
+      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+        El botón <strong>Descargar Excel</strong> de la Terminal genera un libro de cálculo `.xlsx` nativo con tres hojas estructuradas listas para incorporar en modelos financieros internos:
+      </p>
+
+      <ul class="space-y-2 text-xs sm:text-sm text-[#1D1D1F] dark:text-[#E5E5EA] list-disc list-inside">
+        <li><strong>Hoja 1: Resumen:</strong> Métricas clave de cotización actual, horizonte seleccionado, proyección central P50 y márgenes de error.</li>
+        <li><strong>Hoja 2: Histórico 10Y:</strong> Serie completa de precios OHLCV con fechas estandarizadas ISO.</li>
+        <li><strong>Hoja 3: Proyección Cuantílica:</strong> Vectores numéricos mensuales de P10, P50 y P90 para graficar conos estocásticos personalizados en tus reportes.</li>
+      </ul>
+    </section>
+
+    <!-- Bottom Action CTA -->
+    <div class="p-8 rounded-2xl bg-[#F5F5F7] dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <h3 class="text-base font-bold text-black dark:text-white">Inicia tu análisis cuantitativo</h3>
+        <p class="text-xs text-[#86868B] dark:text-[#8E8E93] mt-0.5">Explora las herramientas y descarga datos directamente a Excel.</p>
+      </div>
+      <a href="/explorer" class="px-6 py-3 rounded-full bg-black dark:bg-white text-white dark:text-black text-xs font-bold hover:opacity-90 transition shadow-sm">
+        Abrir Terminal &rarr;
+      </a>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#0D0D0E] py-8 text-xs text-[#86868B] transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <div class="w-5 h-5 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-bold text-[10px]">M</div>
+        <span class="font-semibold text-black dark:text-white">MacroData Explorer</span>
+        <span>·</span>
+        <span>Guía Operativa © 2026</span>
+      </div>
+
+      <div class="flex items-center space-x-5">
+        <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
+        <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
+        <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
+        <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos y Modelos</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById("themeToggle");
+    const isDark = document.documentElement.classList.contains("dark");
+    if (themeToggle) {
+      themeToggle.checked = isDark;
+      themeToggle.addEventListener("change", (e) => {
+        if (e.target.checked) {
+          document.documentElement.classList.add("dark");
+          document.documentElement.classList.remove("light");
+          localStorage.setItem("theme", "dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+          document.documentElement.classList.add("light");
+          localStorage.setItem("theme", "light");
+        }
+      });
+    }
+  </script>
+
+  <!-- Auth & Teleprompter -->
+  <script src="/auth.js"></script>
+  <script src="/teleprompter.js"></script>
+</body>
+</html>

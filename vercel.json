@@ -1,4 +1,10 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/explorer", "destination": "/explorer.html" },
+    { "source": "/metodologia", "destination": "/metodologia.html" },
+    { "source": "/guia", "destination": "/guia.html" },
+    { "source": "/terms", "destination": "/terms.html" }
+  ]
 }

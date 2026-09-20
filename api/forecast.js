@@ -5,7 +5,7 @@
  */
 
 const SYMBOL_REGEX = /^[A-Za-z0-9=._\-\^]{1,20}$/;
-const ALLOWED_HORIZONS = new Set([1, 3, 6, 12]);
+const ALLOWED_HORIZONS = new Set([1, 3, 6, 9, 12]);
 
 export default async function handler(req, res) {
   // CORS & Security Headers

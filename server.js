@@ -6,16 +6,30 @@ import searchHandler from "./api/search.js";
 import historicalHandler from "./api/historical.js";
 import forecastHandler from "./api/forecast.js";
 import interpretHandler from "./api/interpret.js";
+import newsHandler from "./api/news.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PORT = process.env.PORT || 3456;
 
+const MIME_TYPES = {
+  ".html": "text/html; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".ico": "image/x-icon",
+  ".txt": "text/plain; charset=utf-8"
+};
+
 const server = http.createServer(async (req, res) => {
   const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
   const pathname = parsedUrl.pathname;
 
-  // Mock response object with helper methods
+  // Mock response helper methods
   res.status = (code) => {
     res.statusCode = code;
     return res;
@@ -41,42 +55,66 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  // --- API Routes ---
   if (pathname === "/api/search") {
     return searchHandler(req, res);
   }
-
   if (pathname === "/api/historical") {
     return historicalHandler(req, res);
   }
-
   if (pathname === "/api/forecast") {
     return forecastHandler(req, res);
   }
-
   if (pathname === "/api/interpret") {
     return interpretHandler(req, res);
   }
+  if (pathname === "/api/news") {
+    return newsHandler(req, res);
+  }
 
-  // Serve static index.html
-  if (pathname === "/" || pathname === "/index.html") {
-    const indexPath = path.join(__dirname, "index.html");
-    fs.readFile(indexPath, (err, content) => {
+  // --- Clean URL mappings to HTML subpages ---
+  let targetFile = null;
+  if (pathname === "/" || pathname === "/index" || pathname === "/index.html") {
+    targetFile = "index.html";
+  } else if (pathname === "/explorer" || pathname === "/explorer.html") {
+    targetFile = "explorer.html";
+  } else if (pathname === "/metodologia" || pathname === "/metodologia.html") {
+    targetFile = "metodologia.html";
+  } else if (pathname === "/guia" || pathname === "/guia.html") {
+    targetFile = "guia.html";
+  } else if (pathname === "/terms" || pathname === "/terms.html") {
+    targetFile = "terms.html";
+  } else {
+    // Check if directly requesting an existing static file (e.g. auth.js, teleprompter.js)
+    const relativePath = pathname.replace(/^\/+/, "");
+    const safePath = path.normalize(relativePath).replace(/^(\.\.[\/\\])+/, "");
+    const candidatePath = path.join(__dirname, safePath);
+    if (fs.existsSync(candidatePath) && fs.statSync(candidatePath).isFile()) {
+      targetFile = safePath;
+    }
+  }
+
+  if (targetFile) {
+    const filePath = path.join(__dirname, targetFile);
+    fs.readFile(filePath, (err, content) => {
       if (err) {
         res.writeHead(500, { "Content-Type": "text/plain" });
-        return res.end("Error loading index.html");
+        return res.end("Error loading " + targetFile);
       }
-      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      const ext = path.extname(filePath).toLowerCase();
+      const contentType = MIME_TYPES[ext] || "text/plain";
+      res.writeHead(200, { "Content-Type": contentType });
       res.end(content);
     });
     return;
   }
 
-  // Serve custom 404 page for clean routing & missing paths
+  // Fallback to 404.html
   const notFoundPath = path.join(__dirname, "404.html");
   fs.readFile(notFoundPath, (err, content) => {
     if (err) {
       res.writeHead(404, { "Content-Type": "text/plain" });
-      return res.end("Not Found");
+      return res.end("404 - Not Found");
     }
     res.writeHead(404, { "Content-Type": "text/html; charset=utf-8" });
     res.end(content);

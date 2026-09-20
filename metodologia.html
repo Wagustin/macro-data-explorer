@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="description" content="Tratado metodológico y formulación econométrica de MacroData Explorer. Normalización RevIN, conos probabilísticos multi-cuantil P10/P50/P90 y descomposición factorial OLS." />
+  <title>Metodología Cuantitativa · MacroData Explorer</title>
+  
+  <!-- Early Theme Init -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
+      } else {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.classList.add("light");
+      }
+    })();
+  </script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            appleLight: '#FFFFFF',
+            appleDark: '#0D0D0E',
+            appleCardDark: '#1C1C1E',
+            appleTextDark: '#F5F5F7',
+            appleSubDark: '#8E8E93',
+            appleBorderDark: '#2C2C2E',
+            appleBorderLight: '#E5E5EA',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html, body {
+      overflow-x: hidden !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      letter-spacing: -0.011em;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .ui-switch {
+      --switch-bg: rgb(229, 229, 234);
+      --switch-checked-bg: rgb(0, 0, 0);
+      --circle-diameter: 18px;
+      --circle-bg: #FFFFFF;
+      --circle-inset: 2px;
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    html.dark .ui-switch {
+      --switch-bg: rgb(44, 44, 46);
+      --switch-checked-bg: rgb(255, 255, 255);
+      --circle-bg: #0D0D0E;
+    }
+
+    .ui-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--switch-bg);
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 9999px;
+    }
+
+    .slider .circle {
+      top: var(--circle-inset);
+      left: var(--circle-inset);
+      width: var(--circle-diameter);
+      height: var(--circle-diameter);
+      position: absolute;
+      background: var(--circle-bg);
+      border-radius: inherit;
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .ui-switch input:checked + .slider {
+      background-color: var(--switch-checked-bg);
+    }
+
+    .ui-switch input:checked + .slider .circle {
+      left: calc(100% - var(--circle-diameter) - var(--circle-inset));
+    }
+
+    .math-formula {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      letter-spacing: normal;
+    }
+  </style>
+</head>
+<body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
+
+  <!-- Apple Minimal Header -->
+  <header class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF]/90 dark:bg-[#0D0D0E]/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      
+      <!-- Brand & Navigation -->
+      <div class="flex items-center space-x-6">
+        <a href="/" class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm shadow-sm">
+            M
+          </div>
+          <div class="flex flex-col">
+            <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">MacroData</span>
+            <span class="text-[10px] text-[#86868B] uppercase tracking-wider font-semibold">Metodología</span>
+          </div>
+        </a>
+
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-[#86868B]">
+          <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
+          <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
+          <a href="/metodologia" class="text-black dark:text-white font-semibold transition border-b-2 border-black dark:border-white pb-0.5">Metodología</a>
+          <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
+          <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos</a>
+        </nav>
+      </div>
+
+      <!-- Right Actions -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <div id="navbarAuthContainer"></div>
+
+        <label class="ui-switch" title="Alternar modo claro / oscuro">
+          <input id="themeToggle" type="checkbox" />
+          <div class="slider">
+            <div class="circle"></div>
+          </div>
+        </label>
+
+        <a href="/explorer" class="inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-4 py-2 rounded-full transition shadow-sm">
+          <span>Ir a Terminal</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16 space-y-12 w-full">
+
+    <!-- Header Section -->
+    <section class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#F5F5F7] dark:bg-[#1C1C1E] text-xs font-semibold text-[#86868B] border border-[#E5E5EA] dark:border-[#2C2C2E]">
+        <span>Marco Teórico Institucional</span>
+        <span>·</span>
+        <span>Econometría Cuantitativa</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-black dark:text-white">
+        Tratado Metodológico & Formulación Matemática
+      </h1>
+      
+      <p class="text-sm sm:text-base text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+        Especificación formal del pipeline estocástico, tratamiento de no-estacionariedad de series financieras, optimización multi-cuantil y regresión factorial de sensibilidad.
+      </p>
+    </section>
+
+    <!-- SECTION 1: INGESTA Y TRATAMIENTO DE SERIES -->
+    <section class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-4 shadow-sm">
+      <div class="flex items-center space-x-3">
+        <span class="px-2.5 py-1 rounded-md bg-black dark:bg-white text-white dark:text-black font-mono font-bold text-xs">01</span>
+        <h2 class="text-lg sm:text-xl font-bold text-black dark:text-white">Ingesta Multifuente & Limpieza de Series OHLCV</h2>
+      </div>
+
+      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+        Las series temporales financieras presentan desafíos de discontinuidad y asincronía (diferencias de calendarios bursátiles entre la Bolsa de Valores de Lima, COMEX y el mercado interbancario de divisas). Nuestro motor realiza:
+      </p>
+
+      <ul class="space-y-2 text-xs sm:text-sm text-[#1D1D1F] dark:text-[#E5E5EA] list-disc list-inside">
+        <li><strong>Alineación temporal con forward-fill adaptativo:</strong> Preserva la última información cotizada en días feriados locales sin interpolaciones artificiales que causen fuga de información.</li>
+        <li><strong>Detección de outliers mediante MAD:</strong> Filtrado de transacciones anómalas o errores de digitación en cotizaciones mediante Desviación Absoluta respecto a la Mediana (*Median Absolute Deviation*).</li>
+        <li><strong>Sincronización macroeconómica con BCRP:</strong> Acoplamiento de series de tipo de cambio interbancario y balanza comercial con cotizaciones en tiempo real.</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 2: NORMALIZACIÓN REVIN -->
+    <section class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-4 shadow-sm">
+      <div class="flex items-center space-x-3">
+        <span class="px-2.5 py-1 rounded-md bg-black dark:bg-white text-white dark:text-black font-mono font-bold text-xs">02</span>
+        <h2 class="text-lg sm:text-xl font-bold text-black dark:text-white">Normalización Temporal Reversible (RevIN)</h2>
+      </div>
+
+      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+        Los mercados de commodities y acciones mineras experimentan cambios estructurales de régimen (*distribution shift*). La normalización estándar de media móvil destruye la no-estacionariedad de la serie. Implementamos <strong>Reversible Instance Normalization (RevIN)</strong>:
+      </p>
+
+      <!-- Math Box -->
+      <div class="p-4 rounded-xl bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3">
+        <p class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Cálculo de Estadísticos Locales</p>
+        <div class="math-formula text-xs sm:text-sm text-black dark:text-white space-y-1">
+          <div>μ_x = (1 / T) · Σ_{t=1}^T x_t</div>
+          <div>σ_x = sqrt[ (1 / T) · Σ_{t=1}^T (x_t - μ_x)² + ε ]</div>
+        </div>
+        <p class="text-[11px] font-bold uppercase tracking-wider text-[#86868B] pt-2">Transformación Simétrica & Re-inyección</p>
+        <div class="math-formula text-xs sm:text-sm text-black dark:text-white space-y-1">
+          <div>x̃_t = γ · ( (x_t - μ_x) / σ_x ) + β</div>
+          <div>ŷ_t = ( (ŷ̃_t - β) / γ ) · σ_x + μ_x</div>
+        </div>
+      </div>
+
+      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+        Donde $\gamma$ y $\beta$ son parámetros afines entrenables y $\epsilon$ es un término de estabilidad numérica ($10^{-5}$). Esta formulación garantiza que las proyecciones preserven las magnitudes y la escala nominal original de la serie.
+      </p>
+    </section>
+
+    <!-- SECTION 3: CONOS PROBABILÍSTICOS MULTI-CUANTIL -->
+    <section class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-4 shadow-sm">
+      <div class="flex items-center space-x-3">
+        <span class="px-2.5 py-1 rounded-md bg-black dark:bg-white text-white dark:text-black font-mono font-bold text-xs">03</span>
+        <h2 class="text-lg sm:text-xl font-bold text-black dark:text-white">Conos de Densidad Probabilística (P10 / P50 / P90)</h2>
+      </div>
+
+      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+        El análisis cuantitativo profesional descarta las estimaciones escalares deterministas (un único número de precio objetivo carece de valor sin un intervalo de certidumbre). Modelamos la distribución empírica condicional completa $P(Y_{t+h} | X_{1:t})$ mediante optimización de pérdida cuantílica (*Pinball Loss*):
+      </p>
+
+      <!-- Math Box -->
+      <div class="p-4 rounded-xl bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-2">
+        <p class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Función de Pérdida de Pinball</p>
+        <div class="math-formula text-xs sm:text-sm text-black dark:text-white">
+          L_q(y, ŷ_q) = max[ q(y - ŷ_q), (1 - q)(ŷ_q - y) ]
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+        <div class="p-3.5 rounded-xl bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E]">
+          <span class="font-mono font-bold text-xs text-black dark:text-white">Cuantil P10</span>
+          <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93] mt-1">Escenario adverso / soporte estocástico con 90% de probabilidad de ser superado.</p>
+        </div>
+        <div class="p-3.5 rounded-xl bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E]">
+          <span class="font-mono font-bold text-xs text-black dark:text-white">Cuantil P50</span>
+          <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93] mt-1">Mediana condicional. Trayectoria central esperada con menor error absoluto.</p>
+        </div>
+        <div class="p-3.5 rounded-xl bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E]">
+          <span class="font-mono font-bold text-xs text-black dark:text-white">Cuantil P90</span>
+          <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93] mt-1">Límite superior / resistencia estocástica. Delimita el 80% de la densidad empírica.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: REGRESIÓN FACTORIAL OLS Y CORRELACIÓN DE PEARSON -->
+    <section class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-4 shadow-sm">
+      <div class="flex items-center space-x-3">
+        <span class="px-2.5 py-1 rounded-md bg-black dark:bg-white text-white dark:text-black font-mono font-bold text-xs">04</span>
+        <h2 class="text-lg sm:text-xl font-bold text-black dark:text-white">Sensibilidad Factorial OLS & Correlación de Pearson</h2>
+      </div>
+
+      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+        Para descomponer las fuerzas exógenas que mueven a cada activo, resolvemos un sistema lineal de mínimos cuadrados ordinarios frente a los factores macroeconómicos fundamentales (Cobre COMEX, Oro y Tipo de Cambio USD/PEN):
+      </p>
+
+      <!-- Math Box -->
+      <div class="p-4 rounded-xl bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3">
+        <p class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Estimación Vectorial Matricial</p>
+        <div class="math-formula text-xs sm:text-sm text-black dark:text-white">
+          β̂ = (X^T · X)^(-1) · X^T · Y
+        </div>
+        <p class="text-[11px] font-bold uppercase tracking-wider text-[#86868B] pt-2">Coeficiente de Correlación de Pearson</p>
+        <div class="math-formula text-xs sm:text-sm text-black dark:text-white">
+          ρ_{X,Y} = Cov(X, Y) / ( σ_X · σ_Y )
+        </div>
+      </div>
+
+      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+        Esto permite a los comités de tesorería y analistas de renta variable comprender de forma instantánea si el movimiento proyectado de una acción minera (como Buenaventura o Southern Copper) responde a fundamentos del precio físico del metal o a variaciones en la prima por riesgo soberano.
+      </p>
+    </section>
+
+    <!-- SECTION 5: PROTOCOLO DE VALIDACIÓN WALK-FORWARD -->
+    <section class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-4 shadow-sm">
+      <div class="flex items-center space-x-3">
+        <span class="px-2.5 py-1 rounded-md bg-black dark:bg-white text-white dark:text-black font-mono font-bold text-xs">05</span>
+        <h2 class="text-lg sm:text-xl font-bold text-black dark:text-white">Validación Temporal sin Fuga de Información</h2>
+      </div>
+
+      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+        Todo modelo econométrico es auditado mediante <strong>Walk-Forward Cross-Validation</strong>: entrenamos estrictamente sobre ventanas deslizantes pasadas y evaluamos la precisión en horizontes ciegos hacia adelante. Queda estrictamente excluida cualquier fuga de datos de series futuras (*lookahead bias*).
+      </p>
+    </section>
+
+    <!-- Bottom Action CTA -->
+    <div class="p-8 rounded-2xl bg-[#F5F5F7] dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <h3 class="text-base font-bold text-black dark:text-white">Aplica esta metodología a tu portafolio</h3>
+        <p class="text-xs text-[#86868B] dark:text-[#8E8E93] mt-0.5">Ejecuta simulaciones en tiempo real sobre 22 activos macrofinancieros.</p>
+      </div>
+      <a href="/explorer" class="px-6 py-3 rounded-full bg-black dark:bg-white text-white dark:text-black text-xs font-bold hover:opacity-90 transition shadow-sm">
+        Abrir Terminal Cuantitativa &rarr;
+      </a>
+    </div>
+
+  </main>
+
+  <!-- Institutional Footer -->
+  <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#0D0D0E] py-8 text-xs text-[#86868B] transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <div class="w-5 h-5 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-bold text-[10px]">M</div>
+        <span class="font-semibold text-black dark:text-white">MacroData Explorer</span>
+        <span>·</span>
+        <span>Tratado Metodológico © 2026</span>
+      </div>
+
+      <div class="flex items-center space-x-5">
+        <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
+        <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
+        <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
+        <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos y Modelos</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById("themeToggle");
+    const isDark = document.documentElement.classList.contains("dark");
+    if (themeToggle) {
+      themeToggle.checked = isDark;
+      themeToggle.addEventListener("change", (e) => {
+        if (e.target.checked) {
+          document.documentElement.classList.add("dark");
+          document.documentElement.classList.remove("light");
+          localStorage.setItem("theme", "dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+          document.documentElement.classList.add("light");
+          localStorage.setItem("theme", "light");
+        }
+      });
+    }
+  </script>
+
+  <!-- Auth and Teleprompter -->
+  <script src="/auth.js"></script>
+  <script src="/teleprompter.js"></script>
+</body>
+</html>

@@ -56,267 +56,178 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Apple Monochromatic Dark Mode */
-    html.dark body {
-      background-color: #0D0D0E !important;
-      color: #F5F5F7 !important;
-    }
-    html.dark header {
-      background-color: rgba(13, 13, 14, 0.9) !important;
-      border-color: #2C2C2E !important;
-    }
-    html.dark .bg-white {
-      background-color: #1C1C1E !important;
-      border-color: #2C2C2E !important;
-      color: #F5F5F7 !important;
-    }
-    html.dark .bg-\[\#F5F5F7\] {
-      background-color: #2C2C2E !important;
-      border-color: #3A3A3C !important;
-      color: #F5F5F7 !important;
-    }
-    html.dark .text-black,
-    html.dark h1, html.dark h2, html.dark h3 {
-      color: #F5F5F7 !important;
-    }
-    html.dark .text-\[\#86868B\] {
-      color: #8E8E93 !important;
+    .ui-switch {
+      --switch-bg: rgb(229, 229, 234);
+      --switch-checked-bg: rgb(0, 0, 0);
+      --circle-diameter: 18px;
+      --circle-bg: #FFFFFF;
+      --circle-inset: 2px;
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
     }
 
-    /* Custom Switch provided by user */
-    .ui-switch {
-      --switch-bg: rgb(135, 150, 165);
-      --switch-width: 48px;
-      --switch-height: 20px;
-      --circle-diameter: 32px;
-      --circle-bg: rgb(0, 56, 146);
-      --circle-inset: calc((var(--circle-diameter) - var(--switch-height)) / 2);
-      display: inline-block;
-      position: relative;
-      cursor: pointer;
+    html.dark .ui-switch {
+      --switch-bg: rgb(44, 44, 46);
+      --switch-checked-bg: rgb(255, 255, 255);
+      --circle-bg: #0D0D0E;
     }
 
     .ui-switch input {
-      display: none;
+      opacity: 0;
+      width: 0;
+      height: 0;
     }
 
     .slider {
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-      width: var(--switch-width);
-      height: var(--switch-height);
-      background: var(--switch-bg);
-      border-radius: 999px;
-      position: relative;
+      position: absolute;
       cursor: pointer;
-    }
-    .slider .circle {
-      top: calc(var(--circle-inset) * -1);
+      top: 0;
       left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--switch-bg);
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 9999px;
+    }
+
+    .slider .circle {
+      top: var(--circle-inset);
+      left: var(--circle-inset);
       width: var(--circle-diameter);
       height: var(--circle-diameter);
       position: absolute;
       background: var(--circle-bg);
       border-radius: inherit;
-      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHdpZHRoPSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj4KICAgIDxwYXRoIGZpbGw9IiNmZmYiCiAgICAgICAgZD0iTTkuMzA1IDEuNjY3VjMuNzVoMS4zODlWMS42NjdoLTEuMzl6bS00LjcwNyAxLjk1bC0uOTgyLjk4Mkw1LjA5IDYuMDcybC45ODItLjk4Mi0xLjQ3My0xLjQ3M3ptMTAuODAyIDBMMTMuOTI3IDUuMDlsLjk4Mi45ODIgMS40NzMtMS40NzMtLjk4Mi0uOTgyek0xMCA1LjEzOWE0Ljg3MiA0Ljg3MiAwIDAwLTQuODYyIDQuODZBNC44NzIgNC44NzIgMCAwMDEwIDE0Ljg2MiA0Ljg3MiA0Ljg3MiAwIDAwMTQuODYgMTAgNC44NzIgNC44NzIgMCAwMDEwIDUuMTM5em0wIDEuMzg5QTMuNDYyIDMuNDYyIDAgMDExMy40NzEgMTBhMy40NjIgMy40NjIgMCAwMS0zLjQ3MyAzLjQ3MkEzLjQ2MiAzLjQ2MiAwIDAxNi41MjcgMTAgMy40NjIgMCAwMTEwIDYuNTI4ek0xLjY2NSA5LjMwNXYxLjM5aDIuMDgzdi0xLjM5SDEuNjY2em0xNC41ODMgMHYxLjM5aDIuMDg0di0xLjM5aC0yLjA4NHpNNS4wOSAxMy45MjhMMy42MTYgMTUuNGwuOTgyLjk4MiAxLjQ3My0xLjQ3My0uOTgyLS45ODJ6bTkuODIgMGwtLjk4Mi45ODIgMS40NzMtMS40NzMuOTgyLS45ODItMS40NzMtMS40NzN6TTkuMzA1IDE2LjI1djIuMDgzaDEuMzg5VjE2LjI1aC0xLjM5eiIgLz4KPC9zdmc+");
-      background-repeat: no-repeat;
-      background-position: center center;
-      -webkit-transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, -webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-      -o-transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-      transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, -webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
-      align-items: center;
-      -webkit-box-pack: center;
-      -ms-flex-pack: center;
-      justify-content: center;
-      box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
 
-    .slider .circle::before {
-      content: "";
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.75);
-      border-radius: inherit;
-      -webkit-transition: all 500ms;
-      -o-transition: all 500ms;
-      transition: all 500ms;
-      opacity: 0;
+    .ui-switch input:checked + .slider {
+      background-color: var(--switch-checked-bg);
     }
 
-    .ui-switch input:checked+.slider .circle {
-      left: calc(100% - var(--circle-diameter));
-      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHdpZHRoPSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj4KICAgIDxwYXRoIGZpbGw9IiNmZmYiCiAgICAgICAgZD0iTTQuMiAyLjVsLS43IDEuOC0xLjguNyAxLjguNy43IDEuOC42LTEuOEw2LjcgNWwtMS45LS43LS42LTEuOHptMTUgOC4zYTYuNyA2LjcgMCAxMS02LjYtNi42IDUuOCA1LjggMCAwMDYuNiA2LjZ6IiAvPgo8L3N2Zz4=");
-    }
-
-    .ui-switch input:active+.slider .circle::before {
-      -webkit-transition: 0s;
-      -o-transition: 0s;
-      transition: 0s;
-      opacity: 1;
-      width: 0;
-      height: 0;
+    .ui-switch input:checked + .slider .circle {
+      left: calc(100% - var(--circle-diameter) - var(--circle-inset));
     }
   </style>
 </head>
-<body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased flex flex-col justify-between transition-colors duration-200">
+<body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 
   <!-- Apple Minimal Header -->
   <header class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF]/90 dark:bg-[#0D0D0E]/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       
-      <!-- Brand & Badges -->
-      <a href="/" class="flex items-center space-x-3 group" title="Ir al inicio de MacroData">
-        <div class="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm transition transform group-hover:scale-105">
-          M
-        </div>
-        <div class="flex items-center space-x-2">
-          <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg">MacroData</span>
-          <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#1D1D1F] dark:text-[#F5F5F7] border border-[#E5E5EA] dark:border-[#3A3A3C]">
-            TimesFM 2.5
-          </span>
-          <span class="hidden sm:inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#1D1D1F] dark:text-[#F5F5F7] border border-[#E5E5EA] dark:border-[#3A3A3C]">
-            TypeSafe AI Jev
-          </span>
-        </div>
-      </a>
+      <!-- Brand & Navigation -->
+      <div class="flex items-center space-x-6">
+        <a href="/" class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm shadow-sm">
+            M
+          </div>
+          <div class="flex flex-col">
+            <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">MacroData</span>
+            <span class="text-[10px] text-[#86868B] uppercase tracking-wider font-semibold">Institutional</span>
+          </div>
+        </a>
 
-      <!-- Right Actions: Switch Toggle & Home Link -->
-      <div class="flex items-center space-x-3 sm:space-x-4">
-        <!-- Switch Toggle -->
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-[#86868B]">
+          <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
+          <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
+          <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
+          <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
+          <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos</a>
+        </nav>
+      </div>
+
+      <!-- Right Actions: Switch Toggle -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <div id="navbarAuthContainer"></div>
+
         <label class="ui-switch" title="Alternar modo claro / oscuro">
           <input id="themeToggle" type="checkbox" />
           <div class="slider">
             <div class="circle"></div>
           </div>
         </label>
-
-        <!-- Home Button -->
-        <a href="/" class="inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-3.5 py-2 rounded-full transition shadow-sm">
-          <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-          <span>Inicio</span>
-        </a>
       </div>
 
     </div>
   </header>
 
-  <!-- Centered 404 Hero Section -->
-  <main class="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20 flex flex-col items-center justify-center text-center">
-    
-    <!-- Badge -->
-    <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#F5F5F7] dark:bg-[#1C1C1E] text-xs font-semibold text-[#86868B] dark:text-[#8E8E93] border border-[#E5E5EA] dark:border-[#2C2C2E] mb-6 shadow-sm">
-      <span class="w-2 h-2 rounded-full bg-neutral-400 dark:bg-neutral-500 animate-pulse"></span>
-      <span>404 · Ruta no encontrada</span>
-    </div>
+  <!-- Main Error Card -->
+  <main class="flex-grow flex items-center justify-center px-4 py-16 sm:py-24">
+    <div class="max-w-md w-full text-center space-y-6">
+      
+      <div class="space-y-2">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#F5F5F7] dark:bg-[#1C1C1E] text-black dark:text-white font-mono font-bold text-2xl border border-[#E5E5EA] dark:border-[#2C2C2E] shadow-sm">
+          404
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-black dark:text-white tracking-tight">
+          Página no encontrada
+        </h1>
+        <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          El recurso o serie econométrica solicitada no existe o ha sido reubicada dentro de la estructura institucional.
+        </p>
+      </div>
 
-    <!-- Minimalist Typography Display -->
-    <div class="relative select-none mb-2">
-      <span class="text-7xl sm:text-9xl font-extrabold tracking-tighter text-black/10 dark:text-white/10 font-mono">
-        404
-      </span>
-    </div>
-
-    <!-- Main Title -->
-    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-black dark:text-white mb-4">
-      Página no encontrada
-    </h1>
-
-    <!-- Description -->
-    <p class="text-xs sm:text-sm sm:text-base text-[#86868B] dark:text-[#8E8E93] leading-relaxed max-w-lg mx-auto mb-8">
-      La serie macroeconómica o subpágina solicitada no existe o ha sido reubicada.
-    </p>
-
-    <!-- Main Action Button -->
-    <div class="mb-10">
-      <a href="/" class="inline-flex items-center space-x-2 text-xs sm:text-sm font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-6 py-3 rounded-full transition shadow-sm">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-        <span>Volver al Inicio</span>
-      </a>
-    </div>
-
-    <!-- Quick Access Section -->
-    <div class="w-full max-w-xl p-5 sm:p-6 bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-3xl shadow-sm transition-colors">
-      <h2 class="text-xs font-bold uppercase tracking-wider text-[#86868B] dark:text-[#8E8E93] mb-3">
-        Accesos rápidos a series:
-      </h2>
-      <div class="flex items-center justify-center gap-2 flex-wrap">
-        <a href="/?symbol=BVN" class="text-xs font-medium px-3.5 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition shadow-sm">
-          Buenaventura (BVN)
+      <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a href="/explorer" class="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full bg-black dark:bg-white text-white dark:text-black font-semibold text-xs transition shadow-sm hover:opacity-90">
+          <span>Abrir Terminal Cuantitativa</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
         </a>
-        <a href="/?symbol=SCCO" class="text-xs font-medium px-3.5 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition shadow-sm">
-          Southern Copper (SCCO)
-        </a>
-        <a href="/?symbol=HG=F" class="text-xs font-medium px-3.5 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition shadow-sm">
-          Cobre Futuros (HG=F)
-        </a>
-        <a href="/?symbol=PEN=X" class="text-xs font-medium px-3.5 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition shadow-sm">
-          USD/PEN
+        <a href="/" class="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full bg-[#F5F5F7] dark:bg-[#1C1C1E] text-black dark:text-white font-semibold text-xs border border-[#E5E5EA] dark:border-[#2C2C2E] transition hover:bg-[#E5E5EA] dark:hover:bg-[#2C2C2E]">
+          <span>Volver al Inicio</span>
         </a>
       </div>
-    </div>
 
+    </div>
   </main>
 
-  <!-- Footer -->
-  <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#0D0D0E] py-8 text-center text-xs text-[#86868B] transition-colors">
-    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <div>
-        <strong>MacroData Explorer</strong> &copy; 2026 · Desarrollado para Agustín Ventura Saldaña
+  <!-- Institutional Footer -->
+  <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#0D0D0E] py-8 text-xs text-[#86868B] transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <div class="w-5 h-5 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-bold text-[10px]">M</div>
+        <span class="font-semibold text-black dark:text-white">MacroData Explorer</span>
+        <span>·</span>
+        <span>Error 404</span>
       </div>
-      <div class="flex items-center space-x-3 text-[#86868B]">
-        <span>Google TimesFM 2.5</span>
-        <span>•</span>
-        <span>TypeSafe AI Jev</span>
-        <span>•</span>
-        <span>100% Serverless Edge</span>
+
+      <div class="flex items-center space-x-5">
+        <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
+        <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
+        <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
+        <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos</a>
       </div>
     </div>
   </footer>
 
-  <!-- Theme Toggle Logic -->
+  <!-- Theme Toggle Script -->
   <script>
     const themeToggle = document.getElementById("themeToggle");
-
-    function initTheme() {
-      const savedTheme = localStorage.getItem("theme");
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const isDark = savedTheme === "dark" || (!savedTheme && prefersDark);
-      
-      applyTheme(isDark);
-
-      if (themeToggle) {
-        themeToggle.addEventListener("change", (e) => {
-          applyTheme(e.target.checked);
-        });
-      }
-    }
-
-    function applyTheme(isDark) {
-      if (isDark) {
-        document.documentElement.classList.add("dark");
-        document.documentElement.classList.remove("light");
-        localStorage.setItem("theme", "dark");
-        if (themeToggle) themeToggle.checked = true;
-      } else {
-        document.documentElement.classList.remove("dark");
-        document.documentElement.classList.add("light");
-        localStorage.setItem("theme", "light");
-        if (themeToggle) themeToggle.checked = false;
-      }
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initTheme);
-    } else {
-      initTheme();
+    const isDark = document.documentElement.classList.contains("dark");
+    if (themeToggle) {
+      themeToggle.checked = isDark;
+      themeToggle.addEventListener("change", (e) => {
+        if (e.target.checked) {
+          document.documentElement.classList.add("dark");
+          document.documentElement.classList.remove("light");
+          localStorage.setItem("theme", "dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+          document.documentElement.classList.add("light");
+          localStorage.setItem("theme", "light");
+        }
+      });
     }
   </script>
+
+  <!-- Auth & Teleprompter -->
+  <script src="/auth.js"></script>
+  <script src="/teleprompter.js"></script>
 </body>
 </html>
