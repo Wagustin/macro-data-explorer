@@ -88,6 +88,8 @@ const server = http.createServer(async (req, res) => {
     targetFile = "guia.html";
   } else if (pathname === "/terms" || pathname === "/terms.html") {
     targetFile = "terms.html";
+  } else if (pathname === "/auth-gateway" || pathname === "/auth-gateway.html") {
+    targetFile = "auth-gateway.html";
   } else {
     // Check if directly requesting an existing static file (e.g. auth.js, teleprompter.js)
     const relativePath = pathname.replace(/^\/+/, "");
@@ -132,5 +134,5 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, "0.0.0.0", () => {
-  console.log(`MacroData Explorer running at http://localhost:${PORT}`);
+  console.log(`PerData running at http://localhost:${PORT}`);
 });

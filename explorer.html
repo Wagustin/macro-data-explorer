@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="description" content="Terminal cuantitativa institucional para la Bolsa de Valores de Lima, metales andinos y divisas soberanas mediante modelado probabilístico multi-cuantil." />
-  <title>Terminal Cuantitativa · MacroData Explorer · Forecasting Probabilístico</title>
+  <title>Terminal Cuantitativa · PerData · Forecasting Probabilístico</title>
   
   <!-- Early Theme Init to avoid flash -->
   <script>
@@ -230,7 +230,7 @@
             M
           </div>
           <div class="flex flex-col">
-            <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">MacroData</span>
+            <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
             <span class="text-[10px] text-[#86868B] uppercase tracking-wider font-semibold">Terminal</span>
           </div>
         </a>
@@ -612,7 +612,7 @@
   <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#0D0D0E] mt-12 py-8 text-center text-xs text-[#86868B] transition-colors">
     <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
       <div>
-        <strong>MacroData Explorer</strong> &copy; 2026 · Desarrollado para Agustín Ventura Saldaña
+        <strong>PerData</strong> &copy; 2026 · Desarrollado para Agustín Ventura Saldaña
       </div>
       <div class="flex items-center space-x-2.5 sm:space-x-3 text-[#86868B] flex-wrap justify-center">
         <span>Google TimesFM 2.5</span>
@@ -653,7 +653,7 @@
         <div class="p-3.5 rounded-2xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] flex items-start space-x-3">
           <svg class="w-5 h-5 text-[#86868B] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           <div class="text-xs text-[#1D1D1F] dark:text-[#F5F5F7]">
-            <strong>Bienvenido a MacroData Explorer:</strong> Este entorno computacional provee herramientas de modelado de series temporales macroeconómicas y activos financieros. Por favor revise los términos antes de continuar.
+            <strong>Bienvenido a PerData:</strong> Este entorno computacional provee herramientas de modelado de series temporales macroeconómicas y activos financieros. Por favor revise los términos antes de continuar.
           </div>
         </div>
 
@@ -664,7 +664,7 @@
             <h3 class="font-bold text-black dark:text-white text-sm sm:text-base">1. Naturaleza Analítica y Descargo Financiero</h3>
           </div>
           <p class="text-[#86868B] dark:text-[#8E8E93] pl-3.5">
-            MacroData Explorer es una plataforma orientada exclusivamente a fines de investigación cuantitativa, análisis técnico y educación financiera. Ningún dato, métrica, gráfico o cálculo presentado constituye una oferta, solicitud ni asesoramiento financiero, tributario o recomendación para la compra o venta de instrumentos de renta variable, materias primas o divisas. Las decisiones de inversión recaen de manera única y exclusiva sobre el criterio y responsabilidad del usuario.
+            PerData es una plataforma orientada exclusivamente a fines de investigación cuantitativa, análisis técnico y educación financiera. Ningún dato, métrica, gráfico o cálculo presentado constituye una oferta, solicitud ni asesoramiento financiero, tributario o recomendación para la compra o venta de instrumentos de renta variable, materias primas o divisas. Las decisiones de inversión recaen de manera única y exclusiva sobre el criterio y responsabilidad del usuario.
           </p>
         </div>
 
@@ -702,7 +702,7 @@
               <strong>Cláusula 4. Integridad de Fuentes de Información:</strong> Los datos históricos provienen de agregadores de mercado público, interfaces de BCRP y Yahoo Finance. La plataforma no asume responsabilidad civil ni contractual por eventuales discrepancias, latencias o interrupciones en la disponibilidad de feeds externos.
             </p>
             <p>
-              <strong>Cláusula 5. Propiedad Intelectual:</strong> El software, heurísticas de visualización, componentes de interfaz y canalización algorítmica son propiedad intelectual reservada de MacroData Explorer (2026).
+              <strong>Cláusula 5. Propiedad Intelectual:</strong> El software, heurísticas de visualización, componentes de interfaz y canalización algorítmica son propiedad intelectual reservada de PerData (2026).
             </p>
             <p>
               <strong>Cláusula 6. Modificaciones de los Términos:</strong> Nos reservamos el derecho de actualizar estos términos para reflejar evoluciones metodológicas del modelo TimesFM o exigencias normativas vigentes.
@@ -1197,7 +1197,7 @@
       macroOverlaySelect.addEventListener("change", (e) => {
         const val = e.target.value;
         state.macroSymbol = val;
-        loadMacroData(val, state.range);
+        loadPerData(val, state.range);
       });
     }
 
@@ -1233,7 +1233,7 @@
     }
 
     // Fetch only Macro Data
-    async function loadMacroData(macroSymbol, range) {
+    async function loadPerData(macroSymbol, range) {
       try {
         if (macroSymbol && macroSymbol !== "none") {
           const macroRes = await fetch(`${API_BASE}/historical?symbol=${encodeURIComponent(macroSymbol)}&range=${range}&interval=1mo`);
@@ -1734,7 +1734,7 @@
         // 1. Sheet: Resumen Ejecutivo
         const summaryData = [
           ["REPORTE MACROECONÓMICO Y PROYECCIÓN TIMESFM 2.5"],
-          ["Generado automáticamente por:", "MacroData Explorer"],
+          ["Generado automáticamente por:", "PerData"],
           ["Fecha de Generación:", new Date().toISOString().split("T")[0]],
           [],
           ["DATOS DEL ACTIVO PRINCIPAL"],

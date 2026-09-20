@@ -53,7 +53,7 @@ export default async function handler(req, res) {
         headers: {
           "Authorization": `Bearer ${typesafeApiKey}`,
           "Content-Type": "application/json",
-          "User-Agent": "MacroDataExplorer/2.5"
+          "User-Agent": "PerDataExplorer/2.5"
         },
         body: JSON.stringify({
           symbol,

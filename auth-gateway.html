@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-[#F5F5F7] dark:bg-[#000000]">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pasarela de Autenticación Institucional · PerData</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'] }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="h-full flex items-center justify-center p-4 antialiased text-[#1D1D1F] dark:text-[#E5E5EA]">
+  <div class="w-full max-w-[420px] bg-white dark:bg-[#1C1C1E] rounded-2xl shadow-2xl border border-[#D2D2D7]/60 dark:border-[#2C2C2E] p-8 relative overflow-hidden transition-all">
+    <!-- Header: Provider Branding -->
+    <div class="flex flex-col items-center text-center">
+      <div id="providerLogoContainer" class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 shadow-sm border border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#2C2C2E]">
+        <!-- Dynamic SVG logo injected via JS -->
+      </div>
+      <h1 id="providerTitle" class="text-xl font-bold tracking-tight text-black dark:text-white">Iniciar sesión</h1>
+      <p id="providerSubtitle" class="text-xs text-[#86868B] mt-1">Acceso seguro federado a PerData Terminal</p>
+    </div>
+
+    <!-- Quick Accounts / Account Input Form -->
+    <div class="mt-6 space-y-4">
+      <div id="quickAccountsContainer" class="space-y-2">
+        <p class="text-[11px] uppercase tracking-wider text-[#86868B] font-semibold">Cuentas detectadas</p>
+        
+        <!-- Primary Quick Account (Agustin) -->
+        <button type="button" class="quick-acc-btn w-full flex items-center gap-3 p-3 rounded-xl border border-[#E5E5EA] dark:border-[#2C2C2E] hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E]/60 transition text-left group"
+                data-email="venturasaldanaa@gmail.com" data-name="Agustin Ventura Saldaña">
+          <div class="w-9 h-9 rounded-full bg-black dark:bg-white text-white dark:text-black font-semibold text-xs flex items-center justify-center flex-shrink-0">
+            AV
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="text-xs font-semibold text-black dark:text-white truncate">Agustin Ventura Saldaña</p>
+            <p class="text-[11px] text-[#86868B] truncate">venturasaldanaa@gmail.com</p>
+          </div>
+          <span class="text-xs text-[#86868B] group-hover:text-black dark:group-hover:text-white transition">&rarr;</span>
+        </button>
+
+        <!-- Secondary Quick Account (PerData Org) -->
+        <button type="button" class="quick-acc-btn w-full flex items-center gap-3 p-3 rounded-xl border border-[#E5E5EA] dark:border-[#2C2C2E] hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E]/60 transition text-left group"
+                data-email="agustin@perdata.pe" data-name="Agustin Ventura (PerData)">
+          <div class="w-9 h-9 rounded-full bg-stone-700 text-white font-semibold text-xs flex items-center justify-center flex-shrink-0">
+            PD
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="text-xs font-semibold text-black dark:text-white truncate">PerData Institutional Work</p>
+            <p class="text-[11px] text-[#86868B] truncate">agustin@perdata.pe</p>
+          </div>
+          <span class="text-xs text-[#86868B] group-hover:text-black dark:group-hover:text-white transition">&rarr;</span>
+        </button>
+      </div>
+
+      <!-- Divider -->
+      <div class="relative flex py-1 items-center">
+        <div class="flex-grow border-t border-[#E5E5EA] dark:border-[#2C2C2E]"></div>
+        <span class="flex-shrink mx-3 text-[10px] uppercase tracking-wider text-[#86868B]">o ingresar otra cuenta</span>
+        <div class="flex-grow border-t border-[#E5E5EA] dark:border-[#2C2C2E]"></div>
+      </div>
+
+      <!-- Custom Account Form -->
+      <form id="customAuthForm" class="space-y-3">
+        <div>
+          <label for="customEmailInput" class="block text-[11px] font-medium text-[#86868B] mb-1">Correo electrónico</label>
+          <input type="email" id="customEmailInput" required placeholder="tu-correo@empresa.com"
+                 class="w-full px-3 py-2 text-xs rounded-xl border border-[#D2D2D7] dark:border-[#3A3A3C] bg-white dark:bg-[#121214] text-black dark:text-white placeholder-[#86868B] focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white transition" />
+        </div>
+        <div>
+          <label for="customNameInput" class="block text-[11px] font-medium text-[#86868B] mb-1">Nombre completo (opcional)</label>
+          <input type="text" id="customNameInput" placeholder="Nombre y Apellidos"
+                 class="w-full px-3 py-2 text-xs rounded-xl border border-[#D2D2D7] dark:border-[#3A3A3C] bg-white dark:bg-[#121214] text-black dark:text-white placeholder-[#86868B] focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white transition" />
+        </div>
+        <button type="submit" id="btnSubmitCustom"
+                class="w-full py-2.5 px-4 rounded-xl bg-black dark:bg-white text-white dark:text-black font-semibold text-xs hover:opacity-90 active:scale-[0.99] transition shadow-sm">
+          Continuar y Autorizar
+        </button>
+      </form>
+    </div>
+
+    <!-- Status / Loading Overlay -->
+    <div id="loadingOverlay" class="absolute inset-0 bg-white/95 dark:bg-[#1C1C1E]/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center transition-opacity opacity-0 pointer-events-none">
+      <div class="w-8 h-8 border-2 border-black dark:border-white border-t-transparent rounded-full animate-spin mb-3"></div>
+      <p id="loadingStatusText" class="text-xs font-semibold text-black dark:text-white">Verificando credenciales federadas...</p>
+      <p class="text-[11px] text-[#86868B] mt-1">Sincronizando sesión con PerData Server</p>
+    </div>
+
+    <!-- Footer Security Notice -->
+    <div class="mt-6 pt-4 border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-center">
+      <p class="text-[10px] text-[#86868B] leading-relaxed">
+        Conexión TLS 1.3 protegida. Al continuar, autorizas la emisión de tokens JWT de sesión institucional para PerData.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // Detect system theme
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const provider = (params.get("provider") || "google").toLowerCase();
+      const originUrl = params.get("origin") || window.location.origin;
+
+      const providerLogoContainer = document.getElementById("providerLogoContainer");
+      const providerTitle = document.getElementById("providerTitle");
+      const providerSubtitle = document.getElementById("providerSubtitle");
+      const loadingOverlay = document.getElementById("loadingOverlay");
+      const loadingStatusText = document.getElementById("loadingStatusText");
+
+      // Provider SVG Logos & Details
+      const providersData = {
+        google: {
+          title: "Iniciar sesión con Google",
+          subtitle: "Elige o ingresa una cuenta para continuar a PerData",
+          logo: `<svg class="w-7 h-7" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>`
+        },
+        apple: {
+          title: "Iniciar sesión con Apple",
+          subtitle: "Usa tu Apple ID institucional para acceder a PerData",
+          logo: `<svg class="w-7 h-7 fill-current text-black dark:text-white" viewBox="0 0 170 170">
+            <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.7-7.74-12-14.1-6.19-9.15-11.05-19.82-14.59-32.03-3.53-12.2-5.3-23.75-5.3-34.64 0-14.28 3.59-26.17 10.77-35.68 7.18-9.51 16.27-14.37 27.27-14.58 4.79 0 10.37 1.25 16.74 3.76 6.37 2.51 10.33 3.82 11.89 3.92 1.34-.1 5.37-1.42 12.09-3.95 6.72-2.54 12.28-3.69 16.69-3.46 12.5.65 22.54 5.38 30.12 14.19-10.87 6.64-16.18 15.65-15.93 27.04.25 8.94 3.65 16.51 10.2 22.7 6.55 6.19 14.47 9.87 23.76 11.04-2.14 6.74-4.82 13.68-8.03 20.82zM119.22 31.84c0-7.39 2.67-14.53 8.01-21.43 5.34-6.9 12.01-11.23 20.02-13-1.07 7.62-3.83 14.73-8.29 21.32-4.46 6.59-10.98 10.95-19.74 13.11z"/>
+          </svg>`
+        },
+        facebook: {
+          title: "Continuar con Meta / Facebook",
+          subtitle: "Acceso federado a través de credenciales de Meta",
+          logo: `<svg class="w-7 h-7 fill-[#1877F2]" viewBox="0 0 24 24">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>`
+        }
+      };
+
+      const selectedConfig = providersData[provider] || providersData.google;
+      providerLogoContainer.innerHTML = selectedConfig.logo;
+      providerTitle.textContent = selectedConfig.title;
+      providerSubtitle.textContent = selectedConfig.subtitle;
+
+      // Handle Authentication Execution
+      async function executeAuth(email, name) {
+        loadingOverlay.classList.remove("pointer-events-none");
+        loadingOverlay.classList.remove("opacity-0");
+        loadingStatusText.textContent = `Autenticando con ${selectedConfig.title.replace('Iniciar sesión con ', '')}...`;
+
+        try {
+          const response = await fetch("/api/auth", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: "sso",
+              provider: provider,
+              email: email,
+              name: name || email.split("@")[0]
+            })
+          });
+
+          const data = await response.json();
+
+          if (!response.ok || !data.success) {
+            alert(data.error || "No se pudo completar la autenticación.");
+            loadingOverlay.classList.add("opacity-0");
+            loadingOverlay.classList.add("pointer-events-none");
+            return;
+          }
+
+          loadingStatusText.textContent = "¡Autenticación completada!";
+
+          // Dispatch message to parent/opener window
+          if (window.opener && !window.opener.closed) {
+            window.opener.postMessage({
+              type: "MDE_AUTH_SUCCESS",
+              session: {
+                user: data.user,
+                access_token: data.token
+              }
+            }, "*");
+            setTimeout(() => {
+              window.close();
+            }, 400);
+          } else {
+            // Standalone tab fallback: save directly and redirect
+            localStorage.setItem("mde_auth_session", JSON.stringify({
+              user: data.user,
+              access_token: data.token
+            }));
+            window.location.href = "/explorer";
+          }
+        } catch (err) {
+          alert("Error de red contactando el servidor de autenticación.");
+          loadingOverlay.classList.add("opacity-0");
+          loadingOverlay.classList.add("pointer-events-none");
+        }
+      }
+
+      // Quick Account buttons listener
+      document.querySelectorAll(".quick-acc-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const email = btn.getAttribute("data-email");
+          const name = btn.getAttribute("data-name");
+          executeAuth(email, name);
+        });
+      });
+
+      // Custom form submission listener
+      document.getElementById("customAuthForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = document.getElementById("customEmailInput").value.trim();
+        const name = document.getElementById("customNameInput").value.trim();
+        if (email) {
+          executeAuth(email, name);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

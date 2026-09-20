@@ -1,5 +1,5 @@
 /**
- * MacroData Explorer - Responsive Financial Teleprompter / Ticker
+ * PerData - Responsive Financial Teleprompter / Ticker
  * Fixed at top-0 on mobile, bottom-0 on desktop.
  * Smooth infinite marquee with hover/touch pause.
  */

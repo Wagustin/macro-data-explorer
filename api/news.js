@@ -265,7 +265,7 @@ export async function fetchMacroNews() {
     try {
       const url = "https://news.google.com/rss/search?q=" + encodeURIComponent(feed.query) + "&hl=es-419&gl=PE&ceid=PE:es-419";
       const res = await fetch(url, {
-        headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) MacroDataExplorer/2.5" },
+        headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) PerDataExplorer/2.5" },
         signal: AbortSignal.timeout(4500)
       });
       if (!res.ok) return [];
@@ -479,7 +479,7 @@ export default async function handler(req, res) {
 
   const responseBody = {
     status: "ok",
-    source: "MacroData Intelligence Feed Pipeline",
+    source: "PerData Intelligence Feed Pipeline",
     updatedAt,
     cached: Boolean(cached),
     count: news.length,

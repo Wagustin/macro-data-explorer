@@ -1,5 +1,5 @@
 /**
- * MacroData Explorer - Institutional Authentication & Feature Gating Module
+ * PerData - Institutional Authentication & Feature Gating Module
  * Compatible with Supabase Auth (@supabase/supabase-js v2) and persistent localStorage session.
  */
 
@@ -172,24 +172,26 @@
     },
 
     async signInWithOAuth(provider) {
-      try {
-        const res = await fetch("/api/auth", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "sso", provider })
-        });
-        const data = await res.json();
-        if (!res.ok || !data.success) {
-          return { success: false, error: data.error || "Error en autenticación institucional." };
-        }
-        this.setSession({
-          user: data.user,
-          access_token: data.token
-        });
-        return { success: true, user: data.user };
-      } catch (err) {
-        return { success: false, error: "Error conectando con el proveedor institucional." };
+      return this.openOAuthPopup(provider);
+    },
+
+    openOAuthPopup(provider) {
+      const w = 460;
+      const h = 640;
+      const left = Math.max(0, Math.round(window.screenX + (window.outerWidth - w) / 2));
+      const top = Math.max(0, Math.round(window.screenY + (window.outerHeight - h) / 2));
+      const popupUrl = `/auth-gateway.html?provider=${encodeURIComponent(provider)}&origin=${encodeURIComponent(window.location.origin)}`;
+
+      const popup = window.open(
+        popupUrl,
+        `perdata_oauth_${provider}`,
+        `width=${w},height=${h},left=${left},top=${top},menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=yes`
+      );
+
+      if (!popup || popup.closed || typeof popup.closed === "undefined") {
+        window.location.href = popupUrl;
       }
+      return { success: true, pending: true };
     },
 
     updateNavbar() {
@@ -297,6 +299,16 @@
       this.updateNavbar();
       this.updateGatedElements();
 
+      // Listen for OAuth Gateway popup message
+      window.addEventListener("message", (e) => {
+        if (e.data && e.data.type === "MDE_AUTH_SUCCESS" && e.data.session) {
+          this.setSession(e.data.session);
+          this.closeModal();
+          this.updateNavbar();
+          this.updateGatedElements();
+        }
+      });
+
       // Listen for ESC key
       window.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
@@ -340,7 +352,7 @@
               MDE
             </div>
             <h3 class="text-lg font-bold tracking-tight">Acceso Cuantitativo Avanzado</h3>
-            <p class="text-xs text-[#86868B] mt-0.5">Terminal Institucional MacroData Explorer</p>
+            <p class="text-xs text-[#86868B] mt-0.5">Terminal Institucional PerData</p>
           </div>
 
           <!-- Mode Switcher (Tab) -->
@@ -458,25 +470,19 @@
     });
 
     // Social SSO Handlers
-    document.getElementById("btnAuthGoogle").addEventListener("click", async () => {
-      statusEl.textContent = "Conectando con Google...";
-      const res = await Auth.signInWithOAuth("google");
-      if (res.success) Auth.closeModal();
-      else statusEl.textContent = res.error || "Error al autenticar.";
+    document.getElementById("btnAuthGoogle").addEventListener("click", () => {
+      statusEl.textContent = "Abriendo ventana segura de Google...";
+      Auth.openOAuthPopup("google");
     });
 
-    document.getElementById("btnAuthApple").addEventListener("click", async () => {
-      statusEl.textContent = "Conectando con Apple...";
-      const res = await Auth.signInWithOAuth("apple");
-      if (res.success) Auth.closeModal();
-      else statusEl.textContent = res.error || "Error al autenticar.";
+    document.getElementById("btnAuthApple").addEventListener("click", () => {
+      statusEl.textContent = "Abriendo ventana segura de Apple...";
+      Auth.openOAuthPopup("apple");
     });
 
-    document.getElementById("btnAuthFacebook").addEventListener("click", async () => {
-      statusEl.textContent = "Conectando con Facebook...";
-      const res = await Auth.signInWithOAuth("facebook");
-      if (res.success) Auth.closeModal();
-      else statusEl.textContent = res.error || "Error al autenticar.";
+    document.getElementById("btnAuthFacebook").addEventListener("click", () => {
+      statusEl.textContent = "Abriendo ventana segura de Meta / Facebook...";
+      Auth.openOAuthPopup("facebook");
     });
 
     // Form Submit Handler

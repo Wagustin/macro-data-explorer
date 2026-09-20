@@ -41,8 +41,8 @@ const HTML_CONTENT = `<!DOCTYPE html>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="description" content="MacroData Explorer - Series Macroeconómicas, BVL y Google TimesFM 2.5 Zero-Shot Forecasting con TypeSafe AI Jev" />
-  <title>MacroData Explorer · Apple Monochromatic · TimesFM 2.5 & TypeSafe AI</title>
+  <meta name="description" content="PerData - Series Macroeconómicas, BVL y Google TimesFM 2.5 Zero-Shot Forecasting con TypeSafe AI Jev" />
+  <title>PerData · Apple Monochromatic · TimesFM 2.5 & TypeSafe AI</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -173,7 +173,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           M
         </div>
         <div class="flex items-center space-x-2">
-          <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg">MacroData</span>
+          <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg">PerData</span>
           <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#1D1D1F] dark:text-[#F5F5F7] border border-[#E5E5EA] dark:border-[#3A3A3C]">
             TimesFM 2.5
           </span>
@@ -528,7 +528,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
   <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#0D0D0E] mt-12 py-8 text-center text-xs text-[#86868B] transition-colors">
     <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
       <div>
-        <strong>MacroData Explorer</strong> &copy; 2026 · Desarrollado para Agustín Ventura Saldaña
+        <strong>PerData</strong> &copy; 2026 · Desarrollado para Agustín Ventura Saldaña
       </div>
       <div class="flex items-center space-x-3 text-[#86868B]">
         <span>Google TimesFM 2.5</span>
@@ -759,7 +759,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
       macroOverlaySelect.addEventListener("change", (e) => {
         const val = e.target.value;
         state.macroSymbol = val;
-        loadMacroData(val, state.range);
+        loadPerData(val, state.range);
       });
     }
 
@@ -795,7 +795,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
     }
 
     // Fetch only Macro Data
-    async function loadMacroData(macroSymbol, range) {
+    async function loadPerData(macroSymbol, range) {
       try {
         if (macroSymbol && macroSymbol !== "none") {
           const macroRes = await fetch(\`\${API_BASE}/historical?symbol=\${encodeURIComponent(macroSymbol)}&range=\${range}&interval=1mo\`);
@@ -1290,7 +1290,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
         // 1. Sheet: Resumen Ejecutivo
         const summaryData = [
           ["REPORTE MACROECONÓMICO Y PROYECCIÓN TIMESFM 2.5"],
-          ["Generado automáticamente por:", "MacroData Explorer"],
+          ["Generado automáticamente por:", "PerData"],
           ["Fecha de Generación:", new Date().toISOString().split("T")[0]],
           [],
           ["DATOS DEL ACTIVO PRINCIPAL"],
@@ -1417,7 +1417,7 @@ async function handleSearch(req, url) {
   try {
     const yfUrl = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(q)}&quotesCount=6&newsCount=0`;
     const yfRes = await fetch(yfUrl, {
-      headers: { "User-Agent": "MacroDataExplorer/2.5" },
+      headers: { "User-Agent": "PerDataExplorer/2.5" },
       signal: AbortSignal.timeout(5000)
     });
     if (yfRes.ok) {
@@ -1469,7 +1469,7 @@ async function handleHistorical(req, url) {
       const indicator = rawSymbol === "PERU_CPI" ? "FP.CPI.TOTL.ZG" : "NY.GDP.MKTP.KD.ZG";
       const wbUrl = `https://api.worldbank.org/v2/country/PER/indicator/${indicator}?format=json&date=2014:2026&per_page=50`;
       const wbRes = await fetch(wbUrl, {
-        headers: { "User-Agent": "MacroDataExplorer/2.5" },
+        headers: { "User-Agent": "PerDataExplorer/2.5" },
         signal: AbortSignal.timeout(6000)
       });
       if (!wbRes.ok) {

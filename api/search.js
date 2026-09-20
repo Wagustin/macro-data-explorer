@@ -71,7 +71,7 @@ export default async function handler(req, res) {
   try {
     const yfUrl = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(q)}&quotesCount=6&newsCount=0`;
     const yfRes = await fetch(yfUrl, {
-      headers: { "User-Agent": "MacroDataExplorer/2.5" },
+      headers: { "User-Agent": "PerDataExplorer/2.5" },
       signal: AbortSignal.timeout(5000)
     });
     

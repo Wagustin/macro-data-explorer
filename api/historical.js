@@ -37,7 +37,7 @@ export default async function handler(req, res) {
       const indicator = symbol === "PERU_CPI" ? "FP.CPI.TOTL.ZG" : "NY.GDP.MKTP.KD.ZG";
       const wbUrl = `https://api.worldbank.org/v2/country/PER/indicator/${indicator}?format=json&date=2014:2026&per_page=50`;
       const wbRes = await fetch(wbUrl, { 
-        headers: { "User-Agent": "MacroDataExplorer/2.5" },
+        headers: { "User-Agent": "PerDataExplorer/2.5" },
         signal: AbortSignal.timeout(6000)
       });
 

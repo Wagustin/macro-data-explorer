@@ -1,5 +1,5 @@
 /**
- * MacroData Explorer - Serverless Institutional Authentication Backend
+ * PerData - Serverless Institutional Authentication Backend
  * Built with native Node.js crypto (no external dependencies required).
  * Provides secure PBKDF2 password hashing with random salt, signed HS256 JWT sessions,
  * and resilient multi-tier persistence (data/users.json -> /tmp fallback -> memory).
