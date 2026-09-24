@@ -184,6 +184,88 @@ const HTML_CONTENT = `<!DOCTYPE html>
         min-height: 40px !important;
       }
     }
+
+    /* ===== Professional motion system ===== */
+    /* Section entrance: soft rise + fade, staggered by DOM order */
+    @keyframes mde-rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    main > section,
+    .rise-in {
+      animation: mde-rise 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    }
+    main > section:nth-child(2) { animation-delay: 0.06s; }
+    main > section:nth-child(3) { animation-delay: 0.12s; }
+    main > section:nth-child(4) { animation-delay: 0.18s; }
+    main > section:nth-child(5) { animation-delay: 0.24s; }
+    main > section:nth-child(6) { animation-delay: 0.30s; }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      main > section, .rise-in { animation: none; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+
+    /* Card hover: hairline tightens + barely-there lift. No scale, no glow. */
+    .hover-lift {
+      transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+                  box-shadow 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+                  border-color 0.2s ease;
+      will-change: transform;
+    }
+    .hover-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.18);
+    }
+    html.dark .hover-lift:hover {
+      box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.55);
+    }
+
+    /* KPI value micro-interaction on update */
+    @keyframes mde-flash {
+      0% { background-color: rgba(16, 185, 129, 0.14); border-radius: 4px; }
+      100% { background-color: transparent; border-radius: 4px; }
+    }
+    .value-flash { animation: mde-flash 0.9s ease-out; }
+
+    /* Buttons: underline-grow feedback instead of jump */
+    .btn-pro {
+      position: relative;
+      overflow: hidden;
+      transition: opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+    }
+    .btn-pro::after {
+      content: "";
+      position: absolute;
+      left: 12%;
+      right: 12%;
+      bottom: 0;
+      height: 1px;
+      background: currentColor;
+      opacity: 0.35;
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+    .btn-pro:hover::after { transform: scaleX(1); }
+
+    /* Segmented controls: sliding feel via quick soft transitions */
+    .range-btn, .horizon-btn, .chip-btn, .cat-chip {
+      transition: background-color 0.18s ease, color 0.18s ease,
+                  border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    /* Search dropdown: slide+fade entrance */
+    #searchResults {
+      transform-origin: top center;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+    #searchResults:not(.hidden) { animation: mde-rise 0.22s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+
+    /* Table rows: fade-in cascade (first 15 rows only, cheap) */
+    #tableBody tr { animation: mde-rise 0.4s ease-out both; }
+    #tableBody tr:nth-child(n+16) { animation: none; }
     .locked-option:hover {
       opacity: 0.75 !important;
     }
@@ -304,7 +386,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
         </label>
 
         <!-- Excel Export Top Button -->
-        <button id="btnExportExcelTop" class="hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-4 py-2 rounded-md transition">
+        <button id="btnExportExcelTop" class="btn-pro hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-4 py-2 rounded-md transition">
           <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           <span>Descargar Excel</span>
         </button>
@@ -392,10 +474,10 @@ const HTML_CONTENT = `<!DOCTYPE html>
       </div>
     </section>
 
-    <!-- Controls Bar: Time Range & Macro Overlay -->
-    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4 transition-colors">
+    <!-- Controls Bar: Time Range & Macro Overlay (centered) -->
+    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 flex flex-col items-center justify-center gap-4 transition-colors">
       <!-- Historical Range Selector -->
-      <div class="flex flex-wrap items-center gap-2">
+      <div class="flex flex-wrap items-center justify-center gap-2">
         <span class="micro-label text-[#86868B] dark:text-[#8E8E93] mr-1">Rango Histórico:</span>
         <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-lg border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-medium tnum">
           <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="1y">1A</button>
@@ -406,11 +488,11 @@ const HTML_CONTENT = `<!DOCTYPE html>
       </div>
 
       <!-- Macro Overlay Dropdown -->
-      <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:space-x-2 w-full sm:w-auto">
-        <label for="macroOverlay" class="micro-label text-[#86868B] dark:text-[#8E8E93] whitespace-nowrap">
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:space-x-2 w-full sm:w-auto">
+        <label for="macroOverlay" class="micro-label text-[#86868B] dark:text-[#8E8E93] whitespace-nowrap text-center sm:text-right">
           Cruce Macroeconómico:
         </label>
-        <select id="macroOverlay" class="w-full sm:w-auto bg-[#F5F5F7] dark:bg-[#2C2C2E] hover:bg-white dark:hover:bg-[#3A3A3C] border border-[#E5E5EA] dark:border-[#3A3A3C] text-black dark:text-white text-xs sm:text-sm rounded-lg px-3 py-2 outline-none font-medium transition cursor-pointer">
+        <select id="macroOverlay" class="w-full sm:w-auto bg-[#F5F5F7] dark:bg-[#2C2C2E] hover:bg-white dark:hover:bg-[#3A3A3C] border border-[#E5E5EA] dark:border-[#3A3A3C] text-black dark:text-white text-xs sm:text-sm rounded-lg px-3 py-2 outline-none font-medium transition cursor-pointer focus:ring-1 focus:ring-black dark:focus:ring-white">
           <option value="HG=F" selected>Cobre Futuros (HG=F)</option>
           <option value="GC=F">Oro Futuros (GC=F)</option>
           <option value="SI=F">Plata Futuros (SI=F)</option>
@@ -442,27 +524,27 @@ const HTML_CONTENT = `<!DOCTYPE html>
 
       <!-- KPI Metrics Grid (Monochromatic Apple Style) -->
       <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4 text-center">
-        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
+        <div class="hover-lift bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
           <div class="micro-label text-[#86868B]">Retorno Histórico</div>
           <div id="metricReturn" class="text-lg sm:text-xl font-bold font-mono tnum text-emerald-600 dark:text-emerald-400 mt-1">+184.2%</div>
           <div class="text-[10px] text-[#86868B] mt-0.5">En el rango seleccionado</div>
         </div>
-        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
+        <div class="hover-lift bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
           <div class="micro-label text-[#86868B]">Máximo Período</div>
           <div id="metricHigh" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">$36.50</div>
           <div id="metricHighDate" class="text-[10px] text-[#86868B] mt-0.5">Pico histórico</div>
         </div>
-        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
+        <div class="hover-lift bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
           <div class="micro-label text-[#86868B]">Mínimo Período</div>
           <div id="metricLow" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">$4.10</div>
           <div id="metricLowDate" class="text-[10px] text-[#86868B] mt-0.5">Valle histórico</div>
         </div>
-        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
+        <div class="hover-lift bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
           <div class="micro-label text-[#86868B]">Correlación (r)</div>
           <div id="metricCorrelation" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">+0.74</div>
           <div id="metricCorrelationDesc" class="text-[10px] text-[#86868B] mt-0.5">vs Cobre Futuros</div>
         </div>
-        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 col-span-2 md:col-span-1">
+        <div class="hover-lift bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 col-span-2 md:col-span-1">
           <div class="micro-label text-[#86868B]">Observaciones</div>
           <div id="metricPoints" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">121</div>
           <div class="text-[10px] text-[#86868B] mt-0.5">Meses continuos</div>
@@ -472,9 +554,9 @@ const HTML_CONTENT = `<!DOCTYPE html>
 
     <!-- Google TimesFM 2.5 Section: Clean Apple Card -->
     <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 sm:p-6 transition-colors relative">
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-[#E5E5EA] dark:border-[#2C2C2E] gap-4">
+      <div class="flex flex-col items-center justify-center text-center pb-4 border-b border-[#E5E5EA] dark:border-[#2C2C2E] gap-4">
         <div>
-          <div class="flex items-center space-x-2.5">
+          <div class="flex items-center justify-center space-x-2.5">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <h3 class="text-base sm:text-lg font-bold text-black dark:text-white">
               Google TimesFM 2.5 — Proyección Cuantitativa Zero-Shot
@@ -488,8 +570,8 @@ const HTML_CONTENT = `<!DOCTYPE html>
           </p>
         </div>
 
-        <!-- Horizon Selection Buttons (1M, 3M, 6M, 12M, Custom) -->
-        <div class="flex items-center flex-wrap gap-2">
+        <!-- Horizon Selection Buttons (1M, 3M, 6M, 12M, Custom) — centered -->
+        <div class="flex items-center justify-center flex-wrap gap-2">
           <span class="micro-label text-[#86868B] dark:text-[#8E8E93]">Horizonte:</span>
           <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-lg border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-semibold items-center tnum">
             <button class="horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition" data-horizon="1">1M</button>
@@ -525,25 +607,25 @@ const HTML_CONTENT = `<!DOCTYPE html>
       <!-- Active Forecast Results & Cards -->
       <div id="forecastContent" class="mt-5 space-y-4">
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-center">
-          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
+          <div class="hover-lift bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
             <div class="micro-label text-[#86868B]">Precio Esperado (P50)</div>
             <div id="tfmP50" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">$39.34</div>
             <div id="tfmHorizonDate" class="text-[10px] text-[#86868B] mt-0.5">Al horizonte de 6 meses</div>
           </div>
 
-          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
+          <div class="hover-lift bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
             <div class="micro-label text-[#86868B]">Retorno Proyectado</div>
             <div id="tfmReturn" class="text-lg sm:text-xl font-bold font-mono tnum text-emerald-600 dark:text-emerald-400 mt-1">+13.3%</div>
             <div id="tfmTrend" class="text-[10px] text-[#86868B] mt-0.5">Tendencia Alcista</div>
           </div>
 
-          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
+          <div class="hover-lift bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
             <div class="micro-label text-[#86868B]">Rango Probabilístico (80%)</div>
             <div id="tfmRange" class="text-base sm:text-lg font-bold font-mono tnum text-black dark:text-white mt-1 whitespace-nowrap">$21.97 — $56.71</div>
             <div class="text-[10px] text-[#86868B] mt-0.5">Cuantiles P10 a P90</div>
           </div>
 
-          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
+          <div class="hover-lift bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
             <div class="micro-label text-[#86868B]">Volatilidad Anualizada</div>
             <div id="tfmVol" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">48.7%</div>
             <div class="text-[10px] text-[#86868B] mt-0.5">Difusión temporal √h</div>
@@ -551,14 +633,14 @@ const HTML_CONTENT = `<!DOCTYPE html>
         </div>
 
         <!-- TimesFM Summary Banner -->
-        <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/40 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-black dark:text-[#F5F5F7]">
-          <div class="flex items-center space-x-2">
+        <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/40 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-3 sm:p-4 flex flex-col items-center text-center justify-center gap-2 text-xs text-black dark:text-[#F5F5F7]">
+          <div class="flex items-center justify-center space-x-2">
             <svg class="w-4 h-4 text-[#86868B] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             <span id="tfmExplainText">
               La gráfica inferior ha sido ampliada con las fechas futuras proyectadas, mostrando la trayectoria P50 (línea discontinua) y el intervalo de confianza P10-P90.
             </span>
           </div>
-          <button id="btnToggleForecastChart" class="self-start sm:self-auto px-3.5 py-1.5 bg-black dark:bg-white hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black rounded-md font-semibold text-xs transition whitespace-nowrap">
+          <button id="btnToggleForecastChart" class="btn-pro self-center px-3.5 py-1.5 bg-black dark:bg-white hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black rounded-md font-semibold text-xs transition whitespace-nowrap">
             Ocultar Proyección en Gráfico
           </button>
         </div>
@@ -567,14 +649,14 @@ const HTML_CONTENT = `<!DOCTYPE html>
 
     <!-- Main Dual Chart Section (Expanded with TimesFM) -->
     <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 sm:p-6 transition-colors">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-[#E5E5EA] dark:border-[#2C2C2E] gap-3">
-        <div class="flex items-center space-x-2">
+      <div class="flex flex-col items-center justify-center text-center pb-4 mb-4 border-b border-[#E5E5EA] dark:border-[#2C2C2E] gap-3">
+        <div class="flex items-center justify-center space-x-2">
           <div class="w-2 h-2 rounded-full bg-black dark:bg-white"></div>
           <span class="text-sm font-bold text-black dark:text-white">Evolución Histórica & Proyección Ampliada</span>
         </div>
         
         <!-- Legend Items (Monochromatic) -->
-        <div class="flex flex-wrap items-center gap-3 text-xs text-[#86868B] dark:text-[#8E8E93] font-medium">
+        <div class="flex flex-wrap items-center justify-center gap-3 text-xs text-[#86868B] dark:text-[#8E8E93] font-medium">
           <span class="inline-flex items-center">
             <span class="w-3 h-1 bg-black dark:bg-white rounded-sm mr-1.5"></span> Histórico
           </span>
@@ -633,7 +715,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
 
     <!-- Historical & Projected Data Table -->
     <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg overflow-hidden transition-colors">
-      <div class="p-4 sm:p-6 border-b border-[#E5E5EA] dark:border-[#2C2C2E] flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#F5F5F7] dark:bg-[#2C2C2E]/40">
+      <div class="p-4 sm:p-6 border-b border-[#E5E5EA] dark:border-[#2C2C2E] flex flex-col items-center text-center justify-center gap-4 bg-[#F5F5F7] dark:bg-[#2C2C2E]/40">
         <div>
           <h3 class="text-base font-bold text-black dark:text-white">Tabla de Datos Históricos y Proyectados</h3>
           <p class="text-xs text-[#86868B] dark:text-[#8E8E93] mt-0.5">Observaciones mensuales correlacionadas y cuantiles probabilísticos.</p>
