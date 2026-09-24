@@ -90,11 +90,19 @@ const server = http.createServer(async (req, res) => {
     targetFile = "terms.html";
   } else {
     // Check if directly requesting an existing static file (e.g. auth.js, teleprompter.js)
-    const relativePath = pathname.replace(/^\/+/, "");
-    const safePath = path.normalize(relativePath).replace(/^(\.\.[\/\\])+/, "");
-    const candidatePath = path.join(__dirname, safePath);
-    if (fs.existsSync(candidatePath) && fs.statSync(candidatePath).isFile()) {
-      targetFile = safePath;
+    let relativePath;
+    try {
+      relativePath = decodeURIComponent(pathname).replace(/^\/+/, "").replace(/\0/g, "");
+    } catch (e) {
+      relativePath = null;
+    }
+    if (relativePath && !relativePath.includes("\0")) {
+      const safePath = path.normalize(relativePath).replace(/^(\.\.[\/\\])+/, "");
+      const candidatePath = path.join(__dirname, safePath);
+      if (candidatePath.startsWith(__dirname + path.sep) &&
+          fs.existsSync(candidatePath) && fs.statSync(candidatePath).isFile()) {
+        targetFile = safePath;
+      }
     }
   }
 

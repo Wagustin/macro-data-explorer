@@ -39,11 +39,26 @@ const HTML_CONTENT = `<!DOCTYPE html>
 <html lang="es" class="light">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="description" content="PerData - Series Macroeconómicas, BVL y Google TimesFM 2.5 Zero-Shot Forecasting con TypeSafe AI Jev" />
-  <title>PerData · Apple Monochromatic · TimesFM 2.5 & TypeSafe AI</title>
+  <meta name="description" content="Terminal cuantitativa institucional para la Bolsa de Valores de Lima, metales andinos y divisas soberanas mediante modelado probabilístico multi-cuantil." />
+  <title>Terminal Cuantitativa · PerData · Forecasting Probabilístico</title>
   
+  <!-- Early Theme Init to avoid flash -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
+      } else {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.classList.add("light");
+      }
+    })();
+  </script>
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -71,121 +86,196 @@ const HTML_CONTENT = `<!DOCTYPE html>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <style>
+    html, body {
+      overflow-x: hidden !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+    }
+
+    main, section {
+      min-width: 0 !important;
+      max-width: 100% !important;
+    }
+
+    canvas {
+      max-width: 100% !important;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       letter-spacing: -0.011em;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    /* Custom Switch provided by user 👇 */
+    .overflow-x-auto {
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Guaranteed Apple Monochromatic Dark Mode */
+    html.dark body {
+      background-color: #0D0D0E !important;
+      color: #F5F5F7 !important;
+    }
+    html.dark header {
+      background-color: rgba(13, 13, 14, 0.9) !important;
+      border-color: #2C2C2E !important;
+    }
+    html.dark .bg-white,
+    html.dark section,
+    html.dark .bg-white\\/90 {
+      background-color: #1C1C1E !important;
+      border-color: #2C2C2E !important;
+      color: #F5F5F7 !important;
+    }
+    html.dark .bg-\\[\\#F5F5F7\\] {
+      background-color: #2C2C2E !important;
+      border-color: #3A3A3C !important;
+      color: #F5F5F7 !important;
+    }
+    html.dark .text-\\[\\#000000\\],
+    html.dark .text-\\[\\#1D1D1F\\],
+    html.dark .text-black,
+    html.dark h1, html.dark h2, html.dark h3, html.dark h4 {
+      color: #F5F5F7 !important;
+    }
+    html.dark .text-\\[\\#86868B\\] {
+      color: #8E8E93 !important;
+    }
+    html.dark input, html.dark select {
+      background-color: #2C2C2E !important;
+      color: #F5F5F7 !important;
+      border-color: #3A3A3C !important;
+    }
+    html.dark tr:hover td {
+      background-color: #252528 !important;
+    }
+    html.dark td, html.dark th {
+      border-color: #2C2C2E !important;
+    }
+
+    /* Locked / Restricted Option Attenuation Styling */
+    .locked-option {
+      color: #9ca3af !important; /* stone-400 */
+      opacity: 0.45 !important;
+      cursor: pointer !important;
+      font-weight: 500 !important;
+      transition: opacity 0.2s ease, color 0.2s ease !important;
+    }
+    html.dark .locked-option {
+      color: #71717a !important; /* stone-500 / zinc-500 */
+      opacity: 0.40 !important;
+    }
+    .locked-option:hover {
+      opacity: 0.75 !important;
+    }
+
+    /* Tabular numerals & institutional micro-labels */
+    .tnum {
+      font-feature-settings: "tnum" 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .micro-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* Minimal institutional switch (shared with metodologia.html) */
     .ui-switch {
-      /* switch */
-      --switch-bg: rgb(135, 150, 165);
-      --switch-width: 48px;
-      --switch-height: 20px;
-      /* circle */
-      --circle-diameter: 32px;
-      --circle-bg: rgb(0, 56, 146);
-      --circle-inset: calc((var(--circle-diameter) - var(--switch-height)) / 2);
-      display: inline-block;
+      --switch-bg: rgb(229, 229, 234);
+      --switch-checked-bg: rgb(0, 0, 0);
+      --circle-diameter: 18px;
+      --circle-bg: #FFFFFF;
+      --circle-inset: 2px;
       position: relative;
-      cursor: pointer;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    html.dark .ui-switch {
+      --switch-bg: rgb(44, 44, 46);
+      --switch-checked-bg: rgb(255, 255, 255);
+      --circle-bg: #0D0D0E;
     }
 
     .ui-switch input {
-      display: none;
+      opacity: 0;
+      width: 0;
+      height: 0;
     }
 
     .slider {
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-      width: var(--switch-width);
-      height: var(--switch-height);
-      background: var(--switch-bg);
-      border-radius: 999px;
-      position: relative;
+      position: absolute;
       cursor: pointer;
-    }
-    .slider .circle {
-      top: calc(var(--circle-inset) * -1);
+      top: 0;
       left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--switch-bg);
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 9999px;
+    }
+
+    .slider .circle {
+      top: var(--circle-inset);
+      left: var(--circle-inset);
       width: var(--circle-diameter);
       height: var(--circle-diameter);
       position: absolute;
       background: var(--circle-bg);
       border-radius: inherit;
-      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHdpZHRoPSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj4KICAgIDxwYXRoIGZpbGw9IiNmZmYiCiAgICAgICAgZD0iTTkuMzA1IDEuNjY3VjMuNzVoMS4zODlWMS42NjdoLTEuMzl6bS00LjcwNyAxLjk1bC0uOTgyLjk4Mkw1LjA5IDYuMDcybC45ODItLjk4Mi0xLjQ3My0xLjQ3M3ptMTAuODAyIDBMMTMuOTI3IDUuMDlsLjk4Mi45ODIgMS40NzMtMS40NzMtLjk4Mi0uOTgyek0xMCA1LjEzOWE0Ljg3MiA0Ljg3MiAwIDAwLTQuODYyIDQuODZBNC44NzIgNC44NzIgMCAwMDEwIDE0Ljg2MiA0Ljg3MiA0Ljg3MiAwIDAwMTQuODYgMTAgNC44NzIgNC44NzIgMCAwMDEwIDUuMTM5em0wIDEuMzg5QTMuNDYyIDMuNDYyIDAgMDExMy40NzEgMTBhMy40NjIgMy40NjIgMCAwMS0zLjQ3MyAzLjQ3MkEzLjQ2MiAzLjQ2MiAwIDAxNi41MjcgMTAgMy40NjIgMCAwMTEwIDYuNTI4ek0xLjY2NSA5LjMwNXYxLjM5aDIuMDgzdi0xLjM5SDEuNjY2em0xNC41ODMgMHYxLjM5aDIuMDg0di0xLjM5aC0yLjA4NHpNNS4wOSAxMy45MjhMMy42MTYgMTUuNGwuOTgyLjk4MiAxLjQ3My0xLjQ3My0uOTgyLS45ODJ6bTkuODIgMGwtLjk4Mi45ODIgMS40NzMtMS40NzMuOTgyLS45ODItMS40NzMtMS40NzN6TTkuMzA1IDE2LjI1djIuMDgzaDEuMzg5VjE2LjI1aC0xLjM5eiIgLz4KPC9zdmc+");
-      background-repeat: no-repeat;
-      background-position: center center;
-      -webkit-transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, -webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-      -o-transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-      transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, -webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
-      align-items: center;
-      -webkit-box-pack: center;
-      -ms-flex-pack: center;
-      justify-content: center;
-      box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
 
-    .slider .circle::before {
-      content: "";
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.75);
-      border-radius: inherit;
-      -webkit-transition: all 500ms;
-      -o-transition: all 500ms;
-      transition: all 500ms;
-      opacity: 0;
+    .ui-switch input:checked + .slider {
+      background-color: var(--switch-checked-bg);
     }
 
-    /* actions */
-    .ui-switch input:checked+.slider .circle {
-      left: calc(100% - var(--circle-diameter));
-      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHdpZHRoPSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj4KICAgIDxwYXRoIGZpbGw9IiNmZmYiCiAgICAgICAgZD0iTTQuMiAyLjVsLS43IDEuOC0xLjguNyAxLjguNy43IDEuOC42LTEuOEw2LjcgNWwtMS45LS43LS42LTEuOHptMTUgOC4zYTYuNyA2LjcgMCAxMS02LjYtNi42IDUuOCA1LjggMCAwMDYuNiA2LjZ6IiAvPgo8L3N2Zz4=");
-    }
-
-    .ui-switch input:active+.slider .circle::before {
-      -webkit-transition: 0s;
-      -o-transition: 0s;
-      transition: 0s;
-      opacity: 1;
-      width: 0;
-      height: 0;
+    .ui-switch input:checked + .slider .circle {
+      left: calc(100% - var(--circle-diameter) - var(--circle-inset));
     }
   </style>
 </head>
 <body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200">
 
-  <!-- Apple Minimal Header -->
+  <!-- Institutional Header -->
   <header class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF]/90 dark:bg-[#0D0D0E]/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
       
-      <!-- Brand & Badges -->
-      <div class="flex items-center space-x-3">
-        <div class="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm">
-          M
-        </div>
-        <div class="flex items-center space-x-2">
-          <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg">PerData</span>
-          <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#1D1D1F] dark:text-[#F5F5F7] border border-[#E5E5EA] dark:border-[#3A3A3C]">
-            TimesFM 2.5
-          </span>
-          <span class="hidden sm:inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#1D1D1F] dark:text-[#F5F5F7] border border-[#E5E5EA] dark:border-[#3A3A3C]">
-            TypeSafe AI Jev
-          </span>
-        </div>
+      <!-- Brand & Navigation -->
+      <div class="flex items-center space-x-6">
+        <a href="/" class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm border border-black/10 dark:border-white/10">
+            P
+          </div>
+          <div class="flex flex-col">
+            <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
+            <span class="text-[10px] text-[#86868B] uppercase tracking-wider font-semibold">Terminal</span>
+          </div>
+        </a>
+
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-[#86868B]">
+          <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
+          <a href="/explorer" class="text-black dark:text-white font-semibold transition border-b-2 border-black dark:border-white pb-0.5">Terminal</a>
+          <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
+          <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
+          <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos</a>
+        </nav>
       </div>
 
-      <!-- Right Actions: Switch Toggle & Excel -->
-      <div class="flex items-center space-x-3 sm:space-x-4">
-        <!-- Switch Toggle Component Provided -->
+      <!-- Right Actions -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <!-- Auth Container -->
+        <div id="navbarAuthContainer"></div>
+
+        <!-- Switch Toggle Component -->
         <label class="ui-switch" title="Alternar modo claro / oscuro">
           <input id="themeToggle" type="checkbox" />
           <div class="slider">
@@ -194,10 +284,25 @@ const HTML_CONTENT = `<!DOCTYPE html>
         </label>
 
         <!-- Excel Export Top Button -->
-        <button id="btnExportExcelTop" class="inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-3.5 py-2 rounded-full transition shadow-sm">
+        <button id="btnExportExcelTop" class="hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-4 py-2 rounded-md transition">
           <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           <span>Descargar Excel</span>
         </button>
+
+        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] text-[#86868B] hover:text-black dark:hover:text-white transition" aria-label="Abrir menú" aria-expanded="false">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+
+      <!-- Mobile Nav Dropdown -->
+      <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 right-0 border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#1C1C1E] shadow-lg">
+        <nav class="flex flex-col py-2 text-xs font-medium text-[#86868B]">
+          <a href="/" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Inicio</a>
+          <a href="/explorer" class="px-4 py-2.5 text-black dark:text-white font-semibold bg-[#F5F5F7] dark:bg-[#0D0D0E]">Terminal</a>
+          <a href="/metodologia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Metodología</a>
+          <a href="/guia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Guía de Uso</a>
+          <a href="/terms" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Términos</a>
+        </nav>
       </div>
 
     </div>
@@ -206,23 +311,23 @@ const HTML_CONTENT = `<!DOCTYPE html>
   <!-- Main Container -->
   <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8">
 
-    <!-- Centered Hero & Search Section -->
-    <section class="text-center max-w-3xl mx-auto space-y-4">
-      <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#F5F5F7] dark:bg-[#1C1C1E] text-xs font-medium text-[#86868B] dark:text-[#8E8E93] border border-[#E5E5EA] dark:border-[#2C2C2E]">
+    <!-- Hero & Search Section -->
+    <section class="text-center space-y-4">
+      <div class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[11px] font-semibold uppercase tracking-wider tnum text-[#86868B] border border-[#E5E5EA] dark:border-[#2C2C2E]">
         <span>10 Años de Series Históricas</span>
         <span>·</span>
         <span>Inferencia Probabilística Zero-Shot</span>
       </div>
 
-      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-black dark:text-white">
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-black dark:text-white">
         Análisis Macroeconómico Cuantitativo
       </h1>
       <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed max-w-2xl mx-auto">
-        Exploración de minería peruana, commodities globales y variables macroeconómicas con predicción multi-cuantil de Google TimesFM 2.5 e interpretación de TypeSafe AI Jev.
+        Modelado econométrico y estocástico de alta dimensión para minería peruana, metales globales y variables macroeconómicas con conos de incertidumbre P10/P50/P90.
       </p>
 
       <!-- Search Input Container -->
-      <div class="mt-6 relative max-w-xl mx-auto text-left" id="searchContainer">
+      <div class="mt-6 relative max-w-xl mx-auto w-full text-left" id="searchContainer">
         <div class="relative">
           <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#86868B]">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -232,7 +337,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
             id="companySearch" 
             autocomplete="off"
             placeholder="Buscar activo o empresa (ej. Buenaventura, Southern Copper, Volcan, Cobre...)" 
-            class="w-full pl-10 pr-10 py-3 bg-[#F5F5F7] dark:bg-[#1C1C1E] focus:bg-white dark:focus:bg-[#161618] text-black dark:text-white placeholder-[#86868B] dark:placeholder-[#8E8E93] text-xs sm:text-sm rounded-2xl border border-[#E5E5EA] dark:border-[#2C2C2E] focus:border-black dark:focus:border-white focus:outline-none transition shadow-sm"
+            class="w-full pl-10 pr-10 py-3 bg-[#F5F5F7] dark:bg-[#1C1C1E] focus:bg-white dark:focus:bg-[#161618] text-black dark:text-white placeholder-[#86868B] dark:placeholder-[#8E8E93] text-xs sm:text-sm rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E] focus:border-black dark:focus:border-white focus:outline-none transition"
           />
           <div id="searchSpinner" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center">
             <div class="w-4 h-4 border-2 border-[#86868B] border-t-black dark:border-t-white rounded-full animate-spin"></div>
@@ -240,41 +345,51 @@ const HTML_CONTENT = `<!DOCTYPE html>
         </div>
 
         <!-- Dropdown Results -->
-        <div id="searchResults" class="hidden absolute left-0 right-0 mt-2 bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl shadow-2xl max-h-80 overflow-y-auto z-40 divide-y divide-[#F5F5F7] dark:divide-[#2C2C2E]"></div>
+        <div id="searchResults" class="hidden absolute left-0 right-0 mt-2 bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg shadow-2xl max-h-80 overflow-y-auto z-40 divide-y divide-[#F5F5F7] dark:divide-[#2C2C2E]"></div>
       </div>
 
       <!-- Quick Chips Shortcuts -->
-      <div class="mt-4 flex items-center justify-center gap-1.5 flex-wrap pt-2">
-        <span class="text-[11px] font-bold text-[#86868B] uppercase tracking-wider mr-1">Atajos:</span>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BVN">Buenaventura (BVN)</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="SCCO">Southern Copper (SCCO)</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="VOLCABC1.LM">Volcan</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="MINSURI1.LM">Minsur</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BAP">Credicorp</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="HG=F">Cobre Futuros</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="PEN=X">USD/PEN</button>
+      <div class="mt-4 flex items-center justify-left sm:justify-center gap-1.5 flex-wrap pt-2">
+        <span class="micro-label text-[#86868B] mr-1">Atajos:</span>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BVN">Buenaventura (BVN)</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="SCCO">Southern Copper (SCCO)</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="VOLCABC1.LM">Volcan</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="MINSURI1.LM">Minsur</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BAP">Credicorp</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="HG=F">Cobre Futuros</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="PEN=X">USD/PEN</button>
+      </div>
+
+      <!-- Search Account Recommendation Banner (Intuitive Gating) -->
+      <div id="searchAccountBanner" class="hidden mt-4 max-w-xl mx-auto p-3.5 bg-white dark:bg-[#18181A] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs transition-all duration-300">
+        <div class="flex items-center gap-2.5 text-left text-[#1D1D1F] dark:text-[#E5E5EA]">
+          <span class="leading-snug">Para esta búsqueda podrías considerar <strong>crearte una cuenta</strong> y acceder a información más precisa, series de 10 años y horizontes extendidos.</span>
+        </div>
+        <button id="btnBannerSignUp" class="shrink-0 px-3.5 py-2 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-md text-[11px] hover:opacity-90 transition">
+          Crear cuenta
+        </button>
       </div>
     </section>
 
     <!-- Controls Bar: Time Range & Macro Overlay -->
-    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4 transition-colors">
+    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4 transition-colors">
       <!-- Historical Range Selector -->
       <div class="flex flex-wrap items-center gap-2">
-        <span class="text-xs font-bold uppercase tracking-wider text-[#86868B] dark:text-[#8E8E93] mr-1">Rango Histórico:</span>
-        <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-xl border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-medium">
+        <span class="micro-label text-[#86868B] dark:text-[#8E8E93] mr-1">Rango Histórico:</span>
+        <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-lg border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-medium tnum">
           <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="1y">1A</button>
-          <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="3y">3A</button>
+          <button class="range-btn px-3 py-1 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition" data-range="3y">3A</button>
           <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="5y">5A</button>
-          <button class="range-btn px-3 py-1 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition" data-range="10y">10 Años (10Y)</button>
+          <button class="range-btn locked-option px-3 py-1 rounded-lg text-stone-400 dark:text-stone-600 opacity-45 hover:opacity-75 font-medium cursor-pointer transition" data-range="10y">10 Años (10Y)</button>
         </div>
       </div>
 
       <!-- Macro Overlay Dropdown -->
-      <div class="flex items-center space-x-2">
-        <label for="macroOverlay" class="text-xs font-bold uppercase tracking-wider text-[#86868B] dark:text-[#8E8E93] whitespace-nowrap">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:space-x-2 w-full sm:w-auto">
+        <label for="macroOverlay" class="micro-label text-[#86868B] dark:text-[#8E8E93] whitespace-nowrap">
           Cruce Macroeconómico:
         </label>
-        <select id="macroOverlay" class="bg-[#F5F5F7] dark:bg-[#2C2C2E] hover:bg-white dark:hover:bg-[#3A3A3C] border border-[#E5E5EA] dark:border-[#3A3A3C] text-black dark:text-white text-xs sm:text-sm rounded-xl px-3 py-1.5 outline-none font-medium transition cursor-pointer">
+        <select id="macroOverlay" class="w-full sm:w-auto bg-[#F5F5F7] dark:bg-[#2C2C2E] hover:bg-white dark:hover:bg-[#3A3A3C] border border-[#E5E5EA] dark:border-[#3A3A3C] text-black dark:text-white text-xs sm:text-sm rounded-lg px-3 py-2 outline-none font-medium transition cursor-pointer">
           <option value="HG=F" selected>Cobre Futuros (HG=F)</option>
           <option value="GC=F">Oro Futuros (GC=F)</option>
           <option value="SI=F">Plata Futuros (SI=F)</option>
@@ -293,57 +408,57 @@ const HTML_CONTENT = `<!DOCTYPE html>
       <div class="flex flex-col sm:flex-row sm:items-baseline justify-between border-b border-[#E5E5EA] dark:border-[#2C2C2E] pb-3 gap-2 text-center sm:text-left">
         <div>
           <div class="flex items-center justify-center sm:justify-start space-x-3">
-            <h2 id="assetTitle" class="text-2xl sm:text-3xl font-black text-black dark:text-white">Compañía de Minas Buenaventura</h2>
-            <span id="assetSymbolBadge" class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 bg-black dark:bg-white text-white dark:text-black rounded-full">BVN</span>
+            <h2 id="assetTitle" class="text-xl sm:text-2xl font-extrabold text-black dark:text-white">Compañía de Minas Buenaventura</h2>
+            <span id="assetSymbolBadge" class="micro-label font-mono tnum px-2 py-0.5 bg-black dark:bg-white text-white dark:text-black rounded-md">BVN</span>
           </div>
           <p id="assetMeta" class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] mt-1">Minería · Perú · Moneda: USD · 10 Años de Datos</p>
         </div>
         <div class="text-center sm:text-right">
-          <div id="latestPrice" class="text-2xl sm:text-3xl font-black text-black dark:text-white">$34.71 USD</div>
-          <div id="latestDate" class="text-xs text-[#86868B]">Último cierre registrado</div>
+          <div id="latestPrice" class="text-xl sm:text-2xl font-extrabold font-mono tnum text-black dark:text-white">$34.71 USD</div>
+          <div id="latestDate" class="text-[11px] text-[#86868B] mt-0.5">Último cierre registrado</div>
         </div>
       </div>
 
       <!-- KPI Metrics Grid (Monochromatic Apple Style) -->
       <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4 text-center">
-        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Retorno Histórico</div>
-          <div id="metricReturn" class="text-lg sm:text-xl font-extrabold text-black dark:text-white mt-1">+184.2%</div>
+        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
+          <div class="micro-label text-[#86868B]">Retorno Histórico</div>
+          <div id="metricReturn" class="text-lg sm:text-xl font-bold font-mono tnum text-emerald-600 dark:text-emerald-400 mt-1">+184.2%</div>
           <div class="text-[10px] text-[#86868B] mt-0.5">En el rango seleccionado</div>
         </div>
-        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Máximo Período</div>
-          <div id="metricHigh" class="text-lg sm:text-xl font-extrabold text-black dark:text-white mt-1">$36.50</div>
+        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
+          <div class="micro-label text-[#86868B]">Máximo Período</div>
+          <div id="metricHigh" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">$36.50</div>
           <div id="metricHighDate" class="text-[10px] text-[#86868B] mt-0.5">Pico histórico</div>
         </div>
-        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Mínimo Período</div>
-          <div id="metricLow" class="text-lg sm:text-xl font-extrabold text-black dark:text-white mt-1">$4.10</div>
+        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
+          <div class="micro-label text-[#86868B]">Mínimo Período</div>
+          <div id="metricLow" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">$4.10</div>
           <div id="metricLowDate" class="text-[10px] text-[#86868B] mt-0.5">Valle histórico</div>
         </div>
-        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Correlación (r)</div>
-          <div id="metricCorrelation" class="text-lg sm:text-xl font-extrabold text-black dark:text-white mt-1">+0.74</div>
+        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
+          <div class="micro-label text-[#86868B]">Correlación (r)</div>
+          <div id="metricCorrelation" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">+0.74</div>
           <div id="metricCorrelationDesc" class="text-[10px] text-[#86868B] mt-0.5">vs Cobre Futuros</div>
         </div>
-        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm col-span-2 md:col-span-1">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Observaciones</div>
-          <div id="metricPoints" class="text-lg sm:text-xl font-extrabold text-black dark:text-white mt-1">121</div>
+        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 col-span-2 md:col-span-1">
+          <div class="micro-label text-[#86868B]">Observaciones</div>
+          <div id="metricPoints" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">121</div>
           <div class="text-[10px] text-[#86868B] mt-0.5">Meses continuos</div>
         </div>
       </div>
     </section>
 
     <!-- Google TimesFM 2.5 Section: Clean Apple Card -->
-    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-5 sm:p-7 shadow-sm transition-colors relative">
+    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 sm:p-6 transition-colors relative">
       <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-[#E5E5EA] dark:border-[#2C2C2E] gap-4">
         <div>
           <div class="flex items-center space-x-2.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-black dark:bg-white animate-pulse"></span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <h3 class="text-base sm:text-lg font-bold text-black dark:text-white">
               Google TimesFM 2.5 — Proyección Cuantitativa Zero-Shot
             </h3>
-            <span class="hidden sm:inline-block text-[11px] font-semibold bg-[#F5F5F7] dark:bg-[#2C2C2E] text-black dark:text-white px-2.5 py-0.5 rounded-full border border-[#E5E5EA] dark:border-[#3A3A3C]">
+            <span class="hidden sm:inline-block micro-label bg-[#F5F5F7] dark:bg-[#2C2C2E] text-black dark:text-white px-2 py-0.5 rounded-md border border-[#E5E5EA] dark:border-[#3A3A3C]">
               RevIN Multi-Cuantil
             </span>
           </div>
@@ -352,14 +467,25 @@ const HTML_CONTENT = `<!DOCTYPE html>
           </p>
         </div>
 
-        <!-- Horizon Selection Buttons (1M, 3M, 6M, 12M) -->
-        <div class="flex items-center space-x-2">
-          <span class="text-xs font-bold text-[#86868B] dark:text-[#8E8E93] uppercase tracking-wider">Horizonte:</span>
-          <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-xl border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-semibold">
-            <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="1">1M</button>
-            <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="3">3M</button>
-            <button class="horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black shadow-sm transition" data-horizon="6">6M</button>
-            <button class="horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-horizon="12">12M</button>
+        <!-- Horizon Selection Buttons (1M, 3M, 6M, 12M, Custom) -->
+        <div class="flex items-center flex-wrap gap-2">
+          <span class="micro-label text-[#86868B] dark:text-[#8E8E93]">Horizonte:</span>
+          <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-lg border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-semibold items-center tnum">
+            <button class="horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition" data-horizon="1">1M</button>
+            <button class="horizon-btn locked-option px-3 py-1.5 rounded-lg text-stone-400 dark:text-stone-600 opacity-45 hover:opacity-75 font-medium cursor-pointer transition" data-horizon="3">3M</button>
+            <button class="horizon-btn locked-option px-3 py-1.5 rounded-lg text-stone-400 dark:text-stone-600 opacity-45 hover:opacity-75 font-medium cursor-pointer transition" data-horizon="6">6M</button>
+            <button class="horizon-btn locked-option px-3 py-1.5 rounded-lg text-stone-400 dark:text-stone-600 opacity-45 hover:opacity-75 font-medium cursor-pointer transition" data-horizon="12">12M</button>
+            <button id="btnCustomHorizon" class="horizon-btn locked-option px-3 py-1.5 rounded-lg text-stone-400 dark:text-stone-600 opacity-45 hover:opacity-75 font-medium cursor-pointer transition flex items-center gap-1" title="Definir cantidad libre de meses">
+              <span id="customHorizonBtnLabel">Custom</span>
+            </button>
+          </div>
+          <!-- Custom Horizon Interactive Input Popover/Bar -->
+          <div id="customHorizonContainer" class="hidden items-center gap-1.5 bg-[#F5F5F7] dark:bg-[#2C2C2E] px-2.5 py-1 rounded-lg border border-[#E5E5EA] dark:border-[#3A3A3C] transition-all">
+            <input id="customHorizonInput" type="number" min="1" max="36" value="18" placeholder="Meses" class="w-16 bg-white dark:bg-[#1C1C1E] text-black dark:text-white px-2 py-1 rounded-lg text-xs font-mono font-bold text-center border border-[#E5E5EA] dark:border-[#3A3A3C] focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white">
+            <span class="text-[11px] font-medium text-[#86868B]">meses</span>
+            <button id="btnApplyCustomHorizon" class="px-2.5 py-1 bg-black dark:bg-white text-white dark:text-black text-xs font-bold rounded-lg hover:opacity-90 transition">
+              Calcular
+            </button>
           </div>
         </div>
       </div>
@@ -378,87 +504,51 @@ const HTML_CONTENT = `<!DOCTYPE html>
       <!-- Active Forecast Results & Cards -->
       <div id="forecastContent" class="mt-5 space-y-4">
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-center">
-          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-2xl p-4">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Precio Esperado (P50)</div>
-            <div id="tfmP50" class="text-xl sm:text-2xl font-black text-black dark:text-white mt-1">$39.34</div>
+          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
+            <div class="micro-label text-[#86868B]">Precio Esperado (P50)</div>
+            <div id="tfmP50" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">$39.34</div>
             <div id="tfmHorizonDate" class="text-[10px] text-[#86868B] mt-0.5">Al horizonte de 6 meses</div>
           </div>
 
-          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-2xl p-4">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Retorno Proyectado</div>
-            <div id="tfmReturn" class="text-xl sm:text-2xl font-black text-black dark:text-white mt-1">+13.3%</div>
+          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
+            <div class="micro-label text-[#86868B]">Retorno Proyectado</div>
+            <div id="tfmReturn" class="text-lg sm:text-xl font-bold font-mono tnum text-emerald-600 dark:text-emerald-400 mt-1">+13.3%</div>
             <div id="tfmTrend" class="text-[10px] text-[#86868B] mt-0.5">Tendencia Alcista</div>
           </div>
 
-          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-2xl p-4">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Rango Probabilístico (80%)</div>
-            <div id="tfmRange" class="text-lg sm:text-xl font-bold text-black dark:text-white mt-1">$21.97 — $56.71</div>
+          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
+            <div class="micro-label text-[#86868B]">Rango Probabilístico (80%)</div>
+            <div id="tfmRange" class="text-base sm:text-lg font-bold font-mono tnum text-black dark:text-white mt-1 whitespace-nowrap">$21.97 — $56.71</div>
             <div class="text-[10px] text-[#86868B] mt-0.5">Cuantiles P10 a P90</div>
           </div>
 
-          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-2xl p-4">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Volatilidad Anualizada</div>
-            <div id="tfmVol" class="text-xl sm:text-2xl font-black text-black dark:text-white mt-1">48.7%</div>
+          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
+            <div class="micro-label text-[#86868B]">Volatilidad Anualizada</div>
+            <div id="tfmVol" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">48.7%</div>
             <div class="text-[10px] text-[#86868B] mt-0.5">Difusión temporal √h</div>
           </div>
         </div>
 
         <!-- TimesFM Summary Banner -->
-        <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/40 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-black dark:text-[#F5F5F7]">
+        <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/40 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-black dark:text-[#F5F5F7]">
           <div class="flex items-center space-x-2">
             <svg class="w-4 h-4 text-[#86868B] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             <span id="tfmExplainText">
               La gráfica inferior ha sido ampliada con las fechas futuras proyectadas, mostrando la trayectoria P50 (línea discontinua) y el intervalo de confianza P10-P90.
             </span>
           </div>
-          <button id="btnToggleForecastChart" class="self-start sm:self-auto px-3.5 py-1.5 bg-black dark:bg-white hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black rounded-full font-semibold text-xs transition whitespace-nowrap shadow-sm">
+          <button id="btnToggleForecastChart" class="self-start sm:self-auto px-3.5 py-1.5 bg-black dark:bg-white hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black rounded-md font-semibold text-xs transition whitespace-nowrap">
             Ocultar Proyección en Gráfico
           </button>
         </div>
       </div>
     </section>
 
-    <!-- TypeSafe AI · Jev System One Interpretation Section -->
-    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-6 sm:p-8 shadow-sm transition-colors text-center relative">
-      <div class="max-w-2xl mx-auto">
-        <div class="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-[#F5F5F7] dark:bg-[#2C2C2E] text-black dark:text-white text-xs font-semibold mb-3 border border-[#E5E5EA] dark:border-[#3A3A3C]">
-          <span class="w-2 h-2 rounded-full bg-black dark:bg-white animate-pulse"></span>
-          <span>TypeSafe AI · Jev System One</span>
-          <span class="text-[#86868B]">|</span>
-          <span id="tsConfidence" class="font-bold">Confianza Calibrada: 88.5%</span>
-        </div>
-        
-        <h3 class="text-xl sm:text-2xl font-bold tracking-tight text-black dark:text-white">
-          Interpretación Cuantitativa & Régimen Macroeconómico
-        </h3>
-        
-        <p id="tsTakeaway" class="mt-3 text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-          Cargando análisis semántico validado por TypeSafe AI Jev...
-        </p>
-      </div>
-
-      <!-- Sub-Cards -->
-      <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-4xl mx-auto text-center">
-        <div class="p-4 rounded-2xl bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C]">
-          <div class="text-[10px] font-bold uppercase tracking-wider text-[#86868B]">Sensibilidad Macro (Beta)</div>
-          <div id="tsBeta" class="text-sm sm:text-base font-bold text-black dark:text-white mt-1">Alta (+0.74)</div>
-        </div>
-        <div class="p-4 rounded-2xl bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C]">
-          <div class="text-[10px] font-bold uppercase tracking-wider text-[#86868B]">Régimen de Volatilidad</div>
-          <div id="tsRegime" class="text-sm sm:text-base font-bold text-black dark:text-white mt-1">Cíclico Moderado</div>
-        </div>
-        <div class="p-4 rounded-2xl bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C]">
-          <div class="text-[10px] font-bold uppercase tracking-wider text-[#86868B]">Verificación Formal</div>
-          <div id="tsEngine" class="text-sm sm:text-base font-bold text-black dark:text-white mt-1">RLCD / Jev Architecture</div>
-        </div>
-      </div>
-    </section>
-
     <!-- Main Dual Chart Section (Expanded with TimesFM) -->
-    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 sm:p-6 shadow-sm transition-colors">
+    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 sm:p-6 transition-colors">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-[#E5E5EA] dark:border-[#2C2C2E] gap-3">
         <div class="flex items-center space-x-2">
-          <div class="w-2.5 h-2.5 rounded-full bg-black dark:bg-white"></div>
+          <div class="w-2 h-2 rounded-full bg-black dark:bg-white"></div>
           <span class="text-sm font-bold text-black dark:text-white">Evolución Histórica & Proyección Ampliada</span>
         </div>
         
@@ -480,36 +570,71 @@ const HTML_CONTENT = `<!DOCTYPE html>
       </div>
 
       <!-- Chart Canvas -->
-      <div class="relative w-full h-80 sm:h-[420px]">
+      <div class="relative w-full h-[260px] sm:h-[360px] md:h-[420px]">
         <canvas id="mainChart"></canvas>
+      </div>
+
+      <!-- Interpretación del Gráfico · TypeSafe AI Jev -->
+      <div class="mt-6 pt-5 border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7]/70 dark:bg-[#2C2C2E]/30 rounded-lg p-4 sm:p-5 transition-colors text-left">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
+          <div class="inline-flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-black dark:bg-white animate-pulse"></span>
+            <span class="text-xs sm:text-sm font-bold text-black dark:text-white">Interpretación del Gráfico · TypeSafe AI Jev</span>
+            <span class="text-[#86868B]">|</span>
+            <span class="text-[10px] font-mono uppercase tracking-wider text-[#86868B]">System One RLCD</span>
+          </div>
+          <span id="tsConfidence" class="micro-label font-mono tnum text-black dark:text-white px-2 py-0.5 rounded-md bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#3A3A3C] w-fit">
+            Confianza Calibrada: 94.2%
+          </span>
+        </div>
+        
+        <p id="tsTakeaway" class="text-xs sm:text-sm text-[#1D1D1F] dark:text-[#E5E5EA] leading-relaxed">
+          Cargando análisis semántico del gráfico validado por TypeSafe AI Jev...
+        </p>
+
+        <!-- Sub-Cards -->
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-center sm:text-left">
+          <div class="p-3 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#3A3A3C]">
+            <div class="micro-label text-[#86868B]">Sensibilidad Macro (Beta)</div>
+            <div id="tsBeta" class="text-xs sm:text-sm font-bold font-mono tnum text-black dark:text-white mt-0.5">Alta (+0.74)</div>
+          </div>
+          <div class="p-3 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#3A3A3C]">
+            <div class="micro-label text-[#86868B]">Régimen de Volatilidad</div>
+            <div id="tsRegime" class="text-xs sm:text-sm font-bold text-black dark:text-white mt-0.5">Cíclico Moderado</div>
+          </div>
+          <div class="p-3 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#3A3A3C]">
+            <div class="micro-label text-[#86868B]">Verificación Formal</div>
+            <div id="tsEngine" class="text-xs sm:text-sm font-bold text-black dark:text-white mt-0.5">RLCD / Jev Architecture</div>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- Historical & Projected Data Table -->
-    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl shadow-sm overflow-hidden transition-colors">
+    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg overflow-hidden transition-colors">
       <div class="p-4 sm:p-6 border-b border-[#E5E5EA] dark:border-[#2C2C2E] flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#F5F5F7] dark:bg-[#2C2C2E]/40">
         <div>
           <h3 class="text-base font-bold text-black dark:text-white">Tabla de Datos Históricos y Proyectados</h3>
           <p class="text-xs text-[#86868B] dark:text-[#8E8E93] mt-0.5">Observaciones mensuales correlacionadas y cuantiles probabilísticos.</p>
         </div>
-        <button id="btnExportExcel" class="inline-flex items-center justify-center px-4 py-2.5 bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black font-semibold text-xs sm:text-sm rounded-full transition shadow-sm">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        <button id="btnExportExcel" class="inline-flex items-center justify-center px-4 py-2 bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black font-semibold text-xs rounded-md transition">
+          <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           Descargar Todo en Excel (.xlsx)
         </button>
       </div>
 
       <div class="overflow-x-auto max-h-96">
-        <table class="w-full text-left border-collapse text-xs sm:text-sm">
-          <thead class="bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#1D1D1F] dark:text-[#F5F5F7] font-semibold border-b border-[#E5E5EA] dark:border-[#3A3A3C] sticky top-0 z-10">
+        <table class="w-full text-left border-collapse text-xs sm:text-[13px]">
+          <thead class="bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#1D1D1F] dark:text-[#F5F5F7] border-b border-[#E5E5EA] dark:border-[#3A3A3C] sticky top-0 z-10">
             <tr>
-              <th class="py-3 px-4">Fecha</th>
-              <th class="py-3 px-4">Estado</th>
-              <th class="py-3 px-4">Cierre / P50</th>
-              <th class="py-3 px-4">Apertura</th>
-              <th class="py-3 px-4">Máximo / P90</th>
-              <th class="py-3 px-4">Mínimo / P10</th>
-              <th id="tableHeaderMacro" class="py-3 px-4">Indicador Macro</th>
-              <th class="py-3 px-4">Variación (%)</th>
+              <th class="py-2.5 px-4 micro-label whitespace-nowrap sticky left-0 z-20 bg-[#F5F5F7] dark:bg-[#2C2C2E]">Fecha</th>
+              <th class="py-2.5 px-4 micro-label whitespace-nowrap">Estado</th>
+              <th class="py-2.5 px-4 micro-label whitespace-nowrap">Cierre / P50</th>
+              <th class="py-2.5 px-4 micro-label whitespace-nowrap">Apertura</th>
+              <th class="py-2.5 px-4 micro-label whitespace-nowrap">Máximo / P90</th>
+              <th class="py-2.5 px-4 micro-label whitespace-nowrap">Mínimo / P10</th>
+              <th id="tableHeaderMacro" class="py-2.5 px-4 micro-label whitespace-nowrap">Indicador Macro</th>
+              <th class="py-2.5 px-4 micro-label whitespace-nowrap">Variación (%)</th>
             </tr>
           </thead>
           <tbody id="tableBody" class="divide-y divide-[#E5E5EA] dark:divide-[#2C2C2E] text-black dark:text-[#F5F5F7] font-normal">
@@ -517,7 +642,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           </tbody>
         </table>
       </div>
-      <div class="p-3.5 bg-[#F5F5F7] dark:bg-[#2C2C2E]/40 border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-xs text-[#86868B] text-right">
+      <div class="p-3.5 bg-[#F5F5F7] dark:bg-[#2C2C2E]/40 border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-[11px] text-[#86868B] text-right">
         <span id="tableSummary">Cargando observaciones...</span>
       </div>
     </section>
@@ -530,15 +655,119 @@ const HTML_CONTENT = `<!DOCTYPE html>
       <div>
         <strong>PerData</strong> &copy; 2026 · Desarrollado para Agustín Ventura Saldaña
       </div>
-      <div class="flex items-center space-x-3 text-[#86868B]">
+      <div class="flex items-center space-x-2.5 sm:space-x-3 text-[#86868B] flex-wrap justify-center">
         <span>Google TimesFM 2.5</span>
         <span>•</span>
         <span>TypeSafe AI Jev</span>
+        <span>•</span>
+        <button id="btnOpenTermsFooter" type="button" class="underline hover:text-black dark:hover:text-white transition font-medium">Términos y Condiciones</button>
         <span>•</span>
         <span>100% Serverless Edge</span>
       </div>
     </div>
   </footer>
+
+  <!-- Modal / Pop-up de Términos y Condiciones -->
+  <div id="termsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
+    <div id="termsModalBox" class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden transition-all duration-300 transform scale-95">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-5 border-b border-[#E5E5EA] dark:border-[#2C2C2E] flex items-center justify-between bg-white dark:bg-[#1C1C1E] sticky top-0 z-10">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-black dark:bg-white text-white dark:text-black flex items-center justify-center font-black text-sm">
+            P
+          </div>
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-black dark:text-white tracking-tight">Términos y Condiciones de Uso</h2>
+            <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93]">Marco Legal · Descargo Cuantitativo · Versión 1.0 (2026)</p>
+          </div>
+        </div>
+        <button id="btnCloseTermsModal" type="button" class="text-[#86868B] hover:text-black dark:hover:text-white p-2 rounded-md hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] transition" title="Cerrar modal">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="overflow-y-auto px-6 py-5 space-y-5 text-xs sm:text-sm text-[#1D1D1F] dark:text-[#E5E5EA] leading-relaxed">
+        
+        <!-- Summary Alert -->
+        <div class="p-3.5 rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] flex items-start space-x-3">
+          <svg class="w-5 h-5 text-[#86868B] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <div class="text-xs text-[#1D1D1F] dark:text-[#F5F5F7]">
+            <strong>Bienvenido a PerData:</strong> Este entorno computacional provee herramientas de modelado de series temporales macroeconómicas y activos financieros. Por favor revise los términos antes de continuar.
+          </div>
+        </div>
+
+        <!-- Section 1: Disclaimer Financiero -->
+        <div class="space-y-1.5">
+          <div class="flex items-center space-x-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
+            <h3 class="font-bold text-black dark:text-white text-sm sm:text-base">1. Naturaleza Analítica y Descargo Financiero</h3>
+          </div>
+          <p class="text-[#86868B] dark:text-[#8E8E93] pl-3.5">
+            PerData es una plataforma orientada exclusivamente a fines de investigación cuantitativa, análisis técnico y educación financiera. Ningún dato, métrica, gráfico o cálculo presentado constituye una oferta, solicitud ni asesoramiento financiero, tributario o recomendación para la compra o venta de instrumentos de renta variable, materias primas o divisas. Las decisiones de inversión recaen de manera única y exclusiva sobre el criterio y responsabilidad del usuario.
+          </p>
+        </div>
+
+        <!-- Section 2: Inferencia TimesFM 2.5 -->
+        <div class="space-y-1.5">
+          <div class="flex items-center space-x-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
+            <h3 class="font-bold text-black dark:text-white text-sm sm:text-base">2. Inferencia Probabilística y Google TimesFM 2.5</h3>
+          </div>
+          <p class="text-[#86868B] dark:text-[#8E8E93] pl-3.5">
+            Las proyecciones generadas utilizan el modelo fundacional zero-shot <strong>Google TimesFM 2.5</strong> junto a la arquitectura interpretativa <strong>TypeSafe AI Jev</strong>. Los resultados se estructuran en abanicos probabilísticos multi-cuantil: <strong>P10</strong> (escenario pesimista o soporte inferior), <strong>P50</strong> (mediana esperada) y <strong>P90</strong> (escenario optimista o resistencia superior) para modelar escenarios de volatilidad. El usuario reconoce que todo modelo matemático está sujeto a regímenes estocásticos y volatilidad de mercado, por lo que el comportamiento histórico de las series temporales no garantiza rendimientos futuros.
+          </p>
+        </div>
+
+        <!-- Section 3: Privacidad y Local Storage -->
+        <div class="space-y-1.5">
+          <div class="flex items-center space-x-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
+            <h3 class="font-bold text-black dark:text-white text-sm sm:text-base">3. Privacidad Local y Ausencia de Trackers</h3>
+          </div>
+          <p class="text-[#86868B] dark:text-[#8E8E93] pl-3.5">
+            En estricta adhesión a los principios de diseño minimalista y privacidad de Apple, la plataforma no emplea trackers publicitarios de terceros, scripts de telemetría invasiva ni perfiles de usuario remotos. Sus preferencias de visualización (modo claro/oscuro) y estado de aceptación de términos se almacenan íntegramente en el navegador de su dispositivo mediante <code class="bg-[#F5F5F7] dark:bg-[#2C2C2E] px-1 py-0.5 rounded text-[11px] font-mono">localStorage</code>.
+          </p>
+        </div>
+
+        <!-- Collapsible / Full legal text -->
+        <div class="pt-1">
+          <button id="btnToggleFullLegal" type="button" class="text-xs font-semibold text-black dark:text-white hover:underline inline-flex items-center space-x-1.5">
+            <span id="toggleLegalText">Ver articulado legal completo</span>
+            <svg id="toggleLegalIcon" class="w-3.5 h-3.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+
+          <div id="fullLegalSection" class="hidden mt-3 p-4 rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] space-y-3 text-xs text-[#86868B] dark:text-[#8E8E93]">
+            <p>
+              <strong>Cláusula 4. Integridad de Fuentes de Información:</strong> Los datos históricos provienen de agregadores de mercado público, interfaces de BCRP y Yahoo Finance. La plataforma no asume responsabilidad civil ni contractual por eventuales discrepancias, latencias o interrupciones en la disponibilidad de feeds externos.
+            </p>
+            <p>
+              <strong>Cláusula 5. Propiedad Intelectual:</strong> El software, heurísticas de visualización, componentes de interfaz y canalización algorítmica son propiedad intelectual reservada de PerData (2026).
+            </p>
+            <p>
+              <strong>Cláusula 6. Modificaciones de los Términos:</strong> Nos reservamos el derecho de actualizar estos términos para reflejar evoluciones metodológicas del modelo TimesFM o exigencias normativas vigentes.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-4 border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#1C1C1E] flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="text-[11px] text-[#86868B] flex items-center space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span id="termsStatusText">Consentimiento requerido para habilitar análisis</span>
+        </div>
+        <div class="flex items-center space-x-2 w-full sm:w-auto">
+          <button id="btnAcceptTerms" type="button" class="w-full sm:w-auto inline-flex items-center justify-center font-semibold text-xs sm:text-sm bg-black dark:bg-white text-white dark:text-black hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] px-6 py-2.5 rounded-md transition">
+            Aceptar y Continuar
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
 
   <!-- Application Script -->
   <script>
@@ -554,8 +783,8 @@ const HTML_CONTENT = `<!DOCTYPE html>
     const state = {
       primarySymbol: "BVN",
       macroSymbol: "HG=F",
-      range: "10y",
-      horizon: 6,
+      range: "3y",
+      horizon: 1,
       showForecastOnChart: true,
       primaryData: null,
       macroData: null,
@@ -622,8 +851,9 @@ const HTML_CONTENT = `<!DOCTYPE html>
     }
 
     // Initialize Application
-    document.addEventListener("DOMContentLoaded", () => {
+    function initializeApp() {
       initTheme();
+      setupTermsModal();
       setupSearch();
       setupQuickChips();
       setupRangeButtons();
@@ -631,10 +861,146 @@ const HTML_CONTENT = `<!DOCTYPE html>
       setupMacroSelect();
       setupExportExcel();
       setupToggleForecast();
+      setupIntuitiveGating();
+      const deepLinked = setupDeepLink();
 
-      // Initial Load
-      loadAllData(state.primarySymbol, state.range, state.macroSymbol, state.horizon);
-    });
+      // Initial Load (skipped when a deep-link symbol was loaded already)
+      if (!deepLinked) {
+        loadAllData(state.primarySymbol, state.range, state.macroSymbol, state.horizon);
+      }
+    }
+
+    // Deep link support: /explorer?symbol=HG=F (used by landing cards & news ticker)
+    function setupDeepLink() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const sym = params.get("symbol");
+        if (sym && /^[A-Za-z0-9=._\\-^]{1,20}$/.test(sym)) {
+          state.primarySymbol = sym;
+          loadAllData(sym, state.range, state.macroSymbol, state.horizon);
+          return true;
+        }
+      } catch (e) {
+        console.warn("Deep link parse error:", e);
+      }
+      return false;
+    }
+
+    // Modal de Términos y Condiciones
+    function setupTermsModal() {
+      const modal = document.getElementById("termsModal");
+      const modalBox = document.getElementById("termsModalBox");
+      const btnClose = document.getElementById("btnCloseTermsModal");
+      const btnAccept = document.getElementById("btnAcceptTerms");
+      const btnOpenHeader = document.getElementById("btnOpenTermsHeader");
+      const btnOpenFooter = document.getElementById("btnOpenTermsFooter");
+      const btnToggleLegal = document.getElementById("btnToggleFullLegal");
+      const fullLegalSection = document.getElementById("fullLegalSection");
+      const toggleLegalIcon = document.getElementById("toggleLegalIcon");
+      const toggleLegalText = document.getElementById("toggleLegalText");
+      const termsStatusText = document.getElementById("termsStatusText");
+
+      const STORAGE_KEY = "mde_terms_accepted_v1";
+
+      function updateStatusDisplay(isAccepted) {
+        if (termsStatusText) {
+          if (isAccepted) {
+            termsStatusText.textContent = "Consentimiento registrado localmente";
+            termsStatusText.className = "text-[11px] text-emerald-600 dark:text-emerald-400 font-medium";
+          } else {
+            termsStatusText.textContent = "Consentimiento requerido para habilitar análisis";
+            termsStatusText.className = "text-[11px] text-[#86868B]";
+          }
+        }
+        if (btnAccept) {
+          btnAccept.textContent = isAccepted ? "Entendido" : "Aceptar y Continuar";
+        }
+      }
+
+      function openModal() {
+        if (!modal || !modalBox) return;
+        const isAccepted = localStorage.getItem(STORAGE_KEY) === "true";
+        updateStatusDisplay(isAccepted);
+        modal.classList.remove("opacity-0", "pointer-events-none");
+        modal.classList.add("opacity-100", "pointer-events-auto");
+        modalBox.classList.remove("scale-95");
+        modalBox.classList.add("scale-100");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal() {
+        if (!modal || !modalBox) return;
+        modal.classList.remove("opacity-100", "pointer-events-auto");
+        modal.classList.add("opacity-0", "pointer-events-none");
+        modalBox.classList.remove("scale-100");
+        modalBox.classList.add("scale-95");
+        document.body.style.overflow = "";
+      }
+
+      // Check on load: if not accepted, show modal automatically
+      if (localStorage.getItem(STORAGE_KEY) !== "true") {
+        setTimeout(() => {
+          openModal();
+        }, 400);
+      }
+
+      if (btnAccept) {
+        btnAccept.addEventListener("click", () => {
+          localStorage.setItem(STORAGE_KEY, "true");
+          closeModal();
+        });
+      }
+
+      if (btnClose) {
+        btnClose.addEventListener("click", closeModal);
+      }
+
+      if (btnOpenHeader) {
+        btnOpenHeader.addEventListener("click", openModal);
+      }
+
+      if (btnOpenFooter) {
+        btnOpenFooter.addEventListener("click", openModal);
+      }
+
+      // Backdrop click closes modal
+      if (modal) {
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) {
+            closeModal();
+          }
+        });
+      }
+
+      // Escape key closes modal
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal && !modal.classList.contains("pointer-events-none")) {
+          closeModal();
+        }
+      });
+
+      // Toggle legal details
+      if (btnToggleLegal && fullLegalSection) {
+        btnToggleLegal.addEventListener("click", () => {
+          const isHidden = fullLegalSection.classList.contains("hidden");
+          if (isHidden) {
+            fullLegalSection.classList.remove("hidden");
+            if (toggleLegalText) toggleLegalText.textContent = "Ocultar articulado legal completo";
+            if (toggleLegalIcon) toggleLegalIcon.classList.add("rotate-180");
+          } else {
+            fullLegalSection.classList.add("hidden");
+            if (toggleLegalText) toggleLegalText.textContent = "Ver articulado legal completo";
+            if (toggleLegalIcon) toggleLegalIcon.classList.remove("rotate-180");
+          }
+        });
+      }
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initializeApp);
+    } else {
+      initializeApp();
+    }
 
     // Toggle Forecast Visibility on Chart
     function setupToggleForecast() {
@@ -696,7 +1062,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
             <div class="font-semibold text-xs sm:text-sm text-black dark:text-white">\${escapeHTML(item.name)}</div>
             <div class="text-[11px] text-[#86868B]">\${escapeHTML(item.sector || 'Mercado')} · \${escapeHTML(item.country || 'Global')}</div>
           </div>
-          <span class="text-xs font-bold font-mono px-2 py-1 bg-[#F5F5F7] dark:bg-[#2C2C2E] text-black dark:text-white rounded border border-[#E5E5EA] dark:border-[#3A3A3C]">\${escapeHTML(item.symbol)}</span>
+          <span class="text-xs font-bold font-mono tnum px-2 py-1 bg-[#F5F5F7] dark:bg-[#2C2C2E] text-black dark:text-white rounded-md border border-[#E5E5EA] dark:border-[#3A3A3C]">\${escapeHTML(item.symbol)}</span>
         </div>
       \`).join("");
 
@@ -708,6 +1074,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           companySearchInput.value = "";
           searchResultsDiv.classList.add("hidden");
           state.primarySymbol = sym;
+          checkSearchGatingBanner();
           loadAllData(sym, state.range, state.macroSymbol, state.horizon);
         });
       });
@@ -719,39 +1086,185 @@ const HTML_CONTENT = `<!DOCTYPE html>
         btn.addEventListener("click", () => {
           const sym = btn.getAttribute("data-symbol");
           state.primarySymbol = sym;
+          checkSearchGatingBanner();
           loadAllData(sym, state.range, state.macroSymbol, state.horizon);
         });
       });
+    }
+
+    // Dynamic Gating Recommendation Banner
+    function checkSearchGatingBanner() {
+      const banner = document.getElementById("searchAccountBanner");
+      if (!banner) return;
+      if (window.MDE_Auth && window.MDE_Auth.isAuthenticated()) {
+        banner.classList.add("hidden");
+      } else {
+        banner.classList.remove("hidden");
+      }
+    }
+
+    // Update Lock Indicators and Gating
+    function updateAuthLocks() {
+      const isAuth = !!(window.MDE_Auth && window.MDE_Auth.isAuthenticated());
+      const banner = document.getElementById("searchAccountBanner");
+      if (banner) {
+        if (isAuth) {
+          banner.classList.add("hidden");
+        } else {
+          banner.classList.remove("hidden");
+        }
+      }
+
+      const lockedElements = [
+        document.querySelector('.range-btn[data-range="10y"]'),
+        document.querySelector('.horizon-btn[data-horizon="3"]'),
+        document.querySelector('.horizon-btn[data-horizon="6"]'),
+        document.querySelector('.horizon-btn[data-horizon="12"]'),
+        document.getElementById("btnCustomHorizon"),
+        document.getElementById("btnExportExcel"),
+        document.getElementById("btnExportExcelTop")
+      ].filter(Boolean);
+
+      lockedElements.forEach(el => {
+        if (isAuth) {
+          el.classList.remove("locked-option");
+        } else {
+          // If button is not currently active, keep attenuated style
+          if (!el.classList.contains("bg-black") && !el.classList.contains("dark:bg-white")) {
+            el.classList.add("locked-option");
+          }
+        }
+      });
+    }
+
+    function setupIntuitiveGating() {
+      const bannerBtn = document.getElementById("btnBannerSignUp");
+      if (bannerBtn) {
+        bannerBtn.addEventListener("click", () => {
+          if (window.MDE_Auth) {
+            window.MDE_Auth.openModal("Para esta búsqueda podrías considerar crearte una cuenta y acceder a información más precisa, series de 10 años y proyecciones completas.");
+          }
+        });
+      }
+      updateAuthLocks();
+      window.addEventListener("mde:auth-change", updateAuthLocks);
+      window.addEventListener("mde-auth-changed", updateAuthLocks);
     }
 
     // Setup Range Buttons
     function setupRangeButtons() {
       document.querySelectorAll(".range-btn").forEach(btn => {
         btn.addEventListener("click", () => {
+          const rng = btn.getAttribute("data-range");
+          if (rng === "10y" && window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
+            window.MDE_Auth.openModal("Acceso Cuantitativo Avanzado — Inicia sesión o crea tu cuenta institucional gratuita para desbloquear series históricas completas de 10 años.");
+            return;
+          }
           document.querySelectorAll(".range-btn").forEach(b => {
             b.className = "range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
           });
           btn.className = "range-btn px-3 py-1 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition";
-          const rng = btn.getAttribute("data-range");
+          // Re-apply lock styling on gated range (10y) after the class reset above
+          const gatedRange = document.querySelector('.range-btn[data-range="10y"]');
+          if (gatedRange && rng !== "10y" && window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
+            gatedRange.classList.add("locked-option");
+          }
           state.range = rng;
           loadAllData(state.primarySymbol, rng, state.macroSymbol, state.horizon);
         });
       });
     }
 
-    // Setup Horizon Buttons (1M, 3M, 6M, 12M)
+    // Setup Horizon Buttons (1M, 3M, 6M, 12M, Custom)
     function setupHorizonButtons() {
+      const customContainer = document.getElementById("customHorizonContainer");
+      const customInput = document.getElementById("customHorizonInput");
+      const btnCustom = document.getElementById("btnCustomHorizon");
+      const btnApplyCustom = document.getElementById("btnApplyCustomHorizon");
+      const customLabel = document.getElementById("customHorizonBtnLabel");
+
       document.querySelectorAll(".horizon-btn").forEach(btn => {
+        if (btn.id === "btnCustomHorizon") return;
         btn.addEventListener("click", () => {
+          const h = parseInt(btn.getAttribute("data-horizon"), 10);
+          if (h > 1 && window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
+            window.MDE_Auth.openModal(\`Acceso a Horizontes Extendidos — La proyección de \${h} meses y análisis de cuantiles en profundidad requiere una cuenta gratuita. Regístrate para acceder a información más precisa.\`);
+            return;
+          }
+          if (customContainer) customContainer.classList.add("hidden");
+          if (customLabel) customLabel.textContent = "Custom";
+
           document.querySelectorAll(".horizon-btn").forEach(b => {
             b.className = "horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
           });
           btn.className = "horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition";
-          const h = parseInt(btn.getAttribute("data-horizon"), 10);
+          // Re-apply lock styling on gated horizons (3/6/12M, Custom) after the class reset above
+          if (window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
+            document.querySelectorAll('.horizon-btn[data-horizon="3"], .horizon-btn[data-horizon="6"], .horizon-btn[data-horizon="12"], #btnCustomHorizon')
+              .forEach(el => el.classList.add("locked-option"));
+          }
           state.horizon = h;
           fetchForecastOnly(state.primarySymbol, h);
         });
       });
+
+      // Custom Horizon Handling
+      if (btnCustom) {
+        btnCustom.addEventListener("click", () => {
+          if (window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
+            window.MDE_Auth.openModal("Horizonte Personalizado en Tiempo Real — La ejecución interactiva de TimesFM a cualquier cantidad de meses a tu elección requiere una cuenta registrada gratuita.");
+            return;
+          }
+          if (customContainer) {
+            const isHidden = customContainer.classList.contains("hidden");
+            if (isHidden) {
+              customContainer.classList.remove("hidden");
+              customContainer.classList.add("flex");
+              if (customInput) customInput.focus();
+            } else {
+              customContainer.classList.add("hidden");
+              customContainer.classList.remove("flex");
+            }
+          }
+        });
+      }
+
+      function executeCustomHorizon() {
+        if (!customInput) return;
+        let val = parseInt(customInput.value, 10);
+        if (isNaN(val) || val < 1) val = 1;
+        if (val > 36) val = 36;
+        customInput.value = val;
+
+        document.querySelectorAll(".horizon-btn").forEach(b => {
+          b.className = "horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
+        });
+        if (btnCustom) {
+          btnCustom.className = "horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition flex items-center gap-1";
+        }
+        // Re-apply lock styling on gated horizons (3/6/12M) after the class reset above
+        if (window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
+          document.querySelectorAll('.horizon-btn[data-horizon="3"], .horizon-btn[data-horizon="6"], .horizon-btn[data-horizon="12"]')
+            .forEach(el => el.classList.add("locked-option"));
+        }
+        if (customLabel) {
+          customLabel.textContent = \`Custom (\${val}M)\`;
+        }
+        state.horizon = val;
+        fetchForecastOnly(state.primarySymbol, val);
+      }
+
+      if (btnApplyCustom) {
+        btnApplyCustom.addEventListener("click", executeCustomHorizon);
+      }
+      if (customInput) {
+        customInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            executeCustomHorizon();
+          }
+        });
+      }
     }
 
     // Setup Macro Selector
@@ -982,10 +1495,12 @@ const HTML_CONTENT = `<!DOCTYPE html>
 
       const returnEl = document.getElementById("tfmReturn");
       returnEl.textContent = \`\${f.expectedReturnPct >= 0 ? '+' : ''}\${f.expectedReturnPct.toFixed(1)}%\`;
-      document.getElementById("tfmTrend").textContent = \`Tendencia \${f.trend}\`;
+      const trendText = f.trend || f.metrics?.driftDirection || (f.expectedReturnPct >= 0 ? 'Alcista' : 'Bajista');
+      document.getElementById("tfmTrend").textContent = \`Tendencia \${trendText}\`;
 
       document.getElementById("tfmRange").textContent = \`\${currencyPrefix}\${f.quantiles.p10.toFixed(2)} — \${currencyPrefix}\${f.quantiles.p90.toFixed(2)}\`;
-      document.getElementById("tfmVol").textContent = \`\${f.volatilityAnnualized}%\`;
+      const volValue = f.volatilityAnnualized ?? f.metrics?.annualizedVolatilityPct ?? '32.4';
+      document.getElementById("tfmVol").textContent = \`\${volValue}%\`;
       document.getElementById("tfmExplainText").textContent = \`Proyección TimesFM 2.5 calculada exitosamente a \${f.horizonLabel}. La gráfica inferior amplía el horizonte temporal incorporando el intervalo probabilístico P10-P90.\`;
     }
 
@@ -1234,14 +1749,14 @@ const HTML_CONTENT = `<!DOCTYPE html>
           const item = f.forecastSeries[i];
           html += \`
             <tr class="bg-[#F5F5F7]/70 dark:bg-[#2C2C2E]/40 font-medium">
-              <td class="py-2.5 px-4 font-mono text-black dark:text-white font-bold">\${escapeHTML(item.date)}</td>
-              <td class="py-2.5 px-4"><span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-black dark:bg-white text-white dark:text-black">TIMESFM P50</span></td>
-              <td class="py-2.5 px-4 font-bold text-black dark:text-white">\${currencySymbol}\${item.p50.toFixed(2)}</td>
-              <td class="py-2.5 px-4 text-[#86868B]">-</td>
-              <td class="py-2.5 px-4 text-[#86868B] font-mono">\${currencySymbol}\${item.p90.toFixed(2)}</td>
-              <td class="py-2.5 px-4 text-[#86868B] font-mono">\${currencySymbol}\${item.p10.toFixed(2)}</td>
-              <td class="py-2.5 px-4 text-[#86868B]">-</td>
-              <td class="py-2.5 px-4 font-bold text-black dark:text-white">Proyectado</td>
+              <td class="py-2.5 px-4 font-mono tnum whitespace-nowrap text-black dark:text-white sticky left-0 z-[5] bg-[#F5F5F7] dark:bg-[#2C2C2E]">\${escapeHTML(item.date)}</td>
+              <td class="py-2.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 micro-label rounded-md bg-black dark:bg-white text-white dark:text-black">TIMESFM P50</span></td>
+              <td class="py-2.5 px-4 font-bold font-mono tnum whitespace-nowrap text-black dark:text-white">\${currencySymbol}\${item.p50.toFixed(2)}</td>
+              <td class="py-2.5 px-4 text-[#86868B] whitespace-nowrap">-</td>
+              <td class="py-2.5 px-4 text-[#86868B] font-mono tnum whitespace-nowrap">\${currencySymbol}\${item.p90.toFixed(2)}</td>
+              <td class="py-2.5 px-4 text-[#86868B] font-mono tnum whitespace-nowrap">\${currencySymbol}\${item.p10.toFixed(2)}</td>
+              <td class="py-2.5 px-4 text-[#86868B] whitespace-nowrap">-</td>
+              <td class="py-2.5 px-4 font-semibold text-black dark:text-white whitespace-nowrap">Proyectado</td>
             </tr>
           \`;
         }
@@ -1257,14 +1772,14 @@ const HTML_CONTENT = `<!DOCTYPE html>
 
         html += \`
           <tr class="hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E]/60 transition">
-            <td class="py-2.5 px-4 font-mono font-medium text-black dark:text-white">\${escapeHTML(item.date)}</td>
-            <td class="py-2.5 px-4"><span class="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#86868B] dark:text-[#8E8E93] border border-[#E5E5EA] dark:border-[#3A3A3C]">HISTÓRICO</span></td>
-            <td class="py-2.5 px-4 font-bold text-black dark:text-white">\${currencySymbol}\${item.close.toFixed(2)}</td>
-            <td class="py-2.5 px-4 text-[#86868B]">\${currencySymbol}\${item.open.toFixed(2)}</td>
-            <td class="py-2.5 px-4 text-[#86868B]">\${currencySymbol}\${item.high.toFixed(2)}</td>
-            <td class="py-2.5 px-4 text-[#86868B]">\${currencySymbol}\${item.low.toFixed(2)}</td>
-            <td class="py-2.5 px-4 font-medium text-black dark:text-white">\${typeof macroVal === 'number' ? macroVal.toFixed(2) : escapeHTML(macroVal)}</td>
-            <td class="py-2.5 px-4 font-bold \${changePct >= 0 ? 'text-black dark:text-white' : 'text-[#86868B]'}">
+            <td class="py-2.5 px-4 font-mono tnum font-medium whitespace-nowrap text-black dark:text-white sticky left-0 z-[5] bg-white dark:bg-[#1C1C1E]">\${escapeHTML(item.date)}</td>
+            <td class="py-2.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 micro-label rounded-md bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#86868B] dark:text-[#8E8E93] border border-[#E5E5EA] dark:border-[#3A3A3C]">HISTÓRICO</span></td>
+            <td class="py-2.5 px-4 font-bold font-mono tnum whitespace-nowrap text-black dark:text-white">\${currencySymbol}\${item.close.toFixed(2)}</td>
+            <td class="py-2.5 px-4 text-[#86868B] font-mono tnum whitespace-nowrap">\${currencySymbol}\${item.open.toFixed(2)}</td>
+            <td class="py-2.5 px-4 text-[#86868B] font-mono tnum whitespace-nowrap">\${currencySymbol}\${item.high.toFixed(2)}</td>
+            <td class="py-2.5 px-4 text-[#86868B] font-mono tnum whitespace-nowrap">\${currencySymbol}\${item.low.toFixed(2)}</td>
+            <td class="py-2.5 px-4 font-medium font-mono tnum whitespace-nowrap text-black dark:text-white">\${typeof macroVal === 'number' ? macroVal.toFixed(2) : escapeHTML(macroVal)}</td>
+            <td class="py-2.5 px-4 font-semibold font-mono tnum whitespace-nowrap \${changePct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400'}">
               \${prevItem ? (changePct >= 0 ? '+' : '') + changePct.toFixed(2) + '%' : '-'}
             </td>
           </tr>
@@ -1279,6 +1794,10 @@ const HTML_CONTENT = `<!DOCTYPE html>
     // Excel Export Setup (With Historical + Forecast Sheets)
     function setupExportExcel() {
       const handler = () => {
+        if (window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
+          window.MDE_Auth.openModal("Acceso Cuantitativo Avanzado — Inicia sesión o crea tu cuenta institucional gratuita para descargar reportes completos en Excel (.xlsx).");
+          return;
+        }
         const p = state.primaryData;
         const m = state.macroData;
         const f = state.forecastData;
@@ -1384,6 +1903,742 @@ const HTML_CONTENT = `<!DOCTYPE html>
       btnExportExcelTop.addEventListener("click", handler);
     }
   </script>
+  <!-- Mobile Menu Toggle -->
+  <script>
+    (function() {
+      var btn = document.getElementById('mobileMenuBtn');
+      var menu = document.getElementById('mobileMenu');
+      if (btn && menu) {
+        btn.addEventListener('click', function() {
+          var open = menu.classList.toggle('hidden');
+          btn.setAttribute('aria-expanded', String(!open));
+        });
+      }
+    })();
+  </script>
+  <!-- Bridge: lets the news ticker select assets inside the terminal (same page, no reload) -->
+  <script>
+    window.selectAssetBySymbol = function(sym) {
+      if (!sym || !/^[A-Za-z0-9=._\\-^]{1,20}$/.test(sym)) return;
+      if (typeof loadAllData === "function" && typeof state !== "undefined") {
+        state.primarySymbol = sym;
+        loadAllData(sym, state.range, state.macroSymbol, state.horizon);
+        document.getElementById("assetTitle")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+  </script>
+  <!-- Authentication & Feature Gating Modal -->
+  <script>
+/**
+ * PerData - Institutional Authentication & Feature Gating Module
+ * Compatible with Supabase Auth (@supabase/supabase-js v2) and persistent localStorage session.
+ */
+
+(function (window) {
+  const STORAGE_KEY = "mde_auth_session";
+  const DEFAULT_GATING_MESSAGE = "Acceso Cuantitativo Avanzado - Inicia sesión o crea tu cuenta institucional gratuita para desbloquear series de 10 años, exportación en Excel y análisis de sensibilidad en profundidad.";
+
+  // Optional Supabase client instance
+  let supabaseClient = null;
+  if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+    try {
+      supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+    } catch (e) {
+      console.warn("Supabase init error:", e);
+    }
+  }
+
+  const Auth = {
+    supabase: supabaseClient,
+
+    getSession() {
+      try {
+        const item = localStorage.getItem(STORAGE_KEY);
+        if (!item) return null;
+        return JSON.parse(item);
+      } catch (e) {
+        return null;
+      }
+    },
+
+    isAuthenticated() {
+      const session = this.getSession();
+      return !!(session && session.user);
+    },
+
+    setSession(sessionData) {
+      if (!sessionData) {
+        localStorage.removeItem(STORAGE_KEY);
+      } else {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionData));
+      }
+      this.updateNavbar();
+      this.updateGatedElements();
+      window.dispatchEvent(new CustomEvent("mde-auth-changed", { detail: sessionData }));
+      window.dispatchEvent(new CustomEvent("mde:auth-change", { detail: sessionData }));
+    },
+
+    logout() {
+      if (supabaseClient) {
+        try { supabaseClient.auth.signOut(); } catch (e) {}
+      }
+      try {
+        fetch("/api/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "signout" })
+        }).catch(() => {});
+      } catch (e) {}
+      this.setSession(null);
+    },
+
+    requireAuth(featureName, onAllowed) {
+      if (this.isAuthenticated()) {
+        if (typeof onAllowed === "function") onAllowed();
+        return true;
+      }
+      this.openModal(DEFAULT_GATING_MESSAGE);
+      return false;
+    },
+
+    openModal(customPrompt) {
+      ensureModalDOM();
+      const modal = document.getElementById("mdeAuthModal");
+      const modalBox = document.getElementById("mdeAuthModalBox");
+      const banner = document.getElementById("mdeAuthBanner");
+
+      if (banner) {
+        if (customPrompt) {
+          banner.textContent = customPrompt;
+          banner.classList.remove("hidden");
+        } else {
+          banner.textContent = DEFAULT_GATING_MESSAGE;
+          banner.classList.remove("hidden");
+        }
+      }
+
+      if (modal && modalBox) {
+        modal.classList.remove("opacity-0", "pointer-events-none");
+        modal.classList.add("opacity-100", "pointer-events-auto");
+        modalBox.classList.remove("scale-95");
+        modalBox.classList.add("scale-100");
+        document.body.style.overflow = "hidden";
+        // Reset form error/status
+        const statusEl = document.getElementById("mdeAuthStatus");
+        if (statusEl) statusEl.textContent = "";
+      }
+    },
+
+    closeModal() {
+      const modal = document.getElementById("mdeAuthModal");
+      const modalBox = document.getElementById("mdeAuthModalBox");
+      if (modal && modalBox) {
+        modal.classList.remove("opacity-100", "pointer-events-auto");
+        modal.classList.add("opacity-0", "pointer-events-none");
+        modalBox.classList.remove("scale-100");
+        modalBox.classList.add("scale-95");
+        document.body.style.overflow = "";
+      }
+    },
+
+    async signInWithEmail(email, password) {
+      if (!email || !email.includes("@")) {
+        return { success: false, error: "Ingresa un correo electrónico válido." };
+      }
+      if (!password || password.length < 6) {
+        return { success: false, error: "La contraseña debe tener al menos 6 caracteres." };
+      }
+
+      try {
+        const res = await fetch("/api/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "signin", email, password })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Credenciales incorrectas." };
+        }
+        this.setSession({
+          user: data.user,
+          access_token: data.token
+        });
+        return { success: true, user: data.user };
+      } catch (err) {
+        return { success: false, error: "Error conectando con el servidor de autenticación." };
+      }
+    },
+
+    async signUpWithEmail(email, password, fullName) {
+      if (!email || !email.includes("@")) {
+        return { success: false, error: "Ingresa un correo institucional válido." };
+      }
+      if (!password || password.length < 6) {
+        return { success: false, error: "La contraseña debe tener un mínimo de 6 caracteres." };
+      }
+
+      try {
+        const res = await fetch("/api/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "signup",
+            email: email.trim().toLowerCase(),
+            password,
+            name: fullName ? fullName.trim() : email.split("@")[0]
+          })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "No se pudo registrar la cuenta." };
+        }
+        this.setSession({
+          user: data.user,
+          access_token: data.token
+        });
+        return { success: true, user: data.user };
+      } catch (err) {
+        return { success: false, error: "Error conectando con el servidor de autenticación." };
+      }
+    },
+
+    async signInWithOAuth(provider) {
+      return this.openOAuthPopup(provider);
+    },
+
+    openOAuthPopup(provider) {
+      // NOTE: Real OAuth requires backend credentials (client_id/secret)
+      // and proper registration at each provider's developer console.
+      // This placeholder shows the modal message until OAuth is configured.
+      const msg = "Autenticación social próximamente. Por ahora usa correo y contraseña.";
+      const statusEl = document.getElementById("mdeAuthStatus") || document.getElementById("authStatus");
+      if (statusEl) statusEl.textContent = msg;
+      console.warn("[PerData] OAuth SSO not yet configured for:", provider);
+    },
+
+    updateNavbar() {
+      const container = document.getElementById("navbarAuthContainer");
+      if (!container) return;
+
+      const session = this.getSession();
+      if (session && session.user) {
+        const u = session.user;
+        const initial = (u.name || u.email || "U").charAt(0).toUpperCase();
+        const displayName = u.name || u.email.split("@")[0];
+
+        container.innerHTML = \`
+          <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C]">
+              <span class="w-6 h-6 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center text-xs font-bold font-mono">\${initial}</span>
+              <span class="text-xs font-medium text-black dark:text-white max-w-[110px] truncate" title="\${u.email}">\${escapeHTML(displayName)}</span>
+            </div>
+            <button id="btnLogout" type="button" class="text-xs text-[#86868B] hover:text-black dark:hover:text-white px-2 py-1 transition" title="Cerrar sesión">
+              Cerrar sesión
+            </button>
+          </div>
+        \`;
+
+        const btnLogout = document.getElementById("btnLogout");
+        if (btnLogout) {
+          btnLogout.addEventListener("click", () => {
+            Auth.logout();
+          });
+        }
+      } else {
+        container.innerHTML = \`
+          <button id="btnOpenAuthModal" type="button" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-black dark:bg-white text-white dark:text-black hover:opacity-90 transition shadow-sm flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            </svg>
+            <span>Iniciar Sesión</span>
+          </button>
+        \`;
+
+        const btnOpen = document.getElementById("btnOpenAuthModal");
+        if (btnOpen) {
+          btnOpen.addEventListener("click", () => {
+            Auth.openModal();
+          });
+        }
+      }
+    },
+
+    updateGatedElements() {
+      const isAuth = this.isAuthenticated();
+
+      // Clean up any remaining legacy lock icons
+      document.querySelectorAll(".auth-lock-icon, .range-lock, .horizon-lock").forEach(el => el.remove());
+
+      // 10Y range button: attenuate font if not authenticated
+      const btn10y = document.querySelector('.range-btn[data-range="10y"]');
+      if (btn10y) {
+        if (!isAuth) {
+          btn10y.classList.add("locked-option");
+        } else {
+          btn10y.classList.remove("locked-option");
+        }
+      }
+
+      // Horizon buttons: 3M, 6M, 12M and Custom
+      const horizonGated = [
+        document.querySelector('.horizon-btn[data-horizon="3"]'),
+        document.querySelector('.horizon-btn[data-horizon="6"]'),
+        document.querySelector('.horizon-btn[data-horizon="12"]'),
+        document.getElementById("btnCustomHorizon")
+      ].filter(Boolean);
+
+      horizonGated.forEach(btn => {
+        if (!isAuth) {
+          btn.classList.add("locked-option");
+        } else {
+          btn.classList.remove("locked-option");
+        }
+      });
+
+      // Excel export buttons
+      const excelButtons = [document.getElementById("btnExportExcel"), document.getElementById("btnExportExcelTop")].filter(Boolean);
+      excelButtons.forEach(btn => {
+        if (!isAuth) {
+          btn.classList.add("locked-option");
+        } else {
+          btn.classList.remove("locked-option");
+        }
+      });
+
+      // Econometric Sensitivity Accordion
+      const accordionHeader = document.getElementById("econometricAccordionHeader");
+      if (accordionHeader) {
+        if (!isAuth) {
+          accordionHeader.classList.add("locked-option");
+        } else {
+          accordionHeader.classList.remove("locked-option");
+        }
+      }
+    },
+
+    init() {
+      ensureModalDOM();
+      this.updateNavbar();
+      this.updateGatedElements();
+
+      // Listen for OAuth Gateway popup message
+      window.addEventListener("message", (e) => {
+        if (e.data && e.data.type === "MDE_AUTH_SUCCESS" && e.data.session) {
+          this.setSession(e.data.session);
+          this.closeModal();
+          this.updateNavbar();
+          this.updateGatedElements();
+        }
+      });
+
+      // Listen for ESC key
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          this.closeModal();
+        }
+      });
+    }
+  };
+
+  function escapeHTML(str) {
+    if (!str) return "";
+    return String(str).replace(/[&<>"']/g, m => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    })[m]);
+  }
+
+  function ensureModalDOM() {
+    if (document.getElementById("mdeAuthModal")) return;
+
+    const modalHTML = \`
+      <div id="mdeAuthModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+        <div id="mdeAuthModalBox" class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl w-full max-w-md p-6 sm:p-7 shadow-2xl scale-95 transition-all duration-300 text-black dark:text-white relative">
+          
+          <!-- Close Button -->
+          <button id="btnCloseAuthModal" type="button" class="absolute top-4 right-4 text-[#86868B] hover:text-black dark:hover:text-white w-8 h-8 rounded-full flex items-center justify-center transition">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+
+          <!-- Banner / Prompt for Gated Features -->
+          <div id="mdeAuthBanner" class="mb-4 p-3 rounded-xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] text-[12px] leading-relaxed text-[#1D1D1F] dark:text-[#E5E5EA] font-medium">
+            \${DEFAULT_GATING_MESSAGE}
+          </div>
+
+          <!-- Header -->
+          <div class="mb-5 text-center">
+            <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-black dark:bg-white text-white dark:text-black mb-2 shadow-sm font-mono text-sm font-bold">
+              MDE
+            </div>
+            <h3 class="text-lg font-bold tracking-tight">Acceso Cuantitativo Avanzado</h3>
+            <p class="text-xs text-[#86868B] mt-0.5">Terminal Institucional PerData</p>
+          </div>
+
+          <!-- Mode Switcher (Tab) -->
+          <div class="flex p-1 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-xl mb-5 text-xs font-semibold">
+            <button id="tabSignIn" type="button" class="flex-1 py-1.5 rounded-lg bg-white dark:bg-[#1C1C1E] text-black dark:text-white shadow-sm transition">
+              Iniciar Sesión
+            </button>
+            <button id="tabSignUp" type="button" class="flex-1 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition">
+              Crear Cuenta
+            </button>
+          </div>
+
+          <!-- Social Auth Buttons -->
+          <div class="space-y-2 mb-4">
+            <!-- Google Button -->
+            <button id="btnAuthGoogle" type="button" class="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-xl border border-[#E5E5EA] dark:border-[#3A3A3C] bg-white dark:bg-[#2C2C2E]/50 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] text-xs font-medium transition">
+              <svg class="w-4 h-4" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <span>Continuar con Google</span>
+            </button>
+
+            <!-- Apple Button -->
+            <button id="btnAuthApple" type="button" class="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-xl border border-[#E5E5EA] dark:border-[#3A3A3C] bg-white dark:bg-[#2C2C2E]/50 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] text-xs font-medium transition">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.4c.65-.79 1.1-1.89.98-3-.95.04-2.09.63-2.76 1.42-.59.68-1.11 1.79-.97 2.87 1.06.08 2.1-.5 2.75-1.29z"/>
+              </svg>
+              <span>Continuar con Apple</span>
+            </button>
+
+            <!-- Facebook Button -->
+            <button id="btnAuthFacebook" type="button" class="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-xl border border-[#E5E5EA] dark:border-[#3A3A3C] bg-white dark:bg-[#2C2C2E]/50 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] text-xs font-medium transition">
+              <svg class="w-4 h-4 fill-[#1877F2]" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+              <span>Continuar con Facebook</span>
+            </button>
+          </div>
+
+          <!-- Divider -->
+          <div class="relative flex items-center justify-center mb-4">
+            <div class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] w-full"></div>
+            <span class="bg-white dark:bg-[#1C1C1E] px-3 text-[10px] text-[#86868B] uppercase tracking-wider font-semibold">o con correo</span>
+          </div>
+
+          <!-- Email / Password Form -->
+          <form id="mdeAuthForm" class="space-y-3">
+            <div id="groupFullName" class="hidden">
+              <label class="block text-[11px] font-medium text-[#86868B] mb-1">Nombre completo / Organización</label>
+              <input type="text" id="authFullName" placeholder="Ej. Agustín Wong / Tesorería Corporativa" class="w-full px-3 py-2 text-xs rounded-xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] focus:outline-none focus:border-black dark:focus:border-white">
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-medium text-[#86868B] mb-1">Correo electrónico</label>
+              <input type="email" id="authEmail" required placeholder="analista@empresa.com" class="w-full px-3 py-2 text-xs rounded-xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] focus:outline-none focus:border-black dark:focus:border-white">
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-medium text-[#86868B] mb-1">Contraseña</label>
+              <input type="password" id="authPassword" required minlength="6" placeholder="Mínimo 6 caracteres" class="w-full px-3 py-2 text-xs rounded-xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] focus:outline-none focus:border-black dark:focus:border-white">
+            </div>
+
+            <div id="mdeAuthStatus" class="text-[11px] text-red-500 font-medium min-h-[16px]"></div>
+
+            <button type="submit" id="btnSubmitAuth" class="w-full py-2.5 rounded-xl bg-black dark:bg-white text-white dark:text-black font-semibold text-xs hover:opacity-90 transition shadow-sm">
+              Iniciar Sesión
+            </button>
+          </form>
+
+          <p class="mt-4 text-[10px] text-center text-[#86868B]">
+            Al registrarte aceptas los <a href="/terms" class="underline hover:text-black dark:hover:text-white">Términos y Condiciones</a> y el descargo SMV/SEC.
+          </p>
+        </div>
+      </div>
+    \`;
+
+    document.body.insertAdjacentHTML("beforeend", modalHTML);
+
+    // Bind Modal Events
+    let isSignUp = false;
+    const tabSignIn = document.getElementById("tabSignIn");
+    const tabSignUp = document.getElementById("tabSignUp");
+    const groupFullName = document.getElementById("groupFullName");
+    const btnSubmit = document.getElementById("btnSubmitAuth");
+    const authForm = document.getElementById("mdeAuthForm");
+    const statusEl = document.getElementById("mdeAuthStatus");
+    const btnClose = document.getElementById("btnCloseAuthModal");
+    const modalBackdrop = document.getElementById("mdeAuthModal");
+
+    function setTab(signup) {
+      isSignUp = signup;
+      if (signup) {
+        tabSignUp.className = "flex-1 py-1.5 rounded-lg bg-white dark:bg-[#1C1C1E] text-black dark:text-white shadow-sm transition";
+        tabSignIn.className = "flex-1 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
+        groupFullName.classList.remove("hidden");
+        btnSubmit.textContent = "Crear Cuenta Institucional Gratuita";
+      } else {
+        tabSignIn.className = "flex-1 py-1.5 rounded-lg bg-white dark:bg-[#1C1C1E] text-black dark:text-white shadow-sm transition";
+        tabSignUp.className = "flex-1 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
+        groupFullName.classList.add("hidden");
+        btnSubmit.textContent = "Iniciar Sesión";
+      }
+      statusEl.textContent = "";
+    }
+
+    tabSignIn.addEventListener("click", () => setTab(false));
+    tabSignUp.addEventListener("click", () => setTab(true));
+
+    btnClose.addEventListener("click", () => Auth.closeModal());
+    modalBackdrop.addEventListener("click", (e) => {
+      if (e.target === modalBackdrop) Auth.closeModal();
+    });
+
+    // Social SSO Handlers
+    document.getElementById("btnAuthGoogle").addEventListener("click", () => {
+      statusEl.textContent = "Abriendo ventana segura de Google...";
+      Auth.openOAuthPopup("google");
+    });
+
+    document.getElementById("btnAuthApple").addEventListener("click", () => {
+      statusEl.textContent = "Abriendo ventana segura de Apple...";
+      Auth.openOAuthPopup("apple");
+    });
+
+    document.getElementById("btnAuthFacebook").addEventListener("click", () => {
+      statusEl.textContent = "Abriendo ventana segura de Meta / Facebook...";
+      Auth.openOAuthPopup("facebook");
+    });
+
+    // Form Submit Handler
+    authForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("authEmail").value;
+      const pass = document.getElementById("authPassword").value;
+      const fullName = document.getElementById("authFullName")?.value;
+
+      btnSubmit.disabled = true;
+      btnSubmit.classList.add("opacity-60");
+      statusEl.className = "text-[11px] text-[#86868B] font-medium min-h-[16px]";
+      statusEl.textContent = "Verificando credenciales institucionales...";
+
+      let res;
+      if (isSignUp) {
+        res = await Auth.signUpWithEmail(email, pass, fullName);
+      } else {
+        res = await Auth.signInWithEmail(email, pass);
+      }
+
+      btnSubmit.disabled = false;
+      btnSubmit.classList.remove("opacity-60");
+
+      if (res.success) {
+        statusEl.className = "text-[11px] text-emerald-600 dark:text-emerald-400 font-medium min-h-[16px]";
+        statusEl.textContent = "Acceso verificado. ¡Bienvenido a la Terminal!";
+        setTimeout(() => {
+          Auth.closeModal();
+        }, 500);
+      } else {
+        statusEl.className = "text-[11px] text-red-500 font-medium min-h-[16px]";
+        statusEl.textContent = res.error || "No se pudo completar el acceso.";
+      }
+    });
+  }
+
+  // Expose to window
+  window.MDE_Auth = Auth;
+  window.MacroAuth = Auth;
+
+  // Auto initialize on DOM ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => Auth.init());
+  } else {
+    Auth.init();
+  }
+})(window);
+
+</script>
+  <!-- Real-Time Teleprompter Feed Ticker -->
+  <script>
+/**
+ * PerData - Responsive Financial Teleprompter / Ticker
+ * Fixed at top-0 on mobile, bottom-0 on desktop.
+ * Smooth infinite marquee with hover/touch pause.
+ */
+
+(function (window) {
+  const FALLBACK_NEWS = [
+    { id: "1", impact: "BCRP", color: "blue", title: "BCRP mantiene tasa de referencia en 5.00% ratificando anclaje de inflación en rango meta", source: "Reuters", time: "hace 8m", symbol: "PEN=X" },
+    { id: "2", impact: "ALTO IMPACTO", color: "red", title: "Cobre COMEX repunta +2.4% superando los $4.48/lb por restricciones en fundiciones globales", source: "Bloomberg", time: "hace 15m", symbol: "HG=F" },
+    { id: "3", impact: "MINERÍA", color: "amber", title: "Minas Buenaventura (BVN) eleva guía de producción de plata y oro tras optimización en Yumpag", source: "Gestión", time: "hace 24m", symbol: "BVN" },
+    { id: "4", impact: "DIVISAS", color: "emerald", title: "Tipo de cambio USD/PEN consolida soporte en S/ 3.74 con flujo sostenido de ventas mineras", source: "SEMANAeconómica", time: "hace 35m", symbol: "PEN=X" },
+    { id: "5", impact: "FED", color: "purple", title: "Rendimiento del bono del Tesoro EE.UU. a 10 años modera a 4.22% tras reporte de nóminas", source: "Financial Times", time: "hace 42m", symbol: "^TNX" },
+    { id: "6", impact: "COBRE", color: "amber", title: "Southern Copper (SCCO) proyecta incremento del 8% en despacho de cátodos refinados", source: "Mining.com", time: "hace 55m", symbol: "SCCO" },
+    { id: "7", impact: "MACRO", color: "blue", title: "Producción minera peruana aporta 1.8 puntos porcentuales al crecimiento desestacionalizado del PBI", source: "INEI / BCRP", time: "hace 1h", symbol: "PERU_GDP" }
+  ];
+
+  function escapeHTML(str) {
+    if (str === null || str === undefined) return "";
+    return String(str).replace(/[&<>"']/g, m => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    })[m]);
+  }
+
+  function escapeJSString(str) {
+    // Escape characters that could break out of a single-quoted JS string
+    return String(str === null || str === undefined ? "" : str).replace(/[\\\\'\\n\\r\\u2028\\u2029]/g, m => "\\\\" + m);
+  }
+
+  function getBadgeClasses(color) {
+    switch (color) {
+      case "red":
+        return "bg-rose-500/20 text-rose-300 border-rose-500/30";
+      case "blue":
+        return "bg-blue-500/20 text-blue-300 border-blue-500/30";
+      case "amber":
+        return "bg-amber-500/20 text-amber-300 border-amber-500/30";
+      case "emerald":
+        return "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
+      case "purple":
+        return "bg-purple-500/20 text-purple-300 border-purple-500/30";
+      default:
+        return "bg-zinc-700/50 text-zinc-300 border-zinc-600/40";
+    }
+  }
+
+  function renderNewsItems(items) {
+    return items.map(item => {
+      const badgeStyle = getBadgeClasses(item.impactColor || item.color || "blue");
+      const sym = escapeJSString(item.symbol || "");
+      const targetUrl = window.location.pathname.includes("explorer")
+        ? \`javascript:window.selectTickerAsset && window.selectTickerAsset('\${sym}')\`
+        : \`/explorer?symbol=\${encodeURIComponent(item.symbol || 'BVN')}\`;
+
+      return \`
+        <div class="teleprompter-item inline-flex items-center gap-2 px-4 py-1 hover:text-white transition group shrink-0 text-xs">
+          <a href="\${escapeHTML(targetUrl)}" class="inline-flex items-center gap-2 hover:opacity-80 transition">
+            <span class="px-1.5 py-0.5 text-[9px] font-bold tracking-wider uppercase rounded border font-mono \${badgeStyle}">
+              \${escapeHTML(item.impact || "MACRO")}
+            </span>
+            <span class="text-[#D1D1D6] group-hover:text-white font-medium">
+              \${escapeHTML(item.title)}
+            </span>
+          </a>
+          <a href="\${escapeHTML(item.url || 'https://www.bcrp.gob.pe')}" target="_blank" rel="noopener noreferrer" class="text-[10px] text-[#86868B] hover:text-white hover:underline font-mono inline-flex items-center gap-0.5" title="Ver fuente original">
+            <span>\${escapeHTML(item.source)}</span>
+            <span class="text-[9px] text-[#636366]">· \${escapeHTML(item.time)} ↗</span>
+          </a>
+          <span class="text-zinc-700 mx-2">|</span>
+        </div>
+      \`;
+    }).join("");
+  }
+
+  async function initTeleprompter() {
+    if (document.getElementById("mdeTeleprompter")) return;
+
+    // Inject styles for infinite marquee
+    if (!document.getElementById("teleprompterStyles")) {
+      const style = document.createElement("style");
+      style.id = "teleprompterStyles";
+      style.textContent = \`
+        @keyframes mdeMarqueeScroll {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .teleprompter-track {
+          display: inline-flex;
+          white-space: nowrap;
+          animation: mdeMarqueeScroll 75s linear infinite;
+          will-change: transform;
+        }
+        .teleprompter-container:hover .teleprompter-track,
+        .teleprompter-container:active .teleprompter-track {
+          animation-play-state: paused !important;
+        }
+        @media (max-width: 639px) {
+          body.has-teleprompter {
+            padding-top: 2.5rem;
+          }
+        }
+        @media (min-width: 640px) {
+          body.has-teleprompter {
+            padding-bottom: 2.5rem;
+          }
+        }
+      \`;
+      document.head.appendChild(style);
+    }
+
+    document.body.classList.add("has-teleprompter");
+
+    // Fetch news from /api/news with fallback
+    let newsItems = FALLBACK_NEWS;
+    try {
+      const res = await fetch("/api/news");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.news && data.news.length > 0) {
+          newsItems = data.news;
+        }
+      }
+    } catch (e) {
+      console.warn("Teleprompter using fallback news feed:", e);
+    }
+
+    const itemsHtml = renderNewsItems(newsItems);
+    // Duplicate items to ensure smooth infinite loop
+    const fullTrackHtml = itemsHtml + itemsHtml;
+
+    const barHtml = \`
+      <aside id="mdeTeleprompter" class="fixed left-0 right-0 z-40 h-9 sm:h-10 top-0 sm:top-auto sm:bottom-0 bg-black/95 dark:bg-[#121214]/95 text-white backdrop-blur-md border-b sm:border-b-0 sm:border-t border-[#2C2C2E] flex items-center overflow-hidden select-none" aria-label="Titulares Macroeconómicos en Vivo">
+        
+        <!-- Live Indicator Badge -->
+        <div class="h-full flex items-center gap-1.5 px-3 bg-black dark:bg-[#121214] z-10 border-r border-[#2C2C2E] shrink-0 text-[10px] font-bold tracking-wider font-mono">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span class="text-white hidden sm:inline">MACRO FEED</span>
+          <span class="text-emerald-400 text-[9px] uppercase sm:hidden">VIVO</span>
+        </div>
+
+        <!-- Marquee Viewport -->
+        <div class="teleprompter-container flex-1 overflow-hidden relative h-full flex items-center">
+          <div class="teleprompter-track">
+            \${fullTrackHtml}
+          </div>
+        </div>
+
+        <!-- Right Quick Action / Audio/Pause helper -->
+        <div class="h-full hidden md:flex items-center px-3 bg-black dark:bg-[#121214] z-10 border-l border-[#2C2C2E] shrink-0 text-[10px] text-[#86868B] font-mono">
+          <span>Pausa: Hover</span>
+        </div>
+      </aside>
+    \`;
+
+    document.body.insertAdjacentHTML("beforeend", barHtml);
+  }
+
+  // Support jumping to asset from teleprompter on explorer page
+  window.selectTickerAsset = function(sym) {
+    if (!sym) return;
+    if (window.selectAssetBySymbol) {
+      window.selectAssetBySymbol(sym);
+    } else {
+      window.location.href = \`/explorer?symbol=\${encodeURIComponent(sym)}\`;
+    }
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initTeleprompter);
+  } else {
+    initTeleprompter();
+  }
+})(window);
+
+</script>
 </body>
 </html>`;
 

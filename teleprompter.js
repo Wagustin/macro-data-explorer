@@ -15,6 +15,22 @@
     { id: "7", impact: "MACRO", color: "blue", title: "Producción minera peruana aporta 1.8 puntos porcentuales al crecimiento desestacionalizado del PBI", source: "INEI / BCRP", time: "hace 1h", symbol: "PERU_GDP" }
   ];
 
+  function escapeHTML(str) {
+    if (str === null || str === undefined) return "";
+    return String(str).replace(/[&<>"']/g, m => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    })[m]);
+  }
+
+  function escapeJSString(str) {
+    // Escape characters that could break out of a single-quoted JS string
+    return String(str === null || str === undefined ? "" : str).replace(/[\\'\n\r\u2028\u2029]/g, m => "\\" + m);
+  }
+
   function getBadgeClasses(color) {
     switch (color) {
       case "red":
@@ -35,23 +51,24 @@
   function renderNewsItems(items) {
     return items.map(item => {
       const badgeStyle = getBadgeClasses(item.impactColor || item.color || "blue");
-      const targetUrl = window.location.pathname.includes("explorer") 
-        ? `javascript:window.selectTickerAsset && window.selectTickerAsset('${item.symbol}')` 
+      const sym = escapeJSString(item.symbol || "");
+      const targetUrl = window.location.pathname.includes("explorer")
+        ? `javascript:window.selectTickerAsset && window.selectTickerAsset('${sym}')`
         : `/explorer?symbol=${encodeURIComponent(item.symbol || 'BVN')}`;
 
       return `
         <div class="teleprompter-item inline-flex items-center gap-2 px-4 py-1 hover:text-white transition group shrink-0 text-xs">
-          <a href="${targetUrl}" class="inline-flex items-center gap-2 hover:opacity-80 transition">
+          <a href="${escapeHTML(targetUrl)}" class="inline-flex items-center gap-2 hover:opacity-80 transition">
             <span class="px-1.5 py-0.5 text-[9px] font-bold tracking-wider uppercase rounded border font-mono ${badgeStyle}">
-              ${item.impact || "MACRO"}
+              ${escapeHTML(item.impact || "MACRO")}
             </span>
             <span class="text-[#D1D1D6] group-hover:text-white font-medium">
-              ${item.title}
+              ${escapeHTML(item.title)}
             </span>
           </a>
-          <a href="${item.url || 'https://www.bcrp.gob.pe'}" target="_blank" rel="noopener noreferrer" class="text-[10px] text-[#86868B] hover:text-white hover:underline font-mono inline-flex items-center gap-0.5" title="Ver fuente original">
-            <span>${item.source}</span>
-            <span class="text-[9px] text-[#636366]">· ${item.time} ↗</span>
+          <a href="${escapeHTML(item.url || 'https://www.bcrp.gob.pe')}" target="_blank" rel="noopener noreferrer" class="text-[10px] text-[#86868B] hover:text-white hover:underline font-mono inline-flex items-center gap-0.5" title="Ver fuente original">
+            <span>${escapeHTML(item.source)}</span>
+            <span class="text-[9px] text-[#636366]">· ${escapeHTML(item.time)} ↗</span>
           </a>
           <span class="text-zinc-700 mx-2">|</span>
         </div>

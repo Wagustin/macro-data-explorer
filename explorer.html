@@ -132,102 +132,91 @@
       opacity: 0.75 !important;
     }
 
-    /* Custom Switch provided by user */
+    /* Tabular numerals & institutional micro-labels */
+    .tnum {
+      font-feature-settings: "tnum" 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .micro-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* Minimal institutional switch (shared with metodologia.html) */
     .ui-switch {
-      /* switch */
-      --switch-bg: rgb(135, 150, 165);
-      --switch-width: 48px;
-      --switch-height: 20px;
-      /* circle */
-      --circle-diameter: 32px;
-      --circle-bg: rgb(0, 56, 146);
-      --circle-inset: calc((var(--circle-diameter) - var(--switch-height)) / 2);
-      display: inline-block;
+      --switch-bg: rgb(229, 229, 234);
+      --switch-checked-bg: rgb(0, 0, 0);
+      --circle-diameter: 18px;
+      --circle-bg: #FFFFFF;
+      --circle-inset: 2px;
       position: relative;
-      cursor: pointer;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    html.dark .ui-switch {
+      --switch-bg: rgb(44, 44, 46);
+      --switch-checked-bg: rgb(255, 255, 255);
+      --circle-bg: #0D0D0E;
     }
 
     .ui-switch input {
-      display: none;
+      opacity: 0;
+      width: 0;
+      height: 0;
     }
 
     .slider {
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-      width: var(--switch-width);
-      height: var(--switch-height);
-      background: var(--switch-bg);
-      border-radius: 999px;
-      position: relative;
+      position: absolute;
       cursor: pointer;
-    }
-    .slider .circle {
-      top: calc(var(--circle-inset) * -1);
+      top: 0;
       left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--switch-bg);
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 9999px;
+    }
+
+    .slider .circle {
+      top: var(--circle-inset);
+      left: var(--circle-inset);
       width: var(--circle-diameter);
       height: var(--circle-diameter);
       position: absolute;
       background: var(--circle-bg);
       border-radius: inherit;
-      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHdpZHRoPSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj4KICAgIDxwYXRoIGZpbGw9IiNmZmYiCiAgICAgICAgZD0iTTkuMzA1IDEuNjY3VjMuNzVoMS4zODlWMS42NjdoLTEuMzl6bS00LjcwNyAxLjk1bC0uOTgyLjk4Mkw1LjA5IDYuMDcybC45ODItLjk4Mi0xLjQ3My0xLjQ3M3ptMTAuODAyIDBMMTMuOTI3IDUuMDlsLjk4Mi45ODIgMS40NzMtMS40NzMtLjk4Mi0uOTgyek0xMCA1LjEzOWE0Ljg3MiA0Ljg3MiAwIDAwLTQuODYyIDQuODZBNC44NzIgNC44NzIgMCAwMDEwIDE0Ljg2MiA0Ljg3MiA0Ljg3MiAwIDAwMTQuODYgMTAgNC44NzIgNC44NzIgMCAwMDEwIDUuMTM5em0wIDEuMzg5QTMuNDYyIDMuNDYyIDAgMDExMy40NzEgMTBhMy40NjIgMy40NjIgMCAwMS0zLjQ3MyAzLjQ3MkEzLjQ2MiAzLjQ2MiAwIDAxNi41MjcgMTAgMy40NjIgMCAwMTEwIDYuNTI4ek0xLjY2NSA5LjMwNXYxLjM5aDIuMDgzdi0xLjM5SDEuNjY2em0xNC41ODMgMHYxLjM5aDIuMDg0di0xLjM5aC0yLjA4NHpNNS4wOSAxMy45MjhMMy42MTYgMTUuNGwuOTgyLjk4MiAxLjQ3My0xLjQ3My0uOTgyLS45ODJ6bTkuODIgMGwtLjk4Mi45ODIgMS40NzMtMS40NzMuOTgyLS45ODItMS40NzMtMS40NzN6TTkuMzA1IDE2LjI1djIuMDgzaDEuMzg5VjE2LjI1aC0xLjM5eiIgLz4KPC9zdmc+");
-      background-repeat: no-repeat;
-      background-position: center center;
-      -webkit-transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, -webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-      -o-transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-      transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, -webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
-      align-items: center;
-      -webkit-box-pack: center;
-      -ms-flex-pack: center;
-      justify-content: center;
-      box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
 
-    .slider .circle::before {
-      content: "";
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.75);
-      border-radius: inherit;
-      -webkit-transition: all 500ms;
-      -o-transition: all 500ms;
-      transition: all 500ms;
-      opacity: 0;
+    .ui-switch input:checked + .slider {
+      background-color: var(--switch-checked-bg);
     }
 
-    /* actions */
-    .ui-switch input:checked+.slider .circle {
-      left: calc(100% - var(--circle-diameter));
-      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHdpZHRoPSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj4KICAgIDxwYXRoIGZpbGw9IiNmZmYiCiAgICAgICAgZD0iTTQuMiAyLjVsLS43IDEuOC0xLjguNyAxLjguNy43IDEuOC42LTEuOEw2LjcgNWwtMS45LS43LS42LTEuOHptMTUgOC4zYTYuNyA2LjcgMCAxMS02LjYtNi42IDUuOCA1LjggMCAwMDYuNiA2LjZ6IiAvPgo8L3N2Zz4=");
-    }
-
-    .ui-switch input:active+.slider .circle::before {
-      -webkit-transition: 0s;
-      -o-transition: 0s;
-      transition: 0s;
-      opacity: 1;
-      width: 0;
-      height: 0;
+    .ui-switch input:checked + .slider .circle {
+      left: calc(100% - var(--circle-diameter) - var(--circle-inset));
     }
   </style>
 </head>
 <body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200">
 
-  <!-- Apple Minimal Header -->
+  <!-- Institutional Header -->
   <header class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF]/90 dark:bg-[#0D0D0E]/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
       
       <!-- Brand & Navigation -->
       <div class="flex items-center space-x-6">
         <a href="/" class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm">
-            M
+          <div class="w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm border border-black/10 dark:border-white/10">
+            P
           </div>
           <div class="flex flex-col">
             <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
@@ -244,7 +233,7 @@
         </nav>
       </div>
 
-      <!-- Right Actions: Auth, Switch Toggle & Excel -->
+      <!-- Right Actions -->
       <div class="flex items-center space-x-2 sm:space-x-3">
         <!-- Auth Container -->
         <div id="navbarAuthContainer"></div>
@@ -258,10 +247,25 @@
         </label>
 
         <!-- Excel Export Top Button -->
-        <button id="btnExportExcelTop" class="inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-3.5 py-2 rounded-full transition shadow-sm">
+        <button id="btnExportExcelTop" class="hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-4 py-2 rounded-md transition">
           <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           <span>Descargar Excel</span>
         </button>
+
+        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] text-[#86868B] hover:text-black dark:hover:text-white transition" aria-label="Abrir menú" aria-expanded="false">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+
+      <!-- Mobile Nav Dropdown -->
+      <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 right-0 border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#1C1C1E] shadow-lg">
+        <nav class="flex flex-col py-2 text-xs font-medium text-[#86868B]">
+          <a href="/" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Inicio</a>
+          <a href="/explorer" class="px-4 py-2.5 text-black dark:text-white font-semibold bg-[#F5F5F7] dark:bg-[#0D0D0E]">Terminal</a>
+          <a href="/metodologia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Metodología</a>
+          <a href="/guia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Guía de Uso</a>
+          <a href="/terms" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Términos</a>
+        </nav>
       </div>
 
     </div>
@@ -270,15 +274,15 @@
   <!-- Main Container -->
   <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8">
 
-    <!-- Centered Hero & Search Section -->
-    <section class="text-center max-w-3xl mx-auto space-y-4">
-      <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#F5F5F7] dark:bg-[#1C1C1E] text-xs font-medium text-[#86868B] dark:text-[#8E8E93] border border-[#E5E5EA] dark:border-[#2C2C2E]">
+    <!-- Hero & Search Section -->
+    <section class="text-center space-y-4">
+      <div class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[11px] font-semibold uppercase tracking-wider tnum text-[#86868B] border border-[#E5E5EA] dark:border-[#2C2C2E]">
         <span>10 Años de Series Históricas</span>
         <span>·</span>
         <span>Inferencia Probabilística Zero-Shot</span>
       </div>
 
-      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-black dark:text-white">
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-black dark:text-white">
         Análisis Macroeconómico Cuantitativo
       </h1>
       <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed max-w-2xl mx-auto">
@@ -286,7 +290,7 @@
       </p>
 
       <!-- Search Input Container -->
-      <div class="mt-6 relative max-w-xl mx-auto text-left" id="searchContainer">
+      <div class="mt-6 relative max-w-xl mx-auto w-full text-left" id="searchContainer">
         <div class="relative">
           <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#86868B]">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -296,7 +300,7 @@
             id="companySearch" 
             autocomplete="off"
             placeholder="Buscar activo o empresa (ej. Buenaventura, Southern Copper, Volcan, Cobre...)" 
-            class="w-full pl-10 pr-10 py-3 bg-[#F5F5F7] dark:bg-[#1C1C1E] focus:bg-white dark:focus:bg-[#161618] text-black dark:text-white placeholder-[#86868B] dark:placeholder-[#8E8E93] text-xs sm:text-sm rounded-2xl border border-[#E5E5EA] dark:border-[#2C2C2E] focus:border-black dark:focus:border-white focus:outline-none transition shadow-sm"
+            class="w-full pl-10 pr-10 py-3 bg-[#F5F5F7] dark:bg-[#1C1C1E] focus:bg-white dark:focus:bg-[#161618] text-black dark:text-white placeholder-[#86868B] dark:placeholder-[#8E8E93] text-xs sm:text-sm rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E] focus:border-black dark:focus:border-white focus:outline-none transition"
           />
           <div id="searchSpinner" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center">
             <div class="w-4 h-4 border-2 border-[#86868B] border-t-black dark:border-t-white rounded-full animate-spin"></div>
@@ -304,38 +308,38 @@
         </div>
 
         <!-- Dropdown Results -->
-        <div id="searchResults" class="hidden absolute left-0 right-0 mt-2 bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl shadow-2xl max-h-80 overflow-y-auto z-40 divide-y divide-[#F5F5F7] dark:divide-[#2C2C2E]"></div>
+        <div id="searchResults" class="hidden absolute left-0 right-0 mt-2 bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg shadow-2xl max-h-80 overflow-y-auto z-40 divide-y divide-[#F5F5F7] dark:divide-[#2C2C2E]"></div>
       </div>
 
       <!-- Quick Chips Shortcuts -->
-      <div class="mt-4 flex items-center justify-center gap-1.5 flex-wrap pt-2">
-        <span class="text-[11px] font-bold text-[#86868B] uppercase tracking-wider mr-1">Atajos:</span>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BVN">Buenaventura (BVN)</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="SCCO">Southern Copper (SCCO)</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="VOLCABC1.LM">Volcan</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="MINSURI1.LM">Minsur</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BAP">Credicorp</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="HG=F">Cobre Futuros</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-full border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="PEN=X">USD/PEN</button>
+      <div class="mt-4 flex items-center justify-left sm:justify-center gap-1.5 flex-wrap pt-2">
+        <span class="micro-label text-[#86868B] mr-1">Atajos:</span>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BVN">Buenaventura (BVN)</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="SCCO">Southern Copper (SCCO)</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="VOLCABC1.LM">Volcan</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="MINSURI1.LM">Minsur</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BAP">Credicorp</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="HG=F">Cobre Futuros</button>
+        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="PEN=X">USD/PEN</button>
       </div>
 
       <!-- Search Account Recommendation Banner (Intuitive Gating) -->
-      <div id="searchAccountBanner" class="hidden mt-4 max-w-xl mx-auto p-3.5 bg-white dark:bg-[#18181A] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl flex items-center justify-between gap-3 text-xs shadow-sm transition-all duration-300">
+      <div id="searchAccountBanner" class="hidden mt-4 max-w-xl mx-auto p-3.5 bg-white dark:bg-[#18181A] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs transition-all duration-300">
         <div class="flex items-center gap-2.5 text-left text-[#1D1D1F] dark:text-[#E5E5EA]">
           <span class="leading-snug">Para esta búsqueda podrías considerar <strong>crearte una cuenta</strong> y acceder a información más precisa, series de 10 años y horizontes extendidos.</span>
         </div>
-        <button id="btnBannerSignUp" class="shrink-0 px-3.5 py-2 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-xl text-[11px] hover:opacity-90 transition shadow-sm">
+        <button id="btnBannerSignUp" class="shrink-0 px-3.5 py-2 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-md text-[11px] hover:opacity-90 transition">
           Crear cuenta
         </button>
       </div>
     </section>
 
     <!-- Controls Bar: Time Range & Macro Overlay -->
-    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4 transition-colors">
+    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4 transition-colors">
       <!-- Historical Range Selector -->
       <div class="flex flex-wrap items-center gap-2">
-        <span class="text-xs font-bold uppercase tracking-wider text-[#86868B] dark:text-[#8E8E93] mr-1">Rango Histórico:</span>
-        <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-xl border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-medium">
+        <span class="micro-label text-[#86868B] dark:text-[#8E8E93] mr-1">Rango Histórico:</span>
+        <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-lg border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-medium tnum">
           <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="1y">1A</button>
           <button class="range-btn px-3 py-1 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition" data-range="3y">3A</button>
           <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="5y">5A</button>
@@ -345,10 +349,10 @@
 
       <!-- Macro Overlay Dropdown -->
       <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:space-x-2 w-full sm:w-auto">
-        <label for="macroOverlay" class="text-xs font-bold uppercase tracking-wider text-[#86868B] dark:text-[#8E8E93] whitespace-nowrap">
+        <label for="macroOverlay" class="micro-label text-[#86868B] dark:text-[#8E8E93] whitespace-nowrap">
           Cruce Macroeconómico:
         </label>
-        <select id="macroOverlay" class="w-full sm:w-auto bg-[#F5F5F7] dark:bg-[#2C2C2E] hover:bg-white dark:hover:bg-[#3A3A3C] border border-[#E5E5EA] dark:border-[#3A3A3C] text-black dark:text-white text-xs sm:text-sm rounded-xl px-3 py-2 outline-none font-medium transition cursor-pointer">
+        <select id="macroOverlay" class="w-full sm:w-auto bg-[#F5F5F7] dark:bg-[#2C2C2E] hover:bg-white dark:hover:bg-[#3A3A3C] border border-[#E5E5EA] dark:border-[#3A3A3C] text-black dark:text-white text-xs sm:text-sm rounded-lg px-3 py-2 outline-none font-medium transition cursor-pointer">
           <option value="HG=F" selected>Cobre Futuros (HG=F)</option>
           <option value="GC=F">Oro Futuros (GC=F)</option>
           <option value="SI=F">Plata Futuros (SI=F)</option>
@@ -367,57 +371,57 @@
       <div class="flex flex-col sm:flex-row sm:items-baseline justify-between border-b border-[#E5E5EA] dark:border-[#2C2C2E] pb-3 gap-2 text-center sm:text-left">
         <div>
           <div class="flex items-center justify-center sm:justify-start space-x-3">
-            <h2 id="assetTitle" class="text-2xl sm:text-3xl font-black text-black dark:text-white">Compañía de Minas Buenaventura</h2>
-            <span id="assetSymbolBadge" class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 bg-black dark:bg-white text-white dark:text-black rounded-full">BVN</span>
+            <h2 id="assetTitle" class="text-xl sm:text-2xl font-extrabold text-black dark:text-white">Compañía de Minas Buenaventura</h2>
+            <span id="assetSymbolBadge" class="micro-label font-mono tnum px-2 py-0.5 bg-black dark:bg-white text-white dark:text-black rounded-md">BVN</span>
           </div>
           <p id="assetMeta" class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] mt-1">Minería · Perú · Moneda: USD · 10 Años de Datos</p>
         </div>
         <div class="text-center sm:text-right">
-          <div id="latestPrice" class="text-2xl sm:text-3xl font-black text-black dark:text-white">$34.71 USD</div>
-          <div id="latestDate" class="text-xs text-[#86868B]">Último cierre registrado</div>
+          <div id="latestPrice" class="text-xl sm:text-2xl font-extrabold font-mono tnum text-black dark:text-white">$34.71 USD</div>
+          <div id="latestDate" class="text-[11px] text-[#86868B] mt-0.5">Último cierre registrado</div>
         </div>
       </div>
 
       <!-- KPI Metrics Grid (Monochromatic Apple Style) -->
       <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4 text-center">
-        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Retorno Histórico</div>
-          <div id="metricReturn" class="text-lg sm:text-xl font-extrabold text-black dark:text-white mt-1">+184.2%</div>
+        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
+          <div class="micro-label text-[#86868B]">Retorno Histórico</div>
+          <div id="metricReturn" class="text-lg sm:text-xl font-bold font-mono tnum text-emerald-600 dark:text-emerald-400 mt-1">+184.2%</div>
           <div class="text-[10px] text-[#86868B] mt-0.5">En el rango seleccionado</div>
         </div>
-        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Máximo Período</div>
-          <div id="metricHigh" class="text-lg sm:text-xl font-extrabold text-black dark:text-white mt-1">$36.50</div>
+        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
+          <div class="micro-label text-[#86868B]">Máximo Período</div>
+          <div id="metricHigh" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">$36.50</div>
           <div id="metricHighDate" class="text-[10px] text-[#86868B] mt-0.5">Pico histórico</div>
         </div>
-        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Mínimo Período</div>
-          <div id="metricLow" class="text-lg sm:text-xl font-extrabold text-black dark:text-white mt-1">$4.10</div>
+        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
+          <div class="micro-label text-[#86868B]">Mínimo Período</div>
+          <div id="metricLow" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">$4.10</div>
           <div id="metricLowDate" class="text-[10px] text-[#86868B] mt-0.5">Valle histórico</div>
         </div>
-        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Correlación (r)</div>
-          <div id="metricCorrelation" class="text-lg sm:text-xl font-extrabold text-black dark:text-white mt-1">+0.74</div>
+        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
+          <div class="micro-label text-[#86868B]">Correlación (r)</div>
+          <div id="metricCorrelation" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">+0.74</div>
           <div id="metricCorrelationDesc" class="text-[10px] text-[#86868B] mt-0.5">vs Cobre Futuros</div>
         </div>
-        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 shadow-sm col-span-2 md:col-span-1">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Observaciones</div>
-          <div id="metricPoints" class="text-lg sm:text-xl font-extrabold text-black dark:text-white mt-1">121</div>
+        <div class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 col-span-2 md:col-span-1">
+          <div class="micro-label text-[#86868B]">Observaciones</div>
+          <div id="metricPoints" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">121</div>
           <div class="text-[10px] text-[#86868B] mt-0.5">Meses continuos</div>
         </div>
       </div>
     </section>
 
     <!-- Google TimesFM 2.5 Section: Clean Apple Card -->
-    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-5 sm:p-7 shadow-sm transition-colors relative">
+    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 sm:p-6 transition-colors relative">
       <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-[#E5E5EA] dark:border-[#2C2C2E] gap-4">
         <div>
           <div class="flex items-center space-x-2.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-black dark:bg-white animate-pulse"></span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <h3 class="text-base sm:text-lg font-bold text-black dark:text-white">
               Google TimesFM 2.5 — Proyección Cuantitativa Zero-Shot
             </h3>
-            <span class="hidden sm:inline-block text-[11px] font-semibold bg-[#F5F5F7] dark:bg-[#2C2C2E] text-black dark:text-white px-2.5 py-0.5 rounded-full border border-[#E5E5EA] dark:border-[#3A3A3C]">
+            <span class="hidden sm:inline-block micro-label bg-[#F5F5F7] dark:bg-[#2C2C2E] text-black dark:text-white px-2 py-0.5 rounded-md border border-[#E5E5EA] dark:border-[#3A3A3C]">
               RevIN Multi-Cuantil
             </span>
           </div>
@@ -428,8 +432,8 @@
 
         <!-- Horizon Selection Buttons (1M, 3M, 6M, 12M, Custom) -->
         <div class="flex items-center flex-wrap gap-2">
-          <span class="text-xs font-bold text-[#86868B] dark:text-[#8E8E93] uppercase tracking-wider">Horizonte:</span>
-          <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-xl border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-semibold items-center">
+          <span class="micro-label text-[#86868B] dark:text-[#8E8E93]">Horizonte:</span>
+          <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-lg border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-semibold items-center tnum">
             <button class="horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition" data-horizon="1">1M</button>
             <button class="horizon-btn locked-option px-3 py-1.5 rounded-lg text-stone-400 dark:text-stone-600 opacity-45 hover:opacity-75 font-medium cursor-pointer transition" data-horizon="3">3M</button>
             <button class="horizon-btn locked-option px-3 py-1.5 rounded-lg text-stone-400 dark:text-stone-600 opacity-45 hover:opacity-75 font-medium cursor-pointer transition" data-horizon="6">6M</button>
@@ -439,7 +443,7 @@
             </button>
           </div>
           <!-- Custom Horizon Interactive Input Popover/Bar -->
-          <div id="customHorizonContainer" class="hidden items-center gap-1.5 bg-[#F5F5F7] dark:bg-[#2C2C2E] px-2.5 py-1 rounded-xl border border-blue-400 dark:border-blue-600 transition-all">
+          <div id="customHorizonContainer" class="hidden items-center gap-1.5 bg-[#F5F5F7] dark:bg-[#2C2C2E] px-2.5 py-1 rounded-lg border border-[#E5E5EA] dark:border-[#3A3A3C] transition-all">
             <input id="customHorizonInput" type="number" min="1" max="36" value="18" placeholder="Meses" class="w-16 bg-white dark:bg-[#1C1C1E] text-black dark:text-white px-2 py-1 rounded-lg text-xs font-mono font-bold text-center border border-[#E5E5EA] dark:border-[#3A3A3C] focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white">
             <span class="text-[11px] font-medium text-[#86868B]">meses</span>
             <button id="btnApplyCustomHorizon" class="px-2.5 py-1 bg-black dark:bg-white text-white dark:text-black text-xs font-bold rounded-lg hover:opacity-90 transition">
@@ -463,40 +467,40 @@
       <!-- Active Forecast Results & Cards -->
       <div id="forecastContent" class="mt-5 space-y-4">
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-center">
-          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-2xl p-4">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Precio Esperado (P50)</div>
-            <div id="tfmP50" class="text-xl sm:text-2xl font-black text-black dark:text-white mt-1">$39.34</div>
+          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
+            <div class="micro-label text-[#86868B]">Precio Esperado (P50)</div>
+            <div id="tfmP50" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">$39.34</div>
             <div id="tfmHorizonDate" class="text-[10px] text-[#86868B] mt-0.5">Al horizonte de 6 meses</div>
           </div>
 
-          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-2xl p-4">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Retorno Proyectado</div>
-            <div id="tfmReturn" class="text-xl sm:text-2xl font-black text-black dark:text-white mt-1">+13.3%</div>
+          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
+            <div class="micro-label text-[#86868B]">Retorno Proyectado</div>
+            <div id="tfmReturn" class="text-lg sm:text-xl font-bold font-mono tnum text-emerald-600 dark:text-emerald-400 mt-1">+13.3%</div>
             <div id="tfmTrend" class="text-[10px] text-[#86868B] mt-0.5">Tendencia Alcista</div>
           </div>
 
-          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-2xl p-4">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Rango Probabilístico (80%)</div>
-            <div id="tfmRange" class="text-lg sm:text-xl font-bold text-black dark:text-white mt-1">$21.97 — $56.71</div>
+          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
+            <div class="micro-label text-[#86868B]">Rango Probabilístico (80%)</div>
+            <div id="tfmRange" class="text-base sm:text-lg font-bold font-mono tnum text-black dark:text-white mt-1 whitespace-nowrap">$21.97 — $56.71</div>
             <div class="text-[10px] text-[#86868B] mt-0.5">Cuantiles P10 a P90</div>
           </div>
 
-          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-2xl p-4">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-[#86868B]">Volatilidad Anualizada</div>
-            <div id="tfmVol" class="text-xl sm:text-2xl font-black text-black dark:text-white mt-1">48.7%</div>
+          <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
+            <div class="micro-label text-[#86868B]">Volatilidad Anualizada</div>
+            <div id="tfmVol" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">48.7%</div>
             <div class="text-[10px] text-[#86868B] mt-0.5">Difusión temporal √h</div>
           </div>
         </div>
 
         <!-- TimesFM Summary Banner -->
-        <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/40 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-black dark:text-[#F5F5F7]">
+        <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/40 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-black dark:text-[#F5F5F7]">
           <div class="flex items-center space-x-2">
             <svg class="w-4 h-4 text-[#86868B] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             <span id="tfmExplainText">
               La gráfica inferior ha sido ampliada con las fechas futuras proyectadas, mostrando la trayectoria P50 (línea discontinua) y el intervalo de confianza P10-P90.
             </span>
           </div>
-          <button id="btnToggleForecastChart" class="self-start sm:self-auto px-3.5 py-1.5 bg-black dark:bg-white hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black rounded-full font-semibold text-xs transition whitespace-nowrap shadow-sm">
+          <button id="btnToggleForecastChart" class="self-start sm:self-auto px-3.5 py-1.5 bg-black dark:bg-white hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black rounded-md font-semibold text-xs transition whitespace-nowrap">
             Ocultar Proyección en Gráfico
           </button>
         </div>
@@ -504,10 +508,10 @@
     </section>
 
     <!-- Main Dual Chart Section (Expanded with TimesFM) -->
-    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl p-4 sm:p-6 shadow-sm transition-colors">
+    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 sm:p-6 transition-colors">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-[#E5E5EA] dark:border-[#2C2C2E] gap-3">
         <div class="flex items-center space-x-2">
-          <div class="w-2.5 h-2.5 rounded-full bg-black dark:bg-white"></div>
+          <div class="w-2 h-2 rounded-full bg-black dark:bg-white"></div>
           <span class="text-sm font-bold text-black dark:text-white">Evolución Histórica & Proyección Ampliada</span>
         </div>
         
@@ -529,20 +533,20 @@
       </div>
 
       <!-- Chart Canvas -->
-      <div class="relative w-full h-[280px] sm:h-[360px] md:h-[420px]">
+      <div class="relative w-full h-[260px] sm:h-[360px] md:h-[420px]">
         <canvas id="mainChart"></canvas>
       </div>
 
       <!-- Interpretación del Gráfico · TypeSafe AI Jev -->
-      <div class="mt-6 pt-5 border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7]/70 dark:bg-[#2C2C2E]/30 rounded-xl p-4 sm:p-5 transition-colors text-left">
+      <div class="mt-6 pt-5 border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7]/70 dark:bg-[#2C2C2E]/30 rounded-lg p-4 sm:p-5 transition-colors text-left">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
           <div class="inline-flex items-center space-x-2">
             <span class="w-2 h-2 rounded-full bg-black dark:bg-white animate-pulse"></span>
             <span class="text-xs sm:text-sm font-bold text-black dark:text-white">Interpretación del Gráfico · TypeSafe AI Jev</span>
             <span class="text-[#86868B]">|</span>
-            <span class="text-[11px] font-mono text-[#86868B]">System One RLCD</span>
+            <span class="text-[10px] font-mono uppercase tracking-wider text-[#86868B]">System One RLCD</span>
           </div>
-          <span id="tsConfidence" class="text-xs font-bold text-black dark:text-white px-2.5 py-0.5 rounded-full bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#3A3A3C] w-fit shadow-xs">
+          <span id="tsConfidence" class="micro-label font-mono tnum text-black dark:text-white px-2 py-0.5 rounded-md bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#3A3A3C] w-fit">
             Confianza Calibrada: 94.2%
           </span>
         </div>
@@ -552,17 +556,17 @@
         </p>
 
         <!-- Sub-Cards -->
-        <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-center">
-          <div class="p-3 rounded-xl bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#3A3A3C] shadow-xs">
-            <div class="text-[10px] font-bold uppercase tracking-wider text-[#86868B]">Sensibilidad Macro (Beta)</div>
-            <div id="tsBeta" class="text-xs sm:text-sm font-bold text-black dark:text-white mt-0.5">Alta (+0.74)</div>
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-center sm:text-left">
+          <div class="p-3 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#3A3A3C]">
+            <div class="micro-label text-[#86868B]">Sensibilidad Macro (Beta)</div>
+            <div id="tsBeta" class="text-xs sm:text-sm font-bold font-mono tnum text-black dark:text-white mt-0.5">Alta (+0.74)</div>
           </div>
-          <div class="p-3 rounded-xl bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#3A3A3C] shadow-xs">
-            <div class="text-[10px] font-bold uppercase tracking-wider text-[#86868B]">Régimen de Volatilidad</div>
+          <div class="p-3 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#3A3A3C]">
+            <div class="micro-label text-[#86868B]">Régimen de Volatilidad</div>
             <div id="tsRegime" class="text-xs sm:text-sm font-bold text-black dark:text-white mt-0.5">Cíclico Moderado</div>
           </div>
-          <div class="p-3 rounded-xl bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#3A3A3C] shadow-xs">
-            <div class="text-[10px] font-bold uppercase tracking-wider text-[#86868B]">Verificación Formal</div>
+          <div class="p-3 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#3A3A3C]">
+            <div class="micro-label text-[#86868B]">Verificación Formal</div>
             <div id="tsEngine" class="text-xs sm:text-sm font-bold text-black dark:text-white mt-0.5">RLCD / Jev Architecture</div>
           </div>
         </div>
@@ -570,30 +574,30 @@
     </section>
 
     <!-- Historical & Projected Data Table -->
-    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl shadow-sm overflow-hidden transition-colors">
+    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg overflow-hidden transition-colors">
       <div class="p-4 sm:p-6 border-b border-[#E5E5EA] dark:border-[#2C2C2E] flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#F5F5F7] dark:bg-[#2C2C2E]/40">
         <div>
           <h3 class="text-base font-bold text-black dark:text-white">Tabla de Datos Históricos y Proyectados</h3>
           <p class="text-xs text-[#86868B] dark:text-[#8E8E93] mt-0.5">Observaciones mensuales correlacionadas y cuantiles probabilísticos.</p>
         </div>
-        <button id="btnExportExcel" class="inline-flex items-center justify-center px-4 py-2.5 bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black font-semibold text-xs sm:text-sm rounded-full transition shadow-sm">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        <button id="btnExportExcel" class="inline-flex items-center justify-center px-4 py-2 bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black font-semibold text-xs rounded-md transition">
+          <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           Descargar Todo en Excel (.xlsx)
         </button>
       </div>
 
       <div class="overflow-x-auto max-h-96">
-        <table class="w-full text-left border-collapse text-xs sm:text-sm">
-          <thead class="bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#1D1D1F] dark:text-[#F5F5F7] font-semibold border-b border-[#E5E5EA] dark:border-[#3A3A3C] sticky top-0 z-10">
+        <table class="w-full text-left border-collapse text-xs sm:text-[13px]">
+          <thead class="bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#1D1D1F] dark:text-[#F5F5F7] border-b border-[#E5E5EA] dark:border-[#3A3A3C] sticky top-0 z-10">
             <tr>
-              <th class="py-3 px-4">Fecha</th>
-              <th class="py-3 px-4">Estado</th>
-              <th class="py-3 px-4">Cierre / P50</th>
-              <th class="py-3 px-4">Apertura</th>
-              <th class="py-3 px-4">Máximo / P90</th>
-              <th class="py-3 px-4">Mínimo / P10</th>
-              <th id="tableHeaderMacro" class="py-3 px-4">Indicador Macro</th>
-              <th class="py-3 px-4">Variación (%)</th>
+              <th class="py-2.5 px-4 micro-label whitespace-nowrap sticky left-0 z-20 bg-[#F5F5F7] dark:bg-[#2C2C2E]">Fecha</th>
+              <th class="py-2.5 px-4 micro-label whitespace-nowrap">Estado</th>
+              <th class="py-2.5 px-4 micro-label whitespace-nowrap">Cierre / P50</th>
+              <th class="py-2.5 px-4 micro-label whitespace-nowrap">Apertura</th>
+              <th class="py-2.5 px-4 micro-label whitespace-nowrap">Máximo / P90</th>
+              <th class="py-2.5 px-4 micro-label whitespace-nowrap">Mínimo / P10</th>
+              <th id="tableHeaderMacro" class="py-2.5 px-4 micro-label whitespace-nowrap">Indicador Macro</th>
+              <th class="py-2.5 px-4 micro-label whitespace-nowrap">Variación (%)</th>
             </tr>
           </thead>
           <tbody id="tableBody" class="divide-y divide-[#E5E5EA] dark:divide-[#2C2C2E] text-black dark:text-[#F5F5F7] font-normal">
@@ -601,7 +605,7 @@
           </tbody>
         </table>
       </div>
-      <div class="p-3.5 bg-[#F5F5F7] dark:bg-[#2C2C2E]/40 border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-xs text-[#86868B] text-right">
+      <div class="p-3.5 bg-[#F5F5F7] dark:bg-[#2C2C2E]/40 border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-[11px] text-[#86868B] text-right">
         <span id="tableSummary">Cargando observaciones...</span>
       </div>
     </section>
@@ -628,20 +632,20 @@
 
   <!-- Modal / Pop-up de Términos y Condiciones -->
   <div id="termsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
-    <div id="termsModalBox" class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden transition-all duration-300 transform scale-95">
+    <div id="termsModalBox" class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden transition-all duration-300 transform scale-95">
       
       <!-- Modal Header -->
       <div class="px-6 py-5 border-b border-[#E5E5EA] dark:border-[#2C2C2E] flex items-center justify-between bg-white dark:bg-[#1C1C1E] sticky top-0 z-10">
         <div class="flex items-center space-x-3">
-          <div class="w-8 h-8 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center font-black text-sm">
-            M
+          <div class="w-8 h-8 rounded-lg bg-black dark:bg-white text-white dark:text-black flex items-center justify-center font-black text-sm">
+            P
           </div>
           <div>
             <h2 class="text-base sm:text-lg font-bold text-black dark:text-white tracking-tight">Términos y Condiciones de Uso</h2>
             <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93]">Marco Legal · Descargo Cuantitativo · Versión 1.0 (2026)</p>
           </div>
         </div>
-        <button id="btnCloseTermsModal" type="button" class="text-[#86868B] hover:text-black dark:hover:text-white p-2 rounded-full hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] transition" title="Cerrar modal">
+        <button id="btnCloseTermsModal" type="button" class="text-[#86868B] hover:text-black dark:hover:text-white p-2 rounded-md hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] transition" title="Cerrar modal">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
@@ -650,7 +654,7 @@
       <div class="overflow-y-auto px-6 py-5 space-y-5 text-xs sm:text-sm text-[#1D1D1F] dark:text-[#E5E5EA] leading-relaxed">
         
         <!-- Summary Alert -->
-        <div class="p-3.5 rounded-2xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] flex items-start space-x-3">
+        <div class="p-3.5 rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] flex items-start space-x-3">
           <svg class="w-5 h-5 text-[#86868B] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           <div class="text-xs text-[#1D1D1F] dark:text-[#F5F5F7]">
             <strong>Bienvenido a PerData:</strong> Este entorno computacional provee herramientas de modelado de series temporales macroeconómicas y activos financieros. Por favor revise los términos antes de continuar.
@@ -697,7 +701,7 @@
             <svg id="toggleLegalIcon" class="w-3.5 h-3.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
           </button>
 
-          <div id="fullLegalSection" class="hidden mt-3 p-4 rounded-2xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] space-y-3 text-xs text-[#86868B] dark:text-[#8E8E93]">
+          <div id="fullLegalSection" class="hidden mt-3 p-4 rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] space-y-3 text-xs text-[#86868B] dark:text-[#8E8E93]">
             <p>
               <strong>Cláusula 4. Integridad de Fuentes de Información:</strong> Los datos históricos provienen de agregadores de mercado público, interfaces de BCRP y Yahoo Finance. La plataforma no asume responsabilidad civil ni contractual por eventuales discrepancias, latencias o interrupciones en la disponibilidad de feeds externos.
             </p>
@@ -719,7 +723,7 @@
           <span id="termsStatusText">Consentimiento requerido para habilitar análisis</span>
         </div>
         <div class="flex items-center space-x-2 w-full sm:w-auto">
-          <button id="btnAcceptTerms" type="button" class="w-full sm:w-auto inline-flex items-center justify-center font-semibold text-xs sm:text-sm bg-black dark:bg-white text-white dark:text-black hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] px-6 py-2.5 rounded-full transition shadow-sm">
+          <button id="btnAcceptTerms" type="button" class="w-full sm:w-auto inline-flex items-center justify-center font-semibold text-xs sm:text-sm bg-black dark:bg-white text-white dark:text-black hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] px-6 py-2.5 rounded-md transition">
             Aceptar y Continuar
           </button>
         </div>
@@ -821,9 +825,28 @@
       setupExportExcel();
       setupToggleForecast();
       setupIntuitiveGating();
+      const deepLinked = setupDeepLink();
 
-      // Initial Load
-      loadAllData(state.primarySymbol, state.range, state.macroSymbol, state.horizon);
+      // Initial Load (skipped when a deep-link symbol was loaded already)
+      if (!deepLinked) {
+        loadAllData(state.primarySymbol, state.range, state.macroSymbol, state.horizon);
+      }
+    }
+
+    // Deep link support: /explorer?symbol=HG=F (used by landing cards & news ticker)
+    function setupDeepLink() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const sym = params.get("symbol");
+        if (sym && /^[A-Za-z0-9=._\-^]{1,20}$/.test(sym)) {
+          state.primarySymbol = sym;
+          loadAllData(sym, state.range, state.macroSymbol, state.horizon);
+          return true;
+        }
+      } catch (e) {
+        console.warn("Deep link parse error:", e);
+      }
+      return false;
     }
 
     // Modal de Términos y Condiciones
@@ -1002,7 +1025,7 @@
             <div class="font-semibold text-xs sm:text-sm text-black dark:text-white">${escapeHTML(item.name)}</div>
             <div class="text-[11px] text-[#86868B]">${escapeHTML(item.sector || 'Mercado')} · ${escapeHTML(item.country || 'Global')}</div>
           </div>
-          <span class="text-xs font-bold font-mono px-2 py-1 bg-[#F5F5F7] dark:bg-[#2C2C2E] text-black dark:text-white rounded border border-[#E5E5EA] dark:border-[#3A3A3C]">${escapeHTML(item.symbol)}</span>
+          <span class="text-xs font-bold font-mono tnum px-2 py-1 bg-[#F5F5F7] dark:bg-[#2C2C2E] text-black dark:text-white rounded-md border border-[#E5E5EA] dark:border-[#3A3A3C]">${escapeHTML(item.symbol)}</span>
         </div>
       `).join("");
 
@@ -1104,6 +1127,11 @@
             b.className = "range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
           });
           btn.className = "range-btn px-3 py-1 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition";
+          // Re-apply lock styling on gated range (10y) after the class reset above
+          const gatedRange = document.querySelector('.range-btn[data-range="10y"]');
+          if (gatedRange && rng !== "10y" && window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
+            gatedRange.classList.add("locked-option");
+          }
           state.range = rng;
           loadAllData(state.primarySymbol, rng, state.macroSymbol, state.horizon);
         });
@@ -1133,6 +1161,11 @@
             b.className = "horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
           });
           btn.className = "horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition";
+          // Re-apply lock styling on gated horizons (3/6/12M, Custom) after the class reset above
+          if (window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
+            document.querySelectorAll('.horizon-btn[data-horizon="3"], .horizon-btn[data-horizon="6"], .horizon-btn[data-horizon="12"], #btnCustomHorizon')
+              .forEach(el => el.classList.add("locked-option"));
+          }
           state.horizon = h;
           fetchForecastOnly(state.primarySymbol, h);
         });
@@ -1171,6 +1204,11 @@
         });
         if (btnCustom) {
           btnCustom.className = "horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition flex items-center gap-1";
+        }
+        // Re-apply lock styling on gated horizons (3/6/12M) after the class reset above
+        if (window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
+          document.querySelectorAll('.horizon-btn[data-horizon="3"], .horizon-btn[data-horizon="6"], .horizon-btn[data-horizon="12"]')
+            .forEach(el => el.classList.add("locked-option"));
         }
         if (customLabel) {
           customLabel.textContent = `Custom (${val}M)`;
@@ -1674,14 +1712,14 @@
           const item = f.forecastSeries[i];
           html += `
             <tr class="bg-[#F5F5F7]/70 dark:bg-[#2C2C2E]/40 font-medium">
-              <td class="py-2.5 px-4 font-mono text-black dark:text-white font-bold">${escapeHTML(item.date)}</td>
-              <td class="py-2.5 px-4"><span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-black dark:bg-white text-white dark:text-black">TIMESFM P50</span></td>
-              <td class="py-2.5 px-4 font-bold text-black dark:text-white">${currencySymbol}${item.p50.toFixed(2)}</td>
-              <td class="py-2.5 px-4 text-[#86868B]">-</td>
-              <td class="py-2.5 px-4 text-[#86868B] font-mono">${currencySymbol}${item.p90.toFixed(2)}</td>
-              <td class="py-2.5 px-4 text-[#86868B] font-mono">${currencySymbol}${item.p10.toFixed(2)}</td>
-              <td class="py-2.5 px-4 text-[#86868B]">-</td>
-              <td class="py-2.5 px-4 font-bold text-black dark:text-white">Proyectado</td>
+              <td class="py-2.5 px-4 font-mono tnum whitespace-nowrap text-black dark:text-white sticky left-0 z-[5] bg-[#F5F5F7] dark:bg-[#2C2C2E]">${escapeHTML(item.date)}</td>
+              <td class="py-2.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 micro-label rounded-md bg-black dark:bg-white text-white dark:text-black">TIMESFM P50</span></td>
+              <td class="py-2.5 px-4 font-bold font-mono tnum whitespace-nowrap text-black dark:text-white">${currencySymbol}${item.p50.toFixed(2)}</td>
+              <td class="py-2.5 px-4 text-[#86868B] whitespace-nowrap">-</td>
+              <td class="py-2.5 px-4 text-[#86868B] font-mono tnum whitespace-nowrap">${currencySymbol}${item.p90.toFixed(2)}</td>
+              <td class="py-2.5 px-4 text-[#86868B] font-mono tnum whitespace-nowrap">${currencySymbol}${item.p10.toFixed(2)}</td>
+              <td class="py-2.5 px-4 text-[#86868B] whitespace-nowrap">-</td>
+              <td class="py-2.5 px-4 font-semibold text-black dark:text-white whitespace-nowrap">Proyectado</td>
             </tr>
           `;
         }
@@ -1697,14 +1735,14 @@
 
         html += `
           <tr class="hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E]/60 transition">
-            <td class="py-2.5 px-4 font-mono font-medium text-black dark:text-white">${escapeHTML(item.date)}</td>
-            <td class="py-2.5 px-4"><span class="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#86868B] dark:text-[#8E8E93] border border-[#E5E5EA] dark:border-[#3A3A3C]">HISTÓRICO</span></td>
-            <td class="py-2.5 px-4 font-bold text-black dark:text-white">${currencySymbol}${item.close.toFixed(2)}</td>
-            <td class="py-2.5 px-4 text-[#86868B]">${currencySymbol}${item.open.toFixed(2)}</td>
-            <td class="py-2.5 px-4 text-[#86868B]">${currencySymbol}${item.high.toFixed(2)}</td>
-            <td class="py-2.5 px-4 text-[#86868B]">${currencySymbol}${item.low.toFixed(2)}</td>
-            <td class="py-2.5 px-4 font-medium text-black dark:text-white">${typeof macroVal === 'number' ? macroVal.toFixed(2) : escapeHTML(macroVal)}</td>
-            <td class="py-2.5 px-4 font-bold ${changePct >= 0 ? 'text-black dark:text-white' : 'text-[#86868B]'}">
+            <td class="py-2.5 px-4 font-mono tnum font-medium whitespace-nowrap text-black dark:text-white sticky left-0 z-[5] bg-white dark:bg-[#1C1C1E]">${escapeHTML(item.date)}</td>
+            <td class="py-2.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 micro-label rounded-md bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#86868B] dark:text-[#8E8E93] border border-[#E5E5EA] dark:border-[#3A3A3C]">HISTÓRICO</span></td>
+            <td class="py-2.5 px-4 font-bold font-mono tnum whitespace-nowrap text-black dark:text-white">${currencySymbol}${item.close.toFixed(2)}</td>
+            <td class="py-2.5 px-4 text-[#86868B] font-mono tnum whitespace-nowrap">${currencySymbol}${item.open.toFixed(2)}</td>
+            <td class="py-2.5 px-4 text-[#86868B] font-mono tnum whitespace-nowrap">${currencySymbol}${item.high.toFixed(2)}</td>
+            <td class="py-2.5 px-4 text-[#86868B] font-mono tnum whitespace-nowrap">${currencySymbol}${item.low.toFixed(2)}</td>
+            <td class="py-2.5 px-4 font-medium font-mono tnum whitespace-nowrap text-black dark:text-white">${typeof macroVal === 'number' ? macroVal.toFixed(2) : escapeHTML(macroVal)}</td>
+            <td class="py-2.5 px-4 font-semibold font-mono tnum whitespace-nowrap ${changePct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400'}">
               ${prevItem ? (changePct >= 0 ? '+' : '') + changePct.toFixed(2) + '%' : '-'}
             </td>
           </tr>
@@ -1827,6 +1865,30 @@
       btnExportExcel.addEventListener("click", handler);
       btnExportExcelTop.addEventListener("click", handler);
     }
+  </script>
+  <!-- Mobile Menu Toggle -->
+  <script>
+    (function() {
+      var btn = document.getElementById('mobileMenuBtn');
+      var menu = document.getElementById('mobileMenu');
+      if (btn && menu) {
+        btn.addEventListener('click', function() {
+          var open = menu.classList.toggle('hidden');
+          btn.setAttribute('aria-expanded', String(!open));
+        });
+      }
+    })();
+  </script>
+  <!-- Bridge: lets the news ticker select assets inside the terminal (same page, no reload) -->
+  <script>
+    window.selectAssetBySymbol = function(sym) {
+      if (!sym || !/^[A-Za-z0-9=._\-^]{1,20}$/.test(sym)) return;
+      if (typeof loadAllData === "function" && typeof state !== "undefined") {
+        state.primarySymbol = sym;
+        loadAllData(sym, state.range, state.macroSymbol, state.horizon);
+        document.getElementById("assetTitle")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
   </script>
   <!-- Authentication & Feature Gating Modal -->
   <script src="/auth.js"></script>

@@ -180,7 +180,7 @@
       // and proper registration at each provider's developer console.
       // This placeholder shows the modal message until OAuth is configured.
       const msg = "Autenticación social próximamente. Por ahora usa correo y contraseña.";
-      const statusEl = document.getElementById("authStatus");
+      const statusEl = document.getElementById("mdeAuthStatus") || document.getElementById("authStatus");
       if (statusEl) statusEl.textContent = msg;
       console.warn("[PerData] OAuth SSO not yet configured for:", provider);
     },

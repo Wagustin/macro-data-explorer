@@ -56,6 +56,22 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    .tnum {
+      font-feature-settings: "tnum" 1, "cv01" 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .micro-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
     .ui-switch {
       --switch-bg: rgb(229, 229, 234);
       --switch-checked-bg: rgb(0, 0, 0);
@@ -120,13 +136,13 @@
 
   <!-- Header -->
   <header class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF]/90 dark:bg-[#0D0D0E]/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
       
       <!-- Brand & Navigation -->
       <div class="flex items-center space-x-6">
         <a href="/" class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm shadow-sm">
-            M
+          <div class="w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm border border-black/10 dark:border-white/10">
+            P
           </div>
           <div class="flex flex-col">
             <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
@@ -154,19 +170,32 @@
           </div>
         </label>
 
-        <a href="/explorer" class="inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-4 py-2 rounded-full transition shadow-sm">
+        <a href="/explorer" class="hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-4 py-2 rounded-md transition">
           <span>Abrir Terminal</span>
         </a>
+        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] text-[#86868B] hover:text-black dark:hover:text-white transition" aria-label="Abrir menú" aria-expanded="false">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+      <!-- Mobile Nav Dropdown -->
+      <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 right-0 border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#1C1C1E] shadow-lg">
+        <nav class="flex flex-col py-2 text-xs font-medium text-[#86868B]">
+          <a href="/" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Inicio</a>
+          <a href="/explorer" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Terminal</a>
+          <a href="/metodologia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Metodología</a>
+          <a href="/guia" class="px-4 py-2.5 text-black dark:text-white font-semibold bg-[#F5F5F7] dark:bg-[#0D0D0E]">Guía de Uso</a>
+          <a href="/terms" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Términos</a>
+        </nav>
       </div>
 
     </div>
   </header>
 
   <!-- Main Content -->
-  <main class="flex-grow max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16 space-y-12 w-full">
+  <main class="flex-grow max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-8 w-full">
 
     <section class="space-y-4 text-center sm:text-left">
-      <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#F5F5F7] dark:bg-[#1C1C1E] text-xs font-semibold text-[#86868B] border border-[#E5E5EA] dark:border-[#2C2C2E]">
+      <div class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[11px] font-semibold uppercase tracking-wider tnum text-[#86868B] border border-[#E5E5EA] dark:border-[#2C2C2E]">
         <span>Playbooks Operativos</span>
         <span>·</span>
         <span>Tesorería & Portafolios</span>
@@ -182,10 +211,10 @@
     </section>
 
     <!-- CASE 1: MINERÍA ANDINA -->
-    <section class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-4 shadow-sm">
+    <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
       <div class="flex items-center justify-between">
-        <span class="text-[11px] font-mono font-bold uppercase text-[#86868B]">Caso Práctico 01 · Equities vs Commodities</span>
-        <span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-semibold text-[10px]">Cobertura Activa</span>
+        <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-[#86868B]">Caso Práctico 01 · Equities vs Commodities</span>
+        <span class="px-2 py-0.5 rounded-md tnum bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-semibold text-[10px]">Cobertura Activa</span>
       </div>
 
       <h2 class="text-xl font-bold text-black dark:text-white">
@@ -196,7 +225,7 @@
         Las acciones mineras peruanas operan con un apalancamiento operativo natural respecto al precio internacional de los metales. Cuando el Cobre o el Oro suben, los márgenes EBITDA se expanden de forma no lineal.
       </p>
 
-      <div class="p-4 rounded-xl bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-2 text-xs">
+      <div class="p-4 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-2 text-xs">
         <h3 class="font-bold text-black dark:text-white">Procedimiento en la Terminal:</h3>
         <ol class="space-y-1.5 list-decimal list-inside text-[#1D1D1F] dark:text-[#E5E5EA]">
           <li>Selecciona <strong>BVN</strong> en el buscador o en la barra rápida.</li>
@@ -207,10 +236,10 @@
     </section>
 
     <!-- CASE 2: GESTIÓN DE RIESGO CAMBIARIO -->
-    <section class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-4 shadow-sm">
+    <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
       <div class="flex items-center justify-between">
-        <span class="text-[11px] font-mono font-bold uppercase text-[#86868B]">Caso Práctico 02 · Divisas Soberanas</span>
-        <span class="px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 font-semibold text-[10px]">Tesorería FX</span>
+        <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-[#86868B]">Caso Práctico 02 · Divisas Soberanas</span>
+        <span class="px-2 py-0.5 rounded-md tnum bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 font-semibold text-[10px]">Tesorería FX</span>
       </div>
 
       <h2 class="text-xl font-bold text-black dark:text-white">
@@ -221,7 +250,7 @@
         El tipo de cambio Sol peruano / Dólar estadounidense (USD/PEN) se caracteriza por un régimen de flotación administrada con intervención activa del BCRP para mitigar la volatilidad extrema.
       </p>
 
-      <div class="p-4 rounded-xl bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-2 text-xs">
+      <div class="p-4 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-2 text-xs">
         <h3 class="font-bold text-black dark:text-white">Estrategia para Tesorerías Corporativas:</h3>
         <p class="text-[#1D1D1F] dark:text-[#E5E5EA] leading-relaxed">
           Al planificar pagos de deuda o importaciones a 3 y 6 meses:
@@ -234,10 +263,10 @@
     </section>
 
     <!-- CASE 3: HORIZONTES TEMPORALES -->
-    <section class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-4 shadow-sm">
+    <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
       <div class="flex items-center justify-between">
-        <span class="text-[11px] font-mono font-bold uppercase text-[#86868B]">Caso Práctico 03 · Calibración Temporal</span>
-        <span class="px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-400 font-semibold text-[10px]">Comités de Inversión</span>
+        <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-[#86868B]">Caso Práctico 03 · Calibración Temporal</span>
+        <span class="px-2 py-0.5 rounded-md tnum bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-400 font-semibold text-[10px]">Comités de Inversión</span>
       </div>
 
       <h2 class="text-xl font-bold text-black dark:text-white">
@@ -245,13 +274,13 @@
       </h2>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs pt-2">
-        <div class="p-4 rounded-xl bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-1.5">
+        <div class="p-4 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-1.5">
           <span class="font-bold text-black dark:text-white">Horizonte 1M – 3M (Táctico)</span>
           <p class="text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
             Indicado para rebalanceo mensual de liquidez, negociación de contratos a plazo y seguimiento de minutas de política monetaria del BCRP y la Reserva Federal.
           </p>
         </div>
-        <div class="p-4 rounded-xl bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-1.5">
+        <div class="p-4 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-1.5">
           <span class="font-bold text-black dark:text-white">Horizonte 6M – 12M (Estratégico)</span>
           <p class="text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
             Diseñado para presupuestos de Capex minero, valoración por descuento de flujos de caja y estructuración de emisiones de deuda corporativa.
@@ -261,10 +290,10 @@
     </section>
 
     <!-- CASE 4: AUDITORÍA EN EXCEL -->
-    <section class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-4 shadow-sm">
+    <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
       <div class="flex items-center justify-between">
-        <span class="text-[11px] font-mono font-bold uppercase text-[#86868B]">Caso Práctico 04 · Datos Estructurados</span>
-        <span class="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 font-semibold text-[10px]">Excel (.xlsx)</span>
+        <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-[#86868B]">Caso Práctico 04 · Datos Estructurados</span>
+        <span class="px-2 py-0.5 rounded-md tnum bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 font-semibold text-[10px]">Excel (.xlsx)</span>
       </div>
 
       <h2 class="text-xl font-bold text-black dark:text-white">
@@ -283,12 +312,12 @@
     </section>
 
     <!-- Bottom Action CTA -->
-    <div class="p-8 rounded-2xl bg-[#F5F5F7] dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="p-5 sm:p-6 rounded-lg bg-[#F5F5F7] dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] flex flex-col sm:flex-row items-center justify-between gap-4">
       <div>
         <h3 class="text-base font-bold text-black dark:text-white">Inicia tu análisis cuantitativo</h3>
         <p class="text-xs text-[#86868B] dark:text-[#8E8E93] mt-0.5">Explora las herramientas y descarga datos directamente a Excel.</p>
       </div>
-      <a href="/explorer" class="px-6 py-3 rounded-full bg-black dark:bg-white text-white dark:text-black text-xs font-bold hover:opacity-90 transition shadow-sm">
+      <a href="/explorer" class="px-5 py-2.5 rounded-md bg-black dark:bg-white text-white dark:text-black text-xs font-bold hover:opacity-90 transition">
         Abrir Terminal &rarr;
       </a>
     </div>
@@ -299,7 +328,7 @@
   <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#0D0D0E] py-8 text-xs text-[#86868B] transition-colors">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="flex items-center space-x-2">
-        <div class="w-5 h-5 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-bold text-[10px]">M</div>
+        <div class="w-5 h-5 rounded bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-bold text-[10px]">P</div>
         <span class="font-semibold text-black dark:text-white">PerData</span>
         <span>·</span>
         <span>Guía Operativa © 2026</span>
@@ -332,6 +361,21 @@
         }
       });
     }
+  </script>
+
+
+  <!-- Mobile Menu Toggle -->
+  <script>
+    (function() {
+      var btn = document.getElementById('mobileMenuBtn');
+      var menu = document.getElementById('mobileMenu');
+      if (btn && menu) {
+        btn.addEventListener('click', function() {
+          var open = menu.classList.toggle('hidden');
+          btn.setAttribute('aria-expanded', String(!open));
+        });
+      }
+    })();
   </script>
 
   <!-- Auth & Teleprompter -->
