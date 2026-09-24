@@ -128,6 +128,25 @@
       color: #71717a !important; /* stone-500 / zinc-500 */
       opacity: 0.40 !important;
     }
+
+    /* Mobile touch targets: all control buttons get a minimum 40px hit area */
+    @media (max-width: 767px) {
+      .range-btn, .horizon-btn, #btnCustomHorizon, .chip-btn,
+      .range-btn *, .horizon-btn * {
+        min-height: 40px !important;
+        min-width: 44px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      .chip-btn {
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+      }
+      #btnToggleForecastChart, #btnExportExcel, #btnExportExcelTop {
+        min-height: 40px !important;
+      }
+    }
     .locked-option:hover {
       opacity: 0.75 !important;
     }
