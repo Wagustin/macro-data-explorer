@@ -137,6 +137,30 @@ export const FEEDS = [
     query: "Buenaventura OR \"Southern Copper\" OR \"Cerro Verde\" OR \"mineria Peru\""
   },
   {
+    name: "Volcan / Antamina / Chinalco",
+    category: "Minería",
+    symbol: "VOLCABC1.LM",
+    impact: "MINERÍA",
+    impactColor: "amber",
+    query: "Volcan minera OR Antamina OR Toromocho OR Shougang OR \"Nexa Resources\""
+  },
+  {
+    name: "Banca & Finanzas Perú",
+    category: "Banca",
+    symbol: "BAP",
+    impact: "BANCA",
+    impactColor: "emerald",
+    query: "Credicorp OR Interbank OR \"BCP Peru\" OR \"BBVA Peru\" OR Scotiabank Peru"
+  },
+  {
+    name: "Consumo & Retail Perú",
+    category: "Consumo",
+    symbol: "ALICORC1.LM",
+    impact: "CONSUMO",
+    impactColor: "emerald",
+    query: "Alicorp OR Backus OR \"Gloria Peru\" OR Lucchetti OR Ferreycorp OR \"Cementos Pacasmayo\""
+  },
+  {
     name: "Tipo de Cambio USD/PEN",
     category: "Forex",
     symbol: "PEN=X",
@@ -145,7 +169,7 @@ export const FEEDS = [
     query: "\"tipo de cambio\" dolar sol peru OR \"USD PEN\""
   },
   {
-    name: "Petróleo WTI",
+    name: "Petróleo WTI / Energía",
     category: "Commodities",
     symbol: "CL=F",
     impact: "WTI",
@@ -159,6 +183,30 @@ export const FEEDS = [
     impact: "ORO",
     impactColor: "amber",
     query: "\"precio del oro\" OR \"cotizacion oro\" OR \"COMEX gold\""
+  },
+  {
+    name: "BVL / Mercado de Capitales",
+    category: "Mercado de Capitales",
+    symbol: "PERU_IGBVL",
+    impact: "BVL",
+    impactColor: "blue",
+    query: "\"Bolsa de Valores de Lima\" OR IGBVL OR \"BVL Peru\" OR \"SMV Peru\""
+  },
+  {
+    name: "Macroeconomía Perú (PBI/Inflación)",
+    category: "Macroeconomía",
+    symbol: "PERU_GDP",
+    impact: "MACRO",
+    impactColor: "blue",
+    query: "\"PBI Peru\" OR \"inflacion Peru\" OR \"economia peruana\" OR \"MEF Peru\""
+  },
+  {
+    name: "Fed / Tasas Globales",
+    category: "Tasas Globales",
+    symbol: "^TNX",
+    impact: "FED",
+    impactColor: "purple",
+    query: "\"Federal Reserve\" OR \"Fed interest rate\" OR \"Treasury yield\" OR Powell"
   }
 ];
 
@@ -374,8 +422,31 @@ export async function refreshNewsCache() {
   return fallbackPayload;
 }
 
-export async function getMacroNews() {
+export async function getMacroNews(force = false) {
   const now = Date.now();
+
+  // 0. Forced refresh (cron / manual)
+  if (force) {
+    if (!activeFetchPromise) {
+      activeFetchPromise = performNewsIngestion();
+    }
+    try {
+      const result = await Promise.race([
+        activeFetchPromise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 9000))
+      ]);
+      if (result && result.news && result.news.length > 0) {
+        return {
+          news: result.news,
+          updatedAt: result.updatedAt,
+          cached: false,
+          refreshed: true
+        };
+      }
+    } catch {
+      // fall through to cache
+    }
+  }
 
   // 1. In-memory cache hit (fresh within TTL)
   if (inMemoryCache.news && inMemoryCache.news.length > 0 && (now - inMemoryCache.timestamp < CACHE_TTL_MS)) {
@@ -475,13 +546,15 @@ export default async function handler(req, res) {
     return res.end();
   }
 
-  const { news, updatedAt, cached } = await getMacroNews();
+  const forceRefresh = req.query && (req.query.refresh === "1" || req.query.refresh === "true");
+  const { news, updatedAt, cached, refreshed } = await getMacroNews(forceRefresh);
 
   const responseBody = {
     status: "ok",
     source: "PerData Intelligence Feed Pipeline",
     updatedAt,
     cached: Boolean(cached),
+    refreshed: Boolean(refreshed),
     count: news.length,
     news
   };

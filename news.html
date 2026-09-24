@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="description" content="Noticias macroeconómicas y de mercados de PerData: BVL, BCRP, minería peruana, commodities y tasas globales con fuentes citadas." />
+  <title>Noticias de Mercados · PerData</title>
+
+  <!-- Early Theme Init -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
+      } else {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.classList.add("light");
+      }
+    })();
+  </script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            appleLight: '#FFFFFF',
+            appleDark: '#0D0D0E',
+            appleCardDark: '#1C1C1E',
+            appleTextDark: '#F5F5F7',
+            appleSubDark: '#8E8E93',
+            appleBorderDark: '#2C2C2E',
+            appleBorderLight: '#E5E5EA',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html, body {
+      overflow-x: hidden !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      letter-spacing: -0.011em;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tnum {
+      font-feature-settings: "tnum" 1, "cv01" 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .micro-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .ui-switch {
+      --switch-bg: rgb(229, 229, 234);
+      --switch-checked-bg: rgb(0, 0, 0);
+      --circle-diameter: 18px;
+      --circle-bg: #FFFFFF;
+      --circle-inset: 2px;
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    html.dark .ui-switch {
+      --switch-bg: rgb(44, 44, 46);
+      --switch-checked-bg: rgb(255, 255, 255);
+      --circle-bg: #0D0D0E;
+    }
+
+    .ui-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--switch-bg);
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 9999px;
+    }
+
+    .slider .circle {
+      top: var(--circle-inset);
+      left: var(--circle-inset);
+      width: var(--circle-diameter);
+      height: var(--circle-diameter);
+      position: absolute;
+      background: var(--circle-bg);
+      border-radius: inherit;
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .ui-switch input:checked + .slider {
+      background-color: var(--switch-checked-bg);
+    }
+
+    .ui-switch input:checked + .slider .circle {
+      left: calc(100% - var(--circle-diameter) - var(--circle-inset));
+    }
+  </style>
+</head>
+<body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
+
+  <!-- Header (idéntico al resto del sitio) -->
+  <header class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF]/90 dark:bg-[#0D0D0E]/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
+
+      <div class="flex items-center space-x-6">
+        <a href="/" class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm border border-black/10 dark:border-white/10">
+            P
+          </div>
+          <div class="flex flex-col">
+            <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
+            <span class="text-[10px] text-[#86868B] uppercase tracking-wider font-semibold">Noticias</span>
+          </div>
+        </a>
+
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-[#86868B]">
+          <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
+          <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
+          <a href="/noticias" class="text-black dark:text-white font-semibold transition border-b-2 border-black dark:border-white pb-0.5">Noticias</a>
+          <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
+          <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
+          <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos</a>
+        </nav>
+      </div>
+
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <div id="navbarAuthContainer"></div>
+
+        <label class="ui-switch" title="Alternar modo claro / oscuro">
+          <input id="themeToggle" type="checkbox" />
+          <div class="slider">
+            <div class="circle"></div>
+          </div>
+        </label>
+
+        <a href="/explorer" class="hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-4 py-2 rounded-md transition">
+          <span>Abrir Terminal</span>
+        </a>
+        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] text-[#86868B] hover:text-black dark:hover:text-white transition" aria-label="Abrir menú" aria-expanded="false">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+      <!-- Mobile Nav Dropdown -->
+      <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 right-0 border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#1C1C1E] shadow-lg">
+        <nav class="flex flex-col py-2 text-xs font-medium text-[#86868B]">
+          <a href="/" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Inicio</a>
+          <a href="/explorer" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Terminal</a>
+          <a href="/noticias" class="px-4 py-2.5 text-black dark:text-white font-semibold bg-[#F5F5F7] dark:bg-[#0D0D0E]">Noticias</a>
+          <a href="/metodologia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Metodología</a>
+          <a href="/guia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Guía de Uso</a>
+          <a href="/terms" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Términos</a>
+        </nav>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-8 w-full">
+
+    <!-- Page Header -->
+    <section class="space-y-3">
+      <div class="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <div class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[11px] font-semibold uppercase tracking-wider tnum text-[#86868B] border border-[#E5E5EA] dark:border-[#2C2C2E]">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Feed en Vivo · Pipeline Automático</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-black dark:text-white mt-3">Noticias de Mercados & Macro</h1>
+          <p class="text-sm text-[#86868B] dark:text-[#8E8E93] mt-1 max-w-2xl leading-relaxed">
+            Cobertura automatizada de BVL, BCRP, minería andina, commodities y tasas soberanas. Titulares y atribución de fuente original: el contenido íntegro pertenece a sus respectivos editores.
+          </p>
+        </div>
+        <div class="text-right">
+          <div id="newsUpdatedAt" class="mono tnum text-xs text-[#86868B]">Actualizando…</div>
+          <button id="btnRefreshNews" class="mt-2 inline-flex items-center gap-2 text-xs font-semibold px-4 py-2.5 min-h-[40px] rounded-md bg-black dark:bg-white text-white dark:text-black hover:opacity-90 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 9a8 8 0 0114-3M20 15a8 8 0 01-14 3"/></svg>
+            <span id="btnRefreshLabel">Actualizar</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Category Filter Chips -->
+    <section class="flex items-center gap-2 flex-wrap">
+      <span class="micro-label text-[#86868B] mr-1">Categoría:</span>
+      <button class="cat-chip text-xs font-semibold px-3 py-2 min-h-[40px] rounded-md border border-black dark:border-white bg-black dark:bg-white text-white dark:text-black transition" data-cat="all">Todas</button>
+      <button class="cat-chip text-xs font-medium px-3 py-2 min-h-[40px] rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-cat="Política Monetaria">BCRP</button>
+      <button class="cat-chip text-xs font-medium px-3 py-2 min-h-[40px] rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-cat="Minería">Minería</button>
+      <button class="cat-chip text-xs font-medium px-3 py-2 min-h-[40px] rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-cat="Commodities">Commodities</button>
+      <button class="cat-chip text-xs font-medium px-3 py-2 min-h-[40px] rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-cat="Banca">Banca</button>
+      <button class="cat-chip text-xs font-medium px-3 py-2 min-h-[40px] rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-cat="Forex">Forex</button>
+      <button class="cat-chip text-xs font-medium px-3 py-2 min-h-[40px] rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-cat="Macroeconomía">Macro Perú</button>
+    </section>
+
+    <!-- News List -->
+    <section id="newsList" class="space-y-3">
+      <!-- skeleton -->
+      <div class="animate-pulse space-y-3">
+        <div class="h-20 rounded-lg bg-[#F5F5F7] dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E]"></div>
+        <div class="h-20 rounded-lg bg-[#F5F5F7] dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E]"></div>
+        <div class="h-20 rounded-lg bg-[#F5F5F7] dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E]"></div>
+      </div>
+    </section>
+
+    <!-- Attribution / Copyright Notice -->
+    <section class="p-4 rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-xs text-[#86868B] dark:text-[#8E8E93] leading-relaxed space-y-2">
+      <span class="micro-label text-[#1D1D1F] dark:text-[#F5F5F7]">Atribución de Fuentes & Derechos</span>
+      <p>
+        Los titulares mostrados provienen del agregador público Google News RSS y son propiedad de sus respectivos editores
+        (Gestión, Reuters, Bloomberg, FXEmpire, MarketScreener, Minería Justa, SEMANAeconómica, BCRP, INEI, entre otros).
+        PerData muestra únicamente el titular, el nombre de la fuente y un enlace directo al artículo original;
+        no reproduce ni almacena el contenido completo. Para leer la nota íntegra, siga el enlace de cada fuente.
+      </p>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#0D0D0E] py-8 text-xs text-[#86868B] transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <div class="w-5 h-5 rounded bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-bold text-[10px]">P</div>
+        <span class="font-semibold text-black dark:text-white">PerData</span>
+        <span>·</span>
+        <span>© 2026 Todos los derechos reservados.</span>
+      </div>
+      <div class="flex items-center space-x-5">
+        <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
+        <a href="/noticias" class="hover:text-black dark:hover:text-white transition">Noticias</a>
+        <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
+        <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos y Modelos</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle -->
+  <script>
+    const themeToggle = document.getElementById("themeToggle");
+    const isDark = document.documentElement.classList.contains("dark");
+    if (themeToggle) {
+      themeToggle.checked = isDark;
+      themeToggle.addEventListener("change", (e) => {
+        if (e.target.checked) {
+          document.documentElement.classList.add("dark");
+          document.documentElement.classList.remove("light");
+          localStorage.setItem("theme", "dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+          document.documentElement.classList.add("light");
+          localStorage.setItem("theme", "light");
+        }
+      });
+    }
+  </script>
+
+  <!-- Mobile Menu -->
+  <script>
+    (function() {
+      var btn = document.getElementById('mobileMenuBtn');
+      var menu = document.getElementById('mobileMenu');
+      if (btn && menu) {
+        btn.addEventListener('click', function() {
+          var open = menu.classList.toggle('hidden');
+          btn.setAttribute('aria-expanded', String(!open));
+        });
+      }
+    })();
+  </script>
+
+  <!-- News Feed App -->
+  <script>
+    function escapeHTML(str) {
+      if (str === null || str === undefined) return "";
+      var AMP = String.fromCharCode(38); // ampersand built at runtime to avoid entity mangling
+      return String(str).replace(/[&<>"']/g, function(m) {
+        if (m === String.fromCharCode(38)) return AMP + "amp;";
+        if (m === "<") return AMP + "lt;";
+        if (m === ">") return AMP + "gt;";
+        if (m === '"') return AMP + "quot;";
+        return AMP + "#039;";
+      });
+    }
+
+    const badgeClasses = {
+      red: "bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-500 border-rose-200 dark:border-rose-900",
+      blue: "bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-500 border-blue-200 dark:border-blue-900",
+      amber: "bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-500 border-amber-200 dark:border-amber-900",
+      emerald: "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-500 border-emerald-200 dark:border-emerald-900",
+      purple: "bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-500 border-purple-200 dark:border-purple-900"
+    };
+
+    let allNews = [];
+    let activeCategory = "all";
+
+    function timeAgoLabel(isoTs) {
+      return "";
+    }
+
+    function renderNews() {
+      const list = document.getElementById("newsList");
+      const filtered = activeCategory === "all" ? allNews : allNews.filter(n => n.category === activeCategory);
+
+      if (!filtered.length) {
+        list.innerHTML = '<div class="p-6 text-center text-sm text-[#86868B] rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E]">No hay titulares en esta categoría ahora. Prueba otra o actualiza el feed.</div>';
+        return;
+      }
+
+      list.innerHTML = filtered.map(n => {
+        const bc = badgeClasses[n.impactColor] || badgeClasses.blue;
+        const sym = /^[A-Za-z0-9=._\-^]{1,20}$/.test(n.symbol || "") ? n.symbol : "";
+        const targetUrl = sym ? `/explorer?symbol=${encodeURIComponent(sym)}` : "/explorer";
+        const sourceUrl = /^https?:\/\//.test(n.url || "") ? n.url : "https://news.google.com";
+        return `
+          <article class="p-4 rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#1C1C1E] hover:border-black dark:hover:border-white transition flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
+            <div class="flex items-center gap-2 sm:w-40 shrink-0">
+              <span class="px-1.5 py-0.5 text-[10px] font-bold tracking-wider uppercase rounded border font-mono ${bc}">${escapeHTML(n.impact || "MACRO")}</span>
+              <span class="micro-label text-[#86868B] hidden sm:inline">${escapeHTML(n.category || "")}</span>
+            </div>
+            <div class="flex-grow min-w-0">
+              <a href="${sourceUrl}" target="_blank" rel="noopener noreferrer" class="block text-sm font-semibold text-black dark:text-white leading-snug hover:underline">
+                ${escapeHTML(n.title)}
+              </a>
+              <div class="mt-1 flex items-center gap-2 text-[11px] text-[#86868B]">
+                <span class="font-medium">Fuente: <span class="text-[#1D1D1F] dark:text-[#E5E5EA]">${escapeHTML(n.source)}</span></span>
+                <span>·</span>
+                <span class="tnum">${escapeHTML(n.time)}</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 shrink-0">
+              ${sym ? `<a href="${targetUrl}" class="mono tnum text-[11px] font-bold px-2 py-1 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#2C2C2E] text-black dark:text-white hover:border-black dark:hover:border-white transition">${escapeHTML(sym)}</a>` : ""}
+              <a href="${sourceUrl}" target="_blank" rel="noopener noreferrer" class="text-[11px] font-semibold text-black dark:text-white hover:underline whitespace-nowrap">
+                Leer ↗
+              </a>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    async function loadNews(force) {
+      const btn = document.getElementById("btnRefreshNews");
+      const label = document.getElementById("btnRefreshLabel");
+      label.textContent = "Actualizando…";
+      btn.disabled = true;
+      try {
+        const res = await fetch(`/api/news${force ? "?refresh=1" : ""}`);
+        const data = await res.json();
+        if (data.news && data.news.length) {
+          allNews = data.news;
+          const upd = new Date(data.updatedAt);
+          document.getElementById("newsUpdatedAt").textContent =
+            `Última actualización: ${upd.toLocaleString("es-PE", { dateStyle: "medium", timeStyle: "short" })} · ${data.count} titulares`;
+          renderNews();
+        }
+      } catch (e) {
+        document.getElementById("newsList").innerHTML =
+          '<div class="p-6 text-center text-sm text-rose-600 rounded-lg border border-rose-200 dark:border-rose-900">Error cargando el feed. Reintenta en unos segundos.</div>';
+      } finally {
+        label.textContent = "Actualizar";
+        btn.disabled = false;
+      }
+    }
+
+    document.getElementById("btnRefreshNews").addEventListener("click", () => loadNews(true));
+
+    document.querySelectorAll(".cat-chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        activeCategory = chip.getAttribute("data-cat");
+        document.querySelectorAll(".cat-chip").forEach(c => {
+          c.className = "cat-chip text-xs font-medium px-3 py-2 min-h-[40px] rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition";
+        });
+        chip.className = "cat-chip text-xs font-semibold px-3 py-2 min-h-[40px] rounded-md border border-black dark:border-white bg-black dark:bg-white text-white dark:text-black transition";
+        renderNews();
+      });
+    });
+
+    loadNews(false);
+  </script>
+
+  <!-- Auth Modal & Feature Gating Script -->
+  <script src="/auth.js"></script>
+  <!-- Real-Time Teleprompter Feed Ticker -->
+  <script src="/teleprompter.js"></script>
+</body>
+</html>
