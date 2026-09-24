@@ -2523,6 +2523,10 @@ async function handleForecast(req, url) {
 
   // ============ PerData Forecast Engine v2 (multi-component, non-linear) ============
   // log domain
+  const closes = series.map(it => it.close);
+  const N = closes.length;
+  const lastClose = closes[N - 1];
+  const lastDateStr = series[N - 1].date;
   const logs = closes.map(v => Math.log(v));
   const L = logs.length;
 
