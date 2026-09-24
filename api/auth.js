@@ -469,10 +469,8 @@ export default async function handler(req, res) {
           const token = signJwt(safeUser);
           return sendJson(res, 200, { success: true, user: safeUser, token });
         }
-        return sendJson(res, 400, {
-          success: false,
-          error: user ? "Contraseña incorrecta." : "No existe una cuenta registrada con este correo."
-        });
+        // Not found in Supabase (or wrong password against Supabase copy):
+        // fall through to the bundled local store so legacy accounts keep working.
       } catch (e) {
         console.warn("[Auth API] Supabase signin fallback to local:", e.message);
         // fall through to local file store
