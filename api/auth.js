@@ -2,7 +2,7 @@
  * PerData - Serverless Institutional Authentication Backend
  * Built with native Node.js crypto (no external dependencies required).
  * Provides secure PBKDF2 password hashing with random salt, signed HS256 JWT sessions,
- * and resilient multi-tier persistence (data/users.json -> /tmp fallback -> memory).
+ * and resilient multi-tier persistence (Supabase Postgres -> data/users.json -> memory).
  */
 
 import fs from "fs";
@@ -22,8 +22,51 @@ const TOKEN_EXPIRY_SECONDS = 30 * 24 * 60 * 60; // 30 days session validity
 const PRIMARY_DATA_PATH = path.join(__dirname, "../data/users.json");
 const FALLBACK_DATA_PATH = path.join(os.tmpdir(), "mde_users.json");
 
+// Supabase shared persistence (production mode)
+// Set SUPABASE_URL + SUPABASE_SERVICE_KEY (service role, server-side only)
+// or SUPABASE_ANON_KEY for environments without service access.
+const SUPABASE_URL = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY || "";
+const SUPABASE_USERS_TABLE = process.env.SUPABASE_USERS_TABLE || "users";
+const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_KEY);
+
 // In-memory cache for fast lookups & read-only environment resilience
 let inMemoryUsers = [];
+
+/**
+ * Supabase REST helper (PostgREST). No SDK required.
+ */
+async function supabaseRequest(method, path_, body) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path_}`, {
+    method,
+    headers: {
+      "apikey": SUPABASE_KEY,
+      "Authorization": `Bearer ${SUPABASE_KEY}`,
+      "Content-Type": "application/json",
+      "Prefer": "return=representation"
+    },
+    body: body ? JSON.stringify(body) : undefined,
+    signal: AbortSignal.timeout(8000)
+  });
+  const text = await res.text();
+  let json;
+  try { json = JSON.parse(text); } catch (e) { json = null; }
+  if (!res.ok) {
+    const msg = (json && json.message) || text.slice(0, 200) || `HTTP ${res.status}`;
+    throw new Error(msg);
+  }
+  return json;
+}
+
+async function supabaseFindUserByEmail(email) {
+  const rows = await supabaseRequest("GET", `${SUPABASE_USERS_TABLE}?email=eq.${encodeURIComponent(email)}&select=*`);
+  return Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
+}
+
+async function supabaseInsertUser(user) {
+  const rows = await supabaseRequest("POST", SUPABASE_USERS_TABLE, user);
+  return Array.isArray(rows) && rows.length > 0 ? rows[0] : user;
+}
 
 /**
  * Loads users from persistent store or fallbacks
@@ -322,6 +365,39 @@ export default async function handler(req, res) {
       });
     }
 
+    // --- Supabase shared store (production) ---
+    if (USE_SUPABASE) {
+      try {
+        const existing = await supabaseFindUserByEmail(email);
+        if (existing) {
+          return sendJson(res, 400, {
+            success: false,
+            error: "Esta cuenta ya está registrada. Por favor inicia sesión."
+          });
+        }
+        const { salt, hash, iterations } = hashPassword(password);
+        const displayName = name || email.split("@")[0];
+        const newUser = {
+          id: "usr_" + crypto.randomBytes(6).toString("hex"),
+          email,
+          name: displayName,
+          role: "pro",
+          salt,
+          hash,
+          iterations,
+          created_at: new Date().toISOString()
+        };
+        const stored = await supabaseInsertUser(newUser);
+        const safeUser = { id: stored.id, email: stored.email, name: stored.name, role: stored.role || "pro" };
+        const token = signJwt(safeUser);
+        return sendJson(res, 200, { success: true, user: safeUser, token });
+      } catch (e) {
+        console.warn("[Auth API] Supabase signup fallback to local:", e.message);
+        // fall through to local file store
+      }
+    }
+
+    // --- Local file store fallback ---
     // Check for duplicate email
     const duplicate = users.find(u => u.email.toLowerCase() === email);
     if (duplicate) {
@@ -379,6 +455,31 @@ export default async function handler(req, res) {
       });
     }
 
+    // --- Supabase shared store (production) ---
+    if (USE_SUPABASE) {
+      try {
+        const user = await supabaseFindUserByEmail(email);
+        if (user && verifyPassword(password, user.salt, user.hash, user.iterations || 100000)) {
+          const safeUser = {
+            id: user.id,
+            email: user.email,
+            name: user.name || user.email.split("@")[0],
+            role: user.role || "pro"
+          };
+          const token = signJwt(safeUser);
+          return sendJson(res, 200, { success: true, user: safeUser, token });
+        }
+        return sendJson(res, 400, {
+          success: false,
+          error: user ? "Contraseña incorrecta." : "No existe una cuenta registrada con este correo."
+        });
+      } catch (e) {
+        console.warn("[Auth API] Supabase signin fallback to local:", e.message);
+        // fall through to local file store
+      }
+    }
+
+    // --- Local file store fallback ---
     const user = users.find(u => u.email.toLowerCase() === email);
     if (!user) {
       return sendJson(res, 400, {
