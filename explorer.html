@@ -43,6 +43,11 @@
     }
   </script>
   
+  <!-- Typography: institutional terminal stack -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- SheetJS (xlsx) for instant client-side Excel downloads -->
@@ -154,19 +159,14 @@
       from { opacity: 0; transform: translateY(14px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    main > section,
+    .terminal-surface,
     .rise-in {
       animation: mde-rise 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both;
     }
-    main > section:nth-child(2) { animation-delay: 0.06s; }
-    main > section:nth-child(3) { animation-delay: 0.12s; }
-    main > section:nth-child(4) { animation-delay: 0.18s; }
-    main > section:nth-child(5) { animation-delay: 0.24s; }
-    main > section:nth-child(6) { animation-delay: 0.30s; }
 
     /* Respect reduced motion */
     @media (prefers-reduced-motion: reduce) {
-      main > section, .rise-in { animation: none; }
+      .terminal-surface, .rise-in { animation: none; }
       * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
     }
 
@@ -305,6 +305,156 @@
     .ui-switch input:checked + .slider .circle {
       left: calc(100% - var(--circle-diameter) - var(--circle-inset));
     }
+
+    /* ================================================================
+       INSTITUTIONAL TERMINAL SYSTEM — unified surface, no floating islands
+       ================================================================ */
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+      letter-spacing: -0.006em;
+    }
+    .font-mono {
+      font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace !important;
+    }
+    .micro-label, .band-label {
+      font-family: "Inter", sans-serif;
+    }
+    .band-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #86868B;
+    }
+
+    .terminal-surface {
+      animation: mde-rise 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 12px 32px -20px rgba(0,0,0,0.10);
+    }
+    html.dark .terminal-surface {
+      box-shadow: 0 1px 3px rgba(0,0,0,0.45), 0 12px 32px -20px rgba(0,0,0,0.6);
+    }
+
+    /* Command bar input */
+    #companySearch {
+      font-family: "IBM Plex Mono", monospace !important;
+      font-size: 12.5px !important;
+      height: 38px !important;
+      padding: 0 12px 0 38px !important;
+      border-radius: 6px !important;
+      background: #FFFFFF !important;
+      border: 1px solid #E5E5EA !important;
+    }
+    html.dark #companySearch { background: #141416 !important; border-color: #3A3A3C !important; }
+    #companySearch:focus {
+      border-color: #000000 !important;
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.07) !important;
+    }
+    html.dark #companySearch:focus {
+      border-color: #FFFFFF !important;
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.10) !important;
+    }
+
+    /* Segmented controls (range / horizon) */
+    .seg {
+      display: inline-flex; align-items: stretch;
+      background: #F5F5F7; border: 1px solid #E5E5EA;
+      border-radius: 6px; padding: 2px; gap: 2px;
+    }
+    html.dark .seg { background: #141416; border-color: #3A3A3C; }
+    .range-btn, .horizon-btn {
+      border-radius: 4px !important;
+      font-size: 11px !important;
+      letter-spacing: 0.01em;
+      height: 28px !important;
+      padding: 0 12px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      white-space: nowrap;
+    }
+
+    /* Combobox */
+    #macroOverlay {
+      appearance: none !important;
+      -webkit-appearance: none !important;
+      height: 32px !important;
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      font-family: "Inter", sans-serif !important;
+      border-radius: 6px !important;
+      border: 1px solid #E5E5EA !important;
+      background-color: #FFFFFF !important;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2386868B' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+      background-repeat: no-repeat !important;
+      background-position: right 10px center !important;
+      padding: 0 30px 0 10px !important;
+      min-width: 210px;
+      cursor: pointer;
+    }
+    html.dark #macroOverlay { background-color: #141416 !important; border-color: #3A3A3C !important; }
+    #macroOverlay:focus {
+      border-color: #000000 !important;
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.07) !important;
+      outline: none !important;
+    }
+    html.dark #macroOverlay:focus {
+      border-color: #FFFFFF !important;
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.10) !important;
+    }
+
+    /* Custom horizon input */
+    #customHorizonInput {
+      height: 28px !important;
+      border-radius: 4px !important;
+      font-size: 12px !important;
+      font-family: "IBM Plex Mono", monospace !important;
+      border: 1px solid #E5E5EA !important;
+      background: #FFFFFF !important;
+    }
+    html.dark #customHorizonInput { border-color: #3A3A3C !important; background: #141416 !important; }
+    #customHorizonContainer:not(.hidden) { display: flex !important; align-items: center; }
+
+    /* Chips */
+    .chip-btn {
+      border-radius: 4px !important;
+      font-size: 11px !important;
+      font-weight: 500 !important;
+      padding: 0 10px !important;
+      height: 26px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+    }
+
+    /* Search dropdown items */
+    .search-item { padding: 9px 12px !important; }
+
+    /* Stat strips with hairline dividers */
+    .stat-strip {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border-top: 1px solid #E5E5EA;
+    }
+    html.dark .stat-strip { border-top-color: #2C2C2E; }
+    .stat {
+      padding: 10px 16px 11px;
+      border-left: 1px solid #E5E5EA;
+      text-align: left;
+    }
+    html.dark .stat { border-left-color: #2C2C2E; }
+    .stat:nth-child(odd) { border-left: none; }
+    .stat .stat-value {
+      font-size: 15px; font-weight: 700; margin-top: 3px;
+      font-family: "IBM Plex Mono", monospace;
+      font-feature-settings: "tnum" 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat .stat-sub { font-size: 10px; color: #86868B; margin-top: 1px; }
+
+    @media (min-width: 640px) {
+      .stat-strip-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+      .stat-strip-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .stat-strip-5 .stat, .stat-strip-4 .stat { border-left: 1px solid #E5E5EA; }
+      html.dark .stat-strip-5 .stat, html.dark .stat-strip-4 .stat { border-left-color: #2C2C2E; }
+      .stat-strip-5 .stat:nth-child(5n+1), .stat-strip-4 .stat:nth-child(4n+1) { border-left: none; }
+    }
   </style>
 </head>
 <body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200">
@@ -375,262 +525,248 @@
   </header>
 
   <!-- Main Container -->
-  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8">
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+  <div class="terminal-surface bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg overflow-hidden">
 
-    <!-- Hero & Search Section -->
-    <section class="text-center space-y-4">
-      <div class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[11px] font-semibold uppercase tracking-wider tnum text-[#86868B] border border-[#E5E5EA] dark:border-[#2C2C2E]">
-        <span>10 Años de Series Históricas</span>
-        <span>·</span>
-        <span>Inferencia Probabilística Zero-Shot</span>
-      </div>
-
-      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-black dark:text-white">
-        Análisis Macroeconómico Cuantitativo
-      </h1>
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed max-w-2xl mx-auto">
-        Modelado econométrico y estocástico de alta dimensión para minería peruana, metales globales y variables macroeconómicas con conos de incertidumbre P10/P50/P90.
-      </p>
-
-      <!-- Search Input Container -->
-      <div class="mt-6 relative max-w-xl mx-auto w-full text-left" id="searchContainer">
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#86868B]">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-          </div>
-          <input 
-            type="text" 
-            id="companySearch" 
-            autocomplete="off"
-            placeholder="Buscar activo o empresa (ej. Buenaventura, Southern Copper, Volcan, Cobre...)" 
-            class="w-full pl-10 pr-10 py-3 bg-[#F5F5F7] dark:bg-[#1C1C1E] focus:bg-white dark:focus:bg-[#161618] text-black dark:text-white placeholder-[#86868B] dark:placeholder-[#8E8E93] text-xs sm:text-sm rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E] focus:border-black dark:focus:border-white focus:outline-none transition"
-          />
-          <div id="searchSpinner" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center">
-            <div class="w-4 h-4 border-2 border-[#86868B] border-t-black dark:border-t-white rounded-full animate-spin"></div>
-          </div>
+    <!-- Command Band -->
+    <section class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 pt-5 pb-4">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+        <div class="min-w-0">
+          <div class="band-label">Terminal Cuantitativa · BVL · Metales · Macro</div>
+          <h1 class="text-lg sm:text-2xl font-bold tracking-tight text-black dark:text-white mt-1">
+            Análisis Macroeconómico
+          </h1>
+          <p class="text-[11px] sm:text-xs text-[#86868B] dark:text-[#8E8E93] leading-relaxed max-w-xl mt-1">
+            Series históricas de 10 años · Inferencia probabilística P10/P50/P90
+          </p>
         </div>
 
-        <!-- Dropdown Results -->
-        <div id="searchResults" class="hidden absolute left-0 right-0 mt-2 bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg shadow-2xl max-h-80 overflow-y-auto z-40 divide-y divide-[#F5F5F7] dark:divide-[#2C2C2E]"></div>
+        <!-- Search: part of the command band, right aligned on desktop -->
+        <div class="relative w-full lg:w-[380px] flex-shrink-0 text-left" id="searchContainer">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#86868B]">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <input 
+              type="text" 
+              id="companySearch" 
+              autocomplete="off"
+              placeholder="Buscar activo — ej. Buenaventura, Volcan, Cobre..." 
+              class="w-full text-xs rounded-lg border transition"
+            />
+            <div id="searchSpinner" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center">
+              <div class="w-3.5 h-3.5 border-2 border-[#86868B] border-t-black dark:border-t-white rounded-full animate-spin"></div>
+            </div>
+          </div>
+
+          <!-- Dropdown Results -->
+          <div id="searchResults" class="hidden absolute left-0 right-0 mt-1.5 bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-md shadow-xl max-h-80 overflow-y-auto z-40 divide-y divide-[#F5F5F7] dark:divide-[#2C2C2E]"></div>
+        </div>
       </div>
 
-      <!-- Quick Chips Shortcuts -->
-      <div class="mt-4 flex items-center justify-left sm:justify-center gap-1.5 flex-wrap pt-2">
-        <span class="micro-label text-[#86868B] mr-1">Atajos:</span>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BVN">Buenaventura (BVN)</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="SCCO">Southern Copper (SCCO)</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="VOLCABC1.LM">Volcan</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="MINSURI1.LM">Minsur</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BAP">Credicorp</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="HG=F">Cobre Futuros</button>
-        <button class="chip-btn text-xs font-medium px-3 py-1.5 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="PEN=X">USD/PEN</button>
+      <!-- Chips row -->
+      <div class="mt-3.5 flex items-center gap-1.5 flex-wrap">
+        <span class="band-label mr-1">Atajos:</span>
+        <button class="chip-btn border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BVN">Buenaventura</button>
+        <button class="chip-btn border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="SCCO">Southern Copper</button>
+        <button class="chip-btn border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="VOLCABC1.LM">Volcan</button>
+        <button class="chip-btn border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="MINSURI1.LM">Minsur</button>
+        <button class="chip-btn border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BAP">Credicorp</button>
+        <button class="chip-btn border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="HG=F">Cobre</button>
+        <button class="chip-btn border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="PEN=X">USD/PEN</button>
       </div>
 
       <!-- Search Account Recommendation Banner (Intuitive Gating) -->
-      <div id="searchAccountBanner" class="hidden mt-4 max-w-xl mx-auto p-3.5 bg-white dark:bg-[#18181A] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs transition-all duration-300">
+      <div id="searchAccountBanner" class="hidden mt-4 max-w-2xl p-3 bg-[#F5F5F7] dark:bg-[#141416] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-md flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs transition-all duration-300">
         <div class="flex items-center gap-2.5 text-left text-[#1D1D1F] dark:text-[#E5E5EA]">
           <span class="leading-snug">Para esta búsqueda podrías considerar <strong>crearte una cuenta</strong> y acceder a información más precisa, series de 10 años y horizontes extendidos.</span>
         </div>
-        <button id="btnBannerSignUp" class="shrink-0 px-3.5 py-2 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-md text-[11px] hover:opacity-90 transition">
+        <button id="btnBannerSignUp" class="shrink-0 px-3.5 py-1.5 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-md text-[11px] hover:opacity-90 transition">
           Crear cuenta
         </button>
       </div>
     </section>
 
-    <!-- Controls Bar: Time Range & Macro Overlay (centered) -->
-    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 flex flex-col items-center justify-center gap-4 transition-colors">
-      <!-- Historical Range Selector -->
-      <div class="flex flex-wrap items-center justify-center gap-2">
-        <span class="micro-label text-[#86868B] dark:text-[#8E8E93] mr-1">Rango Histórico:</span>
-        <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-lg border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-medium tnum">
-          <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="1y">1A</button>
-          <button class="range-btn px-3 py-1 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition" data-range="3y">3A</button>
-          <button class="range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="5y">5A</button>
-          <button class="range-btn locked-option px-3 py-1 rounded-lg text-stone-400 dark:text-stone-600 opacity-45 hover:opacity-75 font-medium cursor-pointer transition" data-range="10y">10 Años (10Y)</button>
-        </div>
-      </div>
 
-      <!-- Macro Overlay Dropdown -->
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:space-x-2 w-full sm:w-auto">
-        <label for="macroOverlay" class="micro-label text-[#86868B] dark:text-[#8E8E93] whitespace-nowrap text-center sm:text-right">
-          Cruce Macroeconómico:
-        </label>
-        <select id="macroOverlay" class="w-full sm:w-auto bg-[#F5F5F7] dark:bg-[#2C2C2E] hover:bg-white dark:hover:bg-[#3A3A3C] border border-[#E5E5EA] dark:border-[#3A3A3C] text-black dark:text-white text-xs sm:text-sm rounded-lg px-3 py-2 outline-none font-medium transition cursor-pointer focus:ring-1 focus:ring-black dark:focus:ring-white">
-          <option value="HG=F" selected>Cobre Futuros (HG=F)</option>
-          <option value="GC=F">Oro Futuros (GC=F)</option>
-          <option value="SI=F">Plata Futuros (SI=F)</option>
-          <option value="CL=F">Petróleo WTI (CL=F)</option>
-          <option value="PEN=X">Tipo de Cambio USD/PEN</option>
-          <option value="^TNX">Bonos EE.UU. 10Y</option>
-          <option value="PERU_CPI">Inflación Perú (Banco Mundial)</option>
-          <option value="PERU_GDP">Crecimiento PBI Perú (Banco Mundial)</option>
-          <option value="none">Ninguno (Solo Empresa)</option>
-        </select>
-      </div>
-    </section>
 
-    <!-- Active Asset Header & KPI Summary Cards -->
-    <section class="space-y-4">
-      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between border-b border-[#E5E5EA] dark:border-[#2C2C2E] pb-3 gap-2 text-center sm:text-left">
-        <div>
-          <div class="flex items-center justify-center sm:justify-start space-x-3">
-            <h2 id="assetTitle" class="text-xl sm:text-2xl font-extrabold text-black dark:text-white">Compañía de Minas Buenaventura</h2>
-            <span id="assetSymbolBadge" class="micro-label font-mono tnum px-2 py-0.5 bg-black dark:bg-white text-white dark:text-black rounded-md">BVN</span>
+    <!-- Toolbar Band: distributed range · overlay · horizon -->
+    <section class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-3 bg-[#FAFAFC] dark:bg-[#161618]">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+        <!-- Range -->
+        <div class="flex items-center gap-2.5">
+          <span class="band-label whitespace-nowrap">Rango</span>
+          <div class="seg">
+            <button class="range-btn text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="1y">1A</button>
+            <button class="range-btn bg-black dark:bg-white text-white dark:text-black font-semibold transition" data-range="3y">3A</button>
+            <button class="range-btn text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="5y">5A</button>
+            <button class="range-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer transition" data-range="10y">10A</button>
           </div>
-          <p id="assetMeta" class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] mt-1">Minería · Perú · Moneda: USD · 10 Años de Datos</p>
-        </div>
-        <div class="text-center sm:text-right">
-          <div id="latestPrice" class="text-xl sm:text-2xl font-extrabold font-mono tnum text-black dark:text-white">$34.71 USD</div>
-          <div id="latestDate" class="text-[11px] text-[#86868B] mt-0.5">Último cierre registrado</div>
-        </div>
-      </div>
-
-      <!-- KPI Metrics Grid (Monochromatic Apple Style) -->
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4 text-center">
-        <div class="hover-lift bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
-          <div class="micro-label text-[#86868B]">Retorno Histórico</div>
-          <div id="metricReturn" class="text-lg sm:text-xl font-bold font-mono tnum text-emerald-600 dark:text-emerald-400 mt-1">+184.2%</div>
-          <div class="text-[10px] text-[#86868B] mt-0.5">En el rango seleccionado</div>
-        </div>
-        <div class="hover-lift bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
-          <div class="micro-label text-[#86868B]">Máximo Período</div>
-          <div id="metricHigh" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">$36.50</div>
-          <div id="metricHighDate" class="text-[10px] text-[#86868B] mt-0.5">Pico histórico</div>
-        </div>
-        <div class="hover-lift bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
-          <div class="micro-label text-[#86868B]">Mínimo Período</div>
-          <div id="metricLow" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">$4.10</div>
-          <div id="metricLowDate" class="text-[10px] text-[#86868B] mt-0.5">Valle histórico</div>
-        </div>
-        <div class="hover-lift bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4">
-          <div class="micro-label text-[#86868B]">Correlación (r)</div>
-          <div id="metricCorrelation" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">+0.74</div>
-          <div id="metricCorrelationDesc" class="text-[10px] text-[#86868B] mt-0.5">vs Cobre Futuros</div>
-        </div>
-        <div class="hover-lift bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 col-span-2 md:col-span-1">
-          <div class="micro-label text-[#86868B]">Observaciones</div>
-          <div id="metricPoints" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">121</div>
-          <div class="text-[10px] text-[#86868B] mt-0.5">Meses continuos</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Google TimesFM 2.5 Section: Clean Apple Card -->
-    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 sm:p-6 transition-colors relative">
-      <div class="flex flex-col items-center justify-center text-center pb-4 border-b border-[#E5E5EA] dark:border-[#2C2C2E] gap-4">
-        <div>
-          <div class="flex items-center justify-center space-x-2.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <h3 class="text-base sm:text-lg font-bold text-black dark:text-white">
-              Google TimesFM 2.5 — Proyección Cuantitativa Zero-Shot
-            </h3>
-            <span class="hidden sm:inline-block micro-label bg-[#F5F5F7] dark:bg-[#2C2C2E] text-black dark:text-white px-2 py-0.5 rounded-md border border-[#E5E5EA] dark:border-[#3A3A3C]">
-              RevIN Multi-Cuantil
-            </span>
-          </div>
-          <p class="text-xs text-[#86868B] dark:text-[#8E8E93] mt-1">
-            Proyección de trayectoria mediana P50 con cuantiles probabilísticos P10 y P90 sobre representaciones continuas.
-          </p>
         </div>
 
-        <!-- Horizon Selection Buttons (1M, 3M, 6M, 12M, Custom) — centered -->
-        <div class="flex items-center justify-center flex-wrap gap-2">
-          <span class="micro-label text-[#86868B] dark:text-[#8E8E93]">Horizonte:</span>
-          <div class="inline-flex bg-[#F5F5F7] dark:bg-[#2C2C2E] p-1 rounded-lg border border-[#E5E5EA] dark:border-[#3A3A3C] text-xs font-semibold items-center tnum">
-            <button class="horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition" data-horizon="1">1M</button>
-            <button class="horizon-btn locked-option px-3 py-1.5 rounded-lg text-stone-400 dark:text-stone-600 opacity-45 hover:opacity-75 font-medium cursor-pointer transition" data-horizon="3">3M</button>
-            <button class="horizon-btn locked-option px-3 py-1.5 rounded-lg text-stone-400 dark:text-stone-600 opacity-45 hover:opacity-75 font-medium cursor-pointer transition" data-horizon="6">6M</button>
-            <button class="horizon-btn locked-option px-3 py-1.5 rounded-lg text-stone-400 dark:text-stone-600 opacity-45 hover:opacity-75 font-medium cursor-pointer transition" data-horizon="12">12M</button>
-            <button id="btnCustomHorizon" class="horizon-btn locked-option px-3 py-1.5 rounded-lg text-stone-400 dark:text-stone-600 opacity-45 hover:opacity-75 font-medium cursor-pointer transition flex items-center gap-1" title="Definir cantidad libre de meses">
+        <!-- Macro Overlay -->
+        <div class="flex items-center gap-2.5">
+          <span class="band-label whitespace-nowrap">Cruce Macro</span>
+          <select id="macroOverlay">
+            <option value="HG=F" selected>Cobre Futuros (HG=F)</option>
+            <option value="GC=F">Oro Futuros (GC=F)</option>
+            <option value="SI=F">Plata Futuros (SI=F)</option>
+            <option value="CL=F">Petróleo WTI (CL=F)</option>
+            <option value="PEN=X">Tipo de Cambio USD/PEN</option>
+            <option value="^TNX">Bonos EE.UU. 10Y</option>
+            <option value="PERU_CPI">Inflación Perú (Banco Mundial)</option>
+            <option value="PERU_GDP">Crecimiento PBI Perú (Banco Mundial)</option>
+            <option value="none">Ninguno (Solo Empresa)</option>
+          </select>
+        </div>
+
+        <!-- Horizon (lives in toolbar now; removed from TimesFM section below) -->
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <span class="band-label whitespace-nowrap">Horizonte</span>
+          <div class="seg">
+            <button class="horizon-btn bg-black dark:bg-white text-white dark:text-black font-semibold transition" data-horizon="1">1M</button>
+            <button class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer transition" data-horizon="3">3M</button>
+            <button class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer transition" data-horizon="6">6M</button>
+            <button class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer transition" data-horizon="12">12M</button>
+            <button id="btnCustomHorizon" class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer transition flex items-center gap-1" title="Definir cantidad libre de meses">
               <span id="customHorizonBtnLabel">Custom</span>
             </button>
           </div>
-          <!-- Custom Horizon Interactive Input Popover/Bar -->
-          <div id="customHorizonContainer" class="hidden items-center gap-1.5 bg-[#F5F5F7] dark:bg-[#2C2C2E] px-2.5 py-1 rounded-lg border border-[#E5E5EA] dark:border-[#3A3A3C] transition-all">
-            <input id="customHorizonInput" type="number" min="1" max="36" value="18" placeholder="Meses" class="w-16 bg-white dark:bg-[#1C1C1E] text-black dark:text-white px-2 py-1 rounded-lg text-xs font-mono font-bold text-center border border-[#E5E5EA] dark:border-[#3A3A3C] focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white">
+          <div id="customHorizonContainer" class="hidden items-center gap-1.5 bg-[#F5F5F7] dark:bg-[#141416] px-2 py-1 rounded-md border border-[#E5E5EA] dark:border-[#3A3A3C] transition-all">
+            <input id="customHorizonInput" type="number" min="1" max="36" value="18" placeholder="Meses">
             <span class="text-[11px] font-medium text-[#86868B]">meses</span>
-            <button id="btnApplyCustomHorizon" class="px-2.5 py-1 bg-black dark:bg-white text-white dark:text-black text-xs font-bold rounded-lg hover:opacity-90 transition">
+            <button id="btnApplyCustomHorizon" class="px-2.5 py-1 bg-black dark:bg-white text-white dark:text-black text-xs font-bold rounded-md hover:opacity-90 transition">
               Calcular
             </button>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- Skeleton Loading State -->
-      <div id="forecastSkeleton" class="hidden mt-6 animate-pulse space-y-4">
-        <div class="h-4 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded w-1/3 mx-auto"></div>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-          <div class="h-20 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-xl"></div>
-          <div class="h-20 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-xl"></div>
-          <div class="h-20 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-xl"></div>
-          <div class="h-20 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-xl"></div>
+    <!-- Quote Header + KPI Strip (one band) -->
+    <section class="px-4 sm:px-6 pt-4 pb-4">
+      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
+        <div class="min-w-0">
+          <div class="flex items-center flex-wrap gap-2.5">
+            <h2 id="assetTitle" class="text-lg sm:text-xl font-bold tracking-tight text-black dark:text-white">Compañía de Minas Buenaventura</h2>
+            <span id="assetSymbolBadge" class="micro-label font-mono tnum px-1.5 py-0.5 bg-black dark:bg-white text-white dark:text-black rounded">BVN</span>
+          </div>
+          <p id="assetMeta" class="text-[11px] sm:text-xs text-[#86868B] dark:text-[#8E8E93] mt-1">Minería · Perú · Moneda: USD · 10 Años de Datos</p>
+        </div>
+        <div class="text-left sm:text-right">
+          <div id="latestPrice" class="text-xl sm:text-2xl font-bold font-mono tnum text-black dark:text-white">$34.71 USD</div>
+          <div id="latestDate" class="text-[10px] text-[#86868B] mt-0.5 font-mono tnum">Último cierre registrado</div>
         </div>
       </div>
 
-      <!-- Active Forecast Results & Cards -->
-      <div id="forecastContent" class="mt-5 space-y-4">
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-center">
-          <div class="hover-lift bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
-            <div class="micro-label text-[#86868B]">Precio Esperado (P50)</div>
-            <div id="tfmP50" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">$39.34</div>
-            <div id="tfmHorizonDate" class="text-[10px] text-[#86868B] mt-0.5">Al horizonte de 6 meses</div>
-          </div>
+      <!-- KPI strip: single row on desktop, hairline dividers -->
+      <div class="stat-strip stat-strip-5 mt-4 -mx-4 sm:-mx-6">
+        <div class="stat">
+          <div class="band-label">Retorno</div>
+          <div id="metricReturn" class="stat-value text-emerald-600 dark:text-emerald-400">+184.2%</div>
+          <div class="stat-sub">En el rango</div>
+        </div>
+        <div class="stat">
+          <div class="band-label">Máximo</div>
+          <div id="metricHigh" class="stat-value text-black dark:text-white">$36.50</div>
+          <div id="metricHighDate" class="stat-sub">Pico</div>
+        </div>
+        <div class="stat">
+          <div class="band-label">Mínimo</div>
+          <div id="metricLow" class="stat-value text-black dark:text-white">$4.10</div>
+          <div id="metricLowDate" class="stat-sub">Valle</div>
+        </div>
+        <div class="stat">
+          <div class="band-label">Correlación (r)</div>
+          <div id="metricCorrelation" class="stat-value text-black dark:text-white">+0.74</div>
+          <div id="metricCorrelationDesc" class="stat-sub">vs Cobre</div>
+        </div>
+        <div class="stat">
+          <div class="band-label">Observaciones</div>
+          <div id="metricPoints" class="stat-value text-black dark:text-white">121</div>
+          <div class="stat-sub">Meses</div>
+        </div>
+      </div>
+    </section>
 
-          <div class="hover-lift bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
-            <div class="micro-label text-[#86868B]">Retorno Proyectado</div>
-            <div id="tfmReturn" class="text-lg sm:text-xl font-bold font-mono tnum text-emerald-600 dark:text-emerald-400 mt-1">+13.3%</div>
-            <div id="tfmTrend" class="text-[10px] text-[#86868B] mt-0.5">Tendencia Alcista</div>
-          </div>
+    <!-- Forecast Band (TimesFM) -->
+    <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+        <div class="inline-flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="text-xs font-bold text-black dark:text-white">Google TimesFM 2.5 · Proyección Zero-Shot</span>
+          <span class="hidden sm:inline micro-label text-[#86868B]">RevIN Multi-Cuantil</span>
+        </div>
+        <span class="text-[10px] text-[#86868B]">P50 con banda P10–P90</span>
+      </div>
 
-          <div class="hover-lift bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
-            <div class="micro-label text-[#86868B]">Rango Probabilístico (80%)</div>
-            <div id="tfmRange" class="text-base sm:text-lg font-bold font-mono tnum text-black dark:text-white mt-1 whitespace-nowrap">$21.97 — $56.71</div>
-            <div class="text-[10px] text-[#86868B] mt-0.5">Cuantiles P10 a P90</div>
-          </div>
+      <!-- Skeleton Loading State -->
+      <div id="forecastSkeleton" class="hidden mt-3 animate-pulse">
+        <div class="stat-strip stat-strip-4">
+          <div class="stat"><div class="h-9 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded"></div></div>
+          <div class="stat"><div class="h-9 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded"></div></div>
+          <div class="stat"><div class="h-9 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded"></div></div>
+          <div class="stat"><div class="h-9 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded"></div></div>
+        </div>
+      </div>
 
-          <div class="hover-lift bg-[#F5F5F7] dark:bg-[#2C2C2E]/60 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-4">
-            <div class="micro-label text-[#86868B]">Volatilidad Anualizada</div>
-            <div id="tfmVol" class="text-lg sm:text-xl font-bold font-mono tnum text-black dark:text-white mt-1">48.7%</div>
-            <div class="text-[10px] text-[#86868B] mt-0.5">Difusión temporal √h</div>
+      <!-- Active Forecast Results -->
+      <div id="forecastContent" class="mt-3">
+        <div class="stat-strip stat-strip-4">
+          <div class="stat">
+            <div class="band-label">Precio Esperado (P50)</div>
+            <div id="tfmP50" class="stat-value text-black dark:text-white">$39.34</div>
+            <div id="tfmHorizonDate" class="stat-sub">Al horizonte de 6 meses</div>
+          </div>
+          <div class="stat">
+            <div class="band-label">Retorno Proyectado</div>
+            <div id="tfmReturn" class="stat-value text-emerald-600 dark:text-emerald-400">+13.3%</div>
+            <div id="tfmTrend" class="stat-sub">Tendencia Alcista</div>
+          </div>
+          <div class="stat">
+            <div class="band-label">Rango Probabilístico (80%)</div>
+            <div id="tfmRange" class="stat-value text-black dark:text-white" style="font-size:13px">$21.97 — $56.71</div>
+            <div class="stat-sub">Cuantiles P10 a P90</div>
+          </div>
+          <div class="stat">
+            <div class="band-label">Volatilidad Anualizada</div>
+            <div id="tfmVol" class="stat-value text-black dark:text-white">48.7%</div>
+            <div class="stat-sub">Difusión temporal √h</div>
           </div>
         </div>
 
-        <!-- TimesFM Summary Banner -->
-        <div class="bg-[#F5F5F7] dark:bg-[#2C2C2E]/40 border border-[#E5E5EA] dark:border-[#3A3A3C] rounded-lg p-3 sm:p-4 flex flex-col items-center text-center justify-center gap-2 text-xs text-black dark:text-[#F5F5F7]">
-          <div class="flex items-center justify-center space-x-2">
-            <svg class="w-4 h-4 text-[#86868B] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <span id="tfmExplainText">
-              La gráfica inferior ha sido ampliada con las fechas futuras proyectadas, mostrando la trayectoria P50 (línea discontinua) y el intervalo de confianza P10-P90.
-            </span>
-          </div>
-          <button id="btnToggleForecastChart" class="btn-pro self-center px-3.5 py-1.5 bg-black dark:bg-white hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black rounded-md font-semibold text-xs transition whitespace-nowrap">
-            Ocultar Proyección en Gráfico
+        <!-- Forecast note + toggle, slim row -->
+        <div class="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-[#E5E5EA] dark:border-[#2C2C2E] pt-3">
+          <span id="tfmExplainText" class="text-[11px] text-[#86868B] leading-relaxed">
+            Gráfica ampliada con fechas futuras: trayectoria P50 (discontinua) y banda P10–P90.
+          </span>
+          <button id="btnToggleForecastChart" class="btn-pro self-start sm:self-auto px-3 py-1.5 bg-black dark:bg-white hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black rounded-md font-semibold text-[11px] transition whitespace-nowrap">
+            Ocultar Proyección
           </button>
         </div>
       </div>
     </section>
 
-    <!-- Main Dual Chart Section (Expanded with TimesFM) -->
-    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-4 sm:p-6 transition-colors">
-      <div class="flex flex-col items-center justify-center text-center pb-4 mb-4 border-b border-[#E5E5EA] dark:border-[#2C2C2E] gap-3">
-        <div class="flex items-center justify-center space-x-2">
-          <div class="w-2 h-2 rounded-full bg-black dark:bg-white"></div>
-          <span class="text-sm font-bold text-black dark:text-white">Evolución Histórica & Proyección Ampliada</span>
+    <!-- Chart Band -->
+    <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-3 border-b border-[#E5E5EA] dark:border-[#2C2C2E] gap-2">
+        <div class="flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-sm bg-black dark:bg-white"></span>
+          <span class="text-xs font-bold text-black dark:text-white">Evolución Histórica & Proyección</span>
         </div>
-        
-        <!-- Legend Items (Monochromatic) -->
-        <div class="flex flex-wrap items-center justify-center gap-3 text-xs text-[#86868B] dark:text-[#8E8E93] font-medium">
+
+        <!-- Legend Items -->
+        <div class="flex flex-wrap items-center gap-3 text-[11px] text-[#86868B] dark:text-[#8E8E93] font-medium">
           <span class="inline-flex items-center">
-            <span class="w-3 h-1 bg-black dark:bg-white rounded-sm mr-1.5"></span> Histórico
+            <span class="w-2.5 h-0.5 bg-black dark:bg-white mr-1.5"></span> Histórico
           </span>
           <span id="legendForecast" class="inline-flex items-center text-black dark:text-white font-semibold">
-            <span class="w-3 h-0.5 border-t-2 border-dashed border-black dark:border-white mr-1.5"></span> TimesFM (P50)
+            <span class="w-2.5 h-0 border-t-2 border-dashed border-black dark:border-white mr-1.5"></span> TimesFM (P50)
           </span>
           <span id="legendBand" class="inline-flex items-center text-[#86868B]">
-            <span class="w-3 h-2 bg-black/10 dark:bg-white/10 border border-black/20 dark:border-white/20 rounded-sm mr-1.5"></span> Banda P10-P90
+            <span class="w-2.5 h-2 bg-black/10 dark:bg-white/10 border border-black/20 dark:border-white/20 rounded-sm mr-1.5"></span> Banda P10-P90
           </span>
           <span id="legendMacro" class="inline-flex items-center text-[#86868B]">
-            <span class="w-3 h-1 bg-[#86868B] rounded-sm mr-1.5"></span> Indicador Macro
+            <span class="w-2.5 h-0.5 bg-[#86868B] mr-1.5"></span> Indicador Macro
           </span>
         </div>
       </div>
@@ -641,11 +777,11 @@
       </div>
 
       <!-- Interpretación del Gráfico · TypeSafe AI Jev -->
-      <div class="mt-6 pt-5 border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7]/70 dark:bg-[#2C2C2E]/30 rounded-lg p-4 sm:p-5 transition-colors text-left">
+      <div class="mt-4 pt-4 border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-left">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
-          <div class="inline-flex items-center space-x-2">
-            <span class="w-2 h-2 rounded-full bg-black dark:bg-white animate-pulse"></span>
-            <span class="text-xs sm:text-sm font-bold text-black dark:text-white">Interpretación del Gráfico · TypeSafe AI Jev</span>
+          <div class="inline-flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white animate-pulse"></span>
+            <span class="text-xs font-bold text-black dark:text-white">Interpretación del Gráfico · TypeSafe AI Jev</span>
             <span class="text-[#86868B]">|</span>
             <span class="text-[10px] font-mono uppercase tracking-wider text-[#86868B]">System One RLCD</span>
           </div>
@@ -676,14 +812,14 @@
       </div>
     </section>
 
-    <!-- Historical & Projected Data Table -->
-    <section class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg overflow-hidden transition-colors">
-      <div class="p-4 sm:p-6 border-b border-[#E5E5EA] dark:border-[#2C2C2E] flex flex-col items-center text-center justify-center gap-4 bg-[#F5F5F7] dark:bg-[#2C2C2E]/40">
+    <!-- Data Table Band -->
+    <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E]">
+      <div class="px-4 sm:px-6 py-3 border-b border-[#E5E5EA] dark:border-[#2C2C2E] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FAFAFC] dark:bg-[#161618]">
         <div>
-          <h3 class="text-base font-bold text-black dark:text-white">Tabla de Datos Históricos y Proyectados</h3>
-          <p class="text-xs text-[#86868B] dark:text-[#8E8E93] mt-0.5">Observaciones mensuales correlacionadas y cuantiles probabilísticos.</p>
+          <h3 class="text-xs font-bold text-black dark:text-white">Tabla de Datos Históricos y Proyectados</h3>
+          <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93] mt-0.5">Observaciones mensuales · cuantiles probabilísticos</p>
         </div>
-        <button id="btnExportExcel" class="inline-flex items-center justify-center px-4 py-2 bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black font-semibold text-xs rounded-md transition">
+        <button id="btnExportExcel" class="btn-pro self-start sm:self-auto inline-flex items-center justify-center px-3.5 py-1.5 bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black font-semibold text-[11px] rounded-md transition">
           <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           Descargar Todo en Excel (.xlsx)
         </button>
@@ -708,11 +844,12 @@
           </tbody>
         </table>
       </div>
-      <div class="p-3.5 bg-[#F5F5F7] dark:bg-[#2C2C2E]/40 border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-[11px] text-[#86868B] text-right">
+      <div class="px-4 sm:px-6 py-2.5 bg-[#FAFAFC] dark:bg-[#161618] border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-[11px] text-[#86868B]">
         <span id="tableSummary">Cargando observaciones...</span>
       </div>
     </section>
 
+  </div><!-- /terminal-surface -->
   </main>
 
   <!-- Footer -->
