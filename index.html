@@ -138,6 +138,40 @@
       font-feature-settings: "tnum" 1;
       font-variant-numeric: tabular-nums;
     }
+  
+    /* ===== Professional motion system ===== */
+    @keyframes mde-rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    main > section,
+    .rise-in {
+      animation: mde-rise 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    }
+    main > section:nth-child(2) { animation-delay: 0.06s; }
+    main > section:nth-child(3) { animation-delay: 0.12s; }
+    main > section:nth-child(4) { animation-delay: 0.18s; }
+    main > section:nth-child(5) { animation-delay: 0.24s; }
+    main > section:nth-child(6) { animation-delay: 0.30s; }
+
+    @media (prefers-reduced-motion: reduce) {
+      main > section, .rise-in { animation: none; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+
+    .hover-lift {
+      transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+                  box-shadow 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+                  border-color 0.2s ease;
+      will-change: transform;
+    }
+    .hover-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.18);
+    }
+    html.dark .hover-lift:hover {
+      box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.55);
+    }
   </style>
 </head>
 <body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
@@ -237,12 +271,12 @@
     <section class="space-y-4">
       <div class="flex items-center justify-between">
         <h2 class="micro-label text-[#86868B] dark:text-[#8E8E93]">Activos de Mayor Sensibilidad Cuantitativa</h2>
-        <a href="/explorer" class="text-xs font-medium text-black dark:text-white hover:underline">Ver catálogo completo (22 activos) &rarr;</a>
+        <a href="/explorer" class="text-xs font-medium text-black dark:text-white hover:underline">Ver catálogo completo (124 activos) &rarr;</a>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Asset 1: Cobre -->
-        <a href="/explorer?symbol=HG=F" class="p-4 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] hover:border-black dark:hover:border-white transition group flex flex-col">
+        <a href="/explorer?symbol=HG=F" class="hover-lift p-4 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] hover:border-black dark:hover:border-white transition group flex flex-col">
           <div class="flex items-center justify-between">
             <span class="mono tnum text-xs font-bold text-[#86868B]">HG=F <span class="font-normal">· COMEX</span></span>
             <span class="px-1.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-500 font-semibold text-[11px] tnum">+2.4%</span>
@@ -256,7 +290,7 @@
         </a>
 
         <!-- Asset 2: Buenaventura -->
-        <a href="/explorer?symbol=BVN" class="p-4 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] hover:border-black dark:hover:border-white transition group flex flex-col">
+        <a href="/explorer?symbol=BVN" class="hover-lift p-4 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] hover:border-black dark:hover:border-white transition group flex flex-col">
           <div class="flex items-center justify-between">
             <span class="mono tnum text-xs font-bold text-[#86868B]">BVN <span class="font-normal">· BVL / NYSE</span></span>
             <span class="px-1.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-500 font-semibold text-[11px] tnum">+1.8%</span>
@@ -270,7 +304,7 @@
         </a>
 
         <!-- Asset 3: Southern Copper -->
-        <a href="/explorer?symbol=SCCO" class="p-4 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] hover:border-black dark:hover:border-white transition group flex flex-col">
+        <a href="/explorer?symbol=SCCO" class="hover-lift p-4 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] hover:border-black dark:hover:border-white transition group flex flex-col">
           <div class="flex items-center justify-between">
             <span class="mono tnum text-xs font-bold text-[#86868B]">SCCO <span class="font-normal">· NYSE / BVL</span></span>
             <span class="px-1.5 py-0.5 rounded-md bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#86868B] dark:text-[#8E8E93] font-semibold text-[11px]">Consolidación</span>
@@ -284,7 +318,7 @@
         </a>
 
         <!-- Asset 4: USD/PEN -->
-        <a href="/explorer?symbol=PEN=X" class="p-4 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] hover:border-black dark:hover:border-white transition group flex flex-col">
+        <a href="/explorer?symbol=PEN=X" class="hover-lift p-4 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] hover:border-black dark:hover:border-white transition group flex flex-col">
           <div class="flex items-center justify-between">
             <span class="mono tnum text-xs font-bold text-[#86868B]">PEN=X <span class="font-normal">· FOREX</span></span>
             <span class="px-1.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-500 font-semibold text-[11px]">Estable</span>

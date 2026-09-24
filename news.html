@@ -130,6 +130,40 @@
     .ui-switch input:checked + .slider .circle {
       left: calc(100% - var(--circle-diameter) - var(--circle-inset));
     }
+  
+    /* ===== Professional motion system ===== */
+    @keyframes mde-rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    main > section,
+    .rise-in {
+      animation: mde-rise 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    }
+    main > section:nth-child(2) { animation-delay: 0.06s; }
+    main > section:nth-child(3) { animation-delay: 0.12s; }
+    main > section:nth-child(4) { animation-delay: 0.18s; }
+    main > section:nth-child(5) { animation-delay: 0.24s; }
+    main > section:nth-child(6) { animation-delay: 0.30s; }
+
+    @media (prefers-reduced-motion: reduce) {
+      main > section, .rise-in { animation: none; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+
+    .hover-lift {
+      transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+                  box-shadow 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+                  border-color 0.2s ease;
+      will-change: transform;
+    }
+    .hover-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.18);
+    }
+    html.dark .hover-lift:hover {
+      box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.55);
+    }
   </style>
 </head>
 <body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
@@ -348,7 +382,7 @@
         const targetUrl = sym ? `/explorer?symbol=${encodeURIComponent(sym)}` : "/explorer";
         const sourceUrl = /^https?:\/\//.test(n.url || "") ? n.url : "https://news.google.com";
         return `
-          <article class="p-4 rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#1C1C1E] hover:border-black dark:hover:border-white transition flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
+          <article class="hover-lift p-4 rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#1C1C1E] hover:border-black dark:hover:border-white transition flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
             <div class="flex items-center gap-2 sm:w-40 shrink-0">
               <span class="px-1.5 py-0.5 text-[10px] font-bold tracking-wider uppercase rounded border font-mono ${bc}">${escapeHTML(n.impact || "MACRO")}</span>
               <span class="micro-label text-[#86868B] hidden sm:inline">${escapeHTML(n.category || "")}</span>

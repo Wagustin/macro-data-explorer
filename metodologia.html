@@ -137,6 +137,40 @@
       font-feature-settings: "tnum" 1;
       font-variant-numeric: tabular-nums;
     }
+  
+    /* ===== Professional motion system ===== */
+    @keyframes mde-rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    main > section,
+    .rise-in {
+      animation: mde-rise 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    }
+    main > section:nth-child(2) { animation-delay: 0.06s; }
+    main > section:nth-child(3) { animation-delay: 0.12s; }
+    main > section:nth-child(4) { animation-delay: 0.18s; }
+    main > section:nth-child(5) { animation-delay: 0.24s; }
+    main > section:nth-child(6) { animation-delay: 0.30s; }
+
+    @media (prefers-reduced-motion: reduce) {
+      main > section, .rise-in { animation: none; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+
+    .hover-lift {
+      transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+                  box-shadow 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+                  border-color 0.2s ease;
+      will-change: transform;
+    }
+    .hover-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.18);
+    }
+    html.dark .hover-lift:hover {
+      box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.55);
+    }
   </style>
 </head>
 <body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
