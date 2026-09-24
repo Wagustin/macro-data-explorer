@@ -1,1 +1,1 @@
-{"cleanUrls": true, "crons": [{"path": "/api/news?refresh=1", "schedule": "*/30 * * * *"}], "functions": {"server.js": {"includeFiles": "{*.html,*.js,data/**}"}}}
+{"cleanUrls": true, "crons": [{"path": "/api/news?refresh=1", "schedule": "0 5 * * *"}], "functions": {"server.js": {"includeFiles": "{*.html,*.js,data/**}"}}}
