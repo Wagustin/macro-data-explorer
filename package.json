@@ -5,6 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "node server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "health": "node scripts/health-check.js",
+    "health:prod": "node scripts/health-check.js --base https://macro-data-explorer.vercel.app",
+    "catalog:verify": "node scripts/verify-bvl.js && node scripts/build-catalog.js",
+    "deploy:check": "node scripts/health-check.js --base https://macro-data-explorer.vercel.app"
   }
 }

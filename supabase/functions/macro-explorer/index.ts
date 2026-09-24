@@ -1312,6 +1312,21 @@ const state = {
       });
     }
 
+    // Informative profile for private/unlisted companies (no market data available)
+    function showUnlistedProfile(sym, name, meta) {
+      const el = document.getElementById("searchAccountBanner");
+      if (!el) return;
+      const span = el.querySelector("span.leading-snug");
+      if (span) {
+        span.innerHTML = "";
+        span.textContent = name + " — empresa registrada en el catálogo institucional de PerData, pero sin cotización pública activa (no listada en bolsa o sin datos en el proveedor de mercado). No hay serie histórica ni proyección disponible. Explora activos relacionados: mineras BVL (BVN, VOLCABC1.LM), cotizadas con exposición peruana (FCX, NEM, BHP) o el catálogo completo.";
+      }
+      const btn = document.getElementById("btnBannerSignUp");
+      if (btn) btn.classList.add("hidden");
+      el.classList.remove("hidden");
+      // Do not auto-hide immediately; let the user read. Hide on next search.
+    }
+
     // Render Search Results (Sanitized against XSS)
     function renderSearchResults(results) {
       if (!results || results.length === 0) {
@@ -1337,6 +1352,13 @@ const state = {
           const sym = el.getAttribute("data-symbol");
           companySearchInput.value = "";
           searchResultsDiv.classList.add("hidden");
+          // Unlisted / private companies: informative profile, NO dead API call
+          if (sym.endsWith("-PRIV") || sym === "COSAPI") {
+            const name = el.querySelector(".font-semibold") ? el.querySelector(".font-semibold").textContent : sym;
+            const meta = el.querySelector(".text-\\\\[11px\\\\]") ? el.querySelector(".text-\\\\[11px\\\\]").textContent : "";
+            showUnlistedProfile(sym, name, meta);
+            return;
+          }
           state.primarySymbol = sym;
           checkSearchGatingBanner();
           loadAllData(sym, state.range, state.macroSymbol, state.horizon);
@@ -1365,6 +1387,19 @@ const state = {
       } else {
         banner.classList.remove("hidden");
       }
+      restoreSignupBanner();
+    }
+
+    // Restore the banner to its default (gating) content after an unlisted profile
+    function restoreSignupBanner() {
+      const el = document.getElementById("searchAccountBanner");
+      if (!el) return;
+      const btn = document.getElementById("btnBannerSignUp");
+      if (btn) btn.classList.remove("hidden");
+      const span = el.querySelector("span.leading-snug");
+      if (span && span.textContent.indexOf("sin cotización pública activa") !== -1) {
+        span.textContent = "Para esta búsqueda podrías considerar crear una cuenta y acceder a series de 10 años, horizontes extendidos y exportación Excel.";
+      }
     }
 
     // Update Lock Indicators and Gating
@@ -1377,6 +1412,7 @@ const state = {
         } else {
           banner.classList.remove("hidden");
         }
+        restoreSignupBanner();
       }
 
       const lockedElements = [
@@ -1875,7 +1911,8 @@ const state = {
           pointHoverBackgroundColor: primaryLineColor,
           fill: true,
           yAxisID: "yPrimary",
-          tension: 0.15
+          spanGaps: false,
+          tension: 0
         }
       ];
 
@@ -1891,7 +1928,8 @@ const state = {
           pointRadius: 0,
           fill: "+1", // Fill to P10 dataset below
           yAxisID: "yPrimary",
-          tension: 0.2
+          spanGaps: true,
+          tension: 0
         });
 
         // P10 (Lower Bound)
@@ -1904,7 +1942,8 @@ const state = {
           pointRadius: 0,
           fill: false,
           yAxisID: "yPrimary",
-          tension: 0.2
+          spanGaps: true,
+          tension: 0
         });
 
         // P50 (Median Forecast Line)
@@ -1920,7 +1959,8 @@ const state = {
           pointHoverBackgroundColor: primaryLineColor,
           fill: false,
           yAxisID: "yPrimary",
-          tension: 0.2
+          spanGaps: true,
+          tension: 0
         });
       }
 
@@ -1937,7 +1977,8 @@ const state = {
           pointHoverRadius: 4,
           pointHoverBackgroundColor: macroLineColor,
           yAxisID: "yMacro",
-          tension: 0.15
+          spanGaps: true,
+          tension: 0
         });
       }
 
