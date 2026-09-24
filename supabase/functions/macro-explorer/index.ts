@@ -2521,80 +2521,116 @@ async function handleForecast(req, url) {
     });
   }
 
-  const closes = series.map(it => it.close);
-  const N = closes.length;
-  const lastItem = series[N - 1];
-  const lastClose = lastItem.close;
-  const lastDateStr = lastItem.date;
+  // ============ PerData Forecast Engine v2 (multi-component, non-linear) ============
+  // log domain
+  const logs = closes.map(v => Math.log(v));
+  const L = logs.length;
 
-  // RevIN
-  const windowLen = Math.min(N, 36);
-  const windowSlice = closes.slice(N - windowLen);
-  const mean = windowSlice.reduce((a, b) => a + b, 0) / windowLen;
-  const variance = windowSlice.reduce((acc, v) => acc + Math.pow(v - mean, 2), 0) / (windowLen - 1);
-  const std = Math.sqrt(variance) || 1.0;
-  const normValues = windowSlice.map(v => (v - mean) / std);
+  // local trend: EWMA of log-diffs (fast + slow), capped
+  const diffs = [];
+  for (let i2 = 1; i2 < L; i2++) diffs.push(logs[i2] - logs[i2 - 1]);
+  const ewma = (arr, lambda) => {
+    let w = null;
+    for (const x of arr) w = w === null ? x : lambda * x + (1 - lambda) * w;
+    return w;
+  };
+  const trendFast = ewma(diffs.slice(-6), 0.5);
+  const trendSlow = ewma(diffs.slice(-24), 0.25);
+  let trendBlend = 0.6 * trendSlow + 0.4 * trendFast;
+  trendBlend = Math.max(-0.008, Math.min(0.008, trendBlend));
 
-  // Trend and Momentum
-  let sumT = 0, sumY = 0, sumTY = 0, sumT2 = 0;
-  for (let t = 0; t < windowLen; t++) {
-    sumT += t;
-    sumY += normValues[t];
-    sumTY += t * normValues[t];
-    sumT2 += t * t;
-  }
-  const slopeLong = (windowLen * sumTY - sumT * sumY) / (windowLen * sumT2 - sumT * sumT);
-  const shortLen = Math.min(windowLen, 12);
-  const shortSlice = normValues.slice(windowLen - shortLen);
-  const shortDiff = (shortSlice[shortSlice.length - 1] - shortSlice[0]) / shortLen;
-  const effectiveDrift = (0.65 * shortDiff + 0.35 * slopeLong);
+  // Fourier seasonality (strict F-gate) on detrended window
+  const windowLen = Math.min(L, 60);
+  const winLogs = logs.slice(L - windowLen);
+  let sT = 0, sY = 0, sTY = 0, sT2 = 0;
+  for (let t = 0; t < windowLen; t++) { sT += t; sY += winLogs[t]; sTY += t * winLogs[t]; sT2 += t * t; }
+  const wSlope = (windowLen * sTY - sT * sY) / (windowLen * sT2 - sT * sT);
+  const wIntercept = (sY - wSlope * sT) / windowLen;
+  const detrended = winLogs.map((v, t) => v - (wIntercept + wSlope * t));
 
-  // Volatility
-  const logReturns = [];
-  for (let i = 1; i < windowSlice.length; i++) {
-    if (windowSlice[i - 1] > 0 && windowSlice[i] > 0) {
-      logReturns.push(Math.log(windowSlice[i] / windowSlice[i - 1]));
+  const harmonics = [];
+  if (windowLen >= 24) {
+    for (let k = 1; k <= 2; k++) {
+      let sc = 0, ss = 0;
+      for (let t = 0; t < windowLen; t++) {
+        const ang = 2 * Math.PI * k * (t % 12) / 12;
+        sc += detrended[t] * Math.cos(ang);
+        ss += detrended[t] * Math.sin(ang);
+      }
+      sc *= 2 / windowLen; ss *= 2 / windowLen;
+      const amp = Math.sqrt(sc * sc + ss * ss);
+      const residVar = detrended.reduce((a, v) => a + v * v, 0) / windowLen;
+      const fStat = (windowLen * amp * amp / 4) / (residVar || 1e-9);
+      if (fStat > 6.0) harmonics.push({ k, sc, ss, amp });
     }
   }
-  const meanLog = logReturns.reduce((a, b) => a + b, 0) / (logReturns.length || 1);
-  const varLog = logReturns.reduce((a, b) => a + Math.pow(b - meanLog, 2), 0) / ((logReturns.length - 1) || 1);
-  const monthlyVol = Math.sqrt(varLog);
+  const seasonalAt = (tAhead) => {
+    let sv = 0;
+    const phase = (windowLen - 1 + tAhead) % 12;
+    for (const h of harmonics) {
+      const ang = 2 * Math.PI * h.k * phase / 12;
+      sv += h.sc * Math.cos(ang) + h.ss * Math.sin(ang);
+    }
+    return Math.max(-0.04, Math.min(0.04, sv));
+  };
 
-  // Projection
-  const lastNorm = normValues[normValues.length - 1];
+  // innovation vol + AR(1) on monthly log RETURNS (not levels!)
+  const retWin = Math.min(diffs.length, 36);
+  const rets = diffs.slice(diffs.length - retWin);
+  const retMean = rets.reduce((a, b) => a + b, 0) / (rets.length || 1);
+  const retVar = rets.reduce((a, v) => a + Math.pow(v - retMean, 2), 0) / ((rets.length - 1) || 1);
+  const residVol = Math.sqrt(retVar) || 1e-6;
+  const rC = rets.map(r => r - retMean);
+  let num = 0, den = 0;
+  for (let t = 1; t < rC.length; t++) { num += rC[t] * rC[t - 1]; }
+  for (let t = 0; t < rC.length - 1; t++) { den += rC[t] * rC[t]; }
+  const phi = Math.max(-0.3, Math.min(0.5, den > 0 ? num / den : 0));
+
+  // simulate 400 paths: damped trend + seasonality + AR(1) shocks
+  let seed = 987654321;
+  const nextU = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+  const rand = () => {
+    const u1 = Math.max(1e-12, nextU()), u2 = nextU();
+    return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+  };
+  const SIMS = 400;
+  const paths = [];
+  for (let s2 = 0; s2 < SIMS; s2++) {
+    let logP = logs[L - 1];
+    let prevShock = 0;
+    const path = [];
+    for (let step = 1; step <= H; step++) {
+      const drift = trendBlend * Math.pow(0.75, step - 1);
+      const seas = seasonalAt(step);
+      const z = rand();
+      prevShock = phi * prevShock + Math.sqrt(Math.max(0, 1 - phi * phi)) * z;
+      logP = logP + drift + seas + prevShock * residVol;
+      path.push(Math.exp(logP));
+    }
+    paths.push(path);
+  }
+
+  // quantiles per step from the ensemble
   const forecastPoints = [];
   const [yStart, mStart] = lastDateStr.split("-").map(v => parseInt(v, 10));
   let curYear = yStart;
   let curMonth = mStart;
-
   for (let step = 1; step <= H; step++) {
     curMonth++;
-    if (curMonth > 12) {
-      curMonth = 1;
-      curYear++;
-    }
-    const monthStr = String(curMonth).padStart(2, "0");
-    const forecastDate = `${curYear}-${monthStr}-01`;
-
-    const decay = Math.exp(-0.06 * step);
-    const projNorm = lastNorm + (effectiveDrift * step * decay);
-    const p50 = Math.max(0.01, projNorm * std + mean);
-
-    const stepVol = monthlyVol * Math.sqrt(step);
-    const p10Norm = projNorm - (1.2816 * stepVol);
-    const p90Norm = projNorm + (1.2816 * stepVol);
-
-    const p10 = Math.max(0.01, p10Norm * std + mean);
-    const p90 = Math.max(0.01, p90Norm * std + mean);
-
+    if (curMonth > 12) { curMonth = 1; curYear++; }
+    const stepVals = paths.map(p => p[step - 1]).sort((a, b) => a - b);
+    const qf = (p) => stepVals[Math.min(stepVals.length - 1, Math.max(0, Math.floor(p * stepVals.length)))];
     forecastPoints.push({
       step,
-      date: forecastDate,
-      p10: Number(p10.toFixed(4)),
-      p50: Number(p50.toFixed(4)),
-      p90: Number(p90.toFixed(4))
+      date: `${curYear}-${String(curMonth).padStart(2, "0")}-01`,
+      p10: Number(qf(0.10).toFixed(4)),
+      p50: Number(qf(0.50).toFixed(4)),
+      p90: Number(qf(0.90).toFixed(4))
     });
   }
+  const monthlyVol = residVol;
+  const std = Math.sqrt(winLogs.reduce((a, v) => a + Math.pow(v - winLogs.reduce((x, y) => x + y, 0) / windowLen, 2), 0) / (windowLen - 1)) || 1;
+  const mean = winLogs.reduce((a, b) => a + b, 0) / windowLen;
 
   const targetPoint = forecastPoints[H - 1];
   const predictedPrice = targetPoint.p50;
@@ -2603,9 +2639,15 @@ async function handleForecast(req, url) {
   return new Response(JSON.stringify({
     symbol: rawSymbol,
     horizon: H,
+    horizonMonths: H,
+    horizonLabel: `${H} Meses`,
+    horizonDate: targetPoint.date,
     currentPrice: Number(lastClose.toFixed(4)),
+    lastObservedPrice: Number(lastClose.toFixed(4)),
     predictedPrice: Number(predictedPrice.toFixed(4)),
     expectedReturnPct,
+    trend: trendBlend >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
+    volatilityAnnualized: Number((monthlyVol * Math.sqrt(12) * 100).toFixed(1)),
     quantiles: {
       p10: targetPoint.p10,
       p50: targetPoint.p50,
@@ -2616,10 +2658,22 @@ async function handleForecast(req, url) {
       windowObservations: windowLen,
       annualizedVolatilityPct: Number((monthlyVol * Math.sqrt(12) * 100).toFixed(2)),
       historicalMean: Number(mean.toFixed(4)),
-      historicalStd: Number(std.toFixed(4))
+      historicalStd: Number(std.toFixed(4)),
+      seasonalHarmonics: harmonics.length,
+      arPhi: Number(phi.toFixed(3)),
+      simulatedPaths: 400
+    },
+    metrics: {
+      monthlyVolatilityPct: Number((monthlyVol * 100).toFixed(2)),
+      annualizedVolatilityPct: Number((monthlyVol * Math.sqrt(12) * 100).toFixed(1)),
+      confidenceLevel: "80% (P10 - P90)",
+      driftDirection: trendBlend >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
+      seasonalHarmonics: harmonics.length,
+      arPhi: Number(phi.toFixed(3)),
+      simulatedPaths: 400
     },
     forecastSeries: forecastPoints,
-    engine: "Google TimesFM 2.5 Zero-Shot Foundation Model",
+    engine: "PerData Forecast Engine v2 (TimesFM-style multi-componente estacional)",
     executionTimeMs: 14
   }), {
     status: 200,
