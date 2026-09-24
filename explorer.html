@@ -653,8 +653,15 @@
           <p id="assetMeta" class="text-[11px] sm:text-xs text-[#86868B] dark:text-[#8E8E93] mt-1">Minería · Perú · Moneda: USD · 10 Años de Datos</p>
         </div>
         <div class="text-left sm:text-right">
-          <div id="latestPrice" class="text-xl sm:text-2xl font-bold font-mono tnum text-black dark:text-white">$34.71 USD</div>
+          <div class="flex items-baseline gap-2 justify-start sm:justify-end">
+            <div id="latestPrice" class="text-xl sm:text-2xl font-bold font-mono tnum text-black dark:text-white">$34.71</div>
+            <span id="liveChangePct" class="hidden text-xs font-mono tnum font-semibold px-1.5 py-0.5 rounded text-rose-600 dark:text-rose-400 bg-rose-500/10">-3.69%</span>
+          </div>
           <div id="latestDate" class="text-[10px] text-[#86868B] mt-0.5 font-mono tnum">Último cierre registrado</div>
+          <div id="liveQuoteNote" class="hidden text-[10px] text-emerald-600 dark:text-emerald-400 mt-0.5">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-1 align-middle"></span>
+            <span id="liveQuoteText">En vivo</span>
+          </div>
         </div>
       </div>
 
@@ -983,7 +990,24 @@
       ? '/functions/v1/app/api'
       : '/api';
 
-    const state = {
+        function showLoadError(symbol, apiError) {
+      const el = document.getElementById("searchAccountBanner");
+      const isUnlisted = symbol.includes("-PRIV") || symbol.startsWith("COSAPI");
+      const msg = isUnlisted
+        ? `${symbol}: empresa peruana relevante pero sin cotización pública activa (no listada / sin datos en el proveedor). Revisa el ticker BVL equivalente o busca un activo similar.`
+        : `No se pudieron cargar datos de ${symbol}: ${apiError}`;
+      if (el) {
+        el.querySelector("span.leading-snug") && (el.querySelector("span.leading-snug").innerHTML = "");
+        const span = el.querySelector("span.leading-snug") || el;
+        span.textContent = msg;
+        el.classList.remove("hidden");
+        setTimeout(() => el.classList.add("hidden"), 9000);
+      } else {
+        alert(msg);
+      }
+    }
+
+const state = {
       primarySymbol: "BVN",
       macroSymbol: "HG=F",
       range: "3y",
@@ -1486,7 +1510,7 @@
         const primaryRes = await fetch(`${API_BASE}/historical?symbol=${encodeURIComponent(symbol)}&range=${range}&interval=1mo`);
         const primaryJson = await primaryRes.json();
         if (primaryJson.error) {
-          alert("Error cargando activo: " + primaryJson.error);
+          showLoadError(symbol, primaryJson.error);
           return;
         }
         state.primaryData = primaryJson;
@@ -1641,8 +1665,42 @@
       document.getElementById("assetTitle").textContent = p.name;
       document.getElementById("assetSymbolBadge").textContent = p.symbol;
       document.getElementById("assetMeta").textContent = `${p.sector || 'Sector'} · ${p.country || 'Mercado'} · Moneda: ${p.currency} · 10 Años de Datos`;
-      document.getElementById("latestPrice").textContent = `${p.currency === 'PEN' ? 'S/ ' : '$'}${lastClose.toFixed(2)} ${p.currency}`;
-      document.getElementById("latestDate").textContent = `Último cierre: ${series[series.length - 1].date}`;
+      document.getElementById("latestPrice").textContent = `${p.currency === 'PEN' ? 'S/ ' : '$'}${lastClose.toFixed(2)}`;
+      document.getElementById("latestDate").textContent = `Cierre mensual: ${series[series.length - 1].date}`;
+
+      // LIVE market signal (may be more recent than the monthly series)
+      const liveEl = document.getElementById("liveChangePct");
+      const liveNote = document.getElementById("liveQuoteNote");
+      const liveText = document.getElementById("liveQuoteText");
+      if (p.live && p.live.price !== null && p.live.price !== undefined) {
+        if (typeof p.live.changePct === "number") {
+          liveEl.textContent = (p.live.changePct >= 0 ? "+" : "") + p.live.changePct.toFixed(2) + "%";
+          liveEl.classList.remove("hidden");
+          liveEl.className = liveEl.className.replace(/text-(rose|emerald)-[0-9]+/g, "").trim();
+          if (p.live.changePct >= 0) {
+            liveEl.classList.add("text-emerald-600", "dark:text-emerald-400", "bg-emerald-500/10");
+          } else {
+            liveEl.classList.add("text-rose-600", "dark:text-rose-400", "bg-rose-500/10");
+          }
+        }
+        if (p.live.time) {
+          const t = new Date(p.live.time);
+          const hhmm = String(t.getHours()).padStart(2, "0") + ":" + String(t.getMinutes()).padStart(2, "0");
+          liveText.textContent = `En vivo · ${t.toLocaleDateString("es-PE", { day: "2-digit", month: "short" })} ${hhmm}`;
+          liveNote.classList.remove("hidden");
+        }
+        // If live price is newer than the last monthly close, show it as the headline
+        const liveT = p.live.time ? new Date(p.live.time).getTime() : 0;
+        const lastT = series[series.length - 1].timestamp ? series[series.length - 1].timestamp * 1000 : 0;
+        if (liveT > lastT) {
+          document.getElementById("latestPrice").textContent = `${p.currency === 'PEN' ? 'S/ ' : '$'}${p.live.price.toFixed(2)}`;
+        }
+      }
+      // Daily micro-context: freshest 5 sessions under the quote (best-effort)
+      if (p.daily && p.daily.length > 1) {
+        const lastD = p.daily[p.daily.length - 1];
+        document.getElementById("latestDate").textContent = `Última sesión: ${lastD.date} · serie mensual hasta ${series[series.length - 1].date}`;
+      }
 
       // Update Historical Metrics
       const returnEl = document.getElementById("metricReturn");

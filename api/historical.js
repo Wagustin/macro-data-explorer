@@ -132,6 +132,43 @@ export default async function handler(req, res) {
 
     const catMeta = CATALOG.find(c => c.symbol === symbol) || {};
 
+    // Live market signal from meta (regular market quote, may be intraday)
+    const live = {
+      price: typeof meta.regularMarketPrice === "number" ? meta.regularMarketPrice : null,
+      changePct: typeof meta.regularMarketChangePercent === "number" ? meta.regularMarketChangePercent : null,
+      time: typeof meta.regularMarketTime === "number" ? new Date(meta.regularMarketTime * 1000).toISOString() : null,
+      state: meta.marketState || null
+    };
+
+    // Last 5 DAILY sessions for a fresh micro-context (independent of the selected range)
+    let daily = [];
+    try {
+      const dUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1mo&interval=1d`;
+      const dRes = await fetch(dUrl, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Accept": "*/*"
+        },
+        signal: AbortSignal.timeout(6000)
+      });
+      if (dRes.ok) {
+        const dData = await dRes.json();
+        const dRes0 = dData?.chart?.result?.[0];
+        const dTs = dRes0?.timestamp || [];
+        const dQ = dRes0?.indicators?.quote?.[0] || {};
+        const dC = dQ.close || [];
+        for (let i = Math.max(0, dTs.length - 5); i < dTs.length; i++) {
+          if (dC[i] !== null && dC[i] !== undefined && !isNaN(dC[i])) {
+            const dt = new Date(dTs[i] * 1000);
+            daily.push({
+              date: `${dt.getUTCFullYear()}-${String(dt.getUTCMonth()+1).padStart(2,"0")}-${String(dt.getUTCDate()).padStart(2,"0")}`,
+              close: Number(dC[i].toFixed(4))
+            });
+          }
+        }
+      }
+    } catch (e) { /* daily context is best-effort */ }
+
     return res.status(200).json({
       symbol: meta.symbol || symbol,
       name: catMeta.name || meta.longName || meta.shortName || symbol,
@@ -142,7 +179,9 @@ export default async function handler(req, res) {
       range,
       interval,
       count: series.length,
-      series
+      series,
+      live,
+      daily
     });
   } catch (err) {
     return res.status(500).json({ error: "Falla temporal al procesar la cotización histórica." });

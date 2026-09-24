@@ -112,7 +112,7 @@
 
     async signInWithEmail(email, password) {
       if (!email || !email.includes("@")) {
-        return { success: false, error: "Ingresa un correo electrónico válido." };
+        return { success: false, error: "Ingresa un correo electrónico válido (ej. analista@empresa.com)." };
       }
       if (!password || password.length < 6) {
         return { success: false, error: "La contraseña debe tener al menos 6 caracteres." };
@@ -215,7 +215,7 @@
         }
       } else {
         container.innerHTML = `
-          <button id="btnOpenAuthModal" type="button" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-black dark:bg-white text-white dark:text-black hover:opacity-90 transition shadow-sm flex items-center gap-1.5">
+          <button id="btnOpenAuthModal" type="button" class="text-xs font-semibold px-3 py-1.5 rounded-md bg-black dark:bg-white text-white dark:text-black hover:opacity-90 transition flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
             </svg>
@@ -325,7 +325,7 @@
 
     const modalHTML = `
       <div id="mdeAuthModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
-        <div id="mdeAuthModalBox" class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-2xl w-full max-w-md p-6 sm:p-7 shadow-2xl scale-95 transition-all duration-300 text-black dark:text-white relative">
+        <div id="mdeAuthModalBox" class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg w-full max-w-md p-6 sm:p-7 shadow-2xl scale-95 transition-all duration-300 text-black dark:text-white relative">
           
           <!-- Close Button -->
           <button id="btnCloseAuthModal" type="button" class="absolute top-4 right-4 text-[#86868B] hover:text-black dark:hover:text-white w-8 h-8 rounded-full flex items-center justify-center transition">
@@ -333,7 +333,7 @@
           </button>
 
           <!-- Banner / Prompt for Gated Features -->
-          <div id="mdeAuthBanner" class="mb-4 p-3 rounded-xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] text-[12px] leading-relaxed text-[#1D1D1F] dark:text-[#E5E5EA] font-medium">
+          <div id="mdeAuthBanner" class="mb-4 p-3 rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] text-[12px] leading-relaxed text-[#1D1D1F] dark:text-[#E5E5EA] font-medium">
             ${DEFAULT_GATING_MESSAGE}
           </div>
 
@@ -347,7 +347,7 @@
           </div>
 
           <!-- Mode Switcher (Tab) -->
-          <div class="flex p-1 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-xl mb-5 text-xs font-semibold">
+          <div class="flex p-1 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-lg mb-5 text-xs font-semibold">
             <button id="tabSignIn" type="button" class="flex-1 py-1.5 rounded-lg bg-white dark:bg-[#1C1C1E] text-black dark:text-white shadow-sm transition">
               Iniciar Sesión
             </button>
@@ -356,10 +356,10 @@
             </button>
           </div>
 
-          <!-- Social Auth Buttons -->
-          <div class="space-y-2 mb-4">
+          <!-- Social Auth Buttons (SSO en desarrollo — claramente marcado) -->
+          <div class="space-y-2 mb-4 opacity-60" title="Disponible próximamente">
             <!-- Google Button -->
-            <button id="btnAuthGoogle" type="button" class="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-xl border border-[#E5E5EA] dark:border-[#3A3A3C] bg-white dark:bg-[#2C2C2E]/50 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] text-xs font-medium transition">
+            <button id="btnAuthGoogle" type="button" class="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-lg border border-[#E5E5EA] dark:border-[#3A3A3C] bg-white dark:bg-[#2C2C2E]/50 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] text-xs font-medium transition">
               <svg class="w-4 h-4" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -370,7 +370,7 @@
             </button>
 
             <!-- Apple Button -->
-            <button id="btnAuthApple" type="button" class="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-xl border border-[#E5E5EA] dark:border-[#3A3A3C] bg-white dark:bg-[#2C2C2E]/50 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] text-xs font-medium transition">
+            <button id="btnAuthApple" type="button" class="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-lg border border-[#E5E5EA] dark:border-[#3A3A3C] bg-white dark:bg-[#2C2C2E]/50 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] text-xs font-medium transition">
               <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
                 <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.4c.65-.79 1.1-1.89.98-3-.95.04-2.09.63-2.76 1.42-.59.68-1.11 1.79-.97 2.87 1.06.08 2.1-.5 2.75-1.29z"/>
               </svg>
@@ -378,7 +378,7 @@
             </button>
 
             <!-- Facebook Button -->
-            <button id="btnAuthFacebook" type="button" class="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-xl border border-[#E5E5EA] dark:border-[#3A3A3C] bg-white dark:bg-[#2C2C2E]/50 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] text-xs font-medium transition">
+            <button id="btnAuthFacebook" type="button" class="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-lg border border-[#E5E5EA] dark:border-[#3A3A3C] bg-white dark:bg-[#2C2C2E]/50 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] text-xs font-medium transition">
               <svg class="w-4 h-4 fill-[#1877F2]" viewBox="0 0 24 24">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
               </svg>
@@ -396,22 +396,35 @@
           <form id="mdeAuthForm" class="space-y-3">
             <div id="groupFullName" class="hidden">
               <label class="block text-[11px] font-medium text-[#86868B] mb-1">Nombre completo / Organización</label>
-              <input type="text" id="authFullName" placeholder="Ej. Agustín Wong / Tesorería Corporativa" class="w-full px-3 py-2 text-xs rounded-xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] focus:outline-none focus:border-black dark:focus:border-white">
+              <input type="text" id="authFullName" placeholder="Ej. Agustín Wong / Tesorería Corporativa" class="w-full px-3 py-2 text-xs rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] focus:outline-none focus:border-black dark:focus:border-white focus:ring-2 focus:ring-black/10 dark:focus:ring-white/10">
             </div>
 
             <div>
               <label class="block text-[11px] font-medium text-[#86868B] mb-1">Correo electrónico</label>
-              <input type="email" id="authEmail" required placeholder="analista@empresa.com" class="w-full px-3 py-2 text-xs rounded-xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] focus:outline-none focus:border-black dark:focus:border-white">
+              <input type="email" id="authEmail" required placeholder="analista@empresa.com" class="w-full px-3 py-2 text-xs rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] focus:outline-none focus:border-black dark:focus:border-white focus:ring-2 focus:ring-black/10 dark:focus:ring-white/10">
             </div>
 
             <div>
               <label class="block text-[11px] font-medium text-[#86868B] mb-1">Contraseña</label>
-              <input type="password" id="authPassword" required minlength="6" placeholder="Mínimo 6 caracteres" class="w-full px-3 py-2 text-xs rounded-xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] focus:outline-none focus:border-black dark:focus:border-white">
+              <div class="relative">
+                <input type="password" id="authPassword" required minlength="6" placeholder="Mínimo 6 caracteres" class="w-full px-3 py-2 pr-9 text-xs rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] focus:outline-none focus:border-black dark:focus:border-white">
+                <button type="button" id="btnTogglePwVisibility" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[#86868B] hover:text-black dark:hover:text-white transition" aria-label="Mostrar u ocultar contraseña">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                </button>
+              </div>
+              <div id="pwStrengthBar" class="hidden mt-1.5 h-1 w-full bg-[#E5E5EA] dark:bg-[#3A3A3C] rounded-full overflow-hidden">
+                <div id="pwStrengthFill" class="h-full w-0 bg-rose-500 transition-all duration-300"></div>
+              </div>
+              <div id="pwStrengthText" class="hidden text-[10px] text-[#86868B] mt-1">Fortaleza de la contraseña</div>
+            </div>
+
+            <div id="groupForgotPw" class="text-right">
+              <button type="button" id="btnForgotPassword" class="text-[11px] text-[#86868B] hover:text-black dark:hover:text-white underline transition">Olvidé mi contraseña</button>
             </div>
 
             <div id="mdeAuthStatus" class="text-[11px] text-red-500 font-medium min-h-[16px]"></div>
 
-            <button type="submit" id="btnSubmitAuth" class="w-full py-2.5 rounded-xl bg-black dark:bg-white text-white dark:text-black font-semibold text-xs hover:opacity-90 transition shadow-sm">
+            <button type="submit" id="btnSubmitAuth" class="w-full py-2.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-semibold text-xs hover:opacity-90 transition shadow-sm">
               Iniciar Sesión
             </button>
           </form>
@@ -452,6 +465,50 @@
       statusEl.textContent = "";
     }
 
+    // Password visibility toggle
+    const pwInput = document.getElementById("authPassword");
+    const pwToggle = document.getElementById("btnTogglePwVisibility");
+    pwToggle.addEventListener("click", () => {
+      pwInput.type = pwInput.type === "password" ? "text" : "password";
+      pwToggle.classList.toggle("text-black", pwInput.type === "text");
+      pwToggle.classList.toggle("dark:text-white", pwInput.type === "text");
+    });
+
+    // Password strength meter (signup only)
+    const strengthBar = document.getElementById("pwStrengthBar");
+    const strengthFill = document.getElementById("pwStrengthFill");
+    const strengthText = document.getElementById("pwStrengthText");
+    pwInput.addEventListener("input", () => {
+      if (!isSignUp) { strengthBar.classList.add("hidden"); strengthText.classList.add("hidden"); return; }
+      const v = pwInput.value;
+      let score = 0;
+      if (v.length >= 6) score++;
+      if (v.length >= 10) score++;
+      if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++;
+      if (/[0-9]/.test(v)) score++;
+      if (/[^A-Za-z0-9]/.test(v)) score++;
+      const pct = Math.min(100, score * 20);
+      const labels = ["Muy débil", "Débil", "Aceptable", "Buena", "Fuerte", "Excelente"];
+      const colors = ["bg-rose-500", "bg-rose-500", "bg-amber-500", "bg-amber-500", "bg-emerald-500", "bg-emerald-600"];
+      strengthFill.className = "h-full transition-all duration-300 " + colors[score];
+      strengthFill.style.width = pct + "%";
+      strengthText.textContent = "Fortaleza: " + labels[score];
+      strengthBar.classList.remove("hidden");
+      strengthText.classList.remove("hidden");
+    });
+
+    // Forgot password — honest message (reset flow pending email service)
+    document.getElementById("btnForgotPassword").addEventListener("click", () => {
+      const email = document.getElementById("authEmail").value.trim();
+      if (!email || !email.includes("@")) {
+        statusEl.className = "text-[11px] text-red-500 font-medium min-h-[16px]";
+        statusEl.textContent = "Ingresa tu correo y te avisaremos cuando el restablecimiento esté activo.";
+        return;
+      }
+      statusEl.className = "text-[11px] text-[#86868B] font-medium min-h-[16px]";
+      statusEl.textContent = "El restablecimiento por correo se activará próximamente. Guarda tus credenciales con cuidado.";
+    });
+
     tabSignIn.addEventListener("click", () => setTab(false));
     tabSignUp.addEventListener("click", () => setTab(true));
 
@@ -460,21 +517,14 @@
       if (e.target === modalBackdrop) Auth.closeModal();
     });
 
-    // Social SSO Handlers
-    document.getElementById("btnAuthGoogle").addEventListener("click", () => {
-      statusEl.textContent = "Abriendo ventana segura de Google...";
-      Auth.openOAuthPopup("google");
-    });
-
-    document.getElementById("btnAuthApple").addEventListener("click", () => {
-      statusEl.textContent = "Abriendo ventana segura de Apple...";
-      Auth.openOAuthPopup("apple");
-    });
-
-    document.getElementById("btnAuthFacebook").addEventListener("click", () => {
-      statusEl.textContent = "Abriendo ventana segura de Meta / Facebook...";
-      Auth.openOAuthPopup("facebook");
-    });
+    // Social SSO — honest state: coming soon (backend credentials not configured)
+    const ssoSoon = (provider) => {
+      statusEl.className = "text-[11px] text-[#86868B] font-medium min-h-[16px]";
+      statusEl.textContent = "El acceso con " + provider + " estará disponible próximamente. Por ahora usa correo y contraseña.";
+    };
+    document.getElementById("btnAuthGoogle").addEventListener("click", () => ssoSoon("Google"));
+    document.getElementById("btnAuthApple").addEventListener("click", () => ssoSoon("Apple"));
+    document.getElementById("btnAuthFacebook").addEventListener("click", () => ssoSoon("Facebook"));
 
     // Form Submit Handler
     authForm.addEventListener("submit", async (e) => {
