@@ -718,9 +718,9 @@
 
       <!-- Active Forecast Results -->
       <div id="forecastContent" class="mt-3">
-        <div class="stat-strip stat-strip-4">
+        <div class="stat-strip stat-strip-5">
           <div class="stat">
-            <div class="band-label">Precio Esperado (P50)</div>
+            <div class="band-label">P50 al Horizonte</div>
             <div id="tfmP50" class="stat-value text-black dark:text-white">$39.34</div>
             <div id="tfmHorizonDate" class="stat-sub">Al horizonte de 6 meses</div>
           </div>
@@ -730,14 +730,19 @@
             <div id="tfmTrend" class="stat-sub">Tendencia Alcista</div>
           </div>
           <div class="stat">
-            <div class="band-label">Rango Probabilístico (80%)</div>
+            <div class="band-label">Prob. de Alza</div>
+            <div id="tfmProbRise" class="stat-value text-black dark:text-white">—</div>
+            <div class="stat-sub">P(PT > último cierre)</div>
+          </div>
+          <div class="stat">
+            <div class="band-label">Rango 80% (P10–P90)</div>
             <div id="tfmRange" class="stat-value text-black dark:text-white" style="font-size:13px">$21.97 — $56.71</div>
-            <div class="stat-sub">Cuantiles P10 a P90</div>
+            <div class="stat-sub">Banda P25–P75: <span id="tfmRangeInner">—</span></div>
           </div>
           <div class="stat">
             <div class="band-label">Volatilidad Anualizada</div>
             <div id="tfmVol" class="stat-value text-black dark:text-white">48.7%</div>
-            <div class="stat-sub">Difusión temporal √h</div>
+            <div class="stat-sub" id="tfmModelInfo">Ensemble 400 trayectorias</div>
           </div>
         </div>
 
@@ -767,10 +772,13 @@
             <span class="w-2.5 h-0.5 bg-black dark:bg-white mr-1.5"></span> Histórico
           </span>
           <span id="legendForecast" class="inline-flex items-center text-black dark:text-white font-semibold">
-            <span class="w-2.5 h-0 border-t-2 border-dashed border-black dark:border-white mr-1.5"></span> TimesFM (P50)
+            <span class="w-2.5 h-0 border-t-2 border-dashed border-black dark:border-white mr-1.5"></span> P50 TimesFM
           </span>
           <span id="legendBand" class="inline-flex items-center text-[#86868B]">
-            <span class="w-2.5 h-2 bg-black/10 dark:bg-white/10 border border-black/20 dark:border-white/20 rounded-sm mr-1.5"></span> Banda P10-P90
+            <span class="w-2.5 h-2 bg-black/10 dark:bg-white/10 border border-black/20 dark:border-white/20 rounded-sm mr-1.5"></span> P10–P90 (80%)
+          </span>
+          <span class="inline-flex items-center text-[#86868B]">
+            <span class="w-2.5 h-2 bg-black/25 dark:bg-white/20 border border-black/30 dark:border-white/30 rounded-sm mr-1.5"></span> P25–P75 (50%)
           </span>
           <span id="legendMacro" class="inline-flex items-center text-[#86868B]">
             <span class="w-2.5 h-0.5 bg-[#86868B] mr-1.5"></span> Indicador Macro
@@ -1796,6 +1804,26 @@ const state = {
       document.getElementById("tfmTrend").textContent = `Tendencia ${trendText}`;
 
       document.getElementById("tfmRange").textContent = `${currencyPrefix}${f.quantiles.p10.toFixed(2)} — ${currencyPrefix}${f.quantiles.p90.toFixed(2)}`;
+      const innerEl = document.getElementById("tfmRangeInner");
+      if (innerEl) {
+        innerEl.textContent = f.quantiles.p25 !== undefined
+          ? `${currencyPrefix}${f.quantiles.p25.toFixed(2)} — ${currencyPrefix}${f.quantiles.p75.toFixed(2)}`
+          : "—";
+      }
+      const probEl = document.getElementById("tfmProbRise");
+      if (probEl) {
+        if (typeof f.probabilityOfRise === "number") {
+          probEl.textContent = f.probabilityOfRise.toFixed(1) + "%";
+          probEl.className = "stat-value " + (f.probabilityOfRise >= 55 ? "text-emerald-600 dark:text-emerald-400" : f.probabilityOfRise <= 45 ? "text-rose-600 dark:text-rose-400" : "text-black dark:text-white");
+        } else {
+          probEl.textContent = "—";
+        }
+      }
+      const modelInfoEl = document.getElementById("tfmModelInfo");
+      if (modelInfoEl && f.metrics) {
+        const h = f.metrics.seasonalHarmonics;
+        modelInfoEl.textContent = `φ AR(1) ${f.metrics.arPhi.toFixed(2)} · ${h > 0 ? h + " armónico" + (h > 1 ? "s" : "") + " estacional" + (h > 1 ? "es" : "") : "sin estacionalidad sig."} · ${f.metrics.simulatedPaths} sims`;
+      }
       const volValue = f.volatilityAnnualized ?? f.metrics?.annualizedVolatilityPct ?? '32.4';
       document.getElementById("tfmVol").textContent = `${volValue}%`;
       document.getElementById("tfmExplainText").textContent = `Proyección TimesFM 2.5 calculada exitosamente a ${f.horizonLabel}. La gráfica inferior amplía el horizonte temporal incorporando el intervalo probabilístico P10-P90.`;
@@ -1826,18 +1854,24 @@ const state = {
       let p50Data = new Array(histData.length).fill(null);
       let p10Data = new Array(histData.length).fill(null);
       let p90Data = new Array(histData.length).fill(null);
+      let p25Data = new Array(histData.length).fill(null);
+      let p75Data = new Array(histData.length).fill(null);
 
       // Append Forecast Series if available & enabled
       if (f && f.forecastSeries && state.showForecastOnChart) {
         p50Data[lastHistIndex] = lastHistVal;
         p10Data[lastHistIndex] = lastHistVal;
         p90Data[lastHistIndex] = lastHistVal;
+        p25Data[lastHistIndex] = lastHistVal;
+        p75Data[lastHistIndex] = lastHistVal;
 
         f.forecastSeries.forEach(item => {
           allLabels.push(item.date);
           p50Data.push(item.p50);
           p10Data.push(item.p10);
           p90Data.push(item.p90);
+          p25Data.push(item.p25 !== undefined ? item.p25 : item.p10);
+          p75Data.push(item.p75 !== undefined ? item.p75 : item.p90);
         });
       }
 
@@ -1879,51 +1913,113 @@ const state = {
         }
       ];
 
-      // 2. TimesFM Forecast Datasets (P90 upper, P10 lower, P50 median)
+      // 2. TimesFM Forecast Datasets — institutional fan chart
       if (f && f.forecastSeries && state.showForecastOnChart) {
-        // P90 (Upper Bound)
+        // Inner band P75 (fill down to P25): 50% central mass, denser tone
         datasets.push({
-          label: "TimesFM P90 (Optimista)",
-          data: p90Data,
-          borderColor: isDark ? "rgba(245, 245, 247, 0.25)" : "rgba(0, 0, 0, 0.2)",
-          backgroundColor: isDark ? "rgba(245, 245, 247, 0.08)" : "rgba(0, 0, 0, 0.05)",
-          borderWidth: 1,
+          label: "TimesFM P75",
+          data: p75Data,
+          borderColor: "transparent",
+          backgroundColor: isDark ? "rgba(245, 245, 247, 0.14)" : "rgba(0, 0, 0, 0.10)",
+          borderWidth: 0,
           pointRadius: 0,
-          fill: "+1", // Fill to P10 dataset below
+          fill: "+1",
           yAxisID: "yPrimary",
           spanGaps: true,
-          tension: 0
+          tension: 0.15
         });
 
-        // P10 (Lower Bound)
+        // Inner band P25 (lower edge of the 50% band)
         datasets.push({
-          label: "TimesFM P10 (Pesimista)",
-          data: p10Data,
-          borderColor: isDark ? "rgba(245, 245, 247, 0.25)" : "rgba(0, 0, 0, 0.2)",
+          label: "TimesFM P25",
+          data: p25Data,
+          borderColor: "transparent",
           backgroundColor: "transparent",
-          borderWidth: 1,
+          borderWidth: 0,
           pointRadius: 0,
           fill: false,
           yAxisID: "yPrimary",
           spanGaps: true,
-          tension: 0
+          tension: 0.15
         });
 
-        // P50 (Median Forecast Line)
+        // Outer band P90 (fill down to P10): 80% cone, lighter tone
+        datasets.push({
+          label: "TimesFM P90",
+          data: p90Data,
+          borderColor: "transparent",
+          backgroundColor: isDark ? "rgba(245, 245, 247, 0.07)" : "rgba(0, 0, 0, 0.045)",
+          borderWidth: 0,
+          pointRadius: 0,
+          fill: "+1",
+          yAxisID: "yPrimary",
+          spanGaps: true,
+          tension: 0.15
+        });
+
+        // P10 (lower edge of the 80% cone) — hairline to delimit the cone
+        datasets.push({
+          label: "TimesFM P10",
+          data: p10Data,
+          borderColor: isDark ? "rgba(245, 245, 247, 0.35)" : "rgba(0, 0, 0, 0.28)",
+          backgroundColor: "transparent",
+          borderWidth: 1,
+          borderDash: [2, 3],
+          pointRadius: 0,
+          fill: false,
+          yAxisID: "yPrimary",
+          spanGaps: true,
+          tension: 0.15
+        });
+
+        // P90 upper hairline
+        datasets.push({
+          label: "Banda P90 (sup.)",
+          data: p90Data,
+          borderColor: isDark ? "rgba(245, 245, 247, 0.35)" : "rgba(0, 0, 0, 0.28)",
+          backgroundColor: "transparent",
+          borderWidth: 1,
+          borderDash: [2, 3],
+          pointRadius: 0,
+          fill: false,
+          yAxisID: "yPrimary",
+          spanGaps: true,
+          tension: 0.15
+        });
+
+        // P50 (Median Forecast Line) — the hero line
         datasets.push({
           label: `TimesFM P50 (${f.horizonLabel})`,
           data: p50Data,
           borderColor: primaryLineColor,
           backgroundColor: "transparent",
-          borderWidth: 2.2,
-          borderDash: [5, 4],
+          borderWidth: 2.4,
+          borderDash: [6, 4],
           pointRadius: 0,
-          pointHoverRadius: 6,
+          pointHoverRadius: 5,
           pointHoverBackgroundColor: primaryLineColor,
+          pointHoverBorderColor: isDark ? "#0D0D0E" : "#FFFFFF",
+          pointHoverBorderWidth: 2,
           fill: false,
           yAxisID: "yPrimary",
           spanGaps: true,
-          tension: 0
+          tension: 0.15
+        });
+
+        // Terminal P50 marker (callout dot at horizon)
+        const lastIdx = p50Data.length - 1;
+        const p50Callout = new Array(p50Data.length).fill(null);
+        p50Callout[lastIdx] = p50Data[lastIdx];
+        datasets.push({
+          label: "P50 Horizonte",
+          data: p50Callout,
+          borderColor: "transparent",
+          backgroundColor: primaryLineColor,
+          pointRadius: 4.5,
+          pointHoverRadius: 6,
+          pointHoverBackgroundColor: primaryLineColor,
+          showLine: false,
+          yAxisID: "yPrimary"
         });
       }
 
@@ -1945,12 +2041,43 @@ const state = {
         });
       }
 
+      // Inline plugin: "HOY" divider at the forecast start
+      const forecastStartDivider = {
+        id: "forecastStartDivider",
+        afterDraw(chartArea) {
+          if (!f || !f.forecastSeries || !state.showForecastOnChart) return;
+          const chart = chartArea;
+          const xScale = chart.scales.x;
+          const fcStartIdx = chart.data.labels.length - f.forecastSeries.length;
+          const x = xScale.getPixelForValue(fcStartIdx);
+          if (!isFinite(x)) return;
+          const { top, bottom, ctx } = chart.chartArea ? { top: chart.chartArea.top, bottom: chart.chartArea.bottom, ctx: chart.ctx } : { top: 0, bottom: 0, ctx: null };
+          if (!ctx) return;
+          ctx.save();
+          ctx.strokeStyle = isDark ? "rgba(245,245,247,0.45)" : "rgba(0,0,0,0.4)";
+          ctx.lineWidth = 1;
+          ctx.setLineDash([3, 3]);
+          ctx.beginPath();
+          ctx.moveTo(x, top);
+          ctx.lineTo(x, bottom);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = isDark ? "rgba(245,245,247,0.75)" : "rgba(0,0,0,0.55)";
+          ctx.font = "700 9px Inter, sans-serif";
+          ctx.textAlign = "left";
+          ctx.fillText("HOY", x + 4, top + 10);
+          ctx.restore();
+          chart.$dividerDrawn = true;
+        }
+      };
+
       state.chartInstance = new Chart(ctx, {
         type: "line",
         data: {
           labels: allLabels,
           datasets: datasets
         },
+        plugins: [forecastStartDivider],
         options: {
           responsive: true,
           maintainAspectRatio: false,

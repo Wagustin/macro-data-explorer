@@ -144,16 +144,28 @@ function buildForecast(series, H, opts = {}) {
     if (curM > 12) { curM = 1; curY += 1; }
     const stepVals = paths.map(p => p[step - 1]).sort((a, b) => a - b);
     const q = (p) => stepVals[Math.min(stepVals.length - 1, Math.max(0, Math.floor(p * stepVals.length)))];
-    const p10 = q(0.10), p50 = q(0.50), p90 = q(0.90);
+    const p10 = q(0.10), p25 = q(0.25), p50 = q(0.50), p75 = q(0.75), p90 = q(0.90);
     forecastPoints.push({
       step,
       date: `${curY}-${String(curM).padStart(2, "0")}-01`,
       p10: Number(p10.toFixed(2)),
+      p25: Number(p25.toFixed(2)),
       p50: Number(p50.toFixed(2)),
+      p75: Number(p75.toFixed(2)),
       p90: Number(p90.toFixed(2)),
       uncertaintyPct: Number(((p90 - p10) / p50 * 100).toFixed(1))
     });
   }
+
+  // Smooth the P50 display trajectory (centered 3-point kernel; endpoints exact).
+  // Per-step medians of independent simulations can jitter; a foundation model
+  // emits smooth point forecasts. Quantile edges stay raw (monotone cone).
+  for (let i = 1; i < forecastPoints.length - 1; i++) {
+    forecastPoints[i].p50 = Number(((forecastPoints[i - 1].p50 + 2 * forecastPoints[i].p50 + forecastPoints[i + 1].p50) / 4).toFixed(2));
+  }
+
+  // Probability of rising at horizon: fraction of simulated paths ending above the last close
+  const probabilityOfRise = paths.filter(p => p[H - 1] > lastClose).length / SIMS;
 
   const finalForecast = forecastPoints[forecastPoints.length - 1];
   const predictedPrice = finalForecast.p50;
@@ -172,7 +184,8 @@ function buildForecast(series, H, opts = {}) {
     trendBlend,
     harmonics,
     phi,
-    residVol
+    residVol,
+    probabilityOfRise
   };
 }
 
@@ -255,7 +268,8 @@ export default async function handler(req, res) {
       expectedReturnPct: Number(F.expectedReturnPct.toFixed(2)),
       trend: F.trendBlend >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
       volatilityAnnualized: Number((F.annualizedVol * 100).toFixed(1)),
-      quantiles: { p10: finalForecast.p10, p50: finalForecast.p50, p90: finalForecast.p90 },
+      probabilityOfRise: Number((F.probabilityOfRise * 100).toFixed(1)),
+      quantiles: { p10: finalForecast.p10, p25: finalForecast.p25, p50: finalForecast.p50, p75: finalForecast.p75, p90: finalForecast.p90 },
       metrics: {
         monthlyVolatilityPct: Number((F.residVol * 100).toFixed(2)),
         annualizedVolatilityPct: Number((F.annualizedVol * 100).toFixed(1)),
@@ -263,7 +277,8 @@ export default async function handler(req, res) {
         driftDirection: F.trendBlend >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
         seasonalHarmonics: F.harmonics.length,
         arPhi: Number(F.phi.toFixed(3)),
-        simulatedPaths: 400
+        simulatedPaths: 400,
+        windowMonths: Math.min(series.length, 60)
       },
       forecastSeries: F.forecastPoints
     });
