@@ -32,20 +32,8 @@
   }
 
   function getBadgeClasses(color) {
-    switch (color) {
-      case "red":
-        return "bg-rose-500/20 text-rose-300 border-rose-500/30";
-      case "blue":
-        return "bg-blue-500/20 text-blue-300 border-blue-500/30";
-      case "amber":
-        return "bg-amber-500/20 text-amber-300 border-amber-500/30";
-      case "emerald":
-        return "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
-      case "purple":
-        return "bg-purple-500/20 text-purple-300 border-purple-500/30";
-      default:
-        return "bg-zinc-700/50 text-zinc-300 border-zinc-600/40";
-    }
+    // Neutral institutional scheme: one zinc tone for every impact level.
+    return "bg-white/10 text-zinc-200 border-white/15";
   }
 
   function renderNewsItems(items) {

@@ -81,9 +81,6 @@ const HTML_CONTENT = `<!DOCTYPE html>
   </script>
   
   <!-- Typography: institutional terminal stack -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -347,14 +344,14 @@ const HTML_CONTENT = `<!DOCTYPE html>
        INSTITUTIONAL TERMINAL SYSTEM — unified surface, no floating islands
        ================================================================ */
     body {
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
       letter-spacing: -0.006em;
     }
     .font-mono {
       font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace !important;
     }
     .micro-label, .band-label {
-      font-family: "Inter", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
     .band-label {
       font-size: 10px; font-weight: 700; text-transform: uppercase;
@@ -363,10 +360,10 @@ const HTML_CONTENT = `<!DOCTYPE html>
 
     .terminal-surface {
       animation: mde-rise 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 12px 32px -20px rgba(0,0,0,0.10);
+      box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08), 0 8px 24px -16px rgba(0,0,0,0.08);
     }
     html.dark .terminal-surface {
-      box-shadow: 0 1px 3px rgba(0,0,0,0.45), 0 12px 32px -20px rgba(0,0,0,0.6);
+      box-shadow: 0 0 0 0.5px rgba(255,255,255,0.10), 0 8px 24px -16px rgba(0,0,0,0.55);
     }
 
     /* Command bar input */
@@ -415,7 +412,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
       height: 32px !important;
       font-size: 12px !important;
       font-weight: 500 !important;
-      font-family: "Inter", sans-serif !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
       border-radius: 6px !important;
       border: 1px solid #E5E5EA !important;
       background-color: #FFFFFF !important;
@@ -536,7 +533,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
         </label>
 
         <!-- Excel Export Top Button -->
-        <button id="btnExportExcelTop" class="btn-pro hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-4 py-2 rounded-md transition">
+        <button id="btnExportExcelTop" class="btn-pro hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-5 py-2 rounded-full transition">
           <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           <span>Descargar Excel</span>
         </button>
@@ -696,7 +693,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           </div>
           <div id="latestDate" class="text-[10px] text-[#86868B] mt-0.5 font-mono tnum">Último cierre registrado</div>
           <div id="liveQuoteNote" class="hidden text-[10px] text-emerald-600 dark:text-emerald-400 mt-0.5">
-            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-1 align-middle"></span>
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 align-middle"></span>
             <span id="liveQuoteText">En vivo</span>
           </div>
         </div>
@@ -736,8 +733,8 @@ const HTML_CONTENT = `<!DOCTYPE html>
     <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-4">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
         <div class="inline-flex items-center gap-2">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span class="text-xs font-bold text-black dark:text-white">Google TimesFM 2.5 · Proyección Zero-Shot</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          <span class="text-xs font-bold text-black dark:text-white">TimesFM · Proyección probabilística</span>
           <span class="hidden sm:inline micro-label text-[#86868B]">RevIN Multi-Cuantil</span>
         </div>
         <span class="text-[10px] text-[#86868B]">P50 con banda P10–P90</span>
@@ -832,7 +829,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
       <div class="mt-4 pt-4 border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-left">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
           <div class="inline-flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white animate-pulse"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
             <span class="text-xs font-bold text-black dark:text-white">Interpretación del Gráfico · TypeSafe AI Jev</span>
             <span class="text-[#86868B]">|</span>
             <span class="text-[10px] font-mono uppercase tracking-wider text-[#86868B]">System One RLCD</span>
@@ -871,7 +868,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           <h3 class="text-xs font-bold text-black dark:text-white">Tabla de Datos Históricos y Proyectados</h3>
           <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93] mt-0.5">Observaciones mensuales · cuantiles probabilísticos</p>
         </div>
-        <button id="btnExportExcel" class="btn-pro self-start sm:self-auto inline-flex items-center justify-center px-3.5 py-1.5 bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black font-semibold text-[11px] rounded-md transition">
+        <button id="btnExportExcel" class="btn-pro self-start sm:self-auto inline-flex items-center justify-center px-3.5 py-1.5 bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black font-semibold text-[11px] rounded-full transition">
           <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           Descargar Todo en Excel (.xlsx)
         </button>
@@ -1015,7 +1012,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           <span id="termsStatusText">Consentimiento requerido para habilitar análisis</span>
         </div>
         <div class="flex items-center space-x-2 w-full sm:w-auto">
-          <button id="btnAcceptTerms" type="button" class="w-full sm:w-auto inline-flex items-center justify-center font-semibold text-xs sm:text-sm bg-black dark:bg-white text-white dark:text-black hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] px-6 py-2.5 rounded-md transition">
+          <button id="btnAcceptTerms" type="button" class="w-full sm:w-auto inline-flex items-center justify-center font-semibold text-xs sm:text-sm bg-black dark:bg-white text-white dark:text-black hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] px-6 py-2.5 rounded-full transition">
             Aceptar y Continuar
           </button>
         </div>
@@ -2216,7 +2213,7 @@ const state = {
           html += \`
             <tr class="bg-[#F5F5F7]/70 dark:bg-[#2C2C2E]/40 font-medium">
               <td class="py-2.5 px-4 font-mono tnum whitespace-nowrap text-black dark:text-white sticky left-0 z-[5] bg-[#F5F5F7] dark:bg-[#2C2C2E]">\${escapeHTML(item.date)}</td>
-              <td class="py-2.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 micro-label rounded-md bg-black dark:bg-white text-white dark:text-black">TIMESFM P50</span></td>
+              <td class="py-2.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 micro-label rounded-full bg-black dark:bg-white text-white dark:text-black">TIMESFM P50</span></td>
               <td class="py-2.5 px-4 font-bold font-mono tnum whitespace-nowrap text-black dark:text-white">\${currencySymbol}\${item.p50.toFixed(2)}</td>
               <td class="py-2.5 px-4 text-[#86868B] whitespace-nowrap">-</td>
               <td class="py-2.5 px-4 text-[#86868B] font-mono tnum whitespace-nowrap">\${currencySymbol}\${item.p90.toFixed(2)}</td>

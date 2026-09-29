@@ -43,10 +43,6 @@
     }
   </script>
 
-    <!-- Typography: institutional terminal stack -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
     html, body {
       overflow-x: hidden !important;
@@ -142,20 +138,15 @@
       font-variant-numeric: tabular-nums;
     }
   
-    /* ===== Professional motion system ===== */
+    /* ===== Apple-style motion: gentle fade, no stagger, no lift ===== */
     @keyframes mde-rise {
-      from { opacity: 0; transform: translateY(14px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
     main > section,
     .rise-in {
-      animation: mde-rise 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+      animation: mde-rise 0.6s ease both;
     }
-    main > section:nth-child(2) { animation-delay: 0.06s; }
-    main > section:nth-child(3) { animation-delay: 0.12s; }
-    main > section:nth-child(4) { animation-delay: 0.18s; }
-    main > section:nth-child(5) { animation-delay: 0.24s; }
-    main > section:nth-child(6) { animation-delay: 0.30s; }
 
     @media (prefers-reduced-motion: reduce) {
       main > section, .rise-in { animation: none; }
@@ -163,18 +154,19 @@
     }
 
     .hover-lift {
-      transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
-                  box-shadow 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
-                  border-color 0.2s ease;
-      will-change: transform;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
     }
     .hover-lift:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.18);
+      border-color: rgba(0, 0, 0, 0.30);
     }
     html.dark .hover-lift:hover {
-      box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.55);
+      border-color: rgba(255, 255, 255, 0.40);
     }
+
+    /* Apple layout helpers */
+    .full-bleed { width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); }
+    .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0; color: #6e6e73; }
+    html.dark .eyebrow { color: #86868b; }
   </style>
 </head>
 <body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
@@ -189,10 +181,7 @@
           <div class="w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm border border-black/10 dark:border-white/10">
             P
           </div>
-          <div class="flex flex-col">
-            <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
-            <span class="text-[10px] text-[#86868B] uppercase tracking-wider font-semibold">Metodología</span>
-          </div>
+          <span class="font-semibold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
         </a>
 
         <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-[#86868B]">
@@ -216,7 +205,7 @@
           </div>
         </label>
 
-        <a href="/explorer" class="hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-4 py-2 rounded-md transition">
+        <a href="/explorer" class="hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-5 py-2 rounded-full transition">
           <span>Ir a Terminal</span>
         </a>
         <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] text-[#86868B] hover:text-black dark:hover:text-white transition" aria-label="Abrir menú" aria-expanded="false">
@@ -243,14 +232,10 @@
 
     <!-- Header Section -->
     <section class="space-y-4 text-center sm:text-left">
-      <div class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[11px] font-semibold uppercase tracking-wider tnum text-[#86868B] border border-[#E5E5EA] dark:border-[#2C2C2E]">
-        <span>Marco Teórico Institucional</span>
-        <span>·</span>
-        <span>Econometría Cuantitativa</span>
-      </div>
+      <p class="eyebrow">Marco metodológico</p>
 
-      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-black dark:text-white">
-        Tratado Metodológico & Formulación Matemática
+      <h1 class="text-3xl sm:text-5xl font-semibold tracking-tight text-black dark:text-white">
+        Cómo se construyen las proyecciones.
       </h1>
       
       <p class="text-sm sm:text-base text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
@@ -260,10 +245,7 @@
 
     <!-- SECTION 1: INGESTA Y TRATAMIENTO DE SERIES -->
     <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
-      <div class="flex items-center space-x-3">
-        <span class="px-2.5 py-1 rounded-md bg-black dark:bg-white text-white dark:text-black font-mono font-bold text-xs tnum">01</span>
-        <h2 class="text-lg sm:text-xl font-bold text-black dark:text-white">Ingesta Multifuente & Limpieza de Series OHLCV</h2>
-      </div>
+      <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">Ingesta Multifuente & Limpieza de Series OHLCV</h2>
 
       <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
         Las series temporales financieras presentan desafíos de discontinuidad y asincronía (diferencias de calendarios bursátiles entre la Bolsa de Valores de Lima, COMEX y el mercado interbancario de divisas). Nuestro motor realiza:
@@ -278,10 +260,7 @@
 
     <!-- SECTION 2: NORMALIZACIÓN REVIN -->
     <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
-      <div class="flex items-center space-x-3">
-        <span class="px-2.5 py-1 rounded-md bg-black dark:bg-white text-white dark:text-black font-mono font-bold text-xs tnum">02</span>
-        <h2 class="text-lg sm:text-xl font-bold text-black dark:text-white">Normalización Temporal Reversible (RevIN)</h2>
-      </div>
+      <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">Normalización Temporal Reversible (RevIN)</h2>
 
       <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
         Los mercados de commodities y acciones mineras experimentan cambios estructurales de régimen (*distribution shift*). La normalización estándar de media móvil destruye la no-estacionariedad de la serie. Implementamos <strong>Reversible Instance Normalization (RevIN)</strong>:
@@ -308,10 +287,7 @@
 
     <!-- SECTION 3: CONOS PROBABILÍSTICOS MULTI-CUANTIL -->
     <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
-      <div class="flex items-center space-x-3">
-        <span class="px-2.5 py-1 rounded-md bg-black dark:bg-white text-white dark:text-black font-mono font-bold text-xs tnum">03</span>
-        <h2 class="text-lg sm:text-xl font-bold text-black dark:text-white">Conos de Densidad Probabilística (P10 / P50 / P90)</h2>
-      </div>
+      <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">Conos de Densidad Probabilística (P10 / P50 / P90)</h2>
 
       <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
         El análisis cuantitativo profesional descarta las estimaciones escalares deterministas (un único número de precio objetivo carece de valor sin un intervalo de certidumbre). Modelamos la distribución empírica condicional completa $P(Y_{t+h} | X_{1:t})$ mediante optimización de pérdida cuantílica (*Pinball Loss*):
@@ -343,10 +319,7 @@
 
     <!-- SECTION 4: REGRESIÓN FACTORIAL OLS Y CORRELACIÓN DE PEARSON -->
     <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
-      <div class="flex items-center space-x-3">
-        <span class="px-2.5 py-1 rounded-md bg-black dark:bg-white text-white dark:text-black font-mono font-bold text-xs tnum">04</span>
-        <h2 class="text-lg sm:text-xl font-bold text-black dark:text-white">Sensibilidad Factorial OLS & Correlación de Pearson</h2>
-      </div>
+      <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">Sensibilidad Factorial OLS & Correlación de Pearson</h2>
 
       <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
         Para descomponer las fuerzas exógenas que mueven a cada activo, resolvemos un sistema lineal de mínimos cuadrados ordinarios frente a los factores macroeconómicos fundamentales (Cobre COMEX, Oro y Tipo de Cambio USD/PEN):
@@ -371,10 +344,7 @@
 
     <!-- SECTION 5: PROTOCOLO DE VALIDACIÓN WALK-FORWARD -->
     <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
-      <div class="flex items-center space-x-3">
-        <span class="px-2.5 py-1 rounded-md bg-black dark:bg-white text-white dark:text-black font-mono font-bold text-xs tnum">05</span>
-        <h2 class="text-lg sm:text-xl font-bold text-black dark:text-white">Validación Temporal sin Fuga de Información</h2>
-      </div>
+      <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">Validación Temporal sin Fuga de Información</h2>
 
       <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
         Todo modelo econométrico es auditado mediante <strong>Walk-Forward Cross-Validation</strong>: entrenamos estrictamente sobre ventanas deslizantes pasadas y evaluamos la precisión en horizontes ciegos hacia adelante. Queda estrictamente excluida cualquier fuga de datos de series futuras (*lookahead bias*).
@@ -382,13 +352,10 @@
     </section>
 
     <!-- Bottom Action CTA -->
-    <div class="p-5 sm:p-6 rounded-lg bg-[#F5F5F7] dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div>
-        <h3 class="text-base font-bold text-black dark:text-white">Aplica esta metodología a tu portafolio</h3>
-        <p class="text-xs text-[#86868B] dark:text-[#8E8E93] mt-0.5">Ejecuta simulaciones en tiempo real sobre 22 activos macrofinancieros.</p>
-      </div>
-      <a href="/explorer" class="px-5 py-2.5 rounded-md bg-black dark:bg-white text-white dark:text-black text-xs font-bold hover:opacity-90 transition">
-        Abrir Terminal Cuantitativa &rarr;
+    <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-sm text-[#6e6e73] dark:text-[#8E8E93]">Ponlo a prueba con datos reales.</p>
+      <a href="/explorer" class="px-6 py-2.5 rounded-full bg-black dark:bg-white text-white dark:text-black text-xs font-semibold hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] transition">
+        Abrir la terminal &rarr;
       </a>
     </div>
 
