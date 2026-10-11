@@ -326,10 +326,24 @@
 
     .terminal-surface {
       animation: mde-rise 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 12px 32px -20px rgba(0,0,0,0.10);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 16px 36px -18px rgba(0,0,0,0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
     html.dark .terminal-surface {
-      box-shadow: 0 1px 3px rgba(0,0,0,0.45), 0 12px 32px -20px rgba(0,0,0,0.6);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.45), 0 16px 36px -18px rgba(0,0,0,0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    /* Metalmorphic specular buttons and segmented controls */
+    .range-btn.bg-black, .horizon-btn.bg-black {
+      background: linear-gradient(180deg, #242426 0%, #0A0A0C 100%) !important;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2), inset 0 1px 0 0 rgba(255,255,255,0.18) !important;
+    }
+    html.dark .range-btn.bg-white, html.dark .horizon-btn.bg-white {
+      background: linear-gradient(180deg, #FFFFFF 0%, #E5E5EA 100%) !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3), inset 0 1px 0 0 rgba(255,255,255,0.6) !important;
     }
 
     /* Command bar input */
@@ -532,9 +546,9 @@
     <section class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 pt-5 pb-4">
       <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
         <div class="min-w-0">
-          <div class="band-label">Terminal Cuantitativa · BVL · Metales · Macro</div>
+          <div class="band-label">PerData Terminal · BVL · Metales · Macro</div>
           <h1 class="text-lg sm:text-2xl font-bold tracking-tight text-black dark:text-white mt-1">
-            Análisis Macroeconómico
+            Terminal Cuantitativa Institucional
           </h1>
           <p class="text-[11px] sm:text-xs text-[#86868B] dark:text-[#8E8E93] leading-relaxed max-w-xl mt-1">
             Series históricas de 10 años · Inferencia probabilística P10/P50/P90

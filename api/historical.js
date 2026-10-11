@@ -4,6 +4,39 @@ const SYMBOL_REGEX = /^[A-Za-z0-9=._\-\^]{1,20}$/;
 const ALLOWED_RANGES = new Set(["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y", "10y", "max"]);
 const ALLOWED_INTERVALS = new Set(["1d", "1wk", "1mo", "1y"]);
 
+// Offline static dataset (annual, 2014-2025) used when the World Bank API is
+// unavailable, errors, or times out, so macro charts degrade instead of 500/502.
+const MACRO_FALLBACK_START_YEAR = 2014;
+const MACRO_FALLBACK = {
+  PERU_CPI: {
+    name: "Inflación Anual Perú (%)",
+    values: [3.41, 3.40, 3.56, 2.99, 1.51, 2.25, 2.00, 4.27, 8.33, 6.46, 2.01, 1.53]
+  },
+  PERU_GDP: {
+    name: "PBI Crecimiento Anual Perú (%)",
+    values: [2.35, 3.25, 3.95, 2.52, 3.98, 2.24, -11.03, 13.42, 2.68, -0.55, 3.16, 2.90]
+  }
+};
+
+function toMacroRecord(year, value) {
+  const v = Number(Number(value).toFixed(2));
+  return {
+    date: `${year}-12-31`,
+    year: String(year),
+    open: v,
+    high: v,
+    low: v,
+    close: v,
+    volume: 0
+  };
+}
+
+function fallbackMacroRecords(symbol) {
+  const fb = MACRO_FALLBACK[symbol];
+  if (!fb) return [];
+  return fb.values.map((value, i) => toMacroRecord(MACRO_FALLBACK_START_YEAR + i, value));
+}
+
 export default async function handler(req, res) {
   // Security & CORS Headers
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -31,8 +64,13 @@ export default async function handler(req, res) {
   const range = ALLOWED_RANGES.has(rawRange) ? rawRange : "10y";
   const interval = ALLOWED_INTERVALS.has(rawInterval) ? rawInterval : "1mo";
 
-  // Special handler for macroeconomic indicators (World Bank)
+  // Special handler for macroeconomic indicators (World Bank, with offline fallback)
   if (symbol === "PERU_CPI" || symbol === "PERU_GDP") {
+    const catMeta = CATALOG.find(c => c.symbol === symbol) || {};
+    const fallbackName = MACRO_FALLBACK[symbol].name;
+    let records = [];
+    let stale = false;
+
     try {
       const indicator = symbol === "PERU_CPI" ? "FP.CPI.TOTL.ZG" : "NY.GDP.MKTP.KD.ZG";
       const wbUrl = `https://api.worldbank.org/v2/country/PER/indicator/${indicator}?format=json&date=2014:2026&per_page=50`;
@@ -41,39 +79,36 @@ export default async function handler(req, res) {
         signal: AbortSignal.timeout(6000)
       });
 
-      if (!wbRes.ok) {
-        return res.status(502).json({ error: "Error consultando fuente macroeconómica." });
+      if (wbRes.ok) {
+        const wbData = await wbRes.json();
+        const wbRecords = (wbData?.[1] || [])
+          .filter(it => it.value !== null && it.value !== undefined)
+          .reverse()
+          .map(it => toMacroRecord(it.date, it.value));
+        // An empty/garbled upstream payload is treated the same as a failed fetch.
+        if (wbRecords.length > 0) records = wbRecords;
       }
-
-      const wbData = await wbRes.json();
-      
-      const records = (wbData[1] || [])
-        .filter(it => it.value !== null)
-        .reverse()
-        .map(it => ({
-          date: `${it.date}-12-31`,
-          year: it.date,
-          open: Number(it.value.toFixed(2)),
-          high: Number(it.value.toFixed(2)),
-          low: Number(it.value.toFixed(2)),
-          close: Number(it.value.toFixed(2)),
-          volume: 0
-        }));
-
-      const catMeta = CATALOG.find(c => c.symbol === symbol) || {};
-      return res.status(200).json({
-        symbol,
-        name: catMeta.name || (symbol === "PERU_CPI" ? "Inflación Anual Perú (%)" : "PBI Crecimiento Anual Perú (%)"),
-        currency: "%",
-        range,
-        interval: "1y",
-        source: "World Bank Open Data / BCRP",
-        count: records.length,
-        series: records
-      });
     } catch (err) {
-      return res.status(500).json({ error: "Falla temporal al consultar datos macroeconómicos." });
+      // Network error, abort/timeout, or malformed JSON: fall through to static data.
+      records = [];
     }
+
+    if (records.length === 0) {
+      records = fallbackMacroRecords(symbol);
+      stale = true;
+    }
+
+    return res.status(200).json({
+      symbol,
+      name: catMeta.name || fallbackName,
+      currency: "%",
+      range,
+      interval: "1y",
+      source: stale ? "World Bank Open Data / BCRP (datos en caché)" : "World Bank Open Data / BCRP",
+      stale,
+      count: records.length,
+      series: records
+    });
   }
 
   // Standard Market Quotes (Yahoo Finance v8 API)

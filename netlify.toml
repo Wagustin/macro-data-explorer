@@ -1,0 +1,32 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/api/*"
+  to = "/api/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/explorer"
+  to = "/explorer.html"
+  status = 200
+
+[[redirects]]
+  from = "/noticias"
+  to = "/news.html"
+  status = 200
+
+[[redirects]]
+  from = "/metodologia"
+  to = "/metodologia.html"
+  status = 200
+
+[[redirects]]
+  from = "/guia"
+  to = "/guia.html"
+  status = 200
+
+[[redirects]]
+  from = "/terms"
+  to = "/terms.html"
+  status = 200
