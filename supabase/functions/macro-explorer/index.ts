@@ -81,9 +81,6 @@ const HTML_CONTENT = `<!DOCTYPE html>
   </script>
   
   <!-- Typography: institutional terminal stack -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -347,14 +344,14 @@ const HTML_CONTENT = `<!DOCTYPE html>
        INSTITUTIONAL TERMINAL SYSTEM — unified surface, no floating islands
        ================================================================ */
     body {
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
       letter-spacing: -0.006em;
     }
     .font-mono {
       font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace !important;
     }
     .micro-label, .band-label {
-      font-family: "Inter", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
     .band-label {
       font-size: 10px; font-weight: 700; text-transform: uppercase;
@@ -363,10 +360,10 @@ const HTML_CONTENT = `<!DOCTYPE html>
 
     .terminal-surface {
       animation: mde-rise 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 12px 32px -20px rgba(0,0,0,0.10);
+      box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08), 0 8px 24px -16px rgba(0,0,0,0.08);
     }
     html.dark .terminal-surface {
-      box-shadow: 0 1px 3px rgba(0,0,0,0.45), 0 12px 32px -20px rgba(0,0,0,0.6);
+      box-shadow: 0 0 0 0.5px rgba(255,255,255,0.10), 0 8px 24px -16px rgba(0,0,0,0.55);
     }
 
     /* Command bar input */
@@ -415,7 +412,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
       height: 32px !important;
       font-size: 12px !important;
       font-weight: 500 !important;
-      font-family: "Inter", sans-serif !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
       border-radius: 6px !important;
       border: 1px solid #E5E5EA !important;
       background-color: #FFFFFF !important;
@@ -536,7 +533,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
         </label>
 
         <!-- Excel Export Top Button -->
-        <button id="btnExportExcelTop" class="btn-pro hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-4 py-2 rounded-md transition">
+        <button id="btnExportExcelTop" class="btn-pro hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-5 py-2 rounded-full transition">
           <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           <span>Descargar Excel</span>
         </button>
@@ -696,7 +693,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           </div>
           <div id="latestDate" class="text-[10px] text-[#86868B] mt-0.5 font-mono tnum">Último cierre registrado</div>
           <div id="liveQuoteNote" class="hidden text-[10px] text-emerald-600 dark:text-emerald-400 mt-0.5">
-            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-1 align-middle"></span>
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 align-middle"></span>
             <span id="liveQuoteText">En vivo</span>
           </div>
         </div>
@@ -736,8 +733,8 @@ const HTML_CONTENT = `<!DOCTYPE html>
     <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-4">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
         <div class="inline-flex items-center gap-2">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span class="text-xs font-bold text-black dark:text-white">Google TimesFM 2.5 · Proyección Zero-Shot</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          <span class="text-xs font-bold text-black dark:text-white">TimesFM · Proyección probabilística</span>
           <span class="hidden sm:inline micro-label text-[#86868B]">RevIN Multi-Cuantil</span>
         </div>
         <span class="text-[10px] text-[#86868B]">P50 con banda P10–P90</span>
@@ -755,9 +752,9 @@ const HTML_CONTENT = `<!DOCTYPE html>
 
       <!-- Active Forecast Results -->
       <div id="forecastContent" class="mt-3">
-        <div class="stat-strip stat-strip-4">
+        <div class="stat-strip stat-strip-5">
           <div class="stat">
-            <div class="band-label">Precio Esperado (P50)</div>
+            <div class="band-label">P50 al Horizonte</div>
             <div id="tfmP50" class="stat-value text-black dark:text-white">$39.34</div>
             <div id="tfmHorizonDate" class="stat-sub">Al horizonte de 6 meses</div>
           </div>
@@ -767,14 +764,19 @@ const HTML_CONTENT = `<!DOCTYPE html>
             <div id="tfmTrend" class="stat-sub">Tendencia Alcista</div>
           </div>
           <div class="stat">
-            <div class="band-label">Rango Probabilístico (80%)</div>
+            <div class="band-label">Prob. de Alza</div>
+            <div id="tfmProbRise" class="stat-value text-black dark:text-white">—</div>
+            <div class="stat-sub">P(PT > último cierre)</div>
+          </div>
+          <div class="stat">
+            <div class="band-label">Rango 80% (P10–P90)</div>
             <div id="tfmRange" class="stat-value text-black dark:text-white" style="font-size:13px">$21.97 — $56.71</div>
-            <div class="stat-sub">Cuantiles P10 a P90</div>
+            <div class="stat-sub">Banda P25–P75: <span id="tfmRangeInner">—</span></div>
           </div>
           <div class="stat">
             <div class="band-label">Volatilidad Anualizada</div>
             <div id="tfmVol" class="stat-value text-black dark:text-white">48.7%</div>
-            <div class="stat-sub">Difusión temporal √h</div>
+            <div class="stat-sub" id="tfmModelInfo">Ensemble 400 trayectorias</div>
           </div>
         </div>
 
@@ -804,10 +806,13 @@ const HTML_CONTENT = `<!DOCTYPE html>
             <span class="w-2.5 h-0.5 bg-black dark:bg-white mr-1.5"></span> Histórico
           </span>
           <span id="legendForecast" class="inline-flex items-center text-black dark:text-white font-semibold">
-            <span class="w-2.5 h-0 border-t-2 border-dashed border-black dark:border-white mr-1.5"></span> TimesFM (P50)
+            <span class="w-2.5 h-0 border-t-2 border-dashed border-black dark:border-white mr-1.5"></span> P50 TimesFM
           </span>
           <span id="legendBand" class="inline-flex items-center text-[#86868B]">
-            <span class="w-2.5 h-2 bg-black/10 dark:bg-white/10 border border-black/20 dark:border-white/20 rounded-sm mr-1.5"></span> Banda P10-P90
+            <span class="w-2.5 h-2 bg-black/10 dark:bg-white/10 border border-black/20 dark:border-white/20 rounded-sm mr-1.5"></span> P10–P90 (80%)
+          </span>
+          <span class="inline-flex items-center text-[#86868B]">
+            <span class="w-2.5 h-2 bg-black/25 dark:bg-white/20 border border-black/30 dark:border-white/30 rounded-sm mr-1.5"></span> P25–P75 (50%)
           </span>
           <span id="legendMacro" class="inline-flex items-center text-[#86868B]">
             <span class="w-2.5 h-0.5 bg-[#86868B] mr-1.5"></span> Indicador Macro
@@ -824,7 +829,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
       <div class="mt-4 pt-4 border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-left">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
           <div class="inline-flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white animate-pulse"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
             <span class="text-xs font-bold text-black dark:text-white">Interpretación del Gráfico · TypeSafe AI Jev</span>
             <span class="text-[#86868B]">|</span>
             <span class="text-[10px] font-mono uppercase tracking-wider text-[#86868B]">System One RLCD</span>
@@ -863,7 +868,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           <h3 class="text-xs font-bold text-black dark:text-white">Tabla de Datos Históricos y Proyectados</h3>
           <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93] mt-0.5">Observaciones mensuales · cuantiles probabilísticos</p>
         </div>
-        <button id="btnExportExcel" class="btn-pro self-start sm:self-auto inline-flex items-center justify-center px-3.5 py-1.5 bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black font-semibold text-[11px] rounded-md transition">
+        <button id="btnExportExcel" class="btn-pro self-start sm:self-auto inline-flex items-center justify-center px-3.5 py-1.5 bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black font-semibold text-[11px] rounded-full transition">
           <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           Descargar Todo en Excel (.xlsx)
         </button>
@@ -1007,7 +1012,7 @@ const HTML_CONTENT = `<!DOCTYPE html>
           <span id="termsStatusText">Consentimiento requerido para habilitar análisis</span>
         </div>
         <div class="flex items-center space-x-2 w-full sm:w-auto">
-          <button id="btnAcceptTerms" type="button" class="w-full sm:w-auto inline-flex items-center justify-center font-semibold text-xs sm:text-sm bg-black dark:bg-white text-white dark:text-black hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] px-6 py-2.5 rounded-md transition">
+          <button id="btnAcceptTerms" type="button" class="w-full sm:w-auto inline-flex items-center justify-center font-semibold text-xs sm:text-sm bg-black dark:bg-white text-white dark:text-black hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] px-6 py-2.5 rounded-full transition">
             Aceptar y Continuar
           </button>
         </div>
@@ -1833,6 +1838,26 @@ const state = {
       document.getElementById("tfmTrend").textContent = \`Tendencia \${trendText}\`;
 
       document.getElementById("tfmRange").textContent = \`\${currencyPrefix}\${f.quantiles.p10.toFixed(2)} — \${currencyPrefix}\${f.quantiles.p90.toFixed(2)}\`;
+      const innerEl = document.getElementById("tfmRangeInner");
+      if (innerEl) {
+        innerEl.textContent = f.quantiles.p25 !== undefined
+          ? \`\${currencyPrefix}\${f.quantiles.p25.toFixed(2)} — \${currencyPrefix}\${f.quantiles.p75.toFixed(2)}\`
+          : "—";
+      }
+      const probEl = document.getElementById("tfmProbRise");
+      if (probEl) {
+        if (typeof f.probabilityOfRise === "number") {
+          probEl.textContent = f.probabilityOfRise.toFixed(1) + "%";
+          probEl.className = "stat-value " + (f.probabilityOfRise >= 55 ? "text-emerald-600 dark:text-emerald-400" : f.probabilityOfRise <= 45 ? "text-rose-600 dark:text-rose-400" : "text-black dark:text-white");
+        } else {
+          probEl.textContent = "—";
+        }
+      }
+      const modelInfoEl = document.getElementById("tfmModelInfo");
+      if (modelInfoEl && f.metrics) {
+        const h = f.metrics.seasonalHarmonics;
+        modelInfoEl.textContent = \`φ AR(1) \${f.metrics.arPhi.toFixed(2)} · \${h > 0 ? h + " armónico" + (h > 1 ? "s" : "") + " estacional" + (h > 1 ? "es" : "") : "sin estacionalidad sig."} · \${f.metrics.simulatedPaths} sims\`;
+      }
       const volValue = f.volatilityAnnualized ?? f.metrics?.annualizedVolatilityPct ?? '32.4';
       document.getElementById("tfmVol").textContent = \`\${volValue}%\`;
       document.getElementById("tfmExplainText").textContent = \`Proyección TimesFM 2.5 calculada exitosamente a \${f.horizonLabel}. La gráfica inferior amplía el horizonte temporal incorporando el intervalo probabilístico P10-P90.\`;
@@ -1863,18 +1888,24 @@ const state = {
       let p50Data = new Array(histData.length).fill(null);
       let p10Data = new Array(histData.length).fill(null);
       let p90Data = new Array(histData.length).fill(null);
+      let p25Data = new Array(histData.length).fill(null);
+      let p75Data = new Array(histData.length).fill(null);
 
       // Append Forecast Series if available & enabled
       if (f && f.forecastSeries && state.showForecastOnChart) {
         p50Data[lastHistIndex] = lastHistVal;
         p10Data[lastHistIndex] = lastHistVal;
         p90Data[lastHistIndex] = lastHistVal;
+        p25Data[lastHistIndex] = lastHistVal;
+        p75Data[lastHistIndex] = lastHistVal;
 
         f.forecastSeries.forEach(item => {
           allLabels.push(item.date);
           p50Data.push(item.p50);
           p10Data.push(item.p10);
           p90Data.push(item.p90);
+          p25Data.push(item.p25 !== undefined ? item.p25 : item.p10);
+          p75Data.push(item.p75 !== undefined ? item.p75 : item.p90);
         });
       }
 
@@ -1916,51 +1947,113 @@ const state = {
         }
       ];
 
-      // 2. TimesFM Forecast Datasets (P90 upper, P10 lower, P50 median)
+      // 2. TimesFM Forecast Datasets — institutional fan chart
       if (f && f.forecastSeries && state.showForecastOnChart) {
-        // P90 (Upper Bound)
+        // Inner band P75 (fill down to P25): 50% central mass, denser tone
         datasets.push({
-          label: "TimesFM P90 (Optimista)",
-          data: p90Data,
-          borderColor: isDark ? "rgba(245, 245, 247, 0.25)" : "rgba(0, 0, 0, 0.2)",
-          backgroundColor: isDark ? "rgba(245, 245, 247, 0.08)" : "rgba(0, 0, 0, 0.05)",
-          borderWidth: 1,
+          label: "TimesFM P75",
+          data: p75Data,
+          borderColor: "transparent",
+          backgroundColor: isDark ? "rgba(245, 245, 247, 0.14)" : "rgba(0, 0, 0, 0.10)",
+          borderWidth: 0,
           pointRadius: 0,
-          fill: "+1", // Fill to P10 dataset below
+          fill: "+1",
           yAxisID: "yPrimary",
           spanGaps: true,
-          tension: 0
+          tension: 0.15
         });
 
-        // P10 (Lower Bound)
+        // Inner band P25 (lower edge of the 50% band)
         datasets.push({
-          label: "TimesFM P10 (Pesimista)",
-          data: p10Data,
-          borderColor: isDark ? "rgba(245, 245, 247, 0.25)" : "rgba(0, 0, 0, 0.2)",
+          label: "TimesFM P25",
+          data: p25Data,
+          borderColor: "transparent",
           backgroundColor: "transparent",
-          borderWidth: 1,
+          borderWidth: 0,
           pointRadius: 0,
           fill: false,
           yAxisID: "yPrimary",
           spanGaps: true,
-          tension: 0
+          tension: 0.15
         });
 
-        // P50 (Median Forecast Line)
+        // Outer band P90 (fill down to P10): 80% cone, lighter tone
+        datasets.push({
+          label: "TimesFM P90",
+          data: p90Data,
+          borderColor: "transparent",
+          backgroundColor: isDark ? "rgba(245, 245, 247, 0.07)" : "rgba(0, 0, 0, 0.045)",
+          borderWidth: 0,
+          pointRadius: 0,
+          fill: "+1",
+          yAxisID: "yPrimary",
+          spanGaps: true,
+          tension: 0.15
+        });
+
+        // P10 (lower edge of the 80% cone) — hairline to delimit the cone
+        datasets.push({
+          label: "TimesFM P10",
+          data: p10Data,
+          borderColor: isDark ? "rgba(245, 245, 247, 0.35)" : "rgba(0, 0, 0, 0.28)",
+          backgroundColor: "transparent",
+          borderWidth: 1,
+          borderDash: [2, 3],
+          pointRadius: 0,
+          fill: false,
+          yAxisID: "yPrimary",
+          spanGaps: true,
+          tension: 0.15
+        });
+
+        // P90 upper hairline
+        datasets.push({
+          label: "Banda P90 (sup.)",
+          data: p90Data,
+          borderColor: isDark ? "rgba(245, 245, 247, 0.35)" : "rgba(0, 0, 0, 0.28)",
+          backgroundColor: "transparent",
+          borderWidth: 1,
+          borderDash: [2, 3],
+          pointRadius: 0,
+          fill: false,
+          yAxisID: "yPrimary",
+          spanGaps: true,
+          tension: 0.15
+        });
+
+        // P50 (Median Forecast Line) — the hero line
         datasets.push({
           label: \`TimesFM P50 (\${f.horizonLabel})\`,
           data: p50Data,
           borderColor: primaryLineColor,
           backgroundColor: "transparent",
-          borderWidth: 2.2,
-          borderDash: [5, 4],
+          borderWidth: 2.4,
+          borderDash: [6, 4],
           pointRadius: 0,
-          pointHoverRadius: 6,
+          pointHoverRadius: 5,
           pointHoverBackgroundColor: primaryLineColor,
+          pointHoverBorderColor: isDark ? "#0D0D0E" : "#FFFFFF",
+          pointHoverBorderWidth: 2,
           fill: false,
           yAxisID: "yPrimary",
           spanGaps: true,
-          tension: 0
+          tension: 0.15
+        });
+
+        // Terminal P50 marker (callout dot at horizon)
+        const lastIdx = p50Data.length - 1;
+        const p50Callout = new Array(p50Data.length).fill(null);
+        p50Callout[lastIdx] = p50Data[lastIdx];
+        datasets.push({
+          label: "P50 Horizonte",
+          data: p50Callout,
+          borderColor: "transparent",
+          backgroundColor: primaryLineColor,
+          pointRadius: 4.5,
+          pointHoverRadius: 6,
+          pointHoverBackgroundColor: primaryLineColor,
+          showLine: false,
+          yAxisID: "yPrimary"
         });
       }
 
@@ -1982,12 +2075,43 @@ const state = {
         });
       }
 
+      // Inline plugin: "HOY" divider at the forecast start
+      const forecastStartDivider = {
+        id: "forecastStartDivider",
+        afterDraw(chartArea) {
+          if (!f || !f.forecastSeries || !state.showForecastOnChart) return;
+          const chart = chartArea;
+          const xScale = chart.scales.x;
+          const fcStartIdx = chart.data.labels.length - f.forecastSeries.length;
+          const x = xScale.getPixelForValue(fcStartIdx);
+          if (!isFinite(x)) return;
+          const { top, bottom, ctx } = chart.chartArea ? { top: chart.chartArea.top, bottom: chart.chartArea.bottom, ctx: chart.ctx } : { top: 0, bottom: 0, ctx: null };
+          if (!ctx) return;
+          ctx.save();
+          ctx.strokeStyle = isDark ? "rgba(245,245,247,0.45)" : "rgba(0,0,0,0.4)";
+          ctx.lineWidth = 1;
+          ctx.setLineDash([3, 3]);
+          ctx.beginPath();
+          ctx.moveTo(x, top);
+          ctx.lineTo(x, bottom);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = isDark ? "rgba(245,245,247,0.75)" : "rgba(0,0,0,0.55)";
+          ctx.font = "700 9px Inter, sans-serif";
+          ctx.textAlign = "left";
+          ctx.fillText("HOY", x + 4, top + 10);
+          ctx.restore();
+          chart.$dividerDrawn = true;
+        }
+      };
+
       state.chartInstance = new Chart(ctx, {
         type: "line",
         data: {
           labels: allLabels,
           datasets: datasets
         },
+        plugins: [forecastStartDivider],
         options: {
           responsive: true,
           maintainAspectRatio: false,
@@ -2089,7 +2213,7 @@ const state = {
           html += \`
             <tr class="bg-[#F5F5F7]/70 dark:bg-[#2C2C2E]/40 font-medium">
               <td class="py-2.5 px-4 font-mono tnum whitespace-nowrap text-black dark:text-white sticky left-0 z-[5] bg-[#F5F5F7] dark:bg-[#2C2C2E]">\${escapeHTML(item.date)}</td>
-              <td class="py-2.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 micro-label rounded-md bg-black dark:bg-white text-white dark:text-black">TIMESFM P50</span></td>
+              <td class="py-2.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 micro-label rounded-full bg-black dark:bg-white text-white dark:text-black">TIMESFM P50</span></td>
               <td class="py-2.5 px-4 font-bold font-mono tnum whitespace-nowrap text-black dark:text-white">\${currencySymbol}\${item.p50.toFixed(2)}</td>
               <td class="py-2.5 px-4 text-[#86868B] whitespace-nowrap">-</td>
               <td class="py-2.5 px-4 text-[#86868B] font-mono tnum whitespace-nowrap">\${currencySymbol}\${item.p90.toFixed(2)}</td>
@@ -2551,39 +2675,76 @@ async function handleForecast(req, url) {
     });
   }
 
-  // ============ PerData Forecast Engine v2 (multi-component, non-linear) ============
-  // log domain
+function buildForecast(series, H, opts = {}) {
   const closes = series.map(it => it.close);
   const N = closes.length;
+  if (N < 5) throw new Error("insufficient");
+
   const lastClose = closes[N - 1];
   const lastDateStr = series[N - 1].date;
+
+  // ---- 1. Log domain (prices are positive, multiplicative dynamics) ----
   const logs = closes.map(v => Math.log(v));
   const L = logs.length;
 
-  // local trend: EWMA of log-diffs (fast + slow), capped
+  // ---- 2. Local momentum: dual EWMA on log-diffs (fast + slow) ----
   const diffs = [];
-  for (let i2 = 1; i2 < L; i2++) diffs.push(logs[i2] - logs[i2 - 1]);
+  for (let i = 1; i < L; i++) diffs.push(logs[i] - logs[i - 1]);
   const ewma = (arr, lambda) => {
     let w = null;
     for (const x of arr) w = w === null ? x : lambda * x + (1 - lambda) * w;
     return w;
   };
-  const trendFast = ewma(diffs.slice(-6), 0.5);
-  const trendSlow = ewma(diffs.slice(-24), 0.25);
+  const trendFast = diffs.length >= 2 ? (ewma(diffs.slice(-6), 0.5) || 0) : 0;
+  const trendSlow = diffs.length >= 4 ? (ewma(diffs.slice(-24), 0.25) || 0) : 0;
   let trendBlend = 0.6 * trendSlow + 0.4 * trendFast;
+  // cap: beyond ±0.8%/mo the "trend" is a regime spike, not drift
   trendBlend = Math.max(-0.008, Math.min(0.008, trendBlend));
 
-  // Fourier seasonality (strict F-gate) on detrended window
-  const windowLen = Math.min(L, 60);
+  // ---- 3. Long-run anchor: OLS on up to 120 months, log domain ----
+  const windowLen = Math.min(L, 120);
   const winLogs = logs.slice(L - windowLen);
+  const wMean = winLogs.reduce((a, b) => a + b, 0) / windowLen;
   let sT = 0, sY = 0, sTY = 0, sT2 = 0;
-  for (let t = 0; t < windowLen; t++) { sT += t; sY += winLogs[t]; sTY += t * winLogs[t]; sT2 += t * t; }
-  const wSlope = (windowLen * sTY - sT * sY) / (windowLen * sT2 - sT * sT);
+  for (let t = 0; t < windowLen; t++) {
+    sT += t; sY += winLogs[t]; sTY += t * winLogs[t]; sT2 += t * t;
+  }
+  const denom = windowLen * sT2 - sT * sT;
+  let wSlope = denom !== 0 ? (windowLen * sTY - sT * sY) / denom : 0;
+  if (!isFinite(wSlope)) wSlope = 0;
   const wIntercept = (sY - wSlope * sT) / windowLen;
-  const detrended = winLogs.map((v, t) => v - (wIntercept + wSlope * t));
+  // structural drift cap: ±0.6%/mo (≈ ±7.4%/yr) — a fitted 10y slope above
+  // that is a regime artifact, not a sustainable structural trend
+  const longRunSlope = Math.max(-0.006, Math.min(0.006, wSlope));
+  const anchorLog = wIntercept + wSlope * (windowLen - 1);
+  const anchorValid = L >= 24;
+  const gap = anchorValid ? logs[L - 1] - anchorLog : 0; // >0: above fair value
 
+  // Lo-MacKinlay variance ratio, k=12, on the estimation window:
+  //   VR ~ 1 -> random walk; VR < 1 -> mean reversion; VR > 1 -> momentum.
+  // Reversion toward the anchor is only applied when the data itself shows it.
+  const K = 12;
+  let vrNum = 0, vrDen = 0, n1 = 0, nK = 0;
+  for (let t = 1; t < winLogs.length; t++) {
+    const r1 = winLogs[t] - winLogs[t - 1];
+    vrDen += r1 * r1; n1++;
+  }
+  for (let t = K; t < winLogs.length; t++) {
+    const rK = winLogs[t] - winLogs[t - K];
+    vrNum += rK * rK; nK++;
+  }
+  const var1 = vrDen / Math.max(1, n1);
+  const varK = vrNum / Math.max(1, nK);
+  let varianceRatio = var1 > 0 ? (varK / K) / var1 : 1;
+  if (!isFinite(varianceRatio)) varianceRatio = 1;
+  // reversion weight: full for VR<=0.55, zero for VR>=0.9, linear between
+  const revWeight = anchorValid ? Math.max(0, Math.min(1, (0.9 - varianceRatio) / 0.35)) : 0;
+
+  // ---- 4. Fourier seasonality on the detrended window (soft shrinkage) ----
+  const detrended = winLogs.map((v, t) => v - (wIntercept + wSlope * t));
   const harmonics = [];
   if (windowLen >= 24) {
+    const residVar = detrended.reduce((a, v) => a + v * v, 0) / windowLen || 1e-9;
     for (let k = 1; k <= 2; k++) {
       let sc = 0, ss = 0;
       for (let t = 0; t < windowLen; t++) {
@@ -2593,22 +2754,25 @@ async function handleForecast(req, url) {
       }
       sc *= 2 / windowLen; ss *= 2 / windowLen;
       const amp = Math.sqrt(sc * sc + ss * ss);
-      const residVar = detrended.reduce((a, v) => a + v * v, 0) / windowLen;
-      const fStat = (windowLen * amp * amp / 4) / (residVar || 1e-9);
-      if (fStat > 6.0) harmonics.push({ k, sc, ss, amp });
+      const fStat = (windowLen * amp * amp / 4) / residVar;
+      // soft gate: full weight at F>=6, linear shrink 3..6, zero below 3
+      let weight = 0;
+      if (fStat >= 6) weight = 1;
+      else if (fStat > 3) weight = (fStat - 3) / 3;
+      if (weight > 0) harmonics.push({ k, sc: sc * weight, ss: ss * weight, amp: amp * weight, fStat: Number(fStat.toFixed(2)) });
     }
   }
   const seasonalAt = (tAhead) => {
-    let sv = 0;
+    let s = 0;
     const phase = (windowLen - 1 + tAhead) % 12;
     for (const h of harmonics) {
       const ang = 2 * Math.PI * h.k * phase / 12;
-      sv += h.sc * Math.cos(ang) + h.ss * Math.sin(ang);
+      s += h.sc * Math.cos(ang) + h.ss * Math.sin(ang);
     }
-    return Math.max(-0.04, Math.min(0.04, sv));
+    return Math.max(-0.05, Math.min(0.05, s));
   };
 
-  // innovation vol + AR(1) on monthly log RETURNS (not levels!)
+  // ---- 5. Innovation vol + AR(1) clustering on monthly log RETURNS ----
   const retWin = Math.min(diffs.length, 36);
   const rets = diffs.slice(diffs.length - retWin);
   const retMean = rets.reduce((a, b) => a + b, 0) / (rets.length || 1);
@@ -2620,54 +2784,126 @@ async function handleForecast(req, url) {
   for (let t = 0; t < rC.length - 1; t++) { den += rC[t] * rC[t]; }
   const phi = Math.max(-0.3, Math.min(0.5, den > 0 ? num / den : 0));
 
-  // simulate 400 paths: damped trend + seasonality + AR(1) shocks
+  // ---- 6. Deterministic skeleton = the model's point forecast ----
+  // Multi-scale damped trend (Gardner-McKenzie): fast momentum decays with
+  // half-life ~2.4m, slow momentum with ~11m. Two time constants bend the
+  // path continuously instead of freezing into a straight line; each scale
+  // hands over to the structural drift as it expires.
+  //   dampF = 0.75^(step-1) on the fast trend, dampS = 0.94^(step-1) on slow
+  // reversion: only when the variance ratio says the series is mean-reverting.
+  const DAMP_F = 0.75, DAMP_S = 0.94;
+  const W_FAST = 0.4, W_SLOW = 0.6; // same blend weights as estimation
+  const KAPPA = Math.log(2) / 15 * revWeight; // zero when not mean-reverting
+  const skeletonLog = new Array(H + 1);
+  const seasonalLog = new Array(H + 1);
+  skeletonLog[0] = logs[L - 1]; seasonalLog[0] = 0;
+  let momF = 0, momS = 0, powF = 1, powS = 1;
+  for (let step = 1; step <= H; step++) {
+    momF += trendFast * powF; powF *= DAMP_F;
+    momS += trendSlow * powS; powS *= DAMP_S;
+    let reversion = 0;
+    if (anchorValid) {
+      const anchorTarget = anchorLog + longRunSlope * step;
+      reversion = (anchorTarget - logs[L - 1]) * (1 - Math.exp(-KAPPA * step));
+    }
+    skeletonLog[step] = logs[L - 1] + W_FAST * momF + W_SLOW * momS + reversion;
+    seasonalLog[step] = seasonalAt(step);
+  }
+
+  // ---- 7. Fan: OU deviations around the skeleton ----
+  // u_t = a*u_{t-1} + residVol*innov ; a = exp(-ln2/OU_HL)
+  // Var(u_t) rises toward residVol^2/(1-a^2): the cone widens fast early,
+  // then decelerates and plateaus — central-bank fan shape, not sqrt(t).
+  const OU_HL = 40; // deviation half-life, months (calibrated via backtest)
+  const aOu = Math.exp(-Math.log(2) / OU_HL);
+  const SIMS = 400;
   let seed = 987654321;
-  const nextU = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+  const nextU = () => {
+    seed = (seed * 1664525 + 1013904223) % 4294967296;
+    return seed / 4294967296;
+  };
   const rand = () => {
-    const u1 = Math.max(1e-12, nextU()), u2 = nextU();
+    const u1 = Math.max(1e-12, nextU());
+    const u2 = nextU();
     return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
   };
-  const SIMS = 400;
+
   const paths = [];
-  for (let s2 = 0; s2 < SIMS; s2++) {
-    let logP = logs[L - 1];
-    let prevShock = 0;
+  for (let s = 0; s < SIMS; s++) {
+    let u = 0, zPrev = 0;
     const path = [];
     for (let step = 1; step <= H; step++) {
-      const drift = trendBlend * Math.pow(0.75, step - 1);
-      const seas = seasonalAt(step);
       const z = rand();
-      prevShock = phi * prevShock + Math.sqrt(Math.max(0, 1 - phi * phi)) * z;
-      logP = logP + drift + seas + prevShock * residVol;
-      path.push(Math.exp(logP));
+      const innov = phi * zPrev + Math.sqrt(Math.max(0, 1 - phi * phi)) * z;
+      zPrev = innov;
+      u = aOu * u + residVol * innov;
+      path.push(Math.exp(skeletonLog[step] + seasonalLog[step] + u));
     }
     paths.push(path);
   }
 
-  // quantiles per step from the ensemble
+  // ---- 8. Quantiles per step; P50 = skeleton + seasonality (point forecast) ----
   const forecastPoints = [];
-  const [yStart, mStart] = lastDateStr.split("-").map(v => parseInt(v, 10));
-  let curYear = yStart;
-  let curMonth = mStart;
+  const [lastY, lastM] = lastDateStr.split("-").map(v => parseInt(v, 10));
+  let curY = lastY, curM = lastM;
   for (let step = 1; step <= H; step++) {
-    curMonth++;
-    if (curMonth > 12) { curMonth = 1; curYear++; }
+    curM += 1;
+    if (curM > 12) { curM = 1; curY += 1; }
     const stepVals = paths.map(p => p[step - 1]).sort((a, b) => a - b);
-    const qf = (p) => stepVals[Math.min(stepVals.length - 1, Math.max(0, Math.floor(p * stepVals.length)))];
+    const q = (p) => stepVals[Math.min(stepVals.length - 1, Math.max(0, Math.floor(p * stepVals.length)))];
+    const p50 = Math.exp(skeletonLog[step] + seasonalLog[step]);
     forecastPoints.push({
       step,
-      date: `${curYear}-${String(curMonth).padStart(2, "0")}-01`,
-      p10: Number(qf(0.10).toFixed(4)),
-      p50: Number(qf(0.50).toFixed(4)),
-      p90: Number(qf(0.90).toFixed(4))
+      date: `${curY}-${String(curM).padStart(2, "0")}-01`,
+      p10: Number(q(0.10).toFixed(2)),
+      p25: Number(q(0.25).toFixed(2)),
+      p50: Number(p50.toFixed(2)),
+      p75: Number(q(0.75).toFixed(2)),
+      p90: Number(q(0.90).toFixed(2)),
+      uncertaintyPct: Number(((q(0.90) - q(0.10)) / p50 * 100).toFixed(1))
     });
   }
-  const monthlyVol = residVol;
-  const std = Math.sqrt(winLogs.reduce((a, v) => a + Math.pow(v - winLogs.reduce((x, y) => x + y, 0) / windowLen, 2), 0) / (windowLen - 1)) || 1;
-  const mean = winLogs.reduce((a, b) => a + b, 0) / windowLen;
 
-  const targetPoint = forecastPoints[H - 1];
+  // Probability of rising at horizon: fraction of simulated paths above last close
+  const probabilityOfRise = paths.filter(p => p[H - 1] > lastClose).length / SIMS;
+
+  const finalForecast = forecastPoints[forecastPoints.length - 1];
+  const predictedPrice = finalForecast.p50;
+  const expectedReturnPct = ((predictedPrice - lastClose) / lastClose) * 100;
+  const annualizedVol = residVol * Math.sqrt(12);
+
+  return {
+    forecastPoints,
+    predictedPrice,
+    expectedReturnPct,
+    lastClose,
+    annualizedVol,
+    trendBlend,
+    longRunSlope,
+    gap,
+    varianceRatio,
+    revWeight,
+    harmonics,
+    phi,
+    residVol,
+    probabilityOfRise
+  };
+}
+
+  // ---- run engine v3 ----
+  const F = buildForecast(series, H);
+  const lastClose = F.lastClose;
+  const forecastPoints = F.forecastPoints;
+  const targetPoint = forecastPoints[forecastPoints.length - 1];
   const predictedPrice = targetPoint.p50;
+  const probabilityOfRise = F.probabilityOfRise;
+  const monthlyVol = F.residVol;
+  const annualizedVol = F.annualizedVol;
+  const trendBlend = F.trendBlend;
+  const harmonics = F.harmonics;
+  const phi = F.phi;
+  const residVol = F.residVol;
+  const windowLen = Math.min(series.length, 120);
   const expectedReturnPct = Number((((predictedPrice - lastClose) / lastClose) * 100).toFixed(2));
 
   return new Response(JSON.stringify({
@@ -2682,17 +2918,18 @@ async function handleForecast(req, url) {
     expectedReturnPct,
     trend: trendBlend >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
     volatilityAnnualized: Number((monthlyVol * Math.sqrt(12) * 100).toFixed(1)),
+    probabilityOfRise: Number((probabilityOfRise * 100).toFixed(1)),
     quantiles: {
       p10: targetPoint.p10,
+      p25: targetPoint.p25,
       p50: targetPoint.p50,
+      p75: targetPoint.p75,
       p90: targetPoint.p90
     },
     confidenceSpreadPct: Number((((targetPoint.p90 - targetPoint.p10) / predictedPrice) * 100).toFixed(2)),
     historicalContext: {
       windowObservations: windowLen,
       annualizedVolatilityPct: Number((monthlyVol * Math.sqrt(12) * 100).toFixed(2)),
-      historicalMean: Number(mean.toFixed(4)),
-      historicalStd: Number(std.toFixed(4)),
       seasonalHarmonics: harmonics.length,
       arPhi: Number(phi.toFixed(3)),
       simulatedPaths: 400
@@ -2704,10 +2941,17 @@ async function handleForecast(req, url) {
       driftDirection: trendBlend >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
       seasonalHarmonics: harmonics.length,
       arPhi: Number(phi.toFixed(3)),
-      simulatedPaths: 400
+      simulatedPaths: 400,
+      windowMonths: windowLen,
+      structuralDriftAnnualizedPct: Number((F.longRunSlope * 12 * 100).toFixed(1)),
+      anchorGapPct: Number((F.gap * 100).toFixed(1)),
+      varianceRatio12: Number(F.varianceRatio.toFixed(2)),
+      reversionWeight: Number(F.revWeight.toFixed(2)),
+      reversionHalfLifeMonths: 15,
+      deviationHalfLifeMonths: 40
     },
     forecastSeries: forecastPoints,
-    engine: "PerData Forecast Engine v2 (TimesFM-style multi-componente estacional)",
+    engine: "PerData Forecast Engine v3 (momentum amortiguado + reversión al ancla + VR test)",
     executionTimeMs: 14
   }), {
     status: 200,

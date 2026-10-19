@@ -43,10 +43,6 @@
     }
   </script>
 
-    <!-- Typography: institutional terminal stack -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
     html, body {
       overflow-x: hidden !important;
@@ -135,20 +131,15 @@
       left: calc(100% - var(--circle-diameter) - var(--circle-inset));
     }
   
-    /* ===== Professional motion system ===== */
+    /* ===== Apple-style motion: gentle fade, no stagger, no lift ===== */
     @keyframes mde-rise {
-      from { opacity: 0; transform: translateY(14px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
     main > section,
     .rise-in {
-      animation: mde-rise 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+      animation: mde-rise 0.6s ease both;
     }
-    main > section:nth-child(2) { animation-delay: 0.06s; }
-    main > section:nth-child(3) { animation-delay: 0.12s; }
-    main > section:nth-child(4) { animation-delay: 0.18s; }
-    main > section:nth-child(5) { animation-delay: 0.24s; }
-    main > section:nth-child(6) { animation-delay: 0.30s; }
 
     @media (prefers-reduced-motion: reduce) {
       main > section, .rise-in { animation: none; }
@@ -156,18 +147,19 @@
     }
 
     .hover-lift {
-      transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
-                  box-shadow 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
-                  border-color 0.2s ease;
-      will-change: transform;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
     }
     .hover-lift:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.18);
+      border-color: rgba(0, 0, 0, 0.30);
     }
     html.dark .hover-lift:hover {
-      box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.55);
+      border-color: rgba(255, 255, 255, 0.40);
     }
+
+    /* Apple layout helpers */
+    .full-bleed { width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); }
+    .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0; color: #6e6e73; }
+    html.dark .eyebrow { color: #86868b; }
   </style>
 </head>
 <body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
@@ -182,10 +174,7 @@
           <div class="w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm border border-black/10 dark:border-white/10">
             P
           </div>
-          <div class="flex flex-col">
-            <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
-            <span class="text-[10px] text-[#86868B] uppercase tracking-wider font-semibold">Institutional</span>
-          </div>
+          <span class="font-semibold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
         </a>
 
         <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-[#86868B]">
@@ -231,24 +220,24 @@
   <main class="flex-grow flex items-center justify-center px-4 py-16 sm:py-24">
     <div class="max-w-md w-full text-center space-y-6">
       
-      <div class="space-y-2">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-lg bg-[#F5F5F7] dark:bg-[#1C1C1E] text-black dark:text-white font-mono font-bold text-2xl border border-[#E5E5EA] dark:border-[#2C2C2E] tnum">
+      <div class="space-y-4">
+        <h1 class="text-6xl sm:text-8xl font-semibold text-[#E5E5EA] dark:text-[#2C2C2E] tracking-tight select-none">
           404
-        </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-black dark:text-white tracking-tight">
-          Página no encontrada
         </h1>
+        <h2 class="text-2xl sm:text-3xl font-semibold text-black dark:text-white tracking-tight -mt-6">
+          Página no encontrada.
+        </h2>
         <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
           El recurso o serie econométrica solicitada no existe o ha sido reubicada dentro de la estructura institucional.
         </p>
       </div>
 
       <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-        <a href="/explorer" class="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-5 py-2.5 rounded-md bg-black dark:bg-white text-white dark:text-black font-semibold text-xs transition hover:opacity-90">
+        <a href="/explorer" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-black dark:bg-white text-white dark:text-black font-semibold text-xs transition hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA]">
           <span>Abrir Terminal Cuantitativa</span>
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
         </a>
-        <a href="/" class="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-5 py-2.5 rounded-md bg-[#F5F5F7] dark:bg-[#1C1C1E] text-black dark:text-white font-semibold text-xs border border-[#E5E5EA] dark:border-[#2C2C2E] transition hover:bg-[#E5E5EA] dark:hover:bg-[#2C2C2E]">
+        <a href="/" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-2.5 rounded-full text-black dark:text-white font-semibold text-xs hover:underline transition">
           <span>Volver al Inicio</span>
         </a>
       </div>

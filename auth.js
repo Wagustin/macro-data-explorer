@@ -215,7 +215,7 @@
         }
       } else {
         container.innerHTML = `
-          <button id="btnOpenAuthModal" type="button" class="text-xs font-semibold px-3 py-1.5 rounded-md bg-black dark:bg-white text-white dark:text-black hover:opacity-90 transition flex items-center gap-1.5">
+          <button id="btnOpenAuthModal" type="button" class="text-xs font-semibold px-4 py-1.5 rounded-full bg-black dark:bg-white text-white dark:text-black hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] transition flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
             </svg>

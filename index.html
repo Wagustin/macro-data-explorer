@@ -43,10 +43,6 @@
     }
   </script>
 
-    <!-- Typography: institutional terminal stack -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
     html, body {
       overflow-x: hidden !important;
@@ -143,20 +139,15 @@
       font-variant-numeric: tabular-nums;
     }
   
-    /* ===== Professional motion system ===== */
+    /* ===== Apple-style motion: gentle fade, no stagger, no lift ===== */
     @keyframes mde-rise {
-      from { opacity: 0; transform: translateY(14px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
     main > section,
     .rise-in {
-      animation: mde-rise 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+      animation: mde-rise 0.6s ease both;
     }
-    main > section:nth-child(2) { animation-delay: 0.06s; }
-    main > section:nth-child(3) { animation-delay: 0.12s; }
-    main > section:nth-child(4) { animation-delay: 0.18s; }
-    main > section:nth-child(5) { animation-delay: 0.24s; }
-    main > section:nth-child(6) { animation-delay: 0.30s; }
 
     @media (prefers-reduced-motion: reduce) {
       main > section, .rise-in { animation: none; }
@@ -164,18 +155,19 @@
     }
 
     .hover-lift {
-      transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
-                  box-shadow 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
-                  border-color 0.2s ease;
-      will-change: transform;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
     }
     .hover-lift:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.18);
+      border-color: rgba(0, 0, 0, 0.30);
     }
     html.dark .hover-lift:hover {
-      box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.55);
+      border-color: rgba(255, 255, 255, 0.40);
     }
+
+    /* Apple layout helpers */
+    .full-bleed { width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); }
+    .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0; color: #6e6e73; }
+    html.dark .eyebrow { color: #86868b; }
   </style>
 </head>
 <body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
@@ -190,10 +182,7 @@
           <div class="w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm border border-black/10 dark:border-white/10">
             P
           </div>
-          <div class="flex flex-col">
-            <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
-            <span class="text-[10px] text-[#86868B] uppercase tracking-wider font-semibold">Institutional</span>
-          </div>
+          <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
         </a>
 
         <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-[#86868B]">
@@ -217,7 +206,7 @@
           </div>
         </label>
 
-        <a href="/explorer" class="hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-4 py-2 rounded-md transition">
+        <a href="/explorer" class="hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-5 py-2 rounded-full transition">
           <span>Abrir Terminal</span>
         </a>
         <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] text-[#86868B] hover:text-black dark:hover:text-white transition" aria-label="Abrir menú" aria-expanded="false">
@@ -243,30 +232,24 @@
 
     <!-- HERO SECTION -->
     <section class="text-center max-w-4xl mx-auto space-y-6 pt-4">
-      <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-md bg-[#F5F5F7] dark:bg-[#1C1C1E] text-xs font-medium text-[#1D1D1F] dark:text-[#E5E5EA] border border-[#E5E5EA] dark:border-[#2C2C2E]">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span class="font-semibold uppercase tracking-wider text-[10px]">Mercados en Vivo · BVL · BCRP · COMEX · LME</span>
-      </div>
+      <p class="eyebrow">Bolsa de Valores de Lima · BCRP · Mercados globales</p>
 
-      <h1 class="text-3xl sm:text-5xl font-bold tracking-tight text-black dark:text-white leading-[1.1]">
-        Inteligencia Cuantitativa &<br class="hidden sm:inline" />
-        Forecasting Macroeconómico
+      <h1 class="text-4xl sm:text-6xl font-semibold tracking-tight text-black dark:text-white leading-[1.07]">
+        Datos macroeconómicos,<br class="hidden sm:inline" />
+        proyectados con rigor.
       </h1>
 
-      <p class="text-base sm:text-lg text-[#86868B] dark:text-[#8E8E93] leading-relaxed max-w-2xl mx-auto">
-        Terminal econométrica de alta dimensión para activos de la Bolsa de Valores de Lima, metales andinos y divisas soberanas mediante conos probabilísticos de incertidumbre.
+      <p class="text-base sm:text-lg text-[#6e6e73] dark:text-[#8E8E93] leading-relaxed max-w-xl mx-auto">
+        Explora la historia de 124 activos peruanos y globales, genera proyecciones probabilísticas y descarga los datos. Sin instalar nada.
       </p>
 
       <!-- Central CTA Button (Required by Agustín) -->
-      <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
-        <a href="/explorer" class="w-full sm:w-auto inline-flex items-center justify-center space-x-2.5 px-8 py-3.5 rounded-md bg-black dark:bg-white hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black text-sm font-bold transition">
-          <span>Empezar a analizar macro data</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+      <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="/explorer" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 rounded-full bg-black dark:bg-white hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black text-sm font-semibold transition">
+          Empezar a analizar
         </a>
-
-        <a href="#metodologia-resumen" class="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-md bg-[#F5F5F7] dark:bg-[#1C1C1E] hover:bg-[#E5E5EA] dark:hover:bg-[#2C2C2E] text-black dark:text-white text-sm font-semibold border border-[#E5E5EA] dark:border-[#2C2C2E] transition">
-          <span>Cómo obtenemos los resultados</span>
-          <svg class="w-4 h-4 text-[#86868B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        <a href="#metodologia-resumen" class="w-full sm:w-auto text-sm font-semibold text-black dark:text-white hover:underline transition py-3">
+          Cómo obtenemos los resultados &rarr;
         </a>
       </div>
     </section>
@@ -274,7 +257,7 @@
     <!-- LIVE ASSETS HIGHLIGHTS GRID -->
     <section class="space-y-4">
       <div class="flex items-center justify-between">
-        <h2 class="micro-label text-[#86868B] dark:text-[#8E8E93]">Activos de Mayor Sensibilidad Cuantitativa</h2>
+        <h2 class="text-sm font-semibold text-black dark:text-white">Cuatro activos para empezar</h2>
         <a href="/explorer" class="text-xs font-medium text-black dark:text-white hover:underline">Ver catálogo completo (124 activos) &rarr;</a>
       </div>
 
@@ -285,7 +268,7 @@
             <span class="mono tnum text-xs font-bold text-[#86868B]">HG=F <span class="font-normal">· COMEX</span></span>
             <span data-livepct="HG=F" class="px-1.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-500 font-semibold text-[11px] tnum">+2.4%</span>
           </div>
-          <h3 class="text-sm font-semibold text-black dark:text-white mt-2">Cobre Grado A</h3>
+          <h3 class="text-sm font-semibold text-black dark:text-white mt-2">Cobre</h3>
           <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93] mt-0.5">Cono P50 a 6M proyecta $4.62/lb con régimen de déficit estructural.</p>
           <div class="mt-3 pt-3 border-t border-[#E5E5EA] dark:border-[#2C2C2E] flex items-baseline justify-between">
             <span data-liveprice="HG=F" class="font-mono tnum text-lg font-bold tracking-tight text-black dark:text-white">$4.48<span class="text-xs font-normal text-[#86868B]">/lb</span></span>
@@ -339,7 +322,7 @@
       <!-- MARKET QUOTE TICKER STRIP -->
       <div class="rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E]">
         <div class="flex items-center px-4 pt-2.5">
-          <span class="micro-label text-[#86868B] dark:text-[#8E8E93]">Cuadro de Mercado · Referencial</span>
+          <span class="text-xs font-semibold text-black dark:text-white">Cuadro de mercado</span>
         </div>
         <div class="overflow-x-auto whitespace-nowrap px-4 py-2.5">
           <div class="inline-flex items-center gap-x-5 text-xs font-mono tnum">
@@ -361,7 +344,7 @@
     <!-- SECTION: CÓMO OBTENEMOS LOS RESULTADOS (REQUIRED BY AGUSTÍN) -->
     <section id="metodologia-resumen" class="space-y-8 pt-12 border-t border-[#E5E5EA] dark:border-[#2C2C2E]">
       <div class="text-center max-w-3xl mx-auto space-y-3">
-        <h2 class="micro-label text-[#86868B] dark:text-[#8E8E93]">Metodología Cuantitativa</h2>
+        <p class="eyebrow">Metodología</p>
         <p class="text-2xl sm:text-3xl font-bold text-black dark:text-white tracking-tight">
           Cómo obtenemos y validamos los resultados
         </p>
@@ -371,39 +354,35 @@
       </div>
 
       <!-- 4 Pillars Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
 
         <!-- Pillar 1 -->
-        <div class="p-5 rounded-lg bg-[#F5F5F7] dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3">
-          <div class="w-9 h-9 rounded-md bg-black dark:bg-white text-white dark:text-black font-mono font-bold text-xs tnum flex items-center justify-center">01</div>
-          <h3 class="text-base font-bold tracking-tight text-black dark:text-white">Ingesta Multifuente & Depuración OHLCV</h3>
+        <div class="space-y-3">
+          <h3 class="text-base font-semibold tracking-tight text-black dark:text-white">Ingesta multifuente y depuración OHLCV</h3>
           <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
             Consolidamos series históricas de hasta 10 años combinando cotizaciones de la Bolsa de Valores de Lima, mercados globales de futuros (LME, COMEX, NYMEX) y series oficiales del Banco Central de Reserva del Perú (BCRP). Aplicamos filtros de no-estacionariedad y detección de anomalías en días no laborables.
           </p>
         </div>
 
         <!-- Pillar 2 -->
-        <div class="p-5 rounded-lg bg-[#F5F5F7] dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3">
-          <div class="w-9 h-9 rounded-md bg-black dark:bg-white text-white dark:text-black font-mono font-bold text-xs tnum flex items-center justify-center">02</div>
-          <h3 class="text-base font-bold tracking-tight text-black dark:text-white">Normalización Temporal Reversible (RevIN)</h3>
+        <div class="space-y-3">
+          <h3 class="text-base font-semibold tracking-tight text-black dark:text-white">Normalización Temporal Reversible (RevIN)</h3>
           <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
             Para evitar el problema común de cambio en la distribución temporal (*distribution shift*) entre ciclos expansivos y contractivos, cada ventana de contexto es normalizada en media y varianza local de manera simétrica y reinyectada en las proyecciones finales sin pérdida de escala original.
           </p>
         </div>
 
         <!-- Pillar 3 -->
-        <div class="p-5 rounded-lg bg-[#F5F5F7] dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3">
-          <div class="w-9 h-9 rounded-md bg-black dark:bg-white text-white dark:text-black font-mono font-bold text-xs tnum flex items-center justify-center">03</div>
-          <h3 class="text-base font-bold tracking-tight text-black dark:text-white">Conos Probabilísticos Multi-Cuantil (P10 / P50 / P90)</h3>
+        <div class="space-y-3">
+          <h3 class="text-base font-semibold tracking-tight text-black dark:text-white">Conos Probabilísticos Multi-Cuantil (P10 / P50 / P90)</h3>
           <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
             Rechazamos las predicciones puntuales engañosas. Generamos envolventes estocásticas que modelan la incertidumbre inherente: el cuantil P50 representa la trayectoria central esperada, mientras que P10 y P90 delimitan el 80% del intervalo de densidad empírica frente a shocks exógenos.
           </p>
         </div>
 
         <!-- Pillar 4 -->
-        <div class="p-5 rounded-lg bg-[#F5F5F7] dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3">
-          <div class="w-9 h-9 rounded-md bg-black dark:bg-white text-white dark:text-black font-mono font-bold text-xs tnum flex items-center justify-center">04</div>
-          <h3 class="text-base font-bold tracking-tight text-black dark:text-white">Sensibilidad Econométrica Multivariante (OLS)</h3>
+        <div class="space-y-3">
+          <h3 class="text-base font-semibold tracking-tight text-black dark:text-white">Sensibilidad Econométrica Multivariante (OLS)</h3>
           <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
             Cada activo cuenta con un modelo de descomposición factorial en tiempo real. Estimamos coeficientes β frente a materias primas clave, diferencial de tasas soberanas y liquidez internacional, determinando el régimen macroeconómico dominante con total trazabilidad matemática.
           </p>
@@ -415,10 +394,10 @@
       <div class="p-5 sm:p-6 rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#141415] space-y-5">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span class="micro-label text-[#86868B] dark:text-[#8E8E93]">Detalle Técnico en Profundidad</span>
+            <p class="eyebrow">Detalle técnico</p>
             <h3 class="text-lg sm:text-xl font-bold text-black dark:text-white mt-1">Formulación Matemática & Pipeline Estocástico</h3>
           </div>
-          <button id="btnToggleVerMas" type="button" class="inline-flex items-center justify-center space-x-2 text-xs font-semibold px-4 py-2.5 min-h-[40px] rounded-md bg-[#F5F5F7] dark:bg-[#2C2C2E] hover:bg-[#E5E5EA] dark:hover:bg-[#3A3A3C] text-black dark:text-white transition">
+          <button id="btnToggleVerMas" type="button" class="inline-flex items-center justify-center space-x-2 text-xs font-semibold px-5 py-2.5 min-h-[40px] rounded-full border border-[#E5E5EA] dark:border-[#3A3A3C] hover:border-black dark:hover:border-white text-black dark:text-white transition">
             <span id="verMasText">Ver más detalles</span>
             <svg id="verMasIcon" class="w-3.5 h-3.5 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
           </button>
@@ -470,17 +449,14 @@
     </section>
 
     <!-- CALL TO ACTION FINAL BANNER -->
-    <section class="mt-4 p-8 sm:p-12 rounded-lg bg-black dark:bg-white text-white dark:text-black text-center space-y-6">
-      <div class="max-w-2xl mx-auto space-y-3">
-        <h2 class="text-2xl sm:text-4xl font-bold tracking-tight">Accede a la Terminal Institucional</h2>
-        <p class="text-xs sm:text-sm text-[#8E8E93] dark:text-[#6E6E73] leading-relaxed">
-          Explora series históricas de 10 años, genera simulaciones de horizontes de 1M a 12M y exporta reportes auditados en formato Excel estructurado.
-        </p>
-      </div>
+    <section class="pt-8 border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-center space-y-5">
+      <h2 class="text-2xl sm:text-4xl font-semibold tracking-tight text-black dark:text-white">Empieza con cualquier activo.</h2>
+      <p class="text-sm text-[#6e6e73] dark:text-[#8E8E93] leading-relaxed max-w-xl mx-auto">
+        Busca una empresa, un metal o el tipo de cambio. La historia, la proyección y la exportación salen en segundos.
+      </p>
       <div>
-        <a href="/explorer" class="inline-flex items-center space-x-2 px-8 py-3 rounded-md bg-white dark:bg-black text-black dark:text-white font-bold text-sm hover:opacity-90 transition">
-          <span>Abrir Terminal Cuantitativa</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        <a href="/explorer" class="inline-flex items-center px-8 py-3 rounded-full bg-black dark:bg-white text-white dark:text-black font-semibold text-sm hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] transition">
+          Abrir la terminal
         </a>
       </div>
     </section>

@@ -43,10 +43,6 @@
     }
   </script>
 
-    <!-- Typography: institutional terminal stack -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
     html, body {
       overflow-x: hidden !important;
@@ -135,20 +131,15 @@
       left: calc(100% - var(--circle-diameter) - var(--circle-inset));
     }
   
-    /* ===== Professional motion system ===== */
+    /* ===== Apple-style motion: gentle fade, no stagger, no lift ===== */
     @keyframes mde-rise {
-      from { opacity: 0; transform: translateY(14px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
     main > section,
     .rise-in {
-      animation: mde-rise 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+      animation: mde-rise 0.6s ease both;
     }
-    main > section:nth-child(2) { animation-delay: 0.06s; }
-    main > section:nth-child(3) { animation-delay: 0.12s; }
-    main > section:nth-child(4) { animation-delay: 0.18s; }
-    main > section:nth-child(5) { animation-delay: 0.24s; }
-    main > section:nth-child(6) { animation-delay: 0.30s; }
 
     @media (prefers-reduced-motion: reduce) {
       main > section, .rise-in { animation: none; }
@@ -156,18 +147,19 @@
     }
 
     .hover-lift {
-      transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
-                  box-shadow 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
-                  border-color 0.2s ease;
-      will-change: transform;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
     }
     .hover-lift:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.18);
+      border-color: rgba(0, 0, 0, 0.30);
     }
     html.dark .hover-lift:hover {
-      box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.55);
+      border-color: rgba(255, 255, 255, 0.40);
     }
+
+    /* Apple layout helpers */
+    .full-bleed { width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); }
+    .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0; color: #6e6e73; }
+    html.dark .eyebrow { color: #86868b; }
   </style>
 </head>
 <body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
@@ -181,10 +173,7 @@
           <div class="w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm border border-black/10 dark:border-white/10">
             P
           </div>
-          <div class="flex flex-col">
-            <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
-            <span class="text-[10px] text-[#86868B] uppercase tracking-wider font-semibold">Noticias</span>
-          </div>
+          <span class="font-semibold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
         </a>
 
         <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-[#86868B]">
@@ -207,7 +196,7 @@
           </div>
         </label>
 
-        <a href="/explorer" class="hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-4 py-2 rounded-md transition">
+        <a href="/explorer" class="hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-5 py-2 rounded-full transition">
           <span>Abrir Terminal</span>
         </a>
         <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] text-[#86868B] hover:text-black dark:hover:text-white transition" aria-label="Abrir menú" aria-expanded="false">
@@ -236,18 +225,15 @@
     <section class="space-y-3">
       <div class="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <div class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[11px] font-semibold uppercase tracking-wider tnum text-[#86868B] border border-[#E5E5EA] dark:border-[#2C2C2E]">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>Feed en Vivo · Pipeline Automático</span>
-          </div>
-          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-black dark:text-white mt-3">Noticias de Mercados & Macro</h1>
+          <p class="eyebrow">Feed actualizado automáticamente</p>
+          <h1 class="text-3xl sm:text-5xl font-semibold tracking-tight text-black dark:text-white mt-3">Noticias de mercados.</h1>
           <p class="text-sm text-[#86868B] dark:text-[#8E8E93] mt-1 max-w-2xl leading-relaxed">
-            Cobertura automatizada de BVL, BCRP, minería andina, commodities y tasas soberanas. Titulares y atribución de fuente original: el contenido íntegro pertenece a sus respectivos editores.
+            Titulares de BVL, BCRP, minería, commodities y tasas, actualizados cada 30 minutos. Cada nota enlaza a su medio original.
           </p>
         </div>
         <div class="text-right">
           <div id="newsUpdatedAt" class="mono tnum text-xs text-[#86868B]">Actualizando…</div>
-          <button id="btnRefreshNews" class="mt-2 inline-flex items-center gap-2 text-xs font-semibold px-4 py-2.5 min-h-[40px] rounded-md bg-black dark:bg-white text-white dark:text-black hover:opacity-90 transition">
+          <button id="btnRefreshNews" class="mt-2 inline-flex items-center gap-2 text-xs font-semibold px-5 py-2.5 min-h-[40px] rounded-full border border-[#E5E5EA] dark:border-[#3A3A3C] hover:border-black dark:hover:border-white text-black dark:text-white transition">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 9a8 8 0 0114-3M20 15a8 8 0 01-14 3"/></svg>
             <span id="btnRefreshLabel">Actualizar</span>
           </button>
@@ -357,11 +343,11 @@
     }
 
     const badgeClasses = {
-      red: "bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-500 border-rose-200 dark:border-rose-900",
-      blue: "bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-500 border-blue-200 dark:border-blue-900",
-      amber: "bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-500 border-amber-200 dark:border-amber-900",
-      emerald: "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-500 border-emerald-200 dark:border-emerald-900",
-      purple: "bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-500 border-purple-200 dark:border-purple-900"
+      red: "bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#E5E5EA] border-[#E5E5EA] dark:border-[#3A3A3C]",
+      blue: "bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#E5E5EA] border-[#E5E5EA] dark:border-[#3A3A3C]",
+      amber: "bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#E5E5EA] border-[#E5E5EA] dark:border-[#3A3A3C]",
+      emerald: "bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#E5E5EA] border-[#E5E5EA] dark:border-[#3A3A3C]",
+      purple: "bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#E5E5EA] border-[#E5E5EA] dark:border-[#3A3A3C]"
     };
 
     let allNews = [];
@@ -429,7 +415,7 @@
         }
       } catch (e) {
         document.getElementById("newsList").innerHTML =
-          '<div class="p-6 text-center text-sm text-rose-600 rounded-lg border border-rose-200 dark:border-rose-900">Error cargando el feed. Reintenta en unos segundos.</div>';
+          '<div class="p-6 text-center text-sm text-[#6e6e73] dark:text-[#8E8E93] rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E]">No se pudo actualizar el feed. Inténtalo de nuevo en unos segundos.</div>';
       } finally {
         label.textContent = "Actualizar";
         btn.disabled = false;
