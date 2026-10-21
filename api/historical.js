@@ -1,4 +1,6 @@
 import { CATALOG } from "./search.js";
+import { PLANS, planForUser, canUseRange, upgradeRequired } from "./_lib/plans.js";
+import { getAuthUserOrNull } from "./_lib/session.js";
 
 const SYMBOL_REGEX = /^[A-Za-z0-9=._\-\^]{1,20}$/;
 const ALLOWED_RANGES = new Set(["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y", "10y", "max"]);
@@ -41,7 +43,7 @@ export default async function handler(req, res) {
   // Security & CORS Headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("X-Frame-Options", "SAMEORIGIN");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
@@ -52,7 +54,7 @@ export default async function handler(req, res) {
   }
 
   const rawSymbol = (req.query.symbol || "BVN").trim();
-  const rawRange = (req.query.range || "10y").toLowerCase().trim();
+  const rawRange = (req.query.range || "5y").toLowerCase().trim();
   const rawInterval = (req.query.interval || "1mo").toLowerCase().trim();
 
   // Validate inputs
@@ -61,7 +63,16 @@ export default async function handler(req, res) {
   }
 
   const symbol = rawSymbol;
-  const range = ALLOWED_RANGES.has(rawRange) ? rawRange : "10y";
+  const range = ALLOWED_RANGES.has(rawRange) ? rawRange : "5y";
+
+  // Long ranges are a paid feature; only hit the user store when they're requested.
+  if (!canUseRange(PLANS.anon, range)) {
+    const plan = planForUser(await getAuthUserOrNull(req));
+    res.setHeader("Cache-Control", "private, no-store");
+    if (!canUseRange(plan, range)) {
+      return res.status(403).json(upgradeRequired(plan, "range"));
+    }
+  }
   const interval = ALLOWED_INTERVALS.has(rawInterval) ? rawInterval : "1mo";
 
   // Special handler for macroeconomic indicators (World Bank, with offline fallback)

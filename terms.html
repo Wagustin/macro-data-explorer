@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="light">
+<html lang="es" class="light pd-marketing">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -161,6 +161,11 @@
     .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0; color: #6e6e73; }
     html.dark .eyebrow { color: #86868b; }
   </style>
+  <!-- Identidad PerData (DESIGN.md) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/pd.css">
 </head>
 <body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 
@@ -183,6 +188,7 @@
           <a href="/noticias" class="hover:text-black dark:hover:text-white transition">Noticias</a>
           <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
           <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
+          <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
           <a href="/terms" class="text-black dark:text-white font-semibold transition border-b-2 border-black dark:border-white pb-0.5">Términos</a>
         </nav>
       </div>
@@ -213,6 +219,7 @@
           <a href="/noticias" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Noticias</a>
           <a href="/metodologia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Metodología</a>
           <a href="/guia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Guía de Uso</a>
+          <a href="/precios" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Precios</a>
           <a href="/terms" class="px-4 py-2.5 text-black dark:text-white font-semibold bg-[#F5F5F7] dark:bg-[#0D0D0E]">Términos</a>
         </nav>
       </div>
@@ -304,7 +311,7 @@
       </h2>
 
       <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-        El registro institucional (correo electrónico, Google, Apple o Facebook) se utiliza exclusivamente para gestionar los privilegios de sesión, habilitar descargas en formato Excel (.xlsx) y permitir acceso a ventanas de histórico extendidas (10 años). Los datos personales se almacenan de manera encriptada y nunca se comercializan a terceros. El diseño visual, la formulación matemática y el código propietario de la terminal están protegidos por leyes internacionales de propiedad intelectual.
+        El registro con correo electrónico se utiliza exclusivamente para gestionar tu sesión y el plan contratado. Las contraseñas se almacenan cifradas con un algoritmo de derivación de claves (PBKDF2) y nunca en texto plano. Los datos personales nunca se comercializan a terceros. El diseño visual, la formulación matemática y el código propietario de la terminal están protegidos por leyes internacionales de propiedad intelectual.
       </p>
     </section>
 
@@ -334,10 +341,24 @@
       </p>
     </section>
 
-    <!-- SECTION 7: MODIFICACIONES -->
+    <!-- SECTION 7: SUSCRIPCIONES Y PAGOS -->
+    <section id="suscripciones" class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
+      <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">
+        7. Plan Pro, Suscripciones y Pagos
+      </h2>
+
+      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+        El plan Pro es una suscripción de renovación automática al precio y con la periodicidad indicados en la página de <a href="/precios" class="underline">Precios</a> al momento de contratar. Los pagos se procesan a través de Stripe; PerData no almacena los datos de tu tarjeta. Recibirás un recibo por correo electrónico en cada cobro.
+      </p>
+      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+        Puedes cancelar en cualquier momento desde <a href="/cuenta" class="underline">Mi cuenta</a>. La cancelación detiene las renovaciones futuras y conservas el acceso Pro hasta el final del periodo ya pagado. Los periodos ya cobrados no son reembolsables, ni total ni parcialmente, salvo en los casos en que la legislación aplicable disponga lo contrario. Si un cobro no puede completarse, la cuenta vuelve al plan Gratis hasta que se regularice el método de pago. Cualquier cambio de precio se comunicará con anticipación y solo aplicará a partir del siguiente periodo de facturación.
+      </p>
+    </section>
+
+    <!-- SECTION 8: MODIFICACIONES -->
     <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
       <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">
-        7. Modificaciones del Acuerdo y Legislación Aplicable
+        8. Modificaciones del Acuerdo y Legislación Aplicable
       </h2>
 
       <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
@@ -347,7 +368,7 @@
 
     <!-- Back to Terminal -->
     <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <p class="text-sm text-[#6e6e73] dark:text-[#8E8E93]">Continua en la terminal cuando quieras.</p>
+      <p class="text-sm text-[#6e6e73] dark:text-[#8E8E93]">Continúa en la terminal cuando quieras.</p>
       <a href="/explorer" class="px-6 py-2.5 rounded-full bg-black dark:bg-white text-white dark:text-black text-xs font-semibold hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] transition">
         Abrir la terminal &rarr;
       </a>
@@ -370,6 +391,7 @@
         <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
         <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
         <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
+        <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
       </div>
     </div>
   </footer>

@@ -1,64 +1,189 @@
 /**
- * PerData - Institutional Authentication & Feature Gating Module
- * Compatible with Supabase Auth (@supabase/supabase-js v2) and persistent localStorage session.
+ * PerData - Cuentas, planes y facturación (cliente).
+ * La sesión se valida contra /api/auth al cargar; los límites por plan vienen de
+ * /api/billing?action=config y el servidor los vuelve a aplicar en cada API.
  */
 
-(function (window) {
+(function (window, document) {
   const STORAGE_KEY = "mde_auth_session";
-  const DEFAULT_GATING_MESSAGE = "Acceso Cuantitativo Avanzado - Inicia sesión o crea tu cuenta institucional gratuita para desbloquear series de 10 años, exportación en Excel y análisis de sensibilidad en profundidad.";
 
-  // Optional Supabase client instance
-  let supabaseClient = null;
-  if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+  // Fallback until /api/billing?action=config answers (same table as api/_lib/plans.js).
+  let PLANS = {
+    anon: { id: "anon", ranges: ["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y"], maxHorizon: 1, excel: false },
+    free: { id: "free", label: "Gratis", ranges: ["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y"], maxHorizon: 6, excel: false },
+    pro: { id: "pro", label: "Pro", ranges: ["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y", "10y", "max"], maxHorizon: 36, excel: true }
+  };
+  let billing = { enabled: false, prices: [] };
+  let billingLoaded = null;
+
+  const ICON_USER = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>';
+  const ICON_CLOSE = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+  const ICON_EYE = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>';
+  const ICON_CHECK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>';
+
+  const FEATURE_COPY = {
+    range: "Las series de 10 años y el historial completo son parte del plan Pro.",
+    horizon: "Los horizontes de proyección largos (12 a 36 meses) son parte del plan Pro.",
+    excel: "La exportación a Excel es parte del plan Pro.",
+    default: "Desbloquea series de 10 años, horizontes de hasta 36 meses y exportación a Excel."
+  };
+
+  function escapeHTML(str) {
+    return String(str == null ? "" : str).replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[m]);
+  }
+
+  function formatPrice(p) {
+    if (!p || typeof p.amount !== "number") return "";
     try {
-      supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+      return new Intl.NumberFormat("es-PE", { style: "currency", currency: p.currency.toUpperCase(), minimumFractionDigits: p.amount % 100 ? 2 : 0 }).format(p.amount / 100);
     } catch (e) {
-      console.warn("Supabase init error:", e);
+      return (p.amount / 100).toFixed(2) + " " + p.currency.toUpperCase();
     }
   }
 
   const Auth = {
-    supabase: supabaseClient,
-
+    // ---------- Session ----------
     getSession() {
       try {
-        const item = localStorage.getItem(STORAGE_KEY);
-        if (!item) return null;
-        return JSON.parse(item);
+        const s = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        return s && s.user && s.access_token ? s : null;
       } catch (e) {
         return null;
       }
     },
 
-    isAuthenticated() {
-      const session = this.getSession();
-      return !!(session && session.user);
+    getUser() {
+      const s = this.getSession();
+      return s ? s.user : null;
     },
 
-    setSession(sessionData) {
-      if (!sessionData) {
-        localStorage.removeItem(STORAGE_KEY);
-      } else {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionData));
-      }
-      this.updateNavbar();
-      this.updateGatedElements();
-      window.dispatchEvent(new CustomEvent("mde-auth-changed", { detail: sessionData }));
-      window.dispatchEvent(new CustomEvent("mde:auth-change", { detail: sessionData }));
+    getToken() {
+      const s = this.getSession();
+      return s ? s.access_token : null;
+    },
+
+    isAuthenticated() {
+      return !!this.getSession();
+    },
+
+    isPro() {
+      const u = this.getUser();
+      return !!(u && u.plan === "pro");
+    },
+
+    setSession(session) {
+      try {
+        if (session) localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+        else localStorage.removeItem(STORAGE_KEY);
+      } catch (e) {}
+      this.render();
+      window.dispatchEvent(new CustomEvent("mde-auth-changed", { detail: session }));
+      window.dispatchEvent(new CustomEvent("mde:auth-change", { detail: session }));
+    },
+
+    /** Re-reads the user (plan included) from the server. Signs out only on a definite 401. */
+    async refresh() {
+      const token = this.getToken();
+      if (!token) return null;
+      try {
+        const res = await fetch("/api/auth", { headers: { Authorization: "Bearer " + token }, cache: "no-store" });
+        if (res.status === 401) {
+          this.setSession(null);
+          return null;
+        }
+        const data = await res.json();
+        if (data.success && data.user) {
+          const prev = this.getUser() || {};
+          if (JSON.stringify(prev) !== JSON.stringify(data.user)) {
+            this.setSession({ user: data.user, access_token: token });
+          }
+          return data.user;
+        }
+      } catch (e) {}
+      return this.getUser();
     },
 
     logout() {
-      if (supabaseClient) {
-        try { supabaseClient.auth.signOut(); } catch (e) {}
-      }
-      try {
-        fetch("/api/auth", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "signout" })
-        }).catch(() => {});
-      } catch (e) {}
+      fetch("/api/auth", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "signout" }) }).catch(() => {});
       this.setSession(null);
+      closeMenu();
+    },
+
+    /** fetch() that adds the session token. */
+    authFetch(url, options) {
+      const opts = Object.assign({}, options || {});
+      const token = this.getToken();
+      if (token) opts.headers = Object.assign({}, opts.headers || {}, { Authorization: "Bearer " + token });
+      return fetch(url, opts);
+    },
+
+    // ---------- Plans ----------
+    plan() {
+      const u = this.getUser();
+      if (!u) return PLANS.anon;
+      return u.plan === "pro" ? PLANS.pro : PLANS.free;
+    },
+
+    plans() {
+      return PLANS;
+    },
+
+    billing() {
+      return billing;
+    },
+
+    loadBilling() {
+      if (!billingLoaded) {
+        billingLoaded = fetch("/api/billing?action=config")
+          .then(r => r.json())
+          .then(cfg => {
+            if (cfg && cfg.plans) PLANS = cfg.plans;
+            billing = { enabled: !!(cfg && cfg.enabled), prices: (cfg && cfg.prices) || [] };
+            window.dispatchEvent(new CustomEvent("mde:billing-loaded", { detail: billing }));
+            this.render();
+            return billing;
+          })
+          .catch(() => billing);
+      }
+      return billingLoaded;
+    },
+
+    priceLabel(interval) {
+      const p = billing.prices.find(x => x.interval === (interval || "month"));
+      return p ? formatPrice(p) : "";
+    },
+
+    /** can("range","10y") · can("horizon",12) · can("excel") */
+    can(feature, value) {
+      const plan = this.plan();
+      if (feature === "range") return plan.ranges.indexOf(value) !== -1;
+      if (feature === "horizon") return Number(value) <= plan.maxHorizon;
+      if (feature === "excel") return !!plan.excel;
+      return true;
+    },
+
+    /** Returns true if allowed; otherwise opens sign-in (anon) or the Pro prompt (free). */
+    gate(feature, value) {
+      if (this.can(feature, value)) return true;
+      if (!this.isAuthenticated()) {
+        // A free account is enough for short horizons; anything else needs Pro after signing up.
+        const freeAllows = feature === "horizon" && Number(value) <= PLANS.free.maxHorizon;
+        const prompt = freeAllows
+          ? "Crea tu cuenta gratuita para proyectar hasta " + PLANS.free.maxHorizon + " meses."
+          : (FEATURE_COPY[feature] || FEATURE_COPY.default) + " Crea tu cuenta para empezar.";
+        this.openModal(prompt, "signup", freeAllows ? null : feature);
+      } else {
+        this.openUpgrade(feature);
+      }
+      return false;
+    },
+
+    /** Handles a 403 from a gated API. Returns true when it was a plan error. */
+    handleApiDenied(body) {
+      if (!body || (body.code !== "auth_required" && body.code !== "upgrade_required")) return false;
+      if (body.code === "auth_required") this.openModal(body.error, "signup");
+      else this.openUpgrade(body.feature);
+      return true;
     },
 
     requireAuth(featureName, onAllowed) {
@@ -66,509 +191,413 @@
         if (typeof onAllowed === "function") onAllowed();
         return true;
       }
-      this.openModal(DEFAULT_GATING_MESSAGE);
+      this.openModal();
       return false;
     },
 
-    openModal(customPrompt) {
-      ensureModalDOM();
-      const modal = document.getElementById("mdeAuthModal");
-      const modalBox = document.getElementById("mdeAuthModalBox");
-      const banner = document.getElementById("mdeAuthBanner");
-
-      if (banner) {
-        if (customPrompt) {
-          banner.textContent = customPrompt;
-          banner.classList.remove("hidden");
-        } else {
-          banner.textContent = DEFAULT_GATING_MESSAGE;
-          banner.classList.remove("hidden");
-        }
+    // ---------- Billing actions ----------
+    async startCheckout(interval) {
+      if (!this.isAuthenticated()) {
+        this.openModal("Crea tu cuenta o inicia sesión para suscribirte a Pro.", "signup", "checkout");
+        return { success: false };
       }
-
-      if (modal && modalBox) {
-        modal.classList.remove("opacity-0", "pointer-events-none");
-        modal.classList.add("opacity-100", "pointer-events-auto");
-        modalBox.classList.remove("scale-95");
-        modalBox.classList.add("scale-100");
-        document.body.style.overflow = "hidden";
-        // Reset form error/status
-        const statusEl = document.getElementById("mdeAuthStatus");
-        if (statusEl) statusEl.textContent = "";
-      }
-    },
-
-    closeModal() {
-      const modal = document.getElementById("mdeAuthModal");
-      const modalBox = document.getElementById("mdeAuthModalBox");
-      if (modal && modalBox) {
-        modal.classList.remove("opacity-100", "pointer-events-auto");
-        modal.classList.add("opacity-0", "pointer-events-none");
-        modalBox.classList.remove("scale-100");
-        modalBox.classList.add("scale-95");
-        document.body.style.overflow = "";
-      }
-    },
-
-    async signInWithEmail(email, password) {
-      if (!email || !email.includes("@")) {
-        return { success: false, error: "Ingresa un correo electrónico válido (ej. analista@empresa.com)." };
-      }
-      if (!password || password.length < 6) {
-        return { success: false, error: "La contraseña debe tener al menos 6 caracteres." };
-      }
-
       try {
-        const res = await fetch("/api/auth", {
+        const res = await this.authFetch("/api/billing", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "signin", email, password })
+          body: JSON.stringify({ action: "checkout", interval: interval || "month" })
         });
         const data = await res.json();
-        if (!res.ok || !data.success) {
-          return { success: false, error: data.error || "Credenciales incorrectas." };
+        if (res.status === 401) this.setSession(null);
+        if (data.url) {
+          window.location.href = data.url;
+          return { success: true };
         }
-        this.setSession({
-          user: data.user,
-          access_token: data.token
-        });
-        return { success: true, user: data.user };
-      } catch (err) {
-        return { success: false, error: "Error conectando con el servidor de autenticación." };
+        return { success: false, error: data.error || "No se pudo iniciar el pago." };
+      } catch (e) {
+        return { success: false, error: "Error de conexión. Intenta de nuevo." };
       }
+    },
+
+    async openPortal() {
+      try {
+        const res = await this.authFetch("/api/billing", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "portal" })
+        });
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+          return { success: true };
+        }
+        return { success: false, error: data.error || "No se pudo abrir el portal de pagos." };
+      } catch (e) {
+        return { success: false, error: "Error de conexión. Intenta de nuevo." };
+      }
+    },
+
+    // ---------- Email auth ----------
+    async signInWithEmail(email, password) {
+      return submitCredentials({ action: "signin", email: String(email || "").trim(), password });
     },
 
     async signUpWithEmail(email, password, fullName) {
-      if (!email || !email.includes("@")) {
-        return { success: false, error: "Ingresa un correo institucional válido." };
-      }
-      if (!password || password.length < 6) {
-        return { success: false, error: "La contraseña debe tener un mínimo de 6 caracteres." };
-      }
-
-      try {
-        const res = await fetch("/api/auth", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "signup",
-            email: email.trim().toLowerCase(),
-            password,
-            name: fullName ? fullName.trim() : email.split("@")[0]
-          })
-        });
-        const data = await res.json();
-        if (!res.ok || !data.success) {
-          return { success: false, error: data.error || "No se pudo registrar la cuenta." };
-        }
-        this.setSession({
-          user: data.user,
-          access_token: data.token
-        });
-        return { success: true, user: data.user };
-      } catch (err) {
-        return { success: false, error: "Error conectando con el servidor de autenticación." };
-      }
+      return submitCredentials({ action: "signup", email: String(email || "").trim().toLowerCase(), password, name: (fullName || "").trim() });
     },
 
-    async signInWithOAuth(provider) {
-      return this.openOAuthPopup(provider);
+    // ---------- UI ----------
+    openModal(prompt, mode, afterAuth) {
+      ensureModal();
+      pendingAfterAuth = afterAuth || null;
+      const banner = document.getElementById("pdAuthPrompt");
+      banner.textContent = prompt || "";
+      banner.hidden = !prompt;
+      setAuthMode(mode === "signup" ? "signup" : "signin");
+      showDialog("pdAuthModal");
+      setTimeout(() => {
+        const first = document.getElementById(mode === "signup" ? "pdAuthName" : "pdAuthEmail");
+        if (first) first.focus();
+      }, 60);
     },
 
-    openOAuthPopup(provider) {
-      // NOTE: Real OAuth requires backend credentials (client_id/secret)
-      // and proper registration at each provider's developer console.
-      // This placeholder shows the modal message until OAuth is configured.
-      const msg = "Autenticación social próximamente. Por ahora usa correo y contraseña.";
-      const statusEl = document.getElementById("mdeAuthStatus") || document.getElementById("authStatus");
-      if (statusEl) statusEl.textContent = msg;
-      console.warn("[PerData] OAuth SSO not yet configured for:", provider);
+    closeModal() {
+      hideDialog("pdAuthModal");
+    },
+
+    openUpgrade(feature) {
+      ensureUpgrade();
+      this.loadBilling();
+      document.getElementById("pdUpgradeReason").textContent = FEATURE_COPY[feature] || FEATURE_COPY.default;
+      renderUpgradeCta();
+      showDialog("pdUpgradeModal");
+    },
+
+    closeUpgrade() {
+      hideDialog("pdUpgradeModal");
+    },
+
+    render() {
+      this.updateNavbar();
+      this.updateGatedElements();
     },
 
     updateNavbar() {
       const container = document.getElementById("navbarAuthContainer");
       if (!container) return;
-
-      const session = this.getSession();
-      if (session && session.user) {
-        const u = session.user;
-        const initial = (u.name || u.email || "U").charAt(0).toUpperCase();
-        const displayName = u.name || u.email.split("@")[0];
-
-        container.innerHTML = `
-          <div class="flex items-center gap-2">
-            <div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C]">
-              <span class="w-6 h-6 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center text-xs font-bold font-mono">${initial}</span>
-              <span class="text-xs font-medium text-black dark:text-white max-w-[110px] truncate" title="${u.email}">${escapeHTML(displayName)}</span>
-            </div>
-            <button id="btnLogout" type="button" class="text-xs text-[#86868B] hover:text-black dark:hover:text-white px-2 py-1 transition" title="Cerrar sesión">
-              Cerrar sesión
-            </button>
-          </div>
-        `;
-
-        const btnLogout = document.getElementById("btnLogout");
-        if (btnLogout) {
-          btnLogout.addEventListener("click", () => {
-            Auth.logout();
-          });
-        }
-      } else {
-        container.innerHTML = `
-          <button id="btnOpenAuthModal" type="button" class="text-xs font-semibold px-4 py-1.5 rounded-full bg-black dark:bg-white text-white dark:text-black hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] transition flex items-center gap-1.5">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-            </svg>
-            <span>Iniciar Sesión</span>
-          </button>
-        `;
-
-        const btnOpen = document.getElementById("btnOpenAuthModal");
-        if (btnOpen) {
-          btnOpen.addEventListener("click", () => {
-            Auth.openModal();
-          });
-        }
+      const u = this.getUser();
+      if (!u) {
+        container.innerHTML = '<button id="btnOpenAuthModal" type="button" class="pd-nav-btn">' + ICON_USER + "<span>Iniciar sesión</span></button>";
+        document.getElementById("btnOpenAuthModal").addEventListener("click", () => Auth.openModal());
+        return;
       }
+      const name = u.name || u.email.split("@")[0];
+      const isPro = u.plan === "pro";
+      container.innerHTML =
+        '<div class="pd-acct">' +
+          '<button id="pdAcctBtn" type="button" class="pd-acct-btn" aria-haspopup="menu" aria-expanded="false">' +
+            '<span class="pd-avatar" aria-hidden="true">' + escapeHTML(name.charAt(0).toUpperCase()) + "</span>" +
+            '<span class="pd-acct-name">' + escapeHTML(name) + "</span>" +
+            (isPro ? '<span class="pd-plan-badge">Pro</span>' : "") +
+          "</button>" +
+          '<div id="pdAcctMenu" class="pd-acct-menu" role="menu" hidden>' +
+            '<div class="pd-acct-head"><div class="pd-acct-head-name">' + escapeHTML(name) + '</div><div class="pd-acct-head-mail">' + escapeHTML(u.email) + "</div>" +
+              '<div class="pd-acct-head-plan">Plan ' + (isPro ? "Pro" : "Gratis") + "</div></div>" +
+            '<a role="menuitem" href="/cuenta">Mi cuenta</a>' +
+            (isPro ? "" : '<a role="menuitem" href="/precios" class="pd-acct-upgrade">Mejorar a Pro</a>') +
+            '<button role="menuitem" type="button" id="pdAcctLogout">Cerrar sesión</button>' +
+          "</div>" +
+        "</div>";
+      const btn = document.getElementById("pdAcctBtn");
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const menu = document.getElementById("pdAcctMenu");
+        const open = menu.hidden;
+        menu.hidden = !open;
+        btn.setAttribute("aria-expanded", String(open));
+      });
+      document.getElementById("pdAcctLogout").addEventListener("click", () => Auth.logout());
     },
 
+    /** Marks buttons for features the current plan can't use. */
     updateGatedElements() {
-      const isAuth = this.isAuthenticated();
-
-      // Clean up any remaining legacy lock icons
-      document.querySelectorAll(".auth-lock-icon, .range-lock, .horizon-lock").forEach(el => el.remove());
-
-      // 10Y range button: attenuate font if not authenticated
-      const btn10y = document.querySelector('.range-btn[data-range="10y"]');
-      if (btn10y) {
-        if (!isAuth) {
-          btn10y.classList.add("locked-option");
-        } else {
-          btn10y.classList.remove("locked-option");
-        }
-      }
-
-      // Horizon buttons: 3M, 6M, 12M and Custom
-      const horizonGated = [
-        document.querySelector('.horizon-btn[data-horizon="3"]'),
-        document.querySelector('.horizon-btn[data-horizon="6"]'),
-        document.querySelector('.horizon-btn[data-horizon="12"]'),
-        document.getElementById("btnCustomHorizon")
-      ].filter(Boolean);
-
-      horizonGated.forEach(btn => {
-        if (!isAuth) {
-          btn.classList.add("locked-option");
-        } else {
-          btn.classList.remove("locked-option");
-        }
+      const mark = (el, allowed) => {
+        if (!el) return;
+        el.classList.toggle("locked-option", !allowed);
+        if (!allowed) el.setAttribute("data-locked", this.isAuthenticated() ? "pro" : "account");
+        else el.removeAttribute("data-locked");
+      };
+      document.querySelectorAll(".range-btn[data-range]").forEach(btn => {
+        if (!btn.classList.contains("bg-black")) mark(btn, this.can("range", btn.getAttribute("data-range")));
       });
-
-      // Excel export buttons
-      const excelButtons = [document.getElementById("btnExportExcel"), document.getElementById("btnExportExcelTop")].filter(Boolean);
-      excelButtons.forEach(btn => {
-        if (!isAuth) {
-          btn.classList.add("locked-option");
-        } else {
-          btn.classList.remove("locked-option");
-        }
+      document.querySelectorAll(".horizon-btn[data-horizon]").forEach(btn => {
+        if (!btn.classList.contains("bg-black")) mark(btn, this.can("horizon", btn.getAttribute("data-horizon")));
       });
-
-      // Econometric Sensitivity Accordion
-      const accordionHeader = document.getElementById("econometricAccordionHeader");
-      if (accordionHeader) {
-        if (!isAuth) {
-          accordionHeader.classList.add("locked-option");
-        } else {
-          accordionHeader.classList.remove("locked-option");
-        }
-      }
+      const custom = document.getElementById("btnCustomHorizon");
+      if (custom && !custom.classList.contains("bg-black")) mark(custom, this.plan().maxHorizon > 12);
+      ["btnExportExcel", "btnExportExcelTop"].forEach(id => mark(document.getElementById(id), this.can("excel")));
     },
 
     init() {
-      ensureModalDOM();
-      this.updateNavbar();
-      this.updateGatedElements();
-
-      // Listen for OAuth Gateway popup message
-      window.addEventListener("message", (e) => {
-        if (e.data && e.data.type === "MDE_AUTH_SUCCESS" && e.data.session) {
-          this.setSession(e.data.session);
-          this.closeModal();
-          this.updateNavbar();
-          this.updateGatedElements();
+      this.render();
+      this.loadBilling();
+      this.refresh();
+      document.addEventListener("click", (e) => {
+        const menu = document.getElementById("pdAcctMenu");
+        if (menu && !menu.hidden && !e.target.closest(".pd-acct")) closeMenu();
+        const opener = e.target.closest("[data-auth-open]");
+        if (opener) {
+          e.preventDefault();
+          Auth.openModal(opener.getAttribute("data-auth-prompt") || "", opener.getAttribute("data-auth-open"));
+        }
+        const upgrader = e.target.closest("[data-upgrade]");
+        if (upgrader) {
+          e.preventDefault();
+          Auth.openUpgrade(upgrader.getAttribute("data-upgrade"));
         }
       });
-
-      // Listen for ESC key
       window.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-          this.closeModal();
-        }
+        if (e.key !== "Escape") return;
+        closeMenu();
+        Auth.closeModal();
+        Auth.closeUpgrade();
+      });
+      // Another tab signed in or out.
+      window.addEventListener("storage", (e) => {
+        if (e.key === STORAGE_KEY) this.render();
       });
     }
   };
 
-  function escapeHTML(str) {
-    if (!str) return "";
-    return String(str).replace(/[&<>"']/g, m => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;"
-    })[m]);
+  // ---------- Internals ----------
+  let authMode = "signin";
+  let pendingAfterAuth = null;
+  let lastFocus = null;
+
+  function closeMenu() {
+    const menu = document.getElementById("pdAcctMenu");
+    if (menu) menu.hidden = true;
+    const btn = document.getElementById("pdAcctBtn");
+    if (btn) btn.setAttribute("aria-expanded", "false");
   }
 
-  function ensureModalDOM() {
-    if (document.getElementById("mdeAuthModal")) return;
+  function showDialog(id) {
+    const el = document.getElementById(id);
+    if (!el || el.classList.contains("is-open")) return;
+    lastFocus = document.activeElement;
+    el.hidden = false;
+    requestAnimationFrame(() => el.classList.add("is-open"));
+    document.body.style.overflow = "hidden";
+  }
 
-    const modalHTML = `
-      <div id="mdeAuthModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
-        <div id="mdeAuthModalBox" class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg w-full max-w-md p-6 sm:p-7 shadow-2xl scale-95 transition-all duration-300 text-black dark:text-white relative">
-          
-          <!-- Close Button -->
-          <button id="btnCloseAuthModal" type="button" class="absolute top-4 right-4 text-[#86868B] hover:text-black dark:hover:text-white w-8 h-8 rounded-full flex items-center justify-center transition">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-          </button>
+  function hideDialog(id) {
+    const el = document.getElementById(id);
+    if (!el || el.hidden) return;
+    el.classList.remove("is-open");
+    el.hidden = true;
+    if (!document.querySelector(".pd-dialog.is-open")) document.body.style.overflow = "";
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
 
-          <!-- Banner / Prompt for Gated Features -->
-          <div id="mdeAuthBanner" class="mb-4 p-3 rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] text-[12px] leading-relaxed text-[#1D1D1F] dark:text-[#E5E5EA] font-medium">
-            ${DEFAULT_GATING_MESSAGE}
-          </div>
-
-          <!-- Header -->
-          <div class="mb-5 text-center">
-            <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-black dark:bg-white text-white dark:text-black mb-2 shadow-sm font-mono text-sm font-bold">
-              MDE
-            </div>
-            <h3 class="text-lg font-bold tracking-tight">Acceso Cuantitativo Avanzado</h3>
-            <p class="text-xs text-[#86868B] mt-0.5">Terminal Institucional PerData</p>
-          </div>
-
-          <!-- Mode Switcher (Tab) -->
-          <div class="flex p-1 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-lg mb-5 text-xs font-semibold">
-            <button id="tabSignIn" type="button" class="flex-1 py-1.5 rounded-lg bg-white dark:bg-[#1C1C1E] text-black dark:text-white shadow-sm transition">
-              Iniciar Sesión
-            </button>
-            <button id="tabSignUp" type="button" class="flex-1 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition">
-              Crear Cuenta
-            </button>
-          </div>
-
-          <!-- Social Auth Buttons (SSO en desarrollo — claramente marcado) -->
-          <div class="space-y-2 mb-4 opacity-60" title="Disponible próximamente">
-            <!-- Google Button -->
-            <button id="btnAuthGoogle" type="button" class="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-lg border border-[#E5E5EA] dark:border-[#3A3A3C] bg-white dark:bg-[#2C2C2E]/50 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] text-xs font-medium transition">
-              <svg class="w-4 h-4" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-              </svg>
-              <span>Continuar con Google</span>
-            </button>
-
-            <!-- Apple Button -->
-            <button id="btnAuthApple" type="button" class="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-lg border border-[#E5E5EA] dark:border-[#3A3A3C] bg-white dark:bg-[#2C2C2E]/50 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] text-xs font-medium transition">
-              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.4c.65-.79 1.1-1.89.98-3-.95.04-2.09.63-2.76 1.42-.59.68-1.11 1.79-.97 2.87 1.06.08 2.1-.5 2.75-1.29z"/>
-              </svg>
-              <span>Continuar con Apple</span>
-            </button>
-
-            <!-- Facebook Button -->
-            <button id="btnAuthFacebook" type="button" class="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-lg border border-[#E5E5EA] dark:border-[#3A3A3C] bg-white dark:bg-[#2C2C2E]/50 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] text-xs font-medium transition">
-              <svg class="w-4 h-4 fill-[#1877F2]" viewBox="0 0 24 24">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-              <span>Continuar con Facebook</span>
-            </button>
-          </div>
-
-          <!-- Divider -->
-          <div class="relative flex items-center justify-center mb-4">
-            <div class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] w-full"></div>
-            <span class="bg-white dark:bg-[#1C1C1E] px-3 text-[10px] text-[#86868B] uppercase tracking-wider font-semibold">o con correo</span>
-          </div>
-
-          <!-- Email / Password Form -->
-          <form id="mdeAuthForm" class="space-y-3">
-            <div id="groupFullName" class="hidden">
-              <label class="block text-[11px] font-medium text-[#86868B] mb-1">Nombre completo / Organización</label>
-              <input type="text" id="authFullName" placeholder="Ej. Agustín Wong / Tesorería Corporativa" class="w-full px-3 py-2 text-xs rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] focus:outline-none focus:border-black dark:focus:border-white focus:ring-2 focus:ring-black/10 dark:focus:ring-white/10">
-            </div>
-
-            <div>
-              <label class="block text-[11px] font-medium text-[#86868B] mb-1">Correo electrónico</label>
-              <input type="email" id="authEmail" required placeholder="analista@empresa.com" class="w-full px-3 py-2 text-xs rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] focus:outline-none focus:border-black dark:focus:border-white focus:ring-2 focus:ring-black/10 dark:focus:ring-white/10">
-            </div>
-
-            <div>
-              <label class="block text-[11px] font-medium text-[#86868B] mb-1">Contraseña</label>
-              <div class="relative">
-                <input type="password" id="authPassword" required minlength="6" placeholder="Mínimo 6 caracteres" class="w-full px-3 py-2 pr-9 text-xs rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] focus:outline-none focus:border-black dark:focus:border-white">
-                <button type="button" id="btnTogglePwVisibility" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[#86868B] hover:text-black dark:hover:text-white transition" aria-label="Mostrar u ocultar contraseña">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                </button>
-              </div>
-              <div id="pwStrengthBar" class="hidden mt-1.5 h-1 w-full bg-[#E5E5EA] dark:bg-[#3A3A3C] rounded-full overflow-hidden">
-                <div id="pwStrengthFill" class="h-full w-0 bg-rose-500 transition-all duration-300"></div>
-              </div>
-              <div id="pwStrengthText" class="hidden text-[10px] text-[#86868B] mt-1">Fortaleza de la contraseña</div>
-            </div>
-
-            <div id="groupForgotPw" class="text-right">
-              <button type="button" id="btnForgotPassword" class="text-[11px] text-[#86868B] hover:text-black dark:hover:text-white underline transition">Olvidé mi contraseña</button>
-            </div>
-
-            <div id="mdeAuthStatus" class="text-[11px] text-red-500 font-medium min-h-[16px]"></div>
-
-            <button type="submit" id="btnSubmitAuth" class="w-full py-2.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-semibold text-xs hover:opacity-90 transition shadow-sm">
-              Iniciar Sesión
-            </button>
-          </form>
-
-          <p class="mt-4 text-[10px] text-center text-[#86868B]">
-            Al registrarte aceptas los <a href="/terms" class="underline hover:text-black dark:hover:text-white">Términos y Condiciones</a> y el descargo SMV/SEC.
-          </p>
-        </div>
-      </div>
-    `;
-
-    document.body.insertAdjacentHTML("beforeend", modalHTML);
-
-    // Bind Modal Events
-    let isSignUp = false;
-    const tabSignIn = document.getElementById("tabSignIn");
-    const tabSignUp = document.getElementById("tabSignUp");
-    const groupFullName = document.getElementById("groupFullName");
-    const btnSubmit = document.getElementById("btnSubmitAuth");
-    const authForm = document.getElementById("mdeAuthForm");
-    const statusEl = document.getElementById("mdeAuthStatus");
-    const btnClose = document.getElementById("btnCloseAuthModal");
-    const modalBackdrop = document.getElementById("mdeAuthModal");
-
-    function setTab(signup) {
-      isSignUp = signup;
-      if (signup) {
-        tabSignUp.className = "flex-1 py-1.5 rounded-lg bg-white dark:bg-[#1C1C1E] text-black dark:text-white shadow-sm transition";
-        tabSignIn.className = "flex-1 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
-        groupFullName.classList.remove("hidden");
-        btnSubmit.textContent = "Crear Cuenta Institucional Gratuita";
-      } else {
-        tabSignIn.className = "flex-1 py-1.5 rounded-lg bg-white dark:bg-[#1C1C1E] text-black dark:text-white shadow-sm transition";
-        tabSignUp.className = "flex-1 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
-        groupFullName.classList.add("hidden");
-        btnSubmit.textContent = "Iniciar Sesión";
+  async function submitCredentials(payload) {
+    try {
+      const res = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) {
+        return { success: false, error: data.error || "No se pudo completar el acceso." };
       }
-      statusEl.textContent = "";
+      Auth.setSession({ user: data.user, access_token: data.token });
+      return { success: true, user: data.user };
+    } catch (err) {
+      return { success: false, error: "No hay conexión con el servidor. Revisa tu internet e intenta de nuevo." };
     }
+  }
 
-    // Password visibility toggle
-    const pwInput = document.getElementById("authPassword");
-    const pwToggle = document.getElementById("btnTogglePwVisibility");
-    pwToggle.addEventListener("click", () => {
-      pwInput.type = pwInput.type === "password" ? "text" : "password";
-      pwToggle.classList.toggle("text-black", pwInput.type === "text");
-      pwToggle.classList.toggle("dark:text-white", pwInput.type === "text");
+  function setAuthMode(mode) {
+    authMode = mode;
+    const signup = mode === "signup";
+    document.getElementById("pdTabSignIn").setAttribute("aria-selected", String(!signup));
+    document.getElementById("pdTabSignUp").setAttribute("aria-selected", String(signup));
+    document.getElementById("pdAuthTitle").textContent = signup ? "Crea tu cuenta gratuita" : "Inicia sesión en PerData";
+    document.getElementById("pdGroupName").hidden = !signup;
+    document.getElementById("pdForgot").hidden = signup;
+    document.getElementById("pdAuthLegal").hidden = !signup;
+    const pw = document.getElementById("pdAuthPassword");
+    pw.autocomplete = signup ? "new-password" : "current-password";
+    pw.placeholder = signup ? "Mínimo 8 caracteres" : "Tu contraseña";
+    document.getElementById("pdAuthSubmit").textContent = signup ? "Crear cuenta" : "Iniciar sesión";
+    setStatus("");
+  }
+
+  function setStatus(msg, kind) {
+    const el = document.getElementById("pdAuthStatus");
+    el.textContent = msg || "";
+    el.className = "pd-form-status" + (kind ? " is-" + kind : "");
+  }
+
+  function ensureModal() {
+    if (document.getElementById("pdAuthModal")) return;
+    document.body.insertAdjacentHTML("beforeend",
+      '<div id="pdAuthModal" class="pd-dialog" hidden>' +
+        '<div class="pd-dialog-box" role="dialog" aria-modal="true" aria-labelledby="pdAuthTitle">' +
+          '<button type="button" class="pd-dialog-close" data-close aria-label="Cerrar">' + ICON_CLOSE + "</button>" +
+          '<div class="pd-dialog-brand"><span class="pd-mark" aria-hidden="true">P</span><span>PerData</span></div>' +
+          '<h2 id="pdAuthTitle" class="pd-dialog-title">Inicia sesión en PerData</h2>' +
+          '<p id="pdAuthPrompt" class="pd-dialog-prompt" hidden></p>' +
+          '<div class="pd-tabs" role="tablist">' +
+            '<button id="pdTabSignIn" type="button" role="tab" aria-selected="true">Iniciar sesión</button>' +
+            '<button id="pdTabSignUp" type="button" role="tab" aria-selected="false">Crear cuenta</button>' +
+          "</div>" +
+          '<form id="pdAuthForm" class="pd-form" novalidate>' +
+            '<label id="pdGroupName" class="pd-field" hidden><span>Nombre</span>' +
+              '<input id="pdAuthName" type="text" autocomplete="name" maxlength="80" placeholder="Cómo te llamamos"></label>' +
+            '<label class="pd-field"><span>Correo electrónico</span>' +
+              '<input id="pdAuthEmail" type="email" autocomplete="email" required placeholder="tu@empresa.com"></label>' +
+            '<label class="pd-field"><span>Contraseña</span><span class="pd-field-pw">' +
+              '<input id="pdAuthPassword" type="password" autocomplete="current-password" required placeholder="Tu contraseña">' +
+              '<button type="button" id="pdTogglePw" aria-label="Mostrar contraseña">' + ICON_EYE + "</button></span></label>" +
+            '<div id="pdForgot" class="pd-form-aside"><button type="button" id="pdForgotBtn">¿Olvidaste tu contraseña?</button></div>' +
+            '<p id="pdAuthStatus" class="pd-form-status" role="status" aria-live="polite"></p>' +
+            '<button id="pdAuthSubmit" type="submit" class="pd-btn pd-btn-primary pd-btn-block">Iniciar sesión</button>' +
+            '<p id="pdAuthLegal" class="pd-form-legal" hidden>Al crear tu cuenta aceptas los <a href="/terms">Términos y Condiciones</a>.</p>' +
+          "</form>" +
+        "</div>" +
+      "</div>");
+
+    const modal = document.getElementById("pdAuthModal");
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal || e.target.closest("[data-close]")) Auth.closeModal();
+    });
+    trapFocus(modal);
+    document.getElementById("pdTabSignIn").addEventListener("click", () => setAuthMode("signin"));
+    document.getElementById("pdTabSignUp").addEventListener("click", () => setAuthMode("signup"));
+
+    const pw = document.getElementById("pdAuthPassword");
+    const toggle = document.getElementById("pdTogglePw");
+    toggle.addEventListener("click", () => {
+      const show = pw.type === "password";
+      pw.type = show ? "text" : "password";
+      toggle.setAttribute("aria-label", show ? "Ocultar contraseña" : "Mostrar contraseña");
+      toggle.classList.toggle("is-on", show);
     });
 
-    // Password strength meter (signup only)
-    const strengthBar = document.getElementById("pwStrengthBar");
-    const strengthFill = document.getElementById("pwStrengthFill");
-    const strengthText = document.getElementById("pwStrengthText");
-    pwInput.addEventListener("input", () => {
-      if (!isSignUp) { strengthBar.classList.add("hidden"); strengthText.classList.add("hidden"); return; }
-      const v = pwInput.value;
-      let score = 0;
-      if (v.length >= 6) score++;
-      if (v.length >= 10) score++;
-      if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++;
-      if (/[0-9]/.test(v)) score++;
-      if (/[^A-Za-z0-9]/.test(v)) score++;
-      const pct = Math.min(100, score * 20);
-      const labels = ["Muy débil", "Débil", "Aceptable", "Buena", "Fuerte", "Excelente"];
-      const colors = ["bg-rose-500", "bg-rose-500", "bg-amber-500", "bg-amber-500", "bg-emerald-500", "bg-emerald-600"];
-      strengthFill.className = "h-full transition-all duration-300 " + colors[score];
-      strengthFill.style.width = pct + "%";
-      strengthText.textContent = "Fortaleza: " + labels[score];
-      strengthBar.classList.remove("hidden");
-      strengthText.classList.remove("hidden");
-    });
-
-    // Forgot password — honest message (reset flow pending email service)
-    document.getElementById("btnForgotPassword").addEventListener("click", () => {
-      const email = document.getElementById("authEmail").value.trim();
-      if (!email || !email.includes("@")) {
-        statusEl.className = "text-[11px] text-red-500 font-medium min-h-[16px]";
-        statusEl.textContent = "Ingresa tu correo y te avisaremos cuando el restablecimiento esté activo.";
+    document.getElementById("pdForgotBtn").addEventListener("click", async (e) => {
+      const email = document.getElementById("pdAuthEmail").value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+        setStatus("Escribe tu correo arriba y vuelve a pulsar aquí para recibir el enlace.", "error");
+        document.getElementById("pdAuthEmail").focus();
         return;
       }
-      statusEl.className = "text-[11px] text-[#86868B] font-medium min-h-[16px]";
-      statusEl.textContent = "El restablecimiento por correo se activará próximamente. Guarda tus credenciales con cuidado.";
-    });
-
-    tabSignIn.addEventListener("click", () => setTab(false));
-    tabSignUp.addEventListener("click", () => setTab(true));
-
-    btnClose.addEventListener("click", () => Auth.closeModal());
-    modalBackdrop.addEventListener("click", (e) => {
-      if (e.target === modalBackdrop) Auth.closeModal();
-    });
-
-    // Social SSO — honest state: coming soon (backend credentials not configured)
-    const ssoSoon = (provider) => {
-      statusEl.className = "text-[11px] text-[#86868B] font-medium min-h-[16px]";
-      statusEl.textContent = "El acceso con " + provider + " estará disponible próximamente. Por ahora usa correo y contraseña.";
-    };
-    document.getElementById("btnAuthGoogle").addEventListener("click", () => ssoSoon("Google"));
-    document.getElementById("btnAuthApple").addEventListener("click", () => ssoSoon("Apple"));
-    document.getElementById("btnAuthFacebook").addEventListener("click", () => ssoSoon("Facebook"));
-
-    // Form Submit Handler
-    authForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("authEmail").value;
-      const pass = document.getElementById("authPassword").value;
-      const fullName = document.getElementById("authFullName")?.value;
-
-      btnSubmit.disabled = true;
-      btnSubmit.classList.add("opacity-60");
-      statusEl.className = "text-[11px] text-[#86868B] font-medium min-h-[16px]";
-      statusEl.textContent = "Verificando credenciales institucionales...";
-
-      let res;
-      if (isSignUp) {
-        res = await Auth.signUpWithEmail(email, pass, fullName);
-      } else {
-        res = await Auth.signInWithEmail(email, pass);
+      const btn = e.currentTarget;
+      btn.disabled = true;
+      setStatus("Enviando enlace…");
+      try {
+        const res = await fetch("/api/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "forgot", email })
+        });
+        const data = await res.json().catch(() => ({}));
+        setStatus(data.message || data.error || "No se pudo enviar el enlace.", data.success ? "ok" : "error");
+      } catch (err) {
+        setStatus("No hay conexión con el servidor. Intenta de nuevo.", "error");
       }
+      btn.disabled = false;
+    });
 
-      btnSubmit.disabled = false;
-      btnSubmit.classList.remove("opacity-60");
+    document.getElementById("pdAuthForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("pdAuthEmail").value.trim();
+      const password = pw.value;
+      const name = document.getElementById("pdAuthName").value;
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return setStatus("Ingresa un correo electrónico válido.", "error");
+      if (authMode === "signup" && password.length < 8) return setStatus("La contraseña debe tener al menos 8 caracteres.", "error");
+      if (!password) return setStatus("Ingresa tu contraseña.", "error");
 
-      if (res.success) {
-        statusEl.className = "text-[11px] text-emerald-600 dark:text-emerald-400 font-medium min-h-[16px]";
-        statusEl.textContent = "Acceso verificado. ¡Bienvenido a la Terminal!";
-        setTimeout(() => {
-          Auth.closeModal();
-        }, 500);
-      } else {
-        statusEl.className = "text-[11px] text-red-500 font-medium min-h-[16px]";
-        statusEl.textContent = res.error || "No se pudo completar el acceso.";
+      const submit = document.getElementById("pdAuthSubmit");
+      submit.disabled = true;
+      setStatus(authMode === "signup" ? "Creando tu cuenta…" : "Verificando…");
+      const res = authMode === "signup" ? await Auth.signUpWithEmail(email, password, name) : await Auth.signInWithEmail(email, password);
+      submit.disabled = false;
+
+      if (!res.success) return setStatus(res.error, "error");
+      setStatus(authMode === "signup" ? "Cuenta creada. ¡Bienvenido!" : "Sesión iniciada.", "ok");
+      pw.value = "";
+      const next = pendingAfterAuth;
+      pendingAfterAuth = null;
+      setTimeout(() => {
+        Auth.closeModal();
+        if (next === "checkout") Auth.startCheckout();
+        else if (next && !Auth.can(next, next === "range" ? "10y" : 36)) Auth.openUpgrade(next);
+      }, 450);
+    });
+  }
+
+  function ensureUpgrade() {
+    if (document.getElementById("pdUpgradeModal")) return;
+    const perks = ["Series históricas de 10 años", "Proyecciones de 1 a 36 meses y horizonte a medida", "Exportación completa a Excel", "Cancela cuando quieras desde tu cuenta"];
+    document.body.insertAdjacentHTML("beforeend",
+      '<div id="pdUpgradeModal" class="pd-dialog" hidden>' +
+        '<div class="pd-dialog-box" role="dialog" aria-modal="true" aria-labelledby="pdUpgradeTitle">' +
+          '<button type="button" class="pd-dialog-close" data-close aria-label="Cerrar">' + ICON_CLOSE + "</button>" +
+          '<p class="pd-kicker">Plan Pro</p>' +
+          '<h2 id="pdUpgradeTitle" class="pd-dialog-title">Análisis completo, sin límites</h2>' +
+          '<p id="pdUpgradeReason" class="pd-dialog-prompt"></p>' +
+          '<ul class="pd-perks">' + perks.map(p => "<li>" + ICON_CHECK + "<span>" + p + "</span></li>").join("") + "</ul>" +
+          '<div id="pdUpgradeCta"></div>' +
+          '<p class="pd-form-legal"><a href="/precios">Comparar planes</a></p>' +
+        "</div>" +
+      "</div>");
+    const modal = document.getElementById("pdUpgradeModal");
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal || e.target.closest("[data-close]")) Auth.closeUpgrade();
+    });
+    trapFocus(modal);
+    window.addEventListener("mde:billing-loaded", renderUpgradeCta);
+  }
+
+  function renderUpgradeCta() {
+    const box = document.getElementById("pdUpgradeCta");
+    if (!box) return;
+    if (!billing.enabled) {
+      box.innerHTML = '<button type="button" class="pd-btn pd-btn-primary pd-btn-block" disabled>Disponible muy pronto</button>';
+      return;
+    }
+    const price = Auth.priceLabel("month");
+    box.innerHTML =
+      '<button type="button" id="pdUpgradeGo" class="pd-btn pd-btn-accent pd-btn-block">Mejorar a Pro' + (price ? " · " + escapeHTML(price) + "/mes" : "") + "</button>" +
+      '<p id="pdUpgradeStatus" class="pd-form-status" role="status"></p>';
+    document.getElementById("pdUpgradeGo").addEventListener("click", async (e) => {
+      e.currentTarget.disabled = true;
+      e.currentTarget.textContent = "Abriendo pago seguro…";
+      const r = await Auth.startCheckout("month");
+      if (!r.success) {
+        const st = document.getElementById("pdUpgradeStatus");
+        if (st) { st.textContent = r.error || ""; st.className = "pd-form-status is-error"; }
+        renderUpgradeCta();
       }
     });
   }
 
-  // Expose to window
+  function trapFocus(container) {
+    container.addEventListener("keydown", (e) => {
+      if (e.key !== "Tab") return;
+      const items = [...container.querySelectorAll("button:not([disabled]), a[href], input:not([type=hidden]):not([disabled])")].filter(el => el.offsetParent !== null);
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+  }
+
   window.MDE_Auth = Auth;
   window.MacroAuth = Auth;
 
-  // Auto initialize on DOM ready
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => Auth.init());
-  } else {
-    Auth.init();
-  }
-})(window);
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => Auth.init());
+  else Auth.init();
+})(window, document);
