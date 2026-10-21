@@ -2,7 +2,7 @@
 // This function used to serve a full copy of the terminal and its data APIs with
 // no plan checks, which bypassed the paid tier. The app now lives on Vercel only;
 // every request is sent there. Deploy with: supabase functions deploy macro-explorer
-const APP_URL = (Deno.env.get("APP_URL") || "https://macro-data-explorer.vercel.app").replace(/\/+$/, "");
+const APP_URL = (Deno.env.get("APP_URL") || "https://perdata.site").replace(/\/+$/, "");
 
 Deno.serve((req) => {
   const url = new URL(req.url);
