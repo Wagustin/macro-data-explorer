@@ -245,7 +245,7 @@
         <article class="pd-plan">
           <div class="pd-plan-head">
             <h2 class="pd-plan-name">Gratis</h2>
-            <p class="pd-plan-price"><span id="pdFreeAmount" class="pd-plan-amount">$0</span><span class="pd-plan-per">para siempre</span></p>
+            <p class="pd-plan-price"><span id="pdFreeAmount" class="pd-plan-amount">US$ 0</span><span class="pd-plan-per">para siempre</span></p>
             <p class="pd-plan-desc">Para seguir activos peruanos y globales con proyecciones de corto plazo.</p>
           </div>
           <ul class="pd-perks">
@@ -373,7 +373,7 @@
         var ref = billing.prices[0];
         if (ref) {
           try {
-            document.getElementById("pdFreeAmount").textContent = new Intl.NumberFormat("es-PE", { style: "currency", currency: ref.currency.toUpperCase(), minimumFractionDigits: 0 }).format(0);
+            document.getElementById("pdFreeAmount").textContent = A.formatMoney(0, ref.currency);
           } catch (e) {}
         }
         amount.textContent = price || "—";
@@ -382,7 +382,7 @@
         var yearly = billing.prices.find(function (p) { return p.interval === "year"; });
         if (interval === "year" && yearly) {
           try {
-            per.textContent = "al año · " + new Intl.NumberFormat("es-PE", { style: "currency", currency: yearly.currency.toUpperCase() }).format(yearly.amount / 1200) + " al mes";
+            per.textContent = "al año · " + A.formatMoney(Math.round(yearly.amount / 12), yearly.currency) + " al mes";
           } catch (e) {}
         }
 

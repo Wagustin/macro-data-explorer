@@ -32,13 +32,24 @@
     return String(str == null ? "" : str).replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[m]);
   }
 
+  // es-PE renders USD as "USD 5"; Peruvian pricing convention is "US$ 5".
+  function formatMoney(cents, currency) {
+    const cur = String(currency || "usd").toUpperCase();
+    const value = cents / 100;
+    const digits = cents % 100 ? 2 : 0;
+    try {
+      const num = new Intl.NumberFormat("es-PE", { minimumFractionDigits: digits, maximumFractionDigits: 2 }).format(value);
+      if (cur === "USD") return "US$ " + num;
+      if (cur === "PEN") return "S/ " + num;
+      return new Intl.NumberFormat("es-PE", { style: "currency", currency: cur, minimumFractionDigits: digits }).format(value);
+    } catch (e) {
+      return value.toFixed(digits) + " " + cur;
+    }
+  }
+
   function formatPrice(p) {
     if (!p || typeof p.amount !== "number") return "";
-    try {
-      return new Intl.NumberFormat("es-PE", { style: "currency", currency: p.currency.toUpperCase(), minimumFractionDigits: p.amount % 100 ? 2 : 0 }).format(p.amount / 100);
-    } catch (e) {
-      return (p.amount / 100).toFixed(2) + " " + p.currency.toUpperCase();
-    }
+    return formatMoney(p.amount, p.currency);
   }
 
   const Auth = {
@@ -147,6 +158,8 @@
       }
       return billingLoaded;
     },
+
+    formatMoney: formatMoney,
 
     priceLabel(interval) {
       const p = billing.prices.find(x => x.interval === (interval || "month"));
