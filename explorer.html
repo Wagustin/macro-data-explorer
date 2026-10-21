@@ -833,41 +833,52 @@
         <canvas id="mainChart"></canvas>
       </div>
 
-      <!-- Interpretación del Gráfico · TypeSafe AI Jev -->
-      <div class="mt-4 pt-4 border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-left">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
+      <!-- Interpretación Cuantitativa y Cobertura de Riesgo -->
+      <div class="mt-5 p-4 rounded-xl border border-[#E2E8F0] dark:border-[#1E3553] bg-[#F8FAFC] dark:bg-[#070F1B] text-left space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div class="inline-flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
-            <span class="text-xs font-bold text-black dark:text-white">Interpretación del Gráfico · TypeSafe AI Jev</span>
-            <span class="text-[#86868B]">|</span>
-            <span class="text-[10px] font-mono uppercase tracking-wider text-[#86868B]">System One RLCD</span>
+            <span class="w-2 h-2 rounded-full bg-[#005DAA] dark:bg-[#38BDF8]"></span>
+            <span class="text-xs font-bold text-[#002244] dark:text-[#F8FAFC]">Interpretación Cuantitativa & Cobertura</span>
+            <span class="text-[#CBD5E1] dark:text-[#1E3553]">|</span>
+            <span class="text-[10px] font-semibold text-[#005DAA] dark:text-[#38BDF8] uppercase tracking-wider">TimesFM & Econometría</span>
           </div>
-          <span id="tsConfidence" class="micro-label font-mono tnum text-black dark:text-white px-2 py-0.5 rounded-md bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#3A3A3C] w-fit">
+          <span id="tsConfidence" class="font-mono tnum text-[11px] font-bold text-[#002244] dark:text-[#38BDF8] px-2.5 py-1 rounded-md bg-white dark:bg-[#0D1929] border border-[#E2E8F0] dark:border-[#1E3553] w-fit">
             Confianza Calibrada: 94.2%
           </span>
         </div>
         
-        <p id="tsTakeaway" class="text-xs sm:text-sm text-[#1D1D1F] dark:text-[#E5E5EA] leading-relaxed">
-          Cargando análisis semántico del gráfico validado por TypeSafe AI Jev...
+        <p id="tsTakeaway" class="text-xs sm:text-sm text-[#0F172A] dark:text-[#F1F5F9] leading-relaxed p-3 bg-white dark:bg-[#0D1929] rounded-lg border-l-4 border-[#005DAA] dark:border-[#38BDF8] border border-t-[#E2E8F0] border-r-[#E2E8F0] border-b-[#E2E8F0] dark:border-t-[#1E3553] dark:border-r-[#1E3553] dark:border-b-[#1E3553]">
+          Cargando análisis cuantitativo de la serie y envolvente estocástica...
         </p>
 
-        <!-- Sub-Cards -->
-        <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-center sm:text-left">
-          <div class="p-3 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#3A3A3C]">
-            <div class="micro-label text-[#86868B]">Sensibilidad Macro (Beta)</div>
-            <div id="tsBeta" class="text-xs sm:text-sm font-bold font-mono tnum text-black dark:text-white mt-0.5">Alta (+0.74)</div>
+        <!-- Sub-Indicators: Macro Beta, Volatilidad, Cobertura -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
+          <div class="p-3 rounded-lg bg-white dark:bg-[#0D1929] border border-[#E2E8F0] dark:border-[#1E3553]">
+            <div class="text-[10px] uppercase font-bold text-[#64748B] dark:text-[#94A3B8]">Sensibilidad Macro (Beta)</div>
+            <div id="tsBeta" class="text-xs sm:text-sm font-bold font-mono tnum text-[#002244] dark:text-[#38BDF8] mt-0.5">Alta (+0.74)</div>
           </div>
-          <div class="p-3 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#3A3A3C]">
-            <div class="micro-label text-[#86868B]">Régimen de Volatilidad</div>
+          <div class="p-3 rounded-lg bg-white dark:bg-[#0D1929] border border-[#E2E8F0] dark:border-[#1E3553]">
+            <div class="text-[10px] uppercase font-bold text-[#64748B] dark:text-[#94A3B8]">Régimen de Volatilidad</div>
             <div id="tsRegime" class="text-xs sm:text-sm font-bold text-black dark:text-white mt-0.5">Cíclico Moderado</div>
           </div>
-          <div class="p-3 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#3A3A3C]">
-            <div class="micro-label text-[#86868B]">Verificación Formal</div>
-            <div id="tsEngine" class="text-xs sm:text-sm font-bold text-black dark:text-white mt-0.5">RLCD / Jev Architecture</div>
+          <div class="p-3 rounded-lg bg-white dark:bg-[#0D1929] border border-[#E2E8F0] dark:border-[#1E3553]">
+            <div class="text-[10px] uppercase font-bold text-[#64748B] dark:text-[#94A3B8]">Intervalo de Riesgo</div>
+            <div id="tsEngine" class="text-xs sm:text-sm font-bold font-mono tnum text-[#005DAA] dark:text-[#38BDF8] mt-0.5">80% Densidad P10-P90</div>
           </div>
         </div>
+
+        <!-- Cobertura de Riesgo Banner -->
+        <div class="mt-2 pt-2 border-t border-[#E2E8F0] dark:border-[#1E3553] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-2 text-[#475569] dark:text-[#94A3B8]">
+            <svg class="w-4 h-4 text-[#005DAA] dark:text-[#38BDF8] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+            <span><strong>Protección & Cobertura Financiera:</strong> ¿Gestionas tesorería o riesgo corporativo? La proyección a 36 meses y exportación completa a Excel están disponibles en el plan Pro.</span>
+          </div>
+          <a href="/precios" class="shrink-0 px-3 py-1.5 rounded-lg bg-[#002244] hover:bg-[#005DAA] dark:bg-[#005DAA] dark:hover:bg-[#0070BA] text-white font-semibold text-[11px] transition">
+            Ver Cobertura Pro &rarr;
+          </a>
+        </div>
       </div>
-    </section>
+    </section></section>
 
     <!-- Data Table Band -->
     <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E]">
@@ -910,16 +921,34 @@
   </main>
 
   <!-- Footer -->
-  <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#0D0D0E] mt-12 py-8 text-center text-xs text-[#86868B] transition-colors">
-    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <div>
-        <strong>PerData</strong> &copy; 2026 · Todos los derechos reservados.
+    <!-- Centered Institutional Banking Footer -->
+  <footer class="border-t border-[#E2E8F0] dark:border-[#1E3553] bg-white dark:bg-[#070F1B] py-10 px-4 transition-colors">
+    <div class="pd-footer-container">
+      <div class="flex flex-col items-center justify-center space-y-2 text-center">
+        <div class="flex items-center space-x-2">
+          <div class="w-6 h-6 rounded bg-[#002244] dark:bg-[#005DAA] flex items-center justify-center text-white font-bold text-xs">P</div>
+          <span class="font-bold text-black dark:text-white tracking-tight">PerData Terminal</span>
+        </div>
+        <p class="text-[11px] text-[#64748B] dark:text-[#94A3B8]">
+          Arquitectura econométrica basada en series oficiales del BCRP, BVL, COMEX y Reserva Federal (FRED).
+        </p>
       </div>
-      <div class="flex items-center gap-x-4 gap-y-2 text-[#86868B] flex-wrap justify-center">
-        <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
-        <button id="btnOpenTermsFooter" type="button" class="hover:text-black dark:hover:text-white transition">Términos y Condiciones</button>
-        <a href="/privacidad" class="hover:text-black dark:hover:text-white transition">Privacidad</a>
-        <a href="mailto:soporte@perdata.site" class="hover:text-black dark:hover:text-white transition">Contacto</a>
+
+      <nav class="pd-footer-nav text-xs" aria-label="Navegación pie de terminal">
+        <a href="/">Inicio</a>
+        <a href="/explorer">Terminal</a>
+        <a href="/noticias">Noticias</a>
+        <a href="/metodologia">Metodología</a>
+        <a href="/guia">Guía</a>
+        <a href="/precios">Precios Pro</a>
+        <a href="/cuenta">Mi Cuenta</a>
+        <a href="/terms">Términos</a>
+        <a href="/privacidad">Privacidad</a>
+        <a href="mailto:soporte@perdata.site">Contacto</a>
+      </nav>
+
+      <div class="pd-footer-disclaimer">
+        <span>© 2026 PerData Technologies · Terminal Cuantitativa. Modelos estocásticos para toma de decisiones institucionales.</span>
       </div>
     </div>
   </footer>
@@ -1901,9 +1930,9 @@ const state = {
       // Monochromatic Apple Colors
       const textColor = isDark ? "#8E8E93" : "#86868B";
       const gridColor = isDark ? "rgba(44, 44, 46, 0.6)" : "rgba(229, 229, 234, 0.7)";
-      const primaryLineColor = isDark ? "#F5F5F7" : "#000000";
-      const primaryBgColor = isDark ? "rgba(245, 245, 247, 0.04)" : "rgba(0, 0, 0, 0.03)";
-      const macroLineColor = isDark ? "#8E8E93" : "#86868B";
+      const primaryLineColor = isDark ? "#38BDF8" : "#002244";
+      const primaryBgColor = isDark ? "rgba(56, 189, 248, 0.05)" : "rgba(0, 34, 68, 0.04)";
+      const macroLineColor = isDark ? "#94A3B8" : "#005DAA";
 
       const datasets = [
         // 1. Historical Asset Line
@@ -1930,7 +1959,7 @@ const state = {
           label: "TimesFM P75",
           data: p75Data,
           borderColor: "transparent",
-          backgroundColor: isDark ? "rgba(245, 245, 247, 0.14)" : "rgba(0, 0, 0, 0.10)",
+          backgroundColor: isDark ? "rgba(56, 189, 248, 0.16)" : "rgba(0, 93, 170, 0.12)",
           borderWidth: 0,
           pointRadius: 0,
           fill: "+1",

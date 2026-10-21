@@ -174,6 +174,27 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/pd.css">
+  <!-- SEO, Google Search Console & Google Ads Readiness -->
+  <meta name="google-site-verification" content="GSC_PERDATA_VERIFICATION" />
+  <meta property="og:title" content="PerData · Terminal Cuantitativa & Forecasting Macroeconómico" />
+  <meta property="og:description" content="Plataforma institucional de inteligencia macroeconómica, Bolsa de Valores de Lima (BVL), commodities y modelado predictivo con TimesFM." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://perdata.site" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Schema.org Institutional Financial Service -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FinancialService",
+    "name": "PerData Terminal Cuantitativa",
+    "url": "https://perdata.site",
+    "description": "Terminal institucional de forecasting y series de tiempo macroeconómicas para Perú y la Región Andina.",
+    "currenciesAccepted": "USD, PEN",
+    "paymentAccepted": "Credit Card, Stripe",
+    "priceRange": "$5 - $50"
+  }
+  </script>
 </head>
 <body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 
@@ -237,11 +258,19 @@
   <!-- Main Content Body -->
   <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 space-y-16 sm:space-y-24 w-full">
 
-    <!-- MASTHEAD: dateline editorial (la portada no lleva ceja sobre el titular) -->
+    <!-- INSTITUTIONAL MASTHEAD: United Airlines Deep Navy + Live Market Status -->
     <section class="pd-masthead">
       <div class="pd-masthead-meta">
-        <span>PerData · Inteligencia macroeconómica institucional</span>
-        <span>BVL · BCRP · Mercados globales</span>
+        <div class="inline-flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="font-bold text-black dark:text-white">PERDATA TERMINAL INSTITUCIONAL</span>
+          <span class="text-[#86868B]">|</span>
+          <span class="text-[#005DAA] dark:text-[#38BDF8] font-semibold">FEED DIRECTO BVL · BCRP · COMEX · FRED</span>
+        </div>
+        <div class="inline-flex items-center gap-3">
+          <span class="hidden sm:inline text-xs text-[#86868B]">Auditado por Modelos Econométricos & TimesFM</span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#EBF3FA] dark:bg-[#0C1E36] text-[#005DAA] dark:text-[#38BDF8] border border-[#005DAA]/20">SISTEMA ACTIVO</span>
+        </div>
       </div>
     </section>
 
@@ -513,6 +542,42 @@
       </div>
     </section>
 
+    <!-- FUENTES OFICIALES Y TRANSPARENCIA DE DATOS (BCRP, SBS, BVL, FRED) -->
+    <section class="pt-8 pb-4 border-t border-[#E5E5EA] dark:border-[#2C2C2E]">
+      <div class="text-center max-w-3xl mx-auto space-y-3 mb-8">
+        <p class="eyebrow">Integridad de Datos</p>
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-black dark:text-white">
+          Arquitectura basada en datos oficiales y auditados
+        </h2>
+        <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          Nuestras proyecciones y series no dependen de especulación sin fundamento. Cada serie histórica se sincroniza mediante pipelines automatizados con los repositorios financieros más rigurosos del hemisferio.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="p-4 rounded-xl bg-white dark:bg-[#0D1929] border border-[#E2E8F0] dark:border-[#1E3553] text-center space-y-1.5 hover-lift">
+          <div class="font-bold text-sm text-[#002244] dark:text-[#38BDF8]">BCRP</div>
+          <div class="text-[11px] font-semibold text-black dark:text-white">Banco Central de Reserva</div>
+          <p class="text-[10px] text-[#86868B]">Tipos de cambio interbancario, RIN, balanza comercial y tasa de referencia monetaria.</p>
+        </div>
+        <div class="p-4 rounded-xl bg-white dark:bg-[#0D1929] border border-[#E2E8F0] dark:border-[#1E3553] text-center space-y-1.5 hover-lift">
+          <div class="font-bold text-sm text-[#002244] dark:text-[#38BDF8]">BVL</div>
+          <div class="text-[11px] font-semibold text-black dark:text-white">Bolsa de Valores de Lima</div>
+          <p class="text-[10px] text-[#86868B]">Precios de cierre diario, ratios PER, capitalización bursátil y volúmenes transados.</p>
+        </div>
+        <div class="p-4 rounded-xl bg-white dark:bg-[#0D1929] border border-[#E2E8F0] dark:border-[#1E3553] text-center space-y-1.5 hover-lift">
+          <div class="font-bold text-sm text-[#002244] dark:text-[#38BDF8]">COMEX & LME</div>
+          <div class="text-[11px] font-semibold text-black dark:text-white">Metales & Commodities</div>
+          <p class="text-[10px] text-[#86868B]">Contratos de futuros de Cobre (HG), Oro (GC), Plata (SI) y Petróleo WTI (CL).</p>
+        </div>
+        <div class="p-4 rounded-xl bg-white dark:bg-[#0D1929] border border-[#E2E8F0] dark:border-[#1E3553] text-center space-y-1.5 hover-lift">
+          <div class="font-bold text-sm text-[#002244] dark:text-[#38BDF8]">FRED / Fed St. Louis</div>
+          <div class="text-[11px] font-semibold text-black dark:text-white">Tesoro EE.UU. & Liquidez</div>
+          <p class="text-[10px] text-[#86868B]">Curva de rendimientos soberanos (^TNX), SOFR y diferencial de riesgo EMBI+.</p>
+        </div>
+      </div>
+    </section>
+
     <!-- CTA FINAL: único bloque saturado (amarillo plano, tinta encima) -->
     <section class="pd-accent-block full-bleed px-4 sm:px-6 py-14 sm:py-20">
       <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-y-6 lg:gap-x-10 items-end">
@@ -531,23 +596,37 @@
   </main>
 
   <!-- Institutional Footer -->
-  <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#0D0D0E] py-8 text-xs text-[#86868B] transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center space-x-2">
-        <div class="w-5 h-5 rounded bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-bold text-[10px]">P</div>
-        <span class="font-semibold text-black dark:text-white">PerData</span>
-        <span>·</span>
-        <span>© 2026 Todos los derechos reservados.</span>
+    <!-- Fully Centered Institutional Banking Footer -->
+  <footer class="border-t border-[#E2E8F0] dark:border-[#1E3553] bg-white dark:bg-[#070F1B] py-12 px-4 transition-colors">
+    <div class="pd-footer-container">
+      <div class="flex flex-col items-center justify-center space-y-3 text-center">
+        <a href="/" class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-[#002244] dark:bg-[#005DAA] flex items-center justify-center text-white font-black text-sm border border-white/20">
+            P
+          </div>
+          <span class="font-bold text-black dark:text-white tracking-tight text-lg">PerData</span>
+        </a>
+        <p class="text-xs text-[#64748B] dark:text-[#94A3B8] max-w-md">
+          Inteligencia cuantitativa, modelado macroeconómico y proyecciones probabilísticas multi-cuantil para el mercado de capitales peruano y global.
+        </p>
       </div>
 
-      <div class="flex items-center space-x-5">
-        <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
-        <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
-        <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
-        <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
-        <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos y Modelos</a>
-        <a href="/privacidad" class="hover:text-black dark:hover:text-white transition">Privacidad</a>
-        <a href="mailto:soporte@perdata.site" class="hover:text-black dark:hover:text-white transition">Contacto</a>
+      <nav class="pd-footer-nav" aria-label="Navegación de pie de página">
+        <a href="/">Inicio</a>
+        <a href="/explorer">Terminal</a>
+        <a href="/noticias">Noticias & Teleprompter</a>
+        <a href="/metodologia">Metodología & TimesFM</a>
+        <a href="/guia">Guía de Uso</a>
+        <a href="/precios">Planes & Facturación</a>
+        <a href="/cuenta">Mi Cuenta</a>
+        <a href="/terms">Términos de Servicio</a>
+        <a href="/privacidad">Política de Privacidad</a>
+        <a href="mailto:soporte@perdata.site">Contacto</a>
+      </nav>
+
+      <div class="pd-footer-disclaimer">
+        <span>© 2026 PerData Technologies. Todos los derechos reservados.</span><br/>
+        <span>Aviso Legal: La información y proyecciones cuantitativas proporcionadas por PerData se basan en métodos econométricos y aprendizaje automático con fines estrictamente informativos y de investigación financiera. No constituyen asesoramiento de inversión ni oferta pública de valores.</span>
       </div>
     </div>
   </footer>

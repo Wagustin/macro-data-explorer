@@ -2,131 +2,140 @@
   "theme": {
     "extend": {
       "colors": {
-        "primary": "#0d2a1c",
-        "secondary": "#5f6b64",
-        "tertiary": "#f6e016",
-        "neutral": "#f7f7f7",
-        "surface": "#ebebeb",
-        "border": "#d4d4d4",
-        "on-primary": "#f6e016",
-        "on-tertiary": "#0d2a1c",
-        "dark-bg": "#0d0d0e",
-        "dark-surface": "#1c1c1e",
-        "dark-primary": "#f5f5f7",
-        "dark-secondary": "#8e8e93",
-        "dark-tertiary": "#f6e016",
-        "dark-neutral": "#0d0d0e",
-        "dark-on-primary": "#0d2a1c",
-        "dark-on-tertiary": "#0d2a1c"
+        "primary": "#002244",
+        "secondary": "#475569",
+        "tertiary": "#005DAA",
+        "accent": "#005DAA",
+        "gold": "#F59E0B",
+        "neutral": "#F8FAFC",
+        "surface": "#F1F5F9",
+        "border": "#E2E8F0",
+        "on-primary": "#FFFFFF",
+        "on-tertiary": "#FFFFFF",
+        "dark-bg": "#070F1B",
+        "dark-surface": "#0C1829",
+        "dark-primary": "#F8FAFC",
+        "dark-secondary": "#94A3B8",
+        "dark-tertiary": "#38BDF8",
+        "dark-neutral": "#070F1B",
+        "dark-on-primary": "#070F1B",
+        "dark-on-tertiary": "#070F1B"
       },
       "fontFamily": {
         "display": [
-          "Libre Franklin"
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "SF Pro Display",
+          "SF Pro Text",
+          "Inter",
+          "sans-serif"
         ],
         "h1": [
-          "Libre Franklin"
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "SF Pro Display",
+          "Inter",
+          "sans-serif"
         ],
         "h2": [
-          "Libre Franklin"
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "SF Pro Display",
+          "Inter",
+          "sans-serif"
         ],
         "h3": [
-          "Libre Franklin"
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "SF Pro Text",
+          "Inter",
+          "sans-serif"
         ],
         "body": [
-          "Source Serif 4"
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "SF Pro Text",
+          "Inter",
+          "sans-serif"
         ],
         "body-emphasis": [
-          "Source Serif 4"
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "SF Pro Text",
+          "Inter",
+          "sans-serif"
         ],
         "caption": [
-          "Libre Franklin"
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "SF Pro Text",
+          "Inter",
+          "sans-serif"
         ],
         "mono": [
-          "IBM Plex Mono"
+          "ui-monospace",
+          "SF Mono",
+          "Menlo",
+          "IBM Plex Mono",
+          "monospace"
         ],
         "mono-sm": [
-          "IBM Plex Mono"
+          "ui-monospace",
+          "SF Mono",
+          "Menlo",
+          "IBM Plex Mono",
+          "monospace"
         ]
       },
       "fontSize": {
         "display": [
-          "4rem",
+          "3.75rem",
           {
-            "letterSpacing": "-0.06em",
+            "letterSpacing": "-0.04em",
             "fontWeight": "700"
           }
         ],
         "h1": [
-          "3rem",
+          "2.75rem",
           {
-            "letterSpacing": "-0.035em",
+            "letterSpacing": "-0.03em",
             "fontWeight": "700"
           }
         ],
         "h2": [
-          "2.25rem",
+          "2rem",
           {
             "letterSpacing": "-0.025em",
             "fontWeight": "700"
           }
         ],
         "h3": [
-          "1.75rem",
+          "1.5rem",
           {
-            "letterSpacing": "-0.015em",
+            "letterSpacing": "-0.02em",
             "fontWeight": "600"
           }
         ],
         "body": [
-          "1.125rem",
+          "1rem",
           {
-            "letterSpacing": "0em",
-            "fontWeight": "400"
-          }
-        ],
-        "body-emphasis": [
-          "1.125rem",
-          {
-            "letterSpacing": "0em",
-            "fontWeight": "600"
+            "letterSpacing": "-0.01em",
+            "lineHeight": "1.5"
           }
         ],
         "caption": [
           "0.75rem",
           {
-            "letterSpacing": "0.08em",
-            "fontWeight": "500"
+            "letterSpacing": "0.06em",
+            "fontWeight": "600"
           }
         ],
         "mono": [
           "0.8125rem",
           {
-            "letterSpacing": "0em",
-            "fontWeight": "500"
-          }
-        ],
-        "mono-sm": [
-          "0.6875rem",
-          {
-            "letterSpacing": "0em",
-            "fontWeight": "500"
+            "letterSpacing": "0"
           }
         ]
-      },
-      "borderRadius": {
-        "sm": "4px",
-        "md": "6px",
-        "lg": "8px",
-        "full": "9999px"
-      },
-      "spacing": {
-        "xs": "4px",
-        "sm": "8px",
-        "md": "16px",
-        "lg": "24px",
-        "xl": "48px",
-        "xxl": "72px",
-        "xxxl": "110px"
       }
     }
   }

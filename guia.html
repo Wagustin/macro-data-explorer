@@ -570,22 +570,37 @@
   </main>
 
   <!-- Footer -->
-  <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#0D0D0E] py-8 text-xs text-[#86868B] transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center space-x-2">
-        <div class="w-5 h-5 rounded bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-bold text-[10px]">P</div>
-        <span class="font-semibold text-black dark:text-white">PerData</span>
-        <span>·</span>
-        <span>Guía Operativa © 2026</span>
+    <!-- Centered Institutional Banking Footer -->
+  <footer class="border-t border-[#E2E8F0] dark:border-[#1E3553] bg-white dark:bg-[#070F1B] py-12 px-4 transition-colors">
+    <div class="pd-footer-container">
+      <div class="flex flex-col items-center justify-center space-y-3 text-center">
+        <a href="/" class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-[#002244] dark:bg-[#005DAA] flex items-center justify-center text-white font-black text-sm border border-white/20">
+            P
+          </div>
+          <span class="font-bold text-black dark:text-white tracking-tight text-lg">PerData</span>
+        </a>
+        <p class="text-xs text-[#64748B] dark:text-[#94A3B8] max-w-md">
+          Inteligencia cuantitativa, modelado macroeconómico y proyecciones probabilísticas multi-cuantil para el mercado de capitales peruano y global.
+        </p>
       </div>
 
-      <div class="flex items-center space-x-5">
-        <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
-        <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
-        <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
-        <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos y Modelos</a>
-        <a href="/privacidad" class="hover:text-black dark:hover:text-white transition">Privacidad</a>
-        <a href="mailto:soporte@perdata.site" class="hover:text-black dark:hover:text-white transition">Contacto</a>
+      <nav class="pd-footer-nav" aria-label="Navegación pie de página">
+        <a href="/">Inicio</a>
+        <a href="/explorer">Terminal</a>
+        <a href="/noticias">Noticias & Teleprompter</a>
+        <a href="/metodologia">Metodología & TimesFM</a>
+        <a href="/guia">Guía de Uso</a>
+        <a href="/precios">Planes & Facturación</a>
+        <a href="/cuenta">Mi Cuenta</a>
+        <a href="/terms">Términos de Servicio</a>
+        <a href="/privacidad">Política de Privacidad</a>
+        <a href="mailto:soporte@perdata.site">Contacto</a>
+      </nav>
+
+      <div class="pd-footer-disclaimer">
+        <span>© 2026 PerData Technologies. Todos los derechos reservados.</span><br/>
+        <span>Aviso Legal: La información y proyecciones cuantitativas proporcionadas por PerData se basan en métodos econométricos y aprendizaje automático con fines estrictamente informativos y de investigación financiera. No constituyen asesoramiento de inversión ni oferta pública de valores.</span>
       </div>
     </div>
   </footer>

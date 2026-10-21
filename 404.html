@@ -225,26 +225,31 @@
 
   <!-- Main Error Card -->
   <main class="flex-grow flex items-center justify-center px-4 py-16 sm:py-24">
-    <div class="max-w-md w-full text-center space-y-6">
+    <div class="max-w-lg w-full text-center space-y-6 p-8 rounded-2xl bg-white dark:bg-[#0C1829] border border-[#E2E8F0] dark:border-[#1E3553] shadow-lg">
       
       <div class="space-y-4">
-        <h1 class="text-6xl sm:text-8xl font-semibold text-[#E5E5EA] dark:text-[#2C2C2E] tracking-tight select-none">
-          404
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold font-mono tracking-wider bg-[#EBF3FA] dark:bg-[#13243B] text-[#005DAA] dark:text-[#38BDF8] border border-[#005DAA]/20">
+          <span>ERROR 404</span>
+          <span>·</span>
+          <span>RUTA NO DISPONIBLE</span>
+        </div>
+        <h1 class="text-4xl sm:text-5xl font-bold text-[#002244] dark:text-[#F8FAFC] tracking-tight">
+          Recurso o Serie No Encontrada
         </h1>
-        <h2 class="text-2xl sm:text-3xl font-semibold text-black dark:text-white tracking-tight -mt-6">
-          Página no encontrada.
-        </h2>
-        <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-          El recurso o serie econométrica solicitada no existe o ha sido reubicada dentro de la estructura institucional.
+        <p class="text-xs sm:text-sm text-[#475569] dark:text-[#94A3B8] leading-relaxed max-w-sm mx-auto">
+          La página o coordenada econométrica que buscas no existe o ha sido reubicada dentro del sistema de datos de PerData.
         </p>
       </div>
 
-      <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-        <a href="/explorer" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-black dark:bg-white text-white dark:text-black font-semibold text-xs transition hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA]">
+      <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a href="/explorer" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-lg bg-[#002244] hover:bg-[#005DAA] text-white font-semibold text-xs transition shadow-sm">
           <span>Abrir Terminal Cuantitativa</span>
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+          <svg class="w-3.5 h-3.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
         </a>
-        <a href="/" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-2.5 rounded-full text-black dark:text-white font-semibold text-xs hover:underline transition">
+        <a href="/precios" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-lg border border-[#E2E8F0] dark:border-[#1E3553] text-[#002244] dark:text-[#F8FAFC] hover:border-[#005DAA] hover:text-[#005DAA] font-semibold text-xs transition">
+          <span>Ver Planes Pro</span>
+        </a>
+        <a href="/" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-3 text-[#64748B] dark:text-[#94A3B8] hover:text-[#002244] dark:hover:text-white font-semibold text-xs transition">
           <span>Volver al Inicio</span>
         </a>
       </div>
@@ -253,22 +258,37 @@
   </main>
 
   <!-- Institutional Footer -->
-  <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#0D0D0E] py-8 text-xs text-[#86868B] transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center space-x-2">
-        <div class="w-5 h-5 rounded bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-bold text-[10px]">P</div>
-        <span class="font-semibold text-black dark:text-white">PerData</span>
-        <span>·</span>
-        <span>Error 404</span>
+    <!-- Centered Institutional Banking Footer -->
+  <footer class="border-t border-[#E2E8F0] dark:border-[#1E3553] bg-white dark:bg-[#070F1B] py-12 px-4 transition-colors">
+    <div class="pd-footer-container">
+      <div class="flex flex-col items-center justify-center space-y-3 text-center">
+        <a href="/" class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-[#002244] dark:bg-[#005DAA] flex items-center justify-center text-white font-black text-sm border border-white/20">
+            P
+          </div>
+          <span class="font-bold text-black dark:text-white tracking-tight text-lg">PerData</span>
+        </a>
+        <p class="text-xs text-[#64748B] dark:text-[#94A3B8] max-w-md">
+          Inteligencia cuantitativa, modelado macroeconómico y proyecciones probabilísticas multi-cuantil para el mercado de capitales peruano y global.
+        </p>
       </div>
 
-      <div class="flex items-center space-x-5">
-        <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
-        <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
-        <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
-        <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos</a>
-        <a href="/privacidad" class="hover:text-black dark:hover:text-white transition">Privacidad</a>
-        <a href="mailto:soporte@perdata.site" class="hover:text-black dark:hover:text-white transition">Contacto</a>
+      <nav class="pd-footer-nav" aria-label="Navegación pie de página">
+        <a href="/">Inicio</a>
+        <a href="/explorer">Terminal</a>
+        <a href="/noticias">Noticias & Teleprompter</a>
+        <a href="/metodologia">Metodología & TimesFM</a>
+        <a href="/guia">Guía de Uso</a>
+        <a href="/precios">Planes & Facturación</a>
+        <a href="/cuenta">Mi Cuenta</a>
+        <a href="/terms">Términos de Servicio</a>
+        <a href="/privacidad">Política de Privacidad</a>
+        <a href="mailto:soporte@perdata.site">Contacto</a>
+      </nav>
+
+      <div class="pd-footer-disclaimer">
+        <span>© 2026 PerData Technologies. Todos los derechos reservados.</span><br/>
+        <span>Aviso Legal: La información y proyecciones cuantitativas proporcionadas por PerData se basan en métodos econométricos y aprendizaje automático con fines estrictamente informativos y de investigación financiera. No constituyen asesoramiento de inversión ni oferta pública de valores.</span>
       </div>
     </div>
   </footer>

@@ -32,8 +32,11 @@
   }
 
   function getBadgeClasses(color) {
-    // Neutral institutional scheme: one zinc tone for every impact level.
-    return "bg-white/10 text-zinc-200 border-white/15";
+    // United Airlines Banking badges: Sky Blue & Slate
+    if (color === "blue" || color === "BCRP") return "bg-[#005DAA]/20 text-[#38BDF8] border-[#005DAA]/40";
+    if (color === "red" || color === "ALTO IMPACTO") return "bg-rose-500/20 text-rose-300 border-rose-500/40";
+    if (color === "amber" || color === "COBRE" || color === "MINERÍA") return "bg-amber-500/20 text-amber-300 border-amber-500/40";
+    return "bg-white/10 text-slate-200 border-white/15";
   }
 
   function renderNewsItems(items) {
@@ -121,10 +124,10 @@
     const fullTrackHtml = itemsHtml + itemsHtml;
 
     const barHtml = `
-      <aside id="mdeTeleprompter" class="fixed left-0 right-0 z-40 h-9 sm:h-10 top-0 sm:top-auto sm:bottom-0 bg-black/95 dark:bg-[#121214]/95 text-white backdrop-blur-md border-b sm:border-b-0 sm:border-t border-[#2C2C2E] flex items-center overflow-hidden select-none" aria-label="Titulares Macroeconómicos en Vivo">
+      <aside id="mdeTeleprompter" class="fixed left-0 right-0 z-40 h-9 sm:h-10 top-0 sm:top-auto sm:bottom-0 bg-[#001733]/95 dark:bg-[#070F1B]/95 text-white backdrop-blur-md border-b sm:border-b-0 sm:border-t border-[#005DAA]/30 flex items-center overflow-hidden select-none shadow-md" aria-label="Titulares Macroeconómicos en Vivo">
         
         <!-- Live Indicator Badge -->
-        <div class="h-full flex items-center gap-1.5 px-3 bg-black dark:bg-[#121214] z-10 border-r border-[#2C2C2E] shrink-0 text-[10px] font-bold tracking-wider font-mono">
+        <div class="h-full flex items-center gap-1.5 px-3 bg-[#001733] dark:bg-[#070F1B] z-10 border-r border-[#005DAA]/30 shrink-0 text-[10px] font-bold tracking-wider font-mono">
           <span class="relative flex h-2 w-2">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -141,7 +144,7 @@
         </div>
 
         <!-- Right Quick Action / Audio/Pause helper -->
-        <div class="h-full hidden md:flex items-center px-3 bg-black dark:bg-[#121214] z-10 border-l border-[#2C2C2E] shrink-0 text-[10px] text-[#86868B] font-mono">
+        <div class="h-full hidden md:flex items-center px-3 bg-[#001733] dark:bg-[#070F1B] z-10 border-l border-[#005DAA]/30 shrink-0 text-[10px] text-slate-400 font-mono">
           <span>Pausa: Hover</span>
         </div>
       </aside>

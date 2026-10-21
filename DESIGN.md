@@ -1,16 +1,18 @@
 ---
 version: alpha
 name: PerData
-description: "Terminal cuantitativa institucional para la Bolsa de Valores de Lima. Estética de reporte impreso anual: masthead tipo mosaico, título en eje fijo 42%, tipografía editorial (Libre Franklin / Source Serif 4), color botella ink + amarillo único como acento. Superficies unificadas sin islas flotantes, densidad de datos calibrada, micro-interacciones sobrias."
+description: "Terminal cuantitativa institucional para la Bolsa de Valores de Lima y Mercados Andinos. Estética bancaria suiza y colores de aviación de United Airlines: Navy profundo (#002244), Azul Vuelo (#005DAA), Canvas Slate (#F8FAFC) y acento dorado tenue (#F59E0B). Tipografía San Francisco de Apple (-apple-system / SF Pro), datos tabulares calibrados, micro-interacciones de alta precisión."
 colors:
-  primary: "#0d2a1c"
-  secondary: "#5f6b64"
-  tertiary: "#f6e016"
-  neutral: "#f7f7f7"
-  surface: "#ebebeb"
-  border: "#d4d4d4"
-  on-primary: "#f6e016"
-  on-tertiary: "#0d2a1c"
+  primary: "#002244"
+  secondary: "#475569"
+  tertiary: "#005DAA"
+  accent: "#005DAA"
+  gold: "#F59E0B"
+  neutral: "#F8FAFC"
+  surface: "#F1F5F9"
+  border: "#E2E8F0"
+  on-primary: "#FFFFFF"
+  on-tertiary: "#FFFFFF"
   dark-bg: "#0d0d0e"
   dark-surface: "#1c1c1e"
   dark-primary: "#f5f5f7"
