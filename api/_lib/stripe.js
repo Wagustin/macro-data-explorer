@@ -33,7 +33,8 @@ export async function stripe(method, endpoint, params) {
     headers: {
       Authorization: `Bearer ${STRIPE_SECRET_KEY}`,
       "Content-Type": "application/x-www-form-urlencoded",
-      "Stripe-Version": "2024-06-20"
+      // Managed Payments requires basil or newer; basil moved current_period_end onto subscription items.
+      "Stripe-Version": "2025-03-31.basil"
     },
     body: params && !isGet ? encodeForm(params) : undefined,
     signal: AbortSignal.timeout(10000)
