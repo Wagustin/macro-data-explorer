@@ -102,6 +102,8 @@ export default async function handler(req, res) {
       }
       const portal = await stripe("POST", "/billing_portal/sessions", {
         customer: user.stripe_customer_id,
+        // Configurations created via the API aren't the account default, so name it.
+        configuration: process.env.STRIPE_PORTAL_CONFIG_ID || undefined,
         return_url: `${appUrl(req)}/cuenta`
       });
       return sendJson(res, 200, { success: true, url: portal.url });
