@@ -238,7 +238,7 @@
     <section class="max-w-6xl mx-auto px-4 sm:px-6">
       <div id="pdIntervalSwitch" class="pd-interval" role="radiogroup" aria-label="Periodo de facturación" hidden>
         <button type="button" role="radio" aria-checked="true" data-interval="month">Mensual</button>
-        <button type="button" role="radio" aria-checked="false" data-interval="year">Anual</button>
+        <button type="button" role="radio" aria-checked="false" data-interval="year">Anual <span class="pd-interval-save">2 meses gratis</span></button>
       </div>
 
       <div class="pd-plans">
@@ -378,6 +378,13 @@
         }
         amount.textContent = price || "—";
         per.textContent = price ? (interval === "year" ? "al año" : "al mes") : (billing.enabled ? "" : "muy pronto");
+        // Annual: show what it works out to per month, which is the number people compare.
+        var yearly = billing.prices.find(function (p) { return p.interval === "year"; });
+        if (interval === "year" && yearly) {
+          try {
+            per.textContent = "al año · " + new Intl.NumberFormat("es-PE", { style: "currency", currency: yearly.currency.toUpperCase() }).format(yearly.amount / 1200) + " al mes";
+          } catch (e) {}
+        }
 
         var freeCta = document.getElementById("pdFreeCta");
         if (user) {
