@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="light">
+<html lang="es" class="light pd-app">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -118,19 +118,6 @@
       border-color: #2C2C2E !important;
     }
 
-    /* Locked / Restricted Option Attenuation Styling */
-    .locked-option {
-      color: #9ca3af !important; /* stone-400 */
-      opacity: 0.45 !important;
-      cursor: pointer !important;
-      font-weight: 500 !important;
-      transition: opacity 0.2s ease, color 0.2s ease !important;
-    }
-    html.dark .locked-option {
-      color: #71717a !important; /* stone-500 / zinc-500 */
-      opacity: 0.40 !important;
-    }
-
     /* Mobile touch targets: all control buttons get a minimum 40px hit area */
     @media (max-width: 767px) {
       .range-btn, .horizon-btn, #btnCustomHorizon, .chip-btn,
@@ -226,9 +213,6 @@
     /* Table rows: fade-in cascade (first 15 rows only, cheap) */
     #tableBody tr { animation: mde-rise 0.4s ease-out both; }
     #tableBody tr:nth-child(n+16) { animation: none; }
-    .locked-option:hover {
-      opacity: 0.75 !important;
-    }
 
     /* Tabular numerals & institutional micro-labels */
     .tnum {
@@ -341,7 +325,6 @@
     html.dark .range-btn.bg-white, html.dark .horizon-btn.bg-white {
       background: linear-gradient(180deg, #FFFFFF 0%, #E5E5EA 100%) !important;
       box-shadow: 0 1px 3px rgba(0,0,0,0.3), inset 0 1px 0 0 rgba(255,255,255,0.6) !important;
-    }
     }
 
     /* Command bar input */
@@ -468,6 +451,11 @@
       .stat-strip-5 .stat:nth-child(5n+1), .stat-strip-4 .stat:nth-child(4n+1) { border-left: none; }
     }
   </style>
+  <!-- Identidad PerData (DESIGN.md) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/pd.css">
 </head>
 <body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200">
 
@@ -493,6 +481,7 @@
           <a href="/noticias" class="hover:text-black dark:hover:text-white transition">Noticias</a>
           <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
           <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
+          <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
           <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos</a>
         </nav>
       </div>
@@ -529,6 +518,7 @@
           <a href="/noticias" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Noticias</a>
           <a href="/metodologia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Metodología</a>
           <a href="/guia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Guía de Uso</a>
+          <a href="/precios" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Precios</a>
           <a href="/terms" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Términos</a>
         </nav>
       </div>
@@ -591,7 +581,7 @@
       <!-- Search Account Recommendation Banner (Intuitive Gating) -->
       <div id="searchAccountBanner" class="hidden mt-4 max-w-2xl p-3 bg-[#F5F5F7] dark:bg-[#141416] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-md flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs transition-all duration-300">
         <div class="flex items-center gap-2.5 text-left text-[#1D1D1F] dark:text-[#E5E5EA]">
-          <span class="leading-snug">Para esta búsqueda podrías considerar <strong>crearte una cuenta</strong> y acceder a información más precisa, series de 10 años y horizontes extendidos.</span>
+          <span class="leading-snug">Con una <strong>cuenta gratuita</strong> proyectas hasta 6 meses. El plan <a href="/precios" class="underline">Pro</a> suma 10 años de historia, horizontes de hasta 36 meses y Excel.</span>
         </div>
         <button id="btnBannerSignUp" class="shrink-0 px-3.5 py-1.5 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-md text-[11px] hover:opacity-90 transition">
           Crear cuenta
@@ -600,6 +590,46 @@
     </section>
 
 
+
+    <!-- Band: cómo leer esta pantalla (guía honesta + glosario) -->
+    <section class="border-b border-[#E5E5EA] dark:border-[#2C2C2E]">
+      <details class="pd-details" id="pdHowTo" open>
+        <summary>
+          <span>Cómo leer esta pantalla</span>
+          <span class="pd-details-hint">Busca · Elige · Lee — y el glosario de cada métrica</span>
+        </summary>
+        <div class="pd-details-body">
+          <div class="pd-guide">
+            <div>
+              <div class="pd-guide-kicker">Primero</div>
+              <div class="pd-guide-title">Busca el activo</div>
+              <div class="pd-guide-copy">Escribe el nombre o el ticker arriba (Buenaventura, BVN, Cobre, USD/PEN) o pulsa un atajo de la banda de comandos.</div>
+            </div>
+            <div>
+              <div class="pd-guide-kicker">Después</div>
+              <div class="pd-guide-title">Elige rango y horizonte</div>
+              <div class="pd-guide-copy">El rango marca la historia visible; el horizonte, hasta dónde proyecta el modelo. Por defecto entra en 3 años y 1 mes.</div>
+            </div>
+            <div>
+              <div class="pd-guide-kicker">Por último</div>
+              <div class="pd-guide-title">Lee P50 y la banda</div>
+              <div class="pd-guide-copy">P50 es el precio central esperado; la banda P10–P90 cubre el 80% de los escenarios. Todo se descarga en Excel.</div>
+            </div>
+          </div>
+          <p class="pd-glossary mt-3.5">
+            <b>P10 / P50 / P90:</b> percentiles del modelo —pesimista, central y optimista—. &middot;
+            <b>Prob. de alza:</b> proporción de las 400 trayectorias simuladas que terminan por encima del último cierre. &middot;
+            <b>Volatilidad anualizada:</b> dispersión esperada a un año. &middot;
+            <b>Correlación (r):</b> fuerza y signo de la relación con el indicador del cruce macro (&minus;1 a +1). &middot;
+            <b>PROYECTADO:</b> filas que genera el modelo, no observaciones de mercado.
+          </p>
+          <p class="pd-glossary mt-2">
+            Con cuenta gratuita se abren los horizontes 3M y 6M; el plan <a href="/precios" class="underline">Pro</a> suma la serie de 10 años, 12M, el horizonte a medida y Excel. El detalle metodológico está en la
+            <a href="/guia" class="underline">guía de uso</a> y en la <a href="/metodologia" class="underline">metodología</a>.
+          </p>
+        </div>
+      </details>
+    </section>
 
     <!-- Toolbar Band: distributed range · overlay · horizon -->
     <section class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-3 bg-[#FAFAFC] dark:bg-[#161618]">
@@ -680,27 +710,27 @@
       <!-- KPI strip: single row on desktop, hairline dividers -->
       <div class="stat-strip stat-strip-5 mt-4 -mx-4 sm:-mx-6">
         <div class="stat">
-          <div class="band-label">Retorno</div>
+          <div class="band-label">Retorno <span class="pd-help" title="Variación del precio entre el primer y el último cierre del rango seleccionado.">?</span></div>
           <div id="metricReturn" class="stat-value text-emerald-600 dark:text-emerald-400">+184.2%</div>
           <div class="stat-sub">En el rango</div>
         </div>
         <div class="stat">
-          <div class="band-label">Máximo</div>
+          <div class="band-label">Máximo <span class="pd-help" title="Precio de cierre más alto dentro del rango. Debajo se indica el mes exacto.">?</span></div>
           <div id="metricHigh" class="stat-value text-black dark:text-white">$36.50</div>
           <div id="metricHighDate" class="stat-sub">Pico</div>
         </div>
         <div class="stat">
-          <div class="band-label">Mínimo</div>
+          <div class="band-label">Mínimo <span class="pd-help" title="Precio de cierre más bajo dentro del rango. Debajo se indica el mes exacto.">?</span></div>
           <div id="metricLow" class="stat-value text-black dark:text-white">$4.10</div>
           <div id="metricLowDate" class="stat-sub">Valle</div>
         </div>
         <div class="stat">
-          <div class="band-label">Correlación (r)</div>
+          <div class="band-label">Correlación (r) <span class="pd-help" title="Coeficiente de Pearson entre la serie del activo y el indicador del cruce macro, en cierres mensuales. +1 = se mueven juntos, -1 = en direcciones opuestas, 0 = sin relación lineal.">?</span></div>
           <div id="metricCorrelation" class="stat-value text-black dark:text-white">+0.74</div>
           <div id="metricCorrelationDesc" class="stat-sub">vs Cobre</div>
         </div>
         <div class="stat">
-          <div class="band-label">Observaciones</div>
+          <div class="band-label">Observaciones <span class="pd-help" title="Número de cierres mensuales usados en el cálculo y en el ajuste del modelo.">?</span></div>
           <div id="metricPoints" class="stat-value text-black dark:text-white">121</div>
           <div class="stat-sub">Meses</div>
         </div>
@@ -711,7 +741,7 @@
     <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-4">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
         <div class="inline-flex items-center gap-2">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          <span class="w-1.5 h-1.5 rounded-sm" style="background: var(--pd-accent)"></span>
           <span class="text-xs font-bold text-black dark:text-white">TimesFM · Proyección probabilística</span>
           <span class="hidden sm:inline micro-label text-[#86868B]">RevIN Multi-Cuantil</span>
         </div>
@@ -732,27 +762,27 @@
       <div id="forecastContent" class="mt-3">
         <div class="stat-strip stat-strip-5">
           <div class="stat">
-            <div class="band-label">P50 al Horizonte</div>
+            <div class="band-label">P50 al Horizonte <span class="pd-help" title="Percentil 50 de la proyección: el precio central esperado al final del horizonte elegido.">?</span></div>
             <div id="tfmP50" class="stat-value text-black dark:text-white">$39.34</div>
             <div id="tfmHorizonDate" class="stat-sub">Al horizonte de 6 meses</div>
           </div>
           <div class="stat">
-            <div class="band-label">Retorno Proyectado</div>
+            <div class="band-label">Retorno Proyectado <span class="pd-help" title="Variación entre el último cierre observado y el P50 al horizonte.">?</span></div>
             <div id="tfmReturn" class="stat-value text-emerald-600 dark:text-emerald-400">+13.3%</div>
             <div id="tfmTrend" class="stat-sub">Tendencia Alcista</div>
           </div>
           <div class="stat">
-            <div class="band-label">Prob. de Alza</div>
+            <div class="band-label">Prob. de Alza <span class="pd-help" title="Porcentaje de las 400 trayectorias simuladas que terminan por encima del último cierre registrado. Verde si supera 55%, rojo si baja de 45%.">?</span></div>
             <div id="tfmProbRise" class="stat-value text-black dark:text-white">—</div>
             <div class="stat-sub">P(PT > último cierre)</div>
           </div>
           <div class="stat">
-            <div class="band-label">Rango 80% (P10–P90)</div>
+            <div class="band-label">Rango 80% (P10–P90) <span class="pd-help" title="Intervalo P10-P90: 8 de cada 10 escenarios simulados caen dentro de esta banda.">?</span></div>
             <div id="tfmRange" class="stat-value text-black dark:text-white" style="font-size:13px">$21.97 — $56.71</div>
             <div class="stat-sub">Banda P25–P75: <span id="tfmRangeInner">—</span></div>
           </div>
           <div class="stat">
-            <div class="band-label">Volatilidad Anualizada</div>
+            <div class="band-label">Volatilidad Anualizada <span class="pd-help" title="Dispersión esperada de la serie a un año, calculada sobre retornos mensuales.">?</span></div>
             <div id="tfmVol" class="stat-value text-black dark:text-white">48.7%</div>
             <div class="stat-sub" id="tfmModelInfo">Ensemble 400 trayectorias</div>
           </div>
@@ -872,7 +902,7 @@
         </table>
       </div>
       <div class="px-4 sm:px-6 py-2.5 bg-[#FAFAFC] dark:bg-[#161618] border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-[11px] text-[#86868B]">
-        <span id="tableSummary">Cargando observaciones...</span>
+        <span id="tableSummary">Cargando observaciones...</span><span class="ml-2">· Las filas marcadas PROYECTADO las genera el modelo: su cierre equivale al P50 y su máximo/mínimo al P90/P10.</span>
       </div>
     </section>
 
@@ -883,16 +913,13 @@
   <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#0D0D0E] mt-12 py-8 text-center text-xs text-[#86868B] transition-colors">
     <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
       <div>
-        <strong>PerData</strong> &copy; 2026 · Desarrollado para Agustín Ventura Saldaña
+        <strong>PerData</strong> &copy; 2026 · Todos los derechos reservados.
       </div>
-      <div class="flex items-center space-x-2.5 sm:space-x-3 text-[#86868B] flex-wrap justify-center">
-        <span>Google TimesFM 2.5</span>
-        <span>•</span>
-        <span>TypeSafe AI Jev</span>
-        <span>•</span>
-        <button id="btnOpenTermsFooter" type="button" class="underline hover:text-black dark:hover:text-white transition font-medium">Términos y Condiciones</button>
-        <span>•</span>
-        <span>100% Serverless Edge</span>
+      <div class="flex items-center gap-x-4 gap-y-2 text-[#86868B] flex-wrap justify-center">
+        <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
+        <button id="btnOpenTermsFooter" type="button" class="hover:text-black dark:hover:text-white transition">Términos y Condiciones</button>
+        <a href="/privacidad" class="hover:text-black dark:hover:text-white transition">Privacidad</a>
+        <a href="mailto:soporte@perdata.site" class="hover:text-black dark:hover:text-white transition">Contacto</a>
       </div>
     </div>
   </footer>
@@ -1003,12 +1030,8 @@
   <script>
     // State management
     
-    // Dynamic API Base URL for Supabase Edge Functions and serverless environments
-    const API_BASE = (window.location.pathname.startsWith('/functions/v1/macro-explorer'))
-      ? '/functions/v1/macro-explorer/api'
-      : (window.location.pathname.startsWith('/functions/v1/app'))
-      ? '/functions/v1/app/api'
-      : '/api';
+    // The Supabase mirror was retired; the app and its plan-checked APIs only run on Vercel.
+    const API_BASE = '/api';
 
         function showLoadError(symbol, apiError) {
       const el = document.getElementById("searchAccountBanner");
@@ -1381,43 +1404,18 @@ const state = {
       if (btn) btn.classList.remove("hidden");
       const span = el.querySelector("span.leading-snug");
       if (span && span.textContent.indexOf("sin cotización pública activa") !== -1) {
-        span.textContent = "Para esta búsqueda podrías considerar crear una cuenta y acceder a series de 10 años, horizontes extendidos y exportación Excel.";
+        span.innerHTML = 'Con una <strong>cuenta gratuita</strong> proyectas hasta 6 meses. El plan <a href="/precios" class="underline">Pro</a> suma 10 años de historia, horizontes de hasta 36 meses y Excel.';
       }
     }
 
     // Update Lock Indicators and Gating
     function updateAuthLocks() {
-      const isAuth = !!(window.MDE_Auth && window.MDE_Auth.isAuthenticated());
       const banner = document.getElementById("searchAccountBanner");
       if (banner) {
-        if (isAuth) {
-          banner.classList.add("hidden");
-        } else {
-          banner.classList.remove("hidden");
-        }
+        banner.classList.toggle("hidden", !!(window.MDE_Auth && window.MDE_Auth.isAuthenticated()));
         restoreSignupBanner();
       }
-
-      const lockedElements = [
-        document.querySelector('.range-btn[data-range="10y"]'),
-        document.querySelector('.horizon-btn[data-horizon="3"]'),
-        document.querySelector('.horizon-btn[data-horizon="6"]'),
-        document.querySelector('.horizon-btn[data-horizon="12"]'),
-        document.getElementById("btnCustomHorizon"),
-        document.getElementById("btnExportExcel"),
-        document.getElementById("btnExportExcelTop")
-      ].filter(Boolean);
-
-      lockedElements.forEach(el => {
-        if (isAuth) {
-          el.classList.remove("locked-option");
-        } else {
-          // If button is not currently active, keep attenuated style
-          if (!el.classList.contains("bg-black") && !el.classList.contains("dark:bg-white")) {
-            el.classList.add("locked-option");
-          }
-        }
-      });
+      if (window.MDE_Auth) window.MDE_Auth.updateGatedElements();
     }
 
     function setupIntuitiveGating() {
@@ -1425,7 +1423,7 @@ const state = {
       if (bannerBtn) {
         bannerBtn.addEventListener("click", () => {
           if (window.MDE_Auth) {
-            window.MDE_Auth.openModal("Para esta búsqueda podrías considerar crearte una cuenta y acceder a información más precisa, series de 10 años y proyecciones completas.");
+            window.MDE_Auth.openModal("Crea tu cuenta gratuita para proyectar hasta 6 meses y guardar tu acceso.", "signup");
           }
         });
       }
@@ -1439,19 +1437,12 @@ const state = {
       document.querySelectorAll(".range-btn").forEach(btn => {
         btn.addEventListener("click", () => {
           const rng = btn.getAttribute("data-range");
-          if (rng === "10y" && window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
-            window.MDE_Auth.openModal("Acceso Cuantitativo Avanzado — Inicia sesión o crea tu cuenta institucional gratuita para desbloquear series históricas completas de 10 años.");
-            return;
-          }
+          if (window.MDE_Auth && !window.MDE_Auth.gate("range", rng)) return;
           document.querySelectorAll(".range-btn").forEach(b => {
             b.className = "range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
           });
           btn.className = "range-btn px-3 py-1 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition";
-          // Re-apply lock styling on gated range (10y) after the class reset above
-          const gatedRange = document.querySelector('.range-btn[data-range="10y"]');
-          if (gatedRange && rng !== "10y" && window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
-            gatedRange.classList.add("locked-option");
-          }
+          if (window.MDE_Auth) window.MDE_Auth.updateGatedElements();
           state.range = rng;
           loadAllData(state.primarySymbol, rng, state.macroSymbol, state.horizon);
         });
@@ -1470,10 +1461,7 @@ const state = {
         if (btn.id === "btnCustomHorizon") return;
         btn.addEventListener("click", () => {
           const h = parseInt(btn.getAttribute("data-horizon"), 10);
-          if (h > 1 && window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
-            window.MDE_Auth.openModal(`Acceso a Horizontes Extendidos — La proyección de ${h} meses y análisis de cuantiles en profundidad requiere una cuenta gratuita. Regístrate para acceder a información más precisa.`);
-            return;
-          }
+          if (window.MDE_Auth && !window.MDE_Auth.gate("horizon", h)) return;
           if (customContainer) customContainer.classList.add("hidden");
           if (customLabel) customLabel.textContent = "Custom";
 
@@ -1481,11 +1469,7 @@ const state = {
             b.className = "horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
           });
           btn.className = "horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition";
-          // Re-apply lock styling on gated horizons (3/6/12M, Custom) after the class reset above
-          if (window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
-            document.querySelectorAll('.horizon-btn[data-horizon="3"], .horizon-btn[data-horizon="6"], .horizon-btn[data-horizon="12"], #btnCustomHorizon')
-              .forEach(el => el.classList.add("locked-option"));
-          }
+          if (window.MDE_Auth) window.MDE_Auth.updateGatedElements();
           state.horizon = h;
           fetchForecastOnly(state.primarySymbol, h);
         });
@@ -1494,10 +1478,8 @@ const state = {
       // Custom Horizon Handling
       if (btnCustom) {
         btnCustom.addEventListener("click", () => {
-          if (window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
-            window.MDE_Auth.openModal("Horizonte Personalizado en Tiempo Real — La ejecución interactiva de TimesFM a cualquier cantidad de meses a tu elección requiere una cuenta registrada gratuita.");
-            return;
-          }
+          // The custom horizon goes past 12 months, so it's a Pro control.
+          if (window.MDE_Auth && !window.MDE_Auth.gate("horizon", 36)) return;
           if (customContainer) {
             const isHidden = customContainer.classList.contains("hidden");
             if (isHidden) {
@@ -1518,6 +1500,7 @@ const state = {
         if (isNaN(val) || val < 1) val = 1;
         if (val > 36) val = 36;
         customInput.value = val;
+        if (window.MDE_Auth && !window.MDE_Auth.gate("horizon", val)) return;
 
         document.querySelectorAll(".horizon-btn").forEach(b => {
           b.className = "horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
@@ -1525,11 +1508,7 @@ const state = {
         if (btnCustom) {
           btnCustom.className = "horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition flex items-center gap-1";
         }
-        // Re-apply lock styling on gated horizons (3/6/12M) after the class reset above
-        if (window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
-          document.querySelectorAll('.horizon-btn[data-horizon="3"], .horizon-btn[data-horizon="6"], .horizon-btn[data-horizon="12"]')
-            .forEach(el => el.classList.add("locked-option"));
-        }
+        if (window.MDE_Auth) window.MDE_Auth.updateGatedElements();
         if (customLabel) {
           customLabel.textContent = `Custom (${val}M)`;
         }
@@ -1559,12 +1538,28 @@ const state = {
       });
     }
 
+    // Data requests carry the session token so the API can apply the user's plan.
+    function apiFetch(url, options) {
+      return window.MDE_Auth ? window.MDE_Auth.authFetch(url, options) : fetch(url, options);
+    }
+
+    // A gated API said no (e.g. stale deep link or expired plan): explain why and fall back to a free setting.
+    function handlePlanDenied(json, fallbackSelector) {
+      if (window.MDE_Auth) window.MDE_Auth.handleApiDenied(json);
+      const fallback = document.querySelector(fallbackSelector);
+      if (fallback) setTimeout(() => fallback.click(), 0);
+    }
+
     // Primary Loader function for all data
     async function loadAllData(symbol, range, macroSymbol, horizon) {
       try {
         // 1. Fetch Primary Historical Data
-        const primaryRes = await fetch(`${API_BASE}/historical?symbol=${encodeURIComponent(symbol)}&range=${range}&interval=1mo`);
+        const primaryRes = await apiFetch(`${API_BASE}/historical?symbol=${encodeURIComponent(symbol)}&range=${range}&interval=1mo`);
         const primaryJson = await primaryRes.json();
+        if (primaryRes.status === 403 && primaryJson.code) {
+          handlePlanDenied(primaryJson, '.range-btn[data-range="3y"]');
+          return;
+        }
         if (primaryJson.error) {
           showLoadError(symbol, primaryJson.error);
           return;
@@ -1573,7 +1568,7 @@ const state = {
 
         // 2. Fetch Macro Indicator
         if (macroSymbol && macroSymbol !== "none") {
-          const macroRes = await fetch(`${API_BASE}/historical?symbol=${encodeURIComponent(macroSymbol)}&range=${range}&interval=1mo`);
+          const macroRes = await apiFetch(`${API_BASE}/historical?symbol=${encodeURIComponent(macroSymbol)}&range=${range}&interval=1mo`);
           const macroJson = await macroRes.json();
           state.macroData = macroJson.error ? null : macroJson;
         } else {
@@ -1594,7 +1589,7 @@ const state = {
     async function loadPerData(macroSymbol, range) {
       try {
         if (macroSymbol && macroSymbol !== "none") {
-          const macroRes = await fetch(`${API_BASE}/historical?symbol=${encodeURIComponent(macroSymbol)}&range=${range}&interval=1mo`);
+          const macroRes = await apiFetch(`${API_BASE}/historical?symbol=${encodeURIComponent(macroSymbol)}&range=${range}&interval=1mo`);
           const macroJson = await macroRes.json();
           state.macroData = macroJson.error ? null : macroJson;
         } else {
@@ -1619,16 +1614,19 @@ const state = {
         const seriesData = state.primaryData?.series || null;
         let forecastRes;
         if (seriesData && seriesData.length >= 5) {
-          forecastRes = await fetch(`${API_BASE}/forecast`, {
+          forecastRes = await apiFetch(`${API_BASE}/forecast`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ symbol, horizon, series: seriesData })
           });
         } else {
-          forecastRes = await fetch(`${API_BASE}/forecast?symbol=${encodeURIComponent(symbol)}&horizon=${horizon}`);
+          forecastRes = await apiFetch(`${API_BASE}/forecast?symbol=${encodeURIComponent(symbol)}&horizon=${horizon}`);
         }
 
         const forecastJson = await forecastRes.json();
+        if (forecastRes.status === 403 && forecastJson.code) {
+          handlePlanDenied(forecastJson, '.horizon-btn[data-horizon="1"]');
+        }
         state.forecastData = forecastJson.error ? null : forecastJson;
       } catch (err) {
         console.error("Error fetching TimesFM forecast:", err);
@@ -2235,10 +2233,7 @@ const state = {
     // Excel Export Setup (With Historical + Forecast Sheets)
     function setupExportExcel() {
       const handler = () => {
-        if (window.MDE_Auth && !window.MDE_Auth.isAuthenticated()) {
-          window.MDE_Auth.openModal("Acceso Cuantitativo Avanzado — Inicia sesión o crea tu cuenta institucional gratuita para descargar reportes completos en Excel (.xlsx).");
-          return;
-        }
+        if (window.MDE_Auth && !window.MDE_Auth.gate("excel")) return;
         const p = state.primaryData;
         const m = state.macroData;
         const f = state.forecastData;

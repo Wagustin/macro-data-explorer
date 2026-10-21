@@ -1,0 +1,9 @@
+# Never upload: user data, docs, tooling, local QA pages
+data/users.json
+*.md
+scripts/
+supabase/
+_shot*.html
+_qa.html
+tailwind.theme.json
+.env*

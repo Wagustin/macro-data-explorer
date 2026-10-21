@@ -8,6 +8,8 @@ import forecastHandler from "./api/forecast.js";
 import interpretHandler from "./api/interpret.js";
 import newsHandler from "./api/news.js";
 import authHandler from "./api/auth.js";
+import billingHandler from "./api/billing.js";
+import stripeWebhookHandler from "./api/stripe-webhook.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,7 +25,27 @@ const MIME_TYPES = {
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".ico": "image/x-icon",
-  ".txt": "text/plain; charset=utf-8"
+  ".txt": "text/plain; charset=utf-8",
+  ".webmanifest": "application/manifest+json"
+};
+
+// Only these root files and extensions are public; everything else (api/, data/,
+// scripts/, supabase/, docs) stays private, matching .vercelignore in production.
+const PUBLIC_EXTENSIONS = new Set([".html", ".js", ".css", ".svg", ".png", ".jpg", ".jpeg", ".ico", ".txt", ".webmanifest"]);
+const PUBLIC_DIRS = new Set(["", "assets"]);
+const PRIVATE_FILES = new Set(["server.js"]);
+const PAGES = {
+  "/": "index.html",
+  "/explorer": "explorer.html",
+  "/metodologia": "metodologia.html",
+  "/guia": "guia.html",
+  "/terms": "terms.html",
+  "/noticias": "news.html",
+  "/news": "news.html",
+  "/precios": "precios.html",
+  "/cuenta": "cuenta.html",
+  "/restablecer": "restablecer.html",
+  "/privacidad": "privacidad.html"
 };
 
 const server = http.createServer(async (req, res) => {
@@ -49,6 +71,7 @@ const server = http.createServer(async (req, res) => {
     let bodyData = "";
     req.on("data", chunk => { bodyData += chunk; });
     await new Promise(resolve => req.on("end", resolve));
+    req.rawBody = bodyData;
     try {
       req.body = JSON.parse(bodyData);
     } catch (e) {
@@ -75,35 +98,28 @@ const server = http.createServer(async (req, res) => {
   if (pathname === "/api/auth" || pathname.startsWith("/api/auth/")) {
     return authHandler(req, res);
   }
+  if (pathname === "/api/billing") {
+    return billingHandler(req, res);
+  }
+  if (pathname === "/api/stripe-webhook") {
+    return stripeWebhookHandler(req, res);
+  }
 
   // --- Clean URL mappings to HTML subpages ---
-  let targetFile = null;
-  if (pathname === "/" || pathname === "/index" || pathname === "/index.html") {
-    targetFile = "index.html";
-  } else if (pathname === "/explorer" || pathname === "/explorer.html") {
-    targetFile = "explorer.html";
-  } else if (pathname === "/metodologia" || pathname === "/metodologia.html") {
-    targetFile = "metodologia.html";
-  } else if (pathname === "/guia" || pathname === "/guia.html") {
-    targetFile = "guia.html";
-  } else if (pathname === "/terms" || pathname === "/terms.html") {
-    targetFile = "terms.html";
-  } else if (pathname === "/noticias" || pathname === "/news" || pathname === "/news.html" || pathname === "/noticias.html") {
-    targetFile = "news.html";
-  } else {
-    // Check if directly requesting an existing static file (e.g. auth.js, teleprompter.js)
-    let relativePath;
+  const cleanPath = pathname.replace(/\.html$/, "").replace(/\/+$/, "") || "/";
+  let targetFile = PAGES[cleanPath === "/index" ? "/" : cleanPath] || null;
+  if (!targetFile) {
+    let relativePath = null;
     try {
-      relativePath = decodeURIComponent(pathname).replace(/^\/+/, "").replace(/\0/g, "");
-    } catch (e) {
-      relativePath = null;
-    }
-    if (relativePath && !relativePath.includes("\0")) {
-      const safePath = path.normalize(relativePath).replace(/^(\.\.[\/\\])+/, "");
-      const candidatePath = path.join(__dirname, safePath);
-      if (candidatePath.startsWith(__dirname + path.sep) &&
-          fs.existsSync(candidatePath) && fs.statSync(candidatePath).isFile()) {
-        targetFile = safePath;
+      relativePath = path.posix.normalize(decodeURIComponent(pathname)).replace(/^\/+/, "");
+    } catch (e) {}
+    if (relativePath && !relativePath.includes("\0") && !relativePath.startsWith("..") &&
+        !path.basename(relativePath).startsWith(".") && !PRIVATE_FILES.has(relativePath) &&
+        PUBLIC_DIRS.has(path.posix.dirname(relativePath).replace(/^\.$/, "")) &&
+        PUBLIC_EXTENSIONS.has(path.extname(relativePath).toLowerCase())) {
+      const candidatePath = path.join(__dirname, relativePath);
+      if (fs.existsSync(candidatePath) && fs.statSync(candidatePath).isFile()) {
+        targetFile = relativePath;
       }
     }
   }

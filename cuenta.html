@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es" class="light pd-marketing">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="description" content="Tu cuenta de PerData: plan, renovación y facturación." />
+  <title>PerData · Mi cuenta</title>
+  
+  <!-- Early Theme Init -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
+      } else {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.classList.add("light");
+      }
+    })();
+  </script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            appleLight: '#FFFFFF',
+            appleDark: '#0D0D0E',
+            appleCardDark: '#1C1C1E',
+            appleTextDark: '#F5F5F7',
+            appleSubDark: '#8E8E93',
+            appleBorderDark: '#2C2C2E',
+            appleBorderLight: '#E5E5EA',
+          }
+        }
+      }
+    }
+  </script>
+
+<style>
+    html, body {
+      overflow-x: hidden !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      letter-spacing: -0.011em;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tnum {
+      font-feature-settings: "tnum" 1, "cv01" 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .micro-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .ui-switch {
+      --switch-bg: rgb(229, 229, 234);
+      --switch-checked-bg: rgb(0, 0, 0);
+      --circle-diameter: 18px;
+      --circle-bg: #FFFFFF;
+      --circle-inset: 2px;
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    html.dark .ui-switch {
+      --switch-bg: rgb(44, 44, 46);
+      --switch-checked-bg: rgb(255, 255, 255);
+      --circle-bg: #0D0D0E;
+    }
+
+    .ui-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--switch-bg);
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 9999px;
+    }
+
+    .slider .circle {
+      top: var(--circle-inset);
+      left: var(--circle-inset);
+      width: var(--circle-diameter);
+      height: var(--circle-diameter);
+      position: absolute;
+      background: var(--circle-bg);
+      border-radius: inherit;
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .ui-switch input:checked + .slider {
+      background-color: var(--switch-checked-bg);
+    }
+
+    .ui-switch input:checked + .slider .circle {
+      left: calc(100% - var(--circle-diameter) - var(--circle-inset));
+    }
+  
+    /* ===== Apple-style motion: gentle fade, no stagger, no lift ===== */
+    @keyframes mde-rise {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    main > section,
+    .rise-in {
+      animation: mde-rise 0.6s ease both;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      main > section, .rise-in { animation: none; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+
+    .hover-lift {
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+    .hover-lift:hover {
+      border-color: rgba(0, 0, 0, 0.30);
+    }
+    html.dark .hover-lift:hover {
+      border-color: rgba(255, 255, 255, 0.40);
+    }
+
+    /* Apple layout helpers */
+    .full-bleed { width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); }
+    .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0; color: #6e6e73; }
+    html.dark .eyebrow { color: #86868b; }
+  </style>
+  <!-- Identidad PerData (DESIGN.md) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/pd.css">
+</head>
+<body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
+
+  <!-- Header -->
+  <header class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF]/90 dark:bg-[#0D0D0E]/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
+      
+      <!-- Brand & Navigation -->
+      <div class="flex items-center space-x-6">
+        <a href="/" class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm border border-black/10 dark:border-white/10">
+            P
+          </div>
+          <span class="font-semibold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
+        </a>
+
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-[#86868B]">
+          <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
+          <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
+          <a href="/noticias" class="hover:text-black dark:hover:text-white transition">Noticias</a>
+          <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
+          <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
+          <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
+          <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos</a>
+        </nav>
+      </div>
+
+      <!-- Right Actions -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <div id="navbarAuthContainer"></div>
+
+        <label class="ui-switch" title="Alternar modo claro / oscuro">
+          <input id="themeToggle" type="checkbox" />
+          <div class="slider">
+            <div class="circle"></div>
+          </div>
+        </label>
+
+        <a href="/explorer" class="hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-5 py-2 rounded-full transition">
+          <span>Abrir Terminal</span>
+        </a>
+        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] text-[#86868B] hover:text-black dark:hover:text-white transition" aria-label="Abrir menú" aria-expanded="false">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+      <!-- Mobile Nav Dropdown -->
+      <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 right-0 border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#1C1C1E] shadow-lg">
+        <nav class="flex flex-col py-2 text-xs font-medium text-[#86868B]">
+          <a href="/" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Inicio</a>
+          <a href="/explorer" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Terminal</a>
+          <a href="/noticias" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Noticias</a>
+          <a href="/metodologia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Metodología</a>
+          <a href="/guia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Guía de Uso</a>
+          <a href="/precios" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Precios</a>
+          <a href="/terms" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Términos</a>
+        </nav>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="flex-grow w-full">
+    <section class="pd-page-head max-w-3xl mx-auto px-4 sm:px-6">
+      <p class="pd-kicker">Mi cuenta</p>
+      <h1 class="pd-page-title" id="pdAcctTitle">Tu cuenta</h1>
+      <p id="pdAcctNotice" class="pd-notice" role="status" hidden></p>
+    </section>
+
+    <section class="max-w-3xl mx-auto px-4 sm:px-6">
+      <div id="pdAcctSignedOut" class="pd-panel" hidden>
+        <h2 class="pd-panel-title">Inicia sesión para ver tu cuenta</h2>
+        <p class="pd-panel-copy">Aquí ves tu plan, la fecha de renovación y tus facturas.</p>
+        <div class="pd-panel-actions">
+          <button type="button" class="pd-btn pd-btn-primary" data-auth-open="signin">Iniciar sesión</button>
+          <button type="button" class="pd-btn pd-btn-ghost" data-auth-open="signup">Crear cuenta</button>
+        </div>
+      </div>
+
+      <div id="pdAcctSignedIn" hidden>
+        <div class="pd-panel">
+          <dl class="pd-dl">
+            <div><dt>Nombre</dt><dd id="pdAcctName"></dd></div>
+            <div><dt>Correo</dt><dd id="pdAcctEmail"></dd></div>
+          </dl>
+        </div>
+
+        <div class="pd-panel">
+          <div class="pd-panel-row">
+            <div>
+              <p class="pd-kicker">Plan actual</p>
+              <h2 class="pd-panel-title" id="pdAcctPlan">Gratis</h2>
+              <p class="pd-panel-copy" id="pdAcctPlanCopy"></p>
+            </div>
+            <span id="pdAcctPlanBadge" class="pd-plan-badge" hidden>Pro</span>
+          </div>
+          <div class="pd-panel-actions">
+            <button type="button" id="pdAcctPrimary" class="pd-btn pd-btn-accent"></button>
+            <a href="/precios" id="pdAcctCompare" class="pd-btn pd-btn-ghost">Ver planes</a>
+          </div>
+          <p id="pdAcctStatus" class="pd-form-status" role="status"></p>
+        </div>
+
+        <div class="pd-panel pd-panel-quiet">
+          <div class="pd-panel-row">
+            <div>
+              <h2 class="pd-panel-title">Sesión</h2>
+              <p class="pd-panel-copy">Cierra la sesión en este navegador.</p>
+            </div>
+            <button type="button" id="pdAcctLogout" class="pd-btn pd-btn-ghost">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#0D0D0E] py-8 text-xs text-[#86868B] transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <div class="w-5 h-5 rounded bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-bold text-[10px]">P</div>
+        <span class="font-semibold text-black dark:text-white">PerData</span>
+        <span>·</span>
+        <span>© 2026 Todos los derechos reservados.</span>
+      </div>
+
+      <div class="flex items-center space-x-5">
+        <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
+        <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
+        <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
+        <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
+        <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
+        <a href="/privacidad" class="hover:text-black dark:hover:text-white transition">Privacidad</a>
+        <a href="mailto:soporte@perdata.site" class="hover:text-black dark:hover:text-white transition">Contacto</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById("themeToggle");
+    const isDark = document.documentElement.classList.contains("dark");
+    if (themeToggle) {
+      themeToggle.checked = isDark;
+      themeToggle.addEventListener("change", (e) => {
+        if (e.target.checked) {
+          document.documentElement.classList.add("dark");
+          document.documentElement.classList.remove("light");
+          localStorage.setItem("theme", "dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+          document.documentElement.classList.add("light");
+          localStorage.setItem("theme", "light");
+        }
+      });
+    }
+  </script>
+
+
+  <!-- Mobile Menu Toggle -->
+  <script>
+    (function() {
+      var btn = document.getElementById('mobileMenuBtn');
+      var menu = document.getElementById('mobileMenu');
+      if (btn && menu) {
+        btn.addEventListener('click', function() {
+          var open = menu.classList.toggle('hidden');
+          btn.setAttribute('aria-expanded', String(!open));
+        });
+      }
+    })();
+  </script>
+
+  <!-- Auth & Teleprompter -->
+  <script src="/auth.js"></script>
+  <script src="/teleprompter.js"></script>
+
+  <!-- Mi cuenta -->
+  <script>
+    (function () {
+      var params = new URLSearchParams(location.search);
+      var awaitingUpgrade = params.get("checkout") === "success";
+
+      function fmtDate(iso) {
+        try { return new Date(iso).toLocaleDateString("es-PE", { day: "numeric", month: "long", year: "numeric" }); }
+        catch (e) { return ""; }
+      }
+
+      function notice(text) {
+        var el = document.getElementById("pdAcctNotice");
+        el.textContent = text || "";
+        el.hidden = !text;
+      }
+
+      function render() {
+        var A = window.MDE_Auth;
+        if (!A) return;
+        var u = A.getUser();
+        document.getElementById("pdAcctSignedOut").hidden = !!u;
+        document.getElementById("pdAcctSignedIn").hidden = !u;
+        if (!u) return;
+
+        document.getElementById("pdAcctTitle").textContent = "Hola, " + (u.name || u.email.split("@")[0]);
+        document.getElementById("pdAcctName").textContent = u.name || "—";
+        document.getElementById("pdAcctEmail").textContent = u.email;
+
+        var isPro = u.plan === "pro";
+        var copy = "";
+        if (isPro && u.cancelAtPeriodEnd && u.currentPeriodEnd) copy = "Tu suscripción termina el " + fmtDate(u.currentPeriodEnd) + ". No se volverá a cobrar.";
+        else if (isPro && u.subscriptionStatus === "trialing" && u.currentPeriodEnd) copy = "Prueba gratuita hasta el " + fmtDate(u.currentPeriodEnd) + ".";
+        else if (isPro && u.currentPeriodEnd) copy = "Se renueva el " + fmtDate(u.currentPeriodEnd) + ".";
+        else if (!isPro && u.subscriptionStatus === "past_due") copy = "No pudimos cobrar tu último pago. Actualiza tu tarjeta para recuperar Pro.";
+        else if (!isPro) copy = "Historia de hasta 5 años y proyecciones de hasta 6 meses.";
+
+        document.getElementById("pdAcctPlan").textContent = isPro ? "Pro" : "Gratis";
+        document.getElementById("pdAcctPlanCopy").textContent = copy;
+        document.getElementById("pdAcctPlanBadge").hidden = !isPro;
+
+        var primary = document.getElementById("pdAcctPrimary");
+        var billing = A.billing();
+        if (u.hasBillingAccount && (isPro || u.subscriptionStatus)) {
+          primary.textContent = "Gestionar suscripción y facturas";
+          primary.dataset.action = "portal";
+          primary.disabled = false;
+        } else if (billing.enabled) {
+          var price = A.priceLabel("month");
+          primary.textContent = "Mejorar a Pro" + (price ? " · " + price + "/mes" : "");
+          primary.dataset.action = "checkout";
+          primary.disabled = false;
+        } else {
+          primary.textContent = "Pro disponible muy pronto";
+          primary.dataset.action = "";
+          primary.disabled = true;
+        }
+        document.getElementById("pdAcctCompare").hidden = isPro;
+
+        if (awaitingUpgrade && isPro) {
+          awaitingUpgrade = false;
+          notice("Listo: tu plan Pro está activo. Gracias por suscribirte.");
+          history.replaceState(null, "", "/cuenta");
+        }
+      }
+
+      // Stripe redirects here before the webhook may have landed; poll briefly.
+      async function waitForUpgrade() {
+        if (!awaitingUpgrade) return;
+        notice("Confirmando tu pago…");
+        for (var i = 0; i < 12 && awaitingUpgrade; i++) {
+          await window.MDE_Auth.refresh();
+          render();
+          if (!awaitingUpgrade) return;
+          await new Promise(function (r) { setTimeout(r, 2500); });
+        }
+        if (awaitingUpgrade) notice("Tu pago se recibió y la activación está tardando un poco. Recarga esta página en un minuto.");
+      }
+
+      document.getElementById("pdAcctPrimary").addEventListener("click", async function (e) {
+        var btn = e.currentTarget;
+        var action = btn.dataset.action;
+        if (!action) return;
+        var status = document.getElementById("pdAcctStatus");
+        btn.disabled = true;
+        btn.textContent = "Abriendo…";
+        var r = action === "portal" ? await window.MDE_Auth.openPortal() : await window.MDE_Auth.startCheckout("month");
+        if (!r.success) {
+          status.textContent = r.error || "";
+          status.className = "pd-form-status is-error";
+          render();
+        }
+      });
+      document.getElementById("pdAcctLogout").addEventListener("click", function () { window.MDE_Auth.logout(); });
+
+      window.addEventListener("mde:auth-change", render);
+      window.addEventListener("mde:billing-loaded", render);
+      document.addEventListener("DOMContentLoaded", function () { render(); waitForUpgrade(); });
+    })();
+  </script>
+</body>
+</html>

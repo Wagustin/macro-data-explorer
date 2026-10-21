@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="light">
+<html lang="es" class="light pd-marketing">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -161,6 +161,11 @@
     .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0; color: #6e6e73; }
     html.dark .eyebrow { color: #86868b; }
   </style>
+  <!-- Identidad PerData (DESIGN.md) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/pd.css">
 </head>
 <body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 
@@ -183,6 +188,7 @@
           <a href="/noticias" class="hover:text-black dark:hover:text-white transition">Noticias</a>
           <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
           <a href="/guia" class="text-black dark:text-white font-semibold transition border-b-2 border-black dark:border-white pb-0.5">Guía de Uso</a>
+          <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
           <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos</a>
         </nav>
       </div>
@@ -213,6 +219,7 @@
           <a href="/noticias" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Noticias</a>
           <a href="/metodologia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Metodología</a>
           <a href="/guia" class="px-4 py-2.5 text-black dark:text-white font-semibold bg-[#F5F5F7] dark:bg-[#0D0D0E]">Guía de Uso</a>
+          <a href="/precios" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Precios</a>
           <a href="/terms" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Términos</a>
         </nav>
       </div>
@@ -221,124 +228,344 @@
   </header>
 
   <!-- Main Content -->
-  <main class="flex-grow max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-8 w-full">
+  <main class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-14 w-full">
 
-    <section class="space-y-4 text-center sm:text-left">
-      <p class="eyebrow">Casos de uso</p>
-
-      <h1 class="text-3xl sm:text-5xl font-semibold tracking-tight text-black dark:text-white">
-        Para qué sirve cada herramienta.
-      </h1>
-      
-      <p class="text-sm sm:text-base text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-        Estrategias prácticas de cobertura, análisis de sensibilidad y uso institucional de los conos probabilísticos para analistas de inversión y tesorerías corporativas.
-      </p>
-    </section>
-
-    <!-- CASE 1: MINERÍA ANDINA -->
-    <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
-      <div class="flex items-center justify-between">
-        <p class="eyebrow">Caso 1 · Cobertura Activa</p>
-      </div>
-
-      <h2 class="text-xl font-semibold text-black dark:text-white">
-        Cobertura de Portafolios Mineros (BVN / SCCO vs Cobre y Oro)
-      </h2>
-
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-        Las acciones mineras peruanas operan con un apalancamiento operativo natural respecto al precio internacional de los metales. Cuando el Cobre o el Oro suben, los márgenes EBITDA se expanden de forma no lineal.
-      </p>
-
-      <div class="p-4 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-2 text-xs">
-        <h3 class="font-bold text-black dark:text-white">Procedimiento en la Terminal:</h3>
-        <ol class="space-y-1.5 list-decimal list-inside text-[#1D1D1F] dark:text-[#E5E5EA]">
-          <li>Selecciona <strong>BVN</strong> en el buscador o en la barra rápida.</li>
-          <li>Revisa el cono P10/P50/P90 para el horizonte de <strong>6 Meses</strong>. Si el cuantil P10 se sitúa por encima del costo de soporte histórico ($14.20), el riesgo de caída está acotado.</li>
-          <li>Compara la pendiente del cono de BVN frente al cono proyectado para el Cobre Grado A (<strong>HG=F</strong>). Si la acción presenta un rezago temporal, existe una oportunidad de arbitraje estadístico de valor relativo.</li>
-        </ol>
+    <!-- MASTHEAD -->
+    <section class="pd-masthead">
+      <div class="pd-masthead-meta">
+        <span>PerData · Guía de uso</span>
+        <span>Terminal · Noticias · Metodología</span>
       </div>
     </section>
 
-    <!-- CASE 2: GESTIÓN DE RIESGO CAMBIARIO -->
-    <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
-      <div class="flex items-center justify-between">
-        <p class="eyebrow">Caso 2 · Tesorería FX</p>
-      </div>
-
-      <h2 class="text-xl font-semibold text-black dark:text-white">
-        Gestión de Riesgo Cambiario (USD / PEN vs Intervenciones BCRP)
-      </h2>
-
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-        El tipo de cambio Sol peruano / Dólar estadounidense (USD/PEN) se caracteriza por un régimen de flotación administrada con intervención activa del BCRP para mitigar la volatilidad extrema.
-      </p>
-
-      <div class="p-4 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-2 text-xs">
-        <h3 class="font-bold text-black dark:text-white">Estrategia para Tesorerías Corporativas:</h3>
-        <p class="text-[#1D1D1F] dark:text-[#E5E5EA] leading-relaxed">
-          Al planificar pagos de deuda o importaciones a 3 y 6 meses:
-        </p>
-        <ul class="space-y-1.5 list-disc list-inside text-[#1D1D1F] dark:text-[#E5E5EA]">
-          <li><strong>Importadores:</strong> Si el cono P90 a 3 meses se aproxima a S/ 3.82, es prudente contratar coberturas de forwards bancarios en los niveles del P50 (S/ 3.75).</li>
-          <li><strong>Exportadores:</strong> Si el P10 a 6 meses toca el soporte psicológico de S/ 3.68, se recomienda fijar tipos de cambio mínimos para proteger los flujos de caja operativos.</li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- CASE 3: HORIZONTES TEMPORALES -->
-    <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
-      <div class="flex items-center justify-between">
-        <p class="eyebrow">Caso 3 · Comités de Inversión</p>
-      </div>
-
-      <h2 class="text-xl font-semibold text-black dark:text-white">
-        Selección del Horizonte de Proyección Óptimo (1M a 12M)
-      </h2>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs pt-2">
-        <div class="p-4 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-1.5">
-          <span class="font-bold text-black dark:text-white">Horizonte 1M – 3M (Táctico)</span>
-          <p class="text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-            Indicado para rebalanceo mensual de liquidez, negociación de contratos a plazo y seguimiento de minutas de política monetaria del BCRP y la Reserva Federal.
-          </p>
-        </div>
-        <div class="p-4 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-1.5">
-          <span class="font-bold text-black dark:text-white">Horizonte 6M – 12M (Estratégico)</span>
-          <p class="text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-            Diseñado para presupuestos de Capex minero, valoración por descuento de flujos de caja y estructuración de emisiones de deuda corporativa.
+    <!-- HERO -->
+    <section class="pt-2">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-6 lg:gap-x-10">
+        <p class="band-label lg:col-span-5">Manual operativo</p>
+        <div class="lg:col-span-7 space-y-3">
+          <h1 class="text-3xl sm:text-5xl font-semibold tracking-tight text-black dark:text-white">
+            Cómo usar la terminal, paso a paso.
+          </h1>
+          <p class="text-sm sm:text-base text-[#6e6e73] dark:text-[#8E8E93] leading-relaxed max-w-2xl">
+            Tres acciones: buscar el activo, elegir rango y horizonte, leer el P50 con su banda. Abajo están el detalle de cada control,
+            el glosario de las métricas y qué incluye cada plan. Los casos de uso institucional cierran la página.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- CASE 4: AUDITORÍA EN EXCEL -->
-    <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
-      <div class="flex items-center justify-between">
-        <p class="eyebrow">Caso 4 · Excel (.xlsx)</p>
+    <!-- PASOS -->
+    <section class="space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-2 gap-x-10 items-baseline pb-4" style="box-shadow: 0 .5px 0 var(--pd-rule)">
+        <p class="band-label lg:col-span-5">Los tres pasos</p>
+        <h2 class="lg:col-span-7 text-2xl sm:text-3xl font-semibold tracking-tight text-black dark:text-white">De cero a un cono proyectado en la misma pantalla.</h2>
       </div>
 
-      <h2 class="text-xl font-semibold text-black dark:text-white">
-        Auditoría y Despliegue de Modelos en Hojas de Cálculo
-      </h2>
+      <div class="pd-guide">
+        <div>
+          <div class="pd-guide-kicker">Primero</div>
+          <div class="pd-guide-title">Busca el activo</div>
+          <div class="pd-guide-copy">
+            Escribe el nombre o el ticker en el buscador de la banda de comandos (Buenaventura, BVN, Cobre, USD/PEN) o pulsa un
+            atajo. El catálogo cubre la BVL, los futuros globales (LME, COMEX, NYMEX) y los principales pares de divisas.
+          </div>
+        </div>
+        <div>
+          <div class="pd-guide-kicker">Después</div>
+          <div class="pd-guide-title">Elige rango y horizonte</div>
+          <div class="pd-guide-copy">
+            El <b>rango</b> define la historia que ves (1, 3, 5 o 10 años). El <b>cruce macro</b> superpone un indicador
+            —cobre, oro, WTI, USD/PEN, bono 10Y, inflación o PBI— en el eje derecho. El <b>horizonte</b> decide hasta dónde
+            proyecta el modelo: 1M, 3M, 6M, 12M o el número de meses que definas.
+          </div>
+        </div>
+        <div>
+          <div class="pd-guide-kicker">Por último</div>
+          <div class="pd-guide-title">Lee el P50 con su banda</div>
+          <div class="pd-guide-copy">
+            La línea negra es el histórico; la discontinua, la trayectoria central (P50) con la banda P10–P90 en gris.
+            Los cinco indicadores de la banda de proyección resumen el resultado y la tabla lista las observaciones mensuales,
+            con las filas proyectadas marcadas como tales. El botón <b>Descargar Excel</b> genera el .xlsx con las tres hojas.
+          </div>
+        </div>
+      </div>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-        El botón <strong>Descargar Excel</strong> de la Terminal genera un libro de cálculo `.xlsx` nativo con tres hojas estructuradas listas para incorporar en modelos financieros internos:
+      <p class="text-xs sm:text-sm text-[#6e6e73] dark:text-[#8E8E93]">
+        ¿Buscaste una empresa que no cotiza, como Cosapi o Cerro Verde? La terminal muestra su perfil y te propone las
+        alternativas listadas con exposición equivalente, en lugar de fallar.
       </p>
-
-      <ul class="space-y-2 text-xs sm:text-sm text-[#1D1D1F] dark:text-[#E5E5EA] list-disc list-inside">
-        <li><strong>Hoja 1: Resumen:</strong> Métricas clave de cotización actual, horizonte seleccionado, proyección central P50 y márgenes de error.</li>
-        <li><strong>Hoja 2: Histórico 10Y:</strong> Serie completa de precios OHLCV con fechas estandarizadas ISO.</li>
-        <li><strong>Hoja 3: Proyección Cuantílica:</strong> Vectores numéricos mensuales de P10, P50 y P90 para graficar conos estocásticos personalizados en tus reportes.</li>
-      </ul>
     </section>
 
-    <!-- Bottom Action CTA -->
-    <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <p class="text-sm text-[#6e6e73] dark:text-[#8E8E93]">Todo lo anterior ocurre en la misma pantalla.</p>
-      <a href="/explorer" class="px-6 py-2.5 rounded-full bg-black dark:bg-white text-white dark:text-black text-xs font-semibold hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] transition">
-        Abrir la terminal &rarr;
-      </a>
-    </div>
+    <!-- GLOSARIO -->
+    <section class="space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-2 gap-x-10 items-baseline pb-4" style="box-shadow: 0 .5px 0 var(--pd-rule)">
+        <p class="band-label lg:col-span-5">Glosario</p>
+        <h2 class="lg:col-span-7 text-2xl sm:text-3xl font-semibold tracking-tight text-black dark:text-white">Qué significa cada número de la pantalla.</h2>
+      </div>
+
+      <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-5">
+        <div class="space-y-1">
+          <dt class="font-semibold text-black dark:text-white text-sm">P10 · P25 · P50 · P75 · P90</dt>
+          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            Percentiles del modelo al final del horizonte. P50 es el escenario central; P10 y P90 son los pesimista y optimista
+            que delimitan el 80% de probabilidad. P25 y P75 dibujan la banda interna del 50%.
+          </dd>
+        </div>
+        <div class="space-y-1">
+          <dt class="font-semibold text-black dark:text-white text-sm">Prob. de alza</dt>
+          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            Fracción de las 400 trayectorias simuladas que terminan por encima del último cierre registrado.
+            Se colorea en verde por encima del 55% y en rojo por debajo del 45%.
+          </dd>
+        </div>
+        <div class="space-y-1">
+          <dt class="font-semibold text-black dark:text-white text-sm">Retorno proyectado</dt>
+          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            Diferencia entre el último cierre observado y el P50 al horizonte, en porcentaje.
+          </dd>
+        </div>
+        <div class="space-y-1">
+          <dt class="font-semibold text-black dark:text-white text-sm">Volatilidad anualizada</dt>
+          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            Dispersión esperada de la serie a un año, estimada sobre los retornos mensuales del rango seleccionado.
+          </dd>
+        </div>
+        <div class="space-y-1">
+          <dt class="font-semibold text-black dark:text-white text-sm">Correlación (r)</dt>
+          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            Coeficiente de Pearson entre el activo y el indicador del cruce macro, en cierres mensuales.
+            Va de −1 (se mueven en direcciones opuestas) a +1 (se mueven juntos); 0 significa que no hay relación lineal.
+          </dd>
+        </div>
+        <div class="space-y-1">
+          <dt class="font-semibold text-black dark:text-white text-sm">PROYECTADO</dt>
+          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            Marca de las filas que genera el modelo, no observaciones de mercado: su cierre equivale al P50 y su
+            máximo y mínimo al P90 y P10.
+          </dd>
+        </div>
+        <div class="space-y-1">
+          <dt class="font-semibold text-black dark:text-white text-sm">RevIN</dt>
+          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            Normalización reversible en media y varianza: cada ventana se normaliza antes del modelo y se devuelve a su
+            escala original después, para que los cambios de régimen no contaminen la proyección.
+          </dd>
+        </div>
+        <div class="space-y-1">
+          <dt class="font-semibold text-black dark:text-white text-sm">Interpretación del gráfico</dt>
+          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            Lectura automática que acompaña al cono: beta frente al cruce macro, régimen de volatilidad y confianza calibrada.
+            Es un resumen de lo dibujado, no una recomendación de inversión.
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- QUÉ ABRE LA CUENTA -->
+    <section class="space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-2 gap-x-10 items-baseline pb-4" style="box-shadow: 0 .5px 0 var(--pd-rule)">
+        <p class="band-label lg:col-span-5">Acceso</p>
+        <h2 class="lg:col-span-7 text-2xl sm:text-3xl font-semibold tracking-tight text-black dark:text-white">Qué incluye cada plan.</h2>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs sm:text-[13px]">
+          <thead class="bg-[#F5F5F7] dark:bg-[#2C2C2E] border-b border-[#E5E5EA] dark:border-[#2C2C2E]">
+            <tr>
+              <th class="py-2.5 px-4 band-label whitespace-nowrap">Función</th>
+              <th class="py-2.5 px-4 band-label whitespace-nowrap">Sin cuenta</th>
+              <th class="py-2.5 px-4 band-label whitespace-nowrap">Gratis</th>
+              <th class="py-2.5 px-4 band-label whitespace-nowrap">Pro</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#E5E5EA] dark:divide-[#2C2C2E]">
+            <tr class="hover:bg-[#F5F5F7] dark:hover:bg-[#1C1C1E]">
+              <td class="py-2.5 px-4 text-black dark:text-white">Buscador y catálogo completo</td>
+              <td class="py-2.5 px-4 font-mono tnum text-emerald-600 dark:text-emerald-400">Sí</td>
+              <td class="py-2.5 px-4 font-mono tnum text-emerald-600 dark:text-emerald-400">Sí</td>
+              <td class="py-2.5 px-4 font-mono tnum text-emerald-600 dark:text-emerald-400">Sí</td>
+            </tr>
+            <tr class="hover:bg-[#F5F5F7] dark:hover:bg-[#1C1C1E]">
+              <td class="py-2.5 px-4 text-black dark:text-white">Rangos de 1, 3 y 5 años</td>
+              <td class="py-2.5 px-4 font-mono tnum text-emerald-600 dark:text-emerald-400">Sí</td>
+              <td class="py-2.5 px-4 font-mono tnum text-emerald-600 dark:text-emerald-400">Sí</td>
+              <td class="py-2.5 px-4 font-mono tnum text-emerald-600 dark:text-emerald-400">Sí</td>
+            </tr>
+            <tr class="hover:bg-[#F5F5F7] dark:hover:bg-[#1C1C1E]">
+              <td class="py-2.5 px-4 text-black dark:text-white">Serie de 10 años</td>
+              <td class="py-2.5 px-4 font-mono tnum text-[#86868B] dark:text-[#8E8E93]">No</td>
+              <td class="py-2.5 px-4 font-mono tnum text-[#86868B] dark:text-[#8E8E93]">No</td>
+              <td class="py-2.5 px-4 font-mono tnum text-emerald-600 dark:text-emerald-400">Sí</td>
+            </tr>
+            <tr class="hover:bg-[#F5F5F7] dark:hover:bg-[#1C1C1E]">
+              <td class="py-2.5 px-4 text-black dark:text-white">Horizonte de proyección</td>
+              <td class="py-2.5 px-4 font-mono tnum text-[#86868B] dark:text-[#8E8E93]">1 mes</td>
+              <td class="py-2.5 px-4 font-mono tnum text-emerald-600 dark:text-emerald-400">1–6 meses</td>
+              <td class="py-2.5 px-4 font-mono tnum text-emerald-600 dark:text-emerald-400">1–36 meses</td>
+            </tr>
+            <tr class="hover:bg-[#F5F5F7] dark:hover:bg-[#1C1C1E]">
+              <td class="py-2.5 px-4 text-black dark:text-white">Exportación a Excel (.xlsx)</td>
+              <td class="py-2.5 px-4 font-mono tnum text-[#86868B] dark:text-[#8E8E93]">No</td>
+              <td class="py-2.5 px-4 font-mono tnum text-[#86868B] dark:text-[#8E8E93]">No</td>
+              <td class="py-2.5 px-4 font-mono tnum text-emerald-600 dark:text-emerald-400">Sí</td>
+            </tr>
+            <tr class="hover:bg-[#F5F5F7] dark:hover:bg-[#1C1C1E]">
+              <td class="py-2.5 px-4 text-black dark:text-white">Noticias de mercados</td>
+              <td class="py-2.5 px-4 font-mono tnum text-emerald-600 dark:text-emerald-400">Sí</td>
+              <td class="py-2.5 px-4 font-mono tnum text-emerald-600 dark:text-emerald-400">Sí</td>
+              <td class="py-2.5 px-4 font-mono tnum text-emerald-600 dark:text-emerald-400">Sí</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-xs sm:text-sm text-[#6e6e73] dark:text-[#8E8E93]">Precios y detalles del plan Pro en <a href="/precios" class="underline">Precios</a>.</p>
+    </section>
+
+    <!-- FAQ -->
+    <section class="space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-2 gap-x-10 items-baseline pb-4" style="box-shadow: 0 .5px 0 var(--pd-rule)">
+        <p class="band-label lg:col-span-5">Preguntas frecuentes</p>
+        <h2 class="lg:col-span-7 text-2xl sm:text-3xl font-semibold tracking-tight text-black dark:text-white">Lo que se pregunta antes de usarlo en un comité.</h2>
+      </div>
+
+      <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-5">
+        <div class="space-y-1">
+          <dt class="font-semibold text-black dark:text-white text-sm">¿De dónde salen los datos?</dt>
+          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            Cotizaciones de la BVL y de los mercados globales, más series oficiales del BCRP y del Banco Mundial.
+            El catálogo de tickers se verifica contra el proveedor antes de cada despliegue.
+          </dd>
+        </div>
+        <div class="space-y-1">
+          <dt class="font-semibold text-black dark:text-white text-sm">¿Cada cuánto se actualiza?</dt>
+          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            El histórico se actualiza con cada cierre mensual y el precio en vivo aparece cuando el proveedor lo publica
+            (verás la marca «En vivo» junto a la cotización). Las noticias se refrescan cada 30 minutos.
+          </dd>
+        </div>
+        <div class="space-y-1">
+          <dt class="font-semibold text-black dark:text-white text-sm">¿Por qué la proyección puede fallar?</dt>
+          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            Porque modela una distribución, no un destino: el P50 acierta con frecuencia, pero no siempre, y la banda existe
+            precisamente para mostrar cuánto puede desviarse. Ocho de cada diez escenarios deberían caer entre P10 y P90.
+          </dd>
+        </div>
+        <div class="space-y-1">
+          <dt class="font-semibold text-black dark:text-white text-sm">¿Puedo llevar el resultado a mi propio modelo?</dt>
+          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            Sí: la exportación genera un .xlsx con resumen de métricas, histórico OHLCV de 10 años y los vectores mensuales
+            de P10, P50 y P90 para graficar el cono donde lo necesites.
+          </dd>
+        </div>
+        <div class="space-y-1">
+          <dt class="font-semibold text-black dark:text-white text-sm">¿Esto es una recomendación de inversión?</dt>
+          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            No. Es una herramienta analítica y educativa sobre series históricas y modelos probabilísticos.
+            Las decisiones y su riesgo son del usuario.
+          </dd>
+        </div>
+        <div class="space-y-1">
+          <dt class="font-semibold text-black dark:text-white text-sm">¿Necesito instalar algo?</dt>
+          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            No. Todo corre en el navegador; la única descarga es el .xlsx cuando lo pides.
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- CASOS DE USO -->
+    <section class="space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-2 gap-x-10 items-baseline pb-4" style="box-shadow: 0 .5px 0 var(--pd-rule)">
+        <p class="band-label lg:col-span-5">Casos de uso</p>
+        <h2 class="lg:col-span-7 text-2xl sm:text-3xl font-semibold tracking-tight text-black dark:text-white">Para qué se usa en la práctica.</h2>
+      </div>
+
+      <!-- CASO: MINERÍA ANDINA -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-3 lg:gap-x-10 pb-7" style="box-shadow: 0 .5px 0 var(--pd-rule)">
+        <p class="band-label lg:col-span-5">Cobertura minera</p>
+        <div class="lg:col-span-7 space-y-3">
+          <h3 class="text-xl font-semibold text-black dark:text-white">Cobertura de portafolios mineros (BVN / SCCO frente a cobre y oro)</h3>
+          <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            Las mineras peruanas operan con apalancamiento operativo natural respecto al precio internacional del metal:
+            cuando el cobre o el oro suben, los márgenes se expanden de forma no lineal.
+          </p>
+          <ol class="space-y-1.5 list-decimal list-inside text-xs sm:text-sm text-[#1D1D1F] dark:text-[#E5E5EA]">
+            <li>Selecciona <strong>BVN</strong> en el buscador o en la barra rápida.</li>
+            <li>Revisa el cono P10/P50/P90 con horizonte de <strong>6 meses</strong>. Si el P10 se sitúa por encima del soporte histórico, el riesgo de caída está acotado.</li>
+            <li>Compara la pendiente del cono de BVN con la del cobre grado A (<strong>HG=F</strong>). Un rezago persistente señala una posible oportunidad de valor relativo.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- CASO: RIESGO CAMBIARIO -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-3 lg:gap-x-10 pb-7" style="box-shadow: 0 .5px 0 var(--pd-rule)">
+        <p class="band-label lg:col-span-5">Tesorería FX</p>
+        <div class="lg:col-span-7 space-y-3">
+          <h3 class="text-xl font-semibold text-black dark:text-white">Gestión de riesgo cambiario (USD/PEN frente a la intervención del BCRP)</h3>
+          <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            El sol opera en flotación administrada, con intervención del BCRP para contener la volatilidad extrema.
+            Al planificar pagos o cobros a 3 y 6 meses:
+          </p>
+          <ul class="space-y-1.5 list-disc list-inside text-xs sm:text-sm text-[#1D1D1F] dark:text-[#E5E5EA]">
+            <li><strong>Importadores:</strong> si el P90 a 3 meses se acerca a un nivel incómodo, conviene cubrir cerca del P50 en lugar de esperar el extremo.</li>
+            <li><strong>Exportadores:</strong> si el P10 a 6 meses toca un soporte relevante, fijar un tipo mínimo protege el flujo de caja operativo.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- CASO: HORIZONTES -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-3 lg:gap-x-10 pb-7" style="box-shadow: 0 .5px 0 var(--pd-rule)">
+        <p class="band-label lg:col-span-5">Comités de inversión</p>
+        <div class="lg:col-span-7 space-y-4">
+          <h3 class="text-xl font-semibold text-black dark:text-white">Qué horizonte elegir (1 a 36 meses)</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+            <div class="space-y-1.5">
+              <p class="font-semibold text-black dark:text-white text-sm">1M – 3M · táctico</p>
+              <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+                Rebalanceo de liquidez, negociación de contratos a plazo y seguimiento de las minutas del BCRP y la Reserva Federal.
+              </p>
+            </div>
+            <div class="space-y-1.5">
+              <p class="font-semibold text-black dark:text-white text-sm">6M – 36M · estratégico</p>
+              <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+                Presupuestos de capex minero, valoración por descuento de flujos y estructuración de emisiones de deuda corporativa.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASO: EXCEL -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-3 lg:gap-x-10">
+        <p class="band-label lg:col-span-5">Excel (.xlsx)</p>
+        <div class="lg:col-span-7 space-y-3">
+          <h3 class="text-xl font-semibold text-black dark:text-white">Auditoría y despliegue en hojas de cálculo</h3>
+          <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+            El botón <strong>Descargar Excel</strong> genera un libro nativo con tres hojas listas para incorporar a modelos internos:
+          </p>
+          <ul class="space-y-2 text-xs sm:text-sm text-[#1D1D1F] dark:text-[#E5E5EA] list-disc list-inside">
+            <li><strong>Resumen:</strong> métricas de la cotización actual, horizonte elegido, P50 y márgenes de error.</li>
+            <li><strong>Histórico 10Y:</strong> serie OHLCV completa con fechas ISO.</li>
+            <li><strong>Proyección cuantílica:</strong> vectores mensuales de P10, P50 y P90 para graficar conos propios.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="pd-accent-block full-bleed px-4 sm:px-6 py-12 sm:py-16">
+      <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-y-5 lg:gap-x-10 items-end">
+        <h2 class="lg:col-span-7 text-3xl sm:text-4xl font-bold tracking-tight">Todo ocurre en la misma pantalla.</h2>
+        <div class="lg:col-span-5 space-y-4">
+          <p class="text-sm sm:text-base leading-relaxed max-w-md">
+            Abre la terminal y prueba con cualquier activo del catálogo.
+          </p>
+          <a href="/explorer" class="inline-flex items-center px-8 py-3 rounded-md bg-[#0D2A1C] text-[#F6E016] font-semibold text-sm hover:opacity-90 transition">
+            Abrir la terminal &rarr;
+          </a>
+        </div>
+      </div>
+    </section>
 
   </main>
 
@@ -357,6 +584,8 @@
         <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
         <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
         <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos y Modelos</a>
+        <a href="/privacidad" class="hover:text-black dark:hover:text-white transition">Privacidad</a>
+        <a href="mailto:soporte@perdata.site" class="hover:text-black dark:hover:text-white transition">Contacto</a>
       </div>
     </div>
   </footer>

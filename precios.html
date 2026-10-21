@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es" class="light pd-marketing">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="description" content="Planes de PerData: cuenta gratuita y plan Pro con series de 10 años, horizontes de hasta 36 meses y exportación a Excel." />
+  <title>PerData · Precios</title>
+  
+  <!-- Early Theme Init -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
+      } else {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.classList.add("light");
+      }
+    })();
+  </script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            appleLight: '#FFFFFF',
+            appleDark: '#0D0D0E',
+            appleCardDark: '#1C1C1E',
+            appleTextDark: '#F5F5F7',
+            appleSubDark: '#8E8E93',
+            appleBorderDark: '#2C2C2E',
+            appleBorderLight: '#E5E5EA',
+          }
+        }
+      }
+    }
+  </script>
+
+<style>
+    html, body {
+      overflow-x: hidden !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      letter-spacing: -0.011em;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tnum {
+      font-feature-settings: "tnum" 1, "cv01" 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .micro-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .ui-switch {
+      --switch-bg: rgb(229, 229, 234);
+      --switch-checked-bg: rgb(0, 0, 0);
+      --circle-diameter: 18px;
+      --circle-bg: #FFFFFF;
+      --circle-inset: 2px;
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    html.dark .ui-switch {
+      --switch-bg: rgb(44, 44, 46);
+      --switch-checked-bg: rgb(255, 255, 255);
+      --circle-bg: #0D0D0E;
+    }
+
+    .ui-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--switch-bg);
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 9999px;
+    }
+
+    .slider .circle {
+      top: var(--circle-inset);
+      left: var(--circle-inset);
+      width: var(--circle-diameter);
+      height: var(--circle-diameter);
+      position: absolute;
+      background: var(--circle-bg);
+      border-radius: inherit;
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .ui-switch input:checked + .slider {
+      background-color: var(--switch-checked-bg);
+    }
+
+    .ui-switch input:checked + .slider .circle {
+      left: calc(100% - var(--circle-diameter) - var(--circle-inset));
+    }
+  
+    /* ===== Apple-style motion: gentle fade, no stagger, no lift ===== */
+    @keyframes mde-rise {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    main > section,
+    .rise-in {
+      animation: mde-rise 0.6s ease both;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      main > section, .rise-in { animation: none; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+
+    .hover-lift {
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+    .hover-lift:hover {
+      border-color: rgba(0, 0, 0, 0.30);
+    }
+    html.dark .hover-lift:hover {
+      border-color: rgba(255, 255, 255, 0.40);
+    }
+
+    /* Apple layout helpers */
+    .full-bleed { width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); }
+    .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0; color: #6e6e73; }
+    html.dark .eyebrow { color: #86868b; }
+  </style>
+  <!-- Identidad PerData (DESIGN.md) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/pd.css">
+</head>
+<body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
+
+  <!-- Header -->
+  <header class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF]/90 dark:bg-[#0D0D0E]/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
+      
+      <!-- Brand & Navigation -->
+      <div class="flex items-center space-x-6">
+        <a href="/" class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm border border-black/10 dark:border-white/10">
+            P
+          </div>
+          <span class="font-semibold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
+        </a>
+
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-[#86868B]">
+          <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
+          <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
+          <a href="/noticias" class="hover:text-black dark:hover:text-white transition">Noticias</a>
+          <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
+          <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
+          <a href="/precios" class="text-black dark:text-white font-semibold transition border-b-2 border-black dark:border-white pb-0.5" aria-current="page">Precios</a>
+          <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos</a>
+        </nav>
+      </div>
+
+      <!-- Right Actions -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <div id="navbarAuthContainer"></div>
+
+        <label class="ui-switch" title="Alternar modo claro / oscuro">
+          <input id="themeToggle" type="checkbox" />
+          <div class="slider">
+            <div class="circle"></div>
+          </div>
+        </label>
+
+        <a href="/explorer" class="hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-5 py-2 rounded-full transition">
+          <span>Abrir Terminal</span>
+        </a>
+        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] text-[#86868B] hover:text-black dark:hover:text-white transition" aria-label="Abrir menú" aria-expanded="false">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+      <!-- Mobile Nav Dropdown -->
+      <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 right-0 border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#1C1C1E] shadow-lg">
+        <nav class="flex flex-col py-2 text-xs font-medium text-[#86868B]">
+          <a href="/" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Inicio</a>
+          <a href="/explorer" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Terminal</a>
+          <a href="/noticias" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Noticias</a>
+          <a href="/metodologia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Metodología</a>
+          <a href="/guia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Guía de Uso</a>
+          <a href="/precios" class="px-4 py-2.5 text-black dark:text-white font-semibold bg-[#F5F5F7] dark:bg-[#0D0D0E]" aria-current="page">Precios</a>
+          <a href="/terms" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Términos</a>
+        </nav>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="flex-grow w-full">
+    <section class="pd-page-head max-w-6xl mx-auto px-4 sm:px-6">
+      <p class="pd-kicker">Precios</p>
+      <h1 class="pd-page-title">Empieza gratis. Pasa a Pro cuando lo necesites.</h1>
+      <p class="pd-page-lede">La cuenta gratuita cubre el análisis del día a día. Pro abre la historia completa, los horizontes largos y la exportación para tu propio modelo.</p>
+      <p id="pdCheckoutNotice" class="pd-notice" hidden>No se realizó ningún cobro. Puedes suscribirte cuando quieras.</p>
+    </section>
+
+    <section class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div id="pdIntervalSwitch" class="pd-interval" role="radiogroup" aria-label="Periodo de facturación" hidden>
+        <button type="button" role="radio" aria-checked="true" data-interval="month">Mensual</button>
+        <button type="button" role="radio" aria-checked="false" data-interval="year">Anual</button>
+      </div>
+
+      <div class="pd-plans">
+        <article class="pd-plan">
+          <div class="pd-plan-head">
+            <h2 class="pd-plan-name">Gratis</h2>
+            <p class="pd-plan-price"><span id="pdFreeAmount" class="pd-plan-amount">$0</span><span class="pd-plan-per">para siempre</span></p>
+            <p class="pd-plan-desc">Para seguir activos peruanos y globales con proyecciones de corto plazo.</p>
+          </div>
+          <ul class="pd-perks">
+            <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span>Catálogo completo de 124 activos</span></li>
+            <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span>Historia de hasta 5 años</span></li>
+            <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span>Proyecciones P10 / P50 / P90 de 1 a 6 meses</span></li>
+            <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span>Cruce macro e interpretación del gráfico</span></li>
+          </ul>
+          <div id="pdFreeCta" class="pd-plan-cta">
+            <button type="button" class="pd-btn pd-btn-ghost pd-btn-block" data-auth-open="signup">Crear cuenta gratis</button>
+          </div>
+        </article>
+
+        <article class="pd-plan pd-plan-featured">
+          <div class="pd-plan-head">
+            <h2 class="pd-plan-name">Pro</h2>
+            <p class="pd-plan-price"><span id="pdProAmount" class="pd-plan-amount">—</span><span id="pdProPer" class="pd-plan-per"></span></p>
+            <p class="pd-plan-desc">Para quien construye su propia tesis: historia larga, horizontes largos y datos exportables.</p>
+          </div>
+          <ul class="pd-perks">
+            <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span>Todo lo del plan Gratis</span></li>
+            <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span>Series históricas de 10 años</span></li>
+            <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span>Horizontes de 1 a 36 meses y a medida</span></li>
+            <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span>Exportación completa a Excel (.xlsx)</span></li>
+            <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span>Cancela cuando quieras desde tu cuenta</span></li>
+          </ul>
+          <div class="pd-plan-cta">
+            <button type="button" id="pdProCta" class="pd-btn pd-btn-accent pd-btn-block" disabled>Cargando…</button>
+            <p id="pdProStatus" class="pd-form-status" role="status"></p>
+          </div>
+        </article>
+      </div>
+      <p class="pd-fineprint">Pagos procesados por Stripe. PerData no almacena los datos de tu tarjeta.</p>
+    </section>
+
+    <section class="max-w-3xl mx-auto px-4 sm:px-6 pd-faq">
+      <h2 class="pd-section-title">Preguntas frecuentes</h2>
+      <details><summary>¿Cómo se realiza el cobro?</summary><p>Con tarjeta de crédito o débito a través de Stripe, al inicio de cada periodo. Recibirás un recibo por correo en cada cobro.</p></details>
+      <details><summary>¿Puedo cancelar en cualquier momento?</summary><p>Sí. Desde <a href="/cuenta">Mi cuenta</a> abres el portal de facturación y cancelas en dos clics. Conservas Pro hasta el final del periodo ya pagado y no se vuelve a cobrar. Los periodos ya cobrados no se reembolsan.</p></details>
+      <details><summary>¿Qué pasa con mis datos si vuelvo al plan Gratis?</summary><p>Tu cuenta sigue activa. Solo se limitan la historia a 5 años, el horizonte a 6 meses y la exportación a Excel.</p></details>
+      <details><summary>¿Las proyecciones son una recomendación de inversión?</summary><p>No. PerData es una herramienta de análisis cuantitativo con fines informativos. Revisa los <a href="/terms">Términos y Condiciones</a>.</p></details>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#0D0D0E] py-8 text-xs text-[#86868B] transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <div class="w-5 h-5 rounded bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-bold text-[10px]">P</div>
+        <span class="font-semibold text-black dark:text-white">PerData</span>
+        <span>·</span>
+        <span>© 2026 Todos los derechos reservados.</span>
+      </div>
+
+      <div class="flex items-center space-x-5">
+        <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
+        <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
+        <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
+        <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
+        <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
+        <a href="/privacidad" class="hover:text-black dark:hover:text-white transition">Privacidad</a>
+        <a href="mailto:soporte@perdata.site" class="hover:text-black dark:hover:text-white transition">Contacto</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById("themeToggle");
+    const isDark = document.documentElement.classList.contains("dark");
+    if (themeToggle) {
+      themeToggle.checked = isDark;
+      themeToggle.addEventListener("change", (e) => {
+        if (e.target.checked) {
+          document.documentElement.classList.add("dark");
+          document.documentElement.classList.remove("light");
+          localStorage.setItem("theme", "dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+          document.documentElement.classList.add("light");
+          localStorage.setItem("theme", "light");
+        }
+      });
+    }
+  </script>
+
+
+  <!-- Mobile Menu Toggle -->
+  <script>
+    (function() {
+      var btn = document.getElementById('mobileMenuBtn');
+      var menu = document.getElementById('mobileMenu');
+      if (btn && menu) {
+        btn.addEventListener('click', function() {
+          var open = menu.classList.toggle('hidden');
+          btn.setAttribute('aria-expanded', String(!open));
+        });
+      }
+    })();
+  </script>
+
+  <!-- Auth & Teleprompter -->
+  <script src="/auth.js"></script>
+  <script src="/teleprompter.js"></script>
+
+  <!-- Precios -->
+  <script>
+    (function () {
+      var interval = "month";
+      var params = new URLSearchParams(location.search);
+      if (params.get("checkout") === "cancelled") document.getElementById("pdCheckoutNotice").hidden = false;
+
+      function render() {
+        var A = window.MDE_Auth;
+        if (!A) return;
+        var billing = A.billing();
+        var user = A.getUser();
+        var amount = document.getElementById("pdProAmount");
+        var per = document.getElementById("pdProPer");
+        var cta = document.getElementById("pdProCta");
+        var hasYear = billing.prices.some(function (p) { return p.interval === "year"; });
+        document.getElementById("pdIntervalSwitch").hidden = !hasYear;
+
+        var price = A.priceLabel(interval);
+        var ref = billing.prices[0];
+        if (ref) {
+          try {
+            document.getElementById("pdFreeAmount").textContent = new Intl.NumberFormat("es-PE", { style: "currency", currency: ref.currency.toUpperCase(), minimumFractionDigits: 0 }).format(0);
+          } catch (e) {}
+        }
+        amount.textContent = price || "—";
+        per.textContent = price ? (interval === "year" ? "al año" : "al mes") : (billing.enabled ? "" : "muy pronto");
+
+        var freeCta = document.getElementById("pdFreeCta");
+        if (user) {
+          freeCta.innerHTML = user.plan === "pro"
+            ? '<a href="/explorer" class="pd-btn pd-btn-ghost pd-btn-block">Abrir la terminal</a>'
+            : '<button type="button" class="pd-btn pd-btn-ghost pd-btn-block" disabled>Tu plan actual</button>';
+        }
+
+        if (user && user.plan === "pro") {
+          cta.disabled = false;
+          cta.textContent = "Gestionar suscripción";
+          cta.dataset.action = "portal";
+        } else if (!billing.enabled) {
+          cta.disabled = true;
+          cta.textContent = "Disponible muy pronto";
+          cta.dataset.action = "";
+        } else {
+          cta.disabled = false;
+          cta.textContent = user ? "Mejorar a Pro" : "Crear cuenta y suscribirme";
+          cta.dataset.action = "checkout";
+        }
+      }
+
+      document.getElementById("pdProCta").addEventListener("click", async function (e) {
+        var btn = e.currentTarget;
+        var status = document.getElementById("pdProStatus");
+        var action = btn.dataset.action;
+        if (!action) return;
+        btn.disabled = true;
+        btn.textContent = "Abriendo pago seguro…";
+        status.textContent = "";
+        var r = action === "portal" ? await window.MDE_Auth.openPortal() : await window.MDE_Auth.startCheckout(interval);
+        if (!r.success) {
+          if (r.error) { status.textContent = r.error; status.className = "pd-form-status is-error"; }
+          render();
+        }
+      });
+
+      document.querySelectorAll("#pdIntervalSwitch [data-interval]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          interval = b.dataset.interval;
+          document.querySelectorAll("#pdIntervalSwitch [data-interval]").forEach(function (x) {
+            x.setAttribute("aria-checked", String(x === b));
+          });
+          render();
+        });
+      });
+
+      window.addEventListener("mde:billing-loaded", render);
+      window.addEventListener("mde:auth-change", render);
+      document.addEventListener("DOMContentLoaded", render);
+    })();
+  </script>
+</body>
+</html>

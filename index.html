@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="light">
+<html lang="es" class="light pd-marketing">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -169,6 +169,11 @@
     .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0; color: #6e6e73; }
     html.dark .eyebrow { color: #86868b; }
   </style>
+  <!-- Identidad PerData (DESIGN.md) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/pd.css">
 </head>
 <body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 
@@ -191,6 +196,7 @@
           <a href="/noticias" class="hover:text-black dark:hover:text-white transition">Noticias</a>
           <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
           <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
+          <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
           <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos</a>
         </nav>
       </div>
@@ -221,6 +227,7 @@
           <a href="/noticias" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Noticias</a>
           <a href="/metodologia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Metodología</a>
           <a href="/guia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Guía de Uso</a>
+          <a href="/precios" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Precios</a>
           <a href="/terms" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Términos</a>
         </nav>
       </div>
@@ -230,34 +237,61 @@
   <!-- Main Content Body -->
   <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 space-y-16 sm:space-y-24 w-full">
 
-    <!-- HERO SECTION -->
-    <section class="text-center max-w-4xl mx-auto space-y-6 pt-4">
-      <p class="eyebrow">Bolsa de Valores de Lima · BCRP · Mercados globales</p>
+    <!-- MASTHEAD: dateline editorial (la portada no lleva ceja sobre el titular) -->
+    <section class="pd-masthead">
+      <div class="pd-masthead-meta">
+        <span>PerData · Inteligencia macroeconómica institucional</span>
+        <span>BVL · BCRP · Mercados globales</span>
+      </div>
+    </section>
 
-      <h1 class="text-4xl sm:text-6xl font-semibold tracking-tight text-black dark:text-white leading-[1.07]">
-        Datos macroeconómicos,<br class="hidden sm:inline" />
-        proyectados con rigor.
-      </h1>
-
-      <p class="text-base sm:text-lg text-[#6e6e73] dark:text-[#8E8E93] leading-relaxed max-w-xl mx-auto">
-        Explora la historia de 124 activos peruanos y globales, genera proyecciones probabilísticas y descarga los datos. Sin instalar nada.
-      </p>
-
-      <!-- Central CTA Button (Required by Agustín) -->
-      <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a href="/explorer" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 rounded-full bg-black dark:bg-white hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black text-sm font-semibold transition">
-          Empezar a analizar
-        </a>
-        <a href="#metodologia-resumen" class="w-full sm:w-auto text-sm font-semibold text-black dark:text-white hover:underline transition py-3">
-          Cómo obtenemos los resultados &rarr;
-        </a>
+    <!-- HERO: titular anclado al eje del 42%; columna izquierda = notas de página -->
+    <section class="pt-2">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-8 lg:gap-x-10">
+        <div class="lg:col-span-5 order-2 lg:order-1">
+          <p class="text-sm sm:text-base text-[#6e6e73] dark:text-[#8E8E93] leading-relaxed max-w-md">
+            Explora la historia de 124 activos peruanos y globales, genera proyecciones probabilísticas y descarga los datos. Sin instalar nada.
+          </p>
+          <dl class="mt-7 grid grid-cols-2 gap-x-6 gap-y-4">
+            <div>
+              <dt class="band-label">Activos</dt>
+              <dd class="font-mono tnum text-sm font-semibold text-black dark:text-white mt-0.5">124</dd>
+            </div>
+            <div>
+              <dt class="band-label">Historia</dt>
+              <dd class="font-mono tnum text-sm font-semibold text-black dark:text-white mt-0.5">10 años</dd>
+            </div>
+            <div>
+              <dt class="band-label">Horizontes</dt>
+              <dd class="font-mono tnum text-sm font-semibold text-black dark:text-white mt-0.5">1—36 meses</dd>
+            </div>
+            <div>
+              <dt class="band-label">Salida</dt>
+              <dd class="font-mono tnum text-sm font-semibold text-black dark:text-white mt-0.5">.xlsx</dd>
+            </div>
+          </dl>
+        </div>
+        <div class="lg:col-span-7 order-1 lg:order-2">
+          <h1 class="text-4xl sm:text-6xl font-semibold tracking-tight text-black dark:text-white">
+            Datos macroeconómicos,<br class="hidden sm:inline" />
+            proyectados con rigor.
+          </h1>
+          <div class="pt-7 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+            <a href="/explorer" class="inline-flex items-center justify-center px-8 py-3 rounded-md bg-black dark:bg-white hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black text-sm font-semibold transition">
+              Empezar a analizar
+            </a>
+            <a href="#metodologia-resumen" class="inline-flex items-center text-sm font-semibold text-black dark:text-white hover:underline transition py-2">
+              Cómo obtenemos los resultados &rarr;
+            </a>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- LIVE ASSETS HIGHLIGHTS GRID -->
     <section class="space-y-4">
-      <div class="flex items-center justify-between">
-        <h2 class="text-sm font-semibold text-black dark:text-white">Cuatro activos para empezar</h2>
+      <div class="flex flex-wrap items-baseline justify-between gap-2 pb-2.5" style="box-shadow: 0 .5px 0 var(--pd-rule)">
+        <h2 class="text-lg sm:text-xl font-semibold tracking-tight text-black dark:text-white">Cuatro activos para empezar</h2>
         <a href="/explorer" class="text-xs font-medium text-black dark:text-white hover:underline">Ver catálogo completo (124 activos) &rarr;</a>
       </div>
 
@@ -341,16 +375,47 @@
         </div>
       </div>
     </section>
+    <!-- CÓMO SE USA: los tres pasos, en palabras y sin numerar -->
+    <section class="space-y-5">
+      <div class="pb-2.5" style="box-shadow: 0 .5px 0 var(--pd-rule)">
+        <h2 class="text-lg sm:text-xl font-semibold tracking-tight text-black dark:text-white">Cómo se usa</h2>
+        <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93] mt-1">La búsqueda, los rangos de hasta 5 años y el horizonte de 1 mes están abiertos sin cuenta.</p>
+      </div>
+      <div class="pd-guide">
+        <div>
+          <div class="pd-guide-kicker">Primero</div>
+          <div class="pd-guide-title">Busca el activo</div>
+          <div class="pd-guide-copy">Por nombre o por ticker: Buenaventura, BVN, Cobre, USD/PEN. El catálogo cubre la BVL y los mercados globales.</div>
+        </div>
+        <div>
+          <div class="pd-guide-kicker">Después</div>
+          <div class="pd-guide-title">Elige rango y horizonte</div>
+          <div class="pd-guide-copy">El rango define la historia que ves; el horizonte, hasta dónde proyecta el modelo (de 1 a 36 meses).</div>
+        </div>
+        <div>
+          <div class="pd-guide-kicker">Por último</div>
+          <div class="pd-guide-title">Lee P50 y la banda</div>
+          <div class="pd-guide-copy">P50 es el precio central esperado; la banda P10–P90 cubre el 80% de los escenarios simulados. Todo se exporta a Excel.</div>
+        </div>
+      </div>
+      <p class="text-xs sm:text-sm text-[#6e6e73] dark:text-[#8E8E93]">
+        Con cuenta gratuita proyectas hasta 6 meses; el plan <a href="/precios" class="underline">Pro</a> suma la serie de 10 años, horizontes de hasta 36 meses y la exportación a Excel. Más en la
+        <a href="/guia" class="underline">guía de uso</a> y la <a href="/metodologia" class="underline">metodología</a>.
+      </p>
+    </section>
+
     <!-- SECTION: CÓMO OBTENEMOS LOS RESULTADOS (REQUIRED BY AGUSTÍN) -->
     <section id="metodologia-resumen" class="space-y-8 pt-12 border-t border-[#E5E5EA] dark:border-[#2C2C2E]">
-      <div class="text-center max-w-3xl mx-auto space-y-3">
-        <p class="eyebrow">Metodología</p>
-        <p class="text-2xl sm:text-3xl font-bold text-black dark:text-white tracking-tight">
-          Cómo obtenemos y validamos los resultados
-        </p>
-        <p class="text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-          Nuestra arquitectura procesa series macroeconómicas y financieras mediante un pipeline econométrico riguroso diseñado para eliminar ruidos espurios y cuantificar el riesgo de mercado de forma reproducible.
-        </p>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-4 lg:gap-x-10 items-baseline pb-5" style="box-shadow: 0 .5px 0 var(--pd-rule)">
+        <p class="band-label lg:col-span-5">Metodología</p>
+        <div class="lg:col-span-7 space-y-3">
+          <h2 class="text-2xl sm:text-3xl font-semibold text-black dark:text-white tracking-tight">
+            Cómo obtenemos y validamos los resultados
+          </h2>
+          <p class="text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed max-w-2xl">
+            Nuestra arquitectura procesa series macroeconómicas y financieras mediante un pipeline econométrico riguroso diseñado para eliminar ruidos espurios y cuantificar el riesgo de mercado de forma reproducible.
+          </p>
+        </div>
       </div>
 
       <!-- 4 Pillars Grid -->
@@ -448,16 +513,18 @@
       </div>
     </section>
 
-    <!-- CALL TO ACTION FINAL BANNER -->
-    <section class="pt-8 border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-center space-y-5">
-      <h2 class="text-2xl sm:text-4xl font-semibold tracking-tight text-black dark:text-white">Empieza con cualquier activo.</h2>
-      <p class="text-sm text-[#6e6e73] dark:text-[#8E8E93] leading-relaxed max-w-xl mx-auto">
-        Busca una empresa, un metal o el tipo de cambio. La historia, la proyección y la exportación salen en segundos.
-      </p>
-      <div>
-        <a href="/explorer" class="inline-flex items-center px-8 py-3 rounded-full bg-black dark:bg-white text-white dark:text-black font-semibold text-sm hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] transition">
-          Abrir la terminal
-        </a>
+    <!-- CTA FINAL: único bloque saturado (amarillo plano, tinta encima) -->
+    <section class="pd-accent-block full-bleed px-4 sm:px-6 py-14 sm:py-20">
+      <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-y-6 lg:gap-x-10 items-end">
+        <h2 class="lg:col-span-7 text-3xl sm:text-5xl font-bold tracking-tight">Empieza con cualquier activo.</h2>
+        <div class="lg:col-span-5 space-y-5">
+          <p class="text-sm sm:text-base leading-relaxed max-w-md">
+            Busca una empresa, un metal o el tipo de cambio. La historia, la proyección y la exportación salen en segundos.
+          </p>
+          <a href="/explorer" class="inline-flex items-center px-8 py-3 rounded-md bg-[#0D2A1C] text-[#F6E016] font-semibold text-sm hover:opacity-90 transition">
+            Abrir la terminal
+          </a>
+        </div>
       </div>
     </section>
 
@@ -477,7 +544,10 @@
         <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
         <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
         <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
+        <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
         <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos y Modelos</a>
+        <a href="/privacidad" class="hover:text-black dark:hover:text-white transition">Privacidad</a>
+        <a href="mailto:soporte@perdata.site" class="hover:text-black dark:hover:text-white transition">Contacto</a>
       </div>
     </div>
   </footer>
