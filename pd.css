@@ -455,3 +455,10 @@ html.dark .pd-plan-featured { border-color: #F6E016; }
 html.pd-marketing main .pd-kicker, html.pd-marketing main .pd-notice, html.pd-marketing main .pd-form-status,
 html.pd-marketing main .pd-fineprint, html.pd-marketing main .pd-plan-price { font-family: var(--pd-font-ui) !important; }
 html.dark .pd-tabs button[aria-selected="true"], html.dark .pd-interval button[aria-checked="true"] { background: #3A3A3C; }
+
+/* Páginas legales */
+.pd-legal-sec { padding: 22px 0; border-top: 1px solid var(--pd-rule); }
+.pd-legal-sec h2 { font-size: 1.125rem !important; margin: 0 0 8px; }
+.pd-legal-sec p { margin: 0 !important; color: var(--pd-ink-soft); max-width: 68ch; }
+.pd-legal-sec b { color: var(--pd-ink); font-weight: 600; }
+.pd-legal-sec a { color: var(--pd-ink); text-decoration: underline; text-underline-offset: 2px; }

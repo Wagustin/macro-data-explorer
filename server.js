@@ -44,7 +44,8 @@ const PAGES = {
   "/news": "news.html",
   "/precios": "precios.html",
   "/cuenta": "cuenta.html",
-  "/restablecer": "restablecer.html"
+  "/restablecer": "restablecer.html",
+  "/privacidad": "privacidad.html"
 };
 
 const server = http.createServer(async (req, res) => {
