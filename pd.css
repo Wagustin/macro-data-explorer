@@ -673,3 +673,22 @@ html.dark .pd-plan-featured { border-color: #38BDF8; }
 .pd-panel-title { font-size: 1.35rem !important; margin: 0; }
 .pd-panel-copy { margin: 8px 0 0 !important; color: var(--pd-ink-soft); font-size: 15px !important; }
 .pd-panel-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.pd-panel .pd-form-status:empty { display: none; }
+.pd-panel .pd-form-status { margin-top: 12px; }
+.pd-dl { display: grid; gap: 16px; margin: 0; }
+@media (min-width: 640px) { .pd-dl { grid-template-columns: 1fr 1fr; } }
+.pd-dl dt { font: 700 10px/1 var(--pd-font-ui); letter-spacing: .09em; text-transform: uppercase; color: var(--pd-ink-soft); margin-bottom: 6px; }
+.pd-dl dd { margin: 0; font: 500 15px/1.4 var(--pd-font-ui) !important; color: var(--pd-ink); overflow-wrap: anywhere; }
+[hidden] { display: none !important; }
+/* Editorial pages set serif on every main <p>; UI labels inside them stay sans. */
+html.pd-marketing main .pd-kicker, html.pd-marketing main .pd-notice, html.pd-marketing main .pd-form-status,
+html.pd-marketing main .pd-fineprint, html.pd-marketing main .pd-plan-price { font-family: var(--pd-font-ui) !important; }
+html.dark .pd-tabs button[aria-selected="true"], html.dark .pd-interval button[aria-checked="true"] { background: #3A3A3C; }
+
+/* Páginas legales */
+.pd-legal-sec { padding: 22px 0; border-top: 1px solid var(--pd-rule); }
+.pd-legal-sec h2 { font-size: 1.125rem !important; margin: 0 0 8px; }
+.pd-legal-sec p { margin: 0 !important; color: var(--pd-ink-soft); max-width: 68ch; }
+.pd-legal-sec b { color: var(--pd-ink); font-weight: 600; }
+.pd-legal-sec a { color: var(--pd-ink); text-decoration: underline; text-underline-offset: 2px; }
+.pd-interval-save { margin-left: 6px; font: 700 9px/1 var(--pd-font-ui); letter-spacing: .06em; text-transform: uppercase; padding: 3px 5px; border-radius: 3px; background: #F6E016; color: #0D2A1C; }
