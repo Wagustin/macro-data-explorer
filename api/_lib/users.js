@@ -32,6 +32,9 @@ async function supabase(method, query, body) {
     },
     body: body ? JSON.stringify(body) : undefined,
     signal: AbortSignal.timeout(8000)
+  }).catch((e) => {
+    // Name the host so a paused/deleted Supabase project is obvious in the logs.
+    throw new Error(`Supabase unreachable (${new URL(SUPABASE_URL).host}): ${e.cause?.code || e.message}`);
   });
   const text = await res.text();
   let json = null;
