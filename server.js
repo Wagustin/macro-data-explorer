@@ -59,7 +59,6 @@ const server = http.createServer(async (req, res) => {
   };
   res.json = (data) => {
     res.setHeader("Content-Type", "application/json; charset=utf-8");
-    res.setHeader("Access-Control-Allow-Origin", "*");
     res.end(JSON.stringify(data));
   };
 

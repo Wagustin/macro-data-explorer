@@ -20,7 +20,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const MIN_PASSWORD = 8;
 
 export default async function handler(req, res) {
-  securityHeaders(res);
+  securityHeaders(res, "GET, POST, OPTIONS", req);
   res.setHeader("Cache-Control", "no-store");
   if (req.method === "OPTIONS") return sendJson(res, 204, {});
 

@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import dns from "node:dns";
 import { fileURLToPath } from "url";
+import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
 
 // Prioritize IPv4 for DNS resolution in Node to prevent RSS fetch timeouts
 try {
@@ -444,11 +445,7 @@ export async function getMacroNews(force = false) {
 
 export default async function handler(req, res) {
   // CORS and Security Headers
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("Cache-Control", "public, max-age=300, s-maxage=900, stale-while-revalidate=1800");
+  applyCors(req, res, "GET, OPTIONS");
 
   if (req.method === "OPTIONS") {
     if (typeof res.status === "function") {
@@ -457,6 +454,13 @@ export default async function handler(req, res) {
     res.statusCode = 200;
     return res.end();
   }
+
+  if (handleRateLimit(req, res)) {
+    return;
+  }
+
+  const hasAuth = Boolean(req.headers?.authorization);
+  setCdnCache(res, hasAuth);
 
   const forceRefresh = req.query && (req.query.refresh === "1" || req.query.refresh === "true");
   const { news, updatedAt, cached, refreshed } = await getMacroNews(forceRefresh);

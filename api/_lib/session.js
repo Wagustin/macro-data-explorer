@@ -98,7 +98,20 @@ export function sendJson(res, status, data) {
   res.end(JSON.stringify(data));
 }
 
-export function securityHeaders(res, methods = "GET, POST, OPTIONS") {
+export function securityHeaders(res, methods = "GET, POST, OPTIONS", req = null) {
+  if (req) {
+    const origin = req.headers?.origin;
+    const allowed = [
+      /^https:\/\/(www\.)?perdata\.site$/i,
+      /^https:\/\/[a-z0-9\-]+(\.[a-z0-9\-]+)*\.vercel\.app$/i,
+      /^https?:\/\/(localhost|127\.0\.0\.1)(:[0-9]+)?$/i
+    ];
+    if (origin && allowed.some(pat => pat.test(origin))) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      const v = res.getHeader?.("Vary");
+      res.setHeader("Vary", v ? `${v}, Origin` : "Origin");
+    }
+  }
   res.setHeader("Access-Control-Allow-Methods", methods);
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("X-Content-Type-Options", "nosniff");

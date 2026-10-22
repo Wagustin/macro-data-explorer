@@ -1,20 +1,23 @@
 /**
- * TypeSafe AI (Jev) - Quantitative Macro & Time-Series Semantic Interpretation Endpoint
- * Provides calibrated confidence scores, macro-sensitivity analysis, and verified executive summaries.
+ * Quantitative Macro & Time-Series Semantic Interpretation Endpoint
+ * Provides confidence scores, macro-sensitivity analysis, and verified executive summaries.
  */
+
+import { applyCors, handleRateLimit } from "./_lib/ratelimit.js";
 
 export default async function handler(req, res) {
   // CORS and Security Headers
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "SAMEORIGIN");
-  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  applyCors(req, res, "POST, GET, OPTIONS");
 
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
+
+  if (handleRateLimit(req, res)) {
+    return;
+  }
+
+  res.setHeader("Cache-Control", "private, no-store");
 
   let body = {};
   if (req.method === "POST") {

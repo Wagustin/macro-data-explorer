@@ -24,6 +24,7 @@
 
 import { PLANS, planForUser, canUseHorizon, upgradeRequired } from "./_lib/plans.js";
 import { getAuthUserOrNull } from "./_lib/session.js";
+import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
 
 // ---------- core engine (shared) ----------
 function buildForecast(series, H, opts = {}) {
@@ -245,15 +246,13 @@ function buildForecast(series, H, opts = {}) {
 const SYMBOL_REGEX = /^[A-Za-z0-9=.\-\^]{1,20}$/;
 
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "SAMEORIGIN");
-  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-  res.setHeader("Cache-Control", "public, max-age=120, s-maxage=300, stale-while-revalidate=600");
+  applyCors(req, res, "GET, POST, OPTIONS");
 
   if (req.method === "OPTIONS") return res.status(200).end();
+
+  if (handleRateLimit(req, res)) {
+    return;
+  }
 
   let body = {};
   if (req.method === "POST") {
@@ -269,12 +268,16 @@ export default async function handler(req, res) {
   const rawHorizon = parseInt(body.horizon || query.horizon || "1", 10);
   const H = Math.max(1, Math.min(36, isNaN(rawHorizon) ? 1 : rawHorizon));
 
+  const hasAuth = Boolean(req.headers?.authorization);
+
   if (!canUseHorizon(PLANS.anon, H)) {
     const plan = planForUser(await getAuthUserOrNull(req));
-    res.setHeader("Cache-Control", "private, no-store");
+    setCdnCache(res, true);
     if (!canUseHorizon(plan, H)) {
       return res.status(403).json(upgradeRequired(plan, "horizon"));
     }
+  } else {
+    setCdnCache(res, hasAuth);
   }
 
   let series = body.series;

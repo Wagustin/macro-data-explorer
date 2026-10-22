@@ -3,6 +3,8 @@
 // Tiers: bvl_pe (BVL Lima), global (verified tickers), macro_pe (World Bank),
 // unlisted (major Peruvian private companies — reference only, no market data).
 // Unknown companies are still resolved live via the Yahoo Finance fallback.
+import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
+
 export const CATALOG = [
   { symbol: "BVN", name: "Compañía de Minas Buenaventura S.A.A.", sector: "Minería", country: "Perú", category: "bvl_pe", tags: ["oro", "plata", "zinc", "cobre", "bvl", "nyse", "yumpag", "uchucchacua"] },
   { symbol: "SCCO.LM", name: "Southern Copper Corporation", sector: "Minería", country: "Perú / México", category: "bvl_pe", tags: ["cobre", "toquepala", "cuajone", "bvl", "spcc"] },
@@ -150,17 +152,18 @@ export const CATALOG = [
 ];
 
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "SAMEORIGIN");
-  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-  res.setHeader("Cache-Control", "public, max-age=300, s-maxage=600, stale-while-revalidate=1200");
+  applyCors(req, res, "GET, OPTIONS");
 
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
+
+  if (handleRateLimit(req, res)) {
+    return;
+  }
+
+  const hasAuth = Boolean(req.headers?.authorization);
+  setCdnCache(res, hasAuth);
 
   const tradable = CATALOG.filter(c => c.category !== "unlisted").length;
   const total = CATALOG.length;

@@ -41,7 +41,7 @@ function appUrl(req) {
 }
 
 export default async function handler(req, res) {
-  securityHeaders(res);
+  securityHeaders(res, "GET, POST, OPTIONS", req);
   res.setHeader("Cache-Control", "no-store");
   if (req.method === "OPTIONS") return sendJson(res, 204, {});
 
