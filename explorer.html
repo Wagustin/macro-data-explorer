@@ -734,8 +734,8 @@
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
         <div class="inline-flex items-center gap-2">
           <span class="w-1.5 h-1.5 rounded-sm" style="background: var(--pd-accent)"></span>
-          <span class="text-xs font-bold text-black dark:text-white">TimesFM · Proyección probabilística</span>
-          <span class="hidden sm:inline micro-label text-ink-soft">RevIN Multi-Cuantil</span>
+          <span class="text-xs font-bold text-black dark:text-white">Proyección probabilística</span>
+          <span class="hidden sm:inline micro-label text-ink-soft">Banda P10–P90</span>
         </div>
         <span class="text-[10px] text-ink-soft">P50 con banda P10–P90</span>
       </div>
@@ -806,7 +806,7 @@
             <span class="w-2.5 h-0.5 bg-black dark:bg-white mr-1.5"></span> Histórico
           </span>
           <span id="legendForecast" class="inline-flex items-center text-black dark:text-white font-semibold">
-            <span class="w-2.5 h-0 border-t-2 border-dashed border-black dark:border-white mr-1.5"></span> P50 TimesFM
+            <span class="w-2.5 h-0 border-t-2 border-dashed border-black dark:border-white mr-1.5"></span> P50
           </span>
           <span id="legendBand" class="inline-flex items-center text-ink-soft">
             <span class="w-2.5 h-2 bg-black/10 dark:bg-white/10 border border-black/20 dark:border-white/20 rounded-sm mr-1.5"></span> P10–P90 (80%)
@@ -832,10 +832,10 @@
             <span class="w-2 h-2 rounded-full" style="background: var(--pd-brand);"></span>
             <span class="text-xs font-bold text-ink">Interpretación Cuantitativa & Cobertura</span>
             <span class="text-ink-soft">|</span>
-            <span class="text-[10px] font-semibold uppercase tracking-wider text-ink-soft">TimesFM & Econometría</span>
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-ink-soft">Modelo y econometría</span>
           </div>
           <span id="tsConfidence" class="font-mono tnum text-[11px] font-bold text-ink px-2.5 py-1 rounded bg-card border border-rule w-fit">
-            Confianza Calibrada: 94.2%
+            Confianza estimada: —
           </span>
         </div>
         
@@ -986,10 +986,10 @@
         <div class="space-y-1.5">
           <div class="flex items-center space-x-2">
             <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
-            <h3 class="font-bold text-black dark:text-white text-sm sm:text-base">2. Inferencia Probabilística y Google TimesFM 2.5</h3>
+            <h3 class="font-bold text-black dark:text-white text-sm sm:text-base">2. Proyección probabilística</h3>
           </div>
           <p class="text-ink-soft pl-3.5">
-            Las proyecciones generadas utilizan el modelo fundacional zero-shot <strong>Google TimesFM 2.5</strong> junto a la arquitectura interpretativa <strong>TypeSafe AI Jev</strong>. Los resultados se estructuran en abanicos probabilísticos multi-cuantil: <strong>P10</strong> (escenario pesimista o soporte inferior), <strong>P50</strong> (mediana esperada) y <strong>P90</strong> (escenario optimista o resistencia superior) para modelar escenarios de volatilidad. El usuario reconoce que todo modelo matemático está sujeto a regímenes estocásticos y volatilidad de mercado, por lo que el comportamiento histórico de las series temporales no garantiza rendimientos futuros.
+            Las proyecciones se calculan con el modelo estadístico propio de PerData (tendencia amortiguada, reversión a la media y estacionalidad), y la lectura que las acompaña se genera con reglas fijas a partir de esas cifras. Los resultados se estructuran en abanicos probabilísticos multi-cuantil: <strong>P10</strong> (escenario pesimista o soporte inferior), <strong>P50</strong> (mediana esperada) y <strong>P90</strong> (escenario optimista o resistencia superior) para modelar escenarios de volatilidad. El usuario reconoce que todo modelo matemático está sujeto a regímenes estocásticos y volatilidad de mercado, por lo que el comportamiento histórico de las series temporales no garantiza rendimientos futuros.
           </p>
         </div>
 
@@ -997,10 +997,10 @@
         <div class="space-y-1.5">
           <div class="flex items-center space-x-2">
             <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
-            <h3 class="font-bold text-black dark:text-white text-sm sm:text-base">3. Privacidad Local y Ausencia de Trackers</h3>
+            <h3 class="font-bold text-black dark:text-white text-sm sm:text-base">3. Privacidad</h3>
           </div>
           <p class="text-ink-soft pl-3.5">
-            En estricta adhesión a los principios de diseño minimalista y privacidad de Apple, la plataforma no emplea trackers publicitarios de terceros, scripts de telemetría invasiva ni perfiles de usuario remotos. Sus preferencias de visualización (modo claro/oscuro) y estado de aceptación de términos se almacenan íntegramente en el navegador de su dispositivo mediante <code class="bg-[#F5F5F7] dark:bg-[#2C2C2E] px-1 py-0.5 rounded text-[11px] font-mono">localStorage</code>.
+            PerData no usa rastreadores publicitarios ni analítica de terceros. Tus preferencias (tema claro u oscuro y la aceptación de estos términos) se guardan en tu navegador con <code class="font-mono text-[11px]">localStorage</code>. Si creas una cuenta, guardamos tu correo y tu plan para darte acceso, como explica la <a href="/privacidad" class="underline">política de privacidad</a>.
           </p>
         </div>
 
@@ -1685,11 +1685,11 @@ const state = {
         // Render TypeSafe AI UI elements
         if (data.executiveTakeaway || data.interpretation) {
           const interp = data.interpretation || data;
-          document.getElementById("tsConfidence").textContent = `Confianza Calibrada: ${interp.confidencePercentage || (interp.calibratedConfidencePct + '%')}`;
+          document.getElementById("tsConfidence").textContent = `Confianza estimada: ${interp.confidencePercentage || (interp.calibratedConfidencePct + '%')}`;
           document.getElementById("tsTakeaway").textContent = interp.executiveTakeaway || "Análisis interpretativo generado.";
           document.getElementById("tsBeta").textContent = interp.macroSensitivity || "Moderada";
           document.getElementById("tsRegime").textContent = interp.regime || interp.marketRegime || "Cíclico";
-          document.getElementById("tsEngine").textContent = `${data.model || 'Jev 1.1'} (Verified)`;
+          document.getElementById("tsEngine").textContent = `${data.model || 'perdata-rules-1'}`;
         }
       } catch (err) {
         console.error("Error fetching TypeSafe AI interpretation:", err);
@@ -1852,7 +1852,7 @@ const state = {
       }
       const volValue = f.volatilityAnnualized ?? f.metrics?.annualizedVolatilityPct ?? '32.4';
       document.getElementById("tfmVol").textContent = `${volValue}%`;
-      document.getElementById("tfmExplainText").textContent = `Proyección TimesFM 2.5 calculada exitosamente a ${f.horizonLabel}. La gráfica inferior amplía el horizonte temporal incorporando el intervalo probabilístico P10-P90.`;
+      document.getElementById("tfmExplainText").textContent = `Proyección calculada a ${f.horizonLabel}. La gráfica inferior amplía el horizonte temporal incorporando el intervalo probabilístico P10-P90.`;
     }
 
     // Render Chart.js with Monochromatic Apple Styling & TimesFM
@@ -1943,7 +1943,7 @@ const state = {
       if (f && f.forecastSeries && state.showForecastOnChart) {
         // Inner band P75 (fill down to P25): 50% central mass, denser tone
         datasets.push({
-          label: "TimesFM P75",
+          label: "P75",
           data: p75Data,
           borderColor: "transparent",
           backgroundColor: isDark ? "rgba(56, 189, 248, 0.16)" : "rgba(0, 93, 170, 0.12)",
@@ -1957,7 +1957,7 @@ const state = {
 
         // Inner band P25 (lower edge of the 50% band)
         datasets.push({
-          label: "TimesFM P25",
+          label: "P25",
           data: p25Data,
           borderColor: "transparent",
           backgroundColor: "transparent",
@@ -1971,7 +1971,7 @@ const state = {
 
         // Outer band P90 (fill down to P10): 80% cone, lighter tone
         datasets.push({
-          label: "TimesFM P90",
+          label: "P90",
           data: p90Data,
           borderColor: "transparent",
           backgroundColor: isDark ? "rgba(245, 245, 247, 0.07)" : "rgba(0, 0, 0, 0.045)",
@@ -1985,7 +1985,7 @@ const state = {
 
         // P10 (lower edge of the 80% cone) — hairline to delimit the cone
         datasets.push({
-          label: "TimesFM P10",
+          label: "P10",
           data: p10Data,
           borderColor: isDark ? "rgba(245, 245, 247, 0.35)" : "rgba(0, 0, 0, 0.28)",
           backgroundColor: "transparent",
@@ -2015,7 +2015,7 @@ const state = {
 
         // P50 (Median Forecast Line) — the hero line
         datasets.push({
-          label: `TimesFM P50 (${f.horizonLabel})`,
+          label: `P50 (${f.horizonLabel})`,
           data: p50Data,
           borderColor: primaryLineColor,
           backgroundColor: "transparent",
@@ -2260,7 +2260,7 @@ const state = {
 
         // 1. Sheet: Resumen Ejecutivo
         const summaryData = [
-          ["REPORTE MACROECONÓMICO Y PROYECCIÓN TIMESFM 2.5"],
+          ["REPORTE MACROECONÓMICO Y PROYECCIÓN PERDATA"],
           ["Generado automáticamente por:", "PerData"],
           ["Fecha de Generación:", new Date().toISOString().split("T")[0]],
           [],
@@ -2279,15 +2279,15 @@ const state = {
           ["Símbolo Macro:", m ? m.symbol : "N/A"],
           ["Correlación Pearson (r):", document.getElementById("metricCorrelation").textContent],
           [],
-          ["PROYECCIÓN GOOGLE TIMESFM 2.5"],
+          ["PROYECCIÓN (MODELO PERDATA ENGINE V3)"],
           ["Horizonte:", f ? f.horizonLabel : "6 Meses"],
           ["Precio Esperado (P50):", f ? f.predictedPrice : "N/A"],
           ["Retorno Proyectado (%):", f ? f.expectedReturnPct + "%" : "N/A"],
           ["Rango P10 - P90:", f ? `${f.quantiles.p10} - ${f.quantiles.p90}` : "N/A"],
           ["Volatilidad Anualizada:", f ? f.volatilityAnnualized + "%" : "N/A"],
           [],
-          ["EVALUACIÓN TYPESAFE AI (JEV)"],
-          ["Confianza Calibrada:", interp ? interp.calibratedConfidencePct + "%" : "N/A"],
+          ["LECTURA AUTOMÁTICA (REGLAS PERDATA)"],
+          ["Confianza estimada:", interp ? interp.calibratedConfidencePct + "%" : "N/A"],
           ["Sensibilidad Macro:", interp ? interp.macroSensitivity : "N/A"],
           ["Régimen:", interp ? interp.marketRegime : "N/A"],
           ["Síntesis Ejecutiva:", interp ? interp.executiveTakeaway : "N/A"]
@@ -2343,11 +2343,11 @@ const state = {
             tfmData.push([s.step, s.date, s.p10, s.p25, s.p50, s.p75, s.p90]);
           });
           const wsTfm = XLSX.utils.aoa_to_sheet(tfmData);
-          XLSX.utils.book_append_sheet(wb, wsTfm, "TimesFM_Proyeccion");
+          XLSX.utils.book_append_sheet(wb, wsTfm, "Proyeccion");
         }
 
         // Generate and download
-        const fileName = `Reporte_${p.symbol}_TimesFM_${state.horizon}M.xlsx`;
+        const fileName = `Reporte_${p.symbol}_Proyeccion_${state.horizon}M.xlsx`;
         XLSX.writeFile(wb, fileName);
       };
 

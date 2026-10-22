@@ -310,7 +310,7 @@ export default async function handler(req, res) {
     } catch (e) { /* fallback */ }
   }
   if (!series || !Array.isArray(series) || series.length < 5) {
-    return res.status(400).json({ error: "Observaciones históricas insuficientes para proyectar con TimesFM." });
+    return res.status(400).json({ error: "Observaciones históricas insuficientes para proyectar." });
   }
 
   try {
@@ -318,7 +318,7 @@ export default async function handler(req, res) {
     const finalForecast = F.forecastPoints[F.forecastPoints.length - 1];
     return res.status(200).json({
       symbol,
-      architecture: "Google TimesFM 2.5 (Zero-shot Foundation Model) · Engine v3 (momentum amortiguado + reversión al ancla)",
+      architecture: "PerData Engine v3 (tendencia amortiguada + reversión al ancla + abanico OU)",
       horizonMonths: H,
       horizonLabel: `${H} Meses`,
       horizonDate: finalForecast.date,

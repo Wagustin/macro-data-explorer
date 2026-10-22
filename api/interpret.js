@@ -119,7 +119,7 @@ export default async function handler(req, res) {
   const direction = (expectedReturnPct !== null && expectedReturnPct >= 0) ? "alcista" : "bajista / correctivo";
   const returnStr = expectedReturnPct !== null ? `${expectedReturnPct >= 0 ? '+' : ''}${expectedReturnPct.toFixed(1)}%` : "estable";
 
-  const executiveTakeaway = `La proyección zero-shot de TimesFM 2.5 señala un sesgo ${direction} estimado en ${returnStr} a un horizonte de ${horizon} meses para ${assetName} (${symbol}). El activo exhibe un ${correlationNarrative}. El intervalo de confianza calibrado P10-P90 delimita un corredor de precios entre $${p10 ? p10.toFixed(2) : '-'} y $${p90 ? p90.toFixed(2) : '-'}, recomendando monitorear la persistencia de inventarios y tasas internacionales para validar el impulso proyectado.`;
+  const executiveTakeaway = `La proyección del modelo de PerData señala un sesgo ${direction} estimado en ${returnStr} a un horizonte de ${horizon} meses para ${assetName} (${symbol}). El activo exhibe un ${correlationNarrative}. El intervalo de confianza calibrado P10-P90 delimita un corredor de precios entre $${p10 ? p10.toFixed(2) : '-'} y $${p90 ? p90.toFixed(2) : '-'}, recomendando monitorear la persistencia de inventarios y tasas internacionales para validar el impulso proyectado.`;
 
   const riskFactors = [
     `Volatilidad macroeconómica asociada al precio de referencia en ${macroName}`,
@@ -128,8 +128,8 @@ export default async function handler(req, res) {
   ];
 
   return res.status(200).json({
-    source: "TypeSafe AI (Jev System One - Engine)",
-    model: "jev-financial-1.1",
+    source: "PerData (lectura automática por reglas)",
+    model: "perdata-rules-1",
     calibratedConfidence: Number(baseConfidence.toFixed(3)),
     confidencePercentage: `${(baseConfidence * 100).toFixed(1)}%`,
     regime,

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="description" content="PerData — Series de tiempo macroeconómicas, cotizaciones de mercado y proyecciones probabilísticas con TimesFM." />
+  <meta name="description" content="PerData — Series de tiempo macroeconómicas, cotizaciones de mercado y proyecciones probabilísticas con un modelo estadístico propio." />
   <title>PerData — Datos macroeconómicos y proyecciones cuantitativas</title>
 
   <!-- Early Theme Init to prevent flash of unstyled content -->
@@ -180,7 +180,7 @@
   <script defer src="/motion.js"></script>
   <!-- SEO & Social Open Graph -->
   <meta property="og:title" content="PerData — Datos macroeconómicos y proyecciones cuantitativas" />
-  <meta property="og:description" content="Series de tiempo macroeconómicas, cotizaciones de mercado y proyecciones probabilísticas con TimesFM." />
+  <meta property="og:description" content="Series de tiempo macroeconómicas, cotizaciones de mercado y proyecciones probabilísticas con un modelo estadístico propio." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://perdata.site" />
   <meta name="robots" content="index, follow" />
@@ -282,7 +282,7 @@
                 <div class="relative w-full h-[240px] sm:h-[300px]">
                   <canvas id="pdHeroChart" role="img" aria-label="Historia de USD/PEN con abanico de proyección P10-P90"></canvas>
                 </div>
-                <p class="mt-3 text-[12px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);">Tipo de cambio USD/PEN, cierre mensual. Proyección a 1 mes con TimesFM 2.5. Fuente: Yahoo Finance. Datos al <span id="pdChartDate">—</span>.</p>
+                <p class="mt-3 text-[12px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);">Tipo de cambio USD/PEN, cierre mensual. Proyección a 1 mes con el modelo de PerData. Fuente: Yahoo Finance. Datos al <span id="pdChartDate">—</span>.</p>
               </div>
             </div>
           </div>
@@ -293,8 +293,7 @@
     <!-- SECCIÓN TABLA: sobre --pd-paper -->
     <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-12 sm:pb-20 space-y-6">
       <div class="space-y-2">
-        <h2 class="text-[28px] font-bold tracking-tight text-ink">Lo mismo para el cobre, el oro y más</h2>
-        <p class="text-base text-ink-soft max-w-2xl">Lo mismo para el cobre, el oro, las acciones de la BVL y 120 activos más.</p>
+        <h2 class="text-[28px] font-bold tracking-tight text-ink">Cobre, oro, BVL y 120 activos más</h2>
       </div>
       <div class="overflow-x-auto">
         <table class="pd-table w-full text-left border-collapse text-sm border-t border-ink">
@@ -344,7 +343,7 @@
           </tbody>
         </table>
       </div>
-      <p id="pdTableFooter" class="pie-ft text-[12px] text-ink-soft leading-normal border-t border-rule pt-2" style="font-family: var(--pd-font-ui);">Fuente: Yahoo Finance, BCRP. Proyección: TimesFM 2.5. Datos al <span id="pdTableDate">—</span>.</p>
+      <p id="pdTableFooter" class="pie-ft text-[12px] text-ink-soft leading-normal border-t border-rule pt-2" style="font-family: var(--pd-font-ui);">Fuente: Yahoo Finance. Proyección: modelo de PerData. Datos al <span id="pdTableDate">—</span>.</p>
       <p class="text-sm sm:text-base text-ink-soft leading-relaxed mt-4">
         Escribe <span class="mono text-ink">"cobre"</span> en <a href="/explorer" class="text-ink hover:text-brand underline font-medium">la terminal</a>, elige un horizonte y descarga la serie en Excel.
       </p>
@@ -362,10 +361,10 @@
         <!-- 4 párrafos cortos en serif -->
         <div class="max-w-3xl space-y-5 text-ink">
           <p>
-            Reunimos datos oficiales del BCRP, la bolsa local y mercados internacionales. Ordenamos cada serie mes a mes y limpiamos días sin operaciones para trabajar con datos homogéneos.
+            Reunimos cotizaciones de mercado (Yahoo Finance) e indicadores macroeconómicos oficiales (Banco Mundial). Ordenamos cada serie mes a mes y limpiamos días sin operaciones para trabajar con datos homogéneos.
           </p>
           <p>
-            Calculamos las proyecciones con TimesFM 2.5, un modelo de Google para series de tiempo. El sistema analiza la tendencia reciente y el comportamiento histórico de cada activo.
+            Calculamos las proyecciones con el modelo estadístico de PerData. Combina la tendencia reciente de cada serie (amortiguada para no extrapolarla sin fin), una vuelta gradual a su nivel de largo plazo y la estacionalidad. La banda de incertidumbre crece con el horizonte y se estabiliza, como en los abanicos de los bancos centrales.
           </p>
           <p>
             Mostramos el resultado como un abanico de posibilidades. P50 es el valor central esperado. La banda entre P10 y P90 reúne el 80% de los escenarios estimados para mostrar la variación del mercado.
@@ -380,20 +379,16 @@
           <h3 class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Fuentes de datos</h3>
           <dl class="border-t border-b border-rule">
             <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-t border-rule first:border-t-0">
-              <dt class="font-semibold text-sm text-ink">BCRP</dt>
-              <dd class="text-xs sm:text-sm text-ink-soft">Tipo de cambio, tasas de referencia e indicadores macroeconómicos oficiales.</dd>
+              <dt class="font-semibold text-sm text-ink">Yahoo Finance</dt>
+              <dd class="text-xs sm:text-sm text-ink-soft">Cotizaciones de acciones (BVL y EE. UU.), materias primas COMEX/NYMEX, divisas y tasas.</dd>
             </div>
             <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-t border-rule first:border-t-0">
-              <dt class="font-semibold text-sm text-ink">BVL</dt>
-              <dd class="text-xs sm:text-sm text-ink-soft">Acciones peruanas y cotizaciones bursátiles locales.</dd>
+              <dt class="font-semibold text-sm text-ink">Banco Mundial (Open Data)</dt>
+              <dd class="text-xs sm:text-sm text-ink-soft">Indicadores macroeconómicos de Perú: PBI, inflación y otros.</dd>
             </div>
             <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-t border-rule first:border-t-0">
-              <dt class="font-semibold text-sm text-ink">COMEX / NYMEX (vía Yahoo Finance)</dt>
-              <dd class="text-xs sm:text-sm text-ink-soft">Cobre, oro, plata y materias primas globales.</dd>
-            </div>
-            <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-t border-rule first:border-t-0">
-              <dt class="font-semibold text-sm text-ink">FRED</dt>
-              <dd class="text-xs sm:text-sm text-ink-soft">Tasas y datos económicos de EE. UU. (rendimiento del Tesoro a 10 años).</dd>
+              <dt class="font-semibold text-sm text-ink">Google News</dt>
+              <dd class="text-xs sm:text-sm text-ink-soft">Titulares de medios financieros, siempre con enlace a la nota original.</dd>
             </div>
           </dl>
         </div>
@@ -498,6 +493,20 @@
         return sign + pct.toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
       }
 
+      // Yahoo repite el mes en curso (p. ej. 2026-10-01 y 2026-10-21): un cierre por mes, el último
+      function monthlyCloses(series) {
+        var byMonth = {};
+        var order = [];
+        (series || []).forEach(function (pt) {
+          if (!pt || typeof pt.close !== "number" || isNaN(pt.close)) return;
+          var m = String(pt.date || "").slice(0, 7);
+          if (!(m in byMonth)) order.push(m);
+          byMonth[m] = pt;
+        });
+        return order.map(function (m) { return byMonth[m]; });
+      }
+      window.pdMonthlyCloses = monthlyCloses;
+
       function generateSparklineSvg(closes) {
         if (!closes || closes.length < 2) return '';
         var w = 80;
@@ -530,9 +539,7 @@
           .then(function (r) { return r.json(); })
           .then(function (d) {
             if (d && d.series && d.series.length) {
-              var closes = d.series
-                .map(function (s) { return s.close; })
-                .filter(function (c) { return typeof c === "number" && !isNaN(c); });
+              var closes = monthlyCloses(d.series).map(function (s) { return s.close; });
 
               // 1. Sparkline (80x24)
               var sparkEl = document.querySelector('[data-cell-spark="' + sym + '"]');
@@ -540,11 +547,11 @@
                 sparkEl.innerHTML = generateSparklineSvg(closes);
               }
 
-              // 2. Último y Var. 1M (Var. 1M = último vs. penúltimo cierre mensual)
+              // 2. Último y Var. 1M (último precio frente al cierre del mes anterior)
               var lastClose = closes[closes.length - 1];
               var prevClose = closes.length >= 2 ? closes[closes.length - 2] : lastClose;
               var price = (d.live && typeof d.live.price === "number" && !isNaN(d.live.price)) ? d.live.price : lastClose;
-              var var1M = (prevClose && prevClose !== 0) ? ((lastClose - prevClose) / prevClose) * 100 : 0;
+              var var1M = (prevClose && prevClose !== 0) ? ((price - prevClose) / prevClose) * 100 : null;
 
               var priceEl = document.querySelector('[data-cell-price="' + sym + '"]');
               var pctEl = document.querySelector('[data-cell-pct="' + sym + '"]');
@@ -643,7 +650,7 @@
       ]).then(function (res) {
         var hist = res[0];
         var fc = res[1];
-        var series = hist && hist.series ? hist.series : [];
+        var series = hist && hist.series ? (window.pdMonthlyCloses ? window.pdMonthlyCloses(hist.series) : hist.series) : [];
         var last = series[series.length - 1];
         var lastClose = last && typeof last.close === 'number' ? last.close : null;
 
@@ -782,7 +789,7 @@
                 spanGaps: true
               },
               {
-                label: 'TimesFM P50',
+                label: 'P50',
                 data: p50Data,
                 borderColor: initialColors.accent,
                 backgroundColor: 'transparent',

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="description" content="Términos y condiciones, marco regulatorio SMV/SEC y divulgación técnica de modelos algorítmicos (TimesFM y Jev) de PerData." />
+  <meta name="description" content="Términos y condiciones, límites de responsabilidad y descripción de los modelos de proyección de PerData." />
   <title>Términos & Modelos Algorítmicos · PerData</title>
   
   <!-- Early Theme Init -->
@@ -231,7 +231,7 @@
       </h1>
       
       <p class="text-sm sm:text-base text-ink-soft leading-relaxed">
-        Declaración regulatoria institucional, límites de responsabilidad financiera y desglose técnico de los modelos fundacionales computacionales que sustentan la plataforma.
+        Las condiciones de uso de PerData, los límites de nuestra responsabilidad y cómo funcionan los modelos que usamos.
       </p>
     </section>
 
@@ -271,28 +271,20 @@
       </div>
 
       <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
-        En cumplimiento con los más rigurosos estándares de transparencia algorítmica institucional, documentamos formalmente los dos sistemas computacionales empleados en el backend analítico:
+        Así funcionan las dos piezas que producen las cifras de la terminal:
       </p>
 
-      <!-- Subsystem 1: TimesFM 2.5 -->
-      <div class="p-5 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-2">
-        <div class="flex items-center justify-between">
-          <h3 class="font-bold text-black dark:text-white text-sm">A. Google Research TimesFM 2.5 (Time-Series Foundation Model)</h3>
-          <span class="text-[10px] font-mono px-2 py-0.5 rounded border border-[#E5E5EA] dark:border-[#3A3A3C] text-[#1D1D1F] dark:text-[#E5E5EA] font-semibold">Forecasting Cuantílico</span>
-        </div>
+      <!-- Modelo de proyección -->
+      <div class="py-4 border-t border-rule space-y-2">
+        <h3 class="font-bold text-ink text-sm">A. Modelo de proyección de PerData</h3>
         <p class="text-xs text-ink-soft leading-relaxed">
-          TimesFM 2.5 es un modelo de difusión autorregresivo basado en transformadores decodificadores (*decoder-only architecture*), entrenado previamente sobre miles de millones de puntos de datos de series temporales del mundo real. En nuestra plataforma, se ejecuta de manera estricta para generar los conos estocásticos de incertidumbre multi-cuantil (P10, P50, P90) sobre ventanas de datos desestacionalizadas mediante normalización RevIN. No existe manipulación manual sobre los vectores de salida calculados.
+          Las proyecciones (P10, P25, P50, P75, P90) se calculan con un modelo estadístico propio: tendencia reciente amortiguada, reversión gradual al nivel de largo plazo de cada serie y estacionalidad. La banda de incertidumbre se modela como un proceso que crece con el horizonte y se estabiliza. No hay ajustes manuales sobre los resultados.
         </p>
       </div>
-
-      <!-- Subsystem 2: TypeSafe AI Jev -->
-      <div class="p-5 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-2">
-        <div class="flex items-center justify-between">
-          <h3 class="font-bold text-black dark:text-white text-sm">B. TypeSafe AI Jev (Semantic Quantitative Interpretation)</h3>
-          <span class="text-[10px] font-mono px-2 py-0.5 rounded border border-[#E5E5EA] dark:border-[#3A3A3C] text-[#1D1D1F] dark:text-[#E5E5EA] font-semibold">Inferencia Semántica</span>
-        </div>
+      <div class="py-4 border-t border-rule space-y-2">
+        <h3 class="font-bold text-ink text-sm">B. Lectura automática</h3>
         <p class="text-xs text-ink-soft leading-relaxed">
-          TypeSafe AI Jev es un motor semántico determinista de inferencia estructurada. Su función se limita a consumir los vectores estadísticos de salida (coeficientes $\beta$, régimen de tendencia, dispersión entre cuantiles P10-P90 y variaciones relativas) y generar un reporte sintético y formal con estrictas restricciones de tipo (*type safety*), eliminando cualquier tipo de alucinación libre y garantizando concordancia con las curvas graficadas.
+          El texto que acompaña a cada proyección se genera con reglas fijas a partir de las cifras calculadas (variación esperada, correlación con el indicador macro, amplitud de la banda). No es una opinión ni una recomendación de inversión.
         </p>
       </div>
     </section>

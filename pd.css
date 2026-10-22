@@ -1061,3 +1061,10 @@ html.dark .pd-terminal-panel {
   background-color: var(--pd-surface) !important;
 }
 
+
+/* Enlace activo del menú sobre la cabecera marino: .text-ink (!important) lo dejaba oscuro */
+header nav a.text-ink,
+#mobileMenu a.text-ink {
+  color: #FFFFFF !important;
+  border-color: var(--pd-sky) !important;
+}

@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="description" content="Tratado metodológico y formulación econométrica de PerData. Normalización RevIN, conos probabilísticos multi-cuantil P10/P50/P90 y descomposición factorial OLS." />
-  <title>Metodología Cuantitativa · PerData</title>
+  <meta name="description" content="Qué datos usa PerData, cómo calcula sus proyecciones P10, P50 y P90 y qué no pueden decirte." />
+  <title>Metodología · PerData</title>
   
   <!-- Early Theme Init -->
   <script>
@@ -228,137 +228,37 @@
   </header>
 
   <!-- Main Content -->
-  <main class="flex-grow max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-8 w-full">
-
-    <!-- Header Section -->
-    <section class="space-y-4 text-center sm:text-left">
-      <p class="eyebrow">Marco metodológico</p>
-
-      <h1 class="text-3xl sm:text-5xl font-semibold tracking-tight text-black dark:text-white">
-        Cómo se construyen las proyecciones.
-      </h1>
-      
-      <p class="text-sm sm:text-base text-ink-soft leading-relaxed">
-        Especificación formal del pipeline estocástico, tratamiento de no-estacionariedad de series financieras, optimización multi-cuantil y regresión factorial de sensibilidad.
-      </p>
+  <main class="flex-grow max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16 space-y-10 w-full">
+    <div class="space-y-4">
+      <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-ink" style="line-height:1.05;">Metodología</h1>
+      <p class="text-ink-soft leading-relaxed" style="font-family: var(--pd-font-read); font-size:18px; line-height:1.55;">Qué datos usamos, cómo calculamos las proyecciones y qué no pueden decirte. Si algo de esta página no coincide con lo que ves en la terminal, escríbenos a soporte@perdata.site y lo corregimos.</p>
+    </div>
+    <section class="space-y-3 border-t border-rule pt-8" data-reveal>
+      <h2 class="text-2xl font-bold tracking-tight text-ink">Datos</h2>
+      <p class="text-ink-soft leading-relaxed" style="font-family: var(--pd-font-read); font-size:18px; line-height:1.55;">Las cotizaciones (acciones de la BVL y de EE. UU., materias primas COMEX y NYMEX, divisas y tasas) vienen de Yahoo Finance; los indicadores macroeconómicos de Perú, del Banco Mundial; los titulares, de Google News con enlace a cada medio. Trabajamos con cierres mensuales de hasta 10 años y no corregimos ni ajustamos los valores que publica la fuente. Si una fuente no responde, mostramos la última copia guardada y lo indicamos.</p>
     </section>
-
-    <!-- SECTION 1: INGESTA Y TRATAMIENTO DE SERIES -->
-    <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5" data-reveal>
-      <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">Ingesta Multifuente & Limpieza de Series OHLCV</h2>
-
-      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
-        Las series temporales financieras presentan desafíos de discontinuidad y asincronía (diferencias de calendarios bursátiles entre la Bolsa de Valores de Lima, COMEX y el mercado interbancario de divisas). Nuestro motor realiza:
-      </p>
-
-      <ul class="space-y-2 text-xs sm:text-sm text-[#1D1D1F] dark:text-[#E5E5EA] list-disc list-inside">
-        <li><strong>Alineación temporal con forward-fill adaptativo:</strong> Preserva la última información cotizada en días feriados locales sin interpolaciones artificiales que causen fuga de información.</li>
-        <li><strong>Detección de outliers mediante MAD:</strong> Filtrado de transacciones anómalas o errores de digitación en cotizaciones mediante Desviación Absoluta respecto a la Mediana (*Median Absolute Deviation*).</li>
-        <li><strong>Sincronización macroeconómica con BCRP:</strong> Acoplamiento de series de tipo de cambio interbancario y balanza comercial con cotizaciones en tiempo real.</li>
+    <section class="space-y-3 border-t border-rule pt-8" data-reveal>
+      <h2 class="text-2xl font-bold tracking-tight text-ink">Cómo proyectamos</h2>
+      <p class="text-ink-soft leading-relaxed" style="font-family: var(--pd-font-read); font-size:18px; line-height:1.55;">Usamos un modelo estadístico propio (PerData Engine v3). La proyección central sale de sumar cuatro piezas:</p>
+      <ul class="text-sm"><li class="py-3 border-t border-rule first:border-t-0"><strong class="text-ink">Tendencia reciente.</strong> <span class="text-ink-soft">Dos medias móviles exponenciales estiman hacia dónde va la serie; esa tendencia se amortigua con el tiempo (vida media de 6 meses) para no extrapolarla sin fin.</span></li><li class="py-3 border-t border-rule first:border-t-0"><strong class="text-ink">Vuelta al nivel de largo plazo.</strong> <span class="text-ink-soft">Una recta ajustada sobre hasta 120 meses (en logaritmos) marca el nivel de referencia; la distancia actual a esa recta se va cerrando (vida media de 15 meses).</span></li><li class="py-3 border-t border-rule first:border-t-0"><strong class="text-ink">Deriva estructural.</strong> <span class="text-ink-soft">La pendiente de esa recta, limitada a ±0,6 % al mes, es lo que sigue la proyección a 2 o 3 años.</span></li><li class="py-3 border-t border-rule first:border-t-0"><strong class="text-ink">Estacionalidad.</strong> <span class="text-ink-soft">Patrones que se repiten a lo largo del año, estimados con armónicos y atenuados si no son claros.</span></li>
       </ul>
     </section>
-
-    <!-- SECTION 2: NORMALIZACIÓN REVIN -->
-    <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5" data-reveal>
-      <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">Normalización Temporal Reversible (RevIN)</h2>
-
-      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
-        Los mercados de commodities y acciones mineras experimentan cambios estructurales de régimen (*distribution shift*). La normalización estándar de media móvil destruye la no-estacionariedad de la serie. Implementamos <strong>Reversible Instance Normalization (RevIN)</strong>:
-      </p>
-
-      <!-- Math Box -->
-      <div class="p-4 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3">
-        <p class="text-[10px] font-bold uppercase tracking-wider text-ink-soft">Cálculo de Estadísticos Locales</p>
-        <div class="math-formula text-xs sm:text-sm text-black dark:text-white space-y-1">
-          <div>μ_x = (1 / T) · Σ_{t=1}^T x_t</div>
-          <div>σ_x = sqrt[ (1 / T) · Σ_{t=1}^T (x_t - μ_x)² + ε ]</div>
-        </div>
-        <p class="text-[10px] font-bold uppercase tracking-wider text-ink-soft pt-2">Transformación Simétrica & Re-inyección</p>
-        <div class="math-formula text-xs sm:text-sm text-black dark:text-white space-y-1">
-          <div>x̃_t = γ · ( (x_t - μ_x) / σ_x ) + β</div>
-          <div>ŷ_t = ( (ŷ̃_t - β) / γ ) · σ_x + μ_x</div>
-        </div>
-      </div>
-
-      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
-        Donde $\gamma$ y $\beta$ son parámetros afines entrenables y $\epsilon$ es un término de estabilidad numérica ($10^{-5}$). Esta formulación garantiza que las proyecciones preserven las magnitudes y la escala nominal original de la serie.
-      </p>
+    <section class="space-y-3 border-t border-rule pt-8" data-reveal>
+      <h2 class="text-2xl font-bold tracking-tight text-ink">Qué significan P10, P50 y P90</h2>
+      <p class="text-ink-soft leading-relaxed" style="font-family: var(--pd-font-read); font-size:18px; line-height:1.55;">Alrededor de la proyección central simulamos 400 trayectorias posibles. La incertidumbre crece con el horizonte y luego se estabiliza, como en los abanicos que publican los bancos centrales. P50 es el valor central: la mitad de las trayectorias termina por encima y la otra mitad por debajo. Entre P10 y P90 queda el 80 % de las trayectorias. La «probabilidad de alza» es la parte de las trayectorias que termina por encima del último cierre.</p>
     </section>
-
-    <!-- SECTION 3: CONOS PROBABILÍSTICOS MULTI-CUANTIL -->
-    <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5" data-reveal>
-      <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">Conos de Densidad Probabilística (P10 / P50 / P90)</h2>
-
-      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
-        El análisis cuantitativo profesional descarta las estimaciones escalares deterministas (un único número de precio objetivo carece de valor sin un intervalo de certidumbre). Modelamos la distribución empírica condicional completa $P(Y_{t+h} | X_{1:t})$ mediante optimización de pérdida cuantílica (*Pinball Loss*):
-      </p>
-
-      <!-- Math Box -->
-      <div class="p-4 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-2">
-        <p class="text-[10px] font-bold uppercase tracking-wider text-ink-soft">Función de Pérdida de Pinball</p>
-        <div class="math-formula text-xs sm:text-sm text-black dark:text-white">
-          L_q(y, ŷ_q) = max[ q(y - ŷ_q), (1 - q)(ŷ_q - y) ]
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-        <div class="p-3.5 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E]">
-          <span class="font-mono font-bold text-xs text-black dark:text-white">Cuantil P10</span>
-          <p class="text-[11px] text-ink-soft mt-1">Escenario adverso / soporte estocástico con 90% de probabilidad de ser superado.</p>
-        </div>
-        <div class="p-3.5 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E]">
-          <span class="font-mono font-bold text-xs text-black dark:text-white">Cuantil P50</span>
-          <p class="text-[11px] text-ink-soft mt-1">Mediana condicional. Trayectoria central esperada con menor error absoluto.</p>
-        </div>
-        <div class="p-3.5 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E]">
-          <span class="font-mono font-bold text-xs text-black dark:text-white">Cuantil P90</span>
-          <p class="text-[11px] text-ink-soft mt-1">Límite superior / resistencia estocástica. Delimita el 80% de la densidad empírica.</p>
-        </div>
-      </div>
+    <section class="space-y-3 border-t border-rule pt-8" data-reveal>
+      <h2 class="text-2xl font-bold tracking-tight text-ink">La lectura automática</h2>
+      <p class="text-ink-soft leading-relaxed" style="font-family: var(--pd-font-read); font-size:18px; line-height:1.55;">El texto que acompaña a cada proyección en la terminal se genera con reglas fijas a partir de las cifras calculadas: variación esperada, correlación con el indicador macro elegido y amplitud de la banda. No lo escribe una persona ni es una opinión.</p>
     </section>
-
-    <!-- SECTION 4: REGRESIÓN FACTORIAL OLS Y CORRELACIÓN DE PEARSON -->
-    <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5" data-reveal>
-      <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">Sensibilidad Factorial OLS & Correlación de Pearson</h2>
-
-      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
-        Para descomponer las fuerzas exógenas que mueven a cada activo, resolvemos un sistema lineal de mínimos cuadrados ordinarios frente a los factores macroeconómicos fundamentales (Cobre COMEX, Oro y Tipo de Cambio USD/PEN):
-      </p>
-
-      <!-- Math Box -->
-      <div class="p-4 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3">
-        <p class="text-[10px] font-bold uppercase tracking-wider text-ink-soft">Estimación Vectorial Matricial</p>
-        <div class="math-formula text-xs sm:text-sm text-black dark:text-white">
-          β̂ = (X^T · X)^(-1) · X^T · Y
-        </div>
-        <p class="text-[10px] font-bold uppercase tracking-wider text-ink-soft pt-2">Coeficiente de Correlación de Pearson</p>
-        <div class="math-formula text-xs sm:text-sm text-black dark:text-white">
-          ρ_{X,Y} = Cov(X, Y) / ( σ_X · σ_Y )
-        </div>
-      </div>
-
-      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
-        Esto permite a los comités de tesorería y analistas de renta variable comprender de forma instantánea si el movimiento proyectado de una acción minera (como Buenaventura o Southern Copper) responde a fundamentos del precio físico del metal o a variaciones en la prima por riesgo soberano.
-      </p>
+    <section class="space-y-3 border-t border-rule pt-8" data-reveal>
+      <h2 class="text-2xl font-bold tracking-tight text-ink">Lo que el modelo no promete</h2>
+      <p class="text-ink-soft leading-relaxed" style="font-family: var(--pd-font-read); font-size:18px; line-height:1.55;">Las proyecciones son una herramienta de análisis, no una recomendación de inversión. El modelo aprende del pasado: no anticipa shocks políticos, desastres ni cambios regulatorios, y la historia de una serie no garantiza lo que hará. Úsalas como un rango razonable, no como una cifra exacta.</p>
     </section>
-
-    <!-- SECTION 5: PROTOCOLO DE VALIDACIÓN WALK-FORWARD -->
-    <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5" data-reveal>
-      <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">Validación Temporal sin Fuga de Información</h2>
-
-      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
-        Todo modelo econométrico es auditado mediante <strong>Walk-Forward Cross-Validation</strong>: entrenamos estrictamente sobre ventanas deslizantes pasadas y evaluamos la precisión en horizontes ciegos hacia adelante. Queda estrictamente excluida cualquier fuga de datos de series futuras (*lookahead bias*).
-      </p>
+    <section class="space-y-3 border-t border-rule pt-8" data-reveal>
+      <h2 class="text-2xl font-bold tracking-tight text-ink">Lo que estamos probando</h2>
+      <p class="text-ink-soft leading-relaxed" style="font-family: var(--pd-font-read); font-size:18px; line-height:1.55;">Estamos evaluando modelos fundacionales de series de tiempo, como TimesFM de Google. Solo lo usaremos si mejora al modelo actual en pruebas con datos que el modelo no ha visto, y lo indicaremos en cada proyección.</p>
     </section>
-
-    <!-- Bottom Action CTA -->
-    <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <p class="text-sm text-[#6e6e73] dark:text-[#8E8E93]">Ponlo a prueba con datos reales.</p>
-      <a href="/explorer" class="px-6 py-2.5 rounded-full bg-black dark:bg-white text-white dark:text-black text-xs font-semibold hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] transition">
-        Abrir la terminal &rarr;
-      </a>
-    </div>
-
   </main>
 
   <!-- Shared Institutional Footer -->
