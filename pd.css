@@ -101,9 +101,9 @@ h1 {
 
 .font-mono, .mono, code, pre, #companySearch, #macroOverlay, #customHorizonInput,
 .math-formula, .tnum {
-  font-family: var(--pd-font-mono);
+  font-family: var(--pd-font-mono) !important;
   font-feature-settings: "tnum" 1, "cv01" 0;
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums !important;
 }
 
 .eyebrow, .band-label, .micro-label {
@@ -122,7 +122,7 @@ html.dark .eyebrow, html.dark .band-label, html.dark .micro-label {
 /* ---------- Highlighter (subrayado grueso de marcador) ---------- */
 .pd-highlight,
 mark {
-  background: linear-gradient(180deg, transparent 60%, var(--pd-mark) 60%);
+  background: linear-gradient(transparent 68%, var(--pd-mark) 68%, var(--pd-mark) 92%, transparent 92%);
   color: inherit;
   padding: 0 2px;
   display: inline;
@@ -143,7 +143,7 @@ mark {
 }
 
 /* ---------- Lectura editorial (Source Serif 4) ---------- */
-html.pd-marketing main p:not(.mono):not(.tnum):not(.micro-label):not(.eyebrow):not(.pd-kicker):not(.pd-plan-price):not(.pd-stat):not(.pd-tag):not(.pd-faq p):not(.pd-form p):not(.pd-plan p),
+html.pd-marketing main p:not(.mono):not(.tnum):not(.micro-label):not(.eyebrow):not(.pd-kicker):not(.pd-plan-price):not(.pd-stat):not(.pd-tag):not(.pd-faq p):not(.pd-form p):not(.pd-plan p):not(.pd-fineprint),
 .pd-reading p, .pd-prose p {
   font-family: var(--pd-font-read) !important;
   font-size: 18px !important;
@@ -174,7 +174,9 @@ main p a:hover, .pd-reading a:hover, .pd-prose a:hover, .pd-legal-sec a:hover {
 .bg-brand { background-color: var(--pd-brand) !important; }
 .bg-mark { background-color: var(--pd-mark) !important; }
 .border-rule { border-color: var(--pd-rule) !important; }
+.border-ink { border-color: var(--pd-ink) !important; }
 .border-pd { border-color: var(--pd-border) !important; }
+.divide-rule > :not([hidden]) ~ :not([hidden]) { border-color: var(--pd-rule) !important; }
 
 /* ---------- CTA Final (amarillo plano, tinta encima) ---------- */
 .pd-accent-block {
@@ -346,12 +348,12 @@ html.dark .terminal-surface {
 
 /* Table styles */
 thead {
-  background-color: var(--pd-surface);
-  border-bottom: 1px solid var(--pd-border);
+  background-color: transparent;
 }
 
 tbody tr {
-  border-bottom: 1px solid var(--pd-rule);
+  border-top: 1px solid var(--pd-rule);
+  border-bottom: none;
 }
 
 tbody tr:hover {
@@ -678,13 +680,13 @@ html.dark .pd-tabs button[aria-selected="true"] { background: var(--pd-surface);
 .pd-page-title { font-size: clamp(2.25rem, 5vw, 3.5rem); line-height: 1.05; margin: 0; font-weight: 700; color: var(--pd-ink); }
 .pd-page-lede { margin: 16px 0 0; max-width: 60ch; color: var(--pd-ink-soft); font-size: 1.125rem; font-family: var(--pd-font-read); }
 
-.pd-interval { display: inline-grid; grid-auto-flow: column; gap: 3px; padding: 3px; border-radius: 4px; background: var(--pd-surface); margin: 0 auto 32px; }
+.pd-interval { display: inline-grid; grid-auto-flow: column; gap: 3px; padding: 3px; border-radius: 4px; background: var(--pd-surface); margin: 0 0 32px; }
 .pd-interval[hidden] { display: none; }
 .pd-interval button { height: 36px; padding: 0 20px; border: 0; border-radius: 4px; background: transparent; cursor: pointer; font: 600 13px/1 var(--pd-font-ui); color: var(--pd-ink-soft); transition: all 0.15s ease; }
 .pd-interval button[aria-checked="true"] { background: var(--pd-card); color: var(--pd-ink); box-shadow: none; }
 html.dark .pd-interval button[aria-checked="true"] { background: var(--pd-surface); color: #FFFFFF; }
 
-.pd-plans { display: grid; gap: 32px 48px; grid-template-columns: 1fr; margin: 0 auto; max-width: 960px; }
+.pd-plans { display: grid; gap: 32px 48px; grid-template-columns: 1fr; margin: 0; max-width: 960px; }
 @media (min-width: 768px) { .pd-plans { grid-template-columns: 1fr 1fr; } }
 
 .pd-plan {
@@ -698,17 +700,18 @@ html.dark .pd-plan-featured { border-top-color: var(--pd-brand); }
 .pd-plan-head { display: flex; flex-direction: column; gap: 8px; }
 .pd-plan-name { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; margin: 0; color: var(--pd-ink); }
 .pd-plan-price { display: flex; align-items: baseline; gap: 8px; margin: 0; }
-.pd-plan-amount { font: 700 44px/1 var(--pd-font-mono); letter-spacing: -0.04em; color: var(--pd-ink); font-variant-numeric: tabular-nums; }
+.pd-plan-amount { font: 700 44px/1 var(--pd-font-mono); font-family: var(--pd-font-mono) !important; letter-spacing: -0.04em; color: var(--pd-ink); font-variant-numeric: tabular-nums !important; }
 .pd-plan-per { font: 500 13px/1 var(--pd-font-ui); color: var(--pd-ink-soft); }
 .pd-plan-desc { margin: 0; color: var(--pd-ink-soft); font-size: 14px; line-height: 1.5; }
 .pd-plan .pd-perks { margin: 12px 0 24px; flex-grow: 1; }
 .pd-plan-cta { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
 .pd-plan-cta .pd-form-status:empty { display: none; }
 
-.pd-fineprint { margin: 24px 0 0; font: 500 12px/1.4 var(--pd-font-ui); color: var(--pd-ink-soft); text-align: center; }
+.pd-fineprint { margin: 24px 0 0; font: 500 12px/1.4 var(--pd-font-ui); color: var(--pd-ink-soft); text-align: left; }
 
 /* ---------- FAQ & Panels ---------- */
-.pd-faq { padding-top: 56px; padding-bottom: 64px; max-width: 820px; margin: 0 auto; }
+.pd-section-title { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 24px; color: var(--pd-ink); }
+.pd-faq { padding-top: 56px; padding-bottom: 64px; }
 .pd-faq details { border-top: 1px solid var(--pd-rule); }
 .pd-faq details:last-child { border-bottom: 1px solid var(--pd-rule); }
 

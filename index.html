@@ -172,7 +172,7 @@
   <!-- Identidad PerData (DESIGN.md) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/pd.css">
   <!-- SEO & Social Open Graph -->
   <meta property="og:title" content="PerData — Datos macroeconómicos y proyecciones cuantitativas" />
@@ -270,21 +270,21 @@
         </div>
 
         <!-- Columna derecha: Tabla resumen de especificaciones (5 col en escritorio) -->
-        <div class="lg:col-span-5 border border-rule bg-card rounded p-5 sm:p-6">
-          <dl class="divide-y divide-rule">
-            <div class="flex items-baseline justify-between py-3 first:pt-0">
+        <div class="lg:col-span-5">
+          <dl class="border-t border-ink">
+            <div class="flex items-baseline justify-between py-3">
               <dt class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Activos</dt>
               <dd class="font-mono tnum text-sm font-semibold text-ink">124</dd>
             </div>
-            <div class="flex items-baseline justify-between py-3">
+            <div class="flex items-baseline justify-between py-3 border-t border-rule">
               <dt class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Historia</dt>
               <dd class="font-mono tnum text-sm font-semibold text-ink">10 años</dd>
             </div>
-            <div class="flex items-baseline justify-between py-3">
+            <div class="flex items-baseline justify-between py-3 border-t border-rule">
               <dt class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Horizontes</dt>
               <dd class="font-mono tnum text-sm font-semibold text-ink">1–36 meses</dd>
             </div>
-            <div class="flex items-baseline justify-between py-3 last:pb-0">
+            <div class="flex items-baseline justify-between py-3 border-t border-rule">
               <dt class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Salida</dt>
               <dd class="font-mono tnum text-sm font-semibold text-ink">.xlsx</dd>
             </div>
@@ -300,19 +300,19 @@
         <a href="/explorer" class="text-xs font-medium text-ink-soft hover:text-ink hover:underline">Ver catálogo completo (124 activos) &rarr;</a>
       </div>
 
-      <div class="overflow-x-auto border border-rule rounded bg-card">
-        <table class="w-full text-left border-collapse text-sm">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-sm border-t border-ink">
           <thead>
-            <tr class="border-b border-rule bg-surface text-ink-soft text-xs">
+            <tr class="border-b border-rule text-ink-soft text-xs">
               <th scope="col" class="py-3 px-4 font-semibold">Ticker</th>
               <th scope="col" class="py-3 px-4 font-semibold">Nombre</th>
               <th scope="col" class="py-3 px-4 font-semibold text-right">Último</th>
               <th scope="col" class="py-3 px-4 font-semibold text-right">Var. 1M</th>
-              <th scope="col" class="py-3 px-4 font-semibold text-right">P50 1M</th>
+              <th scope="col" class="py-3 px-4 font-semibold text-right">P50&nbsp;1M</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-rule">
-            <tr class="hover:bg-surface transition-colors">
+          <tbody>
+            <tr class="border-t border-rule hover:bg-surface transition-colors">
               <td class="py-3.5 px-4 font-mono tnum font-semibold">
                 <a href="/explorer?symbol=HG%3DF" class="text-ink hover:text-brand underline">HG=F</a>
               </td>
@@ -321,7 +321,7 @@
               <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="HG=F">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="HG=F">—</td>
             </tr>
-            <tr class="hover:bg-surface transition-colors">
+            <tr class="border-t border-rule hover:bg-surface transition-colors">
               <td class="py-3.5 px-4 font-mono tnum font-semibold">
                 <a href="/explorer?symbol=BVN" class="text-ink hover:text-brand underline">BVN</a>
               </td>
@@ -330,7 +330,7 @@
               <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="BVN">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="BVN">—</td>
             </tr>
-            <tr class="hover:bg-surface transition-colors">
+            <tr class="border-t border-rule hover:bg-surface transition-colors">
               <td class="py-3.5 px-4 font-mono tnum font-semibold">
                 <a href="/explorer?symbol=SCCO" class="text-ink hover:text-brand underline">SCCO</a>
               </td>
@@ -339,7 +339,7 @@
               <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="SCCO">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="SCCO">—</td>
             </tr>
-            <tr class="hover:bg-surface transition-colors">
+            <tr class="border-t border-rule hover:bg-surface transition-colors">
               <td class="py-3.5 px-4 font-mono tnum font-semibold">
                 <a href="/explorer?symbol=PEN%3DX" class="text-ink hover:text-brand underline">PEN=X</a>
               </td>
@@ -396,36 +396,36 @@
       <!-- 4 párrafos cortos en serif -->
       <div class="max-w-3xl space-y-5 text-ink">
         <p>
-          Recopilamos series históricas oficiales y cotizaciones de mercado de fuentes públicas y bursátiles primarias. Cada serie se limpia de días inhábiles y se ajusta a intervalos mensuales continuos para garantizar que el modelo entrene y evalúe observaciones homogéneas sin vacíos artificiales.
+          Reunimos datos oficiales del BCRP, la bolsa local y mercados internacionales. Ordenamos cada serie mes a mes y limpiamos días sin operaciones para trabajar con datos homogéneos.
         </p>
         <p>
-          Para proyectar aplicamos la arquitectura TimesFM 2.5 de Google sobre cada serie temporal mensual. El motor descompone la trayectoria en momentum local amortiguado y reversión empírica hacia el valor de ancla de largo plazo, generando simulaciones estocásticas de escenarios futuros según la volatilidad histórica de los residuos.
+          Calculamos las proyecciones con TimesFM 2.5, un modelo de Google para series de tiempo. El sistema analiza la tendencia reciente y el comportamiento histórico de cada activo.
         </p>
         <p>
-          Los resultados se entregan en conos probabilísticos definidos por cuantiles: P50 representa la proyección central esperada, mientras que entre el cuantil P10 y el cuantil P90 se concentra el 80% de las trayectorias simuladas. Este intervalo ilustra la incertidumbre estructural del mercado en lugar de fijar una cifra puntual rígida.
+          Mostramos el resultado como un abanico de posibilidades. P50 es el valor central esperado. La banda entre P10 y P90 reúne el 80% de los escenarios estimados para mostrar la variación del mercado.
         </p>
         <p>
-          Nuestras proyecciones son herramientas cuantitativas de referencia para investigación y análisis técnico; no constituyen asesoramiento financiero ni recomendaciones de inversión. El modelo no puede prever shocks geopolíticos imprevistos ni cambios regulatorios extraordinarios, y el desempeño pasado de una serie no garantiza resultados futuros.
+          Estas cifras son una herramienta de estudio y no constituyen asesoría financiera. El modelo no puede anticipar crisis repentinas ni cambios de leyes, y el rendimiento pasado no asegura resultados futuros.
         </p>
       </div>
 
       <!-- Lista de fuentes con filete entre filas -->
       <div class="space-y-3 pt-4">
         <h3 class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Fuentes de datos</h3>
-        <dl class="divide-y divide-rule border-t border-b border-rule">
-          <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+        <dl class="border-t border-b border-rule">
+          <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-t border-rule first:border-t-0">
             <dt class="font-semibold text-sm text-ink">BCRP</dt>
             <dd class="text-xs sm:text-sm text-ink-soft">Tipo de cambio, tasas de referencia e indicadores macroeconómicos oficiales.</dd>
           </div>
-          <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+          <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-t border-rule first:border-t-0">
             <dt class="font-semibold text-sm text-ink">BVL</dt>
             <dd class="text-xs sm:text-sm text-ink-soft">Acciones peruanas y cotizaciones bursátiles locales.</dd>
           </div>
-          <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+          <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-t border-rule first:border-t-0">
             <dt class="font-semibold text-sm text-ink">COMEX / NYMEX (vía Yahoo Finance)</dt>
             <dd class="text-xs sm:text-sm text-ink-soft">Cobre, oro, plata y materias primas globales.</dd>
           </div>
-          <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+          <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-t border-rule first:border-t-0">
             <dt class="font-semibold text-sm text-ink">FRED</dt>
             <dd class="text-xs sm:text-sm text-ink-soft">Tasas y datos económicos de EE. UU. (rendimiento del Tesoro a 10 años).</dd>
           </div>
