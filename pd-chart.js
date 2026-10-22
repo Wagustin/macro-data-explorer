@@ -73,12 +73,14 @@
       const macroEnabled = macro && macro.enabled && macro.series && macro.series.length;
       const macroSeries = macroEnabled ? macro.series.map(m => ({ d: m.date.substring(0, 7), v: Number(m.close) })) : [];
 
-      // Rango automático según horizonte (ya aplicado por el caller, pero protegemos aquí)
+      // Rango automático según horizonte (6 meses para H=1, 1 año para H=3-6 y 3 años para H=12)
       if (history && history.length > 0 && options.horizonMonths) {
-        const H = options.horizonMonths;
-        let years = H <= 6 ? 1 : H === 12 ? 3 : 5;
-        const cutoff = new Date();
-        cutoff.setFullYear(cutoff.getFullYear() - years);
+        const H = Number(options.horizonMonths);
+        const months = H <= 1 ? 6 : H <= 6 ? 12 : 36;
+        const lastItem = histOnly[histOnly.length - 1];
+        const lastDate = lastItem ? new Date(lastItem.d + "-01T00:00:00") : new Date();
+        const cutoff = new Date(lastDate);
+        cutoff.setMonth(cutoff.getMonth() - months);
         // histOnly.d es "YYYY-MM"; se filtra sobre él (no sobre history, que trae "YYYY-MM-DD")
         const filtered = histOnly.filter(h => new Date(h.d + "-01T00:00:00") >= cutoff);
         if (filtered.length > 1) {
@@ -117,21 +119,6 @@
           p75[idx] = Number(item.p75 !== undefined ? item.p75 : item.p90);
           p90[idx] = Number(item.p90);
         });
-      }
-
-      // Macro en base 100 sobre el mismo rango
-      let macroPadded = new Array(labels.length).fill(null);
-      if (macroEnabled) {
-        const macroMap = new Map();
-        macroSeries.forEach(m => macroMap.set(m.d, m.v));
-        labels.forEach((l, i) => {
-          if (macroMap.has(l)) macroPadded[i] = macroMap.get(l);
-        });
-        // Rebase a 100 usando el primer valor común
-        const firstMacro = macroPadded.find(v => v !== null);
-        if (firstMacro) {
-          macroPadded = macroPadded.map(v => v !== null ? (v / firstMacro) * 100 : null);
-        }
       }
 
       const ctx = container.querySelector("canvas");
@@ -230,24 +217,16 @@
         });
       }
 
-      if (macroEnabled) {
-        datasets.push({
-          label: macro.name || "Macro",
-          data: macroPadded,
-          borderColor: tokens.inkSoft,
-          backgroundColor: "transparent",
-          borderWidth: 1.5,
-          borderDash: [4, 4],
-          pointRadius: 0,
-          fill: false,
-          tension: 0,
-          order: 0,
-        });
-      }
-
-      const yMin = Math.min(...seriesData.filter(v => v !== null));
-      const yMax = Math.max(...seriesData.filter(v => v !== null));
+      const allVals = [
+        ...seriesData.filter(v => v !== null && !isNaN(v)),
+        ...p10.filter(v => v !== null && !isNaN(v)),
+        ...p90.filter(v => v !== null && !isNaN(v)),
+      ];
+      const yMin = allVals.length ? Math.min(...allVals) : 0;
+      const yMax = allVals.length ? Math.max(...allVals) : 100;
       const yPad = (yMax - yMin) * 0.12 || Math.max(Math.abs(yMax), 1) * 0.12;
+
+      const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
 
       const chart = new Chart(cctx, {
         type: "line",
@@ -255,6 +234,14 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          layout: {
+            padding: {
+              right: isMobile ? 64 : 96,
+              top: 8,
+              left: 0,
+              bottom: 4,
+            },
+          },
           animation: {
             duration: reduceMotion() ? 0 : 300,
             easing: "easeInOutQuad",
@@ -293,24 +280,23 @@
           {
             id: "pd-chart-core",
             beforeDraw(ch) {
-              // Zona futura + línea Hoy + etiquetas directas
+              // Zona futura + línea Hoy exactamente en el último cierre real (punto negro)
               if (!forecastSeries.length) return;
               const { ctx: c, chartArea: area, scales } = ch;
               if (!area) return;
               const xScale = scales.x;
-              const fcStart = nHist;
-              const x0 = xScale.getPixelForValue(fcStart - 0.5);
+              const hoyIdx = nHist - 1;
+              const hoyX = xScale.getPixelForValue(hoyIdx);
               const x1 = xScale.getPixelForValue(labels.length - 1);
-              if (!isFinite(x0) || !isFinite(x1)) return;
+              if (!isFinite(hoyX) || !isFinite(x1)) return;
 
-              // Fondo zona futura
+              // Fondo zona futura: inicia exactamente en el último cierre real
               c.save();
               c.fillStyle = tokens.surface;
-              c.fillRect(x0, area.top, x1 - x0, area.bottom - area.top);
+              c.fillRect(hoyX, area.top, x1 - hoyX, area.bottom - area.top);
               c.restore();
 
-              // Línea Hoy
-              const hoyX = xScale.getPixelForValue(fcStart - 0.5);
+              // Línea Hoy: exactamente en el punto negro (último cierre real)
               c.save();
               c.strokeStyle = tokens.inkSoft;
               c.lineWidth = 1;
@@ -321,50 +307,81 @@
               c.stroke();
               c.setLineDash([]);
               c.fillStyle = tokens.ink;
-              c.font = `700 10px ${"IBM Plex Mono, ui-monospace, monospace"}`;
-              c.fillText("Hoy", hoyX + 5, area.top + 16);
+              c.font = `700 10px IBM Plex Mono, ui-monospace, monospace`;
+              c.fillText("Hoy", hoyX + 4, area.top + 14);
               c.restore();
+            },
+            afterDatasetsDraw(ch) {
+              // Etiquetas directas P90, P50, P10 al final del abanico con separación mínima
+              if (!forecastSeries.length) return;
+              const { ctx: c, chartArea: area, scales } = ch;
+              if (!area) return;
+              const xScale = scales.x;
+              const mob = typeof window !== "undefined" && window.innerWidth < 640;
 
-              // Etiquetas directas P90, P50, P10 al final del abanico
               const lastIdx = labels.length - 1;
               const xLast = xScale.getPixelForValue(lastIdx);
+              const xText = xLast + (mob ? 6 : 8);
+
               const yP90 = ch.scales.y.getPixelForValue(p90[lastIdx] ?? p50[lastIdx]);
               const yP50 = ch.scales.y.getPixelForValue(p50[lastIdx]);
               const yP10 = ch.scales.y.getPixelForValue(p10[lastIdx] ?? p50[lastIdx]);
 
+              let pos90 = yP90;
+              let pos50 = yP50;
+              let pos10 = yP10;
+
+              // Separación mínima de 14px; si chocan, se desplazan
+              const minDist = 14;
+              if (pos50 - pos90 < minDist) {
+                const mid = (pos90 + pos50) / 2;
+                pos90 = mid - minDist / 2;
+                pos50 = mid + minDist / 2;
+              }
+              if (pos10 - pos50 < minDist) {
+                pos10 = pos50 + minDist;
+              }
+              if (pos50 - pos90 < minDist) {
+                pos90 = pos50 - minDist;
+              }
+
+              // Mantener dentro del área visible vertical
+              if (pos90 < area.top + 8) {
+                const shift = (area.top + 8) - pos90;
+                pos90 += shift;
+                pos50 += shift;
+                pos10 += shift;
+              }
+              if (pos10 > area.bottom - 4) {
+                const shift = pos10 - (area.bottom - 4);
+                pos10 -= shift;
+                pos50 = Math.min(pos50, pos10 - minDist);
+                pos90 = Math.min(pos90, pos50 - minDist);
+              }
+
               c.save();
               c.textAlign = "left";
-              c.font = `700 11px ${"IBM Plex Mono, ui-monospace, monospace"}`;
+              c.textBaseline = "middle";
+              c.font = mob
+                ? "700 9.5px IBM Plex Mono, ui-monospace, monospace"
+                : "700 11px IBM Plex Mono, ui-monospace, monospace";
+
               if (p90[lastIdx] != null && !isNaN(p90[lastIdx])) {
                 c.fillStyle = tokens.accent;
-                c.fillText("P90 " + sym + Number(p90[lastIdx]).toFixed(2), xLast + 8, yP90 - 6);
+                c.fillText("P90 " + sym + Number(p90[lastIdx]).toFixed(2), xText, pos90);
               }
               if (p50[lastIdx] != null && !isNaN(p50[lastIdx])) {
                 c.fillStyle = tokens.ink;
-                c.fillText("P50 " + sym + Number(p50[lastIdx]).toFixed(2), xLast + 8, yP50 + 4);
+                c.fillText("P50 " + sym + Number(p50[lastIdx]).toFixed(2), xText, pos50);
               }
               if (p10[lastIdx] != null && !isNaN(p10[lastIdx])) {
                 c.fillStyle = tokens.inkSoft;
-                c.fillText("P10 " + sym + Number(p10[lastIdx]).toFixed(2), xLast + 8, yP10 + 14);
+                c.fillText("P10 " + sym + Number(p10[lastIdx]).toFixed(2), xText, pos10);
               }
               c.restore();
             },
-            afterDraw(ch) {
-              // Rótulo del modelo sobre el gráfico
-              const modelName = forecast && forecast.model ? forecast.model : "engine-v3";
-              const runAt = forecast && forecast.runAt ? new Date(forecast.runAt).toLocaleString("es-ES", { day: "2-digit", month: "short", year: "2-digit", hour: "2-digit", minute: "2-digit" }) : "";
-              const txt = modelName === "timesfm-2.5"
-                ? `TimesFM 2.5 · calculado ${runAt}`
-                : `PerData Engine v3${runAt ? " · " + runAt : ""}`;
-              if (!txt) return;
-              const { ctx: c, chartArea: area } = ch;
-              if (!area) return;
-              c.save();
-              c.fillStyle = tokens.inkSoft;
-              c.font = `600 11px ${"Libre Franklin, -apple-system, sans-serif"}`;
-              c.textAlign = "right";
-              c.fillText(txt, area.right - 8, area.top - 8);
-              c.restore();
+            afterDraw() {
+              // Rótulo del modelo se gestiona en HTML fuera del canvas
             },
           },
           // Crosshair vertical + ficha
@@ -450,6 +467,34 @@
         return cells.join("\t");
       });
       a11y.textContent = "Gráfico PerData: fecha, precio real y P50 proyectado por mes.\n" + rows.join("\n");
+
+      // Rótulo del modelo FUERA del canvas, en HTML encima del gráfico (11px mono en --pd-ink-soft)
+      let modelBadge = document.getElementById("chartModelBadge");
+      if (!modelBadge && container.parentElement) {
+        modelBadge = container.parentElement.querySelector("#chartModelBadge, .pd-chart-model-badge");
+      }
+      if (!modelBadge && container.parentNode) {
+        const header = document.createElement("div");
+        header.className = "flex justify-end items-center mb-1.5 pd-chart-model-header";
+        modelBadge = document.createElement("span");
+        modelBadge.id = "chartModelBadge";
+        modelBadge.className = "pd-chart-model-badge";
+        modelBadge.style.cssText = "font:11px 'IBM Plex Mono',ui-monospace,monospace;color:var(--pd-ink-soft);text-align:right;";
+        header.appendChild(modelBadge);
+        container.parentNode.insertBefore(header, container);
+      }
+      if (modelBadge) {
+        const modelName = forecast && forecast.model ? forecast.model : "engine-v3";
+        const runAt = forecast && forecast.runAt ? new Date(forecast.runAt).toLocaleString("es-ES", { day: "2-digit", month: "short", year: "2-digit", hour: "2-digit", minute: "2-digit" }) : "";
+        const txt = modelName === "timesfm-2.5"
+          ? `TimesFM 2.5 · calculado ${runAt}`
+          : `PerData Engine v3${runAt ? " · " + runAt : ""}`;
+        modelBadge.textContent = forecastSeries.length ? txt : "";
+        modelBadge.style.color = "var(--pd-ink-soft)";
+        modelBadge.style.fontFamily = "'IBM Plex Mono', ui-monospace, monospace";
+        modelBadge.style.fontSize = "11px";
+        modelBadge.style.textAlign = "right";
+      }
 
       const instance = {
         container,

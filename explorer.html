@@ -318,16 +318,6 @@
       -webkit-backdrop-filter: blur(12px);
     }
 
-    /* Metalmorphic specular buttons and segmented controls */
-    .range-btn.bg-black, .horizon-btn.bg-black {
-      background: linear-gradient(180deg, #242426 0%, #0A0A0C 100%) !important;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.2), inset 0 1px 0 0 rgba(255,255,255,0.18) !important;
-    }
-    html.dark .range-btn.bg-white, html.dark .horizon-btn.bg-white {
-      background: linear-gradient(180deg, #FFFFFF 0%, #E5E5EA 100%) !important;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.3), inset 0 1px 0 0 rgba(255,255,255,0.6) !important;
-    }
-
     /* Command bar input */
     #companySearch {
       font-family: "IBM Plex Mono", monospace !important;
@@ -365,6 +355,32 @@
       align-items: center !important;
       justify-content: center !important;
       white-space: nowrap;
+      color: var(--pd-ink-soft) !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      border: none !important;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .range-btn:not(.is-active):hover, .horizon-btn:not(.is-active):hover {
+      color: var(--pd-ink) !important;
+    }
+    /* Activo en modo claro: fondo --pd-brand (#002244) y texto blanco */
+    .range-btn.is-active, .horizon-btn.is-active,
+    .range-btn.bg-black, .horizon-btn.bg-black {
+      background: #002244 !important;
+      color: #FFFFFF !important;
+      font-weight: 700 !important;
+      box-shadow: none !important;
+    }
+    /* Activo en modo oscuro: fondo --pd-accent (#93B7F8) y texto #0A1422 */
+    html.dark .range-btn.is-active, html.dark .horizon-btn.is-active,
+    html.dark .range-btn.bg-black, html.dark .horizon-btn.bg-black,
+    html.dark .range-btn.bg-white, html.dark .horizon-btn.bg-white {
+      background: #93B7F8 !important;
+      color: #0A1422 !important;
+      font-weight: 700 !important;
+      box-shadow: none !important;
     }
 
     /* Combobox */
@@ -410,6 +426,8 @@
 
     /* Chips */
     .chip-btn {
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
       border-radius: 4px !important;
       font-size: 11px !important;
       font-weight: 500 !important;
@@ -417,6 +435,7 @@
       height: 26px !important;
       display: inline-flex !important;
       align-items: center !important;
+      justify-content: center !important;
     }
 
     /* Search dropdown items */
@@ -560,15 +579,15 @@
       </div>
 
       <!-- Chips row -->
-      <div class="mt-2.5 sm:mt-3.5 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap pb-1 sm:pb-0 sm:flex-wrap">
-        <span class="band-label mr-1">Atajos:</span>
-        <button class="chip-btn border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BVN">Buenaventura</button>
-        <button class="chip-btn border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="SCCO">Southern Copper</button>
-        <button class="chip-btn border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="VOLCABC1.LM">Volcan</button>
-        <button class="chip-btn border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="MINSURI1.LM">Minsur</button>
-        <button class="chip-btn border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BAP">Credicorp</button>
-        <button class="chip-btn border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="HG=F">Cobre</button>
-        <button class="chip-btn border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="PEN=X">USD/PEN</button>
+      <div class="mt-2.5 sm:mt-3.5 flex flex-nowrap items-center gap-2 overflow-x-auto whitespace-nowrap pb-1.5 pt-0.5 max-w-full">
+        <span class="band-label mr-1 shrink-0 whitespace-nowrap">Atajos:</span>
+        <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BVN">Buenaventura</button>
+        <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="SCCO">Southern Copper</button>
+        <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="VOLCABC1.LM">Volcan</button>
+        <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="MINSURI1.LM">Minsur</button>
+        <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BAP">Credicorp</button>
+        <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="HG=F">Cobre</button>
+        <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="PEN=X">USD/PEN</button>
       </div>
 
       <!-- Search Account Recommendation Banner (Intuitive Gating) -->
@@ -589,10 +608,10 @@
         <div class="flex items-center gap-2.5">
           <span class="band-label whitespace-nowrap">Rango</span>
           <div class="seg">
-            <button class="range-btn text-ink-soft hover:text-black dark:hover:text-white transition" data-range="1y">1A</button>
-            <button class="range-btn bg-black dark:bg-white text-white dark:text-black font-semibold transition" data-range="3y">3A</button>
-            <button class="range-btn text-ink-soft hover:text-black dark:hover:text-white transition" data-range="5y">5A</button>
-            <button class="range-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer transition" data-range="10y">10A</button>
+            <button class="range-btn" data-range="1y">1A</button>
+            <button class="range-btn is-active font-semibold" data-range="3y">3A</button>
+            <button class="range-btn" data-range="5y">5A</button>
+            <button class="range-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer" data-range="10y">10A</button>
           </div>
         </div>
 
@@ -616,11 +635,11 @@
         <div class="flex items-center gap-2.5 flex-wrap">
           <span class="band-label whitespace-nowrap">Horizonte</span>
           <div class="seg">
-            <button class="horizon-btn bg-black dark:bg-white text-white dark:text-black font-semibold transition" data-horizon="1">1M</button>
-            <button class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer transition" data-horizon="3">3M</button>
-            <button class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer transition" data-horizon="6">6M</button>
-            <button class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer transition" data-horizon="12">12M</button>
-            <button id="btnCustomHorizon" class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer transition flex items-center gap-1" title="Definir cantidad libre de meses">
+            <button class="horizon-btn is-active font-semibold" data-horizon="1">1M</button>
+            <button class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer" data-horizon="3">3M</button>
+            <button class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer" data-horizon="6">6M</button>
+            <button class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer" data-horizon="12">12M</button>
+            <button id="btnCustomHorizon" class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer flex items-center gap-1" title="Definir cantidad libre de meses">
               <span id="customHorizonBtnLabel">Custom</span>
             </button>
           </div>
@@ -662,6 +681,9 @@
     <!-- Chart Band: Visible Above the Fold on Mobile (300px) -->
     <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-4">
       <!-- Main Chart Container (con rótulo del modelo y canvas) -->
+      <div id="chartModelHeader" class="flex justify-end items-center mb-1.5 min-h-[16px]">
+        <span id="chartModelBadge" class="font-mono tnum text-[11px]" style="color: var(--pd-ink-soft); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px;"></span>
+      </div>
       <div id="chartContainer" class="relative w-full h-[300px] sm:h-[360px] md:h-[400px]">
         <canvas id="mainChart"></canvas>
       </div>
@@ -1118,6 +1140,18 @@ const state = {
           applyTheme(e.target.checked);
         });
       }
+
+      if (typeof MutationObserver !== "undefined") {
+        let lastDark = document.documentElement.classList.contains("dark");
+        const themeObserver = new MutationObserver(() => {
+          const curDark = document.documentElement.classList.contains("dark");
+          if (curDark !== lastDark) {
+            lastDark = curDark;
+            renderChart();
+          }
+        });
+        themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+      }
     }
 
     function applyTheme(isDark) {
@@ -1448,6 +1482,28 @@ const state = {
       window.addEventListener("mde-auth-changed", updateAuthLocks);
     }
 
+    function setActiveRangeBtn(btn) {
+      document.querySelectorAll(".range-btn").forEach(b => {
+        b.classList.remove("is-active", "bg-black", "bg-white", "text-white", "text-black", "font-bold");
+        b.classList.add("text-ink-soft");
+      });
+      if (btn) {
+        btn.classList.remove("text-ink-soft");
+        btn.classList.add("is-active", "font-bold");
+      }
+    }
+
+    function setActiveHorizonBtn(btn) {
+      document.querySelectorAll(".horizon-btn").forEach(b => {
+        b.classList.remove("is-active", "bg-black", "bg-white", "text-white", "text-black", "font-bold");
+        b.classList.add("text-ink-soft");
+      });
+      if (btn) {
+        btn.classList.remove("text-ink-soft");
+        btn.classList.add("is-active", "font-bold");
+      }
+    }
+
     // Setup Range Buttons (1A, 3A, 5A, 10A)
     function setupRangeButtons() {
       document.querySelectorAll(".range-btn").forEach(btn => {
@@ -1455,10 +1511,7 @@ const state = {
           const rng = btn.getAttribute("data-range");
           if (window.MDE_Auth && !window.MDE_Auth.gate("range", rng)) return;
           state.userSelectedRange = true;
-          document.querySelectorAll(".range-btn").forEach(b => {
-            b.className = "range-btn px-3 py-1 rounded-lg text-ink-soft hover:text-black dark:hover:text-white transition";
-          });
-          btn.className = "range-btn px-3 py-1 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition";
+          setActiveRangeBtn(btn);
           if (window.MDE_Auth) window.MDE_Auth.updateGatedElements();
           state.range = rng;
           loadAllData(state.primarySymbol, rng, state.macroSymbol, state.horizon);
@@ -1482,21 +1535,16 @@ const state = {
           if (customContainer) customContainer.classList.add("hidden");
           if (customLabel) customLabel.textContent = "Custom";
 
-          document.querySelectorAll(".horizon-btn").forEach(b => {
-            b.className = "horizon-btn px-3 py-1.5 rounded-lg text-ink-soft hover:text-black dark:hover:text-white transition";
-          });
-          btn.className = "horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition";
+          setActiveHorizonBtn(btn);
           if (window.MDE_Auth) window.MDE_Auth.updateGatedElements();
           state.horizon = h;
           if (!state.userSelectedRange) {
-            const autoRng = h <= 6 ? "1y" : h === 12 ? "3y" : "5y";
+            const autoRng = h <= 1 ? "1y" : h <= 6 ? "1y" : h === 12 ? "3y" : "5y";
             state.range = autoRng;
             document.querySelectorAll(".range-btn").forEach(b => {
               const r = b.getAttribute("data-range");
               if (r === autoRng) {
-                b.className = "range-btn px-3 py-1 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition";
-              } else {
-                b.className = "range-btn px-3 py-1 rounded-lg text-ink-soft hover:text-black dark:hover:text-white transition";
+                setActiveRangeBtn(b);
               }
             });
           }
@@ -1531,12 +1579,7 @@ const state = {
         customInput.value = val;
         if (window.MDE_Auth && !window.MDE_Auth.gate("horizon", val)) return;
 
-        document.querySelectorAll(".horizon-btn").forEach(b => {
-          b.className = "horizon-btn px-3 py-1.5 rounded-lg text-ink-soft hover:text-black dark:hover:text-white transition";
-        });
-        if (btnCustom) {
-          btnCustom.className = "horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition flex items-center gap-1";
-        }
+        setActiveHorizonBtn(btnCustom);
         if (window.MDE_Auth) window.MDE_Auth.updateGatedElements();
         if (customLabel) {
           customLabel.textContent = `Custom (${val}M)`;
@@ -1928,13 +1971,7 @@ const state = {
           model: f.model || "engine-v3",
           runAt: f.runAt || null,
         } : null,
-        macro: macroEnabled ? {
-          enabled: true,
-          name: m.name || "Indicador Macro",
-          symbol: m.symbol,
-          series: m.series.map(it => ({ date: it.date.substring(0, 7), close: Number(it.close) })),
-          currency: m.currency || "USD",
-        } : { enabled: false },
+        macro: { enabled: false }, // Cruce macro solo en el panel de abajo
         options: {
           currency: p.currency || "USD",
           horizonMonths: state.horizon || 1,
