@@ -5,15 +5,6 @@
  */
 
 (function (window) {
-  const FALLBACK_NEWS = [
-    { id: "1", impact: "BCRP", color: "blue", title: "BCRP mantiene tasa de referencia en 5.00% ratificando anclaje de inflación en rango meta", source: "Reuters", time: "hace 8m", symbol: "PEN=X" },
-    { id: "2", impact: "ALTO IMPACTO", color: "red", title: "Cobre COMEX repunta +2.4% superando los $4.48/lb por restricciones en fundiciones globales", source: "Bloomberg", time: "hace 15m", symbol: "HG=F" },
-    { id: "3", impact: "MINERÍA", color: "amber", title: "Minas Buenaventura (BVN) eleva guía de producción de plata y oro tras optimización en Yumpag", source: "Gestión", time: "hace 24m", symbol: "BVN" },
-    { id: "4", impact: "DIVISAS", color: "emerald", title: "Tipo de cambio USD/PEN consolida soporte en S/ 3.74 con flujo sostenido de ventas mineras", source: "SEMANAeconómica", time: "hace 35m", symbol: "PEN=X" },
-    { id: "5", impact: "FED", color: "purple", title: "Rendimiento del bono del Tesoro EE.UU. a 10 años modera a 4.22% tras reporte de nóminas", source: "Financial Times", time: "hace 42m", symbol: "^TNX" },
-    { id: "6", impact: "COBRE", color: "amber", title: "Southern Copper (SCCO) proyecta incremento del 8% en despacho de cátodos refinados", source: "Mining.com", time: "hace 55m", symbol: "SCCO" },
-    { id: "7", impact: "MACRO", color: "blue", title: "Producción minera peruana aporta 1.8 puntos porcentuales al crecimiento desestacionalizado del PBI", source: "INEI / BCRP", time: "hace 1h", symbol: "PERU_GDP" }
-  ];
 
   function escapeHTML(str) {
     if (str === null || str === undefined) return "";
@@ -31,12 +22,9 @@
     return String(str === null || str === undefined ? "" : str).replace(/[\\'\n\r\u2028\u2029]/g, m => "\\" + m);
   }
 
-  function getBadgeClasses(color) {
-    // United Airlines Banking badges: Sky Blue & Slate
-    if (color === "blue" || color === "BCRP") return "bg-[#005DAA]/20 text-[#38BDF8] border-[#005DAA]/40";
-    if (color === "red" || color === "ALTO IMPACTO") return "bg-rose-500/20 text-rose-300 border-rose-500/40";
-    if (color === "amber" || color === "COBRE" || color === "MINERÍA") return "bg-amber-500/20 text-amber-300 border-amber-500/40";
-    return "bg-white/10 text-slate-200 border-white/15";
+  function getBadgeClasses() {
+    // Una sola etiqueta sobria para todas las categorías.
+    return "text-[#6CACE4] border-[#6CACE4]/40";
   }
 
   function renderNewsItems(items) {
@@ -50,7 +38,7 @@
       return `
         <div class="teleprompter-item inline-flex items-center gap-2 px-4 py-1 hover:text-white transition group shrink-0 text-xs">
           <a href="${escapeHTML(targetUrl)}" class="inline-flex items-center gap-2 hover:opacity-80 transition">
-            <span class="px-1.5 py-0.5 text-[9px] font-bold tracking-wider uppercase rounded border font-mono ${badgeStyle}">
+            <span class="px-1.5 py-0.5 text-[9px] font-medium tracking-wider uppercase border font-mono ${badgeStyle}">
               ${escapeHTML(item.impact || "MACRO")}
             </span>
             <span class="text-[#D1D1D6] group-hover:text-white font-medium">
@@ -61,7 +49,7 @@
             <span>${escapeHTML(item.source)}</span>
             <span class="text-[9px] text-[#636366]">· ${escapeHTML(item.time)} ↗</span>
           </a>
-          <span class="text-zinc-700 mx-2">|</span>
+          <span class="text-white/20 mx-2">/</span>
         </div>
       `;
     }).join("");
@@ -103,10 +91,8 @@
       document.head.appendChild(style);
     }
 
-    document.body.classList.add("has-teleprompter");
-
-    // Fetch news from /api/news with fallback
-    let newsItems = FALLBACK_NEWS;
+    // Sin titulares reales no se muestra la barra: nunca se inventan noticias.
+    let newsItems = [];
     try {
       const res = await fetch("/api/news");
       if (res.ok) {
@@ -116,24 +102,21 @@
         }
       }
     } catch (e) {
-      console.warn("Teleprompter using fallback news feed:", e);
+      console.warn("Teleprompter: /api/news no disponible", e);
     }
+    if (!newsItems.length) return;
+    document.body.classList.add("has-teleprompter");
 
     const itemsHtml = renderNewsItems(newsItems);
     // Duplicate items to ensure smooth infinite loop
     const fullTrackHtml = itemsHtml + itemsHtml;
 
     const barHtml = `
-      <aside id="mdeTeleprompter" class="fixed left-0 right-0 z-40 h-9 sm:h-10 top-0 sm:top-auto sm:bottom-0 bg-[#001733]/95 dark:bg-[#070F1B]/95 text-white backdrop-blur-md border-b sm:border-b-0 sm:border-t border-[#005DAA]/30 flex items-center overflow-hidden select-none shadow-md" aria-label="Titulares Macroeconómicos en Vivo">
+      <aside id="mdeTeleprompter" class="fixed left-0 right-0 z-40 h-9 sm:h-10 top-0 sm:top-auto sm:bottom-0 bg-[#002244] text-white border-b sm:border-b-0 sm:border-t border-white/10 flex items-center overflow-hidden select-none" aria-label="Titulares Macroeconómicos en Vivo">
         
         <!-- Live Indicator Badge -->
-        <div class="h-full flex items-center gap-1.5 px-3 bg-[#001733] dark:bg-[#070F1B] z-10 border-r border-[#005DAA]/30 shrink-0 text-[10px] font-bold tracking-wider font-mono">
-          <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </span>
-          <span class="text-white hidden sm:inline">MACRO FEED</span>
-          <span class="text-emerald-400 text-[9px] uppercase sm:hidden">VIVO</span>
+        <div class="h-full flex items-center gap-1.5 px-3 bg-[#005DAA] z-10 shrink-0 text-[10px] font-medium tracking-wider font-mono">
+          <span class="text-white">TITULARES</span>
         </div>
 
         <!-- Marquee Viewport -->
@@ -144,7 +127,7 @@
         </div>
 
         <!-- Right Quick Action / Audio/Pause helper -->
-        <div class="h-full hidden md:flex items-center px-3 bg-[#001733] dark:bg-[#070F1B] z-10 border-l border-[#005DAA]/30 shrink-0 text-[10px] text-slate-400 font-mono">
+        <div class="h-full hidden md:flex items-center px-3 bg-[#002244] z-10 border-l border-white/10 shrink-0 text-[10px] text-slate-400 font-mono">
           <span>Pausa: Hover</span>
         </div>
       </aside>
