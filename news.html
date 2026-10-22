@@ -219,56 +219,59 @@
     </div>
   </header>
 
-  <div id="pdNewsTicker"></div>
-
   <!-- Main -->
   <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-8 w-full">
 
     <!-- Page Header -->
-    <section class="space-y-3">
-      <div class="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <p class="eyebrow">Feed actualizado automáticamente</p>
-          <h1 class="text-3xl sm:text-5xl font-semibold tracking-tight text-black dark:text-white mt-3">Noticias de mercados.</h1>
-          <p class="text-sm text-ink-soft mt-1 max-w-2xl leading-relaxed">
-            Titulares de BVL, BCRP, minería, commodities y tasas, actualizados cada 30 minutos. Cada nota enlaza a su medio original.
-          </p>
-        </div>
-        <div class="text-right">
-          <div id="newsUpdatedAt" class="mono tnum text-xs text-ink-soft">Actualizando…</div>
-          <button id="btnRefreshNews" class="mt-2 inline-flex items-center gap-2 text-xs font-semibold px-5 py-2.5 min-h-[40px] rounded-full border border-[#E5E5EA] dark:border-[#3A3A3C] hover:border-black dark:hover:border-white text-black dark:text-white transition">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 9a8 8 0 0114-3M20 15a8 8 0 01-14 3"/></svg>
-            <span id="btnRefreshLabel">Actualizar</span>
-          </button>
-        </div>
+    <section class="space-y-2">
+      <h1 class="text-3xl sm:text-5xl font-bold tracking-tight text-ink">Noticias de mercados</h1>
+      <p class="pd-page-lede text-base sm:text-lg text-ink-soft leading-relaxed mt-2 max-w-2xl" style="font-family: var(--pd-font-read);">
+        Titulares de BVL, BCRP, minería, commodities y tasas, actualizados cada 20 minutos. Cada nota enlaza a su medio original.
+      </p>
+      <div class="flex items-center gap-2 pt-1 text-xs mono tnum text-ink-soft flex-wrap">
+        <span id="newsUpdatedAt">Actualizando…</span>
+        <span>·</span>
+        <button id="btnRefreshNews" class="underline underline-offset-2 text-ink hover:text-ink-soft transition bg-transparent border-0 p-0 cursor-pointer font-inherit">
+          <span id="btnRefreshLabel">Actualizar</span>
+        </button>
       </div>
     </section>
 
-    <!-- Category Filter Chips -->
-    <section class="flex items-center gap-2 flex-wrap">
-      <span class="micro-label text-ink-soft mr-1">Categoría:</span>
-      <button class="cat-chip text-xs font-semibold px-3 py-2 min-h-[40px] rounded-md border border-black dark:border-white bg-black dark:bg-white text-white dark:text-black transition" data-cat="all">Todas</button>
-      <button class="cat-chip text-xs font-medium px-3 py-2 min-h-[40px] rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-cat="Política Monetaria">BCRP</button>
-      <button class="cat-chip text-xs font-medium px-3 py-2 min-h-[40px] rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-cat="Minería">Minería</button>
-      <button class="cat-chip text-xs font-medium px-3 py-2 min-h-[40px] rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-cat="Commodities">Commodities</button>
-      <button class="cat-chip text-xs font-medium px-3 py-2 min-h-[40px] rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-cat="Banca">Banca</button>
-      <button class="cat-chip text-xs font-medium px-3 py-2 min-h-[40px] rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-cat="Forex">Forex</button>
-      <button class="cat-chip text-xs font-medium px-3 py-2 min-h-[40px] rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-cat="Macroeconomía">Macro Perú</button>
+    <!-- Category Filter Links -->
+    <section class="w-full border-b border-rule pb-2 overflow-x-auto">
+      <div class="flex items-center gap-6 min-w-max">
+        <button class="cat-chip text-[14px] font-semibold text-ink border-b-2 border-ink pb-1 whitespace-nowrap transition cursor-pointer bg-transparent border-t-0 border-l-0 border-r-0 rounded-none" data-cat="all">Todas</button>
+        <button class="cat-chip text-[14px] font-medium text-ink-soft hover:text-ink pb-1 whitespace-nowrap transition cursor-pointer bg-transparent border-b-2 border-transparent border-t-0 border-l-0 border-r-0 rounded-none" data-cat="Política Monetaria">BCRP</button>
+        <button class="cat-chip text-[14px] font-medium text-ink-soft hover:text-ink pb-1 whitespace-nowrap transition cursor-pointer bg-transparent border-b-2 border-transparent border-t-0 border-l-0 border-r-0 rounded-none" data-cat="Minería">Minería</button>
+        <button class="cat-chip text-[14px] font-medium text-ink-soft hover:text-ink pb-1 whitespace-nowrap transition cursor-pointer bg-transparent border-b-2 border-transparent border-t-0 border-l-0 border-r-0 rounded-none" data-cat="Commodities">Commodities</button>
+        <button class="cat-chip text-[14px] font-medium text-ink-soft hover:text-ink pb-1 whitespace-nowrap transition cursor-pointer bg-transparent border-b-2 border-transparent border-t-0 border-l-0 border-r-0 rounded-none" data-cat="Banca">Banca</button>
+        <button class="cat-chip text-[14px] font-medium text-ink-soft hover:text-ink pb-1 whitespace-nowrap transition cursor-pointer bg-transparent border-b-2 border-transparent border-t-0 border-l-0 border-r-0 rounded-none" data-cat="Forex">Forex</button>
+        <button class="cat-chip text-[14px] font-medium text-ink-soft hover:text-ink pb-1 whitespace-nowrap transition cursor-pointer bg-transparent border-b-2 border-transparent border-t-0 border-l-0 border-r-0 rounded-none" data-cat="Macroeconomía">Macro Perú</button>
+      </div>
     </section>
 
     <!-- News List -->
-    <section id="newsList" class="space-y-3">
+    <section id="newsList" class="border-t border-rule">
       <!-- skeleton -->
-      <div class="animate-pulse space-y-3">
-        <div class="h-20 rounded-lg bg-[#F5F5F7] dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E]"></div>
-        <div class="h-20 rounded-lg bg-[#F5F5F7] dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E]"></div>
-        <div class="h-20 rounded-lg bg-[#F5F5F7] dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E]"></div>
+      <div class="animate-pulse divide-y divide-rule">
+        <div class="py-4 space-y-2">
+          <div class="h-4 bg-surface max-w-xl"></div>
+          <div class="h-3 bg-surface max-w-xs"></div>
+        </div>
+        <div class="py-4 space-y-2">
+          <div class="h-4 bg-surface max-w-lg"></div>
+          <div class="h-3 bg-surface max-w-xs"></div>
+        </div>
+        <div class="py-4 space-y-2">
+          <div class="h-4 bg-surface max-w-2xl"></div>
+          <div class="h-3 bg-surface max-w-xs"></div>
+        </div>
       </div>
     </section>
 
     <!-- Attribution / Copyright Notice -->
-    <section class="p-4 rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-xs text-ink-soft leading-relaxed space-y-2">
-      <span class="micro-label text-[#1D1D1F] dark:text-[#F5F5F7]">Atribución de Fuentes & Derechos</span>
+    <section class="border-t border-rule pt-6 text-xs text-ink-soft leading-relaxed space-y-2">
+      <div class="micro-label text-ink">Atribución de Fuentes & Derechos</div>
       <p>
         Los titulares mostrados provienen del agregador público Google News RSS y son propiedad de sus respectivos editores
         (Gestión, Reuters, Bloomberg, FXEmpire, MarketScreener, Minería Justa, SEMANAeconómica, BCRP, INEI, entre otros).
@@ -355,13 +358,8 @@
       });
     }
 
-    const badgeClasses = {
-      red: "bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#E5E5EA] border-[#E5E5EA] dark:border-[#3A3A3C]",
-      blue: "bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#E5E5EA] border-[#E5E5EA] dark:border-[#3A3A3C]",
-      amber: "bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#E5E5EA] border-[#E5E5EA] dark:border-[#3A3A3C]",
-      emerald: "bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#E5E5EA] border-[#E5E5EA] dark:border-[#3A3A3C]",
-      purple: "bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#E5E5EA] border-[#E5E5EA] dark:border-[#3A3A3C]"
-    };
+    const CHIP_ACTIVE = "cat-chip text-[14px] font-semibold text-ink border-b-2 border-ink pb-1 whitespace-nowrap transition cursor-pointer bg-transparent border-t-0 border-l-0 border-r-0 rounded-none";
+    const CHIP_INACTIVE = "cat-chip text-[14px] font-medium text-ink-soft hover:text-ink pb-1 whitespace-nowrap transition cursor-pointer bg-transparent border-b-2 border-transparent border-t-0 border-l-0 border-r-0 rounded-none";
 
     let allNews = [];
     let activeCategory = "all";
@@ -375,37 +373,37 @@
       const filtered = activeCategory === "all" ? allNews : allNews.filter(n => n.category === activeCategory);
 
       if (!filtered.length) {
-        list.innerHTML = '<div class="p-6 text-center text-sm text-ink-soft rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E]">No hay titulares en esta categoría ahora. Prueba otra o actualiza el feed.</div>';
+        list.innerHTML = '<div class="py-12 text-center text-sm text-ink-soft">No hay titulares en esta categoría ahora. Prueba otra o actualiza el feed.</div>';
         return;
       }
 
       list.innerHTML = filtered.map(n => {
-        const bc = badgeClasses[n.impactColor] || badgeClasses.blue;
         const sym = /^[A-Za-z0-9=._\-^]{1,20}$/.test(n.symbol || "") ? n.symbol : "";
         const targetUrl = sym ? `/explorer?symbol=${encodeURIComponent(sym)}` : "/explorer";
         const sourceUrl = /^https?:\/\//.test(n.url || "") ? n.url : "https://news.google.com";
+        const cat = escapeHTML(n.category || n.impact || "Mercados");
         return `
-          <article class="hover-lift p-4 rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#1C1C1E] hover:border-black dark:hover:border-white transition flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
-            <div class="flex items-center gap-2 sm:w-40 shrink-0">
-              <span class="px-1.5 py-0.5 text-[10px] font-bold tracking-wider uppercase rounded border font-mono ${bc}">${escapeHTML(n.impact || "MACRO")}</span>
-              <span class="micro-label text-ink-soft hidden sm:inline">${escapeHTML(n.category || "")}</span>
-            </div>
-            <div class="flex-grow min-w-0">
-              <a href="${sourceUrl}" target="_blank" rel="noopener noreferrer" class="block text-sm font-semibold text-black dark:text-white leading-snug hover:underline">
+          <article class="py-3.5 border-b border-rule flex items-baseline justify-between gap-4">
+            <div class="min-w-0 flex-grow">
+              <a href="${sourceUrl}" target="_blank" rel="noopener noreferrer" class="block font-semibold text-[17px] text-ink leading-snug no-underline hover:underline">
                 ${escapeHTML(n.title)}
               </a>
-              <div class="mt-1 flex items-center gap-2 text-[11px] text-ink-soft">
-                <span class="font-medium">Fuente: <span class="text-[#1D1D1F] dark:text-[#E5E5EA]">${escapeHTML(n.source)}</span></span>
+              <div class="mt-1 flex flex-wrap items-center gap-2 text-xs text-ink-soft">
+                <span>${cat}</span>
                 <span>·</span>
-                <span class="tnum">${escapeHTML(n.time)}</span>
+                <span>${escapeHTML(n.source)}</span>
+                <span>·</span>
+                <span class="mono tnum">${escapeHTML(n.time)}</span>
+                ${sym ? `<span class="sm:hidden">·</span><a href="${targetUrl}" class="mono tnum text-xs text-ink-soft hover:text-ink sm:hidden">${escapeHTML(sym)}</a>` : ""}
               </div>
             </div>
-            <div class="flex items-center gap-3 shrink-0">
-              ${sym ? `<a href="${targetUrl}" class="mono tnum text-[11px] font-bold px-2 py-1 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#2C2C2E] text-black dark:text-white hover:border-black dark:hover:border-white transition">${escapeHTML(sym)}</a>` : ""}
-              <a href="${sourceUrl}" target="_blank" rel="noopener noreferrer" class="text-[11px] font-semibold text-black dark:text-white hover:underline whitespace-nowrap">
-                Leer ↗
-              </a>
-            </div>
+            ${sym ? `
+              <div class="hidden sm:block shrink-0 text-right">
+                <a href="${targetUrl}" class="mono tnum text-xs text-ink-soft hover:text-ink hover:underline no-underline">
+                  ${escapeHTML(sym)}
+                </a>
+              </div>
+            ` : ""}
           </article>
         `;
       }).join("");
@@ -428,7 +426,7 @@
         }
       } catch (e) {
         document.getElementById("newsList").innerHTML =
-          '<div class="p-6 text-center text-sm text-[#6e6e73] dark:text-[#8E8E93] rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E]">No se pudo actualizar el feed. Inténtalo de nuevo en unos segundos.</div>';
+          '<div class="py-12 text-center text-sm text-ink-soft">No se pudo actualizar el feed. Inténtalo de nuevo en unos segundos.</div>';
       } finally {
         label.textContent = "Actualizar";
         btn.disabled = false;
@@ -441,9 +439,9 @@
       chip.addEventListener("click", () => {
         activeCategory = chip.getAttribute("data-cat");
         document.querySelectorAll(".cat-chip").forEach(c => {
-          c.className = "cat-chip text-xs font-medium px-3 py-2 min-h-[40px] rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition";
+          c.className = CHIP_INACTIVE;
         });
-        chip.className = "cat-chip text-xs font-semibold px-3 py-2 min-h-[40px] rounded-md border border-black dark:border-white bg-black dark:bg-white text-white dark:text-black transition";
+        chip.className = CHIP_ACTIVE;
         renderNews();
       });
     });
@@ -453,7 +451,5 @@
 
   <!-- Auth Modal & Feature Gating Script -->
   <script src="/auth.js"></script>
-  <!-- Real-Time Teleprompter Feed Ticker -->
-  <script src="/teleprompter.js"></script>
 </body>
 </html>
