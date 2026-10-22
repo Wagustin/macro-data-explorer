@@ -167,31 +167,30 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/pd.css">
 </head>
-<body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
+<body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 
-  <!-- Header (idéntico al resto del sitio) -->
-  <header class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF]/90 dark:bg-[#0D0D0E]/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
+  <!-- Shared Institutional Header -->
+  <header class="border-b border-rule bg-card sticky top-0 z-30 transition-colors">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
-
+      <!-- Brand & Navigation -->
       <div class="flex items-center space-x-6">
-        <a href="/" class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm border border-black/10 dark:border-white/10">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <div class="w-7 h-7 rounded pd-mark flex items-center justify-center font-bold text-xs">
             P
           </div>
-          <span class="font-semibold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
+          <span class="font-bold tracking-tight text-base leading-none text-ink">PerData</span>
         </a>
 
-        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-[#86868B]">
-          <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
-          <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
-          <a href="/noticias" class="text-black dark:text-white font-semibold transition border-b-2 border-black dark:border-white pb-0.5">Noticias</a>
-          <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
-          <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
-          <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
-          <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos</a>
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
+          <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a>
+          <a href="/noticias" class="text-ink font-semibold border-b border-ink pb-0.5 no-underline">Noticias</a>
+          <a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a>
+          <a href="/guia" class="hover:text-ink transition no-underline">Guía</a>
+          <a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
         </nav>
       </div>
 
+      <!-- Right Actions -->
       <div class="flex items-center space-x-2 sm:space-x-3">
         <div id="navbarAuthContainer"></div>
 
@@ -202,26 +201,21 @@
           </div>
         </label>
 
-        <a href="/explorer" class="hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-5 py-2 rounded-full transition">
-          <span>Abrir Terminal</span>
-        </a>
-        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] text-[#86868B] hover:text-black dark:hover:text-white transition" aria-label="Abrir menú" aria-expanded="false">
+        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menú" aria-expanded="false">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
       </div>
-      <!-- Mobile Nav Dropdown -->
-      <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 right-0 border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#1C1C1E] shadow-lg">
-        <nav class="flex flex-col py-2 text-xs font-medium text-[#86868B]">
-          <a href="/" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Inicio</a>
-          <a href="/explorer" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Terminal</a>
-          <a href="/noticias" class="px-4 py-2.5 text-black dark:text-white font-semibold bg-[#F5F5F7] dark:bg-[#0D0D0E]">Noticias</a>
-          <a href="/metodologia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Metodología</a>
-          <a href="/guia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Guía de Uso</a>
-          <a href="/precios" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Precios</a>
-          <a href="/terms" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Términos</a>
-        </nav>
-      </div>
+    </div>
 
+    <!-- Mobile Drawer -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors">
+      <nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft">
+        <a href="/explorer" class="hover:text-ink py-1 transition no-underline">Terminal</a>
+        <a href="/noticias" class="text-ink font-semibold py-1 no-underline">Noticias</a>
+        <a href="/metodologia" class="hover:text-ink py-1 transition no-underline">Metodología</a>
+        <a href="/guia" class="hover:text-ink py-1 transition no-underline">Guía</a>
+        <a href="/precios" class="hover:text-ink py-1 transition no-underline">Precios</a>
+      </nav>
     </div>
   </header>
 
@@ -234,12 +228,12 @@
         <div>
           <p class="eyebrow">Feed actualizado automáticamente</p>
           <h1 class="text-3xl sm:text-5xl font-semibold tracking-tight text-black dark:text-white mt-3">Noticias de mercados.</h1>
-          <p class="text-sm text-[#86868B] dark:text-[#8E8E93] mt-1 max-w-2xl leading-relaxed">
+          <p class="text-sm text-ink-soft mt-1 max-w-2xl leading-relaxed">
             Titulares de BVL, BCRP, minería, commodities y tasas, actualizados cada 30 minutos. Cada nota enlaza a su medio original.
           </p>
         </div>
         <div class="text-right">
-          <div id="newsUpdatedAt" class="mono tnum text-xs text-[#86868B]">Actualizando…</div>
+          <div id="newsUpdatedAt" class="mono tnum text-xs text-ink-soft">Actualizando…</div>
           <button id="btnRefreshNews" class="mt-2 inline-flex items-center gap-2 text-xs font-semibold px-5 py-2.5 min-h-[40px] rounded-full border border-[#E5E5EA] dark:border-[#3A3A3C] hover:border-black dark:hover:border-white text-black dark:text-white transition">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 9a8 8 0 0114-3M20 15a8 8 0 01-14 3"/></svg>
             <span id="btnRefreshLabel">Actualizar</span>
@@ -250,7 +244,7 @@
 
     <!-- Category Filter Chips -->
     <section class="flex items-center gap-2 flex-wrap">
-      <span class="micro-label text-[#86868B] mr-1">Categoría:</span>
+      <span class="micro-label text-ink-soft mr-1">Categoría:</span>
       <button class="cat-chip text-xs font-semibold px-3 py-2 min-h-[40px] rounded-md border border-black dark:border-white bg-black dark:bg-white text-white dark:text-black transition" data-cat="all">Todas</button>
       <button class="cat-chip text-xs font-medium px-3 py-2 min-h-[40px] rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-cat="Política Monetaria">BCRP</button>
       <button class="cat-chip text-xs font-medium px-3 py-2 min-h-[40px] rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-cat="Minería">Minería</button>
@@ -271,7 +265,7 @@
     </section>
 
     <!-- Attribution / Copyright Notice -->
-    <section class="p-4 rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-xs text-[#86868B] dark:text-[#8E8E93] leading-relaxed space-y-2">
+    <section class="p-4 rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E] text-xs text-ink-soft leading-relaxed space-y-2">
       <span class="micro-label text-[#1D1D1F] dark:text-[#F5F5F7]">Atribución de Fuentes & Derechos</span>
       <p>
         Los titulares mostrados provienen del agregador público Google News RSS y son propiedad de sus respectivos editores
@@ -283,22 +277,30 @@
 
   </main>
 
-  <!-- Footer -->
-  <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#0D0D0E] py-8 text-xs text-[#86868B] transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center space-x-2">
-        <div class="w-5 h-5 rounded bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-bold text-[10px]">P</div>
-        <span class="font-semibold text-black dark:text-white">PerData</span>
-        <span>·</span>
-        <span>© 2026 Todos los derechos reservados.</span>
+  <!-- Shared Institutional Footer -->
+  <footer class="border-t border-rule bg-card py-10 px-4 sm:px-6 transition-colors">
+    <div class="max-w-6xl mx-auto flex flex-col gap-6 text-left">
+      <!-- Fila 1: Logo y enlaces cortos -->
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-rule">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <div class="w-7 h-7 rounded pd-mark flex items-center justify-center font-bold text-xs">
+            P
+          </div>
+          <span class="font-bold tracking-tight text-base leading-none text-ink">PerData</span>
+        </a>
+        <nav class="flex flex-wrap items-center gap-6 text-xs text-ink-soft" aria-label="Navegación secundaria">
+          <a href="/terms" class="hover:text-ink transition no-underline">Términos</a>
+          <a href="/privacidad" class="hover:text-ink transition no-underline">Privacidad</a>
+          <a href="mailto:soporte@perdata.site" class="hover:text-ink transition no-underline">Contacto</a>
+        </nav>
       </div>
-      <div class="flex items-center space-x-5">
-        <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
-        <a href="/noticias" class="hover:text-black dark:hover:text-white transition">Noticias</a>
-        <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
-        <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos y Modelos</a>
-        <a href="/privacidad" class="hover:text-black dark:hover:text-white transition">Privacidad</a>
-        <a href="mailto:soporte@perdata.site" class="hover:text-black dark:hover:text-white transition">Contacto</a>
+
+      <!-- Fila 2: Copyright y aviso legal corto -->
+      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 text-[11px] text-ink-soft leading-relaxed">
+        <span class="font-medium text-ink shrink-0">© 2026 PerData</span>
+        <p class="max-w-2xl m-0 text-ink-soft">
+          Información financiera y cuantitativa con fines estrictamente informativos y de investigación. No constituye asesoramiento de inversión ni oferta pública de valores.
+        </p>
       </div>
     </div>
   </footer>
@@ -371,7 +373,7 @@
       const filtered = activeCategory === "all" ? allNews : allNews.filter(n => n.category === activeCategory);
 
       if (!filtered.length) {
-        list.innerHTML = '<div class="p-6 text-center text-sm text-[#86868B] rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E]">No hay titulares en esta categoría ahora. Prueba otra o actualiza el feed.</div>';
+        list.innerHTML = '<div class="p-6 text-center text-sm text-ink-soft rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E]">No hay titulares en esta categoría ahora. Prueba otra o actualiza el feed.</div>';
         return;
       }
 
@@ -384,13 +386,13 @@
           <article class="hover-lift p-4 rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#1C1C1E] hover:border-black dark:hover:border-white transition flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
             <div class="flex items-center gap-2 sm:w-40 shrink-0">
               <span class="px-1.5 py-0.5 text-[10px] font-bold tracking-wider uppercase rounded border font-mono ${bc}">${escapeHTML(n.impact || "MACRO")}</span>
-              <span class="micro-label text-[#86868B] hidden sm:inline">${escapeHTML(n.category || "")}</span>
+              <span class="micro-label text-ink-soft hidden sm:inline">${escapeHTML(n.category || "")}</span>
             </div>
             <div class="flex-grow min-w-0">
               <a href="${sourceUrl}" target="_blank" rel="noopener noreferrer" class="block text-sm font-semibold text-black dark:text-white leading-snug hover:underline">
                 ${escapeHTML(n.title)}
               </a>
-              <div class="mt-1 flex items-center gap-2 text-[11px] text-[#86868B]">
+              <div class="mt-1 flex items-center gap-2 text-[11px] text-ink-soft">
                 <span class="font-medium">Fuente: <span class="text-[#1D1D1F] dark:text-[#E5E5EA]">${escapeHTML(n.source)}</span></span>
                 <span>·</span>
                 <span class="tnum">${escapeHTML(n.time)}</span>

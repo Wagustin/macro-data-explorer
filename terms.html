@@ -167,29 +167,26 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/pd.css">
 </head>
-<body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
+<body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 
-  <!-- Header -->
-  <header class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF]/90 dark:bg-[#0D0D0E]/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
+  <!-- Shared Institutional Header -->
+  <header class="border-b border-rule bg-card sticky top-0 z-30 transition-colors">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
-      
       <!-- Brand & Navigation -->
       <div class="flex items-center space-x-6">
-        <a href="/" class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm border border-black/10 dark:border-white/10">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <div class="w-7 h-7 rounded pd-mark flex items-center justify-center font-bold text-xs">
             P
           </div>
-          <span class="font-semibold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
+          <span class="font-bold tracking-tight text-base leading-none text-ink">PerData</span>
         </a>
 
-        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-[#86868B]">
-          <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
-          <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
-          <a href="/noticias" class="hover:text-black dark:hover:text-white transition">Noticias</a>
-          <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
-          <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
-          <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
-          <a href="/terms" class="text-black dark:text-white font-semibold transition border-b-2 border-black dark:border-white pb-0.5">Términos</a>
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
+          <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a>
+          <a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a>
+          <a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a>
+          <a href="/guia" class="hover:text-ink transition no-underline">Guía</a>
+          <a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
         </nav>
       </div>
 
@@ -204,26 +201,21 @@
           </div>
         </label>
 
-        <a href="/explorer" class="hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-5 py-2 rounded-full transition">
-          <span>Abrir Terminal</span>
-        </a>
-        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] text-[#86868B] hover:text-black dark:hover:text-white transition" aria-label="Abrir menú" aria-expanded="false">
+        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menú" aria-expanded="false">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
       </div>
-      <!-- Mobile Nav Dropdown -->
-      <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 right-0 border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#1C1C1E] shadow-lg">
-        <nav class="flex flex-col py-2 text-xs font-medium text-[#86868B]">
-          <a href="/" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Inicio</a>
-          <a href="/explorer" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Terminal</a>
-          <a href="/noticias" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Noticias</a>
-          <a href="/metodologia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Metodología</a>
-          <a href="/guia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Guía de Uso</a>
-          <a href="/precios" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Precios</a>
-          <a href="/terms" class="px-4 py-2.5 text-black dark:text-white font-semibold bg-[#F5F5F7] dark:bg-[#0D0D0E]">Términos</a>
-        </nav>
-      </div>
+    </div>
 
+    <!-- Mobile Drawer -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors">
+      <nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft">
+        <a href="/explorer" class="hover:text-ink py-1 transition no-underline">Terminal</a>
+        <a href="/noticias" class="hover:text-ink py-1 transition no-underline">Noticias</a>
+        <a href="/metodologia" class="hover:text-ink py-1 transition no-underline">Metodología</a>
+        <a href="/guia" class="hover:text-ink py-1 transition no-underline">Guía</a>
+        <a href="/precios" class="hover:text-ink py-1 transition no-underline">Precios</a>
+      </nav>
     </div>
   </header>
 
@@ -237,7 +229,7 @@
         Términos y condiciones.
       </h1>
       
-      <p class="text-sm sm:text-base text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-sm sm:text-base text-ink-soft leading-relaxed">
         Declaración regulatoria institucional, límites de responsabilidad financiera y desglose técnico de los modelos fundacionales computacionales que sustentan la plataforma.
       </p>
     </section>
@@ -248,11 +240,11 @@
         1. Naturaleza del Servicio y Ausencia de Asesoría Financiera
       </h2>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         PerData es una plataforma tecnológica de investigación econométrica, procesamiento estadístico y visualización de datos de mercado. <strong>Bajo ninguna circunstancia la información contenida, calculada o proyectada en esta terminal constituye asesoría financiera, recomendación de inversión, oferta pública de valores o gestión fiduciaria de fondos</strong> en el marco de las leyes de la República del Perú (Superintendencia del Mercado de Valores - SMV) ni de la Comisión de Bolsa y Valores de los Estados Unidos (SEC).
       </p>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         Todo usuario o entidad es exclusivamente responsable de sus propias decisiones patrimoniales, debiendo contrastar los resultados con sus propios comités de riesgo y asesores financieros colegiados.
       </p>
     </section>
@@ -263,7 +255,7 @@
         2. Advertencia de Volatilidad y Riesgo de Capitales
       </h2>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         Las cotizaciones de instrumentos de renta variable de la Bolsa de Valores de Lima, los contratos de futuros de materias primas (Cobre COMEX, Oro, Plata, Petróleo) y los tipos de cambio soberanos (USD/PEN) están sujetos a volatilidades extremas, shocks geopolíticos, cambios regulatorios, factores climáticos y eventos de cola (*black swans*). El rendimiento histórico y las proyecciones probabilísticas no garantizan resultados futuros.
       </p>
     </section>
@@ -271,13 +263,13 @@
     <!-- SECTION 3: TRANSPARENCIA TÉCNICA Y MODELOS ALGORÍTMICOS -->
     <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-5">
       <div>
-        <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-[#86868B]">Divulgación de Arquitectura</span>
+        <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-ink-soft">Divulgación de Arquitectura</span>
         <h2 class="text-lg sm:text-xl font-bold text-black dark:text-white mt-1">
           3. Especificación Técnica de Modelos Fundacionales & Sistemas de Inferencia
         </h2>
       </div>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         En cumplimiento con los más rigurosos estándares de transparencia algorítmica institucional, documentamos formalmente los dos sistemas computacionales empleados en el backend analítico:
       </p>
 
@@ -287,7 +279,7 @@
           <h3 class="font-bold text-black dark:text-white text-sm">A. Google Research TimesFM 2.5 (Time-Series Foundation Model)</h3>
           <span class="text-[10px] font-mono px-2 py-0.5 rounded border border-[#E5E5EA] dark:border-[#3A3A3C] text-[#1D1D1F] dark:text-[#E5E5EA] font-semibold">Forecasting Cuantílico</span>
         </div>
-        <p class="text-xs text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+        <p class="text-xs text-ink-soft leading-relaxed">
           TimesFM 2.5 es un modelo de difusión autorregresivo basado en transformadores decodificadores (*decoder-only architecture*), entrenado previamente sobre miles de millones de puntos de datos de series temporales del mundo real. En nuestra plataforma, se ejecuta de manera estricta para generar los conos estocásticos de incertidumbre multi-cuantil (P10, P50, P90) sobre ventanas de datos desestacionalizadas mediante normalización RevIN. No existe manipulación manual sobre los vectores de salida calculados.
         </p>
       </div>
@@ -298,7 +290,7 @@
           <h3 class="font-bold text-black dark:text-white text-sm">B. TypeSafe AI Jev (Semantic Quantitative Interpretation)</h3>
           <span class="text-[10px] font-mono px-2 py-0.5 rounded border border-[#E5E5EA] dark:border-[#3A3A3C] text-[#1D1D1F] dark:text-[#E5E5EA] font-semibold">Inferencia Semántica</span>
         </div>
-        <p class="text-xs text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+        <p class="text-xs text-ink-soft leading-relaxed">
           TypeSafe AI Jev es un motor semántico determinista de inferencia estructurada. Su función se limita a consumir los vectores estadísticos de salida (coeficientes $\beta$, régimen de tendencia, dispersión entre cuantiles P10-P90 y variaciones relativas) y generar un reporte sintético y formal con estrictas restricciones de tipo (*type safety*), eliminando cualquier tipo de alucinación libre y garantizando concordancia con las curvas graficadas.
         </p>
       </div>
@@ -310,7 +302,7 @@
         4. Cuentas de Usuario, Privacidad de Datos y Propiedad Intelectual
       </h2>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         El registro con correo electrónico se utiliza exclusivamente para gestionar tu sesión y el plan contratado. Las contraseñas se almacenan cifradas con un algoritmo de derivación de claves (PBKDF2) y nunca en texto plano. Los datos personales nunca se comercializan a terceros. El diseño visual, la formulación matemática y el código propietario de la terminal están protegidos por leyes internacionales de propiedad intelectual.
       </p>
     </section>
@@ -321,11 +313,11 @@
         5. Fuentes de Información, Noticias y Derechos de Terceros
       </h2>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         Las series históricas de cotizaciones provienen de agregadores públicos de mercado (Yahoo Finance) y, cuando corresponde, de interfaces abiertas del Banco Central de Reserva del Perú (BCRP) y del Banco Mundial. PerData no reivindica propiedad sobre dichos datos primarios y reconoce a sus respectivos proveedores como fuentes originarias.
       </p>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         <strong>Titulares de noticias.</strong> El feed de noticias y el teleprompter muestran exclusivamente el titular, el nombre del medio y un enlace directo al artículo original, obtenidos mediante el canal público RSS de Google News. El contenido completo de cada nota pertenece a su editor respectivo (Gestión, Reuters, Bloomberg, FXEmpire, MarketScreener, SEMANAeconómica, Mining.com, entre otros). PerData no reproduce, almacena ni redistribuye el cuerpo de los artículos; el acceso al texto íntegro ocurre siempre en el sitio oficial del medio mediante el enlace provisto. Cualquier medio que desee la exclusión de su titular de este agregador puede solicitarlo a través de los canales de contacto de la plataforma y será retirado en un plazo máximo de 48 horas.
       </p>
     </section>
@@ -336,7 +328,7 @@
         6. Disponibilidad, Latencia de Datos y Límites del Servicio
       </h2>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         Las cotizaciones pueden presentar desfases de 15 minutos o más respecto al mercado en vivo; el sello temporal de cada serie indica la última observación oficial registrada. El pipeline de noticias se actualiza de manera automatizada cada 30 minutos. La plataforma se provee "tal cual" y "según disponibilidad", sin garantía de continuidad ininterrumpida: eventos de mantenimiento, fallas de proveedores externos o contingencias de infraestructura serverless pueden degradar temporalmente la experiencia sin que ello genere responsabilidad contractual para PerData.
       </p>
     </section>
@@ -347,10 +339,10 @@
         7. Plan Pro, Suscripciones y Pagos
       </h2>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         El plan Pro es una suscripción de renovación automática al precio y con la periodicidad indicados en la página de <a href="/precios" class="underline">Precios</a> al momento de contratar. Los pagos se procesan a través de Stripe; PerData no almacena los datos de tu tarjeta. Recibirás un recibo por correo electrónico en cada cobro.
       </p>
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         Puedes cancelar en cualquier momento desde <a href="/cuenta" class="underline">Mi cuenta</a>. La cancelación detiene las renovaciones futuras y conservas el acceso Pro hasta el final del periodo ya pagado. Los periodos ya cobrados no son reembolsables, ni total ni parcialmente, salvo en los casos en que la legislación aplicable disponga lo contrario. Si un cobro no puede completarse, la cuenta vuelve al plan Gratis hasta que se regularice el método de pago. Cualquier cambio de precio se comunicará con anticipación y solo aplicará a partir del siguiente periodo de facturación.
       </p>
     </section>
@@ -361,7 +353,7 @@
         8. Modificaciones del Acuerdo y Legislación Aplicable
       </h2>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         PerData se reserva el derecho de actualizar estos términos para reflejar evoluciones metodológicas de los modelos, nuevas fuentes de datos o exigencias normativas de la SMV peruana. El uso continuado de la plataforma tras la publicación de cambios constituye aceptación de los mismos. Este acuerdo se rige por las leyes de la República del Perú; cualquier controversia se someterá a los juzgados competentes de Lima.
       </p>
     </section>
@@ -376,38 +368,30 @@
 
   </main>
 
-  <!-- Footer -->
-    <!-- Centered Institutional Banking Footer -->
-  <footer class="border-t border-[#E2E8F0] dark:border-[#1E3553] bg-white dark:bg-[#070F1B] py-12 px-4 transition-colors">
-    <div class="pd-footer-container">
-      <div class="flex flex-col items-center justify-center space-y-3 text-center">
-        <a href="/" class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-lg bg-[#002244] dark:bg-[#005DAA] flex items-center justify-center text-white font-black text-sm border border-white/20">
+  <!-- Shared Institutional Footer -->
+  <footer class="border-t border-rule bg-card py-10 px-4 sm:px-6 transition-colors">
+    <div class="max-w-6xl mx-auto flex flex-col gap-6 text-left">
+      <!-- Fila 1: Logo y enlaces cortos -->
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-rule">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <div class="w-7 h-7 rounded pd-mark flex items-center justify-center font-bold text-xs">
             P
           </div>
-          <span class="font-bold text-black dark:text-white tracking-tight text-lg">PerData</span>
+          <span class="font-bold tracking-tight text-base leading-none text-ink">PerData</span>
         </a>
-        <p class="text-xs text-[#64748B] dark:text-[#94A3B8] max-w-md">
-          Inteligencia cuantitativa, modelado macroeconómico y proyecciones probabilísticas multi-cuantil para el mercado de capitales peruano y global.
-        </p>
+        <nav class="flex flex-wrap items-center gap-6 text-xs text-ink-soft" aria-label="Navegación secundaria">
+          <a href="/terms" class="hover:text-ink transition no-underline">Términos</a>
+          <a href="/privacidad" class="hover:text-ink transition no-underline">Privacidad</a>
+          <a href="mailto:soporte@perdata.site" class="hover:text-ink transition no-underline">Contacto</a>
+        </nav>
       </div>
 
-      <nav class="pd-footer-nav" aria-label="Navegación pie de página">
-        <a href="/">Inicio</a>
-        <a href="/explorer">Terminal</a>
-        <a href="/noticias">Noticias & Teleprompter</a>
-        <a href="/metodologia">Metodología & TimesFM</a>
-        <a href="/guia">Guía de Uso</a>
-        <a href="/precios">Planes & Facturación</a>
-        <a href="/cuenta">Mi Cuenta</a>
-        <a href="/terms">Términos de Servicio</a>
-        <a href="/privacidad">Política de Privacidad</a>
-        <a href="mailto:soporte@perdata.site">Contacto</a>
-      </nav>
-
-      <div class="pd-footer-disclaimer">
-        <span>© 2026 PerData Technologies. Todos los derechos reservados.</span><br/>
-        <span>Aviso Legal: La información y proyecciones cuantitativas proporcionadas por PerData se basan en métodos econométricos y aprendizaje automático con fines estrictamente informativos y de investigación financiera. No constituyen asesoramiento de inversión ni oferta pública de valores.</span>
+      <!-- Fila 2: Copyright y aviso legal corto -->
+      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 text-[11px] text-ink-soft leading-relaxed">
+        <span class="font-medium text-ink shrink-0">© 2026 PerData</span>
+        <p class="max-w-2xl m-0 text-ink-soft">
+          Información financiera y cuantitativa con fines estrictamente informativos y de investigación. No constituye asesoramiento de inversión ni oferta pública de valores.
+        </p>
       </div>
     </div>
   </footer>

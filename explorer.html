@@ -103,8 +103,8 @@
     html.dark h1, html.dark h2, html.dark h3, html.dark h4 {
       color: #F5F5F7 !important;
     }
-    html.dark .text-\[\#86868B\] {
-      color: #8E8E93 !important;
+    html.dark .text-ink-soft {
+      color: var(--pd-ink-soft) !important;
     }
     html.dark input, html.dark select {
       background-color: #2C2C2E !important;
@@ -302,7 +302,7 @@
     }
     .band-label {
       font-size: 10px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.08em; color: #86868B;
+      letter-spacing: 0.08em; color: var(--pd-ink-soft);
     }
 
     .terminal-surface {
@@ -441,7 +441,7 @@
       font-feature-settings: "tnum" 1;
       font-variant-numeric: tabular-nums;
     }
-    .stat .stat-sub { font-size: 10px; color: #86868B; margin-top: 1px; }
+    .stat .stat-sub { font-size: 10px; color: var(--pd-ink-soft); margin-top: 1px; }
 
     @media (min-width: 640px) {
       .stat-strip-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
@@ -457,32 +457,26 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/pd.css">
 </head>
-<body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200">
+<body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200">
 
-  <!-- Institutional Header -->
-  <header class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF]/90 dark:bg-[#0D0D0E]/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
+  <!-- Shared Institutional Header -->
+  <header class="border-b border-rule bg-card sticky top-0 z-30 transition-colors">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
-      
       <!-- Brand & Navigation -->
       <div class="flex items-center space-x-6">
-        <a href="/" class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm border border-black/10 dark:border-white/10">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <div class="w-7 h-7 rounded pd-mark flex items-center justify-center font-bold text-xs">
             P
           </div>
-          <div class="flex flex-col">
-            <span class="font-bold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
-            <span class="text-[10px] text-[#86868B] uppercase tracking-wider font-semibold">Terminal</span>
-          </div>
+          <span class="font-bold tracking-tight text-base leading-none text-ink">PerData</span>
         </a>
 
-        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-[#86868B]">
-          <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
-          <a href="/explorer" class="text-black dark:text-white font-semibold transition border-b-2 border-black dark:border-white pb-0.5">Terminal</a>
-          <a href="/noticias" class="hover:text-black dark:hover:text-white transition">Noticias</a>
-          <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
-          <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
-          <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
-          <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos</a>
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
+          <a href="/explorer" class="text-ink font-semibold border-b border-ink pb-0.5 no-underline">Terminal</a>
+          <a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a>
+          <a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a>
+          <a href="/guia" class="hover:text-ink transition no-underline">Guía</a>
+          <a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
         </nav>
       </div>
 
@@ -500,29 +494,26 @@
         </label>
 
         <!-- Excel Export Top Button -->
-        <button id="btnExportExcelTop" class="btn-pro hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-5 py-2 rounded-full transition">
+        <button id="btnExportExcelTop" class="btn-pro hidden sm:inline-flex items-center text-xs font-semibold pd-btn-primary px-4 py-2 rounded transition">
           <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           <span>Descargar Excel</span>
         </button>
 
-        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] text-[#86868B] hover:text-black dark:hover:text-white transition" aria-label="Abrir menú" aria-expanded="false">
+        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menú" aria-expanded="false">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
       </div>
+    </div>
 
-      <!-- Mobile Nav Dropdown -->
-      <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 right-0 border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#1C1C1E] shadow-lg">
-        <nav class="flex flex-col py-2 text-xs font-medium text-[#86868B]">
-          <a href="/" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Inicio</a>
-          <a href="/explorer" class="px-4 py-2.5 text-black dark:text-white font-semibold bg-[#F5F5F7] dark:bg-[#0D0D0E]">Terminal</a>
-          <a href="/noticias" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Noticias</a>
-          <a href="/metodologia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Metodología</a>
-          <a href="/guia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Guía de Uso</a>
-          <a href="/precios" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Precios</a>
-          <a href="/terms" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Términos</a>
-        </nav>
-      </div>
-
+    <!-- Mobile Drawer -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors">
+      <nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft">
+        <a href="/explorer" class="text-ink font-semibold py-1 no-underline">Terminal</a>
+        <a href="/noticias" class="hover:text-ink py-1 transition no-underline">Noticias</a>
+        <a href="/metodologia" class="hover:text-ink py-1 transition no-underline">Metodología</a>
+        <a href="/guia" class="hover:text-ink py-1 transition no-underline">Guía</a>
+        <a href="/precios" class="hover:text-ink py-1 transition no-underline">Precios</a>
+      </nav>
     </div>
   </header>
 
@@ -538,7 +529,7 @@
           <h1 class="text-lg sm:text-2xl font-bold tracking-tight text-black dark:text-white mt-1">
             Terminal Cuantitativa Institucional
           </h1>
-          <p class="text-[11px] sm:text-xs text-[#86868B] dark:text-[#8E8E93] leading-relaxed max-w-xl mt-1">
+          <p class="text-[11px] sm:text-xs text-ink-soft leading-relaxed max-w-xl mt-1">
             Series históricas de 10 años · Inferencia probabilística P10/P50/P90
           </p>
         </div>
@@ -546,7 +537,7 @@
         <!-- Search: part of the command band, right aligned on desktop -->
         <div class="relative w-full lg:w-[380px] flex-shrink-0 text-left" id="searchContainer">
           <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#86868B]">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-ink-soft">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </div>
             <input 
@@ -557,7 +548,7 @@
               class="w-full text-xs rounded-lg border transition"
             />
             <div id="searchSpinner" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center">
-              <div class="w-3.5 h-3.5 border-2 border-[#86868B] border-t-black dark:border-t-white rounded-full animate-spin"></div>
+              <div class="w-3.5 h-3.5 border-2 border-rule border-t-black dark:border-t-white rounded-full animate-spin"></div>
             </div>
           </div>
 
@@ -638,9 +629,9 @@
         <div class="flex items-center gap-2.5">
           <span class="band-label whitespace-nowrap">Rango</span>
           <div class="seg">
-            <button class="range-btn text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="1y">1A</button>
+            <button class="range-btn text-ink-soft hover:text-black dark:hover:text-white transition" data-range="1y">1A</button>
             <button class="range-btn bg-black dark:bg-white text-white dark:text-black font-semibold transition" data-range="3y">3A</button>
-            <button class="range-btn text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition" data-range="5y">5A</button>
+            <button class="range-btn text-ink-soft hover:text-black dark:hover:text-white transition" data-range="5y">5A</button>
             <button class="range-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer transition" data-range="10y">10A</button>
           </div>
         </div>
@@ -675,7 +666,7 @@
           </div>
           <div id="customHorizonContainer" class="hidden items-center gap-1.5 bg-[#F5F5F7] dark:bg-[#141416] px-2 py-1 rounded-md border border-[#E5E5EA] dark:border-[#3A3A3C] transition-all">
             <input id="customHorizonInput" type="number" min="1" max="36" value="18" placeholder="Meses">
-            <span class="text-[11px] font-medium text-[#86868B]">meses</span>
+            <span class="text-[11px] font-medium text-ink-soft">meses</span>
             <button id="btnApplyCustomHorizon" class="px-2.5 py-1 bg-black dark:bg-white text-white dark:text-black text-xs font-bold rounded-md hover:opacity-90 transition">
               Calcular
             </button>
@@ -692,14 +683,14 @@
             <h2 id="assetTitle" class="text-lg sm:text-xl font-bold tracking-tight text-black dark:text-white">Compañía de Minas Buenaventura</h2>
             <span id="assetSymbolBadge" class="micro-label font-mono tnum px-1.5 py-0.5 bg-black dark:bg-white text-white dark:text-black rounded">BVN</span>
           </div>
-          <p id="assetMeta" class="text-[11px] sm:text-xs text-[#86868B] dark:text-[#8E8E93] mt-1">Minería · Perú · Moneda: USD · 10 Años de Datos</p>
+          <p id="assetMeta" class="text-[11px] sm:text-xs text-ink-soft mt-1">Minería · Perú · Moneda: USD · 10 Años de Datos</p>
         </div>
         <div class="text-left sm:text-right">
           <div class="flex items-baseline gap-2 justify-start sm:justify-end">
             <div id="latestPrice" class="text-xl sm:text-2xl font-bold font-mono tnum text-black dark:text-white">$34.71</div>
             <span id="liveChangePct" class="hidden text-xs font-mono tnum font-semibold px-1.5 py-0.5 rounded text-rose-600 dark:text-rose-400 bg-rose-500/10">-3.69%</span>
           </div>
-          <div id="latestDate" class="text-[10px] text-[#86868B] mt-0.5 font-mono tnum">Último cierre registrado</div>
+          <div id="latestDate" class="text-[10px] text-ink-soft mt-0.5 font-mono tnum">Último cierre registrado</div>
           <div id="liveQuoteNote" class="hidden text-[10px] text-emerald-600 dark:text-emerald-400 mt-0.5">
             <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 align-middle"></span>
             <span id="liveQuoteText">En vivo</span>
@@ -743,9 +734,9 @@
         <div class="inline-flex items-center gap-2">
           <span class="w-1.5 h-1.5 rounded-sm" style="background: var(--pd-accent)"></span>
           <span class="text-xs font-bold text-black dark:text-white">TimesFM · Proyección probabilística</span>
-          <span class="hidden sm:inline micro-label text-[#86868B]">RevIN Multi-Cuantil</span>
+          <span class="hidden sm:inline micro-label text-ink-soft">RevIN Multi-Cuantil</span>
         </div>
-        <span class="text-[10px] text-[#86868B]">P50 con banda P10–P90</span>
+        <span class="text-[10px] text-ink-soft">P50 con banda P10–P90</span>
       </div>
 
       <!-- Skeleton Loading State -->
@@ -790,7 +781,7 @@
 
         <!-- Forecast note + toggle, slim row -->
         <div class="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-[#E5E5EA] dark:border-[#2C2C2E] pt-3">
-          <span id="tfmExplainText" class="text-[11px] text-[#86868B] leading-relaxed">
+          <span id="tfmExplainText" class="text-[11px] text-ink-soft leading-relaxed">
             Gráfica ampliada con fechas futuras: trayectoria P50 (discontinua) y banda P10–P90.
           </span>
           <button id="btnToggleForecastChart" class="btn-pro self-start sm:self-auto px-3 py-1.5 bg-black dark:bg-white hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black rounded-md font-semibold text-[11px] transition whitespace-nowrap">
@@ -809,21 +800,21 @@
         </div>
 
         <!-- Legend Items -->
-        <div class="flex flex-wrap items-center gap-3 text-[11px] text-[#86868B] dark:text-[#8E8E93] font-medium">
+        <div class="flex flex-wrap items-center gap-3 text-[11px] text-ink-soft font-medium">
           <span class="inline-flex items-center">
             <span class="w-2.5 h-0.5 bg-black dark:bg-white mr-1.5"></span> Histórico
           </span>
           <span id="legendForecast" class="inline-flex items-center text-black dark:text-white font-semibold">
             <span class="w-2.5 h-0 border-t-2 border-dashed border-black dark:border-white mr-1.5"></span> P50 TimesFM
           </span>
-          <span id="legendBand" class="inline-flex items-center text-[#86868B]">
+          <span id="legendBand" class="inline-flex items-center text-ink-soft">
             <span class="w-2.5 h-2 bg-black/10 dark:bg-white/10 border border-black/20 dark:border-white/20 rounded-sm mr-1.5"></span> P10–P90 (80%)
           </span>
-          <span class="inline-flex items-center text-[#86868B]">
+          <span class="inline-flex items-center text-ink-soft">
             <span class="w-2.5 h-2 bg-black/25 dark:bg-white/20 border border-black/30 dark:border-white/30 rounded-sm mr-1.5"></span> P25–P75 (50%)
           </span>
-          <span id="legendMacro" class="inline-flex items-center text-[#86868B]">
-            <span class="w-2.5 h-0.5 bg-[#86868B] mr-1.5"></span> Indicador Macro
+          <span id="legendMacro" class="inline-flex items-center text-ink-soft">
+            <span class="w-2.5 h-0.5 mr-1.5" style="background: var(--pd-ink-soft);"></span> Indicador Macro
           </span>
         </div>
       </div>
@@ -834,46 +825,46 @@
       </div>
 
       <!-- Interpretación Cuantitativa y Cobertura de Riesgo -->
-      <div class="mt-5 p-4 rounded-xl border border-[#E2E8F0] dark:border-[#1E3553] bg-[#F8FAFC] dark:bg-[#070F1B] text-left space-y-3">
+      <div class="mt-5 p-4 rounded border border-rule bg-surface text-left space-y-3">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div class="inline-flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-[#005DAA] dark:bg-[#38BDF8]"></span>
-            <span class="text-xs font-bold text-[#002244] dark:text-[#F8FAFC]">Interpretación Cuantitativa & Cobertura</span>
-            <span class="text-[#CBD5E1] dark:text-[#1E3553]">|</span>
-            <span class="text-[10px] font-semibold text-[#005DAA] dark:text-[#38BDF8] uppercase tracking-wider">TimesFM & Econometría</span>
+            <span class="w-2 h-2 rounded-full" style="background: var(--pd-brand);"></span>
+            <span class="text-xs font-bold text-ink">Interpretación Cuantitativa & Cobertura</span>
+            <span class="text-ink-soft">|</span>
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-ink-soft">TimesFM & Econometría</span>
           </div>
-          <span id="tsConfidence" class="font-mono tnum text-[11px] font-bold text-[#002244] dark:text-[#38BDF8] px-2.5 py-1 rounded-md bg-white dark:bg-[#0D1929] border border-[#E2E8F0] dark:border-[#1E3553] w-fit">
+          <span id="tsConfidence" class="font-mono tnum text-[11px] font-bold text-ink px-2.5 py-1 rounded bg-card border border-rule w-fit">
             Confianza Calibrada: 94.2%
           </span>
         </div>
         
-        <p id="tsTakeaway" class="text-xs sm:text-sm text-[#0F172A] dark:text-[#F1F5F9] leading-relaxed p-3 bg-white dark:bg-[#0D1929] rounded-lg border-l-4 border-[#005DAA] dark:border-[#38BDF8] border border-t-[#E2E8F0] border-r-[#E2E8F0] border-b-[#E2E8F0] dark:border-t-[#1E3553] dark:border-r-[#1E3553] dark:border-b-[#1E3553]">
+        <p id="tsTakeaway" class="text-xs sm:text-sm text-ink leading-relaxed p-3 bg-card rounded border-l-4 border border-rule" style="border-left-color: var(--pd-brand);">
           Cargando análisis cuantitativo de la serie y envolvente estocástica...
         </p>
 
         <!-- Sub-Indicators: Macro Beta, Volatilidad, Cobertura -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
-          <div class="p-3 rounded-lg bg-white dark:bg-[#0D1929] border border-[#E2E8F0] dark:border-[#1E3553]">
-            <div class="text-[10px] uppercase font-bold text-[#64748B] dark:text-[#94A3B8]">Sensibilidad Macro (Beta)</div>
-            <div id="tsBeta" class="text-xs sm:text-sm font-bold font-mono tnum text-[#002244] dark:text-[#38BDF8] mt-0.5">Alta (+0.74)</div>
+          <div class="p-3 rounded bg-card border border-rule">
+            <div class="text-[10px] uppercase font-bold text-ink-soft">Sensibilidad Macro (Beta)</div>
+            <div id="tsBeta" class="text-xs sm:text-sm font-bold font-mono tnum text-ink mt-0.5">Alta (+0.74)</div>
           </div>
-          <div class="p-3 rounded-lg bg-white dark:bg-[#0D1929] border border-[#E2E8F0] dark:border-[#1E3553]">
-            <div class="text-[10px] uppercase font-bold text-[#64748B] dark:text-[#94A3B8]">Régimen de Volatilidad</div>
-            <div id="tsRegime" class="text-xs sm:text-sm font-bold text-black dark:text-white mt-0.5">Cíclico Moderado</div>
+          <div class="p-3 rounded bg-card border border-rule">
+            <div class="text-[10px] uppercase font-bold text-ink-soft">Régimen de Volatilidad</div>
+            <div id="tsRegime" class="text-xs sm:text-sm font-bold text-ink mt-0.5">Cíclico Moderado</div>
           </div>
-          <div class="p-3 rounded-lg bg-white dark:bg-[#0D1929] border border-[#E2E8F0] dark:border-[#1E3553]">
-            <div class="text-[10px] uppercase font-bold text-[#64748B] dark:text-[#94A3B8]">Intervalo de Riesgo</div>
-            <div id="tsEngine" class="text-xs sm:text-sm font-bold font-mono tnum text-[#005DAA] dark:text-[#38BDF8] mt-0.5">80% Densidad P10-P90</div>
+          <div class="p-3 rounded bg-card border border-rule">
+            <div class="text-[10px] uppercase font-bold text-ink-soft">Intervalo de Riesgo</div>
+            <div id="tsEngine" class="text-xs sm:text-sm font-bold font-mono tnum text-ink mt-0.5">80% Densidad P10-P90</div>
           </div>
         </div>
 
         <!-- Cobertura de Riesgo Banner -->
-        <div class="mt-2 pt-2 border-t border-[#E2E8F0] dark:border-[#1E3553] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <div class="flex items-center gap-2 text-[#475569] dark:text-[#94A3B8]">
-            <svg class="w-4 h-4 text-[#005DAA] dark:text-[#38BDF8] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+        <div class="mt-2 pt-2 border-t border-rule flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-2 text-ink-soft">
+            <svg class="w-4 h-4 shrink-0 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
             <span><strong>Protección & Cobertura Financiera:</strong> ¿Gestionas tesorería o riesgo corporativo? La proyección a 36 meses y exportación completa a Excel están disponibles en el plan Pro.</span>
           </div>
-          <a href="/precios" class="shrink-0 px-3 py-1.5 rounded-lg bg-[#002244] hover:bg-[#005DAA] dark:bg-[#005DAA] dark:hover:bg-[#0070BA] text-white font-semibold text-[11px] transition">
+          <a href="/precios" class="pd-btn pd-btn-primary shrink-0 text-[11px] py-1 px-3">
             Ver Cobertura Pro &rarr;
           </a>
         </div>
@@ -885,7 +876,7 @@
       <div class="px-4 sm:px-6 py-3 border-b border-[#E5E5EA] dark:border-[#2C2C2E] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FAFAFC] dark:bg-[#161618]">
         <div>
           <h3 class="text-xs font-bold text-black dark:text-white">Tabla de Datos Históricos y Proyectados</h3>
-          <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93] mt-0.5">Observaciones mensuales · cuantiles probabilísticos</p>
+          <p class="text-[11px] text-ink-soft mt-0.5">Observaciones mensuales · cuantiles probabilísticos</p>
         </div>
         <button id="btnExportExcel" class="btn-pro self-start sm:self-auto inline-flex items-center justify-center px-3.5 py-1.5 bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black font-semibold text-[11px] rounded-full transition">
           <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
@@ -912,7 +903,7 @@
           </tbody>
         </table>
       </div>
-      <div class="px-4 sm:px-6 py-2.5 bg-[#FAFAFC] dark:bg-[#161618] border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-[11px] text-[#86868B]">
+      <div class="px-4 sm:px-6 py-2.5 bg-[#FAFAFC] dark:bg-[#161618] border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-[11px] text-ink-soft">
         <span id="tableSummary">Cargando observaciones...</span><span class="ml-2">· Las filas marcadas PROYECTADO las genera el modelo: su cierre equivale al P50 y su máximo/mínimo al P90/P10.</span>
       </div>
     </section>
@@ -920,35 +911,30 @@
   </div><!-- /terminal-surface -->
   </main>
 
-  <!-- Footer -->
-    <!-- Centered Institutional Banking Footer -->
-  <footer class="border-t border-[#E2E8F0] dark:border-[#1E3553] bg-white dark:bg-[#070F1B] py-10 px-4 transition-colors">
-    <div class="pd-footer-container">
-      <div class="flex flex-col items-center justify-center space-y-2 text-center">
-        <div class="flex items-center space-x-2">
-          <div class="w-6 h-6 rounded bg-[#002244] dark:bg-[#005DAA] flex items-center justify-center text-white font-bold text-xs">P</div>
-          <span class="font-bold text-black dark:text-white tracking-tight">PerData Terminal</span>
-        </div>
-        <p class="text-[11px] text-[#64748B] dark:text-[#94A3B8]">
-          Arquitectura econométrica basada en series oficiales del BCRP, BVL, COMEX y Reserva Federal (FRED).
-        </p>
+  <!-- Shared Institutional Footer -->
+  <footer class="border-t border-rule bg-card py-10 px-4 sm:px-6 transition-colors">
+    <div class="max-w-6xl mx-auto flex flex-col gap-6 text-left">
+      <!-- Fila 1: Logo y enlaces cortos -->
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-rule">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <div class="w-7 h-7 rounded pd-mark flex items-center justify-center font-bold text-xs">
+            P
+          </div>
+          <span class="font-bold tracking-tight text-base leading-none text-ink">PerData</span>
+        </a>
+        <nav class="flex flex-wrap items-center gap-6 text-xs text-ink-soft" aria-label="Navegación secundaria">
+          <a href="/terms" class="hover:text-ink transition no-underline">Términos</a>
+          <a href="/privacidad" class="hover:text-ink transition no-underline">Privacidad</a>
+          <a href="mailto:soporte@perdata.site" class="hover:text-ink transition no-underline">Contacto</a>
+        </nav>
       </div>
 
-      <nav class="pd-footer-nav text-xs" aria-label="Navegación pie de terminal">
-        <a href="/">Inicio</a>
-        <a href="/explorer">Terminal</a>
-        <a href="/noticias">Noticias</a>
-        <a href="/metodologia">Metodología</a>
-        <a href="/guia">Guía</a>
-        <a href="/precios">Precios Pro</a>
-        <a href="/cuenta">Mi Cuenta</a>
-        <a href="/terms">Términos</a>
-        <a href="/privacidad">Privacidad</a>
-        <a href="mailto:soporte@perdata.site">Contacto</a>
-      </nav>
-
-      <div class="pd-footer-disclaimer">
-        <span>© 2026 PerData Technologies · Terminal Cuantitativa. Modelos estocásticos para toma de decisiones institucionales.</span>
+      <!-- Fila 2: Copyright y aviso legal corto -->
+      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 text-[11px] text-ink-soft leading-relaxed">
+        <span class="font-medium text-ink shrink-0">© 2026 PerData</span>
+        <p class="max-w-2xl m-0 text-ink-soft">
+          Información financiera y cuantitativa con fines estrictamente informativos y de investigación. No constituye asesoramiento de inversión ni oferta pública de valores.
+        </p>
       </div>
     </div>
   </footer>
@@ -965,10 +951,10 @@
           </div>
           <div>
             <h2 class="text-base sm:text-lg font-bold text-black dark:text-white tracking-tight">Términos y Condiciones de Uso</h2>
-            <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93]">Marco Legal · Descargo Cuantitativo · Versión 1.0 (2026)</p>
+            <p class="text-[11px] text-ink-soft">Marco Legal · Descargo Cuantitativo · Versión 1.0 (2026)</p>
           </div>
         </div>
-        <button id="btnCloseTermsModal" type="button" class="text-[#86868B] hover:text-black dark:hover:text-white p-2 rounded-md hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] transition" title="Cerrar modal">
+        <button id="btnCloseTermsModal" type="button" class="text-ink-soft hover:text-black dark:hover:text-white p-2 rounded-md hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] transition" title="Cerrar modal">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
@@ -978,7 +964,7 @@
         
         <!-- Summary Alert -->
         <div class="p-3.5 rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] flex items-start space-x-3">
-          <svg class="w-5 h-5 text-[#86868B] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <svg class="w-5 h-5 text-ink-soft shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           <div class="text-xs text-[#1D1D1F] dark:text-[#F5F5F7]">
             <strong>Bienvenido a PerData:</strong> Este entorno computacional provee herramientas de modelado de series temporales macroeconómicas y activos financieros. Por favor revise los términos antes de continuar.
           </div>
@@ -990,7 +976,7 @@
             <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
             <h3 class="font-bold text-black dark:text-white text-sm sm:text-base">1. Naturaleza Analítica y Descargo Financiero</h3>
           </div>
-          <p class="text-[#86868B] dark:text-[#8E8E93] pl-3.5">
+          <p class="text-ink-soft pl-3.5">
             PerData es una plataforma orientada exclusivamente a fines de investigación cuantitativa, análisis técnico y educación financiera. Ningún dato, métrica, gráfico o cálculo presentado constituye una oferta, solicitud ni asesoramiento financiero, tributario o recomendación para la compra o venta de instrumentos de renta variable, materias primas o divisas. Las decisiones de inversión recaen de manera única y exclusiva sobre el criterio y responsabilidad del usuario.
           </p>
         </div>
@@ -1001,7 +987,7 @@
             <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
             <h3 class="font-bold text-black dark:text-white text-sm sm:text-base">2. Inferencia Probabilística y Google TimesFM 2.5</h3>
           </div>
-          <p class="text-[#86868B] dark:text-[#8E8E93] pl-3.5">
+          <p class="text-ink-soft pl-3.5">
             Las proyecciones generadas utilizan el modelo fundacional zero-shot <strong>Google TimesFM 2.5</strong> junto a la arquitectura interpretativa <strong>TypeSafe AI Jev</strong>. Los resultados se estructuran en abanicos probabilísticos multi-cuantil: <strong>P10</strong> (escenario pesimista o soporte inferior), <strong>P50</strong> (mediana esperada) y <strong>P90</strong> (escenario optimista o resistencia superior) para modelar escenarios de volatilidad. El usuario reconoce que todo modelo matemático está sujeto a regímenes estocásticos y volatilidad de mercado, por lo que el comportamiento histórico de las series temporales no garantiza rendimientos futuros.
           </p>
         </div>
@@ -1012,7 +998,7 @@
             <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
             <h3 class="font-bold text-black dark:text-white text-sm sm:text-base">3. Privacidad Local y Ausencia de Trackers</h3>
           </div>
-          <p class="text-[#86868B] dark:text-[#8E8E93] pl-3.5">
+          <p class="text-ink-soft pl-3.5">
             En estricta adhesión a los principios de diseño minimalista y privacidad de Apple, la plataforma no emplea trackers publicitarios de terceros, scripts de telemetría invasiva ni perfiles de usuario remotos. Sus preferencias de visualización (modo claro/oscuro) y estado de aceptación de términos se almacenan íntegramente en el navegador de su dispositivo mediante <code class="bg-[#F5F5F7] dark:bg-[#2C2C2E] px-1 py-0.5 rounded text-[11px] font-mono">localStorage</code>.
           </p>
         </div>
@@ -1024,7 +1010,7 @@
             <svg id="toggleLegalIcon" class="w-3.5 h-3.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
           </button>
 
-          <div id="fullLegalSection" class="hidden mt-3 p-4 rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] space-y-3 text-xs text-[#86868B] dark:text-[#8E8E93]">
+          <div id="fullLegalSection" class="hidden mt-3 p-4 rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] space-y-3 text-xs text-ink-soft">
             <p>
               <strong>Cláusula 4. Integridad de Fuentes de Información:</strong> Los datos históricos provienen de agregadores de mercado público, interfaces de BCRP y Yahoo Finance. La plataforma no asume responsabilidad civil ni contractual por eventuales discrepancias, latencias o interrupciones en la disponibilidad de feeds externos.
             </p>
@@ -1041,7 +1027,7 @@
 
       <!-- Modal Footer -->
       <div class="px-6 py-4 border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#1C1C1E] flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div class="text-[11px] text-[#86868B] flex items-center space-x-1.5">
+        <div class="text-[11px] text-ink-soft flex items-center space-x-1.5">
           <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
           <span id="termsStatusText">Consentimiento requerido para habilitar análisis</span>
         </div>
@@ -1208,7 +1194,7 @@ const state = {
             termsStatusText.className = "text-[11px] text-emerald-600 dark:text-emerald-400 font-medium";
           } else {
             termsStatusText.textContent = "Consentimiento requerido para habilitar análisis";
-            termsStatusText.className = "text-[11px] text-[#86868B]";
+            termsStatusText.className = "text-[11px] text-ink-soft";
           }
         }
         if (btnAccept) {
@@ -1365,7 +1351,7 @@ const state = {
     // Render Search Results (Sanitized against XSS)
     function renderSearchResults(results) {
       if (!results || results.length === 0) {
-        searchResultsDiv.innerHTML = `<div class="p-3 text-xs text-[#86868B]">No se encontraron resultados coincidentes.</div>`;
+        searchResultsDiv.innerHTML = `<div class="p-3 text-xs text-ink-soft">No se encontraron resultados coincidentes.</div>`;
         searchResultsDiv.classList.remove("hidden");
         return;
       }
@@ -1374,7 +1360,7 @@ const state = {
         <div class="search-item p-3 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] cursor-pointer flex items-center justify-between transition" data-symbol="${escapeHTML(item.symbol)}">
           <div>
             <div class="font-semibold text-xs sm:text-sm text-black dark:text-white">${escapeHTML(item.name)}</div>
-            <div class="text-[11px] text-[#86868B]">${escapeHTML(item.sector || 'Mercado')} · ${escapeHTML(item.country || 'Global')}</div>
+            <div class="text-[11px] text-ink-soft">${escapeHTML(item.sector || 'Mercado')} · ${escapeHTML(item.country || 'Global')}</div>
           </div>
           <span class="text-xs font-bold font-mono tnum px-2 py-1 bg-[#F5F5F7] dark:bg-[#2C2C2E] text-black dark:text-white rounded-md border border-[#E5E5EA] dark:border-[#3A3A3C]">${escapeHTML(item.symbol)}</span>
         </div>
@@ -1468,7 +1454,7 @@ const state = {
           const rng = btn.getAttribute("data-range");
           if (window.MDE_Auth && !window.MDE_Auth.gate("range", rng)) return;
           document.querySelectorAll(".range-btn").forEach(b => {
-            b.className = "range-btn px-3 py-1 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
+            b.className = "range-btn px-3 py-1 rounded-lg text-ink-soft hover:text-black dark:hover:text-white transition";
           });
           btn.className = "range-btn px-3 py-1 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition";
           if (window.MDE_Auth) window.MDE_Auth.updateGatedElements();
@@ -1495,7 +1481,7 @@ const state = {
           if (customLabel) customLabel.textContent = "Custom";
 
           document.querySelectorAll(".horizon-btn").forEach(b => {
-            b.className = "horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
+            b.className = "horizon-btn px-3 py-1.5 rounded-lg text-ink-soft hover:text-black dark:hover:text-white transition";
           });
           btn.className = "horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition";
           if (window.MDE_Auth) window.MDE_Auth.updateGatedElements();
@@ -1532,7 +1518,7 @@ const state = {
         if (window.MDE_Auth && !window.MDE_Auth.gate("horizon", val)) return;
 
         document.querySelectorAll(".horizon-btn").forEach(b => {
-          b.className = "horizon-btn px-3 py-1.5 rounded-lg text-[#86868B] dark:text-[#8E8E93] hover:text-black dark:hover:text-white transition";
+          b.className = "horizon-btn px-3 py-1.5 rounded-lg text-ink-soft hover:text-black dark:hover:text-white transition";
         });
         if (btnCustom) {
           btnCustom.className = "horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition flex items-center gap-1";
@@ -1927,12 +1913,12 @@ const state = {
       }
       const macroDataPadded = allLabels.map(lbl => macroMap.has(lbl) ? macroMap.get(lbl) : null);
 
-      // Monochromatic Apple Colors
-      const textColor = isDark ? "#8E8E93" : "#86868B";
-      const gridColor = isDark ? "rgba(44, 44, 46, 0.6)" : "rgba(229, 229, 234, 0.7)";
-      const primaryLineColor = isDark ? "#38BDF8" : "#002244";
-      const primaryBgColor = isDark ? "rgba(56, 189, 248, 0.05)" : "rgba(0, 34, 68, 0.04)";
-      const macroLineColor = isDark ? "#94A3B8" : "#005DAA";
+      // Paper and Ink Palette
+      const textColor = isDark ? "#A3A09A" : "#5C5A55";
+      const gridColor = isDark ? "rgba(46, 45, 42, 0.6)" : "rgba(228, 225, 218, 0.7)";
+      const primaryLineColor = isDark ? "#E8E4D8" : "#0D2A1C";
+      const primaryBgColor = isDark ? "rgba(232, 228, 216, 0.05)" : "rgba(13, 42, 28, 0.04)";
+      const macroLineColor = isDark ? "#A3A09A" : "#5C5A55";
 
       const datasets = [
         // 1. Historical Asset Line
@@ -2220,10 +2206,10 @@ const state = {
               <td class="py-2.5 px-4 font-mono tnum whitespace-nowrap text-black dark:text-white sticky left-0 z-[5] bg-[#F5F5F7] dark:bg-[#2C2C2E]">${escapeHTML(item.date)}</td>
               <td class="py-2.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 micro-label rounded-full bg-black dark:bg-white text-white dark:text-black">TIMESFM P50</span></td>
               <td class="py-2.5 px-4 font-bold font-mono tnum whitespace-nowrap text-black dark:text-white">${currencySymbol}${item.p50.toFixed(2)}</td>
-              <td class="py-2.5 px-4 text-[#86868B] whitespace-nowrap">-</td>
-              <td class="py-2.5 px-4 text-[#86868B] font-mono tnum whitespace-nowrap">${currencySymbol}${item.p90.toFixed(2)}</td>
-              <td class="py-2.5 px-4 text-[#86868B] font-mono tnum whitespace-nowrap">${currencySymbol}${item.p10.toFixed(2)}</td>
-              <td class="py-2.5 px-4 text-[#86868B] whitespace-nowrap">-</td>
+              <td class="py-2.5 px-4 text-ink-soft whitespace-nowrap">-</td>
+              <td class="py-2.5 px-4 text-ink-soft font-mono tnum whitespace-nowrap">${currencySymbol}${item.p90.toFixed(2)}</td>
+              <td class="py-2.5 px-4 text-ink-soft font-mono tnum whitespace-nowrap">${currencySymbol}${item.p10.toFixed(2)}</td>
+              <td class="py-2.5 px-4 text-ink-soft whitespace-nowrap">-</td>
               <td class="py-2.5 px-4 font-semibold text-black dark:text-white whitespace-nowrap">Proyectado</td>
             </tr>
           `;
@@ -2241,11 +2227,11 @@ const state = {
         html += `
           <tr class="hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E]/60 transition">
             <td class="py-2.5 px-4 font-mono tnum font-medium whitespace-nowrap text-black dark:text-white sticky left-0 z-[5] bg-white dark:bg-[#1C1C1E]">${escapeHTML(item.date)}</td>
-            <td class="py-2.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 micro-label rounded-md bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#86868B] dark:text-[#8E8E93] border border-[#E5E5EA] dark:border-[#3A3A3C]">HISTÓRICO</span></td>
+            <td class="py-2.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 micro-label rounded-md bg-[#F5F5F7] dark:bg-[#2C2C2E] text-ink-soft border border-[#E5E5EA] dark:border-[#3A3A3C]">HISTÓRICO</span></td>
             <td class="py-2.5 px-4 font-bold font-mono tnum whitespace-nowrap text-black dark:text-white">${currencySymbol}${item.close.toFixed(2)}</td>
-            <td class="py-2.5 px-4 text-[#86868B] font-mono tnum whitespace-nowrap">${currencySymbol}${item.open.toFixed(2)}</td>
-            <td class="py-2.5 px-4 text-[#86868B] font-mono tnum whitespace-nowrap">${currencySymbol}${item.high.toFixed(2)}</td>
-            <td class="py-2.5 px-4 text-[#86868B] font-mono tnum whitespace-nowrap">${currencySymbol}${item.low.toFixed(2)}</td>
+            <td class="py-2.5 px-4 text-ink-soft font-mono tnum whitespace-nowrap">${currencySymbol}${item.open.toFixed(2)}</td>
+            <td class="py-2.5 px-4 text-ink-soft font-mono tnum whitespace-nowrap">${currencySymbol}${item.high.toFixed(2)}</td>
+            <td class="py-2.5 px-4 text-ink-soft font-mono tnum whitespace-nowrap">${currencySymbol}${item.low.toFixed(2)}</td>
             <td class="py-2.5 px-4 font-medium font-mono tnum whitespace-nowrap text-black dark:text-white">${typeof macroVal === 'number' ? macroVal.toFixed(2) : escapeHTML(macroVal)}</td>
             <td class="py-2.5 px-4 font-semibold font-mono tnum whitespace-nowrap ${changePct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400'}">
               ${prevItem ? (changePct >= 0 ? '+' : '') + changePct.toFixed(2) + '%' : '-'}

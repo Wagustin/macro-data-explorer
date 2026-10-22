@@ -2,198 +2,77 @@
 <html lang="es" class="light pd-marketing">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="description" content="PerData - Página no encontrada (404)" />
-  <title>404 · Página no encontrada · PerData</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 · PerData</title>
+  <meta name="description" content="Recurso o serie no encontrada en PerData." />
+  <meta name="robots" content="noindex, follow" />
 
-  <!-- Early Theme Init to avoid flash -->
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23F6E016'/><text x='16' y='22' font-family='sans-serif' font-size='18' font-weight='900' fill='%230D2A1C' text-anchor='middle'>P</text></svg>" />
+
+  <!-- Script Antiparapadeo Modo Oscuro -->
   <script>
     (function() {
       const savedTheme = localStorage.getItem("theme");
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+      const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (savedTheme === "dark" || (!savedTheme && systemPrefersDark)) {
         document.documentElement.classList.add("dark");
         document.documentElement.classList.remove("light");
       } else {
-        document.documentElement.classList.remove("dark");
         document.documentElement.classList.add("light");
+        document.documentElement.classList.remove("dark");
       }
     })();
   </script>
 
-  <!-- Tailwind CSS -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
-          colors: {
-            appleLight: '#FFFFFF',
-            appleDark: '#0D0D0E',
-            appleCardDark: '#1C1C1E',
-            appleTextDark: '#F5F5F7',
-            appleSubDark: '#8E8E93',
-            appleBorderDark: '#2C2C2E',
-            appleBorderLight: '#E5E5EA',
+          fontFamily: {
+            sans: ['"Libre Franklin"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            serif: ['"Source Serif 4"', 'Georgia', 'serif'],
+            mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace']
           }
         }
       }
     }
   </script>
 
-<style>
-    html, body {
-      overflow-x: hidden !important;
-      width: 100% !important;
-      max-width: 100vw !important;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      letter-spacing: -0.011em;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .tnum {
-      font-feature-settings: "tnum" 1, "cv01" 0;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .mono {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    }
-
-    .micro-label {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .ui-switch {
-      --switch-bg: rgb(229, 229, 234);
-      --switch-checked-bg: rgb(0, 0, 0);
-      --circle-diameter: 18px;
-      --circle-bg: #FFFFFF;
-      --circle-inset: 2px;
-      position: relative;
-      display: inline-block;
-      width: 40px;
-      height: 22px;
-      flex-shrink: 0;
-    }
-
-    html.dark .ui-switch {
-      --switch-bg: rgb(44, 44, 46);
-      --switch-checked-bg: rgb(255, 255, 255);
-      --circle-bg: #0D0D0E;
-    }
-
-    .ui-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: var(--switch-bg);
-      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-      border-radius: 9999px;
-    }
-
-    .slider .circle {
-      top: var(--circle-inset);
-      left: var(--circle-inset);
-      width: var(--circle-diameter);
-      height: var(--circle-diameter);
-      position: absolute;
-      background: var(--circle-bg);
-      border-radius: inherit;
-      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    }
-
-    .ui-switch input:checked + .slider {
-      background-color: var(--switch-checked-bg);
-    }
-
-    .ui-switch input:checked + .slider .circle {
-      left: calc(100% - var(--circle-diameter) - var(--circle-inset));
-    }
-  
-    /* ===== Apple-style motion: gentle fade, no stagger, no lift ===== */
-    @keyframes mde-rise {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    main > section,
-    .rise-in {
-      animation: mde-rise 0.6s ease both;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      main > section, .rise-in { animation: none; }
-      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
-    }
-
-    .hover-lift {
-      transition: border-color 0.2s ease, background-color 0.2s ease;
-    }
-    .hover-lift:hover {
-      border-color: rgba(0, 0, 0, 0.30);
-    }
-    html.dark .hover-lift:hover {
-      border-color: rgba(255, 255, 255, 0.40);
-    }
-
-    /* Apple layout helpers */
-    .full-bleed { width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); }
-    .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0; color: #6e6e73; }
-    html.dark .eyebrow { color: #86868b; }
-  </style>
-  <!-- Identidad PerData (DESIGN.md) -->
+  <!-- Google Fonts: Libre Franklin, Source Serif 4, IBM Plex Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="/pd.css">
 </head>
-<body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
+<body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 
-  <!-- Apple Minimal Header -->
-  <header class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF]/90 dark:bg-[#0D0D0E]/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
+  <!-- Shared Institutional Header -->
+  <header class="border-b border-rule bg-card sticky top-0 z-30 transition-colors">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
-      
       <!-- Brand & Navigation -->
       <div class="flex items-center space-x-6">
-        <a href="/" class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm border border-black/10 dark:border-white/10">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <div class="w-7 h-7 rounded pd-mark flex items-center justify-center font-bold text-xs">
             P
           </div>
-          <span class="font-semibold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
+          <span class="font-bold tracking-tight text-base leading-none text-ink">PerData</span>
         </a>
 
-        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-[#86868B]">
-          <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
-          <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
-          <a href="/noticias" class="hover:text-black dark:hover:text-white transition">Noticias</a>
-          <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
-          <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
-          <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
-          <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos</a>
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
+          <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a>
+          <a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a>
+          <a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a>
+          <a href="/guia" class="hover:text-ink transition no-underline">Guía</a>
+          <a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
         </nav>
       </div>
 
-      <!-- Right Actions: Switch Toggle -->
+      <!-- Right Actions -->
       <div class="flex items-center space-x-2 sm:space-x-3">
         <div id="navbarAuthContainer"></div>
 
@@ -203,92 +82,80 @@
             <div class="circle"></div>
           </div>
         </label>
-        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] text-[#86868B] hover:text-black dark:hover:text-white transition" aria-label="Abrir menú" aria-expanded="false">
+
+        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menú" aria-expanded="false">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
       </div>
-      <!-- Mobile Nav Dropdown -->
-      <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 right-0 border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#1C1C1E] shadow-lg">
-        <nav class="flex flex-col py-2 text-xs font-medium text-[#86868B]">
-          <a href="/" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Inicio</a>
-          <a href="/explorer" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Terminal</a>
-          <a href="/noticias" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Noticias</a>
-          <a href="/metodologia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Metodología</a>
-          <a href="/guia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Guía de Uso</a>
-          <a href="/precios" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Precios</a>
-          <a href="/terms" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Términos</a>
-        </nav>
-      </div>
+    </div>
 
+    <!-- Mobile Drawer -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors">
+      <nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft">
+        <a href="/explorer" class="hover:text-ink py-1 transition no-underline">Terminal</a>
+        <a href="/noticias" class="hover:text-ink py-1 transition no-underline">Noticias</a>
+        <a href="/metodologia" class="hover:text-ink py-1 transition no-underline">Metodología</a>
+        <a href="/guia" class="hover:text-ink py-1 transition no-underline">Guía</a>
+        <a href="/precios" class="hover:text-ink py-1 transition no-underline">Precios</a>
+      </nav>
     </div>
   </header>
 
   <!-- Main Error Card -->
   <main class="flex-grow flex items-center justify-center px-4 py-16 sm:py-24">
-    <div class="max-w-lg w-full text-center space-y-6 p-8 rounded-2xl bg-white dark:bg-[#0C1829] border border-[#E2E8F0] dark:border-[#1E3553] shadow-lg">
-      
-      <div class="space-y-4">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold font-mono tracking-wider bg-[#EBF3FA] dark:bg-[#13243B] text-[#005DAA] dark:text-[#38BDF8] border border-[#005DAA]/20">
-          <span>ERROR 404</span>
+    <div class="max-w-lg w-full text-center space-y-6 p-8 rounded bg-card border border-rule">
+      <div class="space-y-3">
+        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded text-xs font-mono font-medium tracking-wider bg-surface text-ink-soft border border-rule">
+          <span>404</span>
           <span>·</span>
-          <span>RUTA NO DISPONIBLE</span>
+          <span>RECURSO NO ENCONTRADO</span>
         </div>
-        <h1 class="text-4xl sm:text-5xl font-bold text-[#002244] dark:text-[#F8FAFC] tracking-tight">
+        <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-ink">
           Recurso o Serie No Encontrada
         </h1>
-        <p class="text-xs sm:text-sm text-[#475569] dark:text-[#94A3B8] leading-relaxed max-w-sm mx-auto">
+        <p class="text-xs sm:text-sm text-ink-soft leading-relaxed max-w-sm mx-auto">
           La página o coordenada econométrica que buscas no existe o ha sido reubicada dentro del sistema de datos de PerData.
         </p>
       </div>
 
       <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
-        <a href="/explorer" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-lg bg-[#002244] hover:bg-[#005DAA] text-white font-semibold text-xs transition shadow-sm">
-          <span>Abrir Terminal Cuantitativa</span>
-          <svg class="w-3.5 h-3.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        <a href="/explorer" class="pd-btn pd-btn-primary text-xs w-full sm:w-auto">
+          <span>Abrir Terminal</span>
         </a>
-        <a href="/precios" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-lg border border-[#E2E8F0] dark:border-[#1E3553] text-[#002244] dark:text-[#F8FAFC] hover:border-[#005DAA] hover:text-[#005DAA] font-semibold text-xs transition">
-          <span>Ver Planes Pro</span>
+        <a href="/precios" class="pd-btn pd-btn-ghost text-xs w-full sm:w-auto">
+          <span>Ver Planes</span>
         </a>
-        <a href="/" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-3 text-[#64748B] dark:text-[#94A3B8] hover:text-[#002244] dark:hover:text-white font-semibold text-xs transition">
-          <span>Volver al Inicio</span>
+        <a href="/" class="pd-btn pd-btn-ghost text-xs w-full sm:w-auto">
+          <span>Inicio</span>
         </a>
       </div>
-
     </div>
   </main>
 
-  <!-- Institutional Footer -->
-    <!-- Centered Institutional Banking Footer -->
-  <footer class="border-t border-[#E2E8F0] dark:border-[#1E3553] bg-white dark:bg-[#070F1B] py-12 px-4 transition-colors">
-    <div class="pd-footer-container">
-      <div class="flex flex-col items-center justify-center space-y-3 text-center">
-        <a href="/" class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-lg bg-[#002244] dark:bg-[#005DAA] flex items-center justify-center text-white font-black text-sm border border-white/20">
+  <!-- Shared Institutional Footer -->
+  <footer class="border-t border-rule bg-card py-10 px-4 sm:px-6 transition-colors">
+    <div class="max-w-6xl mx-auto flex flex-col gap-6 text-left">
+      <!-- Fila 1: Logo y enlaces cortos -->
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-rule">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <div class="w-7 h-7 rounded pd-mark flex items-center justify-center font-bold text-xs">
             P
           </div>
-          <span class="font-bold text-black dark:text-white tracking-tight text-lg">PerData</span>
+          <span class="font-bold tracking-tight text-base leading-none text-ink">PerData</span>
         </a>
-        <p class="text-xs text-[#64748B] dark:text-[#94A3B8] max-w-md">
-          Inteligencia cuantitativa, modelado macroeconómico y proyecciones probabilísticas multi-cuantil para el mercado de capitales peruano y global.
-        </p>
+        <nav class="flex flex-wrap items-center gap-6 text-xs text-ink-soft" aria-label="Navegación secundaria">
+          <a href="/terms" class="hover:text-ink transition no-underline">Términos</a>
+          <a href="/privacidad" class="hover:text-ink transition no-underline">Privacidad</a>
+          <a href="mailto:soporte@perdata.site" class="hover:text-ink transition no-underline">Contacto</a>
+        </nav>
       </div>
 
-      <nav class="pd-footer-nav" aria-label="Navegación pie de página">
-        <a href="/">Inicio</a>
-        <a href="/explorer">Terminal</a>
-        <a href="/noticias">Noticias & Teleprompter</a>
-        <a href="/metodologia">Metodología & TimesFM</a>
-        <a href="/guia">Guía de Uso</a>
-        <a href="/precios">Planes & Facturación</a>
-        <a href="/cuenta">Mi Cuenta</a>
-        <a href="/terms">Términos de Servicio</a>
-        <a href="/privacidad">Política de Privacidad</a>
-        <a href="mailto:soporte@perdata.site">Contacto</a>
-      </nav>
-
-      <div class="pd-footer-disclaimer">
-        <span>© 2026 PerData Technologies. Todos los derechos reservados.</span><br/>
-        <span>Aviso Legal: La información y proyecciones cuantitativas proporcionadas por PerData se basan en métodos econométricos y aprendizaje automático con fines estrictamente informativos y de investigación financiera. No constituyen asesoramiento de inversión ni oferta pública de valores.</span>
+      <!-- Fila 2: Copyright y aviso legal corto -->
+      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 text-[11px] text-ink-soft leading-relaxed">
+        <span class="font-medium text-ink shrink-0">© 2026 PerData</span>
+        <p class="max-w-2xl m-0 text-ink-soft">
+          Información financiera y cuantitativa con fines estrictamente informativos y de investigación. No constituye asesoramiento de inversión ni oferta pública de valores.
+        </p>
       </div>
     </div>
   </footer>
@@ -311,25 +178,16 @@
         }
       });
     }
+
+    const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
+    if (mobileMenuBtn && mobileMenu) {
+      mobileMenuBtn.addEventListener("click", () => {
+        const isHidden = mobileMenu.classList.toggle("hidden");
+        mobileMenuBtn.setAttribute("aria-expanded", String(!isHidden));
+      });
+    }
   </script>
-
-
-  <!-- Mobile Menu Toggle -->
-  <script>
-    (function() {
-      var btn = document.getElementById('mobileMenuBtn');
-      var menu = document.getElementById('mobileMenu');
-      if (btn && menu) {
-        btn.addEventListener('click', function() {
-          var open = menu.classList.toggle('hidden');
-          btn.setAttribute('aria-expanded', String(!open));
-        });
-      }
-    })();
-  </script>
-
-  <!-- Auth & Teleprompter -->
-  <script src="/auth.js"></script>
-  <script src="/teleprompter.js"></script>
+  <script type="module" src="/auth.js"></script>
 </body>
 </html>

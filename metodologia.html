@@ -174,29 +174,26 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/pd.css">
 </head>
-<body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
+<body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 
-  <!-- Apple Minimal Header -->
-  <header class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF]/90 dark:bg-[#0D0D0E]/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
+  <!-- Shared Institutional Header -->
+  <header class="border-b border-rule bg-card sticky top-0 z-30 transition-colors">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
-      
       <!-- Brand & Navigation -->
       <div class="flex items-center space-x-6">
-        <a href="/" class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm border border-black/10 dark:border-white/10">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <div class="w-7 h-7 rounded pd-mark flex items-center justify-center font-bold text-xs">
             P
           </div>
-          <span class="font-semibold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
+          <span class="font-bold tracking-tight text-base leading-none text-ink">PerData</span>
         </a>
 
-        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-[#86868B]">
-          <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
-          <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
-          <a href="/noticias" class="hover:text-black dark:hover:text-white transition">Noticias</a>
-          <a href="/metodologia" class="text-black dark:text-white font-semibold transition border-b-2 border-black dark:border-white pb-0.5">Metodología</a>
-          <a href="/guia" class="hover:text-black dark:hover:text-white transition">Guía de Uso</a>
-          <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
-          <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos</a>
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
+          <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a>
+          <a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a>
+          <a href="/metodologia" class="text-ink font-semibold border-b border-ink pb-0.5 no-underline">Metodología</a>
+          <a href="/guia" class="hover:text-ink transition no-underline">Guía</a>
+          <a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
         </nav>
       </div>
 
@@ -211,26 +208,21 @@
           </div>
         </label>
 
-        <a href="/explorer" class="hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-5 py-2 rounded-full transition">
-          <span>Ir a Terminal</span>
-        </a>
-        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] text-[#86868B] hover:text-black dark:hover:text-white transition" aria-label="Abrir menú" aria-expanded="false">
+        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menú" aria-expanded="false">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
       </div>
-      <!-- Mobile Nav Dropdown -->
-      <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 right-0 border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#1C1C1E] shadow-lg">
-        <nav class="flex flex-col py-2 text-xs font-medium text-[#86868B]">
-          <a href="/" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Inicio</a>
-          <a href="/explorer" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Terminal</a>
-          <a href="/noticias" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Noticias</a>
-          <a href="/metodologia" class="px-4 py-2.5 text-black dark:text-white font-semibold bg-[#F5F5F7] dark:bg-[#0D0D0E]">Metodología</a>
-          <a href="/guia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Guía de Uso</a>
-          <a href="/precios" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Precios</a>
-          <a href="/terms" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Términos</a>
-        </nav>
-      </div>
+    </div>
 
+    <!-- Mobile Drawer -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors">
+      <nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft">
+        <a href="/explorer" class="hover:text-ink py-1 transition no-underline">Terminal</a>
+        <a href="/noticias" class="hover:text-ink py-1 transition no-underline">Noticias</a>
+        <a href="/metodologia" class="text-ink font-semibold py-1 no-underline">Metodología</a>
+        <a href="/guia" class="hover:text-ink py-1 transition no-underline">Guía</a>
+        <a href="/precios" class="hover:text-ink py-1 transition no-underline">Precios</a>
+      </nav>
     </div>
   </header>
 
@@ -245,7 +237,7 @@
         Cómo se construyen las proyecciones.
       </h1>
       
-      <p class="text-sm sm:text-base text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-sm sm:text-base text-ink-soft leading-relaxed">
         Especificación formal del pipeline estocástico, tratamiento de no-estacionariedad de series financieras, optimización multi-cuantil y regresión factorial de sensibilidad.
       </p>
     </section>
@@ -254,7 +246,7 @@
     <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
       <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">Ingesta Multifuente & Limpieza de Series OHLCV</h2>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         Las series temporales financieras presentan desafíos de discontinuidad y asincronía (diferencias de calendarios bursátiles entre la Bolsa de Valores de Lima, COMEX y el mercado interbancario de divisas). Nuestro motor realiza:
       </p>
 
@@ -269,25 +261,25 @@
     <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
       <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">Normalización Temporal Reversible (RevIN)</h2>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         Los mercados de commodities y acciones mineras experimentan cambios estructurales de régimen (*distribution shift*). La normalización estándar de media móvil destruye la no-estacionariedad de la serie. Implementamos <strong>Reversible Instance Normalization (RevIN)</strong>:
       </p>
 
       <!-- Math Box -->
       <div class="p-4 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3">
-        <p class="text-[10px] font-bold uppercase tracking-wider text-[#86868B]">Cálculo de Estadísticos Locales</p>
+        <p class="text-[10px] font-bold uppercase tracking-wider text-ink-soft">Cálculo de Estadísticos Locales</p>
         <div class="math-formula text-xs sm:text-sm text-black dark:text-white space-y-1">
           <div>μ_x = (1 / T) · Σ_{t=1}^T x_t</div>
           <div>σ_x = sqrt[ (1 / T) · Σ_{t=1}^T (x_t - μ_x)² + ε ]</div>
         </div>
-        <p class="text-[10px] font-bold uppercase tracking-wider text-[#86868B] pt-2">Transformación Simétrica & Re-inyección</p>
+        <p class="text-[10px] font-bold uppercase tracking-wider text-ink-soft pt-2">Transformación Simétrica & Re-inyección</p>
         <div class="math-formula text-xs sm:text-sm text-black dark:text-white space-y-1">
           <div>x̃_t = γ · ( (x_t - μ_x) / σ_x ) + β</div>
           <div>ŷ_t = ( (ŷ̃_t - β) / γ ) · σ_x + μ_x</div>
         </div>
       </div>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         Donde $\gamma$ y $\beta$ son parámetros afines entrenables y $\epsilon$ es un término de estabilidad numérica ($10^{-5}$). Esta formulación garantiza que las proyecciones preserven las magnitudes y la escala nominal original de la serie.
       </p>
     </section>
@@ -296,13 +288,13 @@
     <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
       <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">Conos de Densidad Probabilística (P10 / P50 / P90)</h2>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         El análisis cuantitativo profesional descarta las estimaciones escalares deterministas (un único número de precio objetivo carece de valor sin un intervalo de certidumbre). Modelamos la distribución empírica condicional completa $P(Y_{t+h} | X_{1:t})$ mediante optimización de pérdida cuantílica (*Pinball Loss*):
       </p>
 
       <!-- Math Box -->
       <div class="p-4 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-2">
-        <p class="text-[10px] font-bold uppercase tracking-wider text-[#86868B]">Función de Pérdida de Pinball</p>
+        <p class="text-[10px] font-bold uppercase tracking-wider text-ink-soft">Función de Pérdida de Pinball</p>
         <div class="math-formula text-xs sm:text-sm text-black dark:text-white">
           L_q(y, ŷ_q) = max[ q(y - ŷ_q), (1 - q)(ŷ_q - y) ]
         </div>
@@ -311,15 +303,15 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
         <div class="p-3.5 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E]">
           <span class="font-mono font-bold text-xs text-black dark:text-white">Cuantil P10</span>
-          <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93] mt-1">Escenario adverso / soporte estocástico con 90% de probabilidad de ser superado.</p>
+          <p class="text-[11px] text-ink-soft mt-1">Escenario adverso / soporte estocástico con 90% de probabilidad de ser superado.</p>
         </div>
         <div class="p-3.5 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E]">
           <span class="font-mono font-bold text-xs text-black dark:text-white">Cuantil P50</span>
-          <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93] mt-1">Mediana condicional. Trayectoria central esperada con menor error absoluto.</p>
+          <p class="text-[11px] text-ink-soft mt-1">Mediana condicional. Trayectoria central esperada con menor error absoluto.</p>
         </div>
         <div class="p-3.5 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E]">
           <span class="font-mono font-bold text-xs text-black dark:text-white">Cuantil P90</span>
-          <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93] mt-1">Límite superior / resistencia estocástica. Delimita el 80% de la densidad empírica.</p>
+          <p class="text-[11px] text-ink-soft mt-1">Límite superior / resistencia estocástica. Delimita el 80% de la densidad empírica.</p>
         </div>
       </div>
     </section>
@@ -328,23 +320,23 @@
     <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
       <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">Sensibilidad Factorial OLS & Correlación de Pearson</h2>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         Para descomponer las fuerzas exógenas que mueven a cada activo, resolvemos un sistema lineal de mínimos cuadrados ordinarios frente a los factores macroeconómicos fundamentales (Cobre COMEX, Oro y Tipo de Cambio USD/PEN):
       </p>
 
       <!-- Math Box -->
       <div class="p-4 rounded-md bg-[#F5F5F7] dark:bg-[#141415] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3">
-        <p class="text-[10px] font-bold uppercase tracking-wider text-[#86868B]">Estimación Vectorial Matricial</p>
+        <p class="text-[10px] font-bold uppercase tracking-wider text-ink-soft">Estimación Vectorial Matricial</p>
         <div class="math-formula text-xs sm:text-sm text-black dark:text-white">
           β̂ = (X^T · X)^(-1) · X^T · Y
         </div>
-        <p class="text-[10px] font-bold uppercase tracking-wider text-[#86868B] pt-2">Coeficiente de Correlación de Pearson</p>
+        <p class="text-[10px] font-bold uppercase tracking-wider text-ink-soft pt-2">Coeficiente de Correlación de Pearson</p>
         <div class="math-formula text-xs sm:text-sm text-black dark:text-white">
           ρ_{X,Y} = Cov(X, Y) / ( σ_X · σ_Y )
         </div>
       </div>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         Esto permite a los comités de tesorería y analistas de renta variable comprender de forma instantánea si el movimiento proyectado de una acción minera (como Buenaventura o Southern Copper) responde a fundamentos del precio físico del metal o a variaciones en la prima por riesgo soberano.
       </p>
     </section>
@@ -353,7 +345,7 @@
     <section class="p-5 sm:p-6 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] space-y-3.5">
       <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">Validación Temporal sin Fuga de Información</h2>
 
-      <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
         Todo modelo econométrico es auditado mediante <strong>Walk-Forward Cross-Validation</strong>: entrenamos estrictamente sobre ventanas deslizantes pasadas y evaluamos la precisión en horizontes ciegos hacia adelante. Queda estrictamente excluida cualquier fuga de datos de series futuras (*lookahead bias*).
       </p>
     </section>
@@ -368,38 +360,30 @@
 
   </main>
 
-  <!-- Institutional Footer -->
-    <!-- Centered Institutional Banking Footer -->
-  <footer class="border-t border-[#E2E8F0] dark:border-[#1E3553] bg-white dark:bg-[#070F1B] py-12 px-4 transition-colors">
-    <div class="pd-footer-container">
-      <div class="flex flex-col items-center justify-center space-y-3 text-center">
-        <a href="/" class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-lg bg-[#002244] dark:bg-[#005DAA] flex items-center justify-center text-white font-black text-sm border border-white/20">
+  <!-- Shared Institutional Footer -->
+  <footer class="border-t border-rule bg-card py-10 px-4 sm:px-6 transition-colors">
+    <div class="max-w-6xl mx-auto flex flex-col gap-6 text-left">
+      <!-- Fila 1: Logo y enlaces cortos -->
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-rule">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <div class="w-7 h-7 rounded pd-mark flex items-center justify-center font-bold text-xs">
             P
           </div>
-          <span class="font-bold text-black dark:text-white tracking-tight text-lg">PerData</span>
+          <span class="font-bold tracking-tight text-base leading-none text-ink">PerData</span>
         </a>
-        <p class="text-xs text-[#64748B] dark:text-[#94A3B8] max-w-md">
-          Inteligencia cuantitativa, modelado macroeconómico y proyecciones probabilísticas multi-cuantil para el mercado de capitales peruano y global.
-        </p>
+        <nav class="flex flex-wrap items-center gap-6 text-xs text-ink-soft" aria-label="Navegación secundaria">
+          <a href="/terms" class="hover:text-ink transition no-underline">Términos</a>
+          <a href="/privacidad" class="hover:text-ink transition no-underline">Privacidad</a>
+          <a href="mailto:soporte@perdata.site" class="hover:text-ink transition no-underline">Contacto</a>
+        </nav>
       </div>
 
-      <nav class="pd-footer-nav" aria-label="Navegación pie de página">
-        <a href="/">Inicio</a>
-        <a href="/explorer">Terminal</a>
-        <a href="/noticias">Noticias & Teleprompter</a>
-        <a href="/metodologia">Metodología & TimesFM</a>
-        <a href="/guia">Guía de Uso</a>
-        <a href="/precios">Planes & Facturación</a>
-        <a href="/cuenta">Mi Cuenta</a>
-        <a href="/terms">Términos de Servicio</a>
-        <a href="/privacidad">Política de Privacidad</a>
-        <a href="mailto:soporte@perdata.site">Contacto</a>
-      </nav>
-
-      <div class="pd-footer-disclaimer">
-        <span>© 2026 PerData Technologies. Todos los derechos reservados.</span><br/>
-        <span>Aviso Legal: La información y proyecciones cuantitativas proporcionadas por PerData se basan en métodos econométricos y aprendizaje automático con fines estrictamente informativos y de investigación financiera. No constituyen asesoramiento de inversión ni oferta pública de valores.</span>
+      <!-- Fila 2: Copyright y aviso legal corto -->
+      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 text-[11px] text-ink-soft leading-relaxed">
+        <span class="font-medium text-ink shrink-0">© 2026 PerData</span>
+        <p class="max-w-2xl m-0 text-ink-soft">
+          Información financiera y cuantitativa con fines estrictamente informativos y de investigación. No constituye asesoramiento de inversión ni oferta pública de valores.
+        </p>
       </div>
     </div>
   </footer>

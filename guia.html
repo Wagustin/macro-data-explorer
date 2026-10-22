@@ -167,29 +167,26 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/pd.css">
 </head>
-<body class="bg-[#FFFFFF] dark:bg-[#0D0D0E] text-[#000000] dark:text-[#F5F5F7] min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
+<body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 
-  <!-- Header -->
-  <header class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF]/90 dark:bg-[#0D0D0E]/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
+  <!-- Shared Institutional Header -->
+  <header class="border-b border-rule bg-card sticky top-0 z-30 transition-colors">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
-      
       <!-- Brand & Navigation -->
       <div class="flex items-center space-x-6">
-        <a href="/" class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-sm border border-black/10 dark:border-white/10">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <div class="w-7 h-7 rounded pd-mark flex items-center justify-center font-bold text-xs">
             P
           </div>
-          <span class="font-semibold text-black dark:text-white tracking-tight text-base sm:text-lg leading-tight">PerData</span>
+          <span class="font-bold tracking-tight text-base leading-none text-ink">PerData</span>
         </a>
 
-        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-[#86868B]">
-          <a href="/" class="hover:text-black dark:hover:text-white transition">Inicio</a>
-          <a href="/explorer" class="hover:text-black dark:hover:text-white transition">Terminal</a>
-          <a href="/noticias" class="hover:text-black dark:hover:text-white transition">Noticias</a>
-          <a href="/metodologia" class="hover:text-black dark:hover:text-white transition">Metodología</a>
-          <a href="/guia" class="text-black dark:text-white font-semibold transition border-b-2 border-black dark:border-white pb-0.5">Guía de Uso</a>
-          <a href="/precios" class="hover:text-black dark:hover:text-white transition">Precios</a>
-          <a href="/terms" class="hover:text-black dark:hover:text-white transition">Términos</a>
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
+          <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a>
+          <a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a>
+          <a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a>
+          <a href="/guia" class="text-ink font-semibold border-b border-ink pb-0.5 no-underline">Guía</a>
+          <a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
         </nav>
       </div>
 
@@ -204,26 +201,21 @@
           </div>
         </label>
 
-        <a href="/explorer" class="hidden sm:inline-flex items-center text-xs font-semibold bg-black dark:bg-[#F5F5F7] hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black px-5 py-2 rounded-full transition">
-          <span>Abrir Terminal</span>
-        </a>
-        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-[#E5E5EA] dark:border-[#2C2C2E] text-[#86868B] hover:text-black dark:hover:text-white transition" aria-label="Abrir menú" aria-expanded="false">
+        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menú" aria-expanded="false">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
       </div>
-      <!-- Mobile Nav Dropdown -->
-      <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 right-0 border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FFFFFF] dark:bg-[#1C1C1E] shadow-lg">
-        <nav class="flex flex-col py-2 text-xs font-medium text-[#86868B]">
-          <a href="/" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Inicio</a>
-          <a href="/explorer" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Terminal</a>
-          <a href="/noticias" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Noticias</a>
-          <a href="/metodologia" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Metodología</a>
-          <a href="/guia" class="px-4 py-2.5 text-black dark:text-white font-semibold bg-[#F5F5F7] dark:bg-[#0D0D0E]">Guía de Uso</a>
-          <a href="/precios" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Precios</a>
-          <a href="/terms" class="px-4 py-2.5 hover:text-black dark:hover:text-white hover:bg-[#F5F5F7] dark:hover:bg-[#0D0D0E] transition">Términos</a>
-        </nav>
-      </div>
+    </div>
 
+    <!-- Mobile Drawer -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors">
+      <nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft">
+        <a href="/explorer" class="hover:text-ink py-1 transition no-underline">Terminal</a>
+        <a href="/noticias" class="hover:text-ink py-1 transition no-underline">Noticias</a>
+        <a href="/metodologia" class="hover:text-ink py-1 transition no-underline">Metodología</a>
+        <a href="/guia" class="text-ink font-semibold py-1 no-underline">Guía</a>
+        <a href="/precios" class="hover:text-ink py-1 transition no-underline">Precios</a>
+      </nav>
     </div>
   </header>
 
@@ -306,54 +298,54 @@
       <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-5">
         <div class="space-y-1">
           <dt class="font-semibold text-black dark:text-white text-sm">P10 · P25 · P50 · P75 · P90</dt>
-          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          <dd class="text-xs sm:text-sm text-ink-soft leading-relaxed">
             Percentiles del modelo al final del horizonte. P50 es el escenario central; P10 y P90 son los pesimista y optimista
             que delimitan el 80% de probabilidad. P25 y P75 dibujan la banda interna del 50%.
           </dd>
         </div>
         <div class="space-y-1">
           <dt class="font-semibold text-black dark:text-white text-sm">Prob. de alza</dt>
-          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          <dd class="text-xs sm:text-sm text-ink-soft leading-relaxed">
             Fracción de las 400 trayectorias simuladas que terminan por encima del último cierre registrado.
             Se colorea en verde por encima del 55% y en rojo por debajo del 45%.
           </dd>
         </div>
         <div class="space-y-1">
           <dt class="font-semibold text-black dark:text-white text-sm">Retorno proyectado</dt>
-          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          <dd class="text-xs sm:text-sm text-ink-soft leading-relaxed">
             Diferencia entre el último cierre observado y el P50 al horizonte, en porcentaje.
           </dd>
         </div>
         <div class="space-y-1">
           <dt class="font-semibold text-black dark:text-white text-sm">Volatilidad anualizada</dt>
-          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          <dd class="text-xs sm:text-sm text-ink-soft leading-relaxed">
             Dispersión esperada de la serie a un año, estimada sobre los retornos mensuales del rango seleccionado.
           </dd>
         </div>
         <div class="space-y-1">
           <dt class="font-semibold text-black dark:text-white text-sm">Correlación (r)</dt>
-          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          <dd class="text-xs sm:text-sm text-ink-soft leading-relaxed">
             Coeficiente de Pearson entre el activo y el indicador del cruce macro, en cierres mensuales.
             Va de −1 (se mueven en direcciones opuestas) a +1 (se mueven juntos); 0 significa que no hay relación lineal.
           </dd>
         </div>
         <div class="space-y-1">
           <dt class="font-semibold text-black dark:text-white text-sm">PROYECTADO</dt>
-          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          <dd class="text-xs sm:text-sm text-ink-soft leading-relaxed">
             Marca de las filas que genera el modelo, no observaciones de mercado: su cierre equivale al P50 y su
             máximo y mínimo al P90 y P10.
           </dd>
         </div>
         <div class="space-y-1">
           <dt class="font-semibold text-black dark:text-white text-sm">RevIN</dt>
-          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          <dd class="text-xs sm:text-sm text-ink-soft leading-relaxed">
             Normalización reversible en media y varianza: cada ventana se normaliza antes del modelo y se devuelve a su
             escala original después, para que los cambios de régimen no contaminen la proyección.
           </dd>
         </div>
         <div class="space-y-1">
           <dt class="font-semibold text-black dark:text-white text-sm">Interpretación del gráfico</dt>
-          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          <dd class="text-xs sm:text-sm text-ink-soft leading-relaxed">
             Lectura automática que acompaña al cono: beta frente al cruce macro, régimen de volatilidad y confianza calibrada.
             Es un resumen de lo dibujado, no una recomendación de inversión.
           </dd>
@@ -393,20 +385,20 @@
             </tr>
             <tr class="hover:bg-[#F5F5F7] dark:hover:bg-[#1C1C1E]">
               <td class="py-2.5 px-4 text-black dark:text-white">Serie de 10 años</td>
-              <td class="py-2.5 px-4 font-mono tnum text-[#86868B] dark:text-[#8E8E93]">No</td>
-              <td class="py-2.5 px-4 font-mono tnum text-[#86868B] dark:text-[#8E8E93]">No</td>
+              <td class="py-2.5 px-4 font-mono tnum text-ink-soft">No</td>
+              <td class="py-2.5 px-4 font-mono tnum text-ink-soft">No</td>
               <td class="py-2.5 px-4 font-mono tnum text-emerald-600 dark:text-emerald-400">Sí</td>
             </tr>
             <tr class="hover:bg-[#F5F5F7] dark:hover:bg-[#1C1C1E]">
               <td class="py-2.5 px-4 text-black dark:text-white">Horizonte de proyección</td>
-              <td class="py-2.5 px-4 font-mono tnum text-[#86868B] dark:text-[#8E8E93]">1 mes</td>
+              <td class="py-2.5 px-4 font-mono tnum text-ink-soft">1 mes</td>
               <td class="py-2.5 px-4 font-mono tnum text-emerald-600 dark:text-emerald-400">1–6 meses</td>
               <td class="py-2.5 px-4 font-mono tnum text-emerald-600 dark:text-emerald-400">1–36 meses</td>
             </tr>
             <tr class="hover:bg-[#F5F5F7] dark:hover:bg-[#1C1C1E]">
               <td class="py-2.5 px-4 text-black dark:text-white">Exportación a Excel (.xlsx)</td>
-              <td class="py-2.5 px-4 font-mono tnum text-[#86868B] dark:text-[#8E8E93]">No</td>
-              <td class="py-2.5 px-4 font-mono tnum text-[#86868B] dark:text-[#8E8E93]">No</td>
+              <td class="py-2.5 px-4 font-mono tnum text-ink-soft">No</td>
+              <td class="py-2.5 px-4 font-mono tnum text-ink-soft">No</td>
               <td class="py-2.5 px-4 font-mono tnum text-emerald-600 dark:text-emerald-400">Sí</td>
             </tr>
             <tr class="hover:bg-[#F5F5F7] dark:hover:bg-[#1C1C1E]">
@@ -431,42 +423,42 @@
       <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-5">
         <div class="space-y-1">
           <dt class="font-semibold text-black dark:text-white text-sm">¿De dónde salen los datos?</dt>
-          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          <dd class="text-xs sm:text-sm text-ink-soft leading-relaxed">
             Cotizaciones de la BVL y de los mercados globales, más series oficiales del BCRP y del Banco Mundial.
             El catálogo de tickers se verifica contra el proveedor antes de cada despliegue.
           </dd>
         </div>
         <div class="space-y-1">
           <dt class="font-semibold text-black dark:text-white text-sm">¿Cada cuánto se actualiza?</dt>
-          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          <dd class="text-xs sm:text-sm text-ink-soft leading-relaxed">
             El histórico se actualiza con cada cierre mensual y el precio en vivo aparece cuando el proveedor lo publica
             (verás la marca «En vivo» junto a la cotización). Las noticias se refrescan cada 30 minutos.
           </dd>
         </div>
         <div class="space-y-1">
           <dt class="font-semibold text-black dark:text-white text-sm">¿Por qué la proyección puede fallar?</dt>
-          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          <dd class="text-xs sm:text-sm text-ink-soft leading-relaxed">
             Porque modela una distribución, no un destino: el P50 acierta con frecuencia, pero no siempre, y la banda existe
             precisamente para mostrar cuánto puede desviarse. Ocho de cada diez escenarios deberían caer entre P10 y P90.
           </dd>
         </div>
         <div class="space-y-1">
           <dt class="font-semibold text-black dark:text-white text-sm">¿Puedo llevar el resultado a mi propio modelo?</dt>
-          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          <dd class="text-xs sm:text-sm text-ink-soft leading-relaxed">
             Sí: la exportación genera un .xlsx con resumen de métricas, histórico OHLCV de 10 años y los vectores mensuales
             de P10, P50 y P90 para graficar el cono donde lo necesites.
           </dd>
         </div>
         <div class="space-y-1">
           <dt class="font-semibold text-black dark:text-white text-sm">¿Esto es una recomendación de inversión?</dt>
-          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          <dd class="text-xs sm:text-sm text-ink-soft leading-relaxed">
             No. Es una herramienta analítica y educativa sobre series históricas y modelos probabilísticos.
             Las decisiones y su riesgo son del usuario.
           </dd>
         </div>
         <div class="space-y-1">
           <dt class="font-semibold text-black dark:text-white text-sm">¿Necesito instalar algo?</dt>
-          <dd class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          <dd class="text-xs sm:text-sm text-ink-soft leading-relaxed">
             No. Todo corre en el navegador; la única descarga es el .xlsx cuando lo pides.
           </dd>
         </div>
@@ -485,7 +477,7 @@
         <p class="band-label lg:col-span-5">Cobertura minera</p>
         <div class="lg:col-span-7 space-y-3">
           <h3 class="text-xl font-semibold text-black dark:text-white">Cobertura de portafolios mineros (BVN / SCCO frente a cobre y oro)</h3>
-          <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
             Las mineras peruanas operan con apalancamiento operativo natural respecto al precio internacional del metal:
             cuando el cobre o el oro suben, los márgenes se expanden de forma no lineal.
           </p>
@@ -502,7 +494,7 @@
         <p class="band-label lg:col-span-5">Tesorería FX</p>
         <div class="lg:col-span-7 space-y-3">
           <h3 class="text-xl font-semibold text-black dark:text-white">Gestión de riesgo cambiario (USD/PEN frente a la intervención del BCRP)</h3>
-          <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
             El sol opera en flotación administrada, con intervención del BCRP para contener la volatilidad extrema.
             Al planificar pagos o cobros a 3 y 6 meses:
           </p>
@@ -521,13 +513,13 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
             <div class="space-y-1.5">
               <p class="font-semibold text-black dark:text-white text-sm">1M – 3M · táctico</p>
-              <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+              <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
                 Rebalanceo de liquidez, negociación de contratos a plazo y seguimiento de las minutas del BCRP y la Reserva Federal.
               </p>
             </div>
             <div class="space-y-1.5">
               <p class="font-semibold text-black dark:text-white text-sm">6M – 36M · estratégico</p>
-              <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+              <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
                 Presupuestos de capex minero, valoración por descuento de flujos y estructuración de emisiones de deuda corporativa.
               </p>
             </div>
@@ -540,7 +532,7 @@
         <p class="band-label lg:col-span-5">Excel (.xlsx)</p>
         <div class="lg:col-span-7 space-y-3">
           <h3 class="text-xl font-semibold text-black dark:text-white">Auditoría y despliegue en hojas de cálculo</h3>
-          <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
+          <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
             El botón <strong>Descargar Excel</strong> genera un libro nativo con tres hojas listas para incorporar a modelos internos:
           </p>
           <ul class="space-y-2 text-xs sm:text-sm text-[#1D1D1F] dark:text-[#E5E5EA] list-disc list-inside">
@@ -569,38 +561,30 @@
 
   </main>
 
-  <!-- Footer -->
-    <!-- Centered Institutional Banking Footer -->
-  <footer class="border-t border-[#E2E8F0] dark:border-[#1E3553] bg-white dark:bg-[#070F1B] py-12 px-4 transition-colors">
-    <div class="pd-footer-container">
-      <div class="flex flex-col items-center justify-center space-y-3 text-center">
-        <a href="/" class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-lg bg-[#002244] dark:bg-[#005DAA] flex items-center justify-center text-white font-black text-sm border border-white/20">
+  <!-- Shared Institutional Footer -->
+  <footer class="border-t border-rule bg-card py-10 px-4 sm:px-6 transition-colors">
+    <div class="max-w-6xl mx-auto flex flex-col gap-6 text-left">
+      <!-- Fila 1: Logo y enlaces cortos -->
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-rule">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <div class="w-7 h-7 rounded pd-mark flex items-center justify-center font-bold text-xs">
             P
           </div>
-          <span class="font-bold text-black dark:text-white tracking-tight text-lg">PerData</span>
+          <span class="font-bold tracking-tight text-base leading-none text-ink">PerData</span>
         </a>
-        <p class="text-xs text-[#64748B] dark:text-[#94A3B8] max-w-md">
-          Inteligencia cuantitativa, modelado macroeconómico y proyecciones probabilísticas multi-cuantil para el mercado de capitales peruano y global.
-        </p>
+        <nav class="flex flex-wrap items-center gap-6 text-xs text-ink-soft" aria-label="Navegación secundaria">
+          <a href="/terms" class="hover:text-ink transition no-underline">Términos</a>
+          <a href="/privacidad" class="hover:text-ink transition no-underline">Privacidad</a>
+          <a href="mailto:soporte@perdata.site" class="hover:text-ink transition no-underline">Contacto</a>
+        </nav>
       </div>
 
-      <nav class="pd-footer-nav" aria-label="Navegación pie de página">
-        <a href="/">Inicio</a>
-        <a href="/explorer">Terminal</a>
-        <a href="/noticias">Noticias & Teleprompter</a>
-        <a href="/metodologia">Metodología & TimesFM</a>
-        <a href="/guia">Guía de Uso</a>
-        <a href="/precios">Planes & Facturación</a>
-        <a href="/cuenta">Mi Cuenta</a>
-        <a href="/terms">Términos de Servicio</a>
-        <a href="/privacidad">Política de Privacidad</a>
-        <a href="mailto:soporte@perdata.site">Contacto</a>
-      </nav>
-
-      <div class="pd-footer-disclaimer">
-        <span>© 2026 PerData Technologies. Todos los derechos reservados.</span><br/>
-        <span>Aviso Legal: La información y proyecciones cuantitativas proporcionadas por PerData se basan en métodos econométricos y aprendizaje automático con fines estrictamente informativos y de investigación financiera. No constituyen asesoramiento de inversión ni oferta pública de valores.</span>
+      <!-- Fila 2: Copyright y aviso legal corto -->
+      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 text-[11px] text-ink-soft leading-relaxed">
+        <span class="font-medium text-ink shrink-0">© 2026 PerData</span>
+        <p class="max-w-2xl m-0 text-ink-soft">
+          Información financiera y cuantitativa con fines estrictamente informativos y de investigación. No constituye asesoramiento de inversión ni oferta pública de valores.
+        </p>
       </div>
     </div>
   </footer>
