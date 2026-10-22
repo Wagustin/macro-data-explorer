@@ -45,8 +45,9 @@
   
   <!-- Typography: institutional terminal stack -->
 
-  <!-- Chart.js -->
+  <!-- Chart.js & Componente de Gráfico Propio -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="pd-chart.js"></script>
   <!-- SheetJS (xlsx) for instant client-side Excel downloads -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
@@ -794,35 +795,26 @@
 
     <!-- Chart Band -->
     <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-4">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-3 border-b border-[#E5E5EA] dark:border-[#2C2C2E] gap-2">
-        <div class="flex items-center gap-2">
-          <span class="w-1.5 h-1.5 rounded-sm bg-black dark:bg-white"></span>
-          <span class="text-xs font-bold text-black dark:text-white">Evolución Histórica & Proyección</span>
-        </div>
-
-        <!-- Legend Items -->
-        <div class="flex flex-wrap items-center gap-3 text-[11px] text-ink-soft font-medium">
-          <span class="inline-flex items-center">
-            <span class="w-2.5 h-0.5 bg-black dark:bg-white mr-1.5"></span> Histórico
-          </span>
-          <span id="legendForecast" class="inline-flex items-center text-black dark:text-white font-semibold">
-            <span class="w-2.5 h-0 border-t-2 border-dashed border-black dark:border-white mr-1.5"></span> P50
-          </span>
-          <span id="legendBand" class="inline-flex items-center text-ink-soft">
-            <span class="w-2.5 h-2 bg-black/10 dark:bg-white/10 border border-black/20 dark:border-white/20 rounded-sm mr-1.5"></span> P10–P90 (80%)
-          </span>
-          <span class="inline-flex items-center text-ink-soft">
-            <span class="w-2.5 h-2 bg-black/25 dark:bg-white/20 border border-black/30 dark:border-white/30 rounded-sm mr-1.5"></span> P25–P75 (50%)
-          </span>
-          <span id="legendMacro" class="inline-flex items-center text-ink-soft">
-            <span class="w-2.5 h-0.5 mr-1.5" style="background: var(--pd-ink-soft);"></span> Indicador Macro
-          </span>
-        </div>
+      <!-- Main Chart Container (con rótulo del modelo y canvas) -->
+      <div id="chartContainer" class="relative w-full h-[260px] sm:h-[360px] md:h-[400px]">
+        <canvas id="mainChart"></canvas>
       </div>
 
-      <!-- Chart Canvas -->
-      <div class="relative w-full h-[260px] sm:h-[360px] md:h-[420px]">
-        <canvas id="mainChart"></canvas>
+      <!-- Panel Macro Aparte (Visible si hay macro activo, ~90px desktop / 70px mobile) -->
+      <div id="macroPanel" class="mt-4 pt-3 border-t border-rule flex flex-col gap-1.5">
+        <div class="flex items-center justify-between text-[11px]">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-0.5" style="background: var(--pd-ink-soft);"></span>
+            <span id="macroPanelTitle" class="font-bold text-ink">Cruce Macro</span>
+            <span id="macroPanelUnit" class="text-ink-soft"></span>
+          </div>
+          <div class="font-mono tnum text-[11px] font-semibold text-ink">
+            Correlación: <span id="macroPanelR" class="font-bold">—</span>
+          </div>
+        </div>
+        <div class="relative w-full h-[70px] sm:h-[90px]">
+          <canvas id="macroChart"></canvas>
+        </div>
       </div>
 
       <!-- Interpretación Cuantitativa y Cobertura de Riesgo -->
@@ -1131,9 +1123,7 @@ const state = {
         if (themeToggle) themeToggle.checked = false;
       }
 
-      if (state.chartInstance) {
-        renderChart();
-      }
+      renderChart();
     }
 
     // Initialize Application
@@ -1448,12 +1438,13 @@ const state = {
       window.addEventListener("mde-auth-changed", updateAuthLocks);
     }
 
-    // Setup Range Buttons
+    // Setup Range Buttons (1A, 3A, 5A, 10A)
     function setupRangeButtons() {
       document.querySelectorAll(".range-btn").forEach(btn => {
         btn.addEventListener("click", () => {
           const rng = btn.getAttribute("data-range");
           if (window.MDE_Auth && !window.MDE_Auth.gate("range", rng)) return;
+          state.userSelectedRange = true;
           document.querySelectorAll(".range-btn").forEach(b => {
             b.className = "range-btn px-3 py-1 rounded-lg text-ink-soft hover:text-black dark:hover:text-white transition";
           });
@@ -1487,6 +1478,18 @@ const state = {
           btn.className = "horizon-btn px-3 py-1.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition";
           if (window.MDE_Auth) window.MDE_Auth.updateGatedElements();
           state.horizon = h;
+          if (!state.userSelectedRange) {
+            const autoRng = h <= 6 ? "1y" : h === 12 ? "3y" : "5y";
+            state.range = autoRng;
+            document.querySelectorAll(".range-btn").forEach(b => {
+              const r = b.getAttribute("data-range");
+              if (r === autoRng) {
+                b.className = "range-btn px-3 py-1 rounded-lg bg-black dark:bg-white text-white dark:text-black font-bold shadow-sm transition";
+              } else {
+                b.className = "range-btn px-3 py-1 rounded-lg text-ink-soft hover:text-black dark:hover:text-white transition";
+              }
+            });
+          }
           fetchForecastOnly(state.primarySymbol, h);
         });
       });
@@ -1529,6 +1532,10 @@ const state = {
           customLabel.textContent = `Custom (${val}M)`;
         }
         state.horizon = val;
+        if (!state.userSelectedRange) {
+          const autoRng = val <= 6 ? "1y" : val === 12 ? "3y" : "5y";
+          state.range = autoRng;
+        }
         fetchForecastOnly(state.primarySymbol, val);
       }
 
@@ -1810,12 +1817,14 @@ const state = {
         const rFormatted = (r >= 0 ? "+" : "") + r.toFixed(2);
         document.getElementById("metricCorrelation").textContent = rFormatted;
         document.getElementById("metricCorrelationDesc").textContent = `vs ${m.name.split('(')[0]}${m.stale ? ' (datos guardados)' : ''}`;
-        document.getElementById("legendMacro").classList.remove("hidden");
+        const legM = document.getElementById("legendMacro");
+        if (legM) legM.classList.remove("hidden");
         document.getElementById("tableHeaderMacro").textContent = `${m.name.split('(')[0]} (${m.currency || ''})${m.stale ? ' · datos guardados' : ''}`;
       } else {
         document.getElementById("metricCorrelation").textContent = "N/A";
         document.getElementById("metricCorrelationDesc").textContent = "Sin cruce macro";
-        document.getElementById("legendMacro").classList.add("hidden");
+        const legM = document.getElementById("legendMacro");
+        if (legM) legM.classList.add("hidden");
         document.getElementById("tableHeaderMacro").textContent = "Sin indicador macro";
       }
     }
@@ -1878,330 +1887,117 @@ const state = {
       document.getElementById("tfmExplainText").textContent = `Proyección calculada a ${f.horizonLabel}. La gráfica inferior amplía el horizonte temporal incorporando el intervalo probabilístico P10-P90.`;
     }
 
-    // Render Chart.js with Monochromatic Apple Styling & TimesFM
+    // Render Chart via Componente PdChart aislado
     function renderChart() {
-      const canvas = document.getElementById("mainChart");
-      const ctx = canvas.getContext("2d");
+      const container = document.getElementById("chartContainer");
       const p = state.primaryData;
       const m = state.macroData;
-      const f = state.forecastData;
+      const f = state.showForecastOnChart ? state.forecastData : null;
+
+      if (!container || !p || !p.series) return;
+
       const isDark = document.documentElement.classList.contains("dark");
+      const range = state.range || "3y";
+      const years = range === "1y" ? 1 : range === "2y" ? 2 : range === "3y" ? 3 : range === "5y" ? 5 : 10;
 
-      if (state.chartInstance) {
-        state.chartInstance.destroy();
+      const macroEnabled = Boolean(m && m.series && m.series.length && state.macroSymbol !== "none");
+
+      const hist = p.series.map(it => ({ date: it.date.substring(0, 7), close: Number(it.close) }));
+
+      PdChart.render(container, {
+        history: hist,
+        forecast: f ? {
+          forecastSeries: f.forecastSeries ? f.forecastSeries.map(it => ({
+            date: it.date.substring(0, 7),
+            p10: Number(it.p10),
+            p25: Number(it.p25 !== undefined ? it.p25 : it.p10),
+            p50: Number(it.p50),
+            p75: Number(it.p75 !== undefined ? it.p75 : it.p90),
+            p90: Number(it.p90),
+          })) : [],
+          model: f.model || "engine-v3",
+          runAt: f.runAt || null,
+        } : null,
+        macro: macroEnabled ? {
+          enabled: true,
+          name: m.name || "Indicador Macro",
+          symbol: m.symbol,
+          series: m.series.map(it => ({ date: it.date.substring(0, 7), close: Number(it.close) })),
+          currency: m.currency || "USD",
+        } : { enabled: false },
+        options: {
+          currency: p.currency || "USD",
+          horizonMonths: state.horizon || 1,
+          isDark,
+        },
+      });
+
+      // Panel macro aparte: si no hay macro activo, ocultar; si hay, renderizar mini-gráfico
+      const panel = document.getElementById("macroPanel");
+      const panelCanvas = document.getElementById("macroChart");
+      if (!panel || !panelCanvas) return;
+      if (!macroEnabled) {
+        panel.style.display = "none";
+        return;
       }
+      panel.style.display = "";
 
-      if (!p || !p.series) return;
+      // Recortar macro al mismo rango que el historial principal
+      const cutoff = new Date();
+      cutoff.setFullYear(cutoff.getFullYear() - years);
+      const macroFiltered = m.series.filter(it => new Date(it.date.substring(0, 7) + "-01") >= cutoff);
 
-      // Prepare Historical Labels and Data
-      const histLabels = p.series.map(it => it.date.substring(0, 7));
-      const histData = p.series.map(it => it.close);
-      const lastHistIndex = histData.length - 1;
-      const lastHistVal = histData[lastHistIndex];
+      const macroCtx = panelCanvas.getContext("2d");
+      const tokens = window.getComputedStyle(container);
+      const inkSoft = tokens.getPropertyValue("--pd-ink-soft").trim() || "#556170";
+      const rule = tokens.getPropertyValue("--pd-rule").trim() || "#DCE1E8";
+      const accent = tokens.getPropertyValue("--pd-accent").trim() || "#1414D2";
 
-      let allLabels = [...histLabels];
-      let p50Data = new Array(histData.length).fill(null);
-      let p10Data = new Array(histData.length).fill(null);
-      let p90Data = new Array(histData.length).fill(null);
-      let p25Data = new Array(histData.length).fill(null);
-      let p75Data = new Array(histData.length).fill(null);
+      if (window._macroChartInstance) window._macroChartInstance.destroy();
 
-      // Append Forecast Series if available & enabled
-      if (f && f.forecastSeries && state.showForecastOnChart) {
-        p50Data[lastHistIndex] = lastHistVal;
-        p10Data[lastHistIndex] = lastHistVal;
-        p90Data[lastHistIndex] = lastHistVal;
-        p25Data[lastHistIndex] = lastHistVal;
-        p75Data[lastHistIndex] = lastHistVal;
+      // Rebase macro a base 100 sobre el primer valor del rango
+      const macroValues = macroFiltered.map(it => Number(it.close));
+      const firstV = macroValues.find(v => v !== null);
+      const base100 = firstV ? macroValues.map(v => (v / firstV) * 100) : macroValues;
 
-        f.forecastSeries.forEach(item => {
-          allLabels.push(item.date);
-          p50Data.push(item.p50);
-          p10Data.push(item.p10);
-          p90Data.push(item.p90);
-          p25Data.push(item.p25 !== undefined ? item.p25 : item.p10);
-          p75Data.push(item.p75 !== undefined ? item.p75 : item.p90);
-        });
-      }
-
-      // Pad historical data with nulls for future forecast months
-      const paddedHistData = [...histData];
-      while (paddedHistData.length < allLabels.length) {
-        paddedHistData.push(null);
-      }
-
-      // Macro Map for Dual Axis
-      const macroMap = new Map();
-      if (m && m.series) {
-        m.series.forEach(it => macroMap.set(it.date.substring(0, 7), it.close));
-      }
-      const macroDataPadded = allLabels.map(lbl => macroMap.has(lbl) ? macroMap.get(lbl) : null);
-
-      // Paper and Ink Palette
-      const textColor = isDark ? "#A3A09A" : "#5C5A55";
-      const gridColor = isDark ? "rgba(46, 45, 42, 0.6)" : "rgba(228, 225, 218, 0.7)";
-      const primaryLineColor = isDark ? "#E8E4D8" : "#0D2A1C";
-      const primaryBgColor = isDark ? "rgba(232, 228, 216, 0.05)" : "rgba(13, 42, 28, 0.04)";
-      const macroLineColor = isDark ? "#A3A09A" : "#5C5A55";
-
-      const datasets = [
-        // 1. Historical Asset Line
-        {
-          label: `${p.name} (Histórico)`,
-          data: paddedHistData,
-          borderColor: primaryLineColor,
-          backgroundColor: primaryBgColor,
-          borderWidth: 2.2,
-          pointRadius: 0,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: primaryLineColor,
-          fill: true,
-          yAxisID: "yPrimary",
-          spanGaps: false,
-          tension: 0
-        }
-      ];
-
-      // 2. TimesFM Forecast Datasets — institutional fan chart
-      if (f && f.forecastSeries && state.showForecastOnChart) {
-        // Inner band P75 (fill down to P25): 50% central mass, denser tone
-        datasets.push({
-          label: "P75",
-          data: p75Data,
-          borderColor: "transparent",
-          backgroundColor: isDark ? "rgba(56, 189, 248, 0.16)" : "rgba(0, 93, 170, 0.12)",
-          borderWidth: 0,
-          pointRadius: 0,
-          fill: "+1",
-          yAxisID: "yPrimary",
-          spanGaps: true,
-          tension: 0.15
-        });
-
-        // Inner band P25 (lower edge of the 50% band)
-        datasets.push({
-          label: "P25",
-          data: p25Data,
-          borderColor: "transparent",
-          backgroundColor: "transparent",
-          borderWidth: 0,
-          pointRadius: 0,
-          fill: false,
-          yAxisID: "yPrimary",
-          spanGaps: true,
-          tension: 0.15
-        });
-
-        // Outer band P90 (fill down to P10): 80% cone, lighter tone
-        datasets.push({
-          label: "P90",
-          data: p90Data,
-          borderColor: "transparent",
-          backgroundColor: isDark ? "rgba(245, 245, 247, 0.07)" : "rgba(0, 0, 0, 0.045)",
-          borderWidth: 0,
-          pointRadius: 0,
-          fill: "+1",
-          yAxisID: "yPrimary",
-          spanGaps: true,
-          tension: 0.15
-        });
-
-        // P10 (lower edge of the 80% cone) — hairline to delimit the cone
-        datasets.push({
-          label: "P10",
-          data: p10Data,
-          borderColor: isDark ? "rgba(245, 245, 247, 0.35)" : "rgba(0, 0, 0, 0.28)",
-          backgroundColor: "transparent",
-          borderWidth: 1,
-          borderDash: [2, 3],
-          pointRadius: 0,
-          fill: false,
-          yAxisID: "yPrimary",
-          spanGaps: true,
-          tension: 0.15
-        });
-
-        // P90 upper hairline
-        datasets.push({
-          label: "Banda P90 (sup.)",
-          data: p90Data,
-          borderColor: isDark ? "rgba(245, 245, 247, 0.35)" : "rgba(0, 0, 0, 0.28)",
-          backgroundColor: "transparent",
-          borderWidth: 1,
-          borderDash: [2, 3],
-          pointRadius: 0,
-          fill: false,
-          yAxisID: "yPrimary",
-          spanGaps: true,
-          tension: 0.15
-        });
-
-        // P50 (Median Forecast Line) — the hero line
-        datasets.push({
-          label: `P50 (${f.horizonLabel})`,
-          data: p50Data,
-          borderColor: primaryLineColor,
-          backgroundColor: "transparent",
-          borderWidth: 2.4,
-          borderDash: [6, 4],
-          pointRadius: 0,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: primaryLineColor,
-          pointHoverBorderColor: isDark ? "#0D0D0E" : "#FFFFFF",
-          pointHoverBorderWidth: 2,
-          fill: false,
-          yAxisID: "yPrimary",
-          spanGaps: true,
-          tension: 0.15
-        });
-
-        // Terminal P50 marker (callout dot at horizon)
-        const lastIdx = p50Data.length - 1;
-        const p50Callout = new Array(p50Data.length).fill(null);
-        p50Callout[lastIdx] = p50Data[lastIdx];
-        datasets.push({
-          label: "P50 Horizonte",
-          data: p50Callout,
-          borderColor: "transparent",
-          backgroundColor: primaryLineColor,
-          pointRadius: 4.5,
-          pointHoverRadius: 6,
-          pointHoverBackgroundColor: primaryLineColor,
-          showLine: false,
-          yAxisID: "yPrimary"
-        });
-      }
-
-      // 3. Macro Overlay Dataset
-      if (m && m.series) {
-        datasets.push({
-          label: `${m.name} (${m.currency || ''})`,
-          data: macroDataPadded,
-          borderColor: macroLineColor,
-          borderDash: [3, 3],
-          backgroundColor: "transparent",
-          borderWidth: 1.6,
-          pointRadius: 0,
-          pointHoverRadius: 4,
-          pointHoverBackgroundColor: macroLineColor,
-          yAxisID: "yMacro",
-          spanGaps: true,
-          tension: 0
-        });
-      }
-
-      // Inline plugin: "HOY" divider at the forecast start
-      const forecastStartDivider = {
-        id: "forecastStartDivider",
-        afterDraw(chartArea) {
-          if (!f || !f.forecastSeries || !state.showForecastOnChart) return;
-          const chart = chartArea;
-          const xScale = chart.scales.x;
-          const fcStartIdx = chart.data.labels.length - f.forecastSeries.length;
-          const x = xScale.getPixelForValue(fcStartIdx);
-          if (!isFinite(x)) return;
-          const { top, bottom, ctx } = chart.chartArea ? { top: chart.chartArea.top, bottom: chart.chartArea.bottom, ctx: chart.ctx } : { top: 0, bottom: 0, ctx: null };
-          if (!ctx) return;
-          ctx.save();
-          ctx.strokeStyle = isDark ? "rgba(245,245,247,0.45)" : "rgba(0,0,0,0.4)";
-          ctx.lineWidth = 1;
-          ctx.setLineDash([3, 3]);
-          ctx.beginPath();
-          ctx.moveTo(x, top);
-          ctx.lineTo(x, bottom);
-          ctx.stroke();
-          ctx.setLineDash([]);
-          ctx.fillStyle = isDark ? "rgba(245,245,247,0.75)" : "rgba(0,0,0,0.55)";
-          ctx.font = "700 9px Inter, sans-serif";
-          ctx.textAlign = "left";
-          ctx.fillText("HOY", x + 4, top + 10);
-          ctx.restore();
-          chart.$dividerDrawn = true;
-        }
-      };
-
-      state.chartInstance = new Chart(ctx, {
+      window._macroChartInstance = new Chart(macroCtx, {
         type: "line",
         data: {
-          labels: allLabels,
-          datasets: datasets
+          labels: macroFiltered.map(it => it.date.substring(0, 7)),
+          datasets: [{
+            label: m.name || "Macro",
+            data: base100,
+            borderColor: inkSoft,
+            backgroundColor: "transparent",
+            borderWidth: 1.5,
+            borderDash: [4, 4],
+            pointRadius: 0,
+            fill: false,
+            tension: 0,
+          }],
         },
-        plugins: [forecastStartDivider],
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          interaction: {
-            mode: "index",
-            intersect: false
-          },
-          plugins: {
-            legend: {
-              display: false
-            },
-            tooltip: {
-              backgroundColor: isDark ? "#1C1C1E" : "#FFFFFF",
-              titleColor: isDark ? "#F5F5F7" : "#000000",
-              bodyColor: isDark ? "#E5E5EA" : "#1D1D1F",
-              borderColor: isDark ? "#2C2C2E" : "#E5E5EA",
-              borderWidth: 1,
-              padding: 10,
-              displayColors: true,
-              callbacks: {
-                label: function(context) {
-                  const val = context.raw;
-                  if (val === null || val === undefined) return null;
-                  const label = context.dataset.label || "";
-                  return ` ${label}: ${val.toFixed(2)}`;
-                }
-              }
-            }
-          },
+          animation: { duration: 0 },
+          interaction: { mode: false },
+          plugins: { legend: { display: false }, tooltip: { enabled: false } },
           scales: {
-            x: {
-              grid: {
-                color: gridColor,
-                drawBorder: false
-              },
-              ticks: {
-                color: textColor,
-                font: { size: 10 },
-                maxTicksLimit: 14
-              }
-            },
-            yPrimary: {
-              type: "linear",
-              position: "left",
-              grid: {
-                color: gridColor,
-                drawBorder: false
-              },
-              ticks: {
-                color: textColor,
-                font: { size: 10 },
-                callback: function(value) {
-                  return (p.currency === "PEN" ? "S/ " : "$") + value.toFixed(1);
-                }
-              }
-            },
-            yMacro: {
-              type: "linear",
-              position: "right",
-              display: m && m.series ? true : false,
-              grid: {
-                drawOnChartArea: false,
-                drawBorder: false
-              },
-              ticks: {
-                color: textColor,
-                font: { size: 10 },
-                callback: function(value) {
-                  return value.toFixed(1);
-                }
-              }
-            }
-          }
-        }
+            x: { display: false, grid: { display: false } },
+            y: { display: false, grid: { display: false } },
+          },
+          layout: { padding: 0 },
+        },
       });
+
+      // Actualizar datos del encabezado del panel macro
+      const elTitle = document.getElementById("macroPanelTitle");
+      const elUnit = document.getElementById("macroPanelUnit");
+      const elR = document.getElementById("macroPanelR");
+      if (elTitle) elTitle.textContent = m.name || "Cruce Macro";
+      if (elUnit) elUnit.textContent = "Base 100 · " + (m.currency || "USD");
+      const corrText = document.getElementById("metricCorrelation") ? document.getElementById("metricCorrelation").textContent : "—";
+      if (elR) elR.textContent = corrText;
     }
 
     // Render Historical & Projected Data Table
