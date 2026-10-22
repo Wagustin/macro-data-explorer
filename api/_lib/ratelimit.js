@@ -78,21 +78,19 @@ const cleanupTimer = setInterval(() => {
 if (cleanupTimer.unref) cleanupTimer.unref();
 
 /**
- * Per-IP rate limiter (60 req/min anon, 300 req/min for auth hint).
+ * Per-IP rate limiter (120 req/min anon, 300 req/min with a Bearer token).
  * If rate limit exceeded, handles response with HTTP 429 and returns true.
  * Otherwise returns false.
  */
 export function handleRateLimit(req, res) {
   const ip = getClientIp(req);
   const authHeader = req.headers?.authorization;
-  const cookieHeader = req.headers?.cookie;
-  const hasAuthHint = Boolean(
-    (authHeader && authHeader.trim().length > 0) ||
-    (cookieHeader && /(pd_session|mde_session|session)=/i.test(cookieHeader))
-  );
+  // La web solo autentica con "Authorization: Bearer <token>" (auth.js); no hay cookies de sesión,
+  // así que una cookie no puede subir el límite (si no, cualquier scraper la falsificaría).
+  const hasAuthHint = typeof authHeader === "string" && /^Bearer\s+\S{20,}$/.test(authHeader.trim());
 
-  // 60 req/min for anonymous, 300 req/min for authenticated
-  const limit = hasAuthHint ? 300 : 60;
+  // 120 req/min for anonymous, 300 req/min with a Bearer token
+  const limit = hasAuthHint ? 300 : 120; // 120: en Perú muchos móviles comparten IP (CGNAT)
   const now = Date.now();
   const windowMs = 60 * 1000;
 
@@ -125,7 +123,7 @@ export function handleRateLimit(req, res) {
     const retryAfter = Math.max(1, Math.ceil((bucket.resetAt - now) / 1000));
     res.setHeader("Retry-After", String(retryAfter));
     res.status(429).json({
-      error: "Demasiadas peticiones. Límite de 60 por minuto alcanzado.",
+      error: "Demasiadas peticiones. Espera un momento y vuelve a intentarlo.",
       retryAfter
     });
     return true;
