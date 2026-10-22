@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="description" content="PerData - Plataforma institucional de inteligencia macroeconómica, Bolsa de Valores de Lima, commodities andinos y modelado probabilístico multi-cuantil." />
-  <title>PerData · Inteligencia Cuantitativa & Forecasting Macroeconómico</title>
+  <meta name="description" content="PerData — Series de tiempo macroeconómicas, cotizaciones de mercado y proyecciones probabilísticas con TimesFM." />
+  <title>PerData — Datos macroeconómicos y proyecciones cuantitativas</title>
 
   <!-- Early Theme Init to prevent flash of unstyled content -->
   <script>
@@ -166,33 +166,29 @@
 
     /* Apple layout helpers */
     .full-bleed { width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); }
-    .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0; color: #6e6e73; }
-    html.dark .eyebrow { color: #86868b; }
+    .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0; color: var(--pd-ink-soft); }
+    html.dark .eyebrow { color: var(--pd-ink-soft); }
   </style>
   <!-- Identidad PerData (DESIGN.md) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/pd.css">
-  <!-- SEO, Google Search Console & Google Ads Readiness -->
-  <meta name="google-site-verification" content="GSC_PERDATA_VERIFICATION" />
-  <meta property="og:title" content="PerData · Terminal Cuantitativa & Forecasting Macroeconómico" />
-  <meta property="og:description" content="Plataforma institucional de inteligencia macroeconómica, Bolsa de Valores de Lima (BVL), commodities y modelado predictivo con TimesFM." />
+  <!-- SEO & Social Open Graph -->
+  <meta property="og:title" content="PerData — Datos macroeconómicos y proyecciones cuantitativas" />
+  <meta property="og:description" content="Series de tiempo macroeconómicas, cotizaciones de mercado y proyecciones probabilísticas con TimesFM." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://perdata.site" />
   <meta name="robots" content="index, follow" />
 
-  <!-- Schema.org Institutional Financial Service -->
+  <!-- Schema.org WebApplication -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "FinancialService",
-    "name": "PerData Terminal Cuantitativa",
+    "@type": "WebApplication",
+    "name": "PerData",
     "url": "https://perdata.site",
-    "description": "Terminal institucional de forecasting y series de tiempo macroeconómicas para Perú y la Región Andina.",
-    "currenciesAccepted": "USD, PEN",
-    "paymentAccepted": "Credit Card, Stripe",
-    "priceRange": "$5 - $50"
+    "description": "Plataforma de datos macroeconómicos, series de tiempo financieras y proyecciones cuantitativas."
   }
   </script>
 </head>
@@ -247,330 +243,197 @@
       </nav>
     </div>
   </header>
+
   <!-- Main Content Body -->
   <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 space-y-16 sm:space-y-24 w-full">
 
-    <!-- INSTITUTIONAL MASTHEAD: United Airlines Deep Navy + Live Market Status -->
-    <section class="pd-masthead">
-      <div class="pd-masthead-meta">
-        <div class="inline-flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span class="font-bold text-black dark:text-white">PERDATA TERMINAL INSTITUCIONAL</span>
-          <span class="text-[#86868B]">|</span>
-          <span class="text-[#005DAA] dark:text-[#38BDF8] font-semibold">FEED DIRECTO BVL · BCRP · COMEX · FRED</span>
-        </div>
-        <div class="inline-flex items-center gap-3">
-          <span class="hidden sm:inline text-xs text-[#86868B]">Auditado por Modelos Econométricos & TimesFM</span>
-          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#EBF3FA] dark:bg-[#0C1E36] text-[#005DAA] dark:text-[#38BDF8] border border-[#005DAA]/20">SISTEMA ACTIVO</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- HERO: titular anclado al eje del 42%; columna izquierda = notas de página -->
+    <!-- HERO: Rejilla de 12 columnas (7 col titular/lede/CTA, 5 col tabla resumen) -->
     <section class="pt-2">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-8 lg:gap-x-10">
-        <div class="lg:col-span-5 order-2 lg:order-1">
-          <p class="text-sm sm:text-base text-[#6e6e73] dark:text-[#8E8E93] leading-relaxed max-w-md">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-10 lg:gap-x-12 items-start">
+        <!-- Columna izquierda: Titular, Lede y CTAs (7 col en escritorio) -->
+        <div class="lg:col-span-7 space-y-6">
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-ink leading-tight">
+            Datos macroeconómicos,<br class="hidden sm:inline" />
+            <mark>proyectados</mark> con rigor.
+          </h1>
+          <p class="text-base sm:text-lg text-ink-soft leading-relaxed max-w-xl">
             Explora la historia de 124 activos peruanos y globales, genera proyecciones probabilísticas y descarga los datos. Sin instalar nada.
           </p>
-          <dl class="mt-7 grid grid-cols-2 gap-x-6 gap-y-4">
-            <div>
-              <dt class="band-label">Activos</dt>
-              <dd class="font-mono tnum text-sm font-semibold text-black dark:text-white mt-0.5">124</dd>
+          <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+            <a href="/explorer" class="pd-btn pd-btn-primary">
+              Empezar a analizar
+            </a>
+            <a href="#metodologia" class="pd-btn pd-btn-ghost">
+              Cómo lo calculamos &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Columna derecha: Tabla resumen de especificaciones (5 col en escritorio) -->
+        <div class="lg:col-span-5 border border-rule bg-card rounded p-5 sm:p-6">
+          <dl class="divide-y divide-rule">
+            <div class="flex items-baseline justify-between py-3 first:pt-0">
+              <dt class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Activos</dt>
+              <dd class="font-mono tnum text-sm font-semibold text-ink">124</dd>
             </div>
-            <div>
-              <dt class="band-label">Historia</dt>
-              <dd class="font-mono tnum text-sm font-semibold text-black dark:text-white mt-0.5">10 años</dd>
+            <div class="flex items-baseline justify-between py-3">
+              <dt class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Historia</dt>
+              <dd class="font-mono tnum text-sm font-semibold text-ink">10 años</dd>
             </div>
-            <div>
-              <dt class="band-label">Horizontes</dt>
-              <dd class="font-mono tnum text-sm font-semibold text-black dark:text-white mt-0.5">1—36 meses</dd>
+            <div class="flex items-baseline justify-between py-3">
+              <dt class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Horizontes</dt>
+              <dd class="font-mono tnum text-sm font-semibold text-ink">1–36 meses</dd>
             </div>
-            <div>
-              <dt class="band-label">Salida</dt>
-              <dd class="font-mono tnum text-sm font-semibold text-black dark:text-white mt-0.5">.xlsx</dd>
+            <div class="flex items-baseline justify-between py-3 last:pb-0">
+              <dt class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Salida</dt>
+              <dd class="font-mono tnum text-sm font-semibold text-ink">.xlsx</dd>
             </div>
           </dl>
         </div>
-        <div class="lg:col-span-7 order-1 lg:order-2">
-          <h1 class="text-4xl sm:text-6xl font-semibold tracking-tight text-black dark:text-white">
-            Datos macroeconómicos,<br class="hidden sm:inline" />
-            proyectados con rigor.
-          </h1>
-          <div class="pt-7 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-            <a href="/explorer" class="inline-flex items-center justify-center px-8 py-3 rounded-md bg-black dark:bg-white hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black text-sm font-semibold transition">
-              Empezar a analizar
-            </a>
-            <a href="#metodologia-resumen" class="inline-flex items-center text-sm font-semibold text-black dark:text-white hover:underline transition py-2">
-              Cómo obtenemos los resultados &rarr;
-            </a>
-          </div>
-        </div>
       </div>
     </section>
 
-    <!-- LIVE ASSETS HIGHLIGHTS GRID -->
+    <!-- CUATRO ACTIVOS PARA EMPEZAR: Tabla editorial con datos en vivo -->
     <section class="space-y-4">
-      <div class="flex flex-wrap items-baseline justify-between gap-2 pb-2.5" style="box-shadow: 0 .5px 0 var(--pd-rule)">
-        <h2 class="text-lg sm:text-xl font-semibold tracking-tight text-black dark:text-white">Cuatro activos para empezar</h2>
-        <a href="/explorer" class="text-xs font-medium text-black dark:text-white hover:underline">Ver catálogo completo (124 activos) &rarr;</a>
+      <div class="flex flex-wrap items-baseline justify-between gap-2 pb-2.5 border-b border-rule">
+        <h2 class="text-lg sm:text-xl font-bold tracking-tight text-ink">Cuatro activos para empezar</h2>
+        <a href="/explorer" class="text-xs font-medium text-ink-soft hover:text-ink hover:underline">Ver catálogo completo (124 activos) &rarr;</a>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- Asset 1: Cobre -->
-        <a href="/explorer?symbol=HG=F" class="hover-lift p-4 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] hover:border-black dark:hover:border-white transition group flex flex-col">
-          <div class="flex items-center justify-between">
-            <span class="mono tnum text-xs font-bold text-[#86868B]">HG=F <span class="font-normal">· COMEX</span></span>
-            <span data-livepct="HG=F" class="px-1.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-500 font-semibold text-[11px] tnum">+2.4%</span>
-          </div>
-          <h3 class="text-sm font-semibold text-black dark:text-white mt-2">Cobre</h3>
-          <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93] mt-0.5">Cono P50 a 6M proyecta $4.62/lb con régimen de déficit estructural.</p>
-          <div class="mt-3 pt-3 border-t border-[#E5E5EA] dark:border-[#2C2C2E] flex items-baseline justify-between">
-            <span data-liveprice="HG=F" class="font-mono tnum text-lg font-bold tracking-tight text-black dark:text-white">$4.48<span class="text-xs font-normal text-[#86868B]">/lb</span></span>
-            <span class="text-[10px] text-[#86868B] tnum">P50 6M <span class="font-semibold text-black dark:text-white">$4.62/lb</span></span>
-          </div>
-        </a>
-
-        <!-- Asset 2: Buenaventura -->
-        <a href="/explorer?symbol=BVN" class="hover-lift p-4 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] hover:border-black dark:hover:border-white transition group flex flex-col">
-          <div class="flex items-center justify-between">
-            <span class="mono tnum text-xs font-bold text-[#86868B]">BVN <span class="font-normal">· BVL / NYSE</span></span>
-            <span data-livepct="BVN" class="px-1.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-500 font-semibold text-[11px] tnum">+1.8%</span>
-          </div>
-          <h3 class="text-sm font-semibold text-black dark:text-white mt-2">Compañía de Minas Buenaventura</h3>
-          <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93] mt-0.5">Beta 1.42 vs Cobre y Oro. Proyección central P50 con sesgo asimétrico alcista.</p>
-          <div class="mt-3 pt-3 border-t border-[#E5E5EA] dark:border-[#2C2C2E] flex items-baseline justify-between">
-            <span data-liveprice="BVN" class="font-mono tnum text-lg font-bold tracking-tight text-black dark:text-white">$16.85</span>
-            <span class="text-[10px] text-[#86868B] tnum">beta <span class="font-semibold text-black dark:text-white">1.42</span></span>
-          </div>
-        </a>
-
-        <!-- Asset 3: Southern Copper -->
-        <a href="/explorer?symbol=SCCO" class="hover-lift p-4 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] hover:border-black dark:hover:border-white transition group flex flex-col">
-          <div class="flex items-center justify-between">
-            <span class="mono tnum text-xs font-bold text-[#86868B]">SCCO <span class="font-normal">· NYSE / BVL</span></span>
-            <span data-livepct="SCCO" class="px-1.5 py-0.5 rounded-md bg-[#F5F5F7] dark:bg-[#2C2C2E] text-[#86868B] dark:text-[#8E8E93] font-semibold text-[11px]">—</span>
-          </div>
-          <h3 class="text-sm font-semibold text-black dark:text-white mt-2">Southern Copper Corp.</h3>
-          <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93] mt-0.5">Correlación histórica de Pearson ρ = 0.88 con términos de intercambio mineros.</p>
-          <div class="mt-3 pt-3 border-t border-[#E5E5EA] dark:border-[#2C2C2E] flex items-baseline justify-between">
-            <span data-liveprice="SCCO" class="font-mono tnum text-lg font-bold tracking-tight text-black dark:text-white">$108.40</span>
-            <span class="text-[10px] text-[#86868B] tnum">rho = <span class="font-semibold text-black dark:text-white">0.88</span></span>
-          </div>
-        </a>
-
-        <!-- Asset 4: USD/PEN -->
-        <a href="/explorer?symbol=PEN=X" class="hover-lift p-4 rounded-lg bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] hover:border-black dark:hover:border-white transition group flex flex-col">
-          <div class="flex items-center justify-between">
-            <span class="mono tnum text-xs font-bold text-[#86868B]">PEN=X <span class="font-normal">· FOREX</span></span>
-            <span data-livepct="PEN=X" class="px-1.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-500 font-semibold text-[11px]">—</span>
-          </div>
-          <h3 class="text-sm font-semibold text-black dark:text-white mt-2">Tipo de Cambio USD / PEN</h3>
-          <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93] mt-0.5">Bajo control estocástico con diferencial de tasas BCRP-Fed y balanza comercial.</p>
-          <div class="mt-3 pt-3 border-t border-[#E5E5EA] dark:border-[#2C2C2E] flex items-baseline justify-between">
-            <span data-liveprice="PEN=X" class="font-mono tnum text-lg font-bold tracking-tight text-black dark:text-white">S/ 3.742</span>
-            <span class="text-[10px] text-[#86868B] tnum">BCRP · <span class="font-semibold text-black dark:text-white">Interbancario</span></span>
-          </div>
-        </a>
-      </div>
-
-      <!-- MARKET QUOTE TICKER STRIP -->
-      <div class="rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#1C1C1E]">
-        <div class="flex items-center px-4 pt-2.5">
-          <span class="text-xs font-semibold text-black dark:text-white">Cuadro de mercado</span>
-        </div>
-        <div class="overflow-x-auto whitespace-nowrap px-4 py-2.5">
-          <div class="inline-flex items-center gap-x-5 text-xs font-mono tnum">
-            <span data-strip="HG=F">HG=F <span class="strip-price font-bold text-black dark:text-white">4,48</span> <span class="strip-pct text-emerald-600 dark:text-emerald-500 font-semibold">+2,4%</span></span>
-            <span class="text-[#E5E5EA] dark:text-[#2C2C2E]">|</span>
-            <span data-strip="GC=F">GC=F <span class="strip-price font-bold text-black dark:text-white">2.618</span> <span class="strip-pct text-emerald-600 dark:text-emerald-500 font-semibold">+0,6%</span></span>
-            <span class="text-[#E5E5EA] dark:text-[#2C2C2E]">|</span>
-            <span data-strip="SI=F">SI=F <span class="strip-price font-bold text-black dark:text-white">31,2</span> <span class="strip-pct text-emerald-600 dark:text-emerald-500 font-semibold">+1,1%</span></span>
-            <span class="text-[#E5E5EA] dark:text-[#2C2C2E]">|</span>
-            <span data-strip="CL=F">CL=F <span class="strip-price font-bold text-black dark:text-white">78,4</span> <span class="strip-pct text-rose-600 dark:text-rose-500 font-semibold">-0,8%</span></span>
-            <span class="text-[#E5E5EA] dark:text-[#2C2C2E]">|</span>
-            <span>USD/PEN <span class="font-bold text-black dark:text-white">3,742</span> <span class="text-[#86868B] dark:text-[#8E8E93] font-semibold">0,0%</span></span>
-            <span class="text-[#E5E5EA] dark:text-[#2C2C2E]">|</span>
-            <span>^TNX <span class="font-bold text-black dark:text-white">4,22</span> <span class="text-rose-600 dark:text-rose-500 font-semibold">-3pb</span></span>
-          </div>
-        </div>
+      <div class="overflow-x-auto border border-rule rounded bg-card">
+        <table class="w-full text-left border-collapse text-sm">
+          <thead>
+            <tr class="border-b border-rule bg-surface text-ink-soft text-xs">
+              <th scope="col" class="py-3 px-4 font-semibold">Ticker</th>
+              <th scope="col" class="py-3 px-4 font-semibold">Nombre</th>
+              <th scope="col" class="py-3 px-4 font-semibold text-right">Último</th>
+              <th scope="col" class="py-3 px-4 font-semibold text-right">Var. 1M</th>
+              <th scope="col" class="py-3 px-4 font-semibold text-right">P50 1M</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-rule">
+            <tr class="hover:bg-surface transition-colors">
+              <td class="py-3.5 px-4 font-mono tnum font-semibold">
+                <a href="/explorer?symbol=HG%3DF" class="text-ink hover:text-brand underline">HG=F</a>
+              </td>
+              <td class="py-3.5 px-4 text-ink">Cobre (COMEX)</td>
+              <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="HG=F">—</td>
+              <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="HG=F">—</td>
+              <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="HG=F">—</td>
+            </tr>
+            <tr class="hover:bg-surface transition-colors">
+              <td class="py-3.5 px-4 font-mono tnum font-semibold">
+                <a href="/explorer?symbol=BVN" class="text-ink hover:text-brand underline">BVN</a>
+              </td>
+              <td class="py-3.5 px-4 text-ink">Buenaventura</td>
+              <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="BVN">—</td>
+              <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="BVN">—</td>
+              <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="BVN">—</td>
+            </tr>
+            <tr class="hover:bg-surface transition-colors">
+              <td class="py-3.5 px-4 font-mono tnum font-semibold">
+                <a href="/explorer?symbol=SCCO" class="text-ink hover:text-brand underline">SCCO</a>
+              </td>
+              <td class="py-3.5 px-4 text-ink">Southern Copper</td>
+              <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="SCCO">—</td>
+              <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="SCCO">—</td>
+              <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="SCCO">—</td>
+            </tr>
+            <tr class="hover:bg-surface transition-colors">
+              <td class="py-3.5 px-4 font-mono tnum font-semibold">
+                <a href="/explorer?symbol=PEN%3DX" class="text-ink hover:text-brand underline">PEN=X</a>
+              </td>
+              <td class="py-3.5 px-4 text-ink">USD/PEN</td>
+              <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="PEN=X">—</td>
+              <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="PEN=X">—</td>
+              <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="PEN=X">—</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
-    <!-- CÓMO SE USA: los tres pasos, en palabras y sin numerar -->
-    <section class="space-y-5">
-      <div class="pb-2.5" style="box-shadow: 0 .5px 0 var(--pd-rule)">
-        <h2 class="text-lg sm:text-xl font-semibold tracking-tight text-black dark:text-white">Cómo se usa</h2>
-        <p class="text-[11px] text-[#86868B] dark:text-[#8E8E93] mt-1">La búsqueda, los rangos de hasta 5 años y el horizonte de 1 mes están abiertos sin cuenta.</p>
+
+    <!-- CÓMO SE USA: 3 pasos en 3 columnas -->
+    <section class="space-y-6">
+      <div class="pb-2.5 border-b border-rule">
+        <h2 class="text-lg sm:text-xl font-bold tracking-tight text-ink">Cómo se usa</h2>
+        <p class="text-xs text-ink-soft mt-1">La búsqueda, los rangos de hasta 5 años y el horizonte de 1 mes están abiertos sin cuenta.</p>
       </div>
-      <div class="pd-guide">
-        <div>
-          <div class="pd-guide-kicker">Primero</div>
-          <div class="pd-guide-title">Busca el activo</div>
-          <div class="pd-guide-copy">Por nombre o por ticker: Buenaventura, BVN, Cobre, USD/PEN. El catálogo cubre la BVL y los mercados globales.</div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="space-y-2">
+          <span class="font-mono tnum text-xs font-bold text-ink-soft">01</span>
+          <h3 class="text-base font-semibold text-ink">Busca el activo</h3>
+          <p class="text-sm text-ink-soft leading-relaxed">Por nombre o por ticker: Buenaventura, BVN, Cobre, USD/PEN. El catálogo cubre la BVL y los mercados globales.</p>
         </div>
-        <div>
-          <div class="pd-guide-kicker">Después</div>
-          <div class="pd-guide-title">Elige rango y horizonte</div>
-          <div class="pd-guide-copy">El rango define la historia que ves; el horizonte, hasta dónde proyecta el modelo (de 1 a 36 meses).</div>
+        <div class="pd-guide-step space-y-2">
+          <span class="font-mono tnum text-xs font-bold text-ink-soft">02</span>
+          <h3 class="text-base font-semibold text-ink">Elige rango y horizonte</h3>
+          <p class="text-sm text-ink-soft leading-relaxed">El rango define la historia que ves; el horizonte, hasta dónde proyecta el modelo (de 1 a 36 meses).</p>
         </div>
-        <div>
-          <div class="pd-guide-kicker">Por último</div>
-          <div class="pd-guide-title">Lee P50 y la banda</div>
-          <div class="pd-guide-copy">P50 es el precio central esperado; la banda P10–P90 cubre el 80% de los escenarios simulados. Todo se exporta a Excel.</div>
+        <div class="pd-guide-step space-y-2">
+          <span class="font-mono tnum text-xs font-bold text-ink-soft">03</span>
+          <h3 class="text-base font-semibold text-ink">Lee P50 y la banda</h3>
+          <p class="text-sm text-ink-soft leading-relaxed">P50 es el precio central esperado; la banda P10–P90 cubre el 80% de los escenarios simulados. Todo se exporta a Excel.</p>
         </div>
       </div>
-      <p class="text-xs sm:text-sm text-[#6e6e73] dark:text-[#8E8E93]">
-        Con cuenta gratuita proyectas hasta 6 meses; el plan <a href="/precios" class="underline">Pro</a> suma la serie de 10 años, horizontes de hasta 36 meses y la exportación a Excel. Más en la
-        <a href="/guia" class="underline">guía de uso</a> y la <a href="/metodologia" class="underline">metodología</a>.
+
+      <p class="text-xs sm:text-sm text-ink-soft">
+        Con cuenta gratuita proyectas hasta 6 meses; el plan <a href="/precios" class="underline text-ink hover:text-brand">Pro</a> suma la serie de 10 años, horizontes de hasta 36 meses y la exportación a Excel. Más en la
+        <a href="/guia" class="underline text-ink hover:text-brand">guía de uso</a> y la <a href="#metodologia" class="underline text-ink hover:text-brand">metodología</a>.
       </p>
     </section>
 
-    <!-- SECTION: CÓMO OBTENEMOS LOS RESULTADOS (REQUIRED BY AGUSTÍN) -->
-    <section id="metodologia-resumen" class="space-y-8 pt-12 border-t border-[#E5E5EA] dark:border-[#2C2C2E]">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-4 lg:gap-x-10 items-baseline pb-5" style="box-shadow: 0 .5px 0 var(--pd-rule)">
-        <p class="band-label lg:col-span-5">Metodología</p>
-        <div class="lg:col-span-7 space-y-3">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-black dark:text-white tracking-tight">
-            Cómo obtenemos y validamos los resultados
-          </h2>
-          <p class="text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed max-w-2xl">
-            Nuestra arquitectura procesa series macroeconómicas y financieras mediante un pipeline econométrico riguroso diseñado para eliminar ruidos espurios y cuantificar el riesgo de mercado de forma reproducible.
-          </p>
-        </div>
-      </div>
-
-      <!-- 4 Pillars Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
-
-        <!-- Pillar 1 -->
-        <div class="space-y-3">
-          <h3 class="text-base font-semibold tracking-tight text-black dark:text-white">Ingesta multifuente y depuración OHLCV</h3>
-          <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-            Consolidamos series históricas de hasta 10 años combinando cotizaciones de la Bolsa de Valores de Lima, mercados globales de futuros (LME, COMEX, NYMEX) y series oficiales del Banco Central de Reserva del Perú (BCRP). Aplicamos filtros de no-estacionariedad y detección de anomalías en días no laborables.
-          </p>
-        </div>
-
-        <!-- Pillar 2 -->
-        <div class="space-y-3">
-          <h3 class="text-base font-semibold tracking-tight text-black dark:text-white">Normalización Temporal Reversible (RevIN)</h3>
-          <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-            Para evitar el problema común de cambio en la distribución temporal (*distribution shift*) entre ciclos expansivos y contractivos, cada ventana de contexto es normalizada en media y varianza local de manera simétrica y reinyectada en las proyecciones finales sin pérdida de escala original.
-          </p>
-        </div>
-
-        <!-- Pillar 3 -->
-        <div class="space-y-3">
-          <h3 class="text-base font-semibold tracking-tight text-black dark:text-white">Conos Probabilísticos Multi-Cuantil (P10 / P50 / P90)</h3>
-          <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-            Rechazamos las predicciones puntuales engañosas. Generamos envolventes estocásticas que modelan la incertidumbre inherente: el cuantil P50 representa la trayectoria central esperada, mientras que P10 y P90 delimitan el 80% del intervalo de densidad empírica frente a shocks exógenos.
-          </p>
-        </div>
-
-        <!-- Pillar 4 -->
-        <div class="space-y-3">
-          <h3 class="text-base font-semibold tracking-tight text-black dark:text-white">Sensibilidad Econométrica Multivariante (OLS)</h3>
-          <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-            Cada activo cuenta con un modelo de descomposición factorial en tiempo real. Estimamos coeficientes β frente a materias primas clave, diferencial de tasas soberanas y liquidez internacional, determinando el régimen macroeconómico dominante con total trazabilidad matemática.
-          </p>
-        </div>
-
-      </div>
-
-      <!-- APARTADO INTERACTIVO: "VER MÁS" (REQUIRED BY AGUSTÍN) -->
-      <div class="p-5 sm:p-6 rounded-lg border border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#141415] space-y-5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <p class="eyebrow">Detalle técnico</p>
-            <h3 class="text-lg sm:text-xl font-bold text-black dark:text-white mt-1">Formulación Matemática & Pipeline Estocástico</h3>
-          </div>
-          <button id="btnToggleVerMas" type="button" class="inline-flex items-center justify-center space-x-2 text-xs font-semibold px-5 py-2.5 min-h-[40px] rounded-full border border-[#E5E5EA] dark:border-[#3A3A3C] hover:border-black dark:hover:border-white text-black dark:text-white transition">
-            <span id="verMasText">Ver más detalles</span>
-            <svg id="verMasIcon" class="w-3.5 h-3.5 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-          </button>
-        </div>
-
-        <!-- Collapsible Content Drawer -->
-        <div id="verMasDrawer" class="hidden space-y-6 pt-4 border-t border-[#E5E5EA] dark:border-[#2C2C2E]">
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs sm:text-sm">
-            <div class="space-y-2">
-              <h4 class="font-bold text-black dark:text-white">Función de Pérdida Cuantílica (Pinball Loss)</h4>
-              <p class="text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-                Para calibrar los conos P10 y P90, el optimizador minimiza la pérdida asimétrica:
-              </p>
-              <div class="p-3 rounded-md bg-[#F5F5F7] dark:bg-[#1C1C1E] math-formula text-[11px] text-black dark:text-white border border-[#E5E5EA] dark:border-[#2C2C2E]">
-                L_q(y, ŷ_q) = max[ q(y - ŷ_q), (1 - q)(ŷ_q - y) ]
-              </div>
-              <p class="text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-                Esto penaliza con mayor severidad las subestimaciones para cuantiles altos (q=0.90) y las sobreestimaciones para cuantiles defensivos (q=0.10).
-              </p>
-            </div>
-
-            <div class="space-y-2">
-              <h4 class="font-bold text-black dark:text-white">Estimación OLS de Sensibilidad Factorial</h4>
-              <p class="text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-                La matriz de coeficientes se obtiene mediante inversión matricial directa sin regularizaciones que oculten relaciones no lineales:
-              </p>
-              <div class="p-3 rounded-md bg-[#F5F5F7] dark:bg-[#1C1C1E] math-formula text-[11px] text-black dark:text-white border border-[#E5E5EA] dark:border-[#2C2C2E]">
-                β̂ = (X^T · X)^(-1) · X^T · Y
-              </div>
-              <p class="text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-                Donde X incorpora los vectores temporales de Cobre COMEX, Oro, Rendimiento del Tesoro US 10Y e Inflación esperada.
-              </p>
-            </div>
-          </div>
-
-          <!-- Direct Link to Metodología Subpage -->
-          <div class="p-4 rounded-md bg-[#F5F5F7] dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-            <span class="text-[#86868B] dark:text-[#8E8E93]">¿Deseas inspeccionar las demostraciones y el backtesting completo?</span>
-            <a href="/metodologia" class="font-bold text-black dark:text-white hover:underline flex items-center space-x-1">
-              <span>Leer el tratado metodológico completo</span>
-              <span>&rarr;</span>
-            </a>
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-    <!-- FUENTES OFICIALES Y TRANSPARENCIA DE DATOS (BCRP, SBS, BVL, FRED) -->
-    <section class="pt-8 pb-4 border-t border-[#E5E5EA] dark:border-[#2C2C2E]">
-      <div class="text-center max-w-3xl mx-auto space-y-3 mb-8">
-        <p class="eyebrow">Integridad de Datos</p>
-        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-black dark:text-white">
-          Arquitectura basada en datos oficiales y auditados
+    <!-- METODOLOGÍA: En español llano, 4 párrafos en serif y fuentes reales con filetes -->
+    <section id="metodologia" class="space-y-8 pt-8 border-t border-rule">
+      <div class="pb-2.5 border-b border-rule">
+        <span class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Metodología</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-ink tracking-tight mt-1">
+          Cómo obtenemos y proyectamos las series
         </h2>
-        <p class="text-xs sm:text-sm text-[#86868B] dark:text-[#8E8E93] leading-relaxed">
-          Nuestras proyecciones y series no dependen de especulación sin fundamento. Cada serie histórica se sincroniza mediante pipelines automatizados con los repositorios financieros más rigurosos del hemisferio.
+      </div>
+
+      <!-- 4 párrafos cortos en serif -->
+      <div class="max-w-3xl space-y-5 text-ink">
+        <p>
+          Recopilamos series históricas oficiales y cotizaciones de mercado de fuentes públicas y bursátiles primarias. Cada serie se limpia de días inhábiles y se ajusta a intervalos mensuales continuos para garantizar que el modelo entrene y evalúe observaciones homogéneas sin vacíos artificiales.
+        </p>
+        <p>
+          Para proyectar aplicamos la arquitectura TimesFM 2.5 de Google sobre cada serie temporal mensual. El motor descompone la trayectoria en momentum local amortiguado y reversión empírica hacia el valor de ancla de largo plazo, generando simulaciones estocásticas de escenarios futuros según la volatilidad histórica de los residuos.
+        </p>
+        <p>
+          Los resultados se entregan en conos probabilísticos definidos por cuantiles: P50 representa la proyección central esperada, mientras que entre el cuantil P10 y el cuantil P90 se concentra el 80% de las trayectorias simuladas. Este intervalo ilustra la incertidumbre estructural del mercado en lugar de fijar una cifra puntual rígida.
+        </p>
+        <p>
+          Nuestras proyecciones son herramientas cuantitativas de referencia para investigación y análisis técnico; no constituyen asesoramiento financiero ni recomendaciones de inversión. El modelo no puede prever shocks geopolíticos imprevistos ni cambios regulatorios extraordinarios, y el desempeño pasado de una serie no garantiza resultados futuros.
         </p>
       </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div class="p-4 rounded-xl bg-white dark:bg-[#0D1929] border border-[#E2E8F0] dark:border-[#1E3553] text-center space-y-1.5 hover-lift">
-          <div class="font-bold text-sm text-[#002244] dark:text-[#38BDF8]">BCRP</div>
-          <div class="text-[11px] font-semibold text-black dark:text-white">Banco Central de Reserva</div>
-          <p class="text-[10px] text-[#86868B]">Tipos de cambio interbancario, RIN, balanza comercial y tasa de referencia monetaria.</p>
-        </div>
-        <div class="p-4 rounded-xl bg-white dark:bg-[#0D1929] border border-[#E2E8F0] dark:border-[#1E3553] text-center space-y-1.5 hover-lift">
-          <div class="font-bold text-sm text-[#002244] dark:text-[#38BDF8]">BVL</div>
-          <div class="text-[11px] font-semibold text-black dark:text-white">Bolsa de Valores de Lima</div>
-          <p class="text-[10px] text-[#86868B]">Precios de cierre diario, ratios PER, capitalización bursátil y volúmenes transados.</p>
-        </div>
-        <div class="p-4 rounded-xl bg-white dark:bg-[#0D1929] border border-[#E2E8F0] dark:border-[#1E3553] text-center space-y-1.5 hover-lift">
-          <div class="font-bold text-sm text-[#002244] dark:text-[#38BDF8]">COMEX & LME</div>
-          <div class="text-[11px] font-semibold text-black dark:text-white">Metales & Commodities</div>
-          <p class="text-[10px] text-[#86868B]">Contratos de futuros de Cobre (HG), Oro (GC), Plata (SI) y Petróleo WTI (CL).</p>
-        </div>
-        <div class="p-4 rounded-xl bg-white dark:bg-[#0D1929] border border-[#E2E8F0] dark:border-[#1E3553] text-center space-y-1.5 hover-lift">
-          <div class="font-bold text-sm text-[#002244] dark:text-[#38BDF8]">FRED / Fed St. Louis</div>
-          <div class="text-[11px] font-semibold text-black dark:text-white">Tesoro EE.UU. & Liquidez</div>
-          <p class="text-[10px] text-[#86868B]">Curva de rendimientos soberanos (^TNX), SOFR y diferencial de riesgo EMBI+.</p>
-        </div>
+      <!-- Lista de fuentes con filete entre filas -->
+      <div class="space-y-3 pt-4">
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Fuentes de datos</h3>
+        <dl class="divide-y divide-rule border-t border-b border-rule">
+          <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+            <dt class="font-semibold text-sm text-ink">BCRP</dt>
+            <dd class="text-xs sm:text-sm text-ink-soft">Tipo de cambio, tasas de referencia e indicadores macroeconómicos oficiales.</dd>
+          </div>
+          <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+            <dt class="font-semibold text-sm text-ink">BVL</dt>
+            <dd class="text-xs sm:text-sm text-ink-soft">Acciones peruanas y cotizaciones bursátiles locales.</dd>
+          </div>
+          <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+            <dt class="font-semibold text-sm text-ink">COMEX / NYMEX (vía Yahoo Finance)</dt>
+            <dd class="text-xs sm:text-sm text-ink-soft">Cobre, oro, plata y materias primas globales.</dd>
+          </div>
+          <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+            <dt class="font-semibold text-sm text-ink">FRED</dt>
+            <dd class="text-xs sm:text-sm text-ink-soft">Tasas y datos económicos de EE. UU. (rendimiento del Tesoro a 10 años).</dd>
+          </div>
+        </dl>
       </div>
     </section>
 
-    <!-- CTA FINAL: único bloque saturado (amarillo plano, tinta encima) -->
+    <!-- CTA FINAL: bloque saturado (fondo marcador amarillo, tinta encima) -->
     <section class="pd-accent-block full-bleed px-4 sm:px-6 py-14 sm:py-20">
       <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-y-6 lg:gap-x-10 items-end">
         <h2 class="lg:col-span-7 text-3xl sm:text-5xl font-bold tracking-tight">Empieza con cualquier activo.</h2>
@@ -578,7 +441,7 @@
           <p class="text-sm sm:text-base leading-relaxed max-w-md">
             Busca una empresa, un metal o el tipo de cambio. La historia, la proyección y la exportación salen en segundos.
           </p>
-          <a href="/explorer" class="inline-flex items-center px-8 py-3 rounded-md bg-[#0D2A1C] text-[#F6E016] font-semibold text-sm hover:opacity-90 transition">
+          <a href="/explorer" class="pd-btn pd-accent-cta font-semibold text-sm transition">
             Abrir la terminal
           </a>
         </div>
@@ -614,7 +477,6 @@
       </div>
     </div>
   </footer>
-
   <!-- Theme Toggle Script -->
   <script>
     const themeToggle = document.getElementById("themeToggle");
@@ -649,78 +511,66 @@
     })();
   </script>
 
-  <!-- Toggle "Ver más" Accordion -->
-  <script>
-    const btnVerMas = document.getElementById("btnToggleVerMas");
-    const verMasDrawer = document.getElementById("verMasDrawer");
-    const verMasText = document.getElementById("verMasText");
-    const verMasIcon = document.getElementById("verMasIcon");
-
-    if (btnVerMas && verMasDrawer) {
-      btnVerMas.addEventListener("click", () => {
-        const isHidden = verMasDrawer.classList.contains("hidden");
-        if (isHidden) {
-          verMasDrawer.classList.remove("hidden");
-          verMasText.textContent = "Ocultar detalles";
-          verMasIcon.classList.add("rotate-180");
-        } else {
-          verMasDrawer.classList.add("hidden");
-          verMasText.textContent = "Ver más detalles";
-          verMasIcon.classList.remove("rotate-180");
-        }
-      });
-    }
-  </script>
-
   <!-- Auth Modal & Feature Gating Script -->
   <script src="/auth.js"></script>
   <!-- Real-Time Teleprompter Script -->
   <script src="/teleprompter.js"></script>
 
-  <!-- Live watchlist quotes -->
+  <!-- Live Watchlist & Forecast Quotes -->
   <script>
     (function () {
       var SYMS = ["HG=F", "BVN", "SCCO", "PEN=X"];
-      function fmt(n, sym) {
-        if (sym === "PEN=X") return "S/ " + n.toFixed(3);
-        if (sym === "HG=F") return "$" + n.toFixed(2);
-        return "$" + n.toFixed(2);
+
+      function formatValue(val, sym) {
+        if (typeof val !== "number" || isNaN(val)) return "—";
+        var decimals = (sym === "PEN=X") ? 4 : 2;
+        return val.toLocaleString("es-PE", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
       }
-      var STRIP = ["HG=F", "GC=F", "SI=F", "CL=F"];
-      function toEs(n) {
-        return n.toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      function formatPct(pct) {
+        if (typeof pct !== "number" || isNaN(pct)) return "—";
+        var sign = pct > 0 ? "+" : "";
+        return sign + pct.toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
       }
-      function updCard(sym, d) {
-        var lp = document.querySelector('[data-liveprice="' + sym + '"]');
-        var pctEl = document.querySelector('[data-livepct="' + sym + '"]');
-        if (d && d.live && d.live.price !== null && d.live.price !== undefined && lp) {
-          lp.textContent = fmt(d.live.price, sym);
-        }
-        if (d && d.live && typeof d.live.changePct === "number" && pctEl) {
-          var p = d.live.changePct;
-          pctEl.textContent = (p >= 0 ? "+" : "") + p.toFixed(2) + "%";
-          pctEl.className = "px-1.5 py-0.5 rounded-md font-semibold text-[11px] tnum " +
-            (p >= 0 ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-500"
-                    : "bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-500");
-        }
-      }
-      function updStrip(sym, d) {
-        var el = document.querySelector('[data-strip="' + sym + '"]');
-        if (!el || !d || !d.live || d.live.price === null || d.live.price === undefined) return;
-        var priceEl = el.querySelector(".strip-price");
-        var pctEl = el.querySelector(".strip-pct");
-        if (priceEl) priceEl.textContent = toEs(d.live.price);
-        if (pctEl && typeof d.live.changePct === "number") {
-          var p = d.live.changePct;
-          pctEl.textContent = (p >= 0 ? "+" : "") + p.toFixed(1).replace(".", ",") + "%";
-          pctEl.className = "strip-pct " + (p >= 0 ? "text-emerald-600 dark:text-emerald-500 font-semibold" : "text-rose-600 dark:text-rose-500 font-semibold");
-        }
-      }
-      SYMS.concat(STRIP).forEach(function (sym) {
+
+      SYMS.forEach(function (sym) {
+        // Fetch Último y Var. 1M
         fetch("/api/historical?symbol=" + encodeURIComponent(sym) + "&range=1mo&interval=1mo")
           .then(function (r) { return r.json(); })
-          .then(function (d) { updCard(sym, d); updStrip(sym, d); })
-          .catch(function () { /* keep static fallback values */ });
+          .then(function (d) {
+            if (d && d.live) {
+              var priceEl = document.querySelector('[data-cell-price="' + sym + '"]');
+              var pctEl = document.querySelector('[data-cell-pct="' + sym + '"]');
+              if (priceEl && typeof d.live.price === "number" && !isNaN(d.live.price)) {
+                priceEl.textContent = formatValue(d.live.price, sym);
+              }
+              if (pctEl && typeof d.live.changePct === "number" && !isNaN(d.live.changePct)) {
+                pctEl.textContent = formatPct(d.live.changePct);
+                if (d.live.changePct > 0) {
+                  pctEl.className = "py-3.5 px-4 font-mono tnum text-right font-semibold text-pos";
+                } else if (d.live.changePct < 0) {
+                  pctEl.className = "py-3.5 px-4 font-mono tnum text-right font-semibold text-neg";
+                } else {
+                  pctEl.className = "py-3.5 px-4 font-mono tnum text-right text-ink-soft";
+                }
+              }
+            }
+          })
+          .catch(function () { /* deja '—' */ });
+
+        // Fetch P50 1M
+        fetch("/api/forecast?symbol=" + encodeURIComponent(sym) + "&horizon=1")
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            var p50 = d && d.quantiles && d.quantiles.p50;
+            if (typeof p50 === "number" && !isNaN(p50)) {
+              var p50El = document.querySelector('[data-cell-p50="' + sym + '"]');
+              if (p50El) {
+                p50El.textContent = formatValue(p50, sym);
+              }
+            }
+          })
+          .catch(function () { /* deja '—' */ });
       });
     })();
   </script>

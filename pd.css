@@ -120,10 +120,26 @@ html.dark .eyebrow, html.dark .band-label, html.dark .micro-label {
 }
 
 /* ---------- Highlighter (subrayado grueso de marcador) ---------- */
-.pd-highlight {
-  background: linear-gradient(180deg, transparent 65%, var(--pd-mark) 65%);
+.pd-highlight,
+mark {
+  background: linear-gradient(180deg, transparent 60%, var(--pd-mark) 60%);
+  color: inherit;
   padding: 0 2px;
   display: inline;
+}
+
+/* ---------- Cómo se usa (pd-guide) ---------- */
+.pd-guide-step {
+  border-top: 1px solid var(--pd-rule);
+  padding-top: 1.25rem;
+}
+@media (min-width: 768px) {
+  .pd-guide-step {
+    border-top: none;
+    border-left: 1px solid var(--pd-rule);
+    padding-top: 0;
+    padding-left: 1.5rem;
+  }
 }
 
 /* ---------- Lectura editorial (Source Serif 4) ---------- */
@@ -149,11 +165,35 @@ main p a:hover, .pd-reading a:hover, .pd-prose a:hover, .pd-legal-sec a:hover {
 .text-ink { color: var(--pd-ink) !important; }
 .text-ink-soft { color: var(--pd-ink-soft) !important; }
 .text-brand { color: var(--pd-brand) !important; }
+.text-mark { color: var(--pd-mark) !important; }
+.text-pos { color: var(--pd-pos) !important; }
+.text-neg { color: var(--pd-neg) !important; }
 .bg-paper { background-color: var(--pd-paper) !important; }
 .bg-card { background-color: var(--pd-card) !important; }
 .bg-surface { background-color: var(--pd-surface) !important; }
+.bg-brand { background-color: var(--pd-brand) !important; }
+.bg-mark { background-color: var(--pd-mark) !important; }
 .border-rule { border-color: var(--pd-rule) !important; }
 .border-pd { border-color: var(--pd-border) !important; }
+
+/* ---------- CTA Final (amarillo plano, tinta encima) ---------- */
+.pd-accent-block {
+  background-color: var(--pd-mark);
+  color: #141414;
+}
+.pd-accent-block h2 {
+  color: #141414;
+}
+.pd-accent-block p {
+  color: #383733;
+}
+.pd-accent-cta {
+  background-color: #0D2A1C;
+  color: #F6E016;
+}
+.pd-accent-cta:hover {
+  opacity: 0.9;
+}
 
 /* ---------- Surfaces, Rules & Overrides ---------- */
 header {
