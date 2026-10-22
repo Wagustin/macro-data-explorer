@@ -1269,3 +1269,23 @@ html.dark .pdl-card { box-shadow: none; }
 .pdl-ind-row { flex-wrap: wrap; }
 .pdl-ind-val { white-space: nowrap; }
 @media (max-width: 767px) { .pdl-ind { padding: 14px 12px; } .pdl-ind-val { font-size: 16px; } }
+
+/* Títulos de las páginas de lectura en serif, como la landing (diseño de Stitch) */
+html.pd-marketing main h1,
+html.pd-marketing main h2 {
+  font-family: var(--pd-font-read) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.02em;
+}
+
+/* Guía: «Los tres pasos» (el contenedor usa .pd-guide, que no tenía estilo) */
+.pd-guide { display: grid; grid-template-columns: 1fr; border-top: 1px solid var(--pd-rule); margin-top: 8px; }
+.pd-guide > div { padding: 20px 0; border-bottom: 1px solid var(--pd-rule); }
+@media (min-width: 768px) {
+  .pd-guide { grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid var(--pd-rule); }
+  .pd-guide > div { padding: 24px 24px 24px 0; border-bottom: 0; }
+  .pd-guide > div + div { padding-left: 24px; border-left: 1px solid var(--pd-rule); }
+}
+.pd-guide .pd-guide-kicker { display: block; font-family: var(--pd-font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--pd-accent); margin-bottom: 6px; }
+.pd-guide .pd-guide-title { font-family: var(--pd-font-read); font-size: 22px; line-height: 1.25; color: var(--pd-ink); margin-bottom: 8px; }
+.pd-guide .pd-guide-copy { font-family: var(--pd-font-ui); font-size: 15px; line-height: 1.6; color: var(--pd-ink-soft); }
