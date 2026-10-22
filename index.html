@@ -283,38 +283,57 @@
   <!-- Main Content Body -->
   <main class="flex-grow w-full">
 
-    <!-- HERO: Banda azul marino a todo el ancho -->
-    <section class="pd-hero-navy full-bleed py-10 sm:py-18">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-8 lg:gap-x-8 items-start">
-          <!-- Columna izquierda: h1, respuesta en vivo, CTA -->
-          <div class="lg:col-span-5 space-y-5">
-            <h1 class="text-[36px] sm:text-[44px] lg:text-[56px] font-bold tracking-tight text-white" style="line-height: 1.05;">
-              ¿A cuánto estará el dólar el próximo mes?
+    <!-- HERO EDITORIAL (diseño de Stitch, datos en vivo) -->
+    <section class="pdl-hero full-bleed">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-16 lg:pt-20 lg:pb-24">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+          <div class="lg:col-span-7">
+            <h1 class="pdl-h1">
+              <span class="pdl-mask"><span class="pdl-rise">El mercado peruano,</span></span>
+              <span class="pdl-mask"><span class="pdl-rise pdl-rise-2 pdl-h1-soft">con su rango probable.</span></span>
             </h1>
-            <p class="pd-hero-answer text-[20px] max-w-2xl leading-relaxed not-italic">
-              Entre <span class="pd-num">S/&nbsp;<span id="pd-p10">—</span></span> y <span class="pd-num">S/&nbsp;<span id="pd-p90">—</span></span>, con un <span class="pd-num">80&nbsp;%</span> de probabilidad. Valor central: <span class="pd-num">S/&nbsp;<span id="pd-p50">—</span></span>.
-            </p>
-            <p id="pd-forecast-fallback" class="text-base text-white/70 hidden">Abre la terminal para ver la proyección de hoy.</p>
-            <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              <a href="/explorer?symbol=PEN%3DX" class="pd-btn pd-btn-primary font-semibold">Abrir la terminal</a>
-              <a href="#metodologia" class="pd-btn pd-btn-ghost font-semibold">Cómo lo calculamos &rarr;</a>
+            <div class="pdl-quote">
+              <p class="pdl-question">¿A cuánto estará el dólar el próximo mes?</p>
+              <p class="pd-hero-answer pdl-answer">
+                Entre <span class="pd-num">S/&nbsp;<span id="pd-p10">—</span></span> y <span class="pd-num">S/&nbsp;<span id="pd-p90">—</span></span>, con un <span class="pd-num">80&nbsp;%</span> de probabilidad. Valor central: <span class="pd-num">S/&nbsp;<span id="pd-p50">—</span></span>.
+              </p>
+              <p id="pd-forecast-fallback" class="pdl-answer hidden">Abre la terminal para ver la proyección de hoy.</p>
             </div>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <a href="/explorer?symbol=PEN%3DX" class="pdl-btn pdl-btn-primary">Abrir la terminal <span aria-hidden="true">&#8599;</span></a>
+              <a href="#metodologia" class="pdl-btn pdl-btn-secondary">Cómo lo calculamos</a>
+            </div>
+            <dl class="pdl-stats">
+              <div><dt class="pdl-label">Activos con datos</dt><dd class="pdl-stat-val"><span data-stat="tradable-count">120</span></dd></div>
+              <div><dt class="pdl-label">Rango P10–P90</dt><dd class="pdl-stat-val">acierta el 80&nbsp;%</dd></div>
+              <div><dt class="pdl-label">Horizontes</dt><dd class="pdl-stat-val">1 a 36 meses</dd></div>
+            </dl>
           </div>
 
-          <!-- Columna derecha: Gráfico en panel de terminal -->
-          <div class="lg:col-span-7 flex flex-col justify-between lg:-mb-12 z-10">
-            <div class="pd-terminal-panel">
-              <!-- Barra de panel de 40px -->
-              <div class="h-10 px-4 border-b border-rule flex items-center justify-between text-xs bg-card">
-                <span class="mono tnum text-[12px] text-ink-soft">USD/PEN · mensual · horizonte 1M</span>
-                <a href="/explorer?symbol=PEN%3DX" class="text-[12px] text-accent hover:underline font-medium">Abrir en la terminal &rarr;</a>
+          <div class="lg:col-span-5">
+            <div class="pdl-card">
+              <div class="pdl-card-head">
+                <span class="font-mono text-[12px] font-semibold text-ink">USD / PEN</span>
+                <span class="font-mono text-[11px] text-ink-soft">Horizonte: 1 mes</span>
               </div>
-              <div class="p-4 sm:p-5 bg-card">
-                <div class="relative w-full h-[240px] sm:h-[300px]">
+              <div class="pdl-card-body">
+                <span class="pdl-label">Valor central estimado (P50)</span>
+                <div class="flex items-baseline gap-3 flex-wrap">
+                  <span class="pdl-big tnum">S/&nbsp;<span id="pdCardP50">—</span></span>
+                  <span id="pdCardChange" class="pdl-chip font-mono">—</span>
+                </div>
+                <div class="pdl-band">
+                  <div><span class="pdl-label">P10 · piso</span><span class="font-mono text-sm font-semibold text-ink tnum">S/&nbsp;<span id="pdCardP10">—</span></span></div>
+                  <div class="text-center"><span class="pdl-label">Probabilidad</span><span class="font-mono text-sm font-semibold text-ink">80&nbsp;%</span></div>
+                  <div class="text-right"><span class="pdl-label">P90 · techo</span><span class="font-mono text-sm font-semibold text-ink tnum">S/&nbsp;<span id="pdCardP90">—</span></span></div>
+                </div>
+              </div>
+              <div class="pdl-card-chart">
+                <div class="relative w-full h-[200px] sm:h-[220px]">
                   <canvas id="pdHeroChart" role="img" aria-label="Historia de USD/PEN con abanico de proyección P10-P90"></canvas>
                 </div>
-                <p class="mt-3 text-[12px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);">Tipo de cambio USD/PEN, cierre mensual. <span id="heroModelBadge" class="font-mono">Modelo: PerData Engine v3</span>. Fuente: Yahoo Finance. Datos al <span id="pdChartDate">—</span>.</p>
+                <p class="mt-3 text-[11px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);"><span id="heroModelBadge" class="font-mono">Modelo: PerData Engine v3</span> · Fuente: Yahoo Finance · Datos al <span id="pdChartDate">—</span></p>
+                <a href="/explorer?symbol=PEN%3DX" class="pdl-link mt-2 inline-block">Abrir en la terminal &rarr;</a>
               </div>
             </div>
           </div>
@@ -322,17 +341,33 @@
       </div>
     </section>
 
+    <!-- FRANJA DE INDICADORES (en vivo) -->
+    <section class="pdl-strip full-bleed" aria-label="Indicadores de mercado">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="pdl-strip-grid">
+          <a class="pdl-ind" href="/explorer?symbol=PEN%3DX" data-ind="PEN=X" data-dec="4" data-prefix="S/ "><span class="pdl-label">Dólar · USD/PEN</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val>—</span><span class="pdl-ind-chg font-mono" data-ind-chg>—</span></span><span class="pdl-ind-unit">S/ por dólar · hoy</span></a>
+          <a class="pdl-ind" href="/explorer?symbol=HG%3DF" data-ind="HG=F" data-dec="2" data-prefix="US$ "><span class="pdl-label">Cobre · COMEX</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val>—</span><span class="pdl-ind-chg font-mono" data-ind-chg>—</span></span><span class="pdl-ind-unit">US$ por libra · hoy</span></a>
+          <a class="pdl-ind" href="/explorer?symbol=GC%3DF" data-ind="GC=F" data-dec="2" data-prefix="US$ "><span class="pdl-label">Oro · COMEX</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val>—</span><span class="pdl-ind-chg font-mono" data-ind-chg>—</span></span><span class="pdl-ind-unit">US$ por onza · hoy</span></a>
+          <a class="pdl-ind" href="/explorer?symbol=BAP" data-ind="BAP" data-dec="2" data-prefix="US$ "><span class="pdl-label">Credicorp · BAP</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val>—</span><span class="pdl-ind-chg font-mono" data-ind-chg>—</span></span><span class="pdl-ind-unit">US$ por acción · hoy</span></a>
+        </div>
+      </div>
+    </section>
+
     <!-- SECCIÓN TABLA: sobre --pd-paper -->
     <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-12 sm:pb-20 space-y-6">
-      <div class="space-y-2">
-        <h2 class="text-[28px] font-bold tracking-tight text-ink">Cobre, oro, BVL y <span data-stat="tradable-count">120</span> activos más</h2>
+      <div class="pdl-sec-head" data-reveal>
+        <div>
+          <span class="pdl-label pdl-label-accent">Cotizaciones y proyecciones</span>
+          <h2 class="pdl-h2">Cobre, oro, BVL y <span data-stat="tradable-count">120</span> activos más</h2>
+        </div>
+        <a href="/explorer" class="pdl-btn pdl-btn-primary">Ver todos en la terminal</a>
       </div>
       <div class="overflow-x-auto">
         <table class="pd-table w-full text-left border-collapse text-sm border-t border-ink">
           <thead>
             <tr class="border-b border-rule text-ink-soft text-xs">
               <th scope="col" class="py-3 px-4 font-semibold">Ticker</th>
-              <th scope="col" class="py-3 px-4 font-semibold">Nombre</th>
+              <th scope="col" class="py-3 px-4 font-semibold">Instrumento</th>
               <th scope="col" class="py-3 px-4 font-semibold text-center hidden sm:table-cell">12 meses</th>
               <th scope="col" class="py-3 px-4 font-semibold text-right">Último</th>
               <th scope="col" class="py-3 px-4 font-semibold text-right">Var. 1M</th>
@@ -342,7 +377,7 @@
           <tbody data-stagger>
             <tr class="border-t border-rule">
               <td class="py-3.5 px-4 font-mono tnum font-semibold"><a href="/explorer?symbol=HG%3DF" class="text-ink hover:text-brand underline">HG=F</a></td>
-              <td class="py-3.5 px-4 text-ink">Cobre (COMEX)</td>
+              <td class="py-3.5 px-4 text-ink">Cobre (COMEX)<span class="pdl-sub">Materia prima · COMEX</span></td>
               <td class="py-3.5 px-4 text-center hidden sm:table-cell" data-cell-spark="HG=F">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="HG=F">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="HG=F">—</td>
@@ -350,7 +385,7 @@
             </tr>
             <tr class="border-t border-rule">
               <td class="py-3.5 px-4 font-mono tnum font-semibold"><a href="/explorer?symbol=BVN" class="text-ink hover:text-brand underline">BVN</a></td>
-              <td class="py-3.5 px-4 text-ink">Buena&#118;entura</td>
+              <td class="py-3.5 px-4 text-ink">Buena&#118;entura<span class="pdl-sub">Minería · BVL / NYSE</span></td>
               <td class="py-3.5 px-4 text-center hidden sm:table-cell" data-cell-spark="BVN">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="BVN">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="BVN">—</td>
@@ -358,7 +393,7 @@
             </tr>
             <tr class="border-t border-rule">
               <td class="py-3.5 px-4 font-mono tnum font-semibold"><a href="/explorer?symbol=SCCO" class="text-ink hover:text-brand underline">SCCO</a></td>
-              <td class="py-3.5 px-4 text-ink">Southern Copper</td>
+              <td class="py-3.5 px-4 text-ink">Southern Copper<span class="pdl-sub">Minería · NYSE / BVL</span></td>
               <td class="py-3.5 px-4 text-center hidden sm:table-cell" data-cell-spark="SCCO">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="SCCO">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="SCCO">—</td>
@@ -366,11 +401,19 @@
             </tr>
             <tr class="border-t border-rule">
               <td class="py-3.5 px-4 font-mono tnum font-semibold"><a href="/explorer?symbol=PEN%3DX" class="text-ink hover:text-brand underline">PEN=X</a></td>
-              <td class="py-3.5 px-4 text-ink">USD/PEN</td>
+              <td class="py-3.5 px-4 text-ink">USD/PEN<span class="pdl-sub">Tipo de cambio</span></td>
               <td class="py-3.5 px-4 text-center hidden sm:table-cell" data-cell-spark="PEN=X">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="PEN=X">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="PEN=X">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="PEN=X">—</td>
+            </tr>
+            <tr class="border-t border-rule">
+              <td class="py-3.5 px-4 font-mono tnum font-semibold"><a href="/explorer?symbol=BAP" class="text-ink hover:text-brand underline">BAP</a></td>
+              <td class="py-3.5 px-4 text-ink">Credicorp<span class="pdl-sub">Banca · NYSE / BVL</span></td>
+              <td class="py-3.5 px-4 text-center hidden sm:table-cell" data-cell-spark="BAP">—</td>
+              <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="BAP">—</td>
+              <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="BAP">—</td>
+              <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="BAP">—</td>
             </tr>
           </tbody>
         </table>
@@ -381,64 +424,69 @@
       </p>
     </section>
 
-    <!-- METODOLOGÍA Y FUENTES: Banda --pd-surface a todo el ancho -->
-    <section id="metodologia" class="bg-surface full-bleed border-t border-b border-rule py-16 sm:py-24" data-reveal>
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
-        <div class="pb-2.5 border-b border-rule">
-          <h2 class="text-[28px] font-bold text-ink tracking-tight">
-            Cómo obtenemos y proyectamos las series
-          </h2>
-          <p class="text-sm text-ink-soft mt-1 font-serif">Tres principios que rigen cada número de PerData.</p>
+    <!-- METODOLOGÍA: 3 principios (diseño de Stitch, contenido verificado contra el código) -->
+    <section id="metodologia" class="pdl-meth full-bleed">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-20 lg:py-28">
+        <div class="pdl-sec-head" data-reveal>
+          <div class="max-w-3xl">
+            <span class="pdl-label pdl-label-accent">Metodología</span>
+            <h2 class="pdl-h2 pdl-h2-lg">Cómo sale cada cifra</h2>
+            <p class="pdl-lede">Qué datos usamos, qué modelo los proyecta y qué tan seguido acierta el rango.</p>
+          </div>
+          <a href="/metodologia" class="pdl-btn pdl-btn-secondary">Leer la metodología completa</a>
         </div>
-        <!-- 4 párrafos cortos en serif -->
-        <div class="max-w-3xl space-y-5 text-ink">
-          <p>
-            Reunimos cotizaciones de mercado (Yahoo Finance) e indicadores macroeconómicos oficiales (Banco Mundial). Ordenamos cada serie mes a mes y limpiamos días sin operaciones para trabajar con datos homogéneos.
-          </p>
-          <p>
-            Calculamos las proyecciones con el modelo estadístico de PerData. Combina la tendencia reciente de cada serie (amortiguada para no extrapolarla sin fin), una vuelta gradual a su nivel de largo plazo y la estacionalidad. La banda de incertidumbre crece con el horizonte y se estabiliza, como en los abanicos de los bancos centrales.
-          </p>
-          <p>
-            Mostramos el resultado como un abanico de posibilidades. P50 es el valor central esperado. La banda entre P10 y P90 reúne el 80% de los escenarios estimados para mostrar la variación del mercado.
-          </p>
-          <p>
-            Estas cifras son una herramienta de estudio y no constituyen asesoría financiera. El modelo no puede anticipar crisis repentinas ni cambios de leyes, y el rendimiento pasado no asegura resultados futuros.
-          </p>
+        <div class="pdl-principles">
+        <div class="pdl-principle" data-reveal style="transition-delay:0ms">
+          <div class="lg:col-span-4">
+            <div class="pdl-num-row"><span class="pdl-num">01</span><span class="pdl-num-line"></span><span class="pdl-label">Datos</span></div>
+            <h3 class="pdl-h3">Datos de mercado, sin retoques</h3>
+          </div>
+          <div class="lg:col-span-5">
+            <p class="pdl-text">Las cotizaciones de acciones de la BVL y de EE.&nbsp;UU., metales, divisas y tasas vienen de Yahoo Finance; los indicadores de Perú (PBI, inflación), del Banco Mundial. Guardamos cierres diarios y mensuales tal como los publica la fuente.</p>
+            <p class="pdl-quote-sm">Si una fuente no responde, mostramos la última copia guardada y lo decimos.</p>
+          </div>
+          <dl class="lg:col-span-3 pdl-facts"><div class="pdl-fact"><dt>Fuentes</dt><dd>Yahoo Finance · Banco Mundial</dd></div><div class="pdl-fact"><dt>Frecuencia</dt><dd>Cierres diarios y mensuales</dd></div><div class="pdl-fact"><dt>Ajustes a mano</dt><dd>Ninguno</dd></div></dl>
         </div>
-
-        <!-- Lista de fuentes con filete entre filas -->
-        <div class="space-y-3 pt-4">
-          <h3 class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Fuentes de datos</h3>
-          <dl class="border-t border-b border-rule">
-            <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-t border-rule first:border-t-0">
-              <dt class="font-semibold text-sm text-ink">Yahoo Finance</dt>
-              <dd class="text-xs sm:text-sm text-ink-soft">Cotizaciones de acciones (BVL y EE. UU.), materias primas COMEX/NYMEX, divisas y tasas.</dd>
-            </div>
-            <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-t border-rule first:border-t-0">
-              <dt class="font-semibold text-sm text-ink">Banco Mundial (Open Data)</dt>
-              <dd class="text-xs sm:text-sm text-ink-soft">Indicadores macroeconómicos de Perú: PBI, inflación y otros.</dd>
-            </div>
-            <div class="py-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-t border-rule first:border-t-0">
-              <dt class="font-semibold text-sm text-ink">Google News</dt>
-              <dd class="text-xs sm:text-sm text-ink-soft">Titulares de medios financieros, siempre con enlace a la nota original.</dd>
-            </div>
-          </dl>
+        <div class="pdl-principle" data-reveal style="transition-delay:120ms">
+          <div class="lg:col-span-4">
+            <div class="pdl-num-row"><span class="pdl-num">02</span><span class="pdl-num-line"></span><span class="pdl-label">Modelo</span></div>
+            <h3 class="pdl-h3">Dos modelos, el que mejor acierta</h3>
+          </div>
+          <div class="lg:col-span-5">
+            <p class="pdl-text">A 1 mes usamos nuestro modelo estadístico (tendencia amortiguada, vuelta a su nivel de largo plazo y estacionalidad). De 3 a 36 meses, TimesFM 2.5 de Google, que en nuestras pruebas falla menos en esos plazos.</p>
+            <p class="pdl-quote-sm">Cada proyección dice qué modelo la calculó.</p>
+          </div>
+          <dl class="lg:col-span-3 pdl-facts"><div class="pdl-fact"><dt>1 mes</dt><dd>PerData Engine v3</dd></div><div class="pdl-fact"><dt>3 a 36 meses</dt><dd>TimesFM 2.5 (Google)</dd></div><div class="pdl-fact"><dt>Se recalcula</dt><dd>Cada día, 06:00 Lima</dd></div></dl>
+        </div>
+        <div class="pdl-principle" data-reveal style="transition-delay:240ms">
+          <div class="lg:col-span-4">
+            <div class="pdl-num-row"><span class="pdl-num">03</span><span class="pdl-num-line"></span><span class="pdl-label">Rango</span></div>
+            <h3 class="pdl-h3">Un rango que dice la verdad</h3>
+          </div>
+          <div class="lg:col-span-5">
+            <p class="pdl-text">P50 es el valor central. Entre P10 y P90 debería caer el valor real 8 de cada 10 veces. Lo comprobamos con datos que el modelo no había visto y ajustamos las bandas hasta que se cumpliera.</p>
+            <p class="pdl-quote-sm">No es una recomendación de inversión: el modelo no anticipa crisis ni cambios de reglas.</p>
+          </div>
+          <dl class="lg:col-span-3 pdl-facts"><div class="pdl-fact"><dt>Cobertura a 1 mes</dt><dd>80&nbsp;%</dd></div><div class="pdl-fact"><dt>Cobertura a 6 meses</dt><dd>80&nbsp;%</dd></div><div class="pdl-fact"><dt>Casos de prueba</dt><dd>unos 800 por plazo</dd></div></dl>
+        </div>
         </div>
       </div>
     </section>
 
-    <!-- CTA FINAL: bloque neutro con filetes -->
-    <section class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24" data-reveal>
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-6 lg:gap-x-10 items-end">
-        <h2 class="lg:col-span-7 text-3xl sm:text-5xl font-bold tracking-tight text-ink">Empieza con cualquier activo.</h2>
-        <div class="lg:col-span-5 space-y-5">
-          <p class="text-sm sm:text-base leading-relaxed max-w-md text-ink-soft">
-            Busca una empresa, un metal o el tipo de cambio. La historia, la proyección y la exportación salen en segundos.
-          </p>
-          <a href="/explorer" class="pd-btn pd-accent-cta font-semibold text-sm transition">
-            Abrir la terminal
-          </a>
+    <!-- CIERRE (diseño de Stitch) -->
+    <section class="pdl-close full-bleed">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 py-20 lg:py-28 text-center flex flex-col items-center" data-reveal>
+        <h2 class="pdl-h2 pdl-h2-xl">Empieza con cualquier activo.</h2>
+        <p class="pdl-lede mt-4 mb-9">Busca una empresa, un metal o el tipo de cambio: la historia y la proyección salen en segundos.</p>
+        <div class="flex flex-col sm:flex-row items-center gap-3">
+          <a href="/explorer" class="pdl-btn pdl-btn-primary min-w-[200px]">Abrir la terminal</a>
+          <a href="/guia" class="pdl-btn pdl-btn-secondary min-w-[200px]">Cómo se usa</a>
         </div>
+        <ul class="pdl-perks">
+          <li>Sin registro: proyecciones a 1 mes</li>
+          <li>Cuenta gratuita: hasta 6 meses</li>
+          <li>Plan Pro: 36 meses, 10 años de historia y Excel</li>
+        </ul>
       </div>
     </section>
 
@@ -511,7 +559,7 @@
   <!-- Live Watchlist & Forecast Quotes -->
   <script>
     (function () {
-      var SYMS = ["HG=F", "BVN", "SCCO", "PEN=X"];
+      var SYMS = ["HG=F", "BVN", "SCCO", "PEN=X", "BAP"];
 
       function formatValue(val, sym) {
         if (typeof val !== "number" || isNaN(val)) return "—";
@@ -712,6 +760,14 @@
             p10El.textContent = fmt(p10, 2);
             p50El.textContent = fmt(p50, 2);
             p90El.textContent = fmt(p90, 2);
+            var cP50 = document.getElementById('pdCardP50'), cP10 = document.getElementById('pdCardP10'), cP90 = document.getElementById('pdCardP90'), cChg = document.getElementById('pdCardChange');
+            if (cP50) cP50.textContent = fmt(p50, 2);
+            if (cP10) cP10.textContent = fmt(p10, 2);
+            if (cP90) cP90.textContent = fmt(p90, 2);
+            if (cChg && lastClose) {
+              var ch = (p50 - lastClose) / lastClose * 100;
+              cChg.textContent = (ch >= 0 ? '+' : '') + ch.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' % est.';
+            }
             if (fallbackEl) fallbackEl.classList.add('hidden');
           } else {
             p10El.textContent = '—';
@@ -935,6 +991,29 @@
           document.querySelectorAll('[data-stat="tradable-count"]').forEach(function(el) { el.textContent = s.tradable; });
         }
       }).catch(function() {});
+    })();
+  </script>
+  <script>
+    // Franja de indicadores: último precio y variación del día, en vivo
+    (function () {
+      document.querySelectorAll('[data-ind]').forEach(function (el) {
+        var sym = el.getAttribute('data-ind');
+        var dec = parseInt(el.getAttribute('data-dec') || '2', 10);
+        var prefix = el.getAttribute('data-prefix') || '';
+        fetch('/api/historical?symbol=' + encodeURIComponent(sym) + '&range=1mo&interval=1mo')
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            var live = d && d.live;
+            if (!live || typeof live.price !== 'number') return;
+            el.querySelector('[data-ind-val]').textContent = prefix + live.price.toLocaleString('es-PE', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+            var c = live.changePct, chg = el.querySelector('[data-ind-chg]');
+            if (typeof c === 'number') {
+              chg.textContent = (c >= 0 ? '+' : '') + c.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
+              chg.classList.add(c > 0 ? 'text-pos' : (c < 0 ? 'text-neg' : 'text-ink-soft'));
+            }
+          })
+          .catch(function () { /* se queda en «—» */ });
+      });
     })();
   </script>
 </body>

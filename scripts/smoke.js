@@ -45,7 +45,12 @@ const FORBIDDEN_PATTERNS = [
   { label: "Jev", regex: /\bJev\b/ },
   { label: "TypeSafe", regex: /TypeSafe/i },
   { label: "BCRP como fuente", regex: /(fuente:\s*bcrp|interfaces.*bcrp|datos oficiales del bcrp|sincronizaci[oó]n.*bcrp)/i },
-  { label: "Nombre fundador", regex: /(agust[ií]n\s+ventura|ventura\s+salda[nñ]a)/i }
+  { label: "Nombre fundador", regex: /(agust[ií]n\s+ventura|ventura\s+salda[nñ]a)/i },
+  { label: "S.A. ficticia", regex: /\bS\.A\./ },
+  { label: "IFRS", regex: /\bIFRS\b/i },
+  { label: "SHA-256", regex: /SHA-256/i },
+  { label: "Whitepaper", regex: /Whitepaper/i },
+  { label: "Bayesian", regex: /Bayesian/i }
 ];
 
 const results = [];
