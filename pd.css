@@ -1289,3 +1289,6 @@ html.pd-marketing main h2 {
 .pd-guide .pd-guide-kicker { display: block; font-family: var(--pd-font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--pd-accent); margin-bottom: 6px; }
 .pd-guide .pd-guide-title { font-family: var(--pd-font-read); font-size: 22px; line-height: 1.25; color: var(--pd-ink); margin-bottom: 8px; }
 .pd-guide .pd-guide-copy { font-family: var(--pd-font-ui); font-size: 15px; line-height: 1.6; color: var(--pd-ink-soft); }
+.pdl-toc { list-style: none; margin: 8px 0 0; padding: 16px 0 0; border-top: 1px solid var(--pd-rule); display: flex; flex-wrap: wrap; gap: 8px 20px; }
+/* Texto de lectura de la landing y de Aprende: serif normal (Libre Franklin solo se carga en 600/700) */
+.pdl-text { font-family: var(--pd-font-read) !important; font-size: 17px !important; font-weight: 400 !important; line-height: 1.6 !important; color: var(--pd-ink) !important; }

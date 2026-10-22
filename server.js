@@ -38,6 +38,7 @@ const PAGES = {
   "/": "index.html",
   "/explorer": "explorer.html",
   "/metodologia": "metodologia.html",
+  "/aprende": "aprende.html",
   "/guia": "guia.html",
   "/terms": "terms.html",
   "/noticias": "news.html",
