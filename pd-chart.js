@@ -66,7 +66,6 @@
       const isDark = Boolean(options.isDark);
       const tokens = getComputedTokens(container);
       const histOnly = history.map(h => ({ d: h.date.substring(0, 7), v: Number(h.close) }));
-      const nHist = histOnly.length;
       let seriesLabels = histOnly.map(h => h.d);
       let seriesData = histOnly.map(h => h.v);
 
@@ -80,13 +79,16 @@
         let years = H <= 6 ? 1 : H === 12 ? 3 : 5;
         const cutoff = new Date();
         cutoff.setFullYear(cutoff.getFullYear() - years);
-        const filtered = history.filter(h => new Date(h.date + "-01") >= cutoff);
-        if (filtered.length > 0) {
+        // histOnly.d es "YYYY-MM"; se filtra sobre él (no sobre history, que trae "YYYY-MM-DD")
+        const filtered = histOnly.filter(h => new Date(h.d + "-01T00:00:00") >= cutoff);
+        if (filtered.length > 1) {
           seriesLabels = filtered.map(h => h.d);
-          seriesData = filtered.map(h => Number(h.close));
+          seriesData = filtered.map(h => h.v);
         }
       }
 
+      // nHist = puntos de historia que se dibujan (después del recorte por horizonte)
+      const nHist = seriesData.length;
       const labels = [...seriesLabels];
       const histPadded = [...seriesData];
       while (histPadded.length < labels.length) histPadded.push(null);
