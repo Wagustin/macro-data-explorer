@@ -11,8 +11,17 @@
                      "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
   function monthLabel(dateStr) {
-    const d = new Date(dateStr + "-01");
-    return MONTHS_ES[d.getMonth()] + " " + d.getFullYear().toString().slice(2);
+    if (!dateStr) return "";
+    const p = String(dateStr).split("-");
+    if (p.length < 2) return dateStr;
+    const m = parseInt(p[1], 10) - 1;
+    const mName = MONTHS_ES[m] || p[1];
+    if (p.length >= 3 && p[2] && p[2] !== "01") {
+      const day = parseInt(p[2], 10);
+      return `${day} ${mName}`;
+    }
+    if (p[0]) return `${mName} '${p[0].slice(2)}`;
+    return mName;
   }
 
   function maxSixLabels(labels) {
@@ -64,6 +73,7 @@
       const currency = options.currency || "USD";
       const sym = currencySymbol(currency);
       const isDark = Boolean(options.isDark);
+      const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
       const tokens = getComputedTokens(container);
       const histOnly = history.map(h => ({ d: h.date.substring(0, 7), v: Number(h.close) }));
       let seriesLabels = histOnly.map(h => h.d);
@@ -127,28 +137,46 @@
       }
       const cctx = ctx.getContext("2d");
 
+      // Gradiente de relleno sutil bajo la línea de historia: sky 12% -> 0%
+      const gradFill = cctx.createLinearGradient(0, 0, 0, container.clientHeight || 400);
+      gradFill.addColorStop(0, hexAlpha(tokens.sky, 12));
+      gradFill.addColorStop(1, hexAlpha(tokens.sky, 0));
+
       const datasets = [
         {
           label: "Histórico",
           data: histPadded,
           borderColor: tokens.ink,
-          backgroundColor: "transparent",
-          borderWidth: 2,
+          backgroundColor: gradFill,
+          borderWidth: isMobile ? 1.4 : 1.2,
           pointRadius: 0,
-          fill: false,
-          tension: 0,
+          fill: "start",
+          cubicInterpolationMode: "monotone",
+          tension: 0.25,
+          borderJoinStyle: "round",
           spanGaps: false,
           order: 3,
         },
       ];
 
       if (forecastSeries.length) {
-        // Abanico exterior P10–P90
+        // Abanico exterior P10–P90 (con degradado horizontal que se desvanece hacia el futuro)
         datasets.push({
           label: "P90",
           data: p90,
           borderColor: "transparent",
-          backgroundColor: hexAlpha(tokens.sky, 30),
+          backgroundColor: (ctx) => {
+            const chart = ctx.chart;
+            const { ctx: c, chartArea: area, scales } = chart;
+            if (!area || !scales?.x) return hexAlpha(tokens.sky, 14);
+            const x0 = scales.x.getPixelForValue(nHist - 1);
+            const x1 = scales.x.getPixelForValue(labels.length - 1);
+            if (!isFinite(x0) || !isFinite(x1) || x1 <= x0) return hexAlpha(tokens.sky, 14);
+            const g = c.createLinearGradient(x0, 0, x1, 0);
+            g.addColorStop(0, hexAlpha(tokens.sky, 16));
+            g.addColorStop(1, hexAlpha(tokens.sky, 3));
+            return g;
+          },
           borderWidth: 0,
           pointRadius: 0,
           fill: "+1",
@@ -166,12 +194,23 @@
           tension: 0.15,
           order: 2,
         });
-        // Abanico interior P25–P75
+        // Abanico interior P25–P75 (más opaco cerca de Hoy, desvaneciéndose hacia el futuro)
         datasets.push({
           label: "P75",
           data: p75,
           borderColor: "transparent",
-          backgroundColor: hexAlpha(tokens.sky, 55),
+          backgroundColor: (ctx) => {
+            const chart = ctx.chart;
+            const { ctx: c, chartArea: area, scales } = chart;
+            if (!area || !scales?.x) return hexAlpha(tokens.sky, 22);
+            const x0 = scales.x.getPixelForValue(nHist - 1);
+            const x1 = scales.x.getPixelForValue(labels.length - 1);
+            if (!isFinite(x0) || !isFinite(x1) || x1 <= x0) return hexAlpha(tokens.sky, 22);
+            const g = c.createLinearGradient(x0, 0, x1, 0);
+            g.addColorStop(0, hexAlpha(tokens.sky, 26));
+            g.addColorStop(1, hexAlpha(tokens.sky, 5));
+            return g;
+          },
           borderWidth: 0,
           pointRadius: 0,
           fill: "+1",
@@ -195,8 +234,8 @@
           data: p50,
           borderColor: tokens.accent,
           backgroundColor: "transparent",
-          borderWidth: 2,
-          borderDash: [6, 4],
+          borderWidth: 1.5,
+          borderDash: [4, 4],
           pointRadius: 0,
           fill: false,
           tension: 0.15,
@@ -211,7 +250,7 @@
           borderColor: "transparent",
           backgroundColor: tokens.ink,
           borderWidth: 0,
-          pointRadius: 4,
+          pointRadius: 3,
           showLine: false,
           order: 4,
         });
@@ -226,8 +265,6 @@
       const yMax = allVals.length ? Math.max(...allVals) : 100;
       const yPad = (yMax - yMin) * 0.12 || Math.max(Math.abs(yMax), 1) * 0.12;
 
-      const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
-
       const chart = new Chart(cctx, {
         type: "line",
         data: { labels, datasets },
@@ -236,15 +273,15 @@
           maintainAspectRatio: false,
           layout: {
             padding: {
-              right: isMobile ? 64 : 96,
-              top: 8,
-              left: 0,
+              right: isMobile ? 64 : 88,
+              top: 10,
+              left: 4,
               bottom: 4,
             },
           },
           animation: {
-            duration: reduceMotion() ? 0 : 300,
-            easing: "easeInOutQuad",
+            duration: reduceMotion() ? 0 : 600,
+            easing: "easeOutQuart",
           },
           interaction: { mode: "nearest", intersect: false, axis: "x" },
           plugins: {
@@ -256,23 +293,35 @@
               type: "category",
               ticks: {
                 maxTicksLimit: 6,
-                callback: (v) => labels[v] ? monthLabel(labels[v]) : "",
+                callback: (v) => (labels[v] ? monthLabel(labels[v]) : ""),
                 font: { family: "IBM Plex Mono, ui-monospace, monospace", size: 10 },
                 color: tokens.inkSoft,
+                padding: 4,
               },
-              grid: { color: tokens.rule, drawBorder: false },
+              grid: { display: false, drawBorder: false },
+              border: { display: false },
             },
             y: {
               type: "linear",
-              position: "left",
+              position: "right",
               min: yMin - yPad,
               max: yMax + yPad,
               ticks: {
-                callback: (v) => sym + v.toFixed(1),
+                maxTicksLimit: 5,
+                callback: (v) => {
+                  const n = Number(v);
+                  return isFinite(n) ? sym + n.toFixed(2) : "";
+                },
                 font: { family: "IBM Plex Mono, ui-monospace, monospace", size: 10 },
                 color: tokens.inkSoft,
+                padding: 6,
               },
-              grid: { color: tokens.rule, drawBorder: false },
+              grid: {
+                color: hexAlpha(tokens.rule, 60),
+                drawBorder: false,
+                drawTicks: false,
+              },
+              border: { display: false },
             },
           },
         },
@@ -280,25 +329,18 @@
           {
             id: "pd-chart-core",
             beforeDraw(ch) {
-              // Zona futura + línea Hoy exactamente en el último cierre real (punto negro)
+              // Zona futura: fondo transparente sobre la tarjeta (sin caja de fondo gris)
               if (!forecastSeries.length) return;
               const { ctx: c, chartArea: area, scales } = ch;
-              if (!area) return;
+              if (!area || !scales.x) return;
               const xScale = scales.x;
               const hoyIdx = nHist - 1;
               const hoyX = xScale.getPixelForValue(hoyIdx);
-              const x1 = xScale.getPixelForValue(labels.length - 1);
-              if (!isFinite(hoyX) || !isFinite(x1)) return;
+              if (!isFinite(hoyX)) return;
 
-              // Fondo zona futura: inicia exactamente en el último cierre real
+              // Línea Hoy: exactamente en el punto del último cierre real
               c.save();
-              c.fillStyle = tokens.surface;
-              c.fillRect(hoyX, area.top, x1 - hoyX, area.bottom - area.top);
-              c.restore();
-
-              // Línea Hoy: exactamente en el punto negro (último cierre real)
-              c.save();
-              c.strokeStyle = tokens.inkSoft;
+              c.strokeStyle = hexAlpha(tokens.inkSoft, 70);
               c.lineWidth = 1;
               c.setLineDash([3, 3]);
               c.beginPath();
@@ -307,25 +349,74 @@
               c.stroke();
               c.setLineDash([]);
               c.fillStyle = tokens.ink;
-              c.font = `700 10px IBM Plex Mono, ui-monospace, monospace`;
+              c.font = "700 10px 'IBM Plex Mono', ui-monospace, monospace";
               c.fillText("Hoy", hoyX + 4, area.top + 14);
               c.restore();
             },
             afterDatasetsDraw(ch) {
-              // Etiquetas directas P90, P50, P10 al final del abanico con separación mínima
-              if (!forecastSeries.length) return;
               const { ctx: c, chartArea: area, scales } = ch;
-              if (!area) return;
-              const xScale = scales.x;
+              if (!area || !scales.y || !scales.x) return;
               const mob = typeof window !== "undefined" && window.innerWidth < 640;
 
-              const lastIdx = labels.length - 1;
-              const xLast = xScale.getPixelForValue(lastIdx);
-              const xText = xLast + (mob ? 6 : 8);
+              // 1. Pastilla del último precio pegada al eje Y a la altura del último cierre
+              const lastCloseVal = seriesData[nHist - 1];
+              if (lastCloseVal != null && !isNaN(lastCloseVal)) {
+                const yClose = scales.y.getPixelForValue(lastCloseVal);
+                const hoyX = scales.x.getPixelForValue(nHist - 1);
+                if (isFinite(yClose)) {
+                  // Línea guía horizontal punteada sutil desde Hoy hasta el eje Y
+                  if (isFinite(hoyX)) {
+                    c.save();
+                    c.strokeStyle = hexAlpha(tokens.inkSoft, 30);
+                    c.lineWidth = 1;
+                    c.setLineDash([2, 2]);
+                    c.beginPath();
+                    c.moveTo(hoyX, yClose);
+                    c.lineTo(area.right, yClose);
+                    c.stroke();
+                    c.restore();
+                  }
 
-              const yP90 = ch.scales.y.getPixelForValue(p90[lastIdx] ?? p50[lastIdx]);
-              const yP50 = ch.scales.y.getPixelForValue(p50[lastIdx]);
-              const yP10 = ch.scales.y.getPixelForValue(p10[lastIdx] ?? p50[lastIdx]);
+                  // Pastilla en el eje Y
+                  const priceStr = sym + Number(lastCloseVal).toFixed(2);
+                  c.save();
+                  c.font = "700 10px 'IBM Plex Mono', ui-monospace, monospace";
+                  const textW = c.measureText(priceStr).width;
+                  const pillW = textW + 8;
+                  const pillH = 17;
+                  const pillX = area.right + 2;
+                  const pillY = yClose - pillH / 2;
+
+                  c.fillStyle = tokens.ink;
+                  c.beginPath();
+                  if (typeof c.roundRect === "function") {
+                    c.roundRect(pillX, pillY, pillW, pillH, 3);
+                  } else {
+                    c.rect(pillX, pillY, pillW, pillH);
+                  }
+                  c.fill();
+
+                  c.fillStyle = tokens.card || "#FFFFFF";
+                  c.textAlign = "center";
+                  c.textBaseline = "middle";
+                  c.fillText(priceStr, pillX + pillW / 2, yClose);
+                  c.restore();
+                }
+              }
+
+              // 2. Etiquetas directas P90, P50, P10 al final del abanico
+              if (!forecastSeries.length) return;
+              const lastIdx = labels.length - 1;
+              const xLast = scales.x.getPixelForValue(lastIdx);
+              if (!isFinite(xLast)) return;
+
+              const valP90 = p90[lastIdx];
+              const valP50 = p50[lastIdx];
+              const valP10 = p10[lastIdx];
+
+              const yP90 = scales.y.getPixelForValue(valP90 ?? valP50);
+              const yP50 = scales.y.getPixelForValue(valP50);
+              const yP10 = scales.y.getPixelForValue(valP10 ?? valP50);
 
               let pos90 = yP90;
               let pos50 = yP50;
@@ -359,24 +450,27 @@
                 pos90 = Math.min(pos90, pos50 - minDist);
               }
 
+              // Posicionadas en el extremo derecho del abanico (alineadas a la derecha dentro del abanico)
+              const xText = Math.min(xLast, area.right) - 6;
+
               c.save();
-              c.textAlign = "left";
+              c.textAlign = "right";
               c.textBaseline = "middle";
               c.font = mob
-                ? "700 9.5px IBM Plex Mono, ui-monospace, monospace"
-                : "700 11px IBM Plex Mono, ui-monospace, monospace";
+                ? "700 9px 'IBM Plex Mono', ui-monospace, monospace"
+                : "700 10.5px 'IBM Plex Mono', ui-monospace, monospace";
 
-              if (p90[lastIdx] != null && !isNaN(p90[lastIdx])) {
-                c.fillStyle = tokens.accent;
-                c.fillText("P90 " + sym + Number(p90[lastIdx]).toFixed(2), xText, pos90);
-              }
-              if (p50[lastIdx] != null && !isNaN(p50[lastIdx])) {
-                c.fillStyle = tokens.ink;
-                c.fillText("P50 " + sym + Number(p50[lastIdx]).toFixed(2), xText, pos50);
-              }
-              if (p10[lastIdx] != null && !isNaN(p10[lastIdx])) {
+              if (valP90 != null && !isNaN(valP90)) {
                 c.fillStyle = tokens.inkSoft;
-                c.fillText("P10 " + sym + Number(p10[lastIdx]).toFixed(2), xText, pos10);
+                c.fillText("P90 " + sym + Number(valP90).toFixed(2), xText, pos90);
+              }
+              if (valP50 != null && !isNaN(valP50)) {
+                c.fillStyle = tokens.accent;
+                c.fillText("P50 " + sym + Number(valP50).toFixed(2), xText, pos50);
+              }
+              if (valP10 != null && !isNaN(valP10)) {
+                c.fillStyle = tokens.inkSoft;
+                c.fillText("P10 " + sym + Number(valP10).toFixed(2), xText, pos10);
               }
               c.restore();
             },
@@ -412,7 +506,8 @@
       if (!chip) {
         chip = document.createElement("div");
         chip.className = "pd-chip";
-        chip.style.cssText = "position:absolute;z-index:10;pointer-events:none;padding:4px 8px;border:1px solid var(--pd-rule);background:var(--pd-card);color:var(--pd-ink);border-radius:6px;font:600 11px IBM Plex Mono,ui-monospace,monospace;display:none;";
+        chip.style.cssText =
+          "position:absolute;z-index:10;pointer-events:none;padding:6px 10px;border:1px solid var(--pd-rule);background:var(--pd-card);color:var(--pd-ink);border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.08);font:600 11px 'IBM Plex Mono',ui-monospace,monospace;transition:left 80ms ease-out, top 80ms ease-out;display:none;min-width:110px;";
         container.style.position = container.style.position || "relative";
         container.appendChild(chip);
       }
@@ -420,9 +515,19 @@
       if (!vline) {
         vline = document.createElement("div");
         vline.className = "pd-vline";
-        vline.style.cssText = "position:absolute;z-index:9;top:0;bottom:0;width:1px;background:var(--pd-accent);display:none;pointer-events:none;";
+        vline.style.cssText =
+          "position:absolute;z-index:9;top:0;bottom:0;width:1px;border-left:1px dashed var(--pd-ink-soft);background:transparent;display:none;pointer-events:none;transition:left 80ms ease-out;";
         container.style.position = container.style.position || "relative";
         container.appendChild(vline);
+      }
+      let dotHalo = container.querySelector(".pd-dot-halo");
+      if (!dotHalo) {
+        dotHalo = document.createElement("div");
+        dotHalo.className = "pd-dot-halo";
+        dotHalo.style.cssText =
+          "position:absolute;z-index:9;width:8px;height:8px;border-radius:50%;background:var(--pd-accent);box-shadow:0 0 0 4px rgba(20,20,210,0.2);display:none;pointer-events:none;transform:translate(-50%,-50%);transition:left 80ms ease-out, top 80ms ease-out;";
+        container.style.position = container.style.position || "relative";
+        container.appendChild(dotHalo);
       }
 
       function drawCrosshair(xPx, idx) {
@@ -430,24 +535,52 @@
         const v = seriesData[idx];
         const p = p50[idx];
         const isFuture = idx >= nHist;
-        const vLine = vline;
-        vLine.style.left = xPx + "px";
-        vLine.style.display = "block";
-        let html = `<div>${monthLabel(label)}</div>`;
-        if (v != null && !isNaN(v)) html += `<div>Último real <b>${sym}${Number(v).toFixed(2)}</b></div>`;
+        
+        vline.style.left = xPx + "px";
+        vline.style.display = "block";
+
+        const ptVal = isFuture ? p : v;
+        if (ptVal != null && !isNaN(ptVal)) {
+          const yPx = chart.scales.y.getPixelForValue(ptVal);
+          if (isFinite(yPx)) {
+            dotHalo.style.left = xPx + "px";
+            dotHalo.style.top = yPx + "px";
+            dotHalo.style.display = "block";
+          } else {
+            dotHalo.style.display = "none";
+          }
+        } else {
+          dotHalo.style.display = "none";
+        }
+
+        let html = `<div style="font-weight:700;margin-bottom:3px;color:var(--pd-ink);">${monthLabel(label)}</div>`;
+        if (v != null && !isNaN(v)) {
+          html += `<div style="color:var(--pd-ink-soft);">Cierre real: <b style="color:var(--pd-ink);font-family:'IBM Plex Mono',monospace;">${sym}${Number(v).toFixed(2)}</b></div>`;
+        }
         if (isFuture && p != null && !isNaN(p)) {
-          html += `<div>P50 <b>${sym}${Number(p).toFixed(2)}</b></div>`;
-          if (p10[idx] != null && !isNaN(p10[idx])) html += `<div>P10 ${sym}${Number(p10[idx]).toFixed(2)}</div>`;
-          if (p90[idx] != null && !isNaN(p90[idx])) html += `<div>P90 ${sym}${Number(p90[idx]).toFixed(2)}</div>`;
+          html += `<div style="color:var(--pd-accent);">P50: <b style="font-family:'IBM Plex Mono',monospace;">${sym}${Number(p).toFixed(2)}</b></div>`;
+          if (p90[idx] != null && !isNaN(p90[idx])) {
+            html += `<div style="color:var(--pd-ink-soft);">P90: <span style="font-family:'IBM Plex Mono',monospace;">${sym}${Number(p90[idx]).toFixed(2)}</span></div>`;
+          }
+          if (p10[idx] != null && !isNaN(p10[idx])) {
+            html += `<div style="color:var(--pd-ink-soft);">P10: <span style="font-family:'IBM Plex Mono',monospace;">${sym}${Number(p10[idx]).toFixed(2)}</span></div>`;
+          }
         }
         chip.innerHTML = html;
         chip.style.display = "block";
-        chip.style.left = (xPx + 10) + "px";
+
+        const cWidth = container.clientWidth || 400;
+        if (xPx + 140 > cWidth) {
+          chip.style.left = Math.max(0, xPx - 130) + "px";
+        } else {
+          chip.style.left = (xPx + 12) + "px";
+        }
         chip.style.top = "10px";
       }
 
       function removeCrosshair() {
         vline.style.display = "none";
+        dotHalo.style.display = "none";
         chip.style.display = "none";
       }
 
@@ -507,6 +640,7 @@
           PdChart.instances.delete(container);
           if (chip) chip.remove();
           if (vline) vline.remove();
+          if (dotHalo) dotHalo.remove();
           if (a11y) a11y.remove();
         },
         resize() {
