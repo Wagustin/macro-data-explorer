@@ -1,15 +1,15 @@
 ---
 version: alpha
 name: PerData
-description: "Terminal cuantitativa y publicación financiera para la Bolsa de Valores de Lima (BVL). Estética papel y tinta inspirada en publicaciones financieras institucionales (Financial Times, Our World in Data, informes BCRP). Paleta sobria basada en fondo papel (#FAF9F6 / #121211), tinta (#141414 / #EDEBE6), verde tinta brand (#0D2A1C / #E8E4D8), divisores en filete (#E4E1DA / #2E2D2A) y amarillo resaltador (#F6E016) de uso quirúrgico. Tipografía: Libre Franklin (headings/UI), Source Serif 4 (lectura) e IBM Plex Mono (datos y tickers con tabular-nums)."
+description: "Terminal cuantitativa y publicación financiera para la Bolsa de Valores de Lima (BVL). Estética sobria basada en azul marino y azul sobre neutros fríos: fondo papel (#F7F8FA / #0A1422), tarjeta (#FFFFFF / #0F1C2E), tinta (#0E1A2B / #E9EEF4), azul marino (#002244), acento azul (#1414D2 / #93B7F8) y filetes de 1px (#DCE1E8 / #22344B). Tipografía: Libre Franklin (headings/UI), Source Serif 4 (lectura) e IBM Plex Mono (datos y tickers con tabular-nums)."
 colors:
-  primary: "#0D2A1C"
-  secondary: "#5C5A55"
-  tertiary: "#F6E016"
-  surface: "#F2F0EB"
-  border: "#E4E1DA"
+  primary: "#002244"
+  secondary: "#556170"
+  tertiary: "#1414D2"
+  surface: "#EEF1F5"
+  border: "#DCE1E8"
   on-primary: "#FFFFFF"
-  on-tertiary: "#0D2A1C"
+  on-tertiary: "#FFFFFF"
 typography:
   display:
     fontFamily: "Libre Franklin"
@@ -80,8 +80,8 @@ spacing:
   xxxl: 110px
 components:
   button-primary:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.on-primary}"
+    backgroundColor: "{colors.tertiary}"
+    textColor: "{colors.on-tertiary}"
     rounded: "{rounded.sm}"
     padding: "10px 20px"
   button-primary-hover:
@@ -96,7 +96,7 @@ components:
     padding: "10px 20px"
   button-ghost-hover:
     backgroundColor: "{colors.surface}"
-    textColor: "{colors.primary}"
+    textColor: "{colors.tertiary}"
     rounded: "{rounded.sm}"
     padding: "10px 20px"
   button-accent:
@@ -176,18 +176,19 @@ components:
 
 ## Overview
 
-PerData es una publicación financiera seria y terminal cuantitativa para la Bolsa de Valores de Lima (BVL) y mercados macrofinancieros andinos. Su identidad visual evoca la autoridad y sobriedad de un informe impreso o diario de referencia (Financial Times, Our World in Data, reportes BCRP): maquetación editorial alineada a la izquierda, tipografía que combina Libre Franklin para titulares y controles con Source Serif 4 para lectura reposada, y una paleta sobria de papel (#FAF9F6) y tinta (#141414), con verde tinta brand (#0D2A1C), filetes de separación de 1px (#E4E1DA) y un uso estrictamente delimitado de amarillo resaltador (#F6E016) para el logotipo, el subrayado de una palabra clave del hero y el badge de descuento.
+PerData es una publicación financiera seria y terminal cuantitativa para la Bolsa de Valores de Lima (BVL) y mercados macrofinancieros andinos. Su identidad visual evoca la autoridad y sobriedad de un informe impreso o diario de referencia: maquetación editorial alineada a la izquierda, tipografía que combina Libre Franklin para titulares y controles con Source Serif 4 para lectura reposada, y una paleta sobria basada en azul marino y azul sobre neutros fríos (papel #F7F8FA, tarjeta #FFFFFF y tinta #0E1A2B), con azul marino (#002244), acento azul (#1414D2 / #93B7F8), filetes de separación de 1px (#DCE1E8 / #22344B) y azul cielo (#93B7F8) para subrayado.
 
 No hay degradados, sombras decorativas en reposo, bordes con radio superior a 4px, ni rejillas de tarjetas flotantes: la jerarquía visual nace del ritmo tipográfico, filetes limpios y datos numéricos tabulares de alta legibilidad.
 
 ## Colors
 
-- **Primary (#0D2A1C):** Verde tinta institucional — usado en botones primarios, marca y acentos tipográficos.
-- **Secondary (#5C5A55):** Tinta suave — texto secundario, explicaciones, metadatos y etiquetas.
-- **Tertiary (#F6E016):** Amarillo resaltador — reservado exclusivamente para el logo, el resaltado de palabra clave en el hero y el badge «2 meses gratis».
-- **Paper (#FAF9F6):** Fondo de lectura en modo claro (en modo oscuro: #121211).
-- **Surface (#F2F0EB):** Superficie para controles, tablas y fondos sutiles (en modo oscuro: #222220).
-- **Border / Rule (#E4E1DA):** Filete de 1px para delimitar secciones, listas y tablas (en modo oscuro: #2E2D2A).
+- **Primary (#002244):** Azul marino institucional — usado en cabecera persistente, marca y acentos de navegación.
+- **Secondary (#556170):** Tinta suave — texto secundario, explicaciones, metadatos y etiquetas.
+- **Tertiary (#1414D2):** Azul vivo de acción — reservado con moderación para botones primarios, enlaces activos, filete Pro y badges.
+- **Sky (#93B7F8):** Azul claro — subrayado técnico de 3px de la palabra clave en el hero y enlaces activos de navegación.
+- **Paper (#F7F8FA):** Fondo general de página en modo claro (en modo oscuro: #0A1422).
+- **Surface (#EEF1F5):** Superficie neutra fría para controles, tablas y fondos sutiles (en modo oscuro: #15253A).
+- **Border / Rule (#DCE1E8):** Filete de 1px para delimitar secciones, listas y tablas (en modo oscuro: #22344B).
 - **Positive (#1E7A46):** Cifras y variaciones al alza (en modo oscuro: #5FBF85).
 - **Negative (#B3261E):** Cifras y variaciones a la baja (en modo oscuro: #F07A72).
 
@@ -212,31 +213,34 @@ No hay degradados, sombras decorativas en reposo, bordes con radio superior a 4p
 
 ## Shapes
 
-- **Radio máximo:** 4px para botones, inputs, modales y tarjetas.
+- **Radio máximo:** 4px para botones, inputs, modales y tarjetas; 2px para badges.
 - **Pill (9999px):** Reservado únicamente para interruptores (switches) y status dots, nunca en botones de acción.
 
 ## Components
 
+### Cabecera
+- Fondo azul marino `#002244` en modo claro y oscuro, con filete inferior sutil `#0B3360`. Enlaces en `rgba(255,255,255,.78)`, hover y activo en blanco puro con subrayado de 2px en azul cielo `#93B7F8`. Chip de logo blanco con la «P» en `#002244`.
+
 ### Botones
-- **Primario:** Fondo `--pd-brand` (#0D2A1C) con texto blanco en claro; fondo #EDEBE6 con texto #121211 en oscuro. Radio de 4px y sin sombra.
-- **Secundario / Ghost:** Fondo transparente con borde de 1px en ink y texto en ink. Hover a surface.
+- **Primario:** Fondo `--pd-accent` (#1414D2) con texto blanco en claro (hover #002244); fondo #93B7F8 con texto #0A1422 en oscuro (hover #B9CFFA). Radio de 4px y sin sombra.
+- **Secundario / Ghost:** Fondo transparente con borde de 1px en ink y texto en ink. Hover a surface y borde accent.
 - **Sin hover-lift ni sombras.**
 
 ### Tablas de Datos
-- Encabezado con fondo `--pd-surface` y borde inferior de 1px.
+- Encabezado con fondo transparente o `--pd-surface` y borde inferior de 1px.
 - Cifras en IBM Plex Mono con alineación derecha y tabular-nums.
 - Filete horizontal entre filas y hover sutil a `--pd-surface`.
 
-### Resaltador
-- Subrayado grueso de marcador (`.pd-highlight`) usando `#F6E016` únicamente sobre la palabra clave del titular.
+### Acento del Hero
+- Subrayado de 3px en azul cielo (`--pd-sky`: `#93B7F8`) con offset de 6px y texto en `--pd-accent`, sin fondo de resaltador ni amarillo.
 
 ## Do's and Don'ts
 
 - **Do** usar filetes de 1px para estructurar la página en lugar de cajas y tarjetas.
 - **Do** alinear el contenido a la izquierda con escala tipográfica clara.
 - **Do** emplear IBM Plex Mono y tabular-nums en todo dato cuantitativo.
-- **Do** mantener el amarillo `#F6E016` estrictamente limitado a logo, resaltador de palabra y badge de descuento.
+- **Do** reservar el azul vivo (`#1414D2`) con moderación para acciones clave, enlaces y badges.
 - **Don't** incluir gradientes, sombras flotantes, resplandores ni pulsos animados.
 - **Don't** usar emojis en interfaces públicas ni dashboards.
 - **Don't** crear tarjetas centradas en rejilla de 4 para listas de elementos.
-- **Don't** usar azul ni estilos ornamentales en enlaces dentro de párrafos de texto.
+- **Don't** usar fondos fotográficos ni saturar fondos grandes con azul vivo.
