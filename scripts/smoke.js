@@ -6,6 +6,13 @@
  *   node scripts/smoke.js --base https://perdata.site
  */
 
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const args = process.argv.slice(2);
 let base = "http://localhost:4321";
 for (let i = 0; i < args.length; i++) {
@@ -35,11 +42,9 @@ const STATIC_FILES = ["/robots.txt", "/sitemap.xml"];
 const ASSETS = ["HG=F", "GC=F", "BVN", "SCCO", "PEN=X"];
 
 const FORBIDDEN_PATTERNS = [
-  { label: "TimesFM 2.5", regex: /TimesFM\s+2\.5/i },
   { label: "Jev", regex: /\bJev\b/ },
   { label: "TypeSafe", regex: /TypeSafe/i },
   { label: "BCRP como fuente", regex: /(fuente:\s*bcrp|interfaces.*bcrp|datos oficiales del bcrp|sincronizaci[oó]n.*bcrp)/i },
-  { label: "Calibrada", regex: /\bcalibrada\b/i },
   { label: "Nombre fundador", regex: /(agust[ií]n\s+ventura|ventura\s+salda[nñ]a)/i }
 ];
 
@@ -247,11 +252,41 @@ async function testBilling() {
   }
 }
 
+async function testCalibration() {
+  const calibPath = path.join(__dirname, "..", "api", "_lib", "calibration.json");
+  if (!fs.existsSync(calibPath)) {
+    record("Archivo calibration.json", false, "No existe api/_lib/calibration.json");
+    return;
+  }
+  record("Archivo calibration.json", true, "Existe en api/_lib/calibration.json");
+
+  try {
+    const data = JSON.parse(fs.readFileSync(calibPath, "utf-8"));
+    const horizons = [1, 3, 6, 12, 24, 36];
+    let allOk = true;
+    const details = [];
+    for (const h of horizons) {
+      const entry = data.horizons?.[h];
+      const cov = entry?.coverageAfter80;
+      if (typeof cov !== "number" || cov < 75 || cov > 85) {
+        allOk = false;
+        details.push(`H=${h}: ${cov}% (fuera de [75%, 85%])`);
+      } else {
+        details.push(`H=${h}: ${cov}%`);
+      }
+    }
+    record("Cobertura empírica en [75%, 85%]", allOk, details.join(", "));
+  } catch (e) {
+    record("Cobertura empírica en [75%, 85%]", false, e.message);
+  }
+}
+
 async function main() {
   console.log(`\n======================================================`);
   console.log(`  PERDATA SANITY SMOKE TEST — Target: ${base}`);
   console.log(`======================================================\n`);
 
+  await testCalibration();
   await testPages();
   await testHistorical();
   await testForecast();

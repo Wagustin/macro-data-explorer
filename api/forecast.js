@@ -22,12 +22,57 @@
  * Zero dependencies.
  */
 
+import fs from "fs";
 import { PLANS, planForUser, canUseHorizon, upgradeRequired } from "./_lib/plans.js";
 import { getAuthUserOrNull } from "./_lib/session.js";
 import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
 
+// ---------- calibration loader (empirically calibrated quantile bands) ----------
+let _calibration = null;
+export function getCalibration() {
+  if (_calibration !== null) return _calibration;
+  try {
+    const p = new URL("./_lib/calibration.json", import.meta.url);
+    if (fs.existsSync(p)) {
+      _calibration = JSON.parse(fs.readFileSync(p, "utf-8"));
+    } else {
+      _calibration = false;
+    }
+  } catch (e) {
+    _calibration = false;
+  }
+  return _calibration;
+}
+
+export function getFactorsForHorizon(H, calib) {
+  if (!calib || !calib.horizons) return null;
+  const known = [1, 3, 6, 12, 24, 36];
+  if (H <= known[0]) return calib.horizons[known[0]];
+  if (H >= known[known.length - 1]) return calib.horizons[known[known.length - 1]];
+  if (calib.horizons[H]) return calib.horizons[H];
+
+  let h0 = known[0], h1 = known[known.length - 1];
+  for (let i = 0; i < known.length - 1; i++) {
+    if (known[i] <= H && H <= known[i + 1]) {
+      h0 = known[i];
+      h1 = known[i + 1];
+      break;
+    }
+  }
+  const f0 = calib.horizons[h0];
+  const f1 = calib.horizons[h1];
+  if (!f0 || !f1) return f0 || f1;
+  const t = (H - h0) / (h1 - h0);
+  return {
+    k80: Number((f0.k80 + t * (f1.k80 - f0.k80)).toFixed(3)),
+    k50: Number((f0.k50 + t * (f1.k50 - f0.k50)).toFixed(3)),
+    coverageAfter80: Number((f0.coverageAfter80 + t * (f1.coverageAfter80 - f0.coverageAfter80)).toFixed(1)),
+    n: Math.round(f0.n + t * (f1.n - f0.n))
+  };
+}
+
 // ---------- core engine (shared) ----------
-function buildForecast(series, H, opts = {}) {
+export function buildForecast(series, H, opts = {}) {
   const closes = series.map(it => it.close);
   const N = closes.length;
   if (N < 5) throw new Error("insufficient");
@@ -195,6 +240,7 @@ function buildForecast(series, H, opts = {}) {
   }
 
   // ---- 8. Quantiles per step; P50 = skeleton + seasonality (point forecast) ----
+  const calib = opts.calibrated === false ? null : getCalibration();
   const forecastPoints = [];
   const [lastY, lastM] = lastDateStr.split("-").map(v => parseInt(v, 10));
   let curY = lastY, curM = lastM;
@@ -203,16 +249,35 @@ function buildForecast(series, H, opts = {}) {
     if (curM > 12) { curM = 1; curY += 1; }
     const stepVals = paths.map(p => p[step - 1]).sort((a, b) => a - b);
     const q = (p) => stepVals[Math.min(stepVals.length - 1, Math.max(0, Math.floor(p * stepVals.length)))];
-    const p50 = Math.exp(skeletonLog[step] + seasonalLog[step]);
+    let p50 = Number(Math.exp(skeletonLog[step] + seasonalLog[step]).toFixed(2));
+    let p10 = Number(q(0.10).toFixed(2));
+    let p25 = Number(q(0.25).toFixed(2));
+    let p75 = Number(q(0.75).toFixed(2));
+    let p90 = Number(q(0.90).toFixed(2));
+
+    const factors = calib ? getFactorsForHorizon(step, calib) : null;
+    if (factors && p50 > 0 && p10 > 0 && p25 > 0 && p75 > 0 && p90 > 0) {
+      p10 = Number((p50 * Math.pow(p10 / p50, factors.k80)).toFixed(2));
+      p90 = Number((p50 * Math.pow(p90 / p50, factors.k80)).toFixed(2));
+      p25 = Number((p50 * Math.pow(p25 / p50, factors.k50)).toFixed(2));
+      p75 = Number((p50 * Math.pow(p75 / p50, factors.k50)).toFixed(2));
+
+      // Monotonía estricta
+      p25 = Math.max(p10, p25);
+      p50 = Math.max(p25, p50);
+      p75 = Math.max(p50, p75);
+      p90 = Math.max(p75, p90);
+    }
+
     forecastPoints.push({
       step,
       date: `${curY}-${String(curM).padStart(2, "0")}-01`,
-      p10: Number(q(0.10).toFixed(2)),
-      p25: Number(q(0.25).toFixed(2)),
-      p50: Number(p50.toFixed(2)),
-      p75: Number(q(0.75).toFixed(2)),
-      p90: Number(q(0.90).toFixed(2)),
-      uncertaintyPct: Number(((q(0.90) - q(0.10)) / p50 * 100).toFixed(1))
+      p10,
+      p25,
+      p50,
+      p75,
+      p90,
+      uncertaintyPct: Number(((p90 - p10) / p50 * 100).toFixed(1))
     });
   }
 
@@ -319,9 +384,19 @@ export default async function handler(req, res) {
   try {
     const F = buildForecast(series, H);
     const finalForecast = F.forecastPoints[F.forecastPoints.length - 1];
+    const calib = getCalibration();
+    const factors = calib ? getFactorsForHorizon(H, calib) : null;
+    const calibrationPayload = factors ? {
+      coverage80: factors.coverageAfter80,
+      n: factors.n
+    } : {
+      calibrated: false
+    };
+
     return res.status(200).json({
       symbol,
       architecture: "PerData Engine v3 (tendencia amortiguada + reversión al ancla + abanico OU)",
+      calibration: calibrationPayload,
       horizonMonths: H,
       horizonLabel: `${H} Meses`,
       horizonDate: finalForecast.date,
