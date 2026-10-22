@@ -1,7 +1,7 @@
 {
   "cleanUrls": true,
   "crons": [{ "path": "/api/news?refresh=1", "schedule": "0 5 * * *" }],
-  "functions": { "server.js": { "includeFiles": "{*.html,*.js,*.css,*.txt,*.xml,assets/**,data/news-cache.json}" } },
+  "functions": { "server.js": { "includeFiles": "{*.html,*.js,*.css,*.txt,*.xml,*.png,*.ico,*.svg,*.webmanifest,assets/**,data/news-cache.json}" } },
   "headers": [
     {
       "source": "/(.*)",
