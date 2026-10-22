@@ -166,6 +166,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/pd.css">
+  <script defer src="/motion.js"></script>
 </head>
 <body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col">
 
@@ -233,7 +234,7 @@
       </div>
 
       <div class="pd-plans">
-        <article class="pd-plan">
+        <article class="pd-plan" data-reveal>
           <div class="pd-plan-head">
             <h2 class="pd-plan-name">Gratis</h2>
             <p class="pd-plan-price"><span id="pdFreeAmount" class="pd-plan-amount font-mono tnum">US$ 0</span><span class="pd-plan-per">para siempre</span></p>
@@ -250,7 +251,7 @@
           </div>
         </article>
 
-        <article class="pd-plan pd-plan-featured">
+        <article class="pd-plan pd-plan-featured" data-reveal>
           <div class="pd-plan-head">
             <h2 class="pd-plan-name">Pro</h2>
             <p class="pd-plan-price"><span id="pdProAmount" class="pd-plan-amount font-mono tnum">—</span><span id="pdProPer" class="pd-plan-per"></span></p>
@@ -272,7 +273,7 @@
       <p class="pd-fineprint">Pagos procesados por Stripe. PerData no almacena los datos de tu tarjeta.</p>
     </section>
 
-    <section class="max-w-6xl mx-auto px-4 sm:px-6 pd-faq w-full">
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 pd-faq w-full" data-reveal>
       <div class="max-w-3xl">
         <h2 class="pd-section-title">Preguntas frecuentes</h2>
         <details><summary>¿Cómo se realiza el cobro?</summary><p>Con tarjeta de crédito o débito a través de Stripe, al inicio de cada periodo. Recibirás un recibo por correo en cada cobro.</p></details>

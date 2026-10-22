@@ -166,6 +166,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/pd.css">
+  <script defer src="/motion.js"></script>
 </head>
 <body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 
@@ -251,7 +252,7 @@
     </section>
 
     <!-- News List -->
-    <section id="newsList" class="border-t border-rule">
+    <section id="newsList" class="border-t border-rule" data-stagger>
       <!-- skeleton -->
       <div class="animate-pulse divide-y divide-rule">
         <div class="py-4 space-y-2">
@@ -378,6 +379,10 @@
       }
 
       list.innerHTML = filtered.map(n => {
+        let title = (n.title || "").trim().replace(/\s+/g, ' ');
+        if (title.length > 140 && !/[.!?…:;,]$/.test(title)) {
+          title += '…';
+        }
         const sym = /^[A-Za-z0-9=._\-^]{1,20}$/.test(n.symbol || "") ? n.symbol : "";
         const targetUrl = sym ? `/explorer?symbol=${encodeURIComponent(sym)}` : "/explorer";
         const sourceUrl = /^https?:\/\//.test(n.url || "") ? n.url : "https://news.google.com";
@@ -386,7 +391,7 @@
           <article class="py-3.5 border-b border-rule flex items-baseline justify-between gap-4">
             <div class="min-w-0 flex-grow">
               <a href="${sourceUrl}" target="_blank" rel="noopener noreferrer" class="block font-semibold text-[17px] text-ink leading-snug no-underline hover:underline">
-                ${escapeHTML(n.title)}
+                ${escapeHTML(title)}
               </a>
               <div class="mt-1 flex flex-wrap items-center gap-2 text-xs text-ink-soft">
                 <span>${cat}</span>
@@ -407,6 +412,10 @@
           </article>
         `;
       }).join("");
+
+      list.classList.remove("is-revealed");
+      void list.offsetHeight;
+      list.classList.add("is-revealed");
     }
 
     async function loadNews(force) {

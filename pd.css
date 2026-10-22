@@ -896,3 +896,76 @@ html.dark .pd-interval-save {
 .cat-chip.border-b-2:not(.border-transparent) {
   border-bottom-color: var(--pd-accent) !important;
 }
+
+/* ==========================================================================
+   Motion System (Tarea 7): Sutil, serio y progresivo
+   ========================================================================== */
+
+/* 1. Cabecera fija con filete inferior al bajar > 8px */
+html.pd-motion header,
+html.pd-motion header.bg-card {
+  transition: border-bottom-color 150ms cubic-bezier(0.05, 0.7, 0.1, 1);
+}
+
+html.pd-motion header.is-scrolled,
+html.pd-motion header.bg-card.is-scrolled,
+html.pd-motion.dark header.is-scrolled,
+html.pd-motion.dark header.bg-card.is-scrolled,
+html.dark.pd-motion header.is-scrolled,
+html.dark.pd-motion header.bg-card.is-scrolled {
+  border-bottom-color: rgba(147, 183, 248, 0.35) !important;
+}
+
+/* 2. Entrada de secciones data-reveal (250ms, 8px, cubic-bezier(.05,.7,.1,1)) */
+html.pd-motion [data-reveal] {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 250ms cubic-bezier(0.05, 0.7, 0.1, 1), transform 250ms cubic-bezier(0.05, 0.7, 0.1, 1);
+  will-change: opacity, transform;
+}
+
+html.pd-motion [data-reveal].is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 3. Filas escalonadas data-stagger (25ms por fila, máx 8 filas) */
+html.pd-motion [data-stagger] > * {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 250ms cubic-bezier(0.05, 0.7, 0.1, 1), transform 250ms cubic-bezier(0.05, 0.7, 0.1, 1);
+  will-change: opacity, transform;
+}
+
+html.pd-motion [data-stagger].is-revealed > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+html.pd-motion [data-stagger] > *:nth-child(1) { transition-delay: 0ms; }
+html.pd-motion [data-stagger] > *:nth-child(2) { transition-delay: 25ms; }
+html.pd-motion [data-stagger] > *:nth-child(3) { transition-delay: 50ms; }
+html.pd-motion [data-stagger] > *:nth-child(4) { transition-delay: 75ms; }
+html.pd-motion [data-stagger] > *:nth-child(5) { transition-delay: 100ms; }
+html.pd-motion [data-stagger] > *:nth-child(6) { transition-delay: 125ms; }
+html.pd-motion [data-stagger] > *:nth-child(7) { transition-delay: 150ms; }
+html.pd-motion [data-stagger] > *:nth-child(8) { transition-delay: 175ms; }
+html.pd-motion [data-stagger] > *:nth-child(n+9) { transition-delay: 0ms; }
+
+/* Gráfico de portada: fade sutil de 300ms al cargar (hero y canvas NO llevan data-reveal) */
+html.pd-motion #pdHeroChart {
+  animation: pdHeroChartFade 300ms ease-out forwards;
+}
+
+@keyframes pdHeroChartFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Hover en enlaces y botones: 120ms */
+html.pd-motion a,
+html.pd-motion button,
+html.pd-motion .pd-btn {
+  transition: color 120ms cubic-bezier(0.2, 0, 0, 1), background-color 120ms cubic-bezier(0.2, 0, 0, 1), border-color 120ms cubic-bezier(0.2, 0, 0, 1);
+}
+

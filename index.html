@@ -177,6 +177,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/pd.css">
+  <script defer src="/motion.js"></script>
   <!-- SEO & Social Open Graph -->
   <meta property="og:title" content="PerData — Datos macroeconómicos y proyecciones cuantitativas" />
   <meta property="og:description" content="Series de tiempo macroeconómicas, cotizaciones de mercado y proyecciones probabilísticas con TimesFM." />
@@ -291,7 +292,7 @@
               <th scope="col" class="py-3 px-4 font-semibold text-right whitespace-nowrap">P50 · 1M</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody data-stagger>
             <tr class="border-t border-rule hover:bg-surface transition-colors">
               <td class="py-3.5 px-4 font-mono tnum font-semibold"><a href="/explorer?symbol=HG%3DF" class="text-ink hover:text-brand underline">HG=F</a></td>
               <td class="py-3.5 px-4 text-ink">Cobre (COMEX)</td>
@@ -327,7 +328,7 @@
     </section>
 
     <!-- CÓMO SE USA: una sola frase con enlace -->
-    <section class="space-y-6 pt-2">
+    <section class="space-y-6 pt-2" data-reveal>
       <div class="pb-2.5 border-b border-rule">
         <h2 class="text-lg sm:text-xl font-bold tracking-tight text-ink">Cómo se usa</h2>
       </div>
@@ -337,13 +338,13 @@
     </section>
 
     <!-- METODOLOGÍA: En español llano, 4 párrafos en serif y fuentes reales con filetes -->
-    <section id="metodologia" class="space-y-8 pt-8 border-t border-rule">
+    <section id="metodologia" class="space-y-8 pt-8 border-t border-rule" data-reveal>
       <div class="pb-2.5 border-b border-rule">
         <h2 class="text-2xl sm:text-3xl font-bold text-ink tracking-tight">
           Cómo obtenemos y proyectamos las series
         </h2>
+        <p class="text-sm text-ink-soft mt-1 font-serif">Tres principios que rigen cada número de PerData.</p>
       </div>
-
       <!-- 4 párrafos cortos en serif -->
       <div class="max-w-3xl space-y-5 text-ink">
         <p>
@@ -385,7 +386,7 @@
     </section>
 
     <!-- CTA FINAL: bloque saturado (fondo marcador amarillo, tinta encima) -->
-    <section class="pd-accent-block full-bleed px-4 sm:px-6 py-14 sm:py-20">
+    <section class="pd-accent-block full-bleed px-4 sm:px-6 py-14 sm:py-20" data-reveal>
       <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-y-6 lg:gap-x-10 items-end">
         <h2 class="lg:col-span-7 text-3xl sm:text-5xl font-bold tracking-tight">Empieza con cualquier activo.</h2>
         <div class="lg:col-span-5 space-y-5">
