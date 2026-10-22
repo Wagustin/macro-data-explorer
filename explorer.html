@@ -982,7 +982,7 @@
           </p>
         </div>
 
-        <!-- Section 2: Inferencia TimesFM 2.5 -->
+        <!-- Section 2: Proyección Cuantitativa -->
         <div class="space-y-1.5">
           <div class="flex items-center space-x-2">
             <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
@@ -1013,13 +1013,13 @@
 
           <div id="fullLegalSection" class="hidden mt-3 p-4 rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] space-y-3 text-xs text-ink-soft">
             <p>
-              <strong>Cláusula 4. Integridad de Fuentes de Información:</strong> Los datos históricos provienen de agregadores de mercado público, interfaces de BCRP y Yahoo Finance. La plataforma no asume responsabilidad civil ni contractual por eventuales discrepancias, latencias o interrupciones en la disponibilidad de feeds externos.
+              <strong>Cláusula 4. Integridad de Fuentes de Información:</strong> Los datos históricos provienen de agregadores de mercado público, interfaces del Banco Mundial y Yahoo Finance. La plataforma no asume responsabilidad civil ni contractual por eventuales discrepancias, latencias o interrupciones en la disponibilidad de feeds externos.
             </p>
             <p>
               <strong>Cláusula 5. Propiedad Intelectual:</strong> El software, heurísticas de visualización, componentes de interfaz y canalización algorítmica son propiedad intelectual reservada de PerData (2026).
             </p>
             <p>
-              <strong>Cláusula 6. Modificaciones de los Términos:</strong> Nos reservamos el derecho de actualizar estos términos para reflejar evoluciones metodológicas del modelo TimesFM o exigencias normativas vigentes.
+              <strong>Cláusula 6. Modificaciones de los Términos:</strong> Nos reservamos el derecho de actualizar estos términos para reflejar evoluciones metodológicas del modelo predictivo o exigencias normativas vigentes.
             </p>
           </div>
         </div>
@@ -1614,13 +1614,13 @@ const state = {
         renderDashboardBasics();
         renderChart();
         renderTable();
-        fetchTypeSafeInterpretation();
+        fetchInterpretation();
       } catch (err) {
         console.error("Error updating macro indicator:", err);
       }
     }
 
-    // Fetch TimesFM Forecast with Skeleton Loader
+    // Fetch Forecast with Skeleton Loader
     async function fetchForecastOnly(symbol, horizon) {
       state.isForecasting = true;
       forecastSkeleton.classList.remove("hidden");
@@ -1654,12 +1654,12 @@ const state = {
         renderForecastCards();
         renderChart();
         renderTable();
-        fetchTypeSafeInterpretation();
+        fetchInterpretation();
       }
     }
 
-    // Fetch TypeSafe AI (Jev System One) Interpretation
-    async function fetchTypeSafeInterpretation() {
+    // Fetch Quantitative Interpretation
+    async function fetchInterpretation() {
       const p = state.primaryData;
       const m = state.macroData;
       const f = state.forecastData;
@@ -1682,7 +1682,7 @@ const state = {
         const data = await res.json();
         state.interpretationData = data;
 
-        // Render TypeSafe AI UI elements
+        // Render Quantitative Interpretation UI elements
         if (data.executiveTakeaway || data.interpretation) {
           const interp = data.interpretation || data;
           document.getElementById("tsConfidence").textContent = `Confianza estimada: ${interp.confidencePercentage || (interp.calibratedConfidencePct + '%')}`;
@@ -1692,7 +1692,7 @@ const state = {
           document.getElementById("tsEngine").textContent = `${data.model || 'perdata-rules-1'}`;
         }
       } catch (err) {
-        console.error("Error fetching TypeSafe AI interpretation:", err);
+        console.error("Error fetching interpretation:", err);
       }
     }
 
@@ -1742,7 +1742,13 @@ const state = {
       const liveEl = document.getElementById("liveChangePct");
       const liveNote = document.getElementById("liveQuoteNote");
       const liveText = document.getElementById("liveQuoteText");
-      if (p.live && p.live.price !== null && p.live.price !== undefined) {
+
+      if (p.stale) {
+        liveEl.classList.add("hidden");
+        liveNote.classList.remove("hidden");
+        liveNote.className = "text-[10px] text-amber-600 dark:text-amber-400 mt-0.5 flex items-center gap-1";
+        liveNote.innerHTML = '<span class="inline-block w-1.5 h-1.5 rounded-full bg-amber-500"></span><span id="liveQuoteText">datos guardados</span>';
+      } else if (p.live && p.live.price !== null && p.live.price !== undefined) {
         if (typeof p.live.changePct === "number") {
           liveEl.textContent = (p.live.changePct >= 0 ? "+" : "") + p.live.changePct.toFixed(2) + "%";
           liveEl.classList.remove("hidden");
@@ -1803,9 +1809,9 @@ const state = {
         const r = calculateCorrelation(matchedP, matchedM);
         const rFormatted = (r >= 0 ? "+" : "") + r.toFixed(2);
         document.getElementById("metricCorrelation").textContent = rFormatted;
-        document.getElementById("metricCorrelationDesc").textContent = `vs ${m.name.split('(')[0]}`;
+        document.getElementById("metricCorrelationDesc").textContent = `vs ${m.name.split('(')[0]}${m.stale ? ' (datos guardados)' : ''}`;
         document.getElementById("legendMacro").classList.remove("hidden");
-        document.getElementById("tableHeaderMacro").textContent = `${m.name.split('(')[0]} (${m.currency || ''})`;
+        document.getElementById("tableHeaderMacro").textContent = `${m.name.split('(')[0]} (${m.currency || ''})${m.stale ? ' · datos guardados' : ''}`;
       } else {
         document.getElementById("metricCorrelation").textContent = "N/A";
         document.getElementById("metricCorrelationDesc").textContent = "Sin cruce macro";
@@ -2205,7 +2211,7 @@ const state = {
           html += `
             <tr class="bg-[#F5F5F7]/70 dark:bg-[#2C2C2E]/40 font-medium">
               <td class="py-2.5 px-4 font-mono tnum whitespace-nowrap text-black dark:text-white sticky left-0 z-[5] bg-[#F5F5F7] dark:bg-[#2C2C2E]">${escapeHTML(item.date)}</td>
-              <td class="py-2.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 micro-label rounded-full bg-black dark:bg-white text-white dark:text-black">TIMESFM P50</span></td>
+              <td class="py-2.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 micro-label rounded-full bg-black dark:bg-white text-white dark:text-black">ENGINE P50</span></td>
               <td class="py-2.5 px-4 font-bold font-mono tnum whitespace-nowrap text-black dark:text-white">${currencySymbol}${item.p50.toFixed(2)}</td>
               <td class="py-2.5 px-4 text-ink-soft whitespace-nowrap">-</td>
               <td class="py-2.5 px-4 text-ink-soft font-mono tnum whitespace-nowrap">${currencySymbol}${item.p90.toFixed(2)}</td>
@@ -2243,7 +2249,7 @@ const state = {
 
       tbody.innerHTML = html;
       const forecastCount = f?.forecastSeries?.length || 0;
-      document.getElementById("tableSummary").textContent = `Mostrando ${series.length} observaciones históricas + ${forecastCount} pasos proyectados de TimesFM.`;
+      document.getElementById("tableSummary").textContent = `Mostrando ${series.length} observaciones históricas + ${forecastCount} pasos proyectados del modelo.`;
     }
 
     // Excel Export Setup (With Historical + Forecast Sheets)
@@ -2335,7 +2341,7 @@ const state = {
         const wsHistory = XLSX.utils.aoa_to_sheet(tableData);
         XLSX.utils.book_append_sheet(wb, wsHistory, "Historico_10Y");
 
-        // 3. Sheet: Proyección TimesFM 2.5
+        // 3. Sheet: Proyección Cuantitativa
         if (f && f.forecastSeries) {
           const tfmHeaders = ["Paso", "Mes Proyectado", "P10 (Pesimista)", "P25", "P50 (Mediana Esperada)", "P75", "P90 (Optimista)"];
           const tfmData = [tfmHeaders];

@@ -241,7 +241,7 @@
             <p class="pd-plan-desc">Para seguir activos peruanos y globales con proyecciones de corto plazo.</p>
           </div>
           <ul class="pd-perks">
-            <li><span>Catálogo completo de 124 activos</span></li>
+            <li><span>Catálogo completo de <span data-stat="tradable-count">120</span> activos cotizados</span></li>
             <li><span>Historia de hasta 5 años</span></li>
             <li><span>Proyecciones P10 / P50 / P90 de 1 a 6 meses</span></li>
             <li><span>Cruce macro e interpretación del gráfico</span></li>
@@ -435,6 +435,12 @@
       window.addEventListener("mde:billing-loaded", render);
       window.addEventListener("mde:auth-change", render);
       document.addEventListener("DOMContentLoaded", render);
+
+      fetch('/api/search?stats=1').then(function(r) { return r.json(); }).then(function(s) {
+        if (s && s.tradable) {
+          document.querySelectorAll('[data-stat="tradable-count"]').forEach(function(el) { el.textContent = s.tradable; });
+        }
+      }).catch(function() {});
     })();
   </script>
 </body>

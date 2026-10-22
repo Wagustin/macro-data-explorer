@@ -162,11 +162,18 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
+  const tradable = CATALOG.filter(c => c.category !== "unlisted").length;
+  const total = CATALOG.length;
+
+  if (req.query.stats === "1" || req.query.stats === "true") {
+    return res.status(200).json({ tradable, total });
+  }
+
   let q = String(req.query.q || "").trim().toLowerCase();
   if (q.length > 50) q = q.slice(0, 50);
 
   if (!q) {
-    return res.status(200).json({ results: CATALOG.filter(c => c.category !== "unlisted").slice(0, 15), total: CATALOG.length });
+    return res.status(200).json({ results: CATALOG.filter(c => c.category !== "unlisted").slice(0, 15), total, tradable });
   }
 
   // Split query into words: every word must match somewhere (AND search)
@@ -186,7 +193,7 @@ export default async function handler(req, res) {
   });
 
   if (localMatches.length >= 8) {
-    return res.status(200).json({ results: localMatches.slice(0, 15), total: CATALOG.length });
+    return res.status(200).json({ results: localMatches.slice(0, 15), total, tradable });
   }
 
   // Complement with live Yahoo lookup (any company in the world)
@@ -225,5 +232,5 @@ export default async function handler(req, res) {
     // Non-blocking: fall back to local matches
   }
 
-  return res.status(200).json({ results: localMatches.slice(0, 15), total: CATALOG.length });
+  return res.status(200).json({ results: localMatches.slice(0, 15), total, tradable });
 }

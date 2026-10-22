@@ -16,7 +16,7 @@ const MACRO_FALLBACK = {
   },
   PERU_GDP: {
     name: "PBI Crecimiento Anual Perú (%)",
-    values: [2.35, 3.25, 3.95, 2.52, 3.98, 2.24, -11.03, 13.42, 2.68, -0.55, 3.16, 2.90]
+    values: [2.38, 3.25, 3.95, 2.52, 3.97, 2.24, -10.93, 13.42, 2.82, -0.35, 3.52, 3.43]
   }
 };
 
@@ -115,7 +115,7 @@ export default async function handler(req, res) {
       currency: "%",
       range,
       interval: "1y",
-      source: stale ? "World Bank Open Data / BCRP (datos en caché)" : "World Bank Open Data / BCRP",
+      source: stale ? "Banco Mundial (copia guardada)" : "Banco Mundial",
       stale,
       count: records.length,
       series: records

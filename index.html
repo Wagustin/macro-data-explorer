@@ -293,7 +293,7 @@
     <!-- SECCIÓN TABLA: sobre --pd-paper -->
     <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-12 sm:pb-20 space-y-6">
       <div class="space-y-2">
-        <h2 class="text-[28px] font-bold tracking-tight text-ink">Cobre, oro, BVL y 120 activos más</h2>
+        <h2 class="text-[28px] font-bold tracking-tight text-ink">Cobre, oro, BVL y <span data-stat="tradable-count">120</span> activos más</h2>
       </div>
       <div class="overflow-x-auto">
         <table class="pd-table w-full text-left border-collapse text-sm border-t border-ink">
@@ -890,6 +890,12 @@
         console.error('Hero chart error:', e);
         if (fallbackEl) fallbackEl.classList.remove('hidden');
       });
+
+      fetch('/api/search?stats=1').then(function(r) { return r.json(); }).then(function(s) {
+        if (s && s.tradable) {
+          document.querySelectorAll('[data-stat="tradable-count"]').forEach(function(el) { el.textContent = s.tradable; });
+        }
+      }).catch(function() {});
     })();
   </script>
 </body>
