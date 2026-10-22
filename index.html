@@ -282,7 +282,7 @@
                 <div class="relative w-full h-[240px] sm:h-[300px]">
                   <canvas id="pdHeroChart" role="img" aria-label="Historia de USD/PEN con abanico de proyección P10-P90"></canvas>
                 </div>
-                <p class="mt-3 text-[12px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);">Tipo de cambio USD/PEN, cierre mensual. Proyección a 1 mes con el modelo de PerData. Fuente: Yahoo Finance. Datos al <span id="pdChartDate">—</span>.</p>
+                <p class="mt-3 text-[12px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);">Tipo de cambio USD/PEN, cierre mensual. <span id="heroModelBadge" class="font-mono">Modelo: PerData Engine v3</span>. Fuente: Yahoo Finance. Datos al <span id="pdChartDate">—</span>.</p>
               </div>
             </div>
           </div>
@@ -661,6 +661,13 @@
         var p10 = f ? f.p10 : null;
         var p50 = f ? f.p50 : null;
         var p90 = f ? f.p90 : null;
+
+        var heroBadge = document.getElementById('heroModelBadge');
+        if (heroBadge) {
+          heroBadge.textContent = (fc && fc.model === 'timesfm-2.5')
+            ? 'Modelo: TimesFM 2.5 (Google), batch diario'
+            : 'Modelo: PerData Engine v3';
+        }
 
         var fcLabel = fc && fc.horizonDate ? shortDate(fc.horizonDate) : 'próx.';
 

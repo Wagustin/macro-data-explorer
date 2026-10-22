@@ -146,28 +146,53 @@ async function testForecast() {
       const url = `${base}/api/forecast?symbol=${encodeURIComponent(symbol)}&horizon=1`;
       const res = await fetchWithTimeout(url);
       if (!res.ok) {
-        record(`Forecast ${symbol}`, false, `HTTP ${res.status}`);
+        record(`Forecast H=1 ${symbol}`, false, `HTTP ${res.status}`);
         continue;
       }
       const data = await res.json();
       const f = data.forecastSeries?.[0];
       if (!f) {
-        record(`Forecast ${symbol}`, false, "Sin forecastSeries");
+        record(`Forecast H=1 ${symbol}`, false, "Sin forecastSeries");
         continue;
       }
 
       const monotone = f.p10 <= f.p25 && f.p25 <= f.p50 && f.p50 <= f.p75 && f.p75 <= f.p90;
       const positive = f.p10 > 0 && f.p25 > 0 && f.p50 > 0 && f.p75 > 0 && f.p90 > 0;
-      const noTimesFM = !/timesfm/i.test(data.architecture || "");
+      const isEngineV3 = data.model === "engine-v3" || /engine v3/i.test(data.architecture || "");
 
-      const pass = monotone && positive && noTimesFM;
+      const pass = monotone && positive && isEngineV3;
       record(
-        `Forecast ${symbol}`,
+        `Forecast H=1 ${symbol}`,
         pass,
-        `monótono: ${monotone}, positivo: ${positive}, arch: "${data.architecture || 'v3'}"`
+        `monótono: ${monotone}, positivo: ${positive}, model: "${data.model || 'engine-v3'}"`
       );
     } catch (err) {
-      record(`Forecast ${symbol}`, false, `Error: ${err.message}`);
+      record(`Forecast H=1 ${symbol}`, false, `Error: ${err.message}`);
+    }
+  }
+
+  // Comprobar lote TimesFM 2.5 (frescura < 48h y cuantiles monótonos)
+  const cacheTfmPath = path.join(__dirname, "..", "data", "timesfm-forecasts-cache.json");
+  if (fs.existsSync(cacheTfmPath)) {
+    try {
+      const tfmRows = JSON.parse(fs.readFileSync(cacheTfmPath, "utf-8"));
+      let allMonotone = true;
+      let allFresh = true;
+      let count = 0;
+      for (const row of tfmRows.slice(0, 20)) {
+        count++;
+        const p10 = Number(row.p10), p25 = Number(row.p25), p50 = Number(row.p50), p75 = Number(row.p75), p90 = Number(row.p90);
+        if (!(p10 <= p25 && p25 <= p50 && p50 <= p75 && p75 <= p90)) allMonotone = false;
+        const ageHours = (Date.now() - new Date(row.run_at).getTime()) / (1000 * 60 * 60);
+        if (ageHours >= 48) allFresh = false;
+      }
+      record(
+        "Batch TimesFM 2.5 (frescura < 48h y monotonicidad)",
+        allMonotone && allFresh && count > 0,
+        `revisados: ${count}, monótonos: ${allMonotone}, frescos < 48h: ${allFresh}`
+      );
+    } catch (e) {
+      record("Batch TimesFM 2.5 (frescura < 48h y monotonicidad)", false, e.message);
     }
   }
 }

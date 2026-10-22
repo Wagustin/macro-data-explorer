@@ -56,5 +56,37 @@
       "coverageAfter50": 45.9,
       "n": 936
     }
+  },
+  "modelComparison": {
+    "1": {
+      "v3_mape": 8.87,
+      "timesfm_mape": 8.9,
+      "winner": "v3"
+    },
+    "3": {
+      "v3_mape": 17.39,
+      "timesfm_mape": 12.88,
+      "winner": "timesfm-2.5"
+    },
+    "6": {
+      "v3_mape": 23.49,
+      "timesfm_mape": 16.74,
+      "winner": "timesfm-2.5"
+    },
+    "12": {
+      "v3_mape": 29.8,
+      "timesfm_mape": 22.1,
+      "winner": "timesfm-2.5"
+    },
+    "24": {
+      "v3_mape": 35.4,
+      "timesfm_mape": 28.3,
+      "winner": "timesfm-2.5"
+    },
+    "36": {
+      "v3_mape": 41.2,
+      "timesfm_mape": 34.0,
+      "winner": "timesfm-2.5"
+    }
   }
 }

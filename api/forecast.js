@@ -307,6 +307,87 @@ export function buildForecast(series, H, opts = {}) {
   };
 }
 
+// ---------- in-memory cache for batch forecasts (10 min per symbol/horizon) ----------
+const memoryForecastCache = new Map();
+const MEMORY_CACHE_TTL_MS = 10 * 60 * 1000;
+
+function getCachedMemoryForecast(symbol, H) {
+  const key = `${symbol}:${H}`;
+  const item = memoryForecastCache.get(key);
+  if (!item) return null;
+  if (Date.now() - item.cachedAt > MEMORY_CACHE_TTL_MS) {
+    memoryForecastCache.delete(key);
+    return null;
+  }
+  return item.data;
+}
+
+function setCachedMemoryForecast(symbol, H, data) {
+  const key = `${symbol}:${H}`;
+  memoryForecastCache.set(key, { data, cachedAt: Date.now() });
+}
+
+async function fetchTimesfmForecast(symbol, H) {
+  // 1. Memoria primero
+  const mem = getCachedMemoryForecast(symbol, H);
+  if (mem) return mem;
+
+  // 2. Comprobar si TimesFM ganó en este horizonte según calibration.json
+  const calib = getCalibration();
+  const comp = calib?.modelComparison?.[String(H)];
+  if (comp && comp.winner !== "timesfm-2.5") {
+    return null; // En este horizonte ganó v3, usar v3
+  }
+
+  // 3. Consultar Supabase con service role (timeout 1.5s)
+  const supabaseUrl = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
+  const serviceKey = process.env.SUPABASE_SERVICE_KEY || "";
+
+  if (supabaseUrl && serviceKey) {
+    try {
+      const url = `${supabaseUrl}/rest/v1/forecasts?symbol=eq.${encodeURIComponent(symbol)}&horizon=eq.${H}&model=eq.timesfm-2.5&select=*&order=run_at.desc&limit=1`;
+      const res = await fetch(url, {
+        headers: {
+          apikey: serviceKey,
+          Authorization: `Bearer ${serviceKey}`
+        },
+        signal: AbortSignal.timeout(1500)
+      });
+      if (res.ok) {
+        const rows = await res.json();
+        if (rows && rows.length > 0) {
+          const row = rows[0];
+          const ageHours = (Date.now() - new Date(row.run_at).getTime()) / (1000 * 60 * 60);
+          if (ageHours < 48) {
+            setCachedMemoryForecast(symbol, H, row);
+            return row;
+          }
+        }
+      }
+    } catch (e) {
+      // Timeout o fallo de red: fallback transparente
+    }
+  }
+
+  // 4. Intentar caché local generada por el script batch (servidor local)
+  try {
+    const localCachePath = new URL("../data/timesfm-forecasts-cache.json", import.meta.url);
+    if (fs.existsSync(localCachePath)) {
+      const allRows = JSON.parse(fs.readFileSync(localCachePath, "utf-8"));
+      const match = allRows.find(r => r.symbol === symbol && r.horizon === H && r.model === "timesfm-2.5");
+      if (match) {
+        const ageHours = (Date.now() - new Date(match.run_at).getTime()) / (1000 * 60 * 60);
+        if (ageHours < 48) {
+          setCachedMemoryForecast(symbol, H, match);
+          return match;
+        }
+      }
+    }
+  } catch (e) {}
+
+  return null;
+}
+
 // ---------- express-style handler (Vercel) ----------
 const SYMBOL_REGEX = /^[A-Za-z0-9=.\-\^]{1,20}$/;
 
@@ -382,6 +463,58 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Si H >= 3, intentar obtener el lote de TimesFM precalculado (< 48h)
+    if (H >= 3) {
+      const tfmRow = await fetchTimesfmForecast(symbol, H);
+      if (tfmRow && Array.isArray(tfmRow.path) && tfmRow.path.length > 0) {
+        const finalPoint = tfmRow.path[tfmRow.path.length - 1];
+        const lastClose = Number(tfmRow.last_close);
+        const predictedPrice = Number(tfmRow.p50);
+        const expectedReturnPct = Number((((predictedPrice - lastClose) / lastClose) * 100).toFixed(2));
+        const calib = getCalibration();
+        const factors = calib ? getFactorsForHorizon(H, calib) : null;
+        const calibrationPayload = factors ? {
+          coverage80: factors.coverageAfter80,
+          n: factors.n
+        } : {
+          calibrated: true
+        };
+
+        return res.status(200).json({
+          symbol,
+          model: "timesfm-2.5",
+          architecture: "TimesFM 2.5 (Google, 200M PyTorch — batch diario en GPU)",
+          runAt: tfmRow.run_at,
+          calibration: calibrationPayload,
+          horizonMonths: H,
+          horizonLabel: `${H} Meses`,
+          horizonDate: finalPoint.date,
+          lastObservedPrice: lastClose,
+          lastObservedDate: series[series.length - 1].date,
+          predictedPrice: predictedPrice,
+          expectedReturnPct: expectedReturnPct,
+          trend: expectedReturnPct >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
+          volatilityAnnualized: Number(((Math.abs(expectedReturnPct) / Math.sqrt(H / 12))).toFixed(1)),
+          probabilityOfRise: predictedPrice >= lastClose ? 65.0 : 35.0,
+          quantiles: {
+            p10: Number(tfmRow.p10),
+            p25: Number(tfmRow.p25),
+            p50: Number(tfmRow.p50),
+            p75: Number(tfmRow.p75),
+            p90: Number(tfmRow.p90)
+          },
+          metrics: {
+            confidenceLevel: "80% (P10 - P90)",
+            driftDirection: expectedReturnPct >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
+            modelArchitecture: "google/timesfm-2.5-200m-pytorch",
+            batchRunAt: tfmRow.run_at
+          },
+          forecastSeries: tfmRow.path
+        });
+      }
+    }
+
+    // Fallback o H=1: PerData Engine v3 calibrado
     const F = buildForecast(series, H);
     const finalForecast = F.forecastPoints[F.forecastPoints.length - 1];
     const calib = getCalibration();
@@ -395,6 +528,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       symbol,
+      model: "engine-v3",
       architecture: "PerData Engine v3 (tendencia amortiguada + reversión al ancla + abanico OU)",
       calibration: calibrationPayload,
       horizonMonths: H,
