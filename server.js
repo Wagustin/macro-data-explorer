@@ -31,7 +31,7 @@ const MIME_TYPES = {
 
 // Only these root files and extensions are public; everything else (api/, data/,
 // scripts/, supabase/, docs) stays private, matching .vercelignore in production.
-const PUBLIC_EXTENSIONS = new Set([".html", ".js", ".css", ".svg", ".png", ".jpg", ".jpeg", ".ico", ".txt", ".webmanifest"]);
+const PUBLIC_EXTENSIONS = new Set([".html", ".js", ".css", ".svg", ".png", ".jpg", ".jpeg", ".ico", ".txt", ".xml", ".webmanifest"]);
 const PUBLIC_DIRS = new Set(["", "assets"]);
 const PRIVATE_FILES = new Set(["server.js"]);
 const PAGES = {
