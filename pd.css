@@ -154,6 +154,106 @@ mark {
   }
 }
 
+/* ---------- Guía editorial al pie (pd-details) ---------- */
+.pd-details {
+  border-top: 1px solid var(--pd-rule);
+  background: var(--pd-card);
+}
+.pd-details summary {
+  padding: 1rem 1.5rem;
+  font-family: var(--pd-font-ui);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--pd-ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  list-style: none;
+  user-select: none;
+}
+.pd-details summary::-webkit-details-marker {
+  display: none;
+}
+.pd-details summary::after {
+  content: "+";
+  font-family: var(--pd-font-mono);
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--pd-ink-soft);
+  transition: transform 0.2s ease;
+}
+.pd-details[open] summary::after {
+  content: "−";
+}
+.pd-details-hint {
+  font-size: 0.6875rem;
+  font-weight: 400;
+  color: var(--pd-ink-soft);
+  margin-left: auto;
+  margin-right: 1.5rem;
+}
+.pd-details-body {
+  padding: 0 1.5rem 1.5rem 1.5rem;
+  border-top: 1px solid var(--pd-rule);
+  background: var(--pd-paper);
+}
+.pd-guide-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  padding: 1.25rem 0;
+}
+@media (min-width: 768px) {
+  .pd-guide-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+.pd-guide-item {
+  border-left: 2px solid var(--pd-rule);
+  padding-left: 1rem;
+}
+.pd-guide-kicker {
+  font-family: var(--pd-font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--pd-ink-soft);
+  font-weight: 600;
+}
+.pd-guide-title {
+  font-family: var(--pd-font-ui);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--pd-ink);
+  margin-top: 0.25rem;
+}
+.pd-guide-copy {
+  font-size: 0.75rem;
+  color: var(--pd-ink-soft);
+  line-height: 1.5;
+  margin-top: 0.25rem;
+}
+.pd-glossary-list {
+  border-top: 1px solid var(--pd-rule);
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.pd-glossary-item {
+  font-size: 0.75rem;
+  color: var(--pd-ink-soft);
+  line-height: 1.5;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--pd-rule);
+}
+.pd-glossary-item b {
+  color: var(--pd-ink);
+  font-family: var(--pd-font-mono);
+}
+
 /* ---------- Lectura editorial (Source Serif 4) ---------- */
 html.pd-marketing main p:not(.mono):not(.tnum):not(.micro-label):not(.eyebrow):not(.pd-kicker):not(.pd-plan-price):not(.pd-stat):not(.pd-tag):not(.pd-faq p):not(.pd-form p):not(.pd-plan p):not(.pd-fineprint):not(.pd-hero-answer):not(.pd-caption):not(#pdChartFooter):not(#pdTableFooter):not(.pie-ft),
 .pd-reading p, .pd-prose p {

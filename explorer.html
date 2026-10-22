@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="description" content="Terminal cuantitativa institucional para la Bolsa de Valores de Lima, metales andinos y divisas soberanas mediante modelado probabilístico multi-cuantil." />
-  <title>Terminal Cuantitativa · PerData · Forecasting Probabilístico</title>
+  <meta name="description" content="Terminal de inteligencia cuantitativa para la Bolsa de Valores de Lima, metales andinos y divisas soberanas mediante modelado probabilístico multi-cuantil." />
+  <title>Terminal PerData · Forecasting Probabilístico</title>
   
   <!-- Early Theme Init to avoid flash -->
   <script>
@@ -524,12 +524,12 @@
   <div class="terminal-surface bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg overflow-hidden">
 
     <!-- Command Band -->
-    <section class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 pt-5 pb-4">
+    <section class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 pt-3 pb-2.5 sm:pt-5 sm:pb-4">
       <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
         <div class="min-w-0">
           <div class="band-label">PerData Terminal · BVL · Metales · Macro</div>
           <h1 class="text-lg sm:text-2xl font-bold tracking-tight text-black dark:text-white mt-1">
-            Terminal Cuantitativa Institucional
+            Terminal PerData
           </h1>
           <p class="text-[11px] sm:text-xs text-ink-soft leading-relaxed max-w-xl mt-1">
             Series históricas de 10 años · Inferencia probabilística P10/P50/P90
@@ -560,7 +560,7 @@
       </div>
 
       <!-- Chips row -->
-      <div class="mt-3.5 flex items-center gap-1.5 flex-wrap">
+      <div class="mt-2.5 sm:mt-3.5 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap pb-1 sm:pb-0 sm:flex-wrap">
         <span class="band-label mr-1">Atajos:</span>
         <button class="chip-btn border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BVN">Buenaventura</button>
         <button class="chip-btn border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="SCCO">Southern Copper</button>
@@ -582,50 +582,8 @@
       </div>
     </section>
 
-
-
-    <!-- Band: cómo leer esta pantalla (guía honesta + glosario) -->
-    <section class="border-b border-[#E5E5EA] dark:border-[#2C2C2E]">
-      <details class="pd-details" id="pdHowTo" open>
-        <summary>
-          <span>Cómo leer esta pantalla</span>
-          <span class="pd-details-hint">Busca · Elige · Lee — y el glosario de cada métrica</span>
-        </summary>
-        <div class="pd-details-body">
-          <div class="pd-guide">
-            <div>
-              <div class="pd-guide-kicker">Primero</div>
-              <div class="pd-guide-title">Busca el activo</div>
-              <div class="pd-guide-copy">Escribe el nombre o el ticker arriba (Buenaventura, BVN, Cobre, USD/PEN) o pulsa un atajo de la banda de comandos.</div>
-            </div>
-            <div>
-              <div class="pd-guide-kicker">Después</div>
-              <div class="pd-guide-title">Elige rango y horizonte</div>
-              <div class="pd-guide-copy">El rango marca la historia visible; el horizonte, hasta dónde proyecta el modelo. Por defecto entra en 3 años y 1 mes.</div>
-            </div>
-            <div>
-              <div class="pd-guide-kicker">Por último</div>
-              <div class="pd-guide-title">Lee P50 y la banda</div>
-              <div class="pd-guide-copy">P50 es el precio central esperado; la banda P10–P90 cubre el 80% de los escenarios. Todo se descarga en Excel.</div>
-            </div>
-          </div>
-          <p class="pd-glossary mt-3.5">
-            <b>P10 / P50 / P90:</b> percentiles del modelo —pesimista, central y optimista—. &middot;
-            <b>Prob. de alza:</b> proporción de las 400 trayectorias simuladas que terminan por encima del último cierre. &middot;
-            <b>Volatilidad anualizada:</b> dispersión esperada a un año. &middot;
-            <b>Correlación (r):</b> fuerza y signo de la relación con el indicador del cruce macro (&minus;1 a +1). &middot;
-            <b>PROYECTADO:</b> filas que genera el modelo, no observaciones de mercado.
-          </p>
-          <p class="pd-glossary mt-2">
-            Con cuenta gratuita se abren los horizontes 3M y 6M; el plan <a href="/precios" class="underline">Pro</a> suma la serie de 10 años, 12M, el horizonte a medida y Excel. El detalle metodológico está en la
-            <a href="/guia" class="underline">guía de uso</a> y en la <a href="/metodologia" class="underline">metodología</a>.
-          </p>
-        </div>
-      </details>
-    </section>
-
     <!-- Toolbar Band: distributed range · overlay · horizon -->
-    <section class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-3 bg-[#FAFAFC] dark:bg-[#161618]">
+    <section class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-2 sm:py-3 bg-[#FAFAFC] dark:bg-[#161618]">
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
         <!-- Range -->
         <div class="flex items-center gap-2.5">
@@ -677,8 +635,8 @@
       </div>
     </section>
 
-    <!-- Quote Header + KPI Strip (one band) -->
-    <section class="px-4 sm:px-6 pt-4 pb-4">
+    <!-- Quote Header: Asset Title & Price -->
+    <section class="px-4 sm:px-6 pt-2.5 pb-2 sm:pt-4 sm:pb-3">
       <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
         <div class="min-w-0">
           <div class="flex items-center flex-wrap gap-2.5">
@@ -699,33 +657,75 @@
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- KPI strip: single row on desktop, hairline dividers -->
-      <div class="stat-strip stat-strip-5 mt-4 -mx-4 sm:-mx-6">
-        <div class="stat">
-          <div class="band-label">Retorno <span class="pd-help" title="Variación del precio entre el primer y el último cierre del rango seleccionado.">?</span></div>
-          <div id="metricReturn" class="stat-value text-emerald-600 dark:text-emerald-400">+184.2%</div>
-          <div class="stat-sub">En el rango</div>
+    <!-- Chart Band: Visible Above the Fold on Mobile (300px) -->
+    <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-4">
+      <!-- Main Chart Container (con rótulo del modelo y canvas) -->
+      <div id="chartContainer" class="relative w-full h-[300px] sm:h-[360px] md:h-[400px]">
+        <canvas id="mainChart"></canvas>
+      </div>
+
+      <!-- Panel Macro Aparte (Visible si hay macro activo, ~90px desktop / 70px mobile) -->
+      <div id="macroPanel" class="mt-4 pt-3 border-t border-rule flex flex-col gap-1.5">
+        <div class="flex items-center justify-between text-[11px]">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-0.5" style="background: var(--pd-ink-soft);"></span>
+            <span id="macroPanelTitle" class="font-bold text-ink">Cruce Macro</span>
+            <span id="macroPanelUnit" class="text-ink-soft"></span>
+          </div>
+          <div class="font-mono tnum text-[11px] font-semibold text-ink">
+            Correlación: <span id="macroPanelR" class="font-bold">—</span>
+          </div>
         </div>
-        <div class="stat">
-          <div class="band-label">Máximo <span class="pd-help" title="Precio de cierre más alto dentro del rango. Debajo se indica el mes exacto.">?</span></div>
-          <div id="metricHigh" class="stat-value text-black dark:text-white">$36.50</div>
-          <div id="metricHighDate" class="stat-sub">Pico</div>
+        <div class="relative w-full h-[70px] sm:h-[90px]">
+          <canvas id="macroChart"></canvas>
         </div>
-        <div class="stat">
-          <div class="band-label">Mínimo <span class="pd-help" title="Precio de cierre más bajo dentro del rango. Debajo se indica el mes exacto.">?</span></div>
-          <div id="metricLow" class="stat-value text-black dark:text-white">$4.10</div>
-          <div id="metricLowDate" class="stat-sub">Valle</div>
+      </div>
+
+      <!-- Interpretación Cuantitativa y Cobertura de Riesgo (Pegada debajo del panel macro) -->
+      <div class="mt-5 p-4 rounded border border-rule bg-surface text-left space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="inline-flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full" style="background: var(--pd-brand);"></span>
+            <span class="text-xs font-bold text-ink">Interpretación Cuantitativa & Cobertura</span>
+            <span class="text-ink-soft">|</span>
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-ink-soft">Modelo y econometría</span>
+          </div>
+          <span id="tsConfidence" class="font-mono tnum text-[11px] font-bold text-ink px-2.5 py-1 rounded bg-card border border-rule w-fit">
+            Confianza estimada: —
+          </span>
         </div>
-        <div class="stat">
-          <div class="band-label">Correlación (r) <span class="pd-help" title="Coeficiente de Pearson entre la serie del activo y el indicador del cruce macro, en cierres mensuales. +1 = se mueven juntos, -1 = en direcciones opuestas, 0 = sin relación lineal.">?</span></div>
-          <div id="metricCorrelation" class="stat-value text-black dark:text-white">+0.74</div>
-          <div id="metricCorrelationDesc" class="stat-sub">vs Cobre</div>
+        
+        <p id="tsTakeaway" class="text-xs sm:text-sm text-ink leading-relaxed p-3 bg-card rounded border-l-4 border border-rule" style="border-left-color: var(--pd-brand);">
+          Cargando análisis cuantitativo de la serie y envolvente estocástica...
+        </p>
+
+        <!-- Sub-Indicators: Macro Beta, Volatilidad, Cobertura -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
+          <div class="p-3 rounded bg-card border border-rule">
+            <div class="text-[10px] uppercase font-bold text-ink-soft">Sensibilidad Macro (Beta)</div>
+            <div id="tsBeta" class="text-xs sm:text-sm font-bold font-mono tnum text-ink mt-0.5">Alta (+0.74)</div>
+          </div>
+          <div class="p-3 rounded bg-card border border-rule">
+            <div class="text-[10px] uppercase font-bold text-ink-soft">Régimen de Volatilidad</div>
+            <div id="tsRegime" class="text-xs sm:text-sm font-bold text-ink mt-0.5">Cíclico Moderado</div>
+          </div>
+          <div class="p-3 rounded bg-card border border-rule">
+            <div class="text-[10px] uppercase font-bold text-ink-soft">Intervalo de Riesgo</div>
+            <div id="tsEngine" class="text-xs sm:text-sm font-bold font-mono tnum text-ink mt-0.5">80% Densidad P10-P90</div>
+          </div>
         </div>
-        <div class="stat">
-          <div class="band-label">Observaciones <span class="pd-help" title="Número de cierres mensuales usados en el cálculo y en el ajuste del modelo.">?</span></div>
-          <div id="metricPoints" class="stat-value text-black dark:text-white">121</div>
-          <div class="stat-sub">Meses</div>
+
+        <!-- Cobertura de Riesgo Banner -->
+        <div class="mt-2 pt-2 border-t border-rule flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-2 text-ink-soft">
+            <svg class="w-4 h-4 shrink-0 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+            <span><strong>Protección & Cobertura Financiera:</strong> ¿Gestionas tesorería o riesgo corporativo? La proyección a 36 meses y exportación completa a Excel están disponibles en el plan Pro.</span>
+          </div>
+          <a href="/precios" class="pd-btn pd-btn-primary shrink-0 text-[11px] py-1 px-3">
+            Ver Cobertura Pro &rarr;
+          </a>
         </div>
       </div>
     </section>
@@ -793,76 +793,36 @@
       </div>
     </section>
 
-    <!-- Chart Band -->
-    <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-4">
-      <!-- Main Chart Container (con rótulo del modelo y canvas) -->
-      <div id="chartContainer" class="relative w-full h-[260px] sm:h-[360px] md:h-[400px]">
-        <canvas id="mainChart"></canvas>
-      </div>
-
-      <!-- Panel Macro Aparte (Visible si hay macro activo, ~90px desktop / 70px mobile) -->
-      <div id="macroPanel" class="mt-4 pt-3 border-t border-rule flex flex-col gap-1.5">
-        <div class="flex items-center justify-between text-[11px]">
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-0.5" style="background: var(--pd-ink-soft);"></span>
-            <span id="macroPanelTitle" class="font-bold text-ink">Cruce Macro</span>
-            <span id="macroPanelUnit" class="text-ink-soft"></span>
-          </div>
-          <div class="font-mono tnum text-[11px] font-semibold text-ink">
-            Correlación: <span id="macroPanelR" class="font-bold">—</span>
-          </div>
+    <!-- Historical KPI Strip -->
+    <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-3">
+      <div class="stat-strip stat-strip-5 -mx-4 sm:-mx-6">
+        <div class="stat">
+          <div class="band-label">Retorno <span class="pd-help" title="Variación del precio entre el primer y el último cierre del rango seleccionado.">?</span></div>
+          <div id="metricReturn" class="stat-value text-emerald-600 dark:text-emerald-400">+184.2%</div>
+          <div class="stat-sub">En el rango</div>
         </div>
-        <div class="relative w-full h-[70px] sm:h-[90px]">
-          <canvas id="macroChart"></canvas>
+        <div class="stat">
+          <div class="band-label">Máximo <span class="pd-help" title="Precio de cierre más alto dentro del rango. Debajo se indica el mes exacto.">?</span></div>
+          <div id="metricHigh" class="stat-value text-black dark:text-white">$36.50</div>
+          <div id="metricHighDate" class="stat-sub">Pico</div>
         </div>
-      </div>
-
-      <!-- Interpretación Cuantitativa y Cobertura de Riesgo -->
-      <div class="mt-5 p-4 rounded border border-rule bg-surface text-left space-y-3">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div class="inline-flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full" style="background: var(--pd-brand);"></span>
-            <span class="text-xs font-bold text-ink">Interpretación Cuantitativa & Cobertura</span>
-            <span class="text-ink-soft">|</span>
-            <span class="text-[10px] font-semibold uppercase tracking-wider text-ink-soft">Modelo y econometría</span>
-          </div>
-          <span id="tsConfidence" class="font-mono tnum text-[11px] font-bold text-ink px-2.5 py-1 rounded bg-card border border-rule w-fit">
-            Confianza estimada: —
-          </span>
+        <div class="stat">
+          <div class="band-label">Mínimo <span class="pd-help" title="Precio de cierre más bajo dentro del rango. Debajo se indica el mes exacto.">?</span></div>
+          <div id="metricLow" class="stat-value text-black dark:text-white">$4.10</div>
+          <div id="metricLowDate" class="stat-sub">Valle</div>
         </div>
-        
-        <p id="tsTakeaway" class="text-xs sm:text-sm text-ink leading-relaxed p-3 bg-card rounded border-l-4 border border-rule" style="border-left-color: var(--pd-brand);">
-          Cargando análisis cuantitativo de la serie y envolvente estocástica...
-        </p>
-
-        <!-- Sub-Indicators: Macro Beta, Volatilidad, Cobertura -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
-          <div class="p-3 rounded bg-card border border-rule">
-            <div class="text-[10px] uppercase font-bold text-ink-soft">Sensibilidad Macro (Beta)</div>
-            <div id="tsBeta" class="text-xs sm:text-sm font-bold font-mono tnum text-ink mt-0.5">Alta (+0.74)</div>
-          </div>
-          <div class="p-3 rounded bg-card border border-rule">
-            <div class="text-[10px] uppercase font-bold text-ink-soft">Régimen de Volatilidad</div>
-            <div id="tsRegime" class="text-xs sm:text-sm font-bold text-ink mt-0.5">Cíclico Moderado</div>
-          </div>
-          <div class="p-3 rounded bg-card border border-rule">
-            <div class="text-[10px] uppercase font-bold text-ink-soft">Intervalo de Riesgo</div>
-            <div id="tsEngine" class="text-xs sm:text-sm font-bold font-mono tnum text-ink mt-0.5">80% Densidad P10-P90</div>
-          </div>
+        <div class="stat">
+          <div class="band-label">Correlación (r) <span class="pd-help" title="Coeficiente de Pearson entre la serie del activo y el indicador del cruce macro, en cierres mensuales. +1 = se mueven juntos, -1 = en direcciones opuestas, 0 = sin relación lineal.">?</span></div>
+          <div id="metricCorrelation" class="stat-value text-black dark:text-white">+0.74</div>
+          <div id="metricCorrelationDesc" class="stat-sub">vs Cobre</div>
         </div>
-
-        <!-- Cobertura de Riesgo Banner -->
-        <div class="mt-2 pt-2 border-t border-rule flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <div class="flex items-center gap-2 text-ink-soft">
-            <svg class="w-4 h-4 shrink-0 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-            <span><strong>Protección & Cobertura Financiera:</strong> ¿Gestionas tesorería o riesgo corporativo? La proyección a 36 meses y exportación completa a Excel están disponibles en el plan Pro.</span>
-          </div>
-          <a href="/precios" class="pd-btn pd-btn-primary shrink-0 text-[11px] py-1 px-3">
-            Ver Cobertura Pro &rarr;
-          </a>
+        <div class="stat">
+          <div class="band-label">Observaciones <span class="pd-help" title="Número de cierres mensuales usados en el cálculo y en el ajuste del modelo.">?</span></div>
+          <div id="metricPoints" class="stat-value text-black dark:text-white">121</div>
+          <div class="stat-sub">Meses</div>
         </div>
       </div>
-    </section></section>
+    </section>
 
     <!-- Data Table Band -->
     <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E]">
@@ -899,6 +859,56 @@
       <div class="px-4 sm:px-6 py-2.5 bg-[#FAFAFC] dark:bg-[#161618] border-t border-[#E5E5EA] dark:border-[#2C2C2E] text-[11px] text-ink-soft">
         <span id="tableSummary">Cargando observaciones...</span><span class="ml-2">· Las filas marcadas PROYECTADO las genera el modelo: su cierre equivale al P50 y su máximo/mínimo al P90/P10.</span>
       </div>
+    </section>
+
+    <!-- Band: Cómo leer esta pantalla (guía honesta + glosario estilizado al pie) -->
+    <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E]">
+      <details class="pd-details" id="pdHowTo">
+        <summary>
+          <span>Cómo leer esta pantalla</span>
+          <span class="pd-details-hint">Busca · Elige · Lee — y el glosario de cada métrica</span>
+        </summary>
+        <div class="pd-details-body">
+          <div class="pd-guide-grid">
+            <div class="pd-guide-item">
+              <div class="pd-guide-kicker">Primero</div>
+              <div class="pd-guide-title">Busca el activo</div>
+              <div class="pd-guide-copy">Escribe el nombre o el ticker arriba (Buenaventura, BVN, Cobre, USD/PEN) o pulsa un atajo de la banda de comandos.</div>
+            </div>
+            <div class="pd-guide-item">
+              <div class="pd-guide-kicker">Después</div>
+              <div class="pd-guide-title">Elige rango y horizonte</div>
+              <div class="pd-guide-copy">El rango marca la historia visible; el horizonte, hasta dónde proyecta el modelo. Por defecto entra en 3 años y 1 mes.</div>
+            </div>
+            <div class="pd-guide-item">
+              <div class="pd-guide-kicker">Por último</div>
+              <div class="pd-guide-title">Lee P50 y la banda</div>
+              <div class="pd-guide-copy">P50 es el precio central esperado; la banda P10–P90 cubre el 80% de los escenarios. Todo se descarga en Excel.</div>
+            </div>
+          </div>
+          <div class="pd-glossary-list">
+            <div class="pd-glossary-item">
+              <b>P10 / P50 / P90:</b> percentiles del modelo —pesimista, central y optimista—.
+            </div>
+            <div class="pd-glossary-item">
+              <b>Prob. de alza:</b> proporción de las 400 trayectorias simuladas que terminan por encima del último cierre.
+            </div>
+            <div class="pd-glossary-item">
+              <b>Volatilidad anualizada:</b> dispersión esperada a un año.
+            </div>
+            <div class="pd-glossary-item">
+              <b>Correlación (r):</b> fuerza y signo de la relación con el indicador del cruce macro (&minus;1 a +1).
+            </div>
+            <div class="pd-glossary-item">
+              <b>PROYECTADO:</b> filas que genera el modelo, no observaciones de mercado.
+            </div>
+          </div>
+          <p class="text-[11px] text-ink-soft mt-3">
+            Con cuenta gratuita se abren los horizontes 3M y 6M; el plan <a href="/precios" class="underline">Pro</a> suma la serie de 10 años, 12M, el horizonte a medida y Excel. El detalle metodológico está en la
+            <a href="/guia" class="underline">guía de uso</a> y en la <a href="/metodologia" class="underline">metodología</a>.
+          </p>
+        </div>
+      </details>
     </section>
 
   </div><!-- /terminal-surface -->
