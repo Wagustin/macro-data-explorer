@@ -105,8 +105,11 @@ h1 {
 }
 
 .font-mono, .mono, code, pre, #companySearch, #macroOverlay, #customHorizonInput,
-.math-formula, .tnum {
+.math-formula {
   font-family: var(--pd-font-mono) !important;
+}
+
+.math-formula, .tnum {
   font-feature-settings: "tnum" 1, "cv01" 0;
   font-variant-numeric: tabular-nums !important;
 }
@@ -152,11 +155,31 @@ mark {
 }
 
 /* ---------- Lectura editorial (Source Serif 4) ---------- */
-html.pd-marketing main p:not(.mono):not(.tnum):not(.micro-label):not(.eyebrow):not(.pd-kicker):not(.pd-plan-price):not(.pd-stat):not(.pd-tag):not(.pd-faq p):not(.pd-form p):not(.pd-plan p):not(.pd-fineprint),
+html.pd-marketing main p:not(.mono):not(.tnum):not(.micro-label):not(.eyebrow):not(.pd-kicker):not(.pd-plan-price):not(.pd-stat):not(.pd-tag):not(.pd-faq p):not(.pd-form p):not(.pd-plan p):not(.pd-fineprint):not(.pd-hero-answer):not(.pd-caption):not(#pdChartFooter):not(#pdTableFooter):not(.pie-ft),
 .pd-reading p, .pd-prose p {
   font-family: var(--pd-font-read) !important;
   font-size: 18px !important;
   line-height: 1.55 !important;
+}
+
+/* Frase de respuesta en hero y pies de gráfico/tabla */
+.pd-hero-answer {
+  font-family: var(--pd-font-read) !important;
+  font-size: 20px !important;
+  font-style: normal !important;
+  line-height: 1.5 !important;
+}
+.pd-hero-answer .pd-num {
+  font-family: var(--pd-font-ui) !important;
+  font-weight: 700 !important;
+  font-style: normal !important;
+  color: var(--pd-ink) !important;
+}
+.pd-caption, .pie-ft, #pdChartFooter, #pdTableFooter {
+  font-family: var(--pd-font-ui) !important;
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+  color: var(--pd-ink-soft) !important;
 }
 
 /* Enlaces dentro del texto: ink y subrayados, hover en accent */

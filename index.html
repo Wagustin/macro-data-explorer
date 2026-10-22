@@ -259,8 +259,9 @@
           <h1 class="text-4xl sm:text-5xl lg:text-[48px] font-bold tracking-tight text-ink leading-tight">
             ¿A cuánto estará el dólar el próximo mes?
           </h1>
-          <p class="text-xl italic text-ink font-read max-w-2xl leading-relaxed">
-            Entre <span class="mono font-semibold text-lg">S/ <span id="pd-p10">—</span></span> y <span class="mono font-semibold text-lg">S/ <span id="pd-p90">—</span></span>, con un <span class="mono font-semibold text-lg">80 %</span> de probabilidad. Valor central: <span class="mono font-semibold text-lg">S/ <span id="pd-p50">—</span></span>.</p>
+          <p class="pd-hero-answer text-[20px] text-ink max-w-2xl leading-relaxed not-italic">
+            Entre <span class="pd-num font-bold tnum text-ink">S/&nbsp;<span id="pd-p10">—</span></span> y <span class="pd-num font-bold tnum text-ink">S/&nbsp;<span id="pd-p90">—</span></span>, con un <span class="pd-num font-bold tnum text-ink">80&nbsp;%</span> de probabilidad. Valor central: <span class="pd-num font-bold tnum text-ink">S/&nbsp;<span id="pd-p50">—</span></span>.
+          </p>
           <p id="pd-forecast-fallback" class="text-lg text-ink-soft hidden">Abre la terminal para ver la proyección de hoy.</p>
           <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
             <a href="/explorer?symbol=PEN%3DX" class="pd-btn pd-btn-primary">Abrir la terminal</a>
@@ -273,7 +274,7 @@
           <div class="relative w-full h-[240px] sm:h-[320px]">
             <canvas id="pdHeroChart" role="img" aria-label="Historia de USD/PEN con abanico de proyección P10-P90"></canvas>
           </div>
-          <p class="mt-3 text-xs text-ink-soft" id="pdChartFooter">Tipo de cambio USD/PEN, cierre mensual. Proyección a 1 mes con TimesFM 2.5. Fuente: Yahoo Finance. Datos al <span id="pdChartDate">—</span>.</p>
+          <p class="mt-3 text-[12px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);">Tipo de cambio USD/PEN, cierre mensual. Proyección a 1 mes con TimesFM 2.5. Fuente: Yahoo Finance. Datos al <span id="pdChartDate">—</span>.</p>
         </div>
       </div>
     </section>
@@ -324,16 +325,9 @@
           </tbody>
         </table>
       </div>
-      <p class="pie-ft mt-4" style="font-family: var(--pd-font-read); font-size: 11px; color: var(--pd-ink-soft); border-top: 1px solid var(--pd-rule); padding-top: 6px;">Fuente: Yahoo Finance, BCRP. Proyección: TimesFM 2.5. Datos al <span id="pdTableDate"></span>.</p>
-    </section>
-
-    <!-- CÓMO SE USA: una sola frase con enlace -->
-    <section class="space-y-6 pt-2" data-reveal>
-      <div class="pb-2.5 border-b border-rule">
-        <h2 class="text-lg sm:text-xl font-bold tracking-tight text-ink">Cómo se usa</h2>
-      </div>
-      <p class="text-base text-ink leading-relaxed max-w-2xl">
-        Escribe <span class="mono">"cobre"</span> en la terminal, elige un horizonte y descarga la serie en Excel.
+      <p id="pdTableFooter" class="pie-ft mt-4 text-[12px] text-ink-soft leading-normal border-t border-rule pt-2" style="font-family: var(--pd-font-ui);">Fuente: Yahoo Finance, BCRP. Proyección: TimesFM 2.5. Datos al <span id="pdTableDate">—</span>.</p>
+      <p class="text-sm sm:text-base text-ink-soft leading-relaxed mt-4">
+        Escribe <span class="mono text-ink">"cobre"</span> en <a href="/explorer" class="text-ink hover:text-brand underline font-medium">la terminal</a>, elige un horizonte y descarga la serie en Excel.
       </p>
     </section>
 
@@ -545,11 +539,39 @@
       }
       function fmt(v, dec) {
         if (typeof v !== 'number' || isNaN(v)) return '—';
-        return v.toFixed(dec).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        return v.toLocaleString('es-PE', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+      }
+
+      function formatHumanDate(iso) {
+        if (!iso) return '—';
+        var parts = iso.split('-');
+        if (parts.length < 3) return iso;
+        var d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+        var s = d.toLocaleDateString('es-PE', { day: 'numeric', month: 'short', year: 'numeric' });
+        return s.replace(/\./g, '');
       }
 
       function getCssVar(name) {
         return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      }
+
+      function getThemeColors() {
+        return {
+          ink: getCssVar('--pd-ink') || '#0E1A2B',
+          inkSoft: getCssVar('--pd-ink-soft') || '#556170',
+          accent: getCssVar('--pd-accent') || '#1414D2',
+          rule: getCssVar('--pd-rule') || '#DCE1E8',
+          sky: getCssVar('--pd-sky') || '#93B7F8'
+        };
+      }
+
+      function hexToRgba(hex, alpha) {
+        if (!hex || hex.charAt(0) !== '#') return 'rgba(147, 183, 248, ' + alpha + ')';
+        var r = parseInt(hex.slice(1, 3), 16);
+        var g = parseInt(hex.slice(3, 5), 16);
+        var b = parseInt(hex.slice(5, 7), 16);
+        if (isNaN(r) || isNaN(g) || isNaN(b)) return 'rgba(147, 183, 248, ' + alpha + ')';
+        return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
       }
 
       Promise.all([
@@ -572,8 +594,9 @@
 
         var fcLabel = fc && fc.horizonDate ? shortDate(fc.horizonDate) : 'próx.';
 
-        if (dateEl) dateEl.textContent = last ? last.date : '—';
-        if (tableDateEl) tableDateEl.textContent = last ? last.date : '—';
+        var hDate = formatHumanDate(last ? last.date : '');
+        if (dateEl) dateEl.textContent = hDate;
+        if (tableDateEl) tableDateEl.textContent = hDate;
 
         if (p10El && p50El && p90El) {
           if (p10 !== null && p50 !== null && p90 !== null) {
@@ -606,24 +629,20 @@
         p10Data[lastHistIndex] = lastClose;
         p10Data[allLabels.length - 1] = p10;
 
-        var inkColor = getCssVar('--pd-ink') || '#0E1A2B';
-        var inkSoft = getCssVar('--pd-ink-soft') || '#556170';
-        var accentColor = getCssVar('--pd-accent') || '#1414D2';
-        var ruleColor = getCssVar('--pd-rule') || '#DCE1E8';
+        var initialColors = getThemeColors();
 
         // Direct Labels Plugin for endpoints
         var directLabelsPlugin = {
           id: 'directLabels',
-          afterDatasetsDraw: function (chart) {
-            var ctx2 = chart.ctx;
-            var meta = chart.getDatasetMeta(0);
+          afterDatasetsDraw: function (chartInstance) {
+            var ctx2 = chartInstance.ctx;
+            var meta = chartInstance.getDatasetMeta(0);
             if (!meta || !meta.data || !meta.data.length) return;
 
-            var lastPoint = meta.data[lastHistIndex];
             var fcIndex = allLabels.length - 1;
-            var p90Meta = chart.getDatasetMeta(1);
-            var p10Meta = chart.getDatasetMeta(2);
-            var p50Meta = chart.getDatasetMeta(3);
+            var p90Meta = chartInstance.getDatasetMeta(1);
+            var p10Meta = chartInstance.getDatasetMeta(2);
+            var p50Meta = chartInstance.getDatasetMeta(3);
 
             if (!p90Meta.data[fcIndex] || !p10Meta.data[fcIndex] || !p50Meta.data[fcIndex]) return;
 
@@ -631,6 +650,8 @@
             var y90 = p90Meta.data[fcIndex].y;
             var y50 = p50Meta.data[fcIndex].y;
             var y10 = p10Meta.data[fcIndex].y;
+
+            var cur = getThemeColors();
 
             ctx2.save();
             ctx2.textAlign = 'left';
@@ -642,17 +663,17 @@
 
             // P90 label
             ctx2.font = '600 11px var(--pd-font-mono, monospace)';
-            ctx2.fillStyle = inkSoft;
+            ctx2.fillStyle = cur.inkSoft;
             ctx2.fillText('P90 ' + fmt(p90, 2), x + 8, y90);
 
             // P50 label
             ctx2.font = 'bold 12px var(--pd-font-mono, monospace)';
-            ctx2.fillStyle = accentColor;
+            ctx2.fillStyle = cur.accent;
             ctx2.fillText('P50 ' + fmt(p50, 2), x + 8, y50);
 
             // P10 label
             ctx2.font = '600 11px var(--pd-font-mono, monospace)';
-            ctx2.fillStyle = inkSoft;
+            ctx2.fillStyle = cur.inkSoft;
             ctx2.fillText('P10 ' + fmt(p10, 2), x + 8, y10);
 
             ctx2.restore();
@@ -667,7 +688,7 @@
               {
                 label: 'USD/PEN Histórico',
                 data: histData.concat([null]),
-                borderColor: inkColor,
+                borderColor: initialColors.ink,
                 backgroundColor: 'transparent',
                 borderWidth: 2,
                 pointRadius: 0,
@@ -679,7 +700,7 @@
                 label: 'P90 (Superior)',
                 data: p90Data,
                 borderColor: 'transparent',
-                backgroundColor: 'rgba(147, 183, 248, 0.25)',
+                backgroundColor: hexToRgba(initialColors.sky, 0.25),
                 borderWidth: 0,
                 pointRadius: 0,
                 fill: '+1', // fill down to dataset 2 (P10)
@@ -700,7 +721,7 @@
               {
                 label: 'TimesFM P50',
                 data: p50Data,
-                borderColor: accentColor,
+                borderColor: initialColors.accent,
                 backgroundColor: 'transparent',
                 borderWidth: 2,
                 borderDash: [5, 4],
@@ -717,7 +738,7 @@
             maintainAspectRatio: false,
             layout: {
               padding: {
-                right: 70, // space for direct labels
+                right: 80, // space for direct labels
                 top: 15,
                 bottom: 10
               }
@@ -733,32 +754,67 @@
             scales: {
               x: {
                 grid: {
-                  color: ruleColor,
+                  display: false,
                   drawBorder: false
                 },
                 ticks: {
-                  color: inkSoft,
+                  color: initialColors.inkSoft,
                   font: { size: 11, family: 'var(--pd-font-ui, sans-serif)' },
-                  maxTicksLimit: 14
+                  maxRotation: 0,
+                  autoSkip: true,
+                  maxTicksLimit: 6
                 }
               },
               y: {
                 position: 'left',
                 grid: {
-                  color: ruleColor,
+                  display: true,
+                  color: initialColors.rule,
+                  lineWidth: 1,
                   drawBorder: false
                 },
                 ticks: {
-                  color: inkSoft,
-                  font: { size: 10, family: 'var(--pd-font-mono, monospace)' },
+                  color: initialColors.inkSoft,
+                  font: { size: 11, family: 'var(--pd-font-mono, monospace)' },
                   callback: function (val) {
-                    return 'S/ ' + val.toFixed(2);
+                    return 'S/ ' + fmt(val, 2);
                   }
                 }
               }
             }
           }
         });
+
+        function applyChartTheme() {
+          if (!chart) return;
+          var c = getThemeColors();
+          chart.data.datasets[0].borderColor = c.ink;
+          chart.data.datasets[1].backgroundColor = hexToRgba(c.sky, 0.25);
+          chart.data.datasets[3].borderColor = c.accent;
+
+          if (chart.options.scales.x && chart.options.scales.x.ticks) {
+            chart.options.scales.x.ticks.color = c.inkSoft;
+          }
+          if (chart.options.scales.y) {
+            if (chart.options.scales.y.grid) {
+              chart.options.scales.y.grid.color = c.rule;
+            }
+            if (chart.options.scales.y.ticks) {
+              chart.options.scales.y.ticks.color = c.inkSoft;
+            }
+          }
+          chart.update();
+        }
+
+        var themeObserver = new MutationObserver(function (mutations) {
+          for (var i = 0; i < mutations.length; i++) {
+            if (mutations[i].attributeName === 'class') {
+              applyChartTheme();
+              break;
+            }
+          }
+        });
+        themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
       }).catch(function (e) {
         console.error('Hero chart error:', e);
