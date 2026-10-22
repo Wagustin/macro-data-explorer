@@ -189,10 +189,10 @@ export default async function handler(req, res) {
       state: meta.marketState || null
     };
 
-    // Last 5 DAILY sessions for a fresh micro-context (independent of the selected range)
+    // 1-year DAILY sessions for high-resolution chart rendering (independent of selected interval)
     let daily = [];
     try {
-      const dUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1mo&interval=1d`;
+      const dUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1y&interval=1d`;
       const dRes = await fetch(dUrl, {
         headers: {
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -206,7 +206,7 @@ export default async function handler(req, res) {
         const dTs = dRes0?.timestamp || [];
         const dQ = dRes0?.indicators?.quote?.[0] || {};
         const dC = dQ.close || [];
-        for (let i = Math.max(0, dTs.length - 5); i < dTs.length; i++) {
+        for (let i = 0; i < dTs.length; i++) {
           if (dC[i] !== null && dC[i] !== undefined && !isNaN(dC[i])) {
             const dt = new Date(dTs[i] * 1000);
             daily.push({

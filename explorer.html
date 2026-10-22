@@ -1980,6 +1980,7 @@ const state = {
 
       PdChart.render(container, {
         history: hist,
+        daily: p.daily || [],
         forecast: f ? {
           forecastSeries: f.forecastSeries ? f.forecastSeries.map(it => ({
             date: it.date.substring(0, 7),
@@ -1996,6 +1997,7 @@ const state = {
         options: {
           currency: p.currency || "USD",
           horizonMonths: state.horizon || 1,
+          range: state.range || "3y",
           isDark,
         },
       });

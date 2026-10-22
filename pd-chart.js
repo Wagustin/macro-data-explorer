@@ -24,6 +24,20 @@
     return mName;
   }
 
+  function formatChipDate(dateStr) {
+    if (!dateStr) return "";
+    const p = String(dateStr).split("-");
+    if (p.length < 2) return dateStr;
+    const m = parseInt(p[1], 10) - 1;
+    const mName = MONTHS_ES[m] || p[1];
+    if (p.length >= 3 && p[2]) {
+      const day = parseInt(p[2], 10);
+      return `${day} ${mName} ${p[0]}`;
+    }
+    if (p[0]) return `${mName} ${p[0]}`;
+    return mName;
+  }
+
   function maxSixLabels(labels) {
     if (labels.length <= 6) return labels;
     const step = Math.floor((labels.length - 1) / 5);
@@ -75,60 +89,132 @@
       const isDark = Boolean(options.isDark);
       const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
       const tokens = getComputedTokens(container);
-      const histOnly = history.map(h => ({ d: h.date.substring(0, 7), v: Number(h.close) }));
-      let seriesLabels = histOnly.map(h => h.d);
-      let seriesData = histOnly.map(h => h.v);
+
+      // Línea histórica: usa cierres DIARIOS para rangos ≤ 1 año (más veraz que 6 puntos mensuales)
+      // y tensión 0 en móvil para evitar sobreoscilación.
+      const range = options.range || "1y";
+      const rangeYears = range === "1y" ? 1 : range === "2y" ? 2 : range === "3y" ? 3 : range === "5y" ? 5 : 10;
+      const H = Number(options.horizonMonths || 1);
+      const isShortRange = rangeYears <= 1 || H <= 12;
+
+      const dailySource = props.daily || [];
+      const useDaily = isShortRange && dailySource && dailySource.length > 2;
+
+      let seriesPoints;
+      if (useDaily) {
+        seriesPoints = dailySource.map(d => ({ d: d.date, v: Number(d.close) }));
+      } else {
+        seriesPoints = history.map(h => ({ d: h.date.substring(0, 7), v: Number(h.close) }));
+      }
+
+      let seriesLabels = seriesPoints.map(h => h.d);
+      let seriesData = seriesPoints.map(h => h.v);
 
       const forecastSeries = forecast && forecast.forecastSeries ? forecast.forecastSeries : [];
       const macroEnabled = macro && macro.enabled && macro.series && macro.series.length;
       const macroSeries = macroEnabled ? macro.series.map(m => ({ d: m.date.substring(0, 7), v: Number(m.close) })) : [];
 
       // Rango automático según horizonte (6 meses para H=1, 1 año para H=3-6 y 3 años para H=12)
-      if (history && history.length > 0 && options.horizonMonths) {
+      if (useDaily) {
+        const H = Number(options.horizonMonths || 1);
+        const dayLimit = H <= 1 ? 126 : 252;
+        const sliced = seriesPoints.slice(-dayLimit);
+        if (sliced.length > 1) {
+          seriesLabels = sliced.map(h => h.d);
+          seriesData = sliced.map(h => h.v);
+        }
+      } else if (history && history.length > 0 && options.horizonMonths) {
         const H = Number(options.horizonMonths);
         const months = H <= 1 ? 6 : H <= 6 ? 12 : 36;
-        const lastItem = histOnly[histOnly.length - 1];
+        const lastItem = seriesPoints[seriesPoints.length - 1];
         const lastDate = lastItem ? new Date(lastItem.d + "-01T00:00:00") : new Date();
         const cutoff = new Date(lastDate);
         cutoff.setMonth(cutoff.getMonth() - months);
-        // histOnly.d es "YYYY-MM"; se filtra sobre él (no sobre history, que trae "YYYY-MM-DD")
-        const filtered = histOnly.filter(h => new Date(h.d + "-01T00:00:00") >= cutoff);
+        const filtered = seriesPoints.filter(h => new Date(h.d + "-01T00:00:00") >= cutoff);
         if (filtered.length > 1) {
           seriesLabels = filtered.map(h => h.d);
           seriesData = filtered.map(h => h.v);
         }
       }
 
-      // nHist = puntos de historia que se dibujan (después del recorte por horizonte)
+      // nHist = puntos de historia que se dibujan
       const nHist = seriesData.length;
+
+      // Reserva de ancho para la zona futura: al menos 30% en móvil y 22% en escritorio, incluso para H=1M
+      const targetFutureRatio = isMobile ? 0.32 : 0.24;
+      const nFutureSlots = forecastSeries.length > 0
+        ? Math.max(forecastSeries.length, Math.round(nHist * (targetFutureRatio / (1 - targetFutureRatio))))
+        : 0;
+
       const labels = [...seriesLabels];
       const histPadded = [...seriesData];
-      while (histPadded.length < labels.length) histPadded.push(null);
+      for (let s = 0; s < nFutureSlots; s++) histPadded.push(null);
 
-      // Array de pronóstico (alinee con labels)
-      const p50 = new Array(labels.length).fill(null);
-      const p10 = new Array(labels.length).fill(null);
-      const p25 = new Array(labels.length).fill(null);
-      const p75 = new Array(labels.length).fill(null);
-      const p90 = new Array(labels.length).fill(null);
+      // Arrays de pronóstico (con slots suficientes para reservar el 30% en móvil / 22% en escritorio)
+      const totalLen = labels.length + nFutureSlots;
+      const p50 = new Array(totalLen).fill(null);
+      const p10 = new Array(totalLen).fill(null);
+      const p25 = new Array(totalLen).fill(null);
+      const p75 = new Array(totalLen).fill(null);
+      const p90 = new Array(totalLen).fill(null);
 
       if (forecastSeries.length) {
-        // Último punto real se replica al inicio del pronóstico para continuidad visual
-        p50[nHist - 1] = seriesData[seriesData.length - 1];
-        p10[nHist - 1] = seriesData[seriesData.length - 1];
-        p25[nHist - 1] = seriesData[seriesData.length - 1];
-        p75[nHist - 1] = seriesData[seriesData.length - 1];
-        p90[nHist - 1] = seriesData[seriesData.length - 1];
+        const lastRealVal = seriesData[nHist - 1];
+        const lastRealDate = seriesLabels[nHist - 1];
 
-        forecastSeries.forEach((item, i) => {
-          const idx = nHist + i;
-          labels.push(item.date.substring(0, 7));
-          p50[idx] = Number(item.p50);
-          p10[idx] = Number(item.p10);
-          p25[idx] = Number(item.p25 !== undefined ? item.p25 : item.p10);
-          p75[idx] = Number(item.p75 !== undefined ? item.p75 : item.p90);
-          p90[idx] = Number(item.p90);
+        // Hitos del pronóstico
+        const milestones = [
+          {
+            prog: 0,
+            date: lastRealDate,
+            p10: lastRealVal,
+            p25: lastRealVal,
+            p50: lastRealVal,
+            p75: lastRealVal,
+            p90: lastRealVal,
+          }
+        ];
+        forecastSeries.forEach((item, mIdx) => {
+          milestones.push({
+            prog: (mIdx + 1) / forecastSeries.length,
+            date: item.date.substring(0, 7),
+            p10: Number(item.p10),
+            p25: Number(item.p25 !== undefined ? item.p25 : item.p10),
+            p50: Number(item.p50),
+            p75: Number(item.p75 !== undefined ? item.p75 : item.p90),
+            p90: Number(item.p90),
+          });
         });
+
+        // Punto de anclaje inicial en Hoy (nHist - 1)
+        p50[nHist - 1] = lastRealVal;
+        p10[nHist - 1] = lastRealVal;
+        p25[nHist - 1] = lastRealVal;
+        p75[nHist - 1] = lastRealVal;
+        p90[nHist - 1] = lastRealVal;
+
+        // Distribución suave a lo largo de nFutureSlots
+        for (let k = 1; k <= nFutureSlots; k++) {
+          const prog = k / nFutureSlots;
+          const idx = nHist - 1 + k;
+
+          let seg = 0;
+          while (seg < milestones.length - 1 && milestones[seg + 1].prog < prog) {
+            seg++;
+          }
+          const m0 = milestones[seg];
+          const m1 = milestones[seg + 1] || m0;
+          const segSpan = (m1.prog - m0.prog) || 1;
+          const alpha = Math.min(1, Math.max(0, (prog - m0.prog) / segSpan));
+
+          p50[idx] = Number((m0.p50 + alpha * (m1.p50 - m0.p50)).toFixed(4));
+          p10[idx] = Number((m0.p10 + alpha * (m1.p10 - m0.p10)).toFixed(4));
+          p25[idx] = Number((m0.p25 + alpha * (m1.p25 - m0.p25)).toFixed(4));
+          p75[idx] = Number((m0.p75 + alpha * (m1.p75 - m0.p75)).toFixed(4));
+          p90[idx] = Number((m0.p90 + alpha * (m1.p90 - m0.p90)).toFixed(4));
+
+          labels.push(alpha > 0.5 ? m1.date : m0.date);
+        }
       }
 
       const ctx = container.querySelector("canvas");
@@ -152,7 +238,7 @@
           pointRadius: 0,
           fill: "start",
           cubicInterpolationMode: "monotone",
-          tension: 0.25,
+          tension: useDaily ? 0 : 0.25,
           borderJoinStyle: "round",
           spanGaps: false,
           order: 3,
@@ -273,7 +359,7 @@
           maintainAspectRatio: false,
           layout: {
             padding: {
-              right: isMobile ? 64 : 88,
+              right: isMobile ? 70 : 88,
               top: 10,
               left: 4,
               bottom: 4,
@@ -292,7 +378,10 @@
             x: {
               type: "category",
               ticks: {
-                maxTicksLimit: 6,
+                maxTicksLimit: isMobile ? 4 : 6,
+                maxRotation: 0,
+                minRotation: 0,
+                autoSkip: true,
                 callback: (v) => (labels[v] ? monthLabel(labels[v]) : ""),
                 font: { family: "IBM Plex Mono, ui-monospace, monospace", size: 10 },
                 color: tokens.inkSoft,
@@ -360,8 +449,9 @@
 
               // 1. Pastilla del último precio pegada al eje Y a la altura del último cierre
               const lastCloseVal = seriesData[nHist - 1];
+              let yClose = null;
               if (lastCloseVal != null && !isNaN(lastCloseVal)) {
-                const yClose = scales.y.getPixelForValue(lastCloseVal);
+                yClose = scales.y.getPixelForValue(lastCloseVal);
                 const hoyX = scales.x.getPixelForValue(nHist - 1);
                 if (isFinite(yClose)) {
                   // Línea guía horizontal punteada sutil desde Hoy hasta el eje Y
@@ -422,6 +512,19 @@
               let pos50 = yP50;
               let pos10 = yP10;
 
+              // Anti-colisión entre P50 y la pastilla del último precio:
+              // "la pastilla del último precio no puede tapar la etiqueta P50: si chocan, la P50 se desplaza"
+              if (yClose !== null && isFinite(yClose)) {
+                const pillCollisionDist = 18;
+                if (Math.abs(pos50 - yClose) < pillCollisionDist) {
+                  if (pos50 <= yClose) {
+                    pos50 = yClose - pillCollisionDist;
+                  } else {
+                    pos50 = yClose + pillCollisionDist;
+                  }
+                }
+              }
+
               // Separación mínima de 14px; si chocan, se desplazan
               const minDist = 14;
               if (pos50 - pos90 < minDist) {
@@ -451,10 +554,10 @@
               }
 
               // Posicionadas en el extremo derecho del abanico (alineadas a la derecha dentro del abanico)
-              const xText = Math.min(xLast, area.right) - 6;
+              const xText = mob ? area.right + 6 : Math.min(xLast, area.right) - 6;
 
               c.save();
-              c.textAlign = "right";
+              c.textAlign = mob ? "left" : "right";
               c.textBaseline = "middle";
               c.font = mob
                 ? "700 9px 'IBM Plex Mono', ui-monospace, monospace"
@@ -478,26 +581,6 @@
               // Rótulo del modelo se gestiona en HTML fuera del canvas
             },
           },
-          // Crosshair vertical + ficha
-          {
-            id: "pd-crosshair",
-            afterEvent(ch) {
-              const evt = ch.event;
-              if (!evt || evt.type !== "mousemove" && evt.type !== "touchmove") return;
-              const rect = ch.canvas.getBoundingClientRect();
-              const x = (evt.type === "touchmove" ? evt.touches[0].clientX : evt.clientX) - rect.left;
-              const y = (evt.type === "touchmove" ? evt.touches[0].clientY : evt.clientY) - rect.top;
-              const area = ch.chartArea;
-              if (!area || x < area.left || x > area.right || y < area.top || y > area.bottom) {
-                removeCrosshair();
-                return;
-              }
-              const xScale = ch.scales.x;
-              const idx = Math.round(xScale.getValueForPixel(x));
-              if (idx < 0 || idx >= labels.length) return;
-              drawCrosshair(x, idx);
-            },
-          },
         ],
       });
 
@@ -507,7 +590,7 @@
         chip = document.createElement("div");
         chip.className = "pd-chip";
         chip.style.cssText =
-          "position:absolute;z-index:10;pointer-events:none;padding:6px 10px;border:1px solid var(--pd-rule);background:var(--pd-card);color:var(--pd-ink);border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.08);font:600 11px 'IBM Plex Mono',ui-monospace,monospace;transition:left 80ms ease-out, top 80ms ease-out;display:none;min-width:110px;";
+          "position:absolute;z-index:30;pointer-events:none;padding:8px 12px;border:1px solid " + tokens.rule + ";background:" + tokens.card + ";color:" + tokens.ink + ";border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,0.14);font:600 11px 'IBM Plex Mono',ui-monospace,monospace;display:none;min-width:145px;line-height:1.45;";
         container.style.position = container.style.position || "relative";
         container.appendChild(chip);
       }
@@ -516,7 +599,7 @@
         vline = document.createElement("div");
         vline.className = "pd-vline";
         vline.style.cssText =
-          "position:absolute;z-index:9;top:0;bottom:0;width:1px;border-left:1px dashed var(--pd-ink-soft);background:transparent;display:none;pointer-events:none;transition:left 80ms ease-out;";
+          "position:absolute;z-index:15;top:8px;bottom:26px;width:1px;border-left:1px dashed " + tokens.inkSoft + ";background:transparent;display:none;pointer-events:none;";
         container.style.position = container.style.position || "relative";
         container.appendChild(vline);
       }
@@ -525,7 +608,7 @@
         dotHalo = document.createElement("div");
         dotHalo.className = "pd-dot-halo";
         dotHalo.style.cssText =
-          "position:absolute;z-index:9;width:8px;height:8px;border-radius:50%;background:var(--pd-accent);box-shadow:0 0 0 4px rgba(20,20,210,0.2);display:none;pointer-events:none;transform:translate(-50%,-50%);transition:left 80ms ease-out, top 80ms ease-out;";
+          "position:absolute;z-index:20;width:8px;height:8px;border-radius:50%;background:" + tokens.accent + ";box-shadow:0 0 0 4px rgba(20,20,210,0.25);display:none;pointer-events:none;transform:translate(-50%,-50%);";
         container.style.position = container.style.position || "relative";
         container.appendChild(dotHalo);
       }
@@ -553,29 +636,33 @@
           dotHalo.style.display = "none";
         }
 
-        let html = `<div style="font-weight:700;margin-bottom:3px;color:var(--pd-ink);">${monthLabel(label)}</div>`;
+        const dateStr = formatChipDate(label);
+        let html = `<div style="font-weight:700;font-size:11px;margin-bottom:4px;border-bottom:1px solid ${tokens.rule};padding-bottom:3px;color:${tokens.ink};">${dateStr}</div>`;
         if (v != null && !isNaN(v)) {
-          html += `<div style="color:var(--pd-ink-soft);">Cierre real: <b style="color:var(--pd-ink);font-family:'IBM Plex Mono',monospace;">${sym}${Number(v).toFixed(2)}</b></div>`;
+          html += `<div style="display:flex;justify-content:space-between;gap:8px;color:${tokens.inkSoft};"><span>Precio:</span><b style="color:${tokens.ink};font-variant-numeric:tabular-nums;">${sym}${Number(v).toFixed(2)}</b></div>`;
         }
-        if (isFuture && p != null && !isNaN(p)) {
-          html += `<div style="color:var(--pd-accent);">P50: <b style="font-family:'IBM Plex Mono',monospace;">${sym}${Number(p).toFixed(2)}</b></div>`;
+        if (isFuture) {
+          if (p != null && !isNaN(p)) {
+            html += `<div style="display:flex;justify-content:space-between;gap:8px;color:${tokens.accent};"><span>P50:</span><b style="font-variant-numeric:tabular-nums;">${sym}${Number(p).toFixed(2)}</b></div>`;
+          }
           if (p90[idx] != null && !isNaN(p90[idx])) {
-            html += `<div style="color:var(--pd-ink-soft);">P90: <span style="font-family:'IBM Plex Mono',monospace;">${sym}${Number(p90[idx]).toFixed(2)}</span></div>`;
+            html += `<div style="display:flex;justify-content:space-between;gap:8px;color:${tokens.inkSoft};"><span>P90:</span><span style="font-variant-numeric:tabular-nums;">${sym}${Number(p90[idx]).toFixed(2)}</span></div>`;
           }
           if (p10[idx] != null && !isNaN(p10[idx])) {
-            html += `<div style="color:var(--pd-ink-soft);">P10: <span style="font-family:'IBM Plex Mono',monospace;">${sym}${Number(p10[idx]).toFixed(2)}</span></div>`;
+            html += `<div style="display:flex;justify-content:space-between;gap:8px;color:${tokens.inkSoft};"><span>P10:</span><span style="font-variant-numeric:tabular-nums;">${sym}${Number(p10[idx]).toFixed(2)}</span></div>`;
           }
         }
         chip.innerHTML = html;
         chip.style.display = "block";
 
         const cWidth = container.clientWidth || 400;
-        if (xPx + 140 > cWidth) {
-          chip.style.left = Math.max(0, xPx - 130) + "px";
+        const chipWidth = 150;
+        if (xPx + chipWidth + 16 > cWidth) {
+          chip.style.left = Math.max(4, xPx - chipWidth - 12) + "px";
         } else {
-          chip.style.left = (xPx + 12) + "px";
+          chip.style.left = (xPx + 14) + "px";
         }
-        chip.style.top = "10px";
+        chip.style.top = "12px";
       }
 
       function removeCrosshair() {
@@ -583,6 +670,48 @@
         dotHalo.style.display = "none";
         chip.style.display = "none";
       }
+
+      function onMouseMove(e) {
+        const rect = chart.canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const area = chart.chartArea;
+        if (!area || x < area.left || x > area.right || y < area.top || y > area.bottom) {
+          removeCrosshair();
+          return;
+        }
+        const xScale = chart.scales.x;
+        const idx = Math.round(xScale.getValueForPixel(x));
+        if (idx < 0 || idx >= labels.length) {
+          removeCrosshair();
+          return;
+        }
+        drawCrosshair(x, idx);
+      }
+
+      function onTouchMove(e) {
+        if (!e.touches || !e.touches[0]) return;
+        const rect = chart.canvas.getBoundingClientRect();
+        const x = e.touches[0].clientX - rect.left;
+        const y = e.touches[0].clientY - rect.top;
+        const area = chart.chartArea;
+        if (!area || x < area.left || x > area.right || y < area.top || y > area.bottom) {
+          removeCrosshair();
+          return;
+        }
+        const xScale = chart.scales.x;
+        const idx = Math.round(xScale.getValueForPixel(x));
+        if (idx < 0 || idx >= labels.length) {
+          removeCrosshair();
+          return;
+        }
+        drawCrosshair(x, idx);
+      }
+
+      chart.canvas.addEventListener("mousemove", onMouseMove);
+      chart.canvas.addEventListener("mouseleave", removeCrosshair);
+      chart.canvas.addEventListener("touchmove", onTouchMove, { passive: true });
+      chart.canvas.addEventListener("touchend", removeCrosshair);
 
       // Tabla oculta para lectores de pantalla
       let a11y = container.querySelector(".pd-a11y");
@@ -636,6 +765,10 @@
           return PdChart.render(container, nextProps);
         },
         destroy() {
+          chart.canvas.removeEventListener("mousemove", onMouseMove);
+          chart.canvas.removeEventListener("mouseleave", removeCrosshair);
+          chart.canvas.removeEventListener("touchmove", onTouchMove);
+          chart.canvas.removeEventListener("touchend", removeCrosshair);
           chart.destroy();
           PdChart.instances.delete(container);
           if (chip) chip.remove();
