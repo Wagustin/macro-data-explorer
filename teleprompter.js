@@ -1,20 +1,10 @@
 /**
  * PerData - Responsive Financial Teleprompter / Ticker
- * Fixed at top-0 on mobile, bottom-0 on desktop.
+ * Displayed in-flow on news.html above main content.
  * Smooth infinite marquee with hover/touch pause.
  */
 
 (function (window) {
-  const FALLBACK_NEWS = [
-    { id: "1", impact: "BCRP", color: "blue", title: "BCRP mantiene tasa de referencia en 5.00% ratificando anclaje de inflación en rango meta", source: "Reuters", time: "hace 8m", symbol: "PEN=X" },
-    { id: "2", impact: "ALTO IMPACTO", color: "red", title: "Cobre COMEX repunta +2.4% superando los $4.48/lb por restricciones en fundiciones globales", source: "Bloomberg", time: "hace 15m", symbol: "HG=F" },
-    { id: "3", impact: "MINERÍA", color: "amber", title: "Minas Buenaventura (BVN) eleva guía de producción de plata y oro tras optimización en Yumpag", source: "Gestión", time: "hace 24m", symbol: "BVN" },
-    { id: "4", impact: "DIVISAS", color: "emerald", title: "Tipo de cambio USD/PEN consolida soporte en S/ 3.74 con flujo sostenido de ventas mineras", source: "SEMANAeconómica", time: "hace 35m", symbol: "PEN=X" },
-    { id: "5", impact: "FED", color: "purple", title: "Rendimiento del bono del Tesoro EE.UU. a 10 años modera a 4.22% tras reporte de nóminas", source: "Financial Times", time: "hace 42m", symbol: "^TNX" },
-    { id: "6", impact: "COBRE", color: "amber", title: "Southern Copper (SCCO) proyecta incremento del 8% en despacho de cátodos refinados", source: "Mining.com", time: "hace 55m", symbol: "SCCO" },
-    { id: "7", impact: "MACRO", color: "blue", title: "Producción minera peruana aporta 1.8 puntos porcentuales al crecimiento desestacionalizado del PBI", source: "INEI / BCRP", time: "hace 1h", symbol: "PERU_GDP" }
-  ];
-
   function escapeHTML(str) {
     if (str === null || str === undefined) return "";
     return String(str).replace(/[&<>"']/g, m => ({
@@ -27,41 +17,31 @@
   }
 
   function escapeJSString(str) {
-    // Escape characters that could break out of a single-quoted JS string
     return String(str === null || str === undefined ? "" : str).replace(/[\\'\n\r\u2028\u2029]/g, m => "\\" + m);
-  }
-
-  function getBadgeClasses(color) {
-    // United Airlines Banking badges: Sky Blue & Slate
-    if (color === "blue" || color === "BCRP") return "bg-[#005DAA]/20 text-[#38BDF8] border-[#005DAA]/40";
-    if (color === "red" || color === "ALTO IMPACTO") return "bg-rose-500/20 text-rose-300 border-rose-500/40";
-    if (color === "amber" || color === "COBRE" || color === "MINERÍA") return "bg-amber-500/20 text-amber-300 border-amber-500/40";
-    return "bg-white/10 text-slate-200 border-white/15";
   }
 
   function renderNewsItems(items) {
     return items.map(item => {
-      const badgeStyle = getBadgeClasses(item.impactColor || item.color || "blue");
       const sym = escapeJSString(item.symbol || "");
       const targetUrl = window.location.pathname.includes("explorer")
         ? `javascript:window.selectTickerAsset && window.selectTickerAsset('${sym}')`
         : `/explorer?symbol=${encodeURIComponent(item.symbol || 'BVN')}`;
 
+      const cat = String(item.impact || item.category || "MACRO").toUpperCase();
+
       return `
-        <div class="teleprompter-item inline-flex items-center gap-2 px-4 py-1 hover:text-white transition group shrink-0 text-xs">
-          <a href="${escapeHTML(targetUrl)}" class="inline-flex items-center gap-2 hover:opacity-80 transition">
-            <span class="px-1.5 py-0.5 text-[9px] font-bold tracking-wider uppercase rounded border font-mono ${badgeStyle}">
-              ${escapeHTML(item.impact || "MACRO")}
-            </span>
-            <span class="text-[#D1D1D6] group-hover:text-white font-medium">
-              ${escapeHTML(item.title)}
-            </span>
+        <div class="teleprompter-item" style="display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; flex-shrink: 0; font-size: 12px; color: var(--pd-ink);">
+          <span style="font-size: 10px; font-weight: 600; letter-spacing: 0.06em; color: var(--pd-ink-soft); text-transform: uppercase;">
+            ${escapeHTML(cat)}
+          </span>
+          <a href="${escapeHTML(targetUrl)}" class="hover:underline" style="color: var(--pd-ink); text-decoration: none;">
+            <span>${escapeHTML(item.title)}</span>
           </a>
-          <a href="${escapeHTML(item.url || 'https://www.bcrp.gob.pe')}" target="_blank" rel="noopener noreferrer" class="text-[10px] text-[#86868B] hover:text-white hover:underline font-mono inline-flex items-center gap-0.5" title="Ver fuente original">
+          <a href="${escapeHTML(item.url || 'https://www.bcrp.gob.pe')}" target="_blank" rel="noopener noreferrer" class="hover:underline" style="font-size: 11px; color: var(--pd-ink-soft); font-family: var(--pd-font-mono); text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" title="Ver fuente original">
             <span>${escapeHTML(item.source)}</span>
-            <span class="text-[9px] text-[#636366]">· ${escapeHTML(item.time)} ↗</span>
+            <span style="font-size: 10px; color: var(--pd-ink-soft);">· ${escapeHTML(item.time)} ↗</span>
           </a>
-          <span class="text-zinc-700 mx-2">|</span>
+          <span style="color: var(--pd-rule); margin: 0 8px;">|</span>
         </div>
       `;
     }).join("");
@@ -70,90 +50,120 @@
   async function initTeleprompter() {
     if (document.getElementById("mdeTeleprompter")) return;
 
-    // Inject styles for infinite marquee
+    let newsItems = [];
+    try {
+      const res = await fetch("/api/news");
+      if (res.ok) {
+        const data = await res.json();
+        if (data && Array.isArray(data.news) && data.news.length > 0) {
+          newsItems = data.news;
+        }
+      }
+    } catch (e) {
+      console.warn("Error fetching news for ticker:", e);
+    }
+
+    if (!newsItems || newsItems.length === 0) {
+      return;
+    }
+
+    let mount = document.getElementById("pdNewsTicker");
+    if (!mount) {
+      const main = document.querySelector("main");
+      if (main) {
+        mount = document.createElement("div");
+        mount.id = "pdNewsTicker";
+        main.parentNode.insertBefore(mount, main);
+      } else {
+        return;
+      }
+    }
+
     if (!document.getElementById("teleprompterStyles")) {
       const style = document.createElement("style");
       style.id = "teleprompterStyles";
       style.textContent = `
-        @keyframes mdeMarqueeScroll {
+        @keyframes pdTickerMarquee {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
+        .teleprompter-bar {
+          height: 36px;
+          background: var(--pd-surface);
+          color: var(--pd-ink);
+          border-top: 1px solid var(--pd-rule);
+          border-bottom: 1px solid var(--pd-rule);
+          display: flex;
+          align-items: center;
+          overflow: hidden;
+          user-select: none;
+          font-family: var(--pd-font-ui);
+        }
+        .teleprompter-label {
+          height: 100%;
+          display: flex;
+          align-items: center;
+          padding: 0 14px;
+          background: var(--pd-surface);
+          color: var(--pd-ink);
+          font-family: var(--pd-font-ui);
+          font-weight: 600;
+          font-size: 13px;
+          border-right: 1px solid var(--pd-rule);
+          flex-shrink: 0;
+          z-index: 10;
+        }
+        .teleprompter-container {
+          flex: 1;
+          overflow: hidden;
+          position: relative;
+          height: 100%;
+          display: flex;
+          align-items: center;
+        }
         .teleprompter-track {
           display: inline-flex;
+          align-items: center;
           white-space: nowrap;
-          animation: mdeMarqueeScroll 140s linear infinite;
+          animation: pdTickerMarquee 140s linear infinite;
           will-change: transform;
         }
         .teleprompter-container:hover .teleprompter-track,
         .teleprompter-container:active .teleprompter-track {
           animation-play-state: paused !important;
         }
-        @media (max-width: 639px) {
-          body.has-teleprompter {
-            padding-top: 2.5rem;
+        @media (prefers-reduced-motion: reduce) {
+          .teleprompter-track {
+            animation: none !important;
           }
-        }
-        @media (min-width: 640px) {
-          body.has-teleprompter {
-            padding-bottom: 2.5rem;
+          .teleprompter-container {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
           }
         }
       `;
       document.head.appendChild(style);
     }
 
-    document.body.classList.add("has-teleprompter");
-
-    // Fetch news from /api/news with fallback
-    let newsItems = FALLBACK_NEWS;
-    try {
-      const res = await fetch("/api/news");
-      if (res.ok) {
-        const data = await res.json();
-        if (data.news && data.news.length > 0) {
-          newsItems = data.news;
-        }
-      }
-    } catch (e) {
-      console.warn("Teleprompter using fallback news feed:", e);
-    }
-
     const itemsHtml = renderNewsItems(newsItems);
-    // Duplicate items to ensure smooth infinite loop
     const fullTrackHtml = itemsHtml + itemsHtml;
 
     const barHtml = `
-      <aside id="mdeTeleprompter" class="fixed left-0 right-0 z-40 h-9 sm:h-10 top-0 sm:top-auto sm:bottom-0 bg-[#001733]/95 dark:bg-[#070F1B]/95 text-white backdrop-blur-md border-b sm:border-b-0 sm:border-t border-[#005DAA]/30 flex items-center overflow-hidden select-none shadow-md" aria-label="Titulares Macroeconómicos en Vivo">
-        
-        <!-- Live Indicator Badge -->
-        <div class="h-full flex items-center gap-1.5 px-3 bg-[#001733] dark:bg-[#070F1B] z-10 border-r border-[#005DAA]/30 shrink-0 text-[10px] font-bold tracking-wider font-mono">
-          <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </span>
-          <span class="text-white hidden sm:inline">MACRO FEED</span>
-          <span class="text-emerald-400 text-[9px] uppercase sm:hidden">VIVO</span>
+      <aside id="mdeTeleprompter" class="teleprompter-bar" aria-label="Titulares Macroeconómicos">
+        <div class="teleprompter-label">
+          Titulares
         </div>
-
-        <!-- Marquee Viewport -->
-        <div class="teleprompter-container flex-1 overflow-hidden relative h-full flex items-center">
+        <div class="teleprompter-container">
           <div class="teleprompter-track">
             ${fullTrackHtml}
           </div>
         </div>
-
-        <!-- Right Quick Action / Audio/Pause helper -->
-        <div class="h-full hidden md:flex items-center px-3 bg-[#001733] dark:bg-[#070F1B] z-10 border-l border-[#005DAA]/30 shrink-0 text-[10px] text-slate-400 font-mono">
-          <span>Pausa: Hover</span>
-        </div>
       </aside>
     `;
 
-    document.body.insertAdjacentHTML("beforeend", barHtml);
+    mount.innerHTML = barHtml;
   }
 
-  // Support jumping to asset from teleprompter on explorer page
   window.selectTickerAsset = function(sym) {
     if (!sym) return;
     if (window.selectAssetBySymbol) {
