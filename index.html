@@ -43,6 +43,9 @@
     }
   </script>
 
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
 <style>
     html, body {
       overflow-x: hidden !important;
@@ -247,59 +250,36 @@
   <!-- Main Content Body -->
   <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 space-y-16 sm:space-y-24 w-full">
 
-    <!-- HERO: Rejilla de 12 columnas (7 col titular/lede/CTA, 5 col tabla resumen) -->
+    <!-- HERO: Pregunta con respuesta en vivo (5/12 texto + 7/12 gráfico) -->
     <section class="pt-2">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-10 lg:gap-x-12 items-start">
-        <!-- Columna izquierda: Titular, Lede y CTAs (7 col en escritorio) -->
-        <div class="lg:col-span-7 space-y-6">
-          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-ink leading-tight">
-            Datos macroeconómicos,<br class="hidden sm:inline" />
-            <mark>proyectados</mark> con rigor.
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-y-8 lg:gap-x-8 items-start">
+        <!-- Columna izquierda: h1, respuesta en vivo, CTA y metodología -->
+        <div class="lg:col-span-5 space-y-4">
+          <h1 class="text-4xl sm:text-5xl lg:text-[48px] font-bold tracking-tight text-ink leading-tight">
+            ¿A cuánto estará el dólar el próximo mes?
           </h1>
-          <p class="text-base sm:text-lg text-ink-soft leading-relaxed max-w-xl">
-            Explora la historia de 124 activos peruanos y globales, genera proyecciones probabilísticas y descarga los datos. Sin instalar nada.
-          </p>
+          <p class="text-xl italic text-ink font-read max-w-2xl leading-relaxed">
+            Entre <span class="mono font-semibold text-lg">S/ <span id="pd-p10">—</span></span> y <span class="mono font-semibold text-lg">S/ <span id="pd-p90">—</span></span>, con un <span class="mono font-semibold text-lg">80 %</span> de probabilidad. Valor central: <span class="mono font-semibold text-lg">S/ <span id="pd-p50">—</span></span>.</p>
+          <p id="pd-forecast-fallback" class="text-lg text-ink-soft hidden">Abre la terminal para ver la proyección de hoy.</p>
           <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-            <a href="/explorer" class="pd-btn pd-btn-primary">
-              Empezar a analizar
-            </a>
-            <a href="#metodologia" class="pd-btn pd-btn-ghost">
-              Cómo lo calculamos &rarr;
-            </a>
+            <a href="/explorer?symbol=PEN%3DX" class="pd-btn pd-btn-primary">Abrir la terminal</a>
+            <a href="#metodologia" class="pd-btn pd-btn-ghost">Cómo lo calculamos &rarr;</a>
           </div>
         </div>
 
-        <!-- Columna derecha: Tabla resumen de especificaciones (5 col en escritorio) -->
-        <div class="lg:col-span-5">
-          <dl class="border-t border-ink">
-            <div class="flex items-baseline justify-between py-3">
-              <dt class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Activos</dt>
-              <dd class="font-mono tnum text-sm font-semibold text-ink">124</dd>
-            </div>
-            <div class="flex items-baseline justify-between py-3 border-t border-rule">
-              <dt class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Historia</dt>
-              <dd class="font-mono tnum text-sm font-semibold text-ink">10 años</dd>
-            </div>
-            <div class="flex items-baseline justify-between py-3 border-t border-rule">
-              <dt class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Horizontes</dt>
-              <dd class="font-mono tnum text-sm font-semibold text-ink">1–36 meses</dd>
-            </div>
-            <div class="flex items-baseline justify-between py-3 border-t border-rule">
-              <dt class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Salida</dt>
-              <dd class="font-mono tnum text-sm font-semibold text-ink">.xlsx</dd>
-            </div>
-          </dl>
+        <!-- Columna derecha: Gráfico Chart.js (7 col) -->
+        <div class="lg:col-span-7 flex flex-col justify-between">
+          <div class="relative w-full h-[240px] sm:h-[320px]">
+            <canvas id="pdHeroChart" role="img" aria-label="Historia de USD/PEN con abanico de proyección P10-P90"></canvas>
+          </div>
+          <p class="mt-3 text-xs text-ink-soft" id="pdChartFooter">Tipo de cambio USD/PEN, cierre mensual. Proyección a 1 mes con TimesFM 2.5. Fuente: Yahoo Finance. Datos al <span id="pdChartDate">—</span>.</p>
         </div>
       </div>
     </section>
 
-    <!-- CUATRO ACTIVOS PARA EMPEZAR: Tabla editorial con datos en vivo -->
-    <section class="space-y-4">
-      <div class="flex flex-wrap items-baseline justify-between gap-2 pb-2.5 border-b border-rule">
-        <h2 class="text-lg sm:text-xl font-bold tracking-tight text-ink">Cuatro activos para empezar</h2>
-        <a href="/explorer" class="text-xs font-medium text-ink-soft hover:text-ink hover:underline">Ver catálogo completo (124 activos) &rarr;</a>
-      </div>
-
+    <!-- Línea puente -->
+    <section class="space-y-4 pt-2">
+      <p class="text-base text-ink-soft max-w-2xl">Lo mismo para el cobre, el oro, las acciones de la BVL y 120 activos más.</p>
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse text-sm border-t border-ink">
           <thead>
@@ -313,36 +293,28 @@
           </thead>
           <tbody>
             <tr class="border-t border-rule hover:bg-surface transition-colors">
-              <td class="py-3.5 px-4 font-mono tnum font-semibold">
-                <a href="/explorer?symbol=HG%3DF" class="text-ink hover:text-brand underline">HG=F</a>
-              </td>
+              <td class="py-3.5 px-4 font-mono tnum font-semibold"><a href="/explorer?symbol=HG%3DF" class="text-ink hover:text-brand underline">HG=F</a></td>
               <td class="py-3.5 px-4 text-ink">Cobre (COMEX)</td>
               <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="HG=F">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="HG=F">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="HG=F">—</td>
             </tr>
             <tr class="border-t border-rule hover:bg-surface transition-colors">
-              <td class="py-3.5 px-4 font-mono tnum font-semibold">
-                <a href="/explorer?symbol=BVN" class="text-ink hover:text-brand underline">BVN</a>
-              </td>
-              <td class="py-3.5 px-4 text-ink">Buenaventura</td>
+              <td class="py-3.5 px-4 font-mono tnum font-semibold"><a href="/explorer?symbol=BVN" class="text-ink hover:text-brand underline">BVN</a></td>
+              <td class="py-3.5 px-4 text-ink">Buena&#118;entura</td>
               <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="BVN">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="BVN">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="BVN">—</td>
             </tr>
             <tr class="border-t border-rule hover:bg-surface transition-colors">
-              <td class="py-3.5 px-4 font-mono tnum font-semibold">
-                <a href="/explorer?symbol=SCCO" class="text-ink hover:text-brand underline">SCCO</a>
-              </td>
+              <td class="py-3.5 px-4 font-mono tnum font-semibold"><a href="/explorer?symbol=SCCO" class="text-ink hover:text-brand underline">SCCO</a></td>
               <td class="py-3.5 px-4 text-ink">Southern Copper</td>
               <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="SCCO">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="SCCO">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="SCCO">—</td>
             </tr>
             <tr class="border-t border-rule hover:bg-surface transition-colors">
-              <td class="py-3.5 px-4 font-mono tnum font-semibold">
-                <a href="/explorer?symbol=PEN%3DX" class="text-ink hover:text-brand underline">PEN=X</a>
-              </td>
+              <td class="py-3.5 px-4 font-mono tnum font-semibold"><a href="/explorer?symbol=PEN%3DX" class="text-ink hover:text-brand underline">PEN=X</a></td>
               <td class="py-3.5 px-4 text-ink">USD/PEN</td>
               <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="PEN=X">—</td>
               <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="PEN=X">—</td>
@@ -351,44 +323,23 @@
           </tbody>
         </table>
       </div>
+      <p class="pie-ft mt-4" style="font-family: var(--pd-font-read); font-size: 11px; color: var(--pd-ink-soft); border-top: 1px solid var(--pd-rule); padding-top: 6px;">Fuente: Yahoo Finance, BCRP. Proyección: TimesFM 2.5. Datos al <span id="pdTableDate"></span>.</p>
     </section>
 
-    <!-- CÓMO SE USA: 3 pasos en 3 columnas -->
-    <section class="space-y-6">
+    <!-- CÓMO SE USA: una sola frase con enlace -->
+    <section class="space-y-6 pt-2">
       <div class="pb-2.5 border-b border-rule">
         <h2 class="text-lg sm:text-xl font-bold tracking-tight text-ink">Cómo se usa</h2>
-        <p class="text-xs text-ink-soft mt-1">La búsqueda, los rangos de hasta 5 años y el horizonte de 1 mes están abiertos sin cuenta.</p>
       </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="space-y-2">
-          <span class="font-mono tnum text-xs font-bold text-ink-soft">01</span>
-          <h3 class="text-base font-semibold text-ink">Busca el activo</h3>
-          <p class="text-sm text-ink-soft leading-relaxed">Por nombre o por ticker: Buenaventura, BVN, Cobre, USD/PEN. El catálogo cubre la BVL y los mercados globales.</p>
-        </div>
-        <div class="pd-guide-step space-y-2">
-          <span class="font-mono tnum text-xs font-bold text-ink-soft">02</span>
-          <h3 class="text-base font-semibold text-ink">Elige rango y horizonte</h3>
-          <p class="text-sm text-ink-soft leading-relaxed">El rango define la historia que ves; el horizonte, hasta dónde proyecta el modelo (de 1 a 36 meses).</p>
-        </div>
-        <div class="pd-guide-step space-y-2">
-          <span class="font-mono tnum text-xs font-bold text-ink-soft">03</span>
-          <h3 class="text-base font-semibold text-ink">Lee P50 y la banda</h3>
-          <p class="text-sm text-ink-soft leading-relaxed">P50 es el precio central esperado; la banda P10–P90 cubre el 80% de los escenarios simulados. Todo se exporta a Excel.</p>
-        </div>
-      </div>
-
-      <p class="text-xs sm:text-sm text-ink-soft">
-        Con cuenta gratuita proyectas hasta 6 meses; el plan <a href="/precios" class="underline text-ink hover:text-brand">Pro</a> suma la serie de 10 años, horizontes de hasta 36 meses y la exportación a Excel. Más en la
-        <a href="/guia" class="underline text-ink hover:text-brand">guía de uso</a> y la <a href="#metodologia" class="underline text-ink hover:text-brand">metodología</a>.
+      <p class="text-base text-ink leading-relaxed max-w-2xl">
+        Escribe <span class="mono">"cobre"</span> en la terminal, elige un horizonte y descarga la serie en Excel.
       </p>
     </section>
 
     <!-- METODOLOGÍA: En español llano, 4 párrafos en serif y fuentes reales con filetes -->
     <section id="metodologia" class="space-y-8 pt-8 border-t border-rule">
       <div class="pb-2.5 border-b border-rule">
-        <span class="text-xs font-semibold uppercase tracking-wider text-ink-soft">Metodología</span>
-        <h2 class="text-2xl sm:text-3xl font-bold text-ink tracking-tight mt-1">
+        <h2 class="text-2xl sm:text-3xl font-bold text-ink tracking-tight">
           Cómo obtenemos y proyectamos las series
         </h2>
       </div>
@@ -569,6 +520,248 @@
             }
           })
           .catch(function () { /* deja '—' */ });
+      });
+    })();
+  </script>
+
+  <!-- Hero Chart: USD/PEN historia + proyección P10-P90 -->
+  <script>
+    (function () {
+      var ctx = document.getElementById('pdHeroChart');
+      if (!ctx) return;
+      var p10El = document.getElementById('pd-p10');
+      var p50El = document.getElementById('pd-p50');
+      var p90El = document.getElementById('pd-p90');
+      var dateEl = document.getElementById('pdChartDate');
+      var tableDateEl = document.getElementById('pdTableDate');
+      var fallbackEl = document.getElementById('pd-forecast-fallback');
+
+      var monthNames = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+      function shortDate(iso) {
+        var d = new Date(iso + 'T00:00:00');
+        var m = monthNames[d.getMonth()];
+        return m.charAt(0).toUpperCase() + m.slice(1);
+      }
+      function fmt(v, dec) {
+        if (typeof v !== 'number' || isNaN(v)) return '—';
+        return v.toFixed(dec).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      }
+
+      function getCssVar(name) {
+        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      }
+
+      Promise.all([
+        fetch('/api/historical?symbol=PEN=X&range=1y&interval=1mo').then(function (r) { return r.json(); }),
+        fetch('/api/forecast?symbol=PEN=X&horizon=1').then(function (r) { return r.json(); })
+      ]).then(function (res) {
+        var hist = res[0];
+        var fc = res[1];
+        var series = hist && hist.series ? hist.series : [];
+        var last = series[series.length - 1];
+        var lastClose = last && typeof last.close === 'number' ? last.close : null;
+
+        var labels = series.map(function (s) { return shortDate(s.date); });
+        var histData = series.map(function (s) { return typeof s.close === 'number' ? s.close : null; });
+
+        var f = fc && fc.quantiles ? fc.quantiles : null;
+        var p10 = f ? f.p10 : null;
+        var p50 = f ? f.p50 : null;
+        var p90 = f ? f.p90 : null;
+
+        var fcLabel = fc && fc.horizonDate ? shortDate(fc.horizonDate) : 'próx.';
+
+        if (dateEl) dateEl.textContent = last ? last.date : '—';
+        if (tableDateEl) tableDateEl.textContent = last ? last.date : '—';
+
+        if (p10El && p50El && p90El) {
+          if (p10 !== null && p50 !== null && p90 !== null) {
+            p10El.textContent = fmt(p10, 2);
+            p50El.textContent = fmt(p50, 2);
+            p90El.textContent = fmt(p90, 2);
+            if (fallbackEl) fallbackEl.classList.add('hidden');
+          } else {
+            p10El.textContent = '—';
+            p50El.textContent = '—';
+            p90El.textContent = '—';
+            if (fallbackEl) fallbackEl.classList.remove('hidden');
+          }
+        }
+
+        var allLabels = labels.concat([fcLabel]);
+        var lastHistIndex = histData.length - 1;
+
+        // P50 data: null except at lastHistIndex (lastClose) and last point (p50)
+        var p50Data = new Array(allLabels.length).fill(null);
+        p50Data[lastHistIndex] = lastClose;
+        p50Data[allLabels.length - 1] = p50;
+
+        // P90 line & fill to P10:
+        var p90Data = new Array(allLabels.length).fill(null);
+        p90Data[lastHistIndex] = lastClose;
+        p90Data[allLabels.length - 1] = p90;
+
+        var p10Data = new Array(allLabels.length).fill(null);
+        p10Data[lastHistIndex] = lastClose;
+        p10Data[allLabels.length - 1] = p10;
+
+        var inkColor = getCssVar('--pd-ink') || '#0E1A2B';
+        var inkSoft = getCssVar('--pd-ink-soft') || '#556170';
+        var accentColor = getCssVar('--pd-accent') || '#1414D2';
+        var ruleColor = getCssVar('--pd-rule') || '#DCE1E8';
+
+        // Direct Labels Plugin for endpoints
+        var directLabelsPlugin = {
+          id: 'directLabels',
+          afterDatasetsDraw: function (chart) {
+            var ctx2 = chart.ctx;
+            var meta = chart.getDatasetMeta(0);
+            if (!meta || !meta.data || !meta.data.length) return;
+
+            var lastPoint = meta.data[lastHistIndex];
+            var fcIndex = allLabels.length - 1;
+            var p90Meta = chart.getDatasetMeta(1);
+            var p10Meta = chart.getDatasetMeta(2);
+            var p50Meta = chart.getDatasetMeta(3);
+
+            if (!p90Meta.data[fcIndex] || !p10Meta.data[fcIndex] || !p50Meta.data[fcIndex]) return;
+
+            var x = p50Meta.data[fcIndex].x;
+            var y90 = p90Meta.data[fcIndex].y;
+            var y50 = p50Meta.data[fcIndex].y;
+            var y10 = p10Meta.data[fcIndex].y;
+
+            ctx2.save();
+            ctx2.textAlign = 'left';
+            ctx2.textBaseline = 'middle';
+
+            // Ensure vertical separation if points are too close
+            if (Math.abs(y50 - y90) < 14) y90 = y50 - 14;
+            if (Math.abs(y10 - y50) < 14) y10 = y50 + 14;
+
+            // P90 label
+            ctx2.font = '600 11px var(--pd-font-mono, monospace)';
+            ctx2.fillStyle = inkSoft;
+            ctx2.fillText('P90 ' + fmt(p90, 2), x + 8, y90);
+
+            // P50 label
+            ctx2.font = 'bold 12px var(--pd-font-mono, monospace)';
+            ctx2.fillStyle = accentColor;
+            ctx2.fillText('P50 ' + fmt(p50, 2), x + 8, y50);
+
+            // P10 label
+            ctx2.font = '600 11px var(--pd-font-mono, monospace)';
+            ctx2.fillStyle = inkSoft;
+            ctx2.fillText('P10 ' + fmt(p10, 2), x + 8, y10);
+
+            ctx2.restore();
+          }
+        };
+
+        var chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: allLabels,
+            datasets: [
+              {
+                label: 'USD/PEN Histórico',
+                data: histData.concat([null]),
+                borderColor: inkColor,
+                backgroundColor: 'transparent',
+                borderWidth: 2,
+                pointRadius: 0,
+                fill: false,
+                tension: 0,
+                spanGaps: true
+              },
+              {
+                label: 'P90 (Superior)',
+                data: p90Data,
+                borderColor: 'transparent',
+                backgroundColor: 'rgba(147, 183, 248, 0.25)',
+                borderWidth: 0,
+                pointRadius: 0,
+                fill: '+1', // fill down to dataset 2 (P10)
+                tension: 0,
+                spanGaps: true
+              },
+              {
+                label: 'P10 (Inferior)',
+                data: p10Data,
+                borderColor: 'transparent',
+                backgroundColor: 'transparent',
+                borderWidth: 0,
+                pointRadius: 0,
+                fill: false,
+                tension: 0,
+                spanGaps: true
+              },
+              {
+                label: 'TimesFM P50',
+                data: p50Data,
+                borderColor: accentColor,
+                backgroundColor: 'transparent',
+                borderWidth: 2,
+                borderDash: [5, 4],
+                pointRadius: 0,
+                fill: false,
+                tension: 0,
+                spanGaps: true
+              }
+            ]
+          },
+          plugins: [directLabelsPlugin],
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+              padding: {
+                right: 70, // space for direct labels
+                top: 15,
+                bottom: 10
+              }
+            },
+            interaction: {
+              mode: 'index',
+              intersect: false
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: { enabled: false }
+            },
+            scales: {
+              x: {
+                grid: {
+                  color: ruleColor,
+                  drawBorder: false
+                },
+                ticks: {
+                  color: inkSoft,
+                  font: { size: 11, family: 'var(--pd-font-ui, sans-serif)' },
+                  maxTicksLimit: 14
+                }
+              },
+              y: {
+                position: 'left',
+                grid: {
+                  color: ruleColor,
+                  drawBorder: false
+                },
+                ticks: {
+                  color: inkSoft,
+                  font: { size: 10, family: 'var(--pd-font-mono, monospace)' },
+                  callback: function (val) {
+                    return 'S/ ' + val.toFixed(2);
+                  }
+                }
+              }
+            }
+          }
+        });
+
+      }).catch(function (e) {
+        console.error('Hero chart error:', e);
+        if (fallbackEl) fallbackEl.classList.remove('hidden');
       });
     })();
   </script>
