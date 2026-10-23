@@ -52,17 +52,19 @@
   }
 
   function getComputedTokens(el) {
-    const cs = window.getComputedStyle(el);
+    const cs = window.getComputedStyle(el || document.documentElement);
+    const rootCs = window.getComputedStyle(document.documentElement);
     return {
-      ink: cs.getPropertyValue("--pd-ink").trim() || "#1B1916",
-      inkSoft: cs.getPropertyValue("--pd-ink-soft").trim() || "#5E584E",
-      surface: cs.getPropertyValue("--pd-surface").trim() || "#ECE6D9",
-      accent: cs.getPropertyValue("--pd-accent").trim() || "#1B1916",
-      sky: cs.getPropertyValue("--pd-sky").trim() || "#B9AF9A",
-      rule: cs.getPropertyValue("--pd-rule").trim() || "#DCD4C4",
-      card: cs.getPropertyValue("--pd-card").trim() || "#1C1B18",
-      pos: cs.getPropertyValue("--pd-pos").trim() || "#1E7A46",
-      neg: cs.getPropertyValue("--pd-neg").trim() || "#B3261E",
+      ink: cs.getPropertyValue("--pd-ink").trim() || rootCs.getPropertyValue("--pd-ink").trim() || "#1B1916",
+      inkSoft: cs.getPropertyValue("--pd-ink-soft").trim() || rootCs.getPropertyValue("--pd-ink-soft").trim() || "#5E584E",
+      paper: cs.getPropertyValue("--pd-paper").trim() || rootCs.getPropertyValue("--pd-paper").trim() || "#F5F1E8",
+      surface: cs.getPropertyValue("--pd-surface").trim() || rootCs.getPropertyValue("--pd-surface").trim() || "#ECE6D9",
+      accent: cs.getPropertyValue("--pd-accent").trim() || rootCs.getPropertyValue("--pd-accent").trim() || "#1B1916",
+      sky: cs.getPropertyValue("--pd-sky").trim() || rootCs.getPropertyValue("--pd-sky").trim() || "#B9AF9A",
+      rule: cs.getPropertyValue("--pd-rule").trim() || rootCs.getPropertyValue("--pd-rule").trim() || "#DCD4C4",
+      card: cs.getPropertyValue("--pd-card").trim() || rootCs.getPropertyValue("--pd-card").trim() || "#1C1B18",
+      pos: cs.getPropertyValue("--pd-pos").trim() || rootCs.getPropertyValue("--pd-pos").trim() || "#1E7A46",
+      neg: cs.getPropertyValue("--pd-neg").trim() || rootCs.getPropertyValue("--pd-neg").trim() || "#B3261E",
     };
   }
 
@@ -522,7 +524,7 @@
                     }
                     c.fill();
 
-                    c.fillStyle = tokens.card || "#FFFFFF";
+                    c.fillStyle = tokens.paper || (isDark ? "#141311" : "#F5F1E8");
                     c.textAlign = "center";
                     c.textBaseline = "middle";
                     c.fillText(priceStr, pillX + pillW / 2, yClose);
