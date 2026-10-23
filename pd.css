@@ -1,28 +1,29 @@
 /* ============================================================
-   PERDATA · IDENTIDAD AZUL MARINO Y AZUL SOBRE NEUTROS FRÍOS
-   United Navy (#002244) + Rhapsody Blue (#1414D2 / #93B7F8)
-   Fondo #F7F8FA / #0F1012 · Tinta #0E1A2B / #ECECEC
-   Tipografía: Libre Franklin (títulos/UI), Source Serif 4 (lectura), IBM Plex Mono (cifras)
+   PERDATA · IDENTIDAD HUESO, TINTA Y ROJO PERÚ
+   Papel hueso (#F5F1E8 / #141311) · Tinta (#1B1916 / #EDE8DC)
+   Marca y acento (#1B1916 / #EDE8DC) · Perú marca (#C8102E / #E0384F)
+   Tipografía: Libre Franklin (UI), Source Serif 4 (lectura), IBM Plex Mono (cifras)
    Sin gradientes, sombras en reposo, bordes hairline ni tarjetas flotantes.
    ============================================================ */
 
 :root {
-  /* Papel y superficies (neutros fríos) */
-  --pd-paper: #F7F8FA;
-  --pd-card: #FFFFFF;
-  --pd-surface: #EEF1F5;
+  /* Papel y superficies (neutros hueso) */
+  --pd-paper: #F5F1E8;
+  --pd-card: #FBF9F4;
+  --pd-surface: #ECE6D9;
 
   /* Tinta y reglas */
-  --pd-ink: #0E1A2B;
-  --pd-ink-soft: #556170;
-  --pd-rule: #DCE1E8;
-  --pd-border: #DCE1E8;
+  --pd-ink: #1B1916;
+  --pd-ink-soft: #5E584E;
+  --pd-rule: #DCD4C4;
+  --pd-border: #DCD4C4;
 
   /* Marca y acentos */
-  --pd-brand: #002244;
-  --pd-accent: #1414D2;
-  --pd-accent-hover: #002244;
-  --pd-sky: #93B7F8;
+  --pd-brand: #1B1916;
+  --pd-accent: #1B1916;
+  --pd-accent-hover: #000000;
+  --pd-sky: #B9AF9A;
+  --pd-peru: #C8102E;
   --pd-mark: var(--pd-accent);
 
   /* Positivo / Negativo */
@@ -30,12 +31,12 @@
   --pd-neg: #B3261E;
 
   /* Focus */
-  --pd-focus: rgba(20, 20, 210, 0.35);
+  --pd-focus: rgba(27, 25, 22, 0.35);
 
   /* Alias de nombres heredados (no romper nada) */
-  --pd-blue: #1414D2;
-  --pd-navy: #002244;
-  --pd-navy-dark: #001A33;
+  --pd-blue: var(--pd-accent);
+  --pd-navy: var(--pd-brand);
+  --pd-navy-dark: #0F0E0D;
 
   /* Tipografía */
   --pd-font-ui: "Libre Franklin", -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Inter", sans-serif;
@@ -45,21 +46,22 @@
 
 html.dark {
   /* Papel y superficies */
-  --pd-paper: #0F1012;
-  --pd-card: #17181B;
-  --pd-surface: #1E2024;
+  --pd-paper: #141311;
+  --pd-card: #1C1B18;
+  --pd-surface: #24221E;
 
   /* Tinta y reglas */
-  --pd-ink: #ECECEC;
-  --pd-ink-soft: #A1A3A8;
-  --pd-rule: #2A2C31;
-  --pd-border: #2A2C31;
+  --pd-ink: #EDE8DC;
+  --pd-ink-soft: #A59E90;
+  --pd-rule: #33302A;
+  --pd-border: #33302A;
 
   /* Marca y acentos */
-  --pd-brand: #ECECEC;
-  --pd-accent: #93B7F8;
-  --pd-accent-hover: #B9CFFA;
-  --pd-sky: #93B7F8;
+  --pd-brand: #EDE8DC;
+  --pd-accent: #EDE8DC;
+  --pd-accent-hover: #FFFFFF;
+  --pd-sky: #8F8672;
+  --pd-peru: #E0384F;
   --pd-mark: var(--pd-accent);
 
   /* Positivo / Negativo */
@@ -67,12 +69,12 @@ html.dark {
   --pd-neg: #F07A72;
 
   /* Focus */
-  --pd-focus: rgba(147, 183, 248, 0.5);
+  --pd-focus: rgba(237, 232, 220, 0.5);
 
   /* Alias de nombres heredados */
-  --pd-blue: #93B7F8;
-  --pd-navy: #002244;
-  --pd-navy-dark: #001A33;
+  --pd-blue: var(--pd-accent);
+  --pd-navy: var(--pd-brand);
+  --pd-navy-dark: #0F0E0D;
 
   /* Tipografía */
   --pd-font-ui: "Libre Franklin", -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Inter", sans-serif;
@@ -345,26 +347,26 @@ html.dark .pd-accent-cta:hover {
 /* ---------- Surfaces, Rules & Overrides ---------- */
 /* header.bg-card: el <header> lleva .bg-card (!important); hay que superarlo en especificidad */
 header, header.bg-card {
-  background-color: #002244 !important;
-  border-bottom: 1px solid #0B3360 !important;
+  background-color: #1B1916 !important;
+  border-bottom: 1px solid #33302A !important;
   box-shadow: none !important;
 }
 
 html.dark header, html.dark header.bg-card {
-  background-color: #002244 !important;
-  border-bottom: 1px solid #0B3360 !important;
+  background-color: #0D0C0B !important;
+  border-bottom: 1px solid #33302A !important;
   box-shadow: none !important;
 }
 
 /* Header brand text */
 header a span.font-bold,
 header a span.text-ink {
-  color: #FFFFFF !important;
+  color: #F5F1E8 !important;
 }
 
 /* Header nav links */
 header nav a {
-  color: rgba(255, 255, 255, 0.78) !important;
+  color: rgba(245, 241, 232, 0.78) !important;
   text-decoration: none !important;
   transition: color 0.15s ease;
 }
@@ -372,46 +374,49 @@ header nav a {
 header nav a:hover,
 header nav a[aria-current="page"],
 header nav a.active {
-  color: #FFFFFF !important;
+  color: #F5F1E8 !important;
   text-decoration: underline !important;
-  text-decoration-color: var(--pd-sky) !important;
+  text-decoration-color: var(--pd-peru) !important;
   text-decoration-thickness: 2px !important;
   text-underline-offset: 4px !important;
 }
 
 /* Header theme toggle */
 header .ui-switch {
-  --switch-bg: rgba(255, 255, 255, 0.28);
-  --switch-checked-bg: #93B7F8;
-  --circle-bg: #FFFFFF;
+  --switch-bg: rgba(245, 241, 232, 0.28);
+  --switch-checked-bg: #F5F1E8;
+  --circle-bg: #1B1916;
 }
 html.dark header .ui-switch {
-  --switch-bg: rgba(255, 255, 255, 0.28);
-  --switch-checked-bg: #93B7F8;
-  --circle-bg: #002244;
+  --switch-bg: rgba(245, 241, 232, 0.28);
+  --switch-checked-bg: #F5F1E8;
+  --circle-bg: #0D0C0B;
 }
 
 /* Header mobile menu toggle button */
 header #mobileMenuBtn {
-  border-color: rgba(255, 255, 255, 0.4) !important;
-  color: #FFFFFF !important;
+  border-color: rgba(245, 241, 232, 0.4) !important;
+  color: #F5F1E8 !important;
   background: transparent !important;
 }
 header #mobileMenuBtn:hover {
-  background-color: rgba(255, 255, 255, 0.08) !important;
+  background-color: rgba(245, 241, 232, 0.08) !important;
 }
 
 /* Mobile drawer */
 #mobileMenu {
-  background-color: #002244 !important;
-  border-top: 1px solid #0B3360 !important;
+  background-color: #1B1916 !important;
+  border-top: 1px solid #33302A !important;
+}
+html.dark #mobileMenu {
+  background-color: #0D0C0B !important;
 }
 #mobileMenu a {
-  color: #FFFFFF !important;
+  color: #F5F1E8 !important;
 }
 #mobileMenu a:hover {
-  color: var(--pd-sky) !important;
-  background: rgba(255, 255, 255, 0.06) !important;
+  color: #FFFFFF !important;
+  background: rgba(245, 241, 232, 0.06) !important;
 }
 
 /* Neutral overrides to adapt Tailwind classes */
@@ -439,7 +444,7 @@ header #mobileMenuBtn:hover {
 }
 
 html.dark [class*="dark:bg-[#1C1C1E]"], html.dark [class*="dark:bg-[#161618]"],
-html.dark [class*="dark:bg-[#141415]"], html.dark [class*="dark:bg-[#141416]"] {
+html.dark [class*="dark:bg-[#161616]"] {
   background-color: var(--pd-card) !important;
 }
 
@@ -449,33 +454,33 @@ html.dark [class*="dark:bg-[#0D0D0E]"], html.dark [class*="dark:bg-[#000000]"] {
 
 /* ---------- Brand logo (chip «P») ---------- */
 .pd-logo {
-  background-color: #002244;
-  color: #FFFFFF;
+  background-color: #1B1916;
+  color: #F5F1E8;
   border: none;
   box-shadow: none;
 }
 
 html.dark .pd-logo {
-  background-color: #005DAA;
-  color: #FFFFFF;
+  background-color: #EDE8DC;
+  color: #141311;
 }
 
 header .pd-logo,
 html.dark header .pd-logo {
-  background-color: #FFFFFF !important;
-  color: #002244 !important;
+  background-color: #F5F1E8 !important;
+  color: #1B1916 !important;
 }
 
 /* Alias heredado para auth.js */
 .pd-mark {
   background-color: var(--pd-accent);
-  color: #FFFFFF;
+  color: var(--pd-card);
   border: none;
   box-shadow: none;
 }
 html.dark .pd-mark {
   background-color: var(--pd-accent);
-  color: #0F1012;
+  color: #141311;
 }
 
 /* ---------- Buttons & Interactive Elements ---------- */
@@ -554,15 +559,15 @@ html.dark .pd-btn-primary:hover {
 }
 .range-btn.is-active, .horizon-btn.is-active,
 .range-btn.bg-black, .horizon-btn.bg-black {
-  background: #002244 !important;
+  background: #1B1916 !important;
   color: #FFFFFF !important;
   font-weight: 700 !important;
 }
 html.dark .range-btn.is-active, html.dark .horizon-btn.is-active,
 html.dark .range-btn.bg-black, html.dark .horizon-btn.bg-black,
 html.dark .range-btn.bg-white, html.dark .horizon-btn.bg-white {
-  background: #93B7F8 !important;
-  color: #0F1012 !important;
+  background: #EDE8DC !important;
+  color: #141311 !important;
   font-weight: 700 !important;
 }
 
@@ -801,21 +806,21 @@ html.dark .pd-plan-badge {
 /* Header-specific auth & account overrides */
 header #navbarAuthContainer .pd-nav-btn,
 header #pdAcctBtn {
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border: 1px solid rgba(245, 241, 232, 0.4) !important;
   background: transparent !important;
-  color: #FFFFFF !important;
+  color: #F5F1E8 !important;
 }
 
 header #navbarAuthContainer .pd-nav-btn:hover,
 header #pdAcctBtn:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border-color: rgba(255, 255, 255, 0.6) !important;
-  color: #FFFFFF !important;
+  background: rgba(245, 241, 232, 0.08) !important;
+  border-color: rgba(245, 241, 232, 0.6) !important;
+  color: #F5F1E8 !important;
 }
 
 header .pd-avatar {
-  background: #FFFFFF !important;
-  color: #002244 !important;
+  background: #F5F1E8 !important;
+  color: #1B1916 !important;
 }
 
 .pd-acct-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -1053,7 +1058,7 @@ html.pd-motion.dark header.is-scrolled,
 html.pd-motion.dark header.bg-card.is-scrolled,
 html.dark.pd-motion header.is-scrolled,
 html.dark.pd-motion header.bg-card.is-scrolled {
-  border-bottom-color: rgba(147, 183, 248, 0.35) !important;
+  border-bottom-color: rgba(245, 241, 232, 0.35) !important;
 }
 
 /* 2. Entrada de secciones data-reveal (250ms, 8px, cubic-bezier(.05,.7,.1,1)) */
@@ -1113,23 +1118,23 @@ html.pd-motion .pd-btn {
    PORTADA: HERO MARINO, TERMINAL PANEL & RITMO DE SUPERFICIES
    ============================================================ */
 
-/* 1. Hero marino (#002244 en claro, #17181B en oscuro) */
+/* 1. Hero marino (#1B1916 en claro, #141311 en oscuro) */
 .pd-hero-navy {
-  background-color: #002244;
-  border-top: 1px solid rgba(147, 183, 248, 0.25);
-  color: #FFFFFF;
+  background-color: #1B1916;
+  border-top: 1px solid rgba(245, 241, 232, 0.25);
+  color: #F5F1E8;
 }
 html.dark .pd-hero-navy {
-  background-color: #17181B;
-  border-top: 1px solid rgba(147, 183, 248, 0.25);
+  background-color: #141311;
+  border-top: 1px solid rgba(245, 241, 232, 0.25);
 }
 
 .pd-hero-navy .pd-hero-answer {
-  color: rgba(255, 255, 255, 0.82) !important;
+  color: rgba(245, 241, 232, 0.82) !important;
 }
 
 .pd-hero-navy .pd-hero-answer .pd-num {
-  color: #FFFFFF !important;
+  color: #F5F1E8 !important;
   font-size: 26px !important;
   line-height: 1 !important;
   font-weight: 700 !important;
@@ -1137,24 +1142,24 @@ html.dark .pd-hero-navy {
 }
 
 .pd-hero-navy .pd-btn-primary {
-  background-color: #FFFFFF !important;
-  color: #002244 !important;
-  border: 1px solid #FFFFFF !important;
+  background-color: #F5F1E8 !important;
+  color: #1B1916 !important;
+  border: 1px solid #F5F1E8 !important;
 }
 .pd-hero-navy .pd-btn-primary:hover {
-  background-color: #E9EEF4 !important;
-  color: #002244 !important;
+  background-color: #FFFFFF !important;
+  color: #1B1916 !important;
 }
 
 .pd-hero-navy .pd-btn-ghost {
   background-color: transparent !important;
-  color: #FFFFFF !important;
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  color: #F5F1E8 !important;
+  border: 1px solid rgba(245, 241, 232, 0.5) !important;
 }
 .pd-hero-navy .pd-btn-ghost:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: rgba(245, 241, 232, 0.1) !important;
   color: #FFFFFF !important;
-  border-color: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(245, 241, 232, 0.8) !important;
 }
 
 /* 2. Panel terminal para el gráfico (único relieve con sombra) */
@@ -1162,7 +1167,7 @@ html.dark .pd-hero-navy {
   background-color: var(--pd-card);
   border: 1px solid var(--pd-rule);
   border-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0, 34, 68, 0.10), 0 12px 32px rgba(0, 34, 68, 0.18);
+  box-shadow: 0 1px 2px rgba(27, 25, 22, 0.10), 0 12px 32px rgba(27, 25, 22, 0.18);
   overflow: hidden;
 }
 html.dark .pd-terminal-panel {
@@ -1187,7 +1192,7 @@ header nav a.text-ink,
 }
 
 /* ===================== LANDING (diseño de Stitch de Agustín, adaptado a los tokens) ===================== */
-.pdl-hero { background: linear-gradient(180deg, var(--pd-surface) 0%, var(--pd-paper) 100%); border-bottom: 1px solid var(--pd-rule); }
+.pdl-hero { background: var(--pd-paper); border-bottom: 1px solid var(--pd-rule); }
 .pdl-h1 { font-family: var(--pd-font-read); font-weight: 400; font-size: clamp(40px, 5.4vw, 62px); line-height: 1.05; letter-spacing: -0.03em; color: var(--pd-ink); margin: 0 0 28px; }
 .pdl-h1-soft { font-style: italic; color: var(--pd-ink-soft); }
 .pdl-mask { display: block; overflow: hidden; padding-bottom: 0.08em; }
@@ -1196,15 +1201,16 @@ html.pd-motion .pdl-rise { animation: pdlRise 0.9s cubic-bezier(.16,1,.3,1) both
 html.pd-motion .pdl-rise-2 { animation-delay: .12s; }
 @keyframes pdlRise { from { opacity: 0; transform: translateY(105%); } to { opacity: 1; transform: none; } }
 
-.pdl-quote { border-left: 2px solid var(--pd-accent); padding-left: 20px; margin: 0 0 32px; }
+.pdl-quote { border-left: 2px solid var(--pd-peru); padding-left: 20px; margin: 0 0 32px; }
 .pdl-question { font-family: var(--pd-font-ui) !important; font-size: 20px; line-height: 1.4; color: var(--pd-ink); margin: 0 0 6px; }
 .pdl-answer { font-family: var(--pd-font-read); font-size: 18px; line-height: 1.55; color: var(--pd-ink-soft); margin: 0; }
 .pdl-answer .pd-num { font-family: var(--pd-font-ui); font-weight: 700; color: var(--pd-ink); font-variant-numeric: tabular-nums; }
 
 .pdl-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 22px; font-family: var(--pd-font-mono); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-radius: 2px; text-decoration: none; transition: background-color .2s ease, border-color .2s ease, color .2s ease; }
-.pdl-btn-primary { background: var(--pd-ink); color: var(--pd-card) !important; border: 1px solid var(--pd-ink); }
-.pdl-btn-primary:hover { background: var(--pd-accent); border-color: var(--pd-accent); }
-html.dark .pdl-btn-primary:hover { color: #0F1012 !important; }
+.pdl-btn-primary { background: var(--pd-ink); color: var(--pd-paper) !important; border: 1px solid var(--pd-ink); }
+.pdl-btn-primary:hover { background: #000000; border-color: #000000; color: var(--pd-paper) !important; }
+html.dark .pdl-btn-primary { background: var(--pd-paper); color: #141311 !important; border: 1px solid var(--pd-paper); }
+html.dark .pdl-btn-primary:hover { background: #FFFFFF; border-color: #FFFFFF; color: #141311 !important; }
 .pdl-btn-secondary { background: transparent; color: var(--pd-ink) !important; border: 1px solid var(--pd-rule); }
 .pdl-btn-secondary:hover { border-color: var(--pd-ink); }
 
@@ -1214,7 +1220,7 @@ html.dark .pdl-btn-primary:hover { color: #0F1012 !important; }
 .pdl-stats dd { margin: 4px 0 0; }
 .pdl-stat-val { font-family: var(--pd-font-mono); font-size: 15px; font-weight: 600; color: var(--pd-ink); font-variant-numeric: tabular-nums; }
 
-.pdl-card { background: var(--pd-card); border: 1px solid var(--pd-rule); padding: 24px; box-shadow: 0 4px 24px -6px rgba(0,34,68,.10); }
+.pdl-card { background: var(--pd-card); border: 1px solid var(--pd-rule); padding: 24px; box-shadow: 0 4px 24px -6px rgba(27,25,22,.10); }
 html.dark .pdl-card { box-shadow: none; }
 .pdl-card-head { display: flex; align-items: center; justify-content: space-between; padding-bottom: 16px; border-bottom: 1px solid var(--pd-rule); }
 .pdl-card-body { padding: 20px 0; border-bottom: 1px solid var(--pd-rule); }
@@ -1293,10 +1299,12 @@ html.pd-marketing main h2 {
 /* Texto de lectura de la landing y de Aprende: serif normal (Libre Franklin solo se carga en 600/700) */
 .pdl-text { font-family: var(--pd-font-read) !important; font-size: 17px !important; font-weight: 400 !important; line-height: 1.6 !important; color: var(--pd-ink) !important; }
 
-/* Logo: firma editorial (serif cursiva + punto), como en el diseño de Stitch */
-.pd-wordmark { font-family: var(--pd-font-read); font-style: italic; font-weight: 600; font-size: 24px; line-height: 1; letter-spacing: -0.01em; display: inline-flex; align-items: baseline; gap: 5px; white-space: nowrap; }
-.pd-wordmark i { width: 6px; height: 6px; border-radius: 50%; background: var(--pd-accent); display: inline-block; }
-header .pd-wordmark { color: #FFFFFF; }
-header .pd-wordmark i { background: #93B7F8; }
+/* Logo: firma editorial (serif cursiva + bandera del Perú) */
+.pd-wordmark { font-family: var(--pd-font-read); font-style: italic; font-weight: 600; font-size: 24px; line-height: 1; letter-spacing: -0.01em; display: inline-flex; align-items: baseline; gap: 0; white-space: nowrap; }
+.pd-flag { display: inline-flex; width: 16px; height: 11px; margin-left: 8px; border: 1px solid currentColor; opacity: 1; align-self: center; box-sizing: border-box; overflow: hidden; }
+.pd-flag b { flex: 1; height: 100%; }
+.pd-flag b:nth-child(1), .pd-flag b:nth-child(3) { background: #D91023; }
+.pd-flag b:nth-child(2) { background: #FFFFFF; }
+header .pd-wordmark { color: var(--pd-paper); }
 footer .pd-wordmark { color: var(--pd-ink); font-size: 22px; }
 @media (max-width: 640px) { header .pd-wordmark { font-size: 22px; } }

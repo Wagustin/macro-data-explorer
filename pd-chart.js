@@ -54,12 +54,12 @@
   function getComputedTokens(el) {
     const cs = window.getComputedStyle(el);
     return {
-      ink: cs.getPropertyValue("--pd-ink").trim() || "#0E1A2B",
-      inkSoft: cs.getPropertyValue("--pd-ink-soft").trim() || "#556170",
-      surface: cs.getPropertyValue("--pd-surface").trim() || "#EEF1F5",
-      accent: cs.getPropertyValue("--pd-accent").trim() || "#1414D2",
-      sky: cs.getPropertyValue("--pd-sky").trim() || "#93B7F8",
-      rule: cs.getPropertyValue("--pd-rule").trim() || "#DCE1E8",
+      ink: cs.getPropertyValue("--pd-ink").trim() || "#1B1916",
+      inkSoft: cs.getPropertyValue("--pd-ink-soft").trim() || "#5E584E",
+      surface: cs.getPropertyValue("--pd-surface").trim() || "#ECE6D9",
+      accent: cs.getPropertyValue("--pd-accent").trim() || "#1B1916",
+      sky: cs.getPropertyValue("--pd-sky").trim() || "#B9AF9A",
+      rule: cs.getPropertyValue("--pd-rule").trim() || "#DCD4C4",
       pos: cs.getPropertyValue("--pd-pos").trim() || "#1E7A46",
       neg: cs.getPropertyValue("--pd-neg").trim() || "#B3261E",
     };
@@ -318,7 +318,7 @@
         datasets.push({
           label: "P50",
           data: p50,
-          borderColor: tokens.accent,
+          borderColor: tokens.ink,
           backgroundColor: "transparent",
           borderWidth: 1.5,
           borderDash: [4, 4],
@@ -568,7 +568,7 @@
                 c.fillText("P90 " + sym + Number(valP90).toFixed(2), xText, pos90);
               }
               if (valP50 != null && !isNaN(valP50)) {
-                c.fillStyle = tokens.accent;
+                c.fillStyle = tokens.ink;
                 c.fillText("P50 " + sym + Number(valP50).toFixed(2), xText, pos50);
               }
               if (valP10 != null && !isNaN(valP10)) {
@@ -608,7 +608,7 @@
         dotHalo = document.createElement("div");
         dotHalo.className = "pd-dot-halo";
         dotHalo.style.cssText =
-          "position:absolute;z-index:20;width:8px;height:8px;border-radius:50%;background:" + tokens.accent + ";box-shadow:0 0 0 4px rgba(20,20,210,0.25);display:none;pointer-events:none;transform:translate(-50%,-50%);";
+          "position:absolute;z-index:20;width:8px;height:8px;border-radius:50%;background:" + tokens.accent + ";box-shadow:0 0 0 4px rgba(27,25,22,0.25);display:none;pointer-events:none;transform:translate(-50%,-50%);";
         container.style.position = container.style.position || "relative";
         container.appendChild(dotHalo);
       }
@@ -643,7 +643,7 @@
         }
         if (isFuture) {
           if (p != null && !isNaN(p)) {
-            html += `<div style="display:flex;justify-content:space-between;gap:8px;color:${tokens.accent};"><span>P50:</span><b style="font-variant-numeric:tabular-nums;">${sym}${Number(p).toFixed(2)}</b></div>`;
+            html += `<div style="display:flex;justify-content:space-between;gap:8px;color:${tokens.ink};"><span>P50:</span><b style="font-variant-numeric:tabular-nums;">${sym}${Number(p).toFixed(2)}</b></div>`;
           }
           if (p90[idx] != null && !isNaN(p90[idx])) {
             html += `<div style="display:flex;justify-content:space-between;gap:8px;color:${tokens.inkSoft};"><span>P90:</span><span style="font-variant-numeric:tabular-nums;">${sym}${Number(p90[idx]).toFixed(2)}</span></div>`;

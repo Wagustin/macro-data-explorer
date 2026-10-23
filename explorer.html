@@ -386,20 +386,20 @@
     .range-btn:not(.is-active):hover, .horizon-btn:not(.is-active):hover {
       color: var(--pd-ink) !important;
     }
-    /* Activo en modo claro: fondo --pd-brand (#002244) y texto blanco */
+    /* Activo en modo claro: fondo --pd-brand (#1B1916) y texto blanco */
     .range-btn.is-active, .horizon-btn.is-active,
     .range-btn.bg-black, .horizon-btn.bg-black {
-      background: #002244 !important;
+      background: #1B1916 !important;
       color: #FFFFFF !important;
       font-weight: 700 !important;
       box-shadow: none !important;
     }
-    /* Activo en modo oscuro: fondo --pd-accent (#93B7F8) y texto #0F1012 */
+    /* Activo en modo oscuro: fondo --pd-accent (#EDE8DC) y texto #141311 */
     html.dark .range-btn.is-active, html.dark .horizon-btn.is-active,
     html.dark .range-btn.bg-black, html.dark .horizon-btn.bg-black,
     html.dark .range-btn.bg-white, html.dark .horizon-btn.bg-white {
-      background: #93B7F8 !important;
-      color: #0F1012 !important;
+      background: #EDE8DC !important;
+      color: #141311 !important;
       font-weight: 700 !important;
       box-shadow: none !important;
     }
@@ -507,7 +507,7 @@
       <!-- Brand & Navigation -->
       <div class="flex items-center space-x-6">
         <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
-          <span class="pd-wordmark">PerData<i aria-hidden="true"></i></span>
+          <span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
         </a>
 
         <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
@@ -960,7 +960,7 @@
       <!-- Fila 1: Logo y enlaces cortos -->
       <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-rule">
         <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
-          <span class="pd-wordmark">PerData<i aria-hidden="true"></i></span>
+          <span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
         </a>
         <nav class="flex flex-wrap items-center gap-6 text-xs text-ink-soft" aria-label="Navegación secundaria">
           <a href="/terms" class="hover:text-ink transition no-underline">Términos</a>
@@ -2013,9 +2013,9 @@ const state = {
 
       const macroCtx = panelCanvas.getContext("2d");
       const tokens = window.getComputedStyle(container);
-      const inkSoft = tokens.getPropertyValue("--pd-ink-soft").trim() || "#556170";
-      const rule = tokens.getPropertyValue("--pd-rule").trim() || "#DCE1E8";
-      const accent = tokens.getPropertyValue("--pd-accent").trim() || "#1414D2";
+      const inkSoft = tokens.getPropertyValue("--pd-ink-soft").trim() || "#5E584E";
+      const rule = tokens.getPropertyValue("--pd-rule").trim() || "#DCD4C4";
+      const accent = tokens.getPropertyValue("--pd-accent").trim() || "#1B1916";
 
       if (window._macroChartInstance) window._macroChartInstance.destroy();
 
