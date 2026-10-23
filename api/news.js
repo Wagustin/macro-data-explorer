@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import dns from "node:dns";
 import { fileURLToPath } from "url";
+import defaultNewsCache from "../data/news-cache.json" with { type: "json" };
 import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
 
 // Prioritize IPv4 for DNS resolution in Node to prevent RSS fetch timeouts
@@ -13,9 +14,16 @@ try {
   // Ignore in environments where node:dns is unavailable or restricted
 }
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const CACHE_PATH = path.join(__dirname, "../data/news-cache.json");
+let CACHE_PATH = "/tmp/news-cache.json";
+try {
+  if (typeof import.meta?.url === "string") {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    CACHE_PATH = path.join(__dirname, "../data/news-cache.json");
+  }
+} catch {
+  CACHE_PATH = "/tmp/news-cache.json";
+}
 
 // Cache TTL: 20 minutes (within 15-30 min range)
 export const CACHE_TTL_MS = 20 * 60 * 1000;
@@ -263,7 +271,7 @@ export async function fetchMacroNews() {
 
 function readDiskCache() {
   try {
-    if (fs.existsSync(CACHE_PATH)) {
+    if (typeof fs?.existsSync === "function" && fs.existsSync(CACHE_PATH)) {
       const raw = fs.readFileSync(CACHE_PATH, "utf-8");
       const parsed = JSON.parse(raw);
       if (parsed && Array.isArray(parsed.news) && parsed.news.length > 0) {
@@ -276,13 +284,39 @@ function readDiskCache() {
   return null;
 }
 
-function writeDiskCache(payload) {
+async function readCache() {
+  if (globalThis.PERDATA_KV) {
+    try {
+      const kvData = await globalThis.PERDATA_KV.get("news-cache", "json");
+      if (kvData && Array.isArray(kvData.news) && kvData.news.length > 0) {
+        return kvData;
+      }
+    } catch {}
+  }
+  const disk = readDiskCache();
+  if (disk && Array.isArray(disk.news) && disk.news.length > 0) {
+    return disk;
+  }
+  if (defaultNewsCache && Array.isArray(defaultNewsCache.news) && defaultNewsCache.news.length > 0) {
+    return defaultNewsCache;
+  }
+  return null;
+}
+
+async function writeDiskCache(payload) {
+  if (globalThis.PERDATA_KV) {
+    try {
+      await globalThis.PERDATA_KV.put("news-cache", JSON.stringify(payload), { expirationTtl: 86400 });
+    } catch {}
+  }
   try {
-    const dir = path.dirname(CACHE_PATH);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+    if (typeof fs?.existsSync === "function") {
+      const dir = path.dirname(CACHE_PATH);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(CACHE_PATH, JSON.stringify(payload, null, 2), "utf-8");
     }
-    fs.writeFileSync(CACHE_PATH, JSON.stringify(payload, null, 2), "utf-8");
   } catch {
     // In read-only serverless filesystems (e.g. AWS Lambda / Vercel), catch write errors
   }
@@ -298,7 +332,7 @@ async function performNewsIngestion() {
         updatedAt: nowIso,
         timestamp: Date.now()
       };
-      writeDiskCache({
+      await writeDiskCache({
         updatedAt: nowIso,
         count: freshNews.length,
         news: freshNews
@@ -325,7 +359,7 @@ export async function refreshNewsCache() {
     };
   }
 
-  const disk = readDiskCache();
+  const disk = await readCache();
   const fallbackPayload = {
     updatedAt: disk?.updatedAt || new Date().toISOString(),
     count: disk?.news?.length || FALLBACK_NEWS.length,
@@ -370,10 +404,10 @@ export async function getMacroNews(force = false) {
     };
   }
 
-  // 2. Check disk cache if in-memory cache is empty (cold start)
+  // 2. Check cache if in-memory cache is empty (cold start)
   let diskData = null;
   if (!inMemoryCache.news) {
-    diskData = readDiskCache();
+    diskData = await readCache();
     if (diskData && diskData.news && diskData.news.length > 0) {
       const diskTime = diskData.updatedAt ? Date.parse(diskData.updatedAt) : 0;
       const diskFresh = (now - diskTime < CACHE_TTL_MS);

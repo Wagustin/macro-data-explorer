@@ -67,15 +67,15 @@ export function getClientIp(req) {
 
 // In-memory per-IP buckets: `${ip}:${type}` -> { count, resetAt }
 const buckets = new Map();
+let lastCleanup = 0;
 
-// Periodic cleanup every 5 minutes
-const cleanupTimer = setInterval(() => {
-  const now = Date.now();
+function cleanupExpiredBuckets(now) {
+  if (now - lastCleanup < 60 * 1000) return;
+  lastCleanup = now;
   for (const [key, b] of buckets.entries()) {
     if (b.resetAt <= now) buckets.delete(key);
   }
-}, 5 * 60 * 1000);
-if (cleanupTimer.unref) cleanupTimer.unref();
+}
 
 /**
  * Per-IP rate limiter (120 req/min anon, 300 req/min with a Bearer token).
@@ -92,6 +92,7 @@ export function handleRateLimit(req, res) {
   // 120 req/min for anonymous, 300 req/min with a Bearer token
   const limit = hasAuthHint ? 300 : 120; // 120: en Perú muchos móviles comparten IP (CGNAT)
   const now = Date.now();
+  cleanupExpiredBuckets(now);
   const windowMs = 60 * 1000;
 
   const key = `${ip}:${hasAuthHint ? "auth" : "anon"}`;

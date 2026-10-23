@@ -23,24 +23,14 @@
  */
 
 import fs from "fs";
+import defaultCalibration from "./_lib/calibration.json" with { type: "json" };
 import { PLANS, planForUser, canUseHorizon, upgradeRequired } from "./_lib/plans.js";
 import { getAuthUserOrNull } from "./_lib/session.js";
 import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
 
 // ---------- calibration loader (empirically calibrated quantile bands) ----------
-let _calibration = null;
+let _calibration = defaultCalibration;
 export function getCalibration() {
-  if (_calibration !== null) return _calibration;
-  try {
-    const p = new URL("./_lib/calibration.json", import.meta.url);
-    if (fs.existsSync(p)) {
-      _calibration = JSON.parse(fs.readFileSync(p, "utf-8"));
-    } else {
-      _calibration = false;
-    }
-  } catch (e) {
-    _calibration = false;
-  }
   return _calibration;
 }
 
@@ -371,15 +361,17 @@ async function fetchTimesfmForecast(symbol, H) {
 
   // 4. Intentar caché local generada por el script batch (servidor local)
   try {
-    const localCachePath = new URL("../data/timesfm-forecasts-cache.json", import.meta.url);
-    if (fs.existsSync(localCachePath)) {
-      const allRows = JSON.parse(fs.readFileSync(localCachePath, "utf-8"));
-      const match = allRows.find(r => r.symbol === symbol && r.horizon === H && r.model === "timesfm-2.5");
-      if (match) {
-        const ageHours = (Date.now() - new Date(match.run_at).getTime()) / (1000 * 60 * 60);
-        if (ageHours < 48) {
-          setCachedMemoryForecast(symbol, H, match);
-          return match;
+    if (typeof import.meta?.url === "string") {
+      const localCachePath = new URL("../data/timesfm-forecasts-cache.json", import.meta.url);
+      if (typeof fs?.existsSync === "function" && fs.existsSync(localCachePath)) {
+        const allRows = JSON.parse(fs.readFileSync(localCachePath, "utf-8"));
+        const match = allRows.find(r => r.symbol === symbol && r.horizon === H && r.model === "timesfm-2.5");
+        if (match) {
+          const ageHours = (Date.now() - new Date(match.run_at).getTime()) / (1000 * 60 * 60);
+          if (ageHours < 48) {
+            setCachedMemoryForecast(symbol, H, match);
+            return match;
+          }
         }
       }
     }
