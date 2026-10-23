@@ -1,0 +1,44 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "perdata-cf",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-23",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "build": {
+    "command": "node scripts/build-cf.js"
+  },
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "html_handling": "drop-trailing-slash",
+    "run_worker_first": true
+  },
+  "kv_namespaces": [
+    {
+      "binding": "PERDATA_KV",
+      "id": "5adf4c3e2d234a9d85664b7eb56febe3",
+      "preview_id": "9f8fa96deac4400b96dff9100a11c1d5"
+    }
+  ],
+  "triggers": {
+    "crons": [
+      "0 5 * * *"
+    ]
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "vars": {
+    "ENVIRONMENT": "production",
+    "SUPABASE_URL": "https://hhutoitkkomfzkmakwts.supabase.co",
+    "APP_URL": "https://perdata.site",
+    "STRIPE_PRICE_ID_MONTHLY": "price_1UT7T2PohxxHwL5eh5KDVHck",
+    "STRIPE_PRICE_ID_YEARLY": "price_1UT7f4PohxxHwL5eGnPLeFcX",
+    "STRIPE_PORTAL_CONFIG_ID": "bpc_1UT7T3PohxxHwL5emDS2ENs2",
+    "EMAIL_FROM": "PerData <no-reply@perdata.site>"
+  }
+}
