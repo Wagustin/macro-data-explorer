@@ -1308,3 +1308,8 @@ html.pd-marketing main h2 {
 header .pd-wordmark { color: var(--pd-paper); }
 footer .pd-wordmark { color: var(--pd-ink); font-size: 22px; }
 @media (max-width: 640px) { header .pd-wordmark { font-size: 22px; } }
+
+/* Hotfix modo oscuro (Claude 23-oct): --pd-paper es el fondo casi negro en oscuro, no el hueso. */
+header .pd-wordmark { color: #F5F1E8; }
+html.dark .pdl-btn-primary { background: var(--pd-ink); border-color: var(--pd-ink); color: #141311 !important; }
+html.dark .pdl-btn-primary:hover { background: #FFFFFF; border-color: #FFFFFF; color: #141311 !important; }
