@@ -1292,3 +1292,11 @@ html.pd-marketing main h2 {
 .pdl-toc { list-style: none; margin: 8px 0 0; padding: 16px 0 0; border-top: 1px solid var(--pd-rule); display: flex; flex-wrap: wrap; gap: 8px 20px; }
 /* Texto de lectura de la landing y de Aprende: serif normal (Libre Franklin solo se carga en 600/700) */
 .pdl-text { font-family: var(--pd-font-read) !important; font-size: 17px !important; font-weight: 400 !important; line-height: 1.6 !important; color: var(--pd-ink) !important; }
+
+/* Logo: firma editorial (serif cursiva + punto), como en el diseño de Stitch */
+.pd-wordmark { font-family: var(--pd-font-read); font-style: italic; font-weight: 600; font-size: 24px; line-height: 1; letter-spacing: -0.01em; display: inline-flex; align-items: baseline; gap: 5px; white-space: nowrap; }
+.pd-wordmark i { width: 6px; height: 6px; border-radius: 50%; background: var(--pd-accent); display: inline-block; }
+header .pd-wordmark { color: #FFFFFF; }
+header .pd-wordmark i { background: #93B7F8; }
+footer .pd-wordmark { color: var(--pd-ink); font-size: 22px; }
+@media (max-width: 640px) { header .pd-wordmark { font-size: 22px; } }
