@@ -377,9 +377,29 @@
               bottom: 4,
             },
           },
-          animation: {
-            duration: reduceMotion() ? 0 : 600,
+          animation: reduceMotion() ? false : {
+            duration: 750,
             easing: "easeOutQuart",
+          },
+          animations: reduceMotion() ? {} : {
+            y: {
+              type: "number",
+              easing: "easeOutQuart",
+              duration: 380,
+              delay: function(ctx) {
+                if (reduceMotion()) return 0;
+                return ctx.datasetIndex === 0 ? 0 : 350;
+              }
+            },
+            x: {
+              type: "number",
+              easing: "linear",
+              duration: 350,
+              delay: function(ctx) {
+                if (reduceMotion()) return 0;
+                return ctx.datasetIndex === 0 ? 0 : 350;
+              }
+            }
           },
           interaction: { mode: "nearest", intersect: false, axis: "x" },
           plugins: {

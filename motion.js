@@ -30,13 +30,16 @@
       document.querySelectorAll('[data-reveal], [data-stagger]').forEach(el => el.classList.add('is-revealed'));
     }, 1500);
 
-    const cells = document.querySelectorAll('[data-cell-price], [data-cell-pct], [data-cell-p50]');
+    const cells = document.querySelectorAll('[data-cell-price], [data-cell-pct], [data-cell-p50], #pdCardP50, #pdCardP10, #pdCardP90, #pdCardChange, #pd-p10, #pd-p50, #pd-p90');
     if (cells.length && 'MutationObserver' in window) {
       const mo = new MutationObserver((mutations) => {
         mutations.forEach(m => {
           const el = m.target.nodeType === 1 ? m.target : m.target.parentElement;
-          if (el && el.animate) {
-            el.animate([{ opacity: 0.2 }, { opacity: 1 }], { duration: 150, easing: 'ease-out' });
+          if (el && el.animate && el.textContent.trim() !== '—') {
+            el.animate([
+              { opacity: 0.35, transform: 'translateY(4px)' },
+              { opacity: 1, transform: 'translateY(0)' }
+            ], { duration: 160, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' });
           }
         });
       });

@@ -1075,11 +1075,11 @@ html.pd-motion [data-reveal].is-revealed {
   transform: translateY(0);
 }
 
-/* 3. Filas escalonadas data-stagger (25ms por fila, máx 8 filas) */
+/* 3. Filas escalonadas data-stagger (40ms por fila, sobrio) */
 html.pd-motion [data-stagger] > * {
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 250ms cubic-bezier(0.05, 0.7, 0.1, 1), transform 250ms cubic-bezier(0.05, 0.7, 0.1, 1);
+  transform: translateY(6px);
+  transition: opacity 220ms cubic-bezier(0.16, 1, 0.3, 1), transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 
@@ -1089,16 +1089,35 @@ html.pd-motion [data-stagger].is-revealed > * {
 }
 
 html.pd-motion [data-stagger] > *:nth-child(1) { transition-delay: 0ms; }
-html.pd-motion [data-stagger] > *:nth-child(2) { transition-delay: 25ms; }
-html.pd-motion [data-stagger] > *:nth-child(3) { transition-delay: 50ms; }
-html.pd-motion [data-stagger] > *:nth-child(4) { transition-delay: 75ms; }
-html.pd-motion [data-stagger] > *:nth-child(5) { transition-delay: 100ms; }
-html.pd-motion [data-stagger] > *:nth-child(6) { transition-delay: 125ms; }
-html.pd-motion [data-stagger] > *:nth-child(7) { transition-delay: 150ms; }
-html.pd-motion [data-stagger] > *:nth-child(8) { transition-delay: 175ms; }
+html.pd-motion [data-stagger] > *:nth-child(2) { transition-delay: 40ms; }
+html.pd-motion [data-stagger] > *:nth-child(3) { transition-delay: 80ms; }
+html.pd-motion [data-stagger] > *:nth-child(4) { transition-delay: 120ms; }
+html.pd-motion [data-stagger] > *:nth-child(5) { transition-delay: 160ms; }
+html.pd-motion [data-stagger] > *:nth-child(6) { transition-delay: 200ms; }
+html.pd-motion [data-stagger] > *:nth-child(7) { transition-delay: 240ms; }
+html.pd-motion [data-stagger] > *:nth-child(8) { transition-delay: 280ms; }
 html.pd-motion [data-stagger] > *:nth-child(n+9) { transition-delay: 0ms; }
 
-/* Gráfico de portada: fade sutil de 300ms al cargar (hero y canvas NO llevan data-reveal) */
+/* 4. Tarjetas de metodología: entrada con peso en viewport */
+html.pd-motion .pdl-principle[data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 320ms cubic-bezier(0.16, 1, 0.3, 1), transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+html.pd-motion .pdl-principle[data-reveal].is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 5. Pastilla del precio (S/ 3.50) con entrada sutil de 160ms */
+html.pd-motion .pdl-card .pdl-big,
+html.pd-motion .pdl-card #pdCardChange {
+  transition: opacity 160ms cubic-bezier(0.16, 1, 0.3, 1), transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+/* Gráfico de portada: fade sutil de 300ms al cargar */
 html.pd-motion #pdHeroChart {
   animation: pdHeroChartFade 300ms ease-out forwards;
 }
