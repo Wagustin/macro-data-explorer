@@ -45,16 +45,17 @@
 }
 
 html.dark {
-  /* Papel y superficies */
+  /* Papel y superficies (capas de papel oscuro cálido, Stitch) */
   --pd-paper: #141311;
-  --pd-card: #1C1B18;
-  --pd-surface: #24221E;
+  --pd-surface: #1B1916;
+  --pd-card: #23211D;
+  --pd-chip: #2B2823;
 
   /* Tinta y reglas */
   --pd-ink: #EDE8DC;
-  --pd-ink-soft: #A59E90;
-  --pd-rule: #33302A;
-  --pd-border: #33302A;
+  --pd-ink-soft: #A8A193;
+  --pd-rule: #332F2A;
+  --pd-border: #332F2A;
 
   /* Marca y acentos */
   --pd-brand: #EDE8DC;
@@ -1210,12 +1211,14 @@ html.dark .pdl-btn-primary:hover { background: #FFFFFF; border-color: #FFFFFF; c
 .pdl-stat-val { font-family: var(--pd-font-mono); font-size: 15px; font-weight: 600; color: var(--pd-ink); font-variant-numeric: tabular-nums; }
 
 .pdl-card { background: var(--pd-card); border: 1px solid var(--pd-rule); padding: 24px; box-shadow: 0 4px 24px -6px rgba(27,25,22,.10); }
-html.dark .pdl-card { box-shadow: none; }
+html.dark .pdl-card { background: var(--pd-card); border: 1px solid var(--pd-rule); box-shadow: 0 4px 24px -6px rgba(0,0,0,.45); }
 .pdl-card-head { display: flex; align-items: center; justify-content: space-between; padding-bottom: 16px; border-bottom: 1px solid var(--pd-rule); }
 .pdl-card-body { padding: 20px 0; border-bottom: 1px solid var(--pd-rule); }
 .pdl-big { font-family: var(--pd-font-read); font-size: clamp(44px, 5vw, 56px); font-weight: 500; letter-spacing: -.02em; color: var(--pd-ink); line-height: 1.1; }
-.pdl-chip { font-size: 12px; color: var(--pd-accent); border: 1px solid var(--pd-rule); padding: 2px 8px; }
+.pdl-chip { font-size: 12px; color: var(--pd-accent); border: 1px solid var(--pd-rule); padding: 2px 8px; background: var(--pd-surface); }
+html.dark .pdl-chip { background: var(--pd-chip, #2B2823); border-color: var(--pd-rule); color: #FFFFFF; }
 .pdl-band { margin-top: 16px; padding: 12px 14px; background: var(--pd-surface); border: 1px solid var(--pd-rule); display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: end; }
+html.dark .pdl-band { background: var(--pd-surface); border-color: var(--pd-rule); }
 .pdl-band > div > .pdl-label { font-size: 10px; margin-bottom: 2px; }
 .pdl-card-chart { padding-top: 18px; }
 .pdl-link { font-family: var(--pd-font-ui); font-size: 13px; font-weight: 500; color: var(--pd-accent); text-decoration: none; }
@@ -1301,7 +1304,24 @@ footer .pd-wordmark { color: var(--pd-ink); font-size: 22px; }
 /* Hotfix modo oscuro (Claude 23-oct): --pd-paper es el fondo casi negro en oscuro, no el hueso. */
 header .pd-wordmark { color: #F5F1E8; }
 html.dark .pdl-btn-primary { background: var(--pd-ink); border-color: var(--pd-ink); color: #141311 !important; }
-html.dark .pdl-btn-primary:hover { background: #FFFFFF; border-color: #FFFFFF; color: #141311 !important; }
+html.dark .pdl-btn-primary:hover { background: #FFFFFF; border-color: var(--pd-peru); color: #141311 !important; }
+html.dark .pdl-btn-secondary { border-color: #4A443B; color: var(--pd-ink) !important; }
+html.dark .pdl-btn-secondary:hover { border-color: var(--pd-ink); color: #FFFFFF !important; }
+
+/* Cifras en blanco puro en modo oscuro con tabular-nums */
+html.dark .tnum,
+html.dark [data-stat],
+html.dark [data-ind-val],
+html.dark [data-cell-price],
+html.dark [data-cell-p50],
+html.dark .pdl-stat-val,
+html.dark .pdl-big,
+html.dark .pdl-num,
+html.dark .pd-num,
+html.dark .pd-val {
+  color: #FFFFFF !important;
+  font-variant-numeric: tabular-nums;
+}
 
 /* ============================================================
    Terminal Panel del Gráfico (estilo pantalla de terminal de grafito)
