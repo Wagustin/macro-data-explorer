@@ -1,37 +1,40 @@
 ---
 version: alpha
 name: PerData
-description: "Terminal cuantitativa y publicación financiera para la Bolsa de Valores de Lima (BVL). Estética sobria basada en azul marino y azul sobre neutros fríos: fondo papel (#F7F8FA / #0F1012), tarjeta (#FFFFFF / #17181B), tinta (#0E1A2B / #E9EEF4), azul marino (#002244), acento azul (#1414D2 / #93B7F8) y filetes de 1px (#DCE1E8 / #2A2C31). Tipografía: Libre Franklin (headings/UI), Source Serif 4 (lectura) e IBM Plex Mono (datos y tickers con tabular-nums)."
+description: "Terminal cuantitativa y publicación financiera para el mercado peruano (Bolsa de Valores de Lima, dólar interbancario US$/PEN y materias primas). Identidad sobria y rigurosa basada en papel hueso (#F5F1E8 / #141311), tinta (#1B1916 / #EDE8DC) y acento de identidad rojo Perú (#C8102E / #E0384F) reservado exclusivamente a la marca."
 colors:
-  primary: "#002244"
-  secondary: "#556170"
-  tertiary: "#1414D2"
-  surface: "#EEF1F5"
-  border: "#DCE1E8"
-  on-primary: "#FFFFFF"
+  primary: "#1B1916"
+  secondary: "#5E584E"
+  tertiary: "#C8102E"
+  neutral: "#F5F1E8"
+  surface: "#ECE6D9"
+  card: "#FBF9F4"
+  border: "#DCD4C4"
+  sky: "#B9AF9A"
+  on-primary: "#F5F1E8"
   on-tertiary: "#FFFFFF"
 typography:
   display:
-    fontFamily: "Libre Franklin"
+    fontFamily: "Source Serif 4"
     fontSize: "3.5rem"
-    fontWeight: 700
+    fontWeight: 400
     lineHeight: 1.05
-    letterSpacing: "-0.04em"
+    letterSpacing: "-0.03em"
   h1:
-    fontFamily: "Libre Franklin"
+    fontFamily: "Source Serif 4"
     fontSize: "2.75rem"
-    fontWeight: 700
+    fontWeight: 400
     lineHeight: 1.05
-    letterSpacing: "-0.035em"
+    letterSpacing: "-0.03em"
   h2:
-    fontFamily: "Libre Franklin"
+    fontFamily: "Source Serif 4"
     fontSize: "2rem"
-    fontWeight: 700
+    fontWeight: 400
     lineHeight: 1.15
     letterSpacing: "-0.025em"
   h3:
     fontFamily: "Libre Franklin"
-    fontSize: "1.5rem"
+    fontSize: "1.375rem"
     fontWeight: 600
     lineHeight: 1.2
     letterSpacing: "-0.015em"
@@ -40,13 +43,11 @@ typography:
     fontSize: "1.125rem"
     fontWeight: 400
     lineHeight: 1.55
-    letterSpacing: "0em"
-  body-emphasis:
-    fontFamily: "Source Serif 4"
-    fontSize: "1.125rem"
+  body-ui:
+    fontFamily: "Libre Franklin"
+    fontSize: "0.9375rem"
     fontWeight: 600
-    lineHeight: 1.55
-    letterSpacing: "0em"
+    lineHeight: 1.45
   caption:
     fontFamily: "Libre Franklin"
     fontSize: "0.6875rem"
@@ -58,13 +59,11 @@ typography:
     fontSize: "0.8125rem"
     fontWeight: 500
     lineHeight: 1.5
-    letterSpacing: "0em"
   mono-sm:
     fontFamily: "IBM Plex Mono"
     fontSize: "0.6875rem"
     fontWeight: 500
     lineHeight: 1.4
-    letterSpacing: "0em"
 rounded:
   sm: 4px
   md: 4px
@@ -80,167 +79,147 @@ spacing:
   xxxl: 110px
 components:
   button-primary:
-    backgroundColor: "{colors.tertiary}"
-    textColor: "{colors.on-tertiary}"
-    rounded: "{rounded.sm}"
-    padding: "10px 20px"
-  button-primary-hover:
     backgroundColor: "{colors.primary}"
     textColor: "{colors.on-primary}"
     rounded: "{rounded.sm}"
-    padding: "10px 20px"
-  button-ghost:
-    backgroundColor: "transparent"
+    padding: "12px 20px"
+  button-primary-hover:
+    backgroundColor: "#000000"
+    textColor: "{colors.on-primary}"
+    rounded: "{rounded.sm}"
+    padding: "12px 20px"
+  button-secondary:
+    backgroundColor: "{colors.card}"
     textColor: "{colors.primary}"
     rounded: "{rounded.sm}"
-    padding: "10px 20px"
-  button-ghost-hover:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.tertiary}"
+    padding: "12px 20px"
+  header:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.neutral}"
+    padding: "14px 24px"
+  card:
+    backgroundColor: "{colors.card}"
+    textColor: "{colors.primary}"
     rounded: "{rounded.sm}"
-    padding: "10px 20px"
-  button-accent:
+    padding: "24px"
+  surface-panel:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.secondary}"
+    padding: "18px 16px"
+  flag-badge:
     backgroundColor: "{colors.tertiary}"
     textColor: "{colors.on-tertiary}"
-    rounded: "{rounded.sm}"
-    padding: "10px 20px"
-  segmented-control:
-    backgroundColor: "{colors.surface}"
-    rounded: "{rounded.sm}"
-    padding: "3px"
-  segmented-btn:
-    rounded: "{rounded.sm}"
-    padding: "0 12px"
-  segmented-btn-active:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.on-primary}"
-    rounded: "{rounded.sm}"
-    padding: "0 12px"
-  input:
-    backgroundColor: "#ffffff"
-    rounded: "{rounded.sm}"
-    padding: "0 14px"
-  input-focus:
-    backgroundColor: "#ffffff"
-    rounded: "{rounded.sm}"
-    padding: "0 14px"
-  select:
-    backgroundColor: "#ffffff"
-    rounded: "{rounded.sm}"
-    padding: "0 30px 0 10px"
-  card:
-    backgroundColor: "#ffffff"
-    rounded: "{rounded.sm}"
-    padding: "24px"
-  stat-strip:
-    backgroundColor: "transparent"
-    padding: "0"
-  stat:
-    backgroundColor: "transparent"
-    padding: "10px 16px 11px"
-  table-header:
-    backgroundColor: "{colors.surface}"
-    padding: "10px 16px"
-  table-row:
-    backgroundColor: "transparent"
-    padding: "10px 16px"
-  table-row-hover:
-    backgroundColor: "{colors.surface}"
-    padding: "10px 16px"
-  kpi-value:
-    backgroundColor: "transparent"
-    padding: "0"
-  band-label:
-    backgroundColor: "transparent"
-    padding: "0"
-  chip:
-    backgroundColor: "{colors.surface}"
-    rounded: "{rounded.sm}"
-    padding: "0 10px"
-  chip-hover:
-    backgroundColor: "{colors.surface}"
-    rounded: "{rounded.sm}"
-    padding: "0 10px"
-  locked:
-    backgroundColor: "transparent"
-    padding: "0"
-  switch:
-    backgroundColor: "rgb(228, 225, 218)"
-    rounded: "{rounded.full}"
-    padding: "0"
-  modal:
-    backgroundColor: "#ffffff"
-    rounded: "{rounded.sm}"
-    padding: "24px"
+    padding: "2px 6px"
+  sky-fan:
+    backgroundColor: "{colors.sky}"
+    textColor: "{colors.primary}"
+  border-line:
+    backgroundColor: "{colors.border}"
+    textColor: "{colors.primary}"
 ---
 
 ## Overview
 
-PerData es una publicación financiera seria y terminal cuantitativa para la Bolsa de Valores de Lima (BVL) y mercados macrofinancieros andinos. Su identidad visual evoca la autoridad y sobriedad de un informe impreso o diario de referencia: maquetación editorial alineada a la izquierda, tipografía que combina Libre Franklin para titulares y controles con Source Serif 4 para lectura reposada, y una paleta sobria basada en azul marino y azul sobre neutros fríos (papel #F7F8FA, tarjeta #FFFFFF y tinta #0E1A2B), con azul marino (#002244), acento azul (#1414D2 / #93B7F8), filetes de separación de 1px (#DCE1E8 / #2A2C31) y azul cielo (#93B7F8) para subrayado.
+### 1. Qué es PerData y para quién
+PerData es una terminal cuantitativa y publicación financiera independiente para el mercado peruano. Cubre la Bolsa de Valores de Lima (BVL), el tipo de cambio interbancario US$/PEN y materias primas estratégicas como cobre y oro. Está dirigida a tesoreros corporativos, directores financieros, analistas cuantitativos, inversionistas y profesionales del sector financiero que requieren análisis objetivo con rigor estadístico y sin sesgo comercial.
 
-No hay degradados, sombras decorativas en reposo, bordes con radio superior a 4px, ni rejillas de tarjetas flotantes: la jerarquía visual nace del ritmo tipográfico, filetes limpios y datos numéricos tabulares de alta legibilidad.
+En PerData la veracidad y la precisión de los datos están estrictamente por encima de cualquier consideración publicitaria o de marketing. Cada visualización comunica incertidumbre real mediante distribuciones de probabilidad calibradas empíricamente.
+
+### 2. Principios de diseño e ingeniería
+- **Cada cifra es real:** Datos de mercado y fuentes oficiales sin inventos, proxies oscuros ni extrapolaciones no declaradas.
+- **Nada inventado ni sellos falsos:** Cero testimonios simulados, logos de empresas ficticias o sellos de certificación engañosos.
+- **El movimiento sirve a la lectura:** Animaciones funcionales y contenidas (250 ms, 8 px) orientadas a facilitar la lectura jerárquica; desactivación completa ante `prefers-reduced-motion`.
+- **Español llano y directo:** Redacción sobria sin tríadas de adjetivos publicitarios ni expresiones infladas («110%», «rigurosísimo», «líder del mercado»).
+- **Un solo sistema visual:** Coherencia de maquetación, proporciones y tokens entre la portada, la terminal interactiva (/explorer) y las páginas de documentación y lectura.
+- **Firma institucional única:** PerData se firma como «PerData». Queda prohibido consignar nombres o datos personales del fundador en la plataforma pública.
 
 ## Colors
 
-- **Primary (#002244):** Azul marino institucional — usado en cabecera persistente, marca y acentos de navegación.
-- **Secondary (#556170):** Tinta suave — texto secundario, explicaciones, metadatos y etiquetas.
-- **Tertiary (#1414D2):** Azul vivo de acción — reservado con moderación para botones primarios, enlaces activos, filete Pro y badges.
-- **Sky (#93B7F8):** Azul claro — subrayado técnico de 3px de la palabra clave en el hero y enlaces activos de navegación.
-- **Paper (#F7F8FA):** Fondo general de página en modo claro (en modo oscuro: #0F1012).
-- **Surface (#EEF1F5):** Superficie neutra fría para controles, tablas y fondos sutiles (en modo oscuro: #1E2024).
-- **Border / Rule (#DCE1E8):** Filete de 1px para delimitar secciones, listas y tablas (en modo oscuro: #2A2C31).
-- **Positive (#1E7A46):** Cifras y variaciones al alza (en modo oscuro: #5FBF85).
-- **Negative (#B3261E):** Cifras y variaciones a la baja (en modo oscuro: #F07A72).
+### 3. Color y Tokens de Identidad
+La dirección visual adopta la estética de publicaciones financieras históricas de referencia («papel y tinta») combinada con la identidad sobria de la economía peruana. El fondo es un blanco hueso orgánico, la cabecera es tinta profunda casi negra y el rojo Perú se reserva de forma estricta y exclusiva para la marca institucional.
+
+| Token | Modo Claro | Modo Oscuro | Uso Permitido | Uso Prohibido |
+|---|---|---|---|---|
+| `--pd-paper` | #F5F1E8 | #141311 | Fondos principales de página, lienzos generales | Prohibido en textos y trazos de datos |
+| `--pd-card` | #FBF9F4 | #1C1B18 | Tarjetas de información, paneles de control, tablas | Prohibido en fondos completos de página |
+| `--pd-surface` | #ECE6D9 | #24221E | Franjas métricas, bandas de indicadores, contenedores | No usar como color de texto continuo |
+| `--pd-ink` | #1B1916 | #EDE8DC | Titulares principales, línea histórica del gráfico, P50 | Prohibido en fondos de pantalla completos |
+| `--pd-ink-soft` | #5E584E | #A59E90 | Texto secundario, subtítulos, etiquetas de ejes, P90/P10 | Prohibido en cuerpos de lectura <14px |
+| `--pd-rule` / `--pd-border` | #DCD4C4 | #33302A | Filetes divisorios de 1px, bordes de tabla | Prohibido en bordes gruesos >1px |
+| `--pd-brand` | #1B1916 | #EDE8DC | Logotipo, monograma, elementos nucleares de marca | Prohibido en cifras de cotización |
+| `--pd-accent` | #1B1916 | #EDE8DC | Enlaces, elementos interactivos principales | Prohibido en colores estridentes |
+| `--pd-accent-hover` | #000000 | #FFFFFF | Estado hover de botones y enlaces | Prohibido en elementos en reposo |
+| `--pd-sky` | #B9AF9A | #8F8672 | Abanico probabilístico futuro (P10-P90), bandas | Prohibido en texto o botones |
+| `--pd-peru` | #C8102E | #E0384F | Franjas rojas de bandera, subrayado activo, filete cita | ESTRICTAMENTE PROHIBIDO en cifras, gráficos o variaciones |
+| `--pd-pos` | #1E7A46 | #5FBF85 | Rendimientos positivos, variaciones al alza | Prohibido en elementos de marca o decoración |
+| `--pd-neg` | #B3261E | #F07A72 | Rendimientos negativos, caídas de cotización | Prohibido confundir con el rojo de marca --pd-peru |
+| `--pd-focus` | rgba(27,25,22,.35) | rgba(237,232,220,.5) | Anillos de foco accesible por teclado | Prohibido eliminar el foco visible |
+
+**Regla clave inquebrantable:** El rojo de datos (`--pd-neg`) señala variaciones negativas del mercado. El rojo Perú (`--pd-peru`) representa exclusivamente la identidad de la marca. Nunca deben mezclarse, intercambiarse ni reutilizarse fuera de su propósito específico.
 
 ## Typography
 
-- **Headings & UI:** Libre Franklin (weights 600 y 700), con tracking negativo moderado (-0.025em a -0.035em) en titulares. Titulares en máximo dos líneas.
-- **Reading / Body:** Source Serif 4 (weight 400 y 600), base 18px (1.125rem), line-height 1.55. Para párrafos de lectura, artículos, metodología y textos legales.
-- **Mono / Data:** IBM Plex Mono con `font-variant-numeric: tabular-nums` (`tabular-nums`) para todas las cifras, fechas, porcentajes y tickers bursátiles.
-- **Eyebrow / Micro-label:** Máximo un eyebrow por página, 11px mayúsculas con espaciado de 0.08em en tinta suave.
+### 4. Sistema Tipográfico
+PerData implementa tres familias tipográficas con roles técnicos complementarios:
+- **Source Serif 4:** Titulares editoriales y cuerpo de lectura general. Su variante cursiva (italic) se emplea de manera controlada para el wordmark de marca (`PerData`) y citas de apertura.
+- **Libre Franklin:** Interfaz de usuario (UI), barras de navegación, botones y selectores. Se cargan únicamente los pesos 600 y 700 para minimizar la sobrecarga de red y optimizar First Contentful Paint.
+- **IBM Plex Mono:** Cifras numéricas, cotizaciones, tickers bursátiles, tablas financieras y fechas, siempre con alineación monoespaciada tabular (`tabular-nums`).
+
+**Escala tipográfica:**
+- Display / H1: 40px - 62px (`clamp(40px, 5.4vw, 62px)`), interlineado 1.05, tracking `-0.03em`.
+- H2 de sección: 28px - 46px (`clamp(28px, 3.4vw, 38px)`), interlineado 1.12, tracking `-0.02em`.
+- H3 destacado: 20px - 24px, interlineado 1.25, tracking `-0.015em`.
+- Cuerpo de texto editorial: 17px - 18px, interlineado 1.6, color `--pd-ink`.
+- Microetiquetas y pies: 11px - 12px en IBM Plex Mono o Libre Franklin 700 con tracking espaciado `0.06em`.
 
 ## Layout
 
-- **Alineación a la izquierda:** Jerarquía editorial natural sin bloques centrados forzados.
-- **Filetes de separación:** Filetes horizontales de 1px (`--pd-rule`) para separar secciones, listas y pasos.
-- **Listas y tablas sobre tarjetas:** No usar rejillas de tarjetas flotantes para mostrar conjuntos de datos; usar tablas o listas con filete.
-- **Ancho de lectura:** Contenedores calibrados (máx. 1040px–1140px) para legibilidad óptima.
+### 5. Firma de Marca y Monograma
+- **Wordmark oficial:** `<span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>`. Configurado en Source Serif 4 cursiva 600 a 24px, complementado con la bandera del Perú de 16x11px (`border: 1px solid currentColor`) con tres franjas verticales proporcionadas (#D91023, #FFFFFF, #D91023). En cabecera se proyecta en color hueso (`var(--pd-paper)`) y en pie de página en tinta (`var(--pd-ink)`).
+- **Monograma «P»:** Reservado exclusivamente como favicon multiformato (`favicon.ico`, `icon.svg`), icono táctil (`apple-touch-icon.png`) e imagen social Open Graph (`og-image.png`). Diseñado en trazo hueso sobre fondo tinta `#1B1916`.
 
-## Elevation & Depth
+### 6. Layout y Componentes Estructurales
+- **Contenedor y cuadrícula:** Ancho máximo centrado en `max-w-6xl` (1152px) con márgenes de seguridad de 16px en móvil y 24px en escritorio.
+- **Filetes de 1px:** Delimitación visual mediante filetes limpios de 1px en `var(--pd-rule)`, descartando tarjetas infladas o separadores gruesos.
+- **Tablas:** Filas con borde inferior de 1px, números tabulares alineados a la derecha y encabezados en Libre Franklin con tracking sobrio.
+- **Botones:** Radio de curvatura reducido (`border-radius: 4px` en UI, `2px` en landing). Botón primario en fondo tinta y texto hueso (en claro) o fondo hueso y texto tinta (en oscuro). Botón secundario con fondo transparente y filete perimetral de 1px.
+- **Elevación controlada:** Cero sombras en reposo en la página. La única sombra autorizada en toda la aplicación es la tarjeta del panel terminal del gráfico (`box-shadow: 0 1px 2px rgba(27,25,22,0.10), 0 12px 32px rgba(27,25,22,0.18)`).
+- **Cabecera fija:** Cabecera institucional en fondo tinta (#1B1916 en claro, #0D0C0B en oscuro) con borde inferior de 1px en #33302A, navegación en blanco hueso translúcido y subrayado de 2px en rojo Perú para la ruta activa.
 
-- **Sin sombras en reposo:** Ni tarjetas, ni botones, ni barras de navegación llevan sombras proyectadas ni glows decorativos.
-- **Contraste de superficie:** La elevación se expresa exclusivamente mediante el contraste sutil entre `--pd-paper`, `--pd-card` y `--pd-surface`.
+### 7. Gráficos Cuantitativos (pd-chart.js)
+- **Eje temporal claro:** Separación nítida entre la serie histórica y el cono de proyección a partir de la línea vertical «Hoy» anclada en el último cierre real.
+- **Serie histórica:** Trazo continuo en `--pd-ink` (1.2px a 1.4px con interpolación monótona y cierres diarios para rangos ≤1 año) acompañado de un degradado vertical tenue de `--pd-sky` (12% a 0%).
+- **Abanico estocástico:** Intervalos de incertidumbre P10-P90 y P25-P75 modelados con degradado horizontal difuminado hacia el horizonte futuro.
+- **Mediana P50:** Trazo discontinuo (`borderDash: [4, 4]`) en `--pd-ink`.
+- **Etiquetas directas y escala:** Rótulos numéricos P90 / P50 / P10 situados directamente en el extremo derecho del abanico sin interferir con la pastilla del último precio. Eje vertical ubicado a la derecha con escala limpia.
+- **Panel macroeconómico:** Curva inferior sincronizada (base 100) en trazo fino de 1.2px sin cuadrículas saturadas.
 
-## Shapes
+### 8. Movimiento e Interacción (motion.js)
+- **Cinética editorial:** Transición de entrada de 250 ms con desplazamiento vertical máximo de 8 px (`translateY(8px)`) y curva suave `cubic-bezier(0.05, 0.7, 0.1, 1)`.
+- **Escalonamiento:** Revelación secuencial de filas mediante `data-stagger` con retardo de 25 ms por elemento hasta un límite de 8 filas consecutivas.
+- **Propósito:** El movimiento se limita a orientar la jerarquía visual durante la carga y cambios de vista; prohibidas animaciones infinitas o decorativas.
+- **Accesibilidad:** Soporte estricto para `@media (prefers-reduced-motion: reduce)` que inhibe las transiciones y sitúa los elementos de forma inmediata.
 
-- **Radio máximo:** 4px para botones, inputs, modales y tarjetas; 2px para badges.
-- **Pill (9999px):** Reservado únicamente para interruptores (switches) y status dots, nunca en botones de acción.
-
-## Components
-
-### Cabecera
-- Fondo azul marino `#002244` en modo claro y oscuro, con filete inferior sutil `#0B3360`. Enlaces en `rgba(255,255,255,.78)`, hover y activo en blanco puro con subrayado de 2px en azul cielo `#93B7F8`. Chip de logo blanco con la «P» en `#002244`.
-
-### Botones
-- **Primario:** Fondo `--pd-accent` (#1414D2) con texto blanco en claro (hover #002244); fondo #93B7F8 con texto #0F1012 en oscuro (hover #B9CFFA). Radio de 4px y sin sombra.
-- **Secundario / Ghost:** Fondo transparente con borde de 1px en ink y texto en ink. Hover a surface y borde accent.
-- **Sin hover-lift ni sombras.**
-
-### Tablas de Datos
-- Encabezado con fondo transparente o `--pd-surface` y borde inferior de 1px.
-- Cifras en IBM Plex Mono con alineación derecha y tabular-nums.
-- Filete horizontal entre filas y hover sutil a `--pd-surface`.
-
-### Acento del Hero
-- Subrayado de 3px en azul cielo (`--pd-sky`: `#93B7F8`) con offset de 6px y texto en `--pd-accent`, sin fondo de resaltador ni amarillo.
+### 9. Datos, Modelos y Veracidad
+- **Fuentes oficiales verificadas:** Datos de cotización obtenidos de Yahoo Finance, Banco Mundial y medios especializados (Google News).
+- **Modelos estocásticos reales:** Proyecciones a 1 mes (H=1) generadas con Engine v3 calibrado; proyecciones de 3 a 36 meses (H=3..36) procesadas en batch diario con TimesFM 2.5 de Google Research.
+- **Cobertura empírica:** Intervalos de incertidumbre calibrados con backtest rolling fuera de muestra con cobertura medida del 80% (rango admisible 75%-85%).
+- **Límites de responsabilidad:** Prohibido emitir recomendaciones de inversión, promesas de ganancias o afirmaciones de certeza predictiva.
 
 ## Do's and Don'ts
 
-- **Do** usar filetes de 1px para estructurar la página en lugar de cajas y tarjetas.
-- **Do** alinear el contenido a la izquierda con escala tipográfica clara.
-- **Do** emplear IBM Plex Mono y tabular-nums en todo dato cuantitativo.
-- **Do** reservar el azul vivo (`#1414D2`) con moderación para acciones clave, enlaces y badges.
-- **Don't** incluir gradientes, sombras flotantes, resplandores ni pulsos animados.
-- **Don't** usar emojis en interfaces públicas ni dashboards.
-- **Don't** crear tarjetas centradas en rejilla de 4 para listas de elementos.
-- **Don't** usar fondos fotográficos ni saturar fondos grandes con azul vivo.
+### 10. Qué NO hacer (Anti-patrones «IA» Prohibidos)
+- **NO usar azules marinos o cianes de startups de IA:** La paleta es papel hueso, tinta y rojo Perú.
+- **NO usar gradientes decorativos o brillos artificiales:** Solo color plano y texturas de inspiración editorial.
+- **NO usar sombras flotantes o paneles con desenfoque (glassmorphism):** Las superficies se definen por tono y filetes de 1px.
+- **NO usar etiquetas repetitivas en mayúsculas diminutas (eyebrows) en cada encabezado:** La jerarquía tipográfica debe ser suficiente.
+- **NO usar emojis en ninguna sección:** Prohibidos en textos, tablas, cabecera y botones.
+- **NO inventar métricas, testimonios ni certificaciones:** La reputación de PerData descansa en la fidelidad estadística de sus modelos.
+- **NO usar contadores animados que incrementan desde cero:** Los datos financieros se muestran firmes y completos.
+
+### 11. Checklist Obligatorio antes de Publicar
+- [ ] Ejecutar prueba de cordura integral: `npm run smoke` con 107/107 pruebas OK y 0 fallos.
+- [ ] Ejecutar auditoría visual `shots.js` en 1440px y 390px, tanto en modo claro como oscuro, verificando 0 OVERFLOW y 0 ERR.
+- [ ] Comprobar que los ratios de contraste WCAG AA superan ampliamente 4.5:1 en todos los textos y botones.
+- [ ] Verificar que no existan patrones de texto prohibidos (nombres personales, marcas de IA, fuentes no autorizadas) en las páginas servidas.
+- [ ] Validar que `DESIGN.md` satisface el linter oficial: `npx @google/design.md lint DESIGN.md` con 0 errores.
