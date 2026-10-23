@@ -3,7 +3,7 @@
  * Zero external dependencies.
  */
 
-import { verifySession, extractToken } from "./session.js";
+import { decodeJwtClaims, extractToken } from "./session.js";
 
 const ALLOWED_ORIGIN_PATTERNS = [
   /^https:\/\/(www\.)?perdata\.site$/i,
@@ -108,7 +108,7 @@ export function handleRateLimit(req, res) {
     // If request had an auth hint and exceeded 300/min, verify session
     if (hasAuthHint) {
       const token = extractToken(req);
-      const claims = token ? verifySession(token) : null;
+      const claims = token ? decodeJwtClaims(token) : null;
       if (!claims) {
         // Invalid session, reject immediately with 429
         const retryAfter = Math.max(1, Math.ceil((bucket.resetAt - now) / 1000));
