@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Terminal PerData Perú · Cotizaciones y proyecciones BVL</title>
+  <title>Terminal PerData</title>
   <meta name="description" content="Terminal financiera para seguir dólar, cobre y acciones en Perú. Gráficos interactivos, series históricas y proyecciones probabilísticas a varios plazos." />
   <link rel="canonical" href="https://perdata.site/explorer" />
 
@@ -361,9 +361,10 @@
 
     /* Segmented controls (range / horizon) */
     .seg {
-      display: inline-flex; align-items: stretch;
+      display: inline-flex; align-items: stretch; flex-wrap: wrap;
       background: #F5F5F7; border: 1px solid #E5E5EA;
       border-radius: 6px; padding: 2px; gap: 2px;
+      max-width: 100%;
     }
     html.dark .seg { background: #141416; border-color: #3A3A3C; }
     .range-btn, .horizon-btn {
@@ -371,7 +372,7 @@
       font-size: 11px !important;
       letter-spacing: 0.01em;
       height: 28px !important;
-      padding: 0 12px !important;
+      padding: 0 10px !important;
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
@@ -382,6 +383,12 @@
       border: none !important;
       cursor: pointer;
       transition: background 0.15s ease, color 0.15s ease;
+    }
+    @media (max-width: 640px) {
+      .range-btn, .horizon-btn {
+        padding: 0 7px !important;
+        font-size: 10.5px !important;
+      }
     }
     .range-btn:not(.is-active):hover, .horizon-btn:not(.is-active):hover {
       color: var(--pd-ink) !important;
@@ -560,115 +567,146 @@
   <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
   <div class="terminal-surface bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg overflow-hidden">
 
-    <!-- Command Band -->
-    <section class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 pt-3 pb-2.5 sm:pt-5 sm:pb-4">
-      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
-        <div class="min-w-0">
+    <!-- Command Header -->
+    <section class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 pt-3 pb-2.5 sm:pt-4 sm:pb-3">
+      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+        <div>
           <div class="band-label">PerData Terminal · BVL · Metales · Macro</div>
-          <h1 class="text-lg sm:text-2xl font-bold tracking-tight text-black dark:text-white mt-1">
+          <h1 class="text-lg sm:text-2xl font-bold tracking-tight text-black dark:text-white mt-0.5">
             Terminal PerData
           </h1>
-          <p class="text-[11px] sm:text-xs text-ink-soft leading-relaxed max-w-xl mt-1">
-            Series históricas de 10 años · Inferencia probabilística P10/P50/P90
-          </p>
         </div>
-
-        <!-- Search: part of the command band, right aligned on desktop -->
-        <div class="relative w-full lg:w-[380px] flex-shrink-0 text-left" id="searchContainer">
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-ink-soft">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            </div>
-            <input 
-              type="text" 
-              id="companySearch" 
-              autocomplete="off"
-              placeholder="Buscar activo — ej. Buenaventura, Volcan, Cobre..." 
-              class="w-full text-xs rounded-lg border transition"
-            />
-            <div id="searchSpinner" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center">
-              <div class="w-3.5 h-3.5 border-2 border-rule border-t-black dark:border-t-white rounded-full animate-spin"></div>
-            </div>
-          </div>
-
-          <!-- Dropdown Results -->
-          <div id="searchResults" class="hidden absolute left-0 right-0 mt-1.5 bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-md shadow-xl max-h-80 overflow-y-auto z-40 divide-y divide-[#F5F5F7] dark:divide-[#2C2C2E]"></div>
-        </div>
-      </div>
-
-      <!-- Chips row -->
-      <div class="mt-2.5 sm:mt-3.5 flex flex-nowrap items-center gap-2 overflow-x-auto whitespace-nowrap pb-1.5 pt-0.5 max-w-full">
-        <span class="band-label mr-1 shrink-0 whitespace-nowrap">Atajos:</span>
-        <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BVN">Buenaventura</button>
-        <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="SCCO">Southern Copper</button>
-        <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="VOLCABC1.LM">Volcan</button>
-        <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="MINSURI1.LM">Minsur</button>
-        <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BAP">Credicorp</button>
-        <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="HG=F">Cobre</button>
-        <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="PEN=X">USD/PEN</button>
-      </div>
-
-      <!-- Search Account Recommendation Banner (Intuitive Gating) -->
-      <div id="searchAccountBanner" class="hidden mt-4 max-w-2xl p-3 bg-[#F5F5F7] dark:bg-[#141416] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-md flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs transition-all duration-300">
-        <div class="flex items-center gap-2.5 text-left text-[#1D1D1F] dark:text-[#E5E5EA]">
-          <span class="leading-snug">Con una <strong>cuenta gratuita</strong> proyectas hasta 6 meses. El plan <a href="/precios" class="underline">Pro</a> suma 10 años de historia, horizontes de hasta 36 meses y Excel.</span>
-        </div>
-        <button id="btnBannerSignUp" class="shrink-0 px-3.5 py-1.5 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-md text-[11px] hover:opacity-90 transition">
-          Crear cuenta
-        </button>
+        <p class="text-[11px] sm:text-xs text-ink-soft">
+          Elige un activo para ver su proyección y comparar su evolución con el entorno macroeconómico.
+        </p>
       </div>
     </section>
 
-    <!-- Toolbar Band: distributed range · overlay · horizon -->
-    <section class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-2 sm:py-3 bg-[#FAFAFC] dark:bg-[#161618]">
-      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-        <!-- Range -->
-        <div class="flex items-center gap-2.5">
-          <span class="band-label whitespace-nowrap">Rango</span>
-          <div class="seg">
-            <button class="range-btn" data-range="1y">1A</button>
-            <button class="range-btn is-active font-semibold" data-range="3y">3A</button>
-            <button class="range-btn" data-range="5y">5A</button>
-            <button class="range-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer" data-range="10y">10A</button>
+    <!-- Guided Steps Band: 3 blocks with vertical dividers -->
+    <section class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FAFAFC] dark:bg-[#161618]">
+      <div class="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-[#E5E5EA] dark:divide-[#2C2C2E]">
+        
+        <!-- Step 1: ¿Qué quieres ver? -->
+        <div class="p-4 sm:p-5 flex flex-col justify-between gap-3">
+          <div>
+            <div class="band-label font-bold text-black dark:text-white">1 · ¿Qué quieres ver?</div>
+            <div class="text-[11px] text-ink-soft mt-0.5">Una empresa, un metal o el dólar</div>
+          </div>
+          
+          <div class="relative w-full" id="searchContainer">
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-ink-soft">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+              </div>
+              <input 
+                type="text" 
+                id="companySearch" 
+                autocomplete="off"
+                placeholder="Buscar activo — ej. Buenaventura, Volcan, Cobre..." 
+                class="w-full text-xs rounded-lg border transition"
+              />
+              <div id="searchSpinner" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center">
+                <div class="w-3.5 h-3.5 border-2 border-rule border-t-black dark:border-t-white rounded-full animate-spin"></div>
+              </div>
+            </div>
+            <!-- Dropdown Results -->
+            <div id="searchResults" class="hidden absolute left-0 right-0 mt-1.5 bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-md shadow-xl max-h-80 overflow-y-auto z-40 divide-y divide-[#F5F5F7] dark:divide-[#2C2C2E]"></div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
+            <span class="band-label mr-1 shrink-0">Atajos:</span>
+            <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BVN">Buenaventura</button>
+            <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="SCCO">Southern Copper</button>
+            <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="VOLCABC1.LM">Volcan</button>
+            <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="MINSURI1.LM">Minsur</button>
+            <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="BAP">Credicorp</button>
+            <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="HG=F">Cobre</button>
+            <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="PEN=X">USD/PEN</button>
           </div>
         </div>
 
-        <!-- Macro Overlay -->
-        <div class="flex items-center gap-2.5">
-          <span class="band-label whitespace-nowrap">Cruce Macro</span>
-          <select id="macroOverlay">
-            <option value="HG=F" selected>Cobre Futuros (HG=F)</option>
-            <option value="GC=F">Oro Futuros (GC=F)</option>
-            <option value="SI=F">Plata Futuros (SI=F)</option>
-            <option value="CL=F">Petróleo WTI (CL=F)</option>
-            <option value="PEN=X">Tipo de Cambio USD/PEN</option>
-            <option value="^TNX">Bonos EE.UU. 10Y</option>
-            <option value="PERU_CPI">Inflación Perú (Banco Mundial)</option>
-            <option value="PERU_GDP">Crecimiento PBI Perú (Banco Mundial)</option>
-            <option value="none">Ninguno (Solo Empresa)</option>
-          </select>
+        <!-- Step 2: ¿Hasta cuándo quieres proyectar? -->
+        <div class="p-4 sm:p-5 flex flex-col justify-between gap-3">
+          <div>
+            <div class="band-label font-bold text-black dark:text-white">2 · ¿Hasta cuándo quieres proyectar?</div>
+            <div class="text-[11px] text-ink-soft mt-0.5">Con cuenta gratuita, hasta 6 meses</div>
+          </div>
+
+          <div class="flex flex-col gap-2.5">
+            <div class="flex items-center gap-2 flex-wrap">
+              <div class="seg" role="group" aria-label="Horizonte de proyección">
+                <button class="horizon-btn is-active font-semibold" data-horizon="1">1 mes</button>
+                <button class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer" data-horizon="3">3 meses</button>
+                <button class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer" data-horizon="6">6 meses</button>
+                <button class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer" data-horizon="12">1 año</button>
+                <button id="btnCustomHorizon" class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer flex items-center gap-1" title="Definir cantidad libre de meses">
+                  <span id="customHorizonBtnLabel">Otro</span>
+                </button>
+              </div>
+              <div id="customHorizonContainer" class="hidden items-center gap-1.5 bg-[#F5F5F7] dark:bg-[#141416] px-2 py-1 rounded-md border border-[#E5E5EA] dark:border-[#3A3A3C] transition-all">
+                <input id="customHorizonInput" type="number" min="1" max="36" value="18" placeholder="Meses">
+                <span class="text-[11px] font-medium text-ink-soft">meses</span>
+                <button id="btnApplyCustomHorizon" class="px-2.5 py-1 bg-black dark:bg-white text-white dark:text-black text-xs font-bold rounded-md hover:opacity-90 transition">
+                  Calcular
+                </button>
+              </div>
+            </div>
+
+            <!-- Historia -->
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="band-label whitespace-nowrap">Historia:</span>
+              <div class="seg" role="group" aria-label="Rango de historia">
+                <button class="range-btn" data-range="1y">1 año</button>
+                <button class="range-btn is-active font-semibold" data-range="3y">3 años</button>
+                <button class="range-btn" data-range="5y">5 años</button>
+                <button class="range-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer" data-range="10y">10 años</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recommendation banner if locked -->
+          <div id="searchAccountBanner" class="hidden p-2.5 bg-[#F5F5F7] dark:bg-[#141416] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-md flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs transition-all duration-300">
+            <div class="text-left text-[#1D1D1F] dark:text-[#E5E5EA] text-[11px]">
+              <span class="leading-snug">Con cuenta gratuita proyectas hasta 6 meses. <a href="/precios" class="underline">Pro</a> suma 10 años y Excel.</span>
+            </div>
+            <button id="btnBannerSignUp" class="shrink-0 px-2.5 py-1 bg-black dark:bg-white text-white dark:text-black font-semibold rounded text-[10px] hover:opacity-90 transition">
+              Crear cuenta
+            </button>
+          </div>
         </div>
 
-        <!-- Horizon (lives in toolbar now; removed from TimesFM section below) -->
-        <div class="flex items-center gap-2.5 flex-wrap">
-          <span class="band-label whitespace-nowrap">Horizonte</span>
-          <div class="seg">
-            <button class="horizon-btn is-active font-semibold" data-horizon="1">1M</button>
-            <button class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer" data-horizon="3">3M</button>
-            <button class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer" data-horizon="6">6M</button>
-            <button class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer" data-horizon="12">12M</button>
-            <button id="btnCustomHorizon" class="horizon-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer flex items-center gap-1" title="Definir cantidad libre de meses">
-              <span id="customHorizonBtnLabel">Custom</span>
-            </button>
+        <!-- Step 3: ¿Con qué quieres compararlo? -->
+        <div class="p-4 sm:p-5 flex flex-col justify-between gap-3">
+          <div>
+            <div class="flex items-center justify-between gap-2">
+              <div class="band-label font-bold text-black dark:text-white">3 · ¿Con qué quieres compararlo?</div>
+              <a href="/aprende#futuros" class="text-[11px] text-ink-soft hover:text-ink underline whitespace-nowrap">¿Qué es un futuro?</a>
+            </div>
+            <div class="text-[11px] text-ink-soft mt-0.5">Comparar con</div>
           </div>
-          <div id="customHorizonContainer" class="hidden items-center gap-1.5 bg-[#F5F5F7] dark:bg-[#141416] px-2 py-1 rounded-md border border-[#E5E5EA] dark:border-[#3A3A3C] transition-all">
-            <input id="customHorizonInput" type="number" min="1" max="36" value="18" placeholder="Meses">
-            <span class="text-[11px] font-medium text-ink-soft">meses</span>
-            <button id="btnApplyCustomHorizon" class="px-2.5 py-1 bg-black dark:bg-white text-white dark:text-black text-xs font-bold rounded-md hover:opacity-90 transition">
-              Calcular
-            </button>
+
+          <div class="flex flex-col gap-2">
+            <div class="relative w-full">
+              <label for="macroOverlay" class="sr-only">Comparar con</label>
+              <select id="macroOverlay" class="w-full">
+                <option value="HG=F" selected>Cobre (el metal que más exporta Perú)</option>
+                <option value="GC=F">Oro</option>
+                <option value="SI=F">Plata</option>
+                <option value="CL=F">Petróleo</option>
+                <option value="PEN=X">Dólar (USD/PEN)</option>
+                <option value="^TNX">Bono del Tesoro de EE. UU. a 10 años</option>
+                <option value="PERU_CPI">Inflación Perú</option>
+                <option value="PERU_GDP">Crecimiento PBI Perú</option>
+                <option value="none">Ninguno</option>
+              </select>
+            </div>
+            
+            <div id="macroOptionDesc" class="text-[11px] text-ink-soft leading-relaxed min-h-[38px] bg-white dark:bg-[#1C1C1E] p-2 rounded border border-[#E5E5EA] dark:border-[#2C2C2E]">
+              Cobre: futuros de COMEX, en dólares por libra. Si el cobre sube, suele subir también la minería peruana.
+            </div>
           </div>
         </div>
+
       </div>
     </section>
 
@@ -698,24 +736,31 @@
 
     <!-- Chart Band: Visible Above the Fold on Mobile (300px) -->
     <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-4">
-      <!-- Main Chart Container (con rótulo del modelo y canvas) -->
-      <div id="chartModelHeader" class="flex justify-end items-center mb-1.5 min-h-[16px]">
-        <span id="chartModelBadge" class="font-mono tnum text-[11px]" style="color: var(--pd-ink-soft); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px;"></span>
-      </div>
-      <div id="chartContainer" class="relative w-full h-[300px] sm:h-[360px] md:h-[400px]">
-        <canvas id="mainChart"></canvas>
+      <!-- Terminal Panel (Pantalla de terminal grafito) -->
+      <div class="pd-terminal-panel p-3.5 sm:p-5">
+        <div class="pd-terminal-header flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
+          <div id="chartGlance" class="pd-chart-glance">
+            Proyección probabilística estocástica
+          </div>
+          <div id="chartModelHeader" class="flex justify-end items-center shrink-0 min-h-[16px]">
+            <span id="chartModelBadge" class="font-mono tnum text-[11px]" style="color: #A59E90; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px;"></span>
+          </div>
+        </div>
+        <div id="chartContainer" class="relative w-full h-[300px] sm:h-[360px] md:h-[400px]">
+          <canvas id="mainChart"></canvas>
+        </div>
       </div>
 
       <!-- Panel Macro Aparte (Visible si hay macro activo, ~90px desktop / 70px mobile) -->
-      <div id="macroPanel" class="mt-4 pt-3 border-t border-rule flex flex-col gap-1.5">
+      <div id="macroPanel" class="pd-terminal-panel mt-4 p-3.5 sm:p-4 flex flex-col gap-1.5">
         <div class="flex items-center justify-between text-[11px]">
           <div class="flex items-center gap-2">
-            <span class="w-2 h-0.5" style="background: var(--pd-ink-soft);"></span>
-            <span id="macroPanelTitle" class="font-bold text-ink">Cruce Macro</span>
-            <span id="macroPanelUnit" class="text-ink-soft"></span>
+            <span class="w-2 h-0.5" style="background: #A59E90;"></span>
+            <span id="macroPanelTitle" class="font-bold text-[#EDE8DC]">Cruce Macro</span>
+            <span id="macroPanelUnit" class="text-[#A59E90]"></span>
           </div>
-          <div class="font-mono tnum text-[11px] font-semibold text-ink">
-            Correlación: <span id="macroPanelR" class="font-bold">—</span>
+          <div class="font-mono tnum text-[11px] font-semibold text-[#EDE8DC]">
+            Correlación: <span id="macroPanelR" class="font-bold text-[#EDE8DC]">—</span>
           </div>
         </div>
         <div class="relative w-full h-[70px] sm:h-[90px]">
@@ -782,42 +827,37 @@
       </div>
 
       <!-- Skeleton Loading State -->
-      <div id="forecastSkeleton" class="hidden mt-3 animate-pulse">
-        <div class="stat-strip stat-strip-4">
-          <div class="stat"><div class="h-9 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded"></div></div>
-          <div class="stat"><div class="h-9 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded"></div></div>
-          <div class="stat"><div class="h-9 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded"></div></div>
-          <div class="stat"><div class="h-9 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded"></div></div>
-        </div>
+      <div id="forecastSkeleton" class="hidden mt-3 p-4 bg-[#FAFAFC] dark:bg-[#161618] border border-rule rounded text-center animate-pulse">
+        <div class="text-xs font-medium text-ink-soft">Calculando proyección probabilística...</div>
       </div>
 
       <!-- Active Forecast Results -->
       <div id="forecastContent" class="mt-3">
         <div class="stat-strip stat-strip-5">
           <div class="stat">
-            <div class="band-label">P50 al Horizonte <span class="pd-help" title="Percentil 50 de la proyección: el precio central esperado al final del horizonte elegido.">?</span></div>
+            <div class="band-label">P50 al Horizonte <a href="/aprende#p10-p50-p90" class="pd-help" title="Percentil 50: el valor central que proyecta el modelo al final del horizonte.">?</a></div>
             <div id="tfmP50" class="stat-value text-black dark:text-white">$39.34</div>
-            <div id="tfmHorizonDate" class="stat-sub">Al horizonte de 6 meses</div>
+            <div id="tfmHorizonDate" class="stat-sub">Precio central esperado en el horizonte</div>
           </div>
           <div class="stat">
-            <div class="band-label">Retorno Proyectado <span class="pd-help" title="Variación entre el último cierre observado y el P50 al horizonte.">?</span></div>
+            <div class="band-label">Retorno Proyectado <a href="/aprende#probabilidad" class="pd-help" title="Ganancia o pérdida porcentual esperada del P50 frente a hoy.">?</a></div>
             <div id="tfmReturn" class="stat-value text-emerald-600 dark:text-emerald-400">+13.3%</div>
-            <div id="tfmTrend" class="stat-sub">Tendencia Alcista</div>
+            <div id="tfmTrend" class="stat-sub">Variación esperada frente a hoy</div>
           </div>
           <div class="stat">
-            <div class="band-label">Prob. de Alza <span class="pd-help" title="Porcentaje de las 400 trayectorias simuladas que terminan por encima del último cierre registrado. Verde si supera 55%, rojo si baja de 45%.">?</span></div>
+            <div class="band-label">Prob. de Alza <a href="/aprende#probabilidad" class="pd-help" title="Proporción de trayectorias simuladas que terminan por encima del precio actual.">?</a></div>
             <div id="tfmProbRise" class="stat-value text-black dark:text-white">—</div>
-            <div class="stat-sub">P(PT > último cierre)</div>
+            <div class="stat-sub">De 10 escenarios, cuántos terminan por encima de hoy</div>
           </div>
           <div class="stat">
-            <div class="band-label">Rango 80% (P10–P90) <span class="pd-help" title="Intervalo P10-P90: 8 de cada 10 escenarios simulados caen dentro de esta banda.">?</span></div>
+            <div class="band-label">Rango 80% (P10–P90) <a href="/aprende#p10-p50-p90" class="pd-help" title="Intervalo donde caen 8 de cada 10 escenarios simulados por el modelo.">?</a></div>
             <div id="tfmRange" class="stat-value text-black dark:text-white" style="font-size:13px">$21.97 — $56.71</div>
-            <div class="stat-sub">Banda P25–P75: <span id="tfmRangeInner">—</span></div>
+            <div class="stat-sub">8 de cada 10 veces el precio queda aquí <span id="tfmRangeInner" class="hidden"></span></div>
           </div>
           <div class="stat">
-            <div class="band-label">Volatilidad Anualizada <span class="pd-help" title="Dispersión esperada de la serie a un año, calculada sobre retornos mensuales.">?</span></div>
+            <div class="band-label">Volatilidad Anualizada <a href="/aprende#volatilidad" class="pd-help" title="Dispersión o vaivén típico del precio proyectado a doce meses.">?</a></div>
             <div id="tfmVol" class="stat-value text-black dark:text-white">48.7%</div>
-            <div class="stat-sub" id="tfmModelInfo">Ensemble 400 trayectorias</div>
+            <div class="stat-sub" id="tfmModelInfo">Vaivén esperado a 1 año (400 trayectorias)</div>
           </div>
         </div>
 
@@ -837,29 +877,29 @@
     <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-3">
       <div class="stat-strip stat-strip-5 -mx-4 sm:-mx-6">
         <div class="stat">
-          <div class="band-label">Retorno <span class="pd-help" title="Variación del precio entre el primer y el último cierre del rango seleccionado.">?</span></div>
+          <div class="band-label">Retorno <a href="/guia#glosario" class="pd-help" title="Variación acumulada entre el inicio y el final del periodo seleccionado.">?</a></div>
           <div id="metricReturn" class="stat-value text-emerald-600 dark:text-emerald-400">+184.2%</div>
-          <div class="stat-sub">En el rango</div>
+          <div class="stat-sub">Variación acumulada en el rango</div>
         </div>
         <div class="stat">
-          <div class="band-label">Máximo <span class="pd-help" title="Precio de cierre más alto dentro del rango. Debajo se indica el mes exacto.">?</span></div>
+          <div class="band-label">Máximo <a href="/guia#glosario" class="pd-help" title="Precio de cierre más alto dentro del rango observado.">?</a></div>
           <div id="metricHigh" class="stat-value text-black dark:text-white">$36.50</div>
-          <div id="metricHighDate" class="stat-sub">Pico</div>
+          <div id="metricHighDate" class="stat-sub">Pico registrado en el periodo</div>
         </div>
         <div class="stat">
-          <div class="band-label">Mínimo <span class="pd-help" title="Precio de cierre más bajo dentro del rango. Debajo se indica el mes exacto.">?</span></div>
+          <div class="band-label">Mínimo <a href="/guia#glosario" class="pd-help" title="Precio de cierre más bajo dentro del rango observado.">?</a></div>
           <div id="metricLow" class="stat-value text-black dark:text-white">$4.10</div>
-          <div id="metricLowDate" class="stat-sub">Valle</div>
+          <div id="metricLowDate" class="stat-sub">Valle registrado en el periodo</div>
         </div>
         <div class="stat">
-          <div class="band-label">Correlación (r) <span class="pd-help" title="Coeficiente de Pearson entre la serie del activo y el indicador del cruce macro, en cierres mensuales. +1 = se mueven juntos, -1 = en direcciones opuestas, 0 = sin relación lineal.">?</span></div>
+          <div class="band-label">Correlación (r) <a href="/guia#glosario" class="pd-help" title="Coeficiente entre -1 y +1 que mide cómo se mueve el activo frente al cruce macro.">?</a></div>
           <div id="metricCorrelation" class="stat-value text-black dark:text-white">+0.74</div>
-          <div id="metricCorrelationDesc" class="stat-sub">vs Cobre</div>
+          <div id="metricCorrelationDesc" class="stat-sub">Si se mueven juntos (+1) o al revés (−1)</div>
         </div>
         <div class="stat">
-          <div class="band-label">Observaciones <span class="pd-help" title="Número de cierres mensuales usados en el cálculo y en el ajuste del modelo.">?</span></div>
+          <div class="band-label">Observaciones <a href="/guia#glosario" class="pd-help" title="Cantidad de meses de datos reales analizados en este rango.">?</a></div>
           <div id="metricPoints" class="stat-value text-black dark:text-white">121</div>
-          <div class="stat-sub">Meses</div>
+          <div class="stat-sub">Meses analizados</div>
         </div>
       </div>
     </section>
@@ -905,7 +945,7 @@
     <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E]">
       <details class="pd-details" id="pdHowTo">
         <summary>
-          <span>Cómo leer esta pantalla</span>
+          <span>Ayuda: cómo leer esta pantalla</span>
           <span class="pd-details-hint">Busca · Elige · Lee — y el glosario de cada métrica</span>
         </summary>
         <div class="pd-details-body">
@@ -1548,7 +1588,7 @@ const state = {
           const h = parseInt(btn.getAttribute("data-horizon"), 10);
           if (window.MDE_Auth && !window.MDE_Auth.gate("horizon", h)) return;
           if (customContainer) customContainer.classList.add("hidden");
-          if (customLabel) customLabel.textContent = "Custom";
+          if (customLabel) customLabel.textContent = "Otro";
 
           setActiveHorizonBtn(btn);
           if (window.MDE_Auth) window.MDE_Auth.updateGatedElements();
@@ -1597,7 +1637,7 @@ const state = {
         setActiveHorizonBtn(btnCustom);
         if (window.MDE_Auth) window.MDE_Auth.updateGatedElements();
         if (customLabel) {
-          customLabel.textContent = `Custom (${val}M)`;
+          customLabel.textContent = `Otro (${val}M)`;
         }
         state.horizon = val;
         if (!state.userSelectedRange) {
@@ -1620,13 +1660,36 @@ const state = {
       }
     }
 
+    const MACRO_DESCRIPTIONS = {
+      "HG=F": "Cobre: futuros de COMEX, en dólares por libra. Si el cobre sube, suele subir también la minería peruana.",
+      "GC=F": "Oro: futuros de COMEX, en dólares por onza troy. Activo de refugio y segundo metal de exportación del Perú.",
+      "SI=F": "Plata: futuros de COMEX, en dólares por onza troy. Metal industrial y precioso clave en la minería polimetálica peruana.",
+      "CL=F": "Petróleo: futuros WTI, en dólares por barril. Influye en costos de transporte, energía e inflación global.",
+      "PEN=X": "Dólar: tipo de cambio soles por dólar (USD/PEN). Si el sol se deprecia, beneficia ingresos de exportadores peruanos.",
+      "^TNX": "Bono del Tesoro EE. UU. 10Y: tasa de referencia global. Marca el costo del crédito y el apetito por mercados emergentes.",
+      "PERU_CPI": "Inflación: variación porcentual anual del índice de precios al consumidor del Perú (Banco Mundial).",
+      "PERU_GDP": "PBI Perú: tasa de crecimiento real del producto bruto interno anual (Banco Mundial).",
+      "none": "Sin cruce macro: se muestra únicamente la serie histórica y proyección del activo seleccionado."
+    };
+
+    function updateMacroOptionDesc(val) {
+      const descEl = document.getElementById("macroOptionDesc");
+      if (descEl) {
+        descEl.textContent = MACRO_DESCRIPTIONS[val] || "";
+      }
+    }
+
     // Setup Macro Selector
     function setupMacroSelect() {
-      macroOverlaySelect.addEventListener("change", (e) => {
-        const val = e.target.value;
-        state.macroSymbol = val;
-        loadPerData(val, state.range);
-      });
+      if (macroOverlaySelect) {
+        macroOverlaySelect.addEventListener("change", (e) => {
+          const val = e.target.value;
+          state.macroSymbol = val;
+          updateMacroOptionDesc(val);
+          loadPerData(val, state.range);
+        });
+        updateMacroOptionDesc(macroOverlaySelect.value);
+      }
     }
 
     // Data requests carry the session token so the API can apply the user's plan.
@@ -1644,6 +1707,10 @@ const state = {
     // Primary Loader function for all data
     async function loadAllData(symbol, range, macroSymbol, horizon) {
       try {
+        if (macroOverlaySelect && macroSymbol) {
+          macroOverlaySelect.value = macroSymbol;
+          updateMacroOptionDesc(macroSymbol);
+        }
         // 1. Fetch Primary Historical Data
         const primaryRes = await apiFetch(`${API_BASE}/historical?symbol=${encodeURIComponent(symbol)}&range=${range}&interval=1mo`);
         const primaryJson = await primaryRes.json();
@@ -1884,13 +1951,14 @@ const state = {
         const r = calculateCorrelation(matchedP, matchedM);
         const rFormatted = (r >= 0 ? "+" : "") + r.toFixed(2);
         document.getElementById("metricCorrelation").textContent = rFormatted;
-        document.getElementById("metricCorrelationDesc").textContent = `vs ${m.name.split('(')[0]}${m.stale ? ' (datos guardados)' : ''}`;
+        const shortMacro = m.name ? m.name.split('(')[0].trim() : 'cruce';
+        document.getElementById("metricCorrelationDesc").textContent = `vs ${shortMacro} · si van juntos (+1) o al revés (−1)`;
         const legM = document.getElementById("legendMacro");
         if (legM) legM.classList.remove("hidden");
-        document.getElementById("tableHeaderMacro").textContent = `${m.name.split('(')[0]} (${m.currency || ''})${m.stale ? ' · datos guardados' : ''}`;
+        document.getElementById("tableHeaderMacro").textContent = `${shortMacro} (${m.currency || ''})${m.stale ? ' · datos guardados' : ''}`;
       } else {
         document.getElementById("metricCorrelation").textContent = "N/A";
-        document.getElementById("metricCorrelationDesc").textContent = "Sin cruce macro";
+        document.getElementById("metricCorrelationDesc").textContent = "Sin comparar · elige un cruce macro";
         const legM = document.getElementById("legendMacro");
         if (legM) legM.classList.add("hidden");
         document.getElementById("tableHeaderMacro").textContent = "Sin indicador macro";
@@ -1904,13 +1972,14 @@ const state = {
       if (!f || !f.forecastSeries) return;
 
       const currencyPrefix = p?.currency === "PEN" ? "S/ " : "$";
+      const hDisplay = (f.horizonLabel || '').toLowerCase().replace('1 meses', '1 mes');
       document.getElementById("tfmP50").textContent = `${currencyPrefix}${f.predictedPrice.toFixed(2)}`;
-      document.getElementById("tfmHorizonDate").textContent = `Al horizonte de ${f.horizonLabel}`;
+      document.getElementById("tfmHorizonDate").textContent = `Precio central a ${hDisplay}`;
 
       const returnEl = document.getElementById("tfmReturn");
       returnEl.textContent = `${f.expectedReturnPct >= 0 ? '+' : ''}${f.expectedReturnPct.toFixed(1)}%`;
       const trendText = f.trend || f.metrics?.driftDirection || (f.expectedReturnPct >= 0 ? 'Alcista' : 'Bajista');
-      document.getElementById("tfmTrend").textContent = `Tendencia ${trendText}`;
+      document.getElementById("tfmTrend").textContent = `Tendencia ${trendText} vs hoy`;
 
       document.getElementById("tfmRange").textContent = `${currencyPrefix}${f.quantiles.p10.toFixed(2)} — ${currencyPrefix}${f.quantiles.p90.toFixed(2)}`;
       const innerEl = document.getElementById("tfmRangeInner");
@@ -1930,8 +1999,7 @@ const state = {
       }
       const modelInfoEl = document.getElementById("tfmModelInfo");
       if (modelInfoEl && f.metrics) {
-        const h = f.metrics.seasonalHarmonics;
-        modelInfoEl.textContent = `φ AR(1) ${f.metrics.arPhi ? f.metrics.arPhi.toFixed(2) : '—'} · ${h > 0 ? h + " armónico" + (h > 1 ? "s" : "") + " estacional" + (h > 1 ? "es" : "") : "sin estacionalidad sig."} · ${f.metrics.simulatedPaths || 400} sims`;
+        modelInfoEl.textContent = `Vaivén anualizado · ${f.metrics.simulatedPaths || 400} trayectorias`;
       }
       const modelBadge = document.getElementById("forecastModelBadge");
       if (modelBadge) {
@@ -1993,8 +2061,38 @@ const state = {
           horizonMonths: state.horizon || 1,
           range: state.range || "3y",
           isDark,
+          assetName: p.name || p.symbol || "el activo",
         },
       });
+
+      // 3. Frase de un vistazo en español llano con números reales
+      const glanceEl = document.getElementById("chartGlance");
+      if (glanceEl) {
+        if (!f || !f.forecastSeries || !f.forecastSeries.length) {
+          glanceEl.innerHTML = `<span style="color:#A59E90;">Elige un activo para ver su proyección</span>`;
+        } else {
+          const sym = p.currency === "PEN" ? "S/ " : "$";
+          const lastReal = Number(p.series[p.series.length - 1].close);
+          const targetItem = f.forecastSeries[f.forecastSeries.length - 1];
+          const p10 = Number(targetItem.p10);
+          const p50 = Number(targetItem.p50);
+          const p90 = Number(targetItem.p90);
+          const pct = ((p50 - lastReal) / lastReal) * 100;
+          const pctStr = (pct >= 0 ? "+" : "") + pct.toFixed(1).replace(".", ",") + " %";
+          const pctColor = pct >= 0 ? "#4EBA7A" : "#E55C55";
+
+          let hText = "1 mes";
+          const h = Number(state.horizon || 1);
+          if (h === 1) hText = "1 mes";
+          else if (h === 3) hText = "3 meses";
+          else if (h === 6) hText = "6 meses";
+          else if (h === 12) hText = "1 año";
+          else hText = `${h} meses`;
+
+          const assetName = p.shortName || p.name || state.symbol || "el activo";
+          glanceEl.innerHTML = `Dentro de <strong style="color:#EDE8DC;">${escapeHTML(hText)}</strong>, <strong style="color:#EDE8DC;">${escapeHTML(assetName)}</strong> estaría entre <strong style="color:#EDE8DC;">${sym}${p10.toFixed(2)}</strong> y <strong style="color:#EDE8DC;">${sym}${p90.toFixed(2)}</strong> (8 de cada 10 veces). Lo más probable: <strong style="color:#EDE8DC;">${sym}${p50.toFixed(2)}</strong>, un <strong style="color:${pctColor}; font-variant-numeric:tabular-nums;">${pctStr}</strong> frente a hoy.`;
+        }
+      }
 
       // Panel macro aparte: si no hay macro activo, ocultar; si hay, renderizar mini-gráfico
       const panel = document.getElementById("macroPanel");
@@ -2031,7 +2129,7 @@ const state = {
           datasets: [{
             label: m.name || "Macro",
             data: base100,
-            borderColor: inkSoft,
+            borderColor: "#EDE8DC",
             backgroundColor: "transparent",
             borderWidth: 1.2,
             pointRadius: 0,
@@ -2057,7 +2155,25 @@ const state = {
       const elTitle = document.getElementById("macroPanelTitle");
       const elUnit = document.getElementById("macroPanelUnit");
       const elR = document.getElementById("macroPanelR");
-      if (elTitle) elTitle.textContent = m.name || "Cruce Macro";
+
+      const MACRO_TITLES = {
+        "HG=F": 'Cobre (futuro de COMEX) <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(HG=F)</span> <a href="/aprende#futuros" style="color:#A59E90; text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
+        "GC=F": 'Oro (futuro de COMEX) <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(GC=F)</span> <a href="/aprende#futuros" style="color:#A59E90; text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
+        "SI=F": 'Plata (futuro de COMEX) <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(SI=F)</span> <a href="/aprende#futuros" style="color:#A59E90; text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
+        "CL=F": 'Petróleo WTI (futuro de NYMEX) <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(CL=F)</span> <a href="/aprende#futuros" style="color:#A59E90; text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
+        "PEN=X": 'Dólar (USD/PEN) <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(PEN=X)</span>',
+        "^TNX": 'Bono del Tesoro EE. UU. 10Y <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(^TNX)</span>',
+        "PERU_CPI": 'Inflación Perú <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(PERU_CPI)</span>',
+        "PERU_GDP": 'Crecimiento PBI Perú <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(PERU_GDP)</span>'
+      };
+
+      if (elTitle) {
+        if (MACRO_TITLES[state.macroSymbol]) {
+          elTitle.innerHTML = MACRO_TITLES[state.macroSymbol];
+        } else {
+          elTitle.textContent = m.name || "Cruce Macro";
+        }
+      }
       if (elUnit) elUnit.textContent = "Base 100 · " + (m.currency || "USD");
       const corrText = document.getElementById("metricCorrelation") ? document.getElementById("metricCorrelation").textContent : "—";
       if (elR) elR.textContent = corrText;

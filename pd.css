@@ -1162,18 +1162,7 @@ html.dark .pd-hero-navy {
   border-color: rgba(245, 241, 232, 0.8) !important;
 }
 
-/* 2. Panel terminal para el gráfico (único relieve con sombra) */
-.pd-terminal-panel {
-  background-color: var(--pd-card);
-  border: 1px solid var(--pd-rule);
-  border-radius: 4px;
-  box-shadow: 0 1px 2px rgba(27, 25, 22, 0.10), 0 12px 32px rgba(27, 25, 22, 0.18);
-  overflow: hidden;
-}
-html.dark .pd-terminal-panel {
-  border-color: #2A2C31;
-  box-shadow: none;
-}
+/* 2. Panel terminal para el gráfico (definido abajo en sección Terminal Panel) */
 
 /* 3. Tabla con hover de fila a 120ms */
 .pd-table tbody tr {
@@ -1313,3 +1302,260 @@ footer .pd-wordmark { color: var(--pd-ink); font-size: 22px; }
 header .pd-wordmark { color: #F5F1E8; }
 html.dark .pdl-btn-primary { background: var(--pd-ink); border-color: var(--pd-ink); color: #141311 !important; }
 html.dark .pdl-btn-primary:hover { background: #FFFFFF; border-color: #FFFFFF; color: #141311 !important; }
+
+/* ============================================================
+   Terminal Panel del Gráfico (estilo pantalla de terminal de grafito)
+   ============================================================ */
+.pd-terminal-panel {
+  background-color: #17181B !important;
+  border: 1px solid #2A2C31 !important;
+  color: #EDE8DC !important;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+html.dark .pd-terminal-panel {
+  border-color: #3A3D45 !important;
+}
+
+.pd-terminal-panel .text-ink {
+  color: #EDE8DC !important;
+}
+.pd-terminal-panel .text-ink-soft {
+  color: #A59E90 !important;
+}
+.pd-terminal-panel .border-rule {
+  border-color: #2A2C31 !important;
+}
+html.dark .pd-terminal-panel .border-rule {
+  border-color: #3A3D45 !important;
+}
+
+.pd-terminal-header {
+  border-bottom: 1px solid #2A2C31;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+html.dark .pd-terminal-header {
+  border-bottom-color: #3A3D45;
+}
+
+.pd-chart-glance {
+  font-family: var(--pd-font-ui);
+  font-size: 13px;
+  line-height: 1.5;
+  color: #EDE8DC;
+  font-weight: 500;
+}
+@media (max-width: 640px) {
+  .pd-chart-glance {
+    font-size: 12px;
+  }
+}
+
+/* Etiquetas directas a la derecha del gráfico */
+.pd-direct-labels {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 195px;
+  pointer-events: none;
+  z-index: 22;
+}
+@media (max-width: 640px) {
+  .pd-direct-labels {
+    width: 140px;
+  }
+}
+
+.pd-direct-label {
+  position: absolute;
+  right: 8px;
+  background: #17181B;
+  border: 1px solid #2A2C31;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-family: var(--pd-font-mono);
+  font-size: 12px;
+  color: #EDE8DC;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  pointer-events: auto;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+@media (max-width: 640px) {
+  .pd-direct-label {
+    font-size: 11px;
+    padding: 2px 5px;
+    right: 4px;
+    gap: 3px;
+  }
+}
+.pd-direct-label a.pd-pill-link {
+  color: #A59E90;
+  font-size: 11px;
+  text-decoration: underline;
+  text-decoration-color: #5E584E;
+}
+.pd-direct-label a.pd-pill-link:hover {
+  color: #EDE8DC;
+  text-decoration-color: #EDE8DC;
+}
+
+/* Crosshair vertical line */
+.pd-crosshair-line {
+  position: absolute;
+  z-index: 15;
+  top: 10px;
+  bottom: 26px;
+  width: 1px;
+  border-left: 1px dashed rgba(237, 232, 220, 0.65);
+  background: transparent;
+  display: none;
+  pointer-events: none;
+}
+
+/* Halos en líneas del gráfico */
+.pd-dot-halo {
+  position: absolute;
+  z-index: 20;
+  border-radius: 50%;
+  display: none;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.08s ease;
+}
+.pd-dot-halo-p50 {
+  width: 8px;
+  height: 8px;
+  background: #EDE8DC;
+  box-shadow: 0 0 0 4px rgba(237, 232, 220, 0.35);
+}
+.pd-dot-halo-band {
+  width: 6px;
+  height: 6px;
+  background: #B9AF9A;
+  box-shadow: 0 0 0 3px rgba(185, 175, 154, 0.25);
+}
+.pd-dot-halo-hist {
+  width: 8px;
+  height: 8px;
+  background: #EDE8DC;
+  box-shadow: 0 0 0 4px rgba(237, 232, 220, 0.35);
+}
+
+/* Ficha / Tarjeta de datos al mover el cursor */
+.pd-chip {
+  position: absolute;
+  z-index: 30;
+  pointer-events: none;
+  padding: 10px 14px;
+  background: #1E2024;
+  border: 1px solid #3A3D45;
+  color: #EDE8DC;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+  font-family: var(--pd-font-mono);
+  font-size: 13px;
+  line-height: 1.45;
+  min-width: 230px;
+  display: none;
+}
+@media (max-width: 640px) {
+  .pd-chip {
+    left: 8px !important;
+    right: 8px !important;
+    top: 6px !important;
+    min-width: auto;
+    font-size: 11.5px;
+    padding: 6px 10px;
+  }
+}
+.pd-chip-date {
+  font-weight: 700;
+  font-size: 12px;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #2A2C31;
+  padding-bottom: 4px;
+  color: #EDE8DC;
+}
+.pd-chip-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 3px;
+}
+.pd-chip-label {
+  color: #A59E90;
+}
+.pd-chip-val {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: #EDE8DC;
+}
+.pd-chip-note {
+  font-size: 10.5px;
+  color: #A59E90;
+  margin-top: 6px;
+  padding-top: 4px;
+  border-top: 1px solid #2A2C31;
+  line-height: 1.3;
+}
+.pd-chip-val.pd-pos {
+  color: #4EBA7A !important;
+}
+.pd-chip-val.pd-neg {
+  color: #E55C55 !important;
+}
+
+/* Enlace discreto de ayuda para metricas y glosario */
+.pd-help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-family: var(--pd-font-mono);
+  font-weight: 600;
+  color: var(--pd-ink-soft);
+  border: 1px solid var(--pd-rule);
+  text-decoration: none;
+  margin-left: 4px;
+  vertical-align: middle;
+  line-height: 1;
+  transition: all 0.15s ease;
+}
+.pd-help:hover {
+  color: var(--pd-ink);
+  border-color: var(--pd-ink);
+  background-color: var(--pd-rule-soft, rgba(0,0,0,0.05));
+}
+html.dark .pd-help {
+  border-color: #3A3D45;
+  color: #A59E90;
+}
+html.dark .pd-help:hover {
+  border-color: #EDE8DC;
+  color: #EDE8DC;
+  background-color: rgba(255,255,255,0.08);
+}
+
+.pd-step-kicker {
+  font-family: var(--pd-font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--pd-ink);
+  letter-spacing: -0.01em;
+}
+.pd-step-sub {
+  font-size: 11px;
+  color: var(--pd-ink-soft);
+  margin-top: 2px;
+  line-height: 1.4;
+}
