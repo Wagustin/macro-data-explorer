@@ -193,7 +193,11 @@
         p75[nHist - 1] = lastRealVal;
         p90[nHist - 1] = lastRealVal;
 
-        // Distribución suave a lo largo de nFutureSlots
+        // Abanico con forma de difusión: entre «Hoy» y el primer mes proyectado, la distancia de cada
+        // cuantil al P50 crece como sqrt(t) (así crece la incertidumbre en el modelo); entre meses
+        // reales, interpolación lineal que Chart.js suaviza con curva monótona. Los valores exactos
+        // son solo los de cada mes devuelto por /api/forecast.
+        const QS = ["p10", "p25", "p75", "p90"];
         for (let k = 1; k <= nFutureSlots; k++) {
           const prog = k / nFutureSlots;
           const idx = nHist - 1 + k;
@@ -207,11 +211,16 @@
           const segSpan = (m1.prog - m0.prog) || 1;
           const alpha = Math.min(1, Math.max(0, (prog - m0.prog) / segSpan));
 
-          p50[idx] = Number((m0.p50 + alpha * (m1.p50 - m0.p50)).toFixed(4));
-          p10[idx] = Number((m0.p10 + alpha * (m1.p10 - m0.p10)).toFixed(4));
-          p25[idx] = Number((m0.p25 + alpha * (m1.p25 - m0.p25)).toFixed(4));
-          p75[idx] = Number((m0.p75 + alpha * (m1.p75 - m0.p75)).toFixed(4));
-          p90[idx] = Number((m0.p90 + alpha * (m1.p90 - m0.p90)).toFixed(4));
+          const mid = m0.p50 + alpha * (m1.p50 - m0.p50);
+          p50[idx] = Number(mid.toFixed(4));
+          const shape = seg === 0 ? Math.sqrt(alpha) : alpha;
+          const target = { p10, p25, p75, p90 };
+          QS.forEach((q) => {
+            const d0 = m0[q] - m0.p50;
+            const d1 = m1[q] - m1.p50;
+            const d = seg === 0 ? d1 * shape : d0 + (d1 - d0) * shape;
+            target[q][idx] = Number((mid + d).toFixed(4));
+          });
 
           labels.push(alpha > 0.5 ? m1.date : m0.date);
         }
@@ -351,6 +360,9 @@
       const yMax = allVals.length ? Math.max(...allVals) : 100;
       const yPad = (yMax - yMin) * 0.12 || Math.max(Math.abs(yMax), 1) * 0.12;
 
+      datasets.forEach((d) => {
+        if (/^P\d/.test(d.label || "")) { d.cubicInterpolationMode = "monotone"; d.tension = 0.4; }
+      });
       const chart = new Chart(cctx, {
         type: "line",
         data: { labels, datasets },
@@ -637,32 +649,46 @@
         }
 
         const dateStr = formatChipDate(label);
-        let html = `<div style="font-weight:700;font-size:11px;margin-bottom:4px;border-bottom:1px solid ${tokens.rule};padding-bottom:3px;color:${tokens.ink};">${dateStr}</div>`;
-        if (v != null && !isNaN(v)) {
-          html += `<div style="display:flex;justify-content:space-between;gap:8px;color:${tokens.inkSoft};"><span>Precio:</span><b style="color:${tokens.ink};font-variant-numeric:tabular-nums;">${sym}${Number(v).toFixed(2)}</b></div>`;
+        const fmt = (n) => sym + Number(n).toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const row = (name, val, strong) =>
+          `<div style="display:flex;justify-content:space-between;gap:14px;margin-top:3px;color:${strong ? tokens.ink : tokens.inkSoft};"><span>${name}</span><span style="font-family:var(--pd-font-mono,monospace);font-variant-numeric:tabular-nums;${strong ? "font-weight:700;" : ""}color:${tokens.ink};">${val}</span></div>`;
+        let html = `<div style="font-weight:700;font-size:12px;margin-bottom:5px;border-bottom:1px solid ${tokens.rule};padding-bottom:4px;color:${tokens.ink};">${dateStr}${isFuture ? " · proyección" : ""}</div>`;
+        if (!isFuture && v != null && !isNaN(v)) {
+          html += row("Precio de cierre", fmt(v), true);
         }
-        if (isFuture) {
-          if (p != null && !isNaN(p)) {
-            html += `<div style="display:flex;justify-content:space-between;gap:8px;color:${tokens.ink};"><span>P50:</span><b style="font-variant-numeric:tabular-nums;">${sym}${Number(p).toFixed(2)}</b></div>`;
+        if (isFuture && p != null && !isNaN(p)) {
+          html += row("Lo más probable (P50)", fmt(p), true);
+          if (p10[idx] != null && p90[idx] != null) html += row("Rango 80 % (P10–P90)", fmt(p10[idx]) + " – " + fmt(p90[idx]));
+          if (p25[idx] != null && p75[idx] != null) html += row("Rango 50 % (P25–P75)", fmt(p25[idx]) + " – " + fmt(p75[idx]));
+          const base = seriesData[nHist - 1];
+          if (base) {
+            const ch = (p - base) / base * 100;
+            const col = ch >= 0 ? "var(--pd-pos)" : "var(--pd-neg)";
+            html += `<div style="display:flex;justify-content:space-between;gap:14px;margin-top:3px;color:${tokens.inkSoft};"><span>Frente a hoy</span><span style="font-family:var(--pd-font-mono,monospace);font-variant-numeric:tabular-nums;font-weight:700;color:${col};">${ch >= 0 ? "+" : ""}${ch.toLocaleString("es-PE", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %</span></div>`;
           }
-          if (p90[idx] != null && !isNaN(p90[idx])) {
-            html += `<div style="display:flex;justify-content:space-between;gap:8px;color:${tokens.inkSoft};"><span>P90:</span><span style="font-variant-numeric:tabular-nums;">${sym}${Number(p90[idx]).toFixed(2)}</span></div>`;
-          }
-          if (p10[idx] != null && !isNaN(p10[idx])) {
-            html += `<div style="display:flex;justify-content:space-between;gap:8px;color:${tokens.inkSoft};"><span>P10:</span><span style="font-variant-numeric:tabular-nums;">${sym}${Number(p10[idx]).toFixed(2)}</span></div>`;
-          }
+          html += `<div style="margin-top:5px;font-size:11px;color:${tokens.inkSoft};">Entre meses proyectados el valor se interpola.</div>`;
         }
         chip.innerHTML = html;
         chip.style.display = "block";
+        chip.style.fontSize = "13px";
+        chip.style.lineHeight = "1.35";
+        chip.style.padding = "9px 11px";
+        chip.style.borderRadius = "6px";
+        chip.style.background = tokens.card;
+        chip.style.border = "1px solid " + tokens.rule;
+        chip.style.boxShadow = "0 6px 18px rgba(0,0,0,0.18)";
+        chip.style.whiteSpace = "nowrap";
 
         const cWidth = container.clientWidth || 400;
-        const chipWidth = 150;
-        if (xPx + chipWidth + 16 > cWidth) {
-          chip.style.left = Math.max(4, xPx - chipWidth - 12) + "px";
+        const chipWidth = chip.offsetWidth || 230;
+        if (cWidth < 640) {
+          // Móvil: ficha fija arriba, centrada, para que el dedo no la tape
+          chip.style.left = Math.max(4, (cWidth - chipWidth) / 2) + "px";
+          chip.style.top = "4px";
         } else {
-          chip.style.left = (xPx + 14) + "px";
+          chip.style.left = (xPx + chipWidth + 18 > cWidth) ? Math.max(4, xPx - chipWidth - 14) + "px" : (xPx + 14) + "px";
+          chip.style.top = "12px";
         }
-        chip.style.top = "12px";
       }
 
       function removeCrosshair() {
