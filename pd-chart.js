@@ -60,6 +60,7 @@
       accent: cs.getPropertyValue("--pd-accent").trim() || "#1B1916",
       sky: cs.getPropertyValue("--pd-sky").trim() || "#B9AF9A",
       rule: cs.getPropertyValue("--pd-rule").trim() || "#DCD4C4",
+      card: cs.getPropertyValue("--pd-card").trim() || "#1C1B18",
       pos: cs.getPropertyValue("--pd-pos").trim() || "#1E7A46",
       neg: cs.getPropertyValue("--pd-neg").trim() || "#B3261E",
     };
@@ -117,7 +118,8 @@
       // Rango automático según horizonte (6 meses para H=1, 1 año para H=3-6 y 3 años para H=12)
       if (useDaily) {
         const H = Number(options.horizonMonths || 1);
-        const dayLimit = H <= 1 ? 126 : 252;
+        // Móvil: ~3 meses de historia para que la proyección se vea; ordenador: 1 año
+        const dayLimit = isMobile ? 63 : 252;
         const sliced = seriesPoints.slice(-dayLimit);
         if (sliced.length > 1) {
           seriesLabels = sliced.map(h => h.d);
@@ -125,7 +127,7 @@
         }
       } else if (history && history.length > 0 && options.horizonMonths) {
         const H = Number(options.horizonMonths);
-        const months = H <= 1 ? 6 : H <= 6 ? 12 : 36;
+        const months = isMobile ? (H <= 6 ? 3 : 12) : (H <= 6 ? 12 : 36);
         const lastItem = seriesPoints[seriesPoints.length - 1];
         const lastDate = lastItem ? new Date(lastItem.d + "-01T00:00:00") : new Date();
         const cutoff = new Date(lastDate);
@@ -428,7 +430,8 @@
               min: yMin - yPad,
               max: yMax + yPad,
               ticks: {
-                display: !options.plainLabels,
+                // En móvil las cifras del eje se pisaban con las etiquetas directas: se ocultan
+                display: !options.plainLabels && !isMobile,
                 maxTicksLimit: options.compact ? 4 : (isMobile ? 4 : 5),
                 callback: function (val) {
                   return sym + Number(val).toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -716,7 +719,11 @@
         chip.style.background = tokens.card;
         chip.style.border = "1px solid " + tokens.rule;
         chip.style.boxShadow = "0 6px 18px rgba(0,0,0,0.18)";
-        chip.style.whiteSpace = "nowrap";
+        chip.style.whiteSpace = (container.clientWidth || 400) < 640 ? "normal" : "nowrap";
+        chip.style.maxWidth = Math.max(160, (container.clientWidth || 400) - 8) + "px";
+        chip.style.boxSizing = "border-box";
+        chip.style.color = tokens.ink;
+        if ((container.clientWidth || 400) < 640) chip.style.fontSize = "12px";
 
         const cWidth = container.clientWidth || 400;
         const chipWidth = chip.offsetWidth || 230;

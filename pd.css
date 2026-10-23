@@ -1598,3 +1598,13 @@ html.dark .pd-help:hover {
   margin-top: 2px;
   line-height: 1.4;
 }
+
+/* Panel de terminal: siempre pantalla oscura, con SUS propios tokens para que el gráfico
+   (pd-chart.js lee los tokens del contenedor) y los textos se lean igual en los dos temas. */
+.pd-terminal-panel {
+  --pd-paper: #17181B; --pd-card: #1F2023; --pd-surface: #24262A;
+  --pd-ink: #EDE8DC; --pd-ink-soft: #A59E90; --pd-rule: #2E3035;
+  --pd-accent: #EDE8DC; --pd-sky: #A89F8C;
+  --pd-pos: #5FBF85; --pd-neg: #F07A72;
+  color: var(--pd-ink);
+}

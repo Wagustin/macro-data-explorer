@@ -218,6 +218,32 @@ export default async function handler(req, res) {
       }
     } catch (e) { /* daily context is best-effort */ }
 
+    // USD/PEN: la serie diaria de Yahoo mezcla dos cotizaciones y salta a diario entre ellas.
+    // Se usa el tipo de cambio oficial del BCRP (TC sistema bancario SBS, venta, PD04640PD).
+    let dailySource = "Yahoo Finance";
+    if (symbol === "PEN=X") {
+      try {
+        const MES = { Ene: "01", Feb: "02", Mar: "03", Abr: "04", May: "05", Jun: "06", Jul: "07", Ago: "08", Set: "09", Sep: "09", Oct: "10", Nov: "11", Dic: "12" };
+        const end = new Date();
+        const start = new Date(end.getTime() - 400 * 864e5);
+        const iso = (d) => d.toISOString().slice(0, 10);
+        const bRes = await fetch(`https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PD04640PD/json/${iso(start)}/${iso(end)}`, { signal: AbortSignal.timeout(6000) });
+        if (bRes.ok) {
+          // Con rangos largos el BCRP añade un aviso HTML detrás del JSON: se corta en el último «}» antes del HTML
+          const raw = await bRes.text();
+          const cut = raw.indexOf("<") > 0 ? raw.slice(0, raw.indexOf("<")) : raw;
+          const bData = JSON.parse(cut.slice(0, cut.lastIndexOf("}") + 1));
+          const pts = [];
+          for (const per of (bData.periods || [])) {
+            const m = /^(\d{2})\.([A-Za-z]{3})\.(\d{2})$/.exec(per.name || "");
+            const v = parseFloat((per.values || [])[0]);
+            if (m && MES[m[2]] && isFinite(v)) pts.push({ date: `20${m[3]}-${MES[m[2]]}-${m[1]}`, close: v });
+          }
+          if (pts.length > 20) { daily = pts; dailySource = "BCRP (tipo de cambio SBS, venta)"; }
+        }
+      } catch (e) { /* si el BCRP no responde, se queda la serie de Yahoo */ }
+    }
+
     return res.status(200).json({
       symbol: meta.symbol || symbol,
       name: catMeta.name || meta.longName || meta.shortName || symbol,
@@ -230,7 +256,8 @@ export default async function handler(req, res) {
       count: series.length,
       series,
       live,
-      daily
+      daily,
+      dailySource
     });
   } catch (err) {
     return res.status(500).json({ error: "Falla temporal al procesar la cotización histórica." });
