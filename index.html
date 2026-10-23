@@ -51,6 +51,7 @@
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="/pd-chart.js"></script>
 
 <style>
     html, body {
@@ -326,10 +327,11 @@
                 </div>
               </div>
               <div class="pdl-card-chart">
-                <div class="relative w-full h-[200px] sm:h-[220px]">
+                <div id="pdHeroChartContainer" class="relative w-full h-[210px] sm:h-[230px]">
                   <canvas id="pdHeroChart" role="img" aria-label="Historia de USD/PEN con abanico de proyección P10-P90"></canvas>
                 </div>
-                <p class="mt-3 text-[11px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);"><span id="heroModelBadge" class="font-mono">Modelo: PerData Engine v3</span> · Fuente: Yahoo Finance · Datos al <span id="pdChartDate">—</span></p>
+                <p class="mt-2 text-xs text-ink-soft leading-normal font-sans">Línea: precio real · Zona sombreada: dónde estaría el dólar el próximo mes (8 de cada 10 veces)</p>
+                <p class="mt-1 text-[11px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);"><span id="heroModelBadge" class="font-mono">Modelo: PerData Engine v3</span> · Fuente: Yahoo Finance · Datos al <span id="pdChartDate">—</span></p>
                 <a href="/explorer?symbol=PEN%3DX" class="pdl-link mt-2 inline-block">Abrir en la terminal &rarr;</a>
               </div>
             </div>
@@ -772,204 +774,50 @@
           }
         }
 
-        var allLabels = labels.concat([fcLabel]);
-        var lastHistIndex = histData.length - 1;
-
-        // P50 data: null except at lastHistIndex (lastClose) and last point (p50)
-        var p50Data = new Array(allLabels.length).fill(null);
-        p50Data[lastHistIndex] = lastClose;
-        p50Data[allLabels.length - 1] = p50;
-
-        // P90 line & fill to P10:
-        var p90Data = new Array(allLabels.length).fill(null);
-        p90Data[lastHistIndex] = lastClose;
-        p90Data[allLabels.length - 1] = p90;
-
-        var p10Data = new Array(allLabels.length).fill(null);
-        p10Data[lastHistIndex] = lastClose;
-        p10Data[allLabels.length - 1] = p10;
-
-        var initialColors = getThemeColors();
-
-        // Direct Labels Plugin for endpoints
-        var directLabelsPlugin = {
-          id: 'directLabels',
-          afterDatasetsDraw: function (chartInstance) {
-            var ctx2 = chartInstance.ctx;
-            var meta = chartInstance.getDatasetMeta(0);
-            if (!meta || !meta.data || !meta.data.length) return;
-
-            var fcIndex = allLabels.length - 1;
-            var p90Meta = chartInstance.getDatasetMeta(1);
-            var p10Meta = chartInstance.getDatasetMeta(2);
-            var p50Meta = chartInstance.getDatasetMeta(3);
-
-            if (!p90Meta.data[fcIndex] || !p10Meta.data[fcIndex] || !p50Meta.data[fcIndex]) return;
-
-            var x = p50Meta.data[fcIndex].x;
-            var y90 = p90Meta.data[fcIndex].y;
-            var y50 = p50Meta.data[fcIndex].y;
-            var y10 = p10Meta.data[fcIndex].y;
-
-            var cur = getThemeColors();
-
-            ctx2.save();
-            ctx2.textAlign = 'left';
-            ctx2.textBaseline = 'middle';
-
-            // Ensure vertical separation if points are too close
-            if (Math.abs(y50 - y90) < 14) y90 = y50 - 14;
-            if (Math.abs(y10 - y50) < 14) y10 = y50 + 14;
-
-            // P90 label
-            ctx2.font = '600 11px var(--pd-font-mono, monospace)';
-            ctx2.fillStyle = cur.inkSoft;
-            ctx2.fillText('P90 ' + fmt(p90, 2), x + 8, y90);
-
-            // P50 label
-            ctx2.font = 'bold 12px var(--pd-font-mono, monospace)';
-            ctx2.fillStyle = cur.accent;
-            ctx2.fillText('P50 ' + fmt(p50, 2), x + 8, y50);
-
-            // P10 label
-            ctx2.font = '600 11px var(--pd-font-mono, monospace)';
-            ctx2.fillStyle = cur.inkSoft;
-            ctx2.fillText('P10 ' + fmt(p10, 2), x + 8, y10);
-
-            ctx2.restore();
-          }
-        };
-
-        var chart = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: allLabels,
-            datasets: [
-              {
-                label: 'USD/PEN Histórico',
-                data: histData.concat([null]),
-                borderColor: initialColors.ink,
-                backgroundColor: 'transparent',
-                borderWidth: 2,
-                pointRadius: 0,
-                fill: false,
-                tension: 0,
-                spanGaps: true
-              },
-              {
-                label: 'P90 (Superior)',
-                data: p90Data,
-                borderColor: 'transparent',
-                backgroundColor: hexToRgba(initialColors.sky, 0.25),
-                borderWidth: 0,
-                pointRadius: 0,
-                fill: '+1', // fill down to dataset 2 (P10)
-                tension: 0,
-                spanGaps: true
-              },
-              {
-                label: 'P10 (Inferior)',
-                data: p10Data,
-                borderColor: 'transparent',
-                backgroundColor: 'transparent',
-                borderWidth: 0,
-                pointRadius: 0,
-                fill: false,
-                tension: 0,
-                spanGaps: true
-              },
-              {
-                label: 'P50',
-                data: p50Data,
-                borderColor: initialColors.ink,
-                backgroundColor: 'transparent',
-                borderWidth: 2,
-                borderDash: [5, 4],
-                pointRadius: 0,
-                fill: false,
-                tension: 0,
-                spanGaps: true
-              }
-            ]
-          },
-          plugins: [directLabelsPlugin],
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            layout: {
-              padding: {
-                right: 80, // space for direct labels
-                top: 15,
-                bottom: 10
-              }
-            },
-            interaction: {
-              mode: 'index',
-              intersect: false
-            },
-            plugins: {
-              legend: { display: false },
-              tooltip: { enabled: false }
-            },
-            scales: {
-              x: {
-                grid: {
-                  display: false,
-                  drawBorder: false
-                },
-                ticks: {
-                  color: initialColors.inkSoft,
-                  font: { size: 11, family: 'var(--pd-font-ui, sans-serif)' },
-                  maxRotation: 0,
-                  autoSkip: true,
-                  maxTicksLimit: 6
-                }
-              },
-              y: {
-                position: 'left',
-                grid: {
-                  display: true,
-                  color: initialColors.rule,
-                  lineWidth: 1,
-                  drawBorder: false
-                },
-                ticks: {
-                  color: initialColors.inkSoft,
-                  font: { size: 11, family: 'var(--pd-font-mono, monospace)' },
-                  callback: function (val) {
-                    return 'S/ ' + fmt(val, 2);
-                  }
-                }
-              }
-            }
-          }
+        var chartContainer = document.getElementById('pdHeroChartContainer');
+        var histPoints = series.map(function (s) {
+          return { date: s.date.substring(0, 7), close: Number(s.close) };
         });
+        var fcSeries = (fc && fc.forecastSeries) ? fc.forecastSeries.map(function (it) {
+          return {
+            date: it.date.substring(0, 7),
+            p10: Number(it.p10),
+            p25: Number(it.p25 !== undefined ? it.p25 : it.p10),
+            p50: Number(it.p50),
+            p75: Number(it.p75 !== undefined ? it.p75 : it.p90),
+            p90: Number(it.p90)
+          };
+        }) : [];
 
-        function applyChartTheme() {
-          if (!chart) return;
-          var c = getThemeColors();
-          chart.data.datasets[0].borderColor = c.ink;
-          chart.data.datasets[1].backgroundColor = hexToRgba(c.sky, 0.25);
-          chart.data.datasets[3].borderColor = c.ink;
-
-          if (chart.options.scales.x && chart.options.scales.x.ticks) {
-            chart.options.scales.x.ticks.color = c.inkSoft;
-          }
-          if (chart.options.scales.y) {
-            if (chart.options.scales.y.grid) {
-              chart.options.scales.y.grid.color = c.rule;
+        function renderHeroChart() {
+          if (!window.PdChart || !chartContainer) return;
+          var curDark = document.documentElement.classList.contains('dark');
+          PdChart.render(chartContainer, {
+            history: histPoints,
+            daily: hist && hist.daily ? hist.daily : [],
+            forecast: {
+              forecastSeries: fcSeries,
+              model: fc && fc.model ? fc.model : 'engine-v3',
+              runAt: fc && fc.runAt ? fc.runAt : null
+            },
+            macro: { enabled: false },
+            options: {
+              currency: 'PEN',
+              horizonMonths: 1,
+              range: '6m',
+              compact: true,
+              plainLabels: true,
+              isDark: curDark,
+              assetName: 'Dólar interbancario (USD/PEN)'
             }
-            if (chart.options.scales.y.ticks) {
-              chart.options.scales.y.ticks.color = c.inkSoft;
-            }
-          }
-          chart.update();
+          });
         }
+        renderHeroChart();
 
         var themeObserver = new MutationObserver(function (mutations) {
           for (var i = 0; i < mutations.length; i++) {
             if (mutations[i].attributeName === 'class') {
-              applyChartTheme();
+              renderHeroChart();
               break;
             }
           }

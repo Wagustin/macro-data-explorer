@@ -371,7 +371,7 @@
           maintainAspectRatio: false,
           layout: {
             padding: {
-              right: isMobile ? 70 : 88,
+              right: isMobile ? (options.plainLabels ? 110 : 70) : (options.plainLabels ? 170 : 88),
               top: 10,
               left: 4,
               bottom: 4,
@@ -408,17 +408,17 @@
               min: yMin - yPad,
               max: yMax + yPad,
               ticks: {
-                maxTicksLimit: 5,
-                callback: (v) => {
-                  const n = Number(v);
-                  return isFinite(n) ? sym + n.toFixed(2) : "";
+                display: !options.plainLabels,
+                maxTicksLimit: options.compact ? 4 : (isMobile ? 4 : 5),
+                callback: function (val) {
+                  return sym + Number(val).toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 },
                 font: { family: "IBM Plex Mono, ui-monospace, monospace", size: 10 },
                 color: tokens.inkSoft,
                 padding: 6,
               },
               grid: {
-                color: hexAlpha(tokens.rule, 60),
+                color: hexAlpha(tokens.rule, options.compact ? 30 : 60),
                 drawBorder: false,
                 drawTicks: false,
               },
@@ -479,30 +479,32 @@
                     c.restore();
                   }
 
-                  // Pastilla en el eje Y
-                  const priceStr = sym + Number(lastCloseVal).toFixed(2);
-                  c.save();
-                  c.font = "700 10px 'IBM Plex Mono', ui-monospace, monospace";
-                  const textW = c.measureText(priceStr).width;
-                  const pillW = textW + 8;
-                  const pillH = 17;
-                  const pillX = area.right + 2;
-                  const pillY = yClose - pillH / 2;
+                  // Pastilla en el eje Y (solo si no es modo de etiquetas directas en margen)
+                  if (!options.plainLabels) {
+                    const priceStr = sym + Number(lastCloseVal).toFixed(2);
+                    c.save();
+                    c.font = "700 10px 'IBM Plex Mono', ui-monospace, monospace";
+                    const textW = c.measureText(priceStr).width;
+                    const pillW = textW + 8;
+                    const pillH = 17;
+                    const pillX = area.right + 2;
+                    const pillY = yClose - pillH / 2;
 
-                  c.fillStyle = tokens.ink;
-                  c.beginPath();
-                  if (typeof c.roundRect === "function") {
-                    c.roundRect(pillX, pillY, pillW, pillH, 3);
-                  } else {
-                    c.rect(pillX, pillY, pillW, pillH);
+                    c.fillStyle = tokens.ink;
+                    c.beginPath();
+                    if (typeof c.roundRect === "function") {
+                      c.roundRect(pillX, pillY, pillW, pillH, 3);
+                    } else {
+                      c.rect(pillX, pillY, pillW, pillH);
+                    }
+                    c.fill();
+
+                    c.fillStyle = tokens.card || "#FFFFFF";
+                    c.textAlign = "center";
+                    c.textBaseline = "middle";
+                    c.fillText(priceStr, pillX + pillW / 2, yClose);
+                    c.restore();
                   }
-                  c.fill();
-
-                  c.fillStyle = tokens.card || "#FFFFFF";
-                  c.textAlign = "center";
-                  c.textBaseline = "middle";
-                  c.fillText(priceStr, pillX + pillW / 2, yClose);
-                  c.restore();
                 }
               }
 
@@ -524,9 +526,11 @@
               let pos50 = yP50;
               let pos10 = yP10;
 
+              const isPlain = Boolean(options.plainLabels);
+
               // Anti-colisión entre P50 y la pastilla del último precio:
               // "la pastilla del último precio no puede tapar la etiqueta P50: si chocan, la P50 se desplaza"
-              if (yClose !== null && isFinite(yClose)) {
+              if (!isPlain && yClose !== null && isFinite(yClose)) {
                 const pillCollisionDist = 18;
                 if (Math.abs(pos50 - yClose) < pillCollisionDist) {
                   if (pos50 <= yClose) {
@@ -537,8 +541,8 @@
                 }
               }
 
-              // Separación mínima de 14px; si chocan, se desplazan
-              const minDist = 14;
+              // Separación mínima: si chocan, se desplazan (anti-solapamiento)
+              const minDist = isPlain ? (mob ? 16 : 18) : 14;
               if (pos50 - pos90 < minDist) {
                 const mid = (pos90 + pos50) / 2;
                 pos90 = mid - minDist / 2;
@@ -565,27 +569,42 @@
                 pos90 = Math.min(pos90, pos50 - minDist);
               }
 
-              // Posicionadas en el extremo derecho del abanico (alineadas a la derecha dentro del abanico)
-              const xText = mob ? area.right + 6 : Math.min(xLast, area.right) - 6;
+              // Posicionadas en el extremo derecho del abanico
+              const xText = isPlain
+                ? (mob ? area.right + 4 : xLast + 8)
+                : (mob ? area.right + 6 : Math.min(xLast, area.right) - 6);
 
               c.save();
-              c.textAlign = mob ? "left" : "right";
+              c.textAlign = isPlain ? "left" : (mob ? "left" : "right");
               c.textBaseline = "middle";
               c.font = mob
-                ? "700 9px 'IBM Plex Mono', ui-monospace, monospace"
-                : "700 10.5px 'IBM Plex Mono', ui-monospace, monospace";
+                ? (isPlain ? "700 8px 'IBM Plex Mono', ui-monospace, monospace" : "700 9px 'IBM Plex Mono', ui-monospace, monospace")
+                : (isPlain ? "600 10px 'IBM Plex Mono', ui-monospace, monospace" : "700 10.5px 'IBM Plex Mono', ui-monospace, monospace");
 
               if (valP90 != null && !isNaN(valP90)) {
                 c.fillStyle = tokens.inkSoft;
-                c.fillText("P90 " + sym + Number(valP90).toFixed(2), xText, pos90);
+                const txt90 = isPlain ? (mob ? "Esc. alto " : "Escenario alto ") : "P90 ";
+                c.fillText(txt90 + sym + Number(valP90).toFixed(2), xText, pos90);
               }
               if (valP50 != null && !isNaN(valP50)) {
-                c.fillStyle = tokens.ink;
-                c.fillText("P50 " + sym + Number(valP50).toFixed(2), xText, pos50);
+                c.fillStyle = isPlain ? tokens.accent : tokens.ink;
+                if (isPlain) {
+                  c.font = mob
+                    ? "700 8.5px 'IBM Plex Mono', ui-monospace, monospace"
+                    : "700 10.5px 'IBM Plex Mono', ui-monospace, monospace";
+                }
+                const txt50 = isPlain ? (mob ? "Probable " : "Lo más probable ") : "P50 ";
+                c.fillText(txt50 + sym + Number(valP50).toFixed(2), xText, pos50);
               }
               if (valP10 != null && !isNaN(valP10)) {
                 c.fillStyle = tokens.inkSoft;
-                c.fillText("P10 " + sym + Number(valP10).toFixed(2), xText, pos10);
+                if (isPlain) {
+                  c.font = mob
+                    ? "700 8px 'IBM Plex Mono', ui-monospace, monospace"
+                    : "600 10px 'IBM Plex Mono', ui-monospace, monospace";
+                }
+                const txt10 = isPlain ? (mob ? "Esc. bajo " : "Escenario bajo ") : "P10 ";
+                c.fillText(txt10 + sym + Number(valP10).toFixed(2), xText, pos10);
               }
               c.restore();
             },
