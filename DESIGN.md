@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: PerData
-description: "Terminal cuantitativa y publicación financiera para la Bolsa de Valores de Lima (BVL). Estética sobria basada en azul marino y azul sobre neutros fríos: fondo papel (#F7F8FA / #0A1422), tarjeta (#FFFFFF / #0F1C2E), tinta (#0E1A2B / #E9EEF4), azul marino (#002244), acento azul (#1414D2 / #93B7F8) y filetes de 1px (#DCE1E8 / #22344B). Tipografía: Libre Franklin (headings/UI), Source Serif 4 (lectura) e IBM Plex Mono (datos y tickers con tabular-nums)."
+description: "Terminal cuantitativa y publicación financiera para la Bolsa de Valores de Lima (BVL). Estética sobria basada en azul marino y azul sobre neutros fríos: fondo papel (#F7F8FA / #0F1012), tarjeta (#FFFFFF / #17181B), tinta (#0E1A2B / #E9EEF4), azul marino (#002244), acento azul (#1414D2 / #93B7F8) y filetes de 1px (#DCE1E8 / #2A2C31). Tipografía: Libre Franklin (headings/UI), Source Serif 4 (lectura) e IBM Plex Mono (datos y tickers con tabular-nums)."
 colors:
   primary: "#002244"
   secondary: "#556170"
@@ -176,7 +176,7 @@ components:
 
 ## Overview
 
-PerData es una publicación financiera seria y terminal cuantitativa para la Bolsa de Valores de Lima (BVL) y mercados macrofinancieros andinos. Su identidad visual evoca la autoridad y sobriedad de un informe impreso o diario de referencia: maquetación editorial alineada a la izquierda, tipografía que combina Libre Franklin para titulares y controles con Source Serif 4 para lectura reposada, y una paleta sobria basada en azul marino y azul sobre neutros fríos (papel #F7F8FA, tarjeta #FFFFFF y tinta #0E1A2B), con azul marino (#002244), acento azul (#1414D2 / #93B7F8), filetes de separación de 1px (#DCE1E8 / #22344B) y azul cielo (#93B7F8) para subrayado.
+PerData es una publicación financiera seria y terminal cuantitativa para la Bolsa de Valores de Lima (BVL) y mercados macrofinancieros andinos. Su identidad visual evoca la autoridad y sobriedad de un informe impreso o diario de referencia: maquetación editorial alineada a la izquierda, tipografía que combina Libre Franklin para titulares y controles con Source Serif 4 para lectura reposada, y una paleta sobria basada en azul marino y azul sobre neutros fríos (papel #F7F8FA, tarjeta #FFFFFF y tinta #0E1A2B), con azul marino (#002244), acento azul (#1414D2 / #93B7F8), filetes de separación de 1px (#DCE1E8 / #2A2C31) y azul cielo (#93B7F8) para subrayado.
 
 No hay degradados, sombras decorativas en reposo, bordes con radio superior a 4px, ni rejillas de tarjetas flotantes: la jerarquía visual nace del ritmo tipográfico, filetes limpios y datos numéricos tabulares de alta legibilidad.
 
@@ -186,9 +186,9 @@ No hay degradados, sombras decorativas en reposo, bordes con radio superior a 4p
 - **Secondary (#556170):** Tinta suave — texto secundario, explicaciones, metadatos y etiquetas.
 - **Tertiary (#1414D2):** Azul vivo de acción — reservado con moderación para botones primarios, enlaces activos, filete Pro y badges.
 - **Sky (#93B7F8):** Azul claro — subrayado técnico de 3px de la palabra clave en el hero y enlaces activos de navegación.
-- **Paper (#F7F8FA):** Fondo general de página en modo claro (en modo oscuro: #0A1422).
-- **Surface (#EEF1F5):** Superficie neutra fría para controles, tablas y fondos sutiles (en modo oscuro: #15253A).
-- **Border / Rule (#DCE1E8):** Filete de 1px para delimitar secciones, listas y tablas (en modo oscuro: #22344B).
+- **Paper (#F7F8FA):** Fondo general de página en modo claro (en modo oscuro: #0F1012).
+- **Surface (#EEF1F5):** Superficie neutra fría para controles, tablas y fondos sutiles (en modo oscuro: #1E2024).
+- **Border / Rule (#DCE1E8):** Filete de 1px para delimitar secciones, listas y tablas (en modo oscuro: #2A2C31).
 - **Positive (#1E7A46):** Cifras y variaciones al alza (en modo oscuro: #5FBF85).
 - **Negative (#B3261E):** Cifras y variaciones a la baja (en modo oscuro: #F07A72).
 
@@ -222,7 +222,7 @@ No hay degradados, sombras decorativas en reposo, bordes con radio superior a 4p
 - Fondo azul marino `#002244` en modo claro y oscuro, con filete inferior sutil `#0B3360`. Enlaces en `rgba(255,255,255,.78)`, hover y activo en blanco puro con subrayado de 2px en azul cielo `#93B7F8`. Chip de logo blanco con la «P» en `#002244`.
 
 ### Botones
-- **Primario:** Fondo `--pd-accent` (#1414D2) con texto blanco en claro (hover #002244); fondo #93B7F8 con texto #0A1422 en oscuro (hover #B9CFFA). Radio de 4px y sin sombra.
+- **Primario:** Fondo `--pd-accent` (#1414D2) con texto blanco en claro (hover #002244); fondo #93B7F8 con texto #0F1012 en oscuro (hover #B9CFFA). Radio de 4px y sin sombra.
 - **Secundario / Ghost:** Fondo transparente con borde de 1px en ink y texto en ink. Hover a surface y borde accent.
 - **Sin hover-lift ni sombras.**
 

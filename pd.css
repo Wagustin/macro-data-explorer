@@ -1,7 +1,7 @@
 /* ============================================================
    PERDATA · IDENTIDAD AZUL MARINO Y AZUL SOBRE NEUTROS FRÍOS
    United Navy (#002244) + Rhapsody Blue (#1414D2 / #93B7F8)
-   Fondo #F7F8FA / #0A1422 · Tinta #0E1A2B / #E9EEF4
+   Fondo #F7F8FA / #0F1012 · Tinta #0E1A2B / #ECECEC
    Tipografía: Libre Franklin (títulos/UI), Source Serif 4 (lectura), IBM Plex Mono (cifras)
    Sin gradientes, sombras en reposo, bordes hairline ni tarjetas flotantes.
    ============================================================ */
@@ -45,18 +45,18 @@
 
 html.dark {
   /* Papel y superficies */
-  --pd-paper: #0A1422;
-  --pd-card: #0F1C2E;
-  --pd-surface: #15253A;
+  --pd-paper: #0F1012;
+  --pd-card: #17181B;
+  --pd-surface: #1E2024;
 
   /* Tinta y reglas */
-  --pd-ink: #E9EEF4;
-  --pd-ink-soft: #9DAABA;
-  --pd-rule: #22344B;
-  --pd-border: #22344B;
+  --pd-ink: #ECECEC;
+  --pd-ink-soft: #A1A3A8;
+  --pd-rule: #2A2C31;
+  --pd-border: #2A2C31;
 
   /* Marca y acentos */
-  --pd-brand: #E9EEF4;
+  --pd-brand: #ECECEC;
   --pd-accent: #93B7F8;
   --pd-accent-hover: #B9CFFA;
   --pd-sky: #93B7F8;
@@ -475,7 +475,7 @@ html.dark header .pd-logo {
 }
 html.dark .pd-mark {
   background-color: var(--pd-accent);
-  color: #0A1422;
+  color: #0F1012;
 }
 
 /* ---------- Buttons & Interactive Elements ---------- */
@@ -562,7 +562,7 @@ html.dark .range-btn.is-active, html.dark .horizon-btn.is-active,
 html.dark .range-btn.bg-black, html.dark .horizon-btn.bg-black,
 html.dark .range-btn.bg-white, html.dark .horizon-btn.bg-white {
   background: #93B7F8 !important;
-  color: #0A1422 !important;
+  color: #0F1012 !important;
   font-weight: 700 !important;
 }
 
@@ -745,7 +745,7 @@ footer {
 
 html.dark .pd-plan-badge {
   background-color: var(--pd-accent);
-  color: #0A1422;
+  color: #0F1012;
 }
 
 /* ---------- Navbar: sign-in button + account menu ---------- */
@@ -1028,7 +1028,7 @@ html.dark .pd-plan-featured { border-top-color: var(--pd-accent); }
 
 html.dark .pd-interval-save {
   background-color: var(--pd-accent);
-  color: #0A1422;
+  color: #0F1012;
 }
 
 /* Category chip / news filter active underline */
@@ -1113,14 +1113,14 @@ html.pd-motion .pd-btn {
    PORTADA: HERO MARINO, TERMINAL PANEL & RITMO DE SUPERFICIES
    ============================================================ */
 
-/* 1. Hero marino (#002244 en claro, #0F1C2E en oscuro) */
+/* 1. Hero marino (#002244 en claro, #17181B en oscuro) */
 .pd-hero-navy {
   background-color: #002244;
   border-top: 1px solid rgba(147, 183, 248, 0.25);
   color: #FFFFFF;
 }
 html.dark .pd-hero-navy {
-  background-color: #0F1C2E;
+  background-color: #17181B;
   border-top: 1px solid rgba(147, 183, 248, 0.25);
 }
 
@@ -1166,7 +1166,7 @@ html.dark .pd-hero-navy {
   overflow: hidden;
 }
 html.dark .pd-terminal-panel {
-  border-color: #22344B;
+  border-color: #2A2C31;
   box-shadow: none;
 }
 
@@ -1204,7 +1204,7 @@ html.pd-motion .pdl-rise-2 { animation-delay: .12s; }
 .pdl-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 22px; font-family: var(--pd-font-mono); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-radius: 2px; text-decoration: none; transition: background-color .2s ease, border-color .2s ease, color .2s ease; }
 .pdl-btn-primary { background: var(--pd-ink); color: var(--pd-card) !important; border: 1px solid var(--pd-ink); }
 .pdl-btn-primary:hover { background: var(--pd-accent); border-color: var(--pd-accent); }
-html.dark .pdl-btn-primary:hover { color: #0A1422 !important; }
+html.dark .pdl-btn-primary:hover { color: #0F1012 !important; }
 .pdl-btn-secondary { background: transparent; color: var(--pd-ink) !important; border: 1px solid var(--pd-rule); }
 .pdl-btn-secondary:hover { border-color: var(--pd-ink); }
 
