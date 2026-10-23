@@ -69,10 +69,18 @@ function adaptNodeHandler(handler) {
       }
     }
 
+    const startCpu = performance.now();
+
     return new Promise(async (resolve) => {
       let statusCode = 200;
       const headers = new Headers();
       let finished = false;
+
+      function finalize() {
+        const dur = (performance.now() - startCpu).toFixed(3);
+        headers.set("Server-Timing", `edge;dur=${dur}`);
+        headers.set("X-Edge-Duration", `${dur}ms`);
+      }
 
       const res = {
         statusCode: 200,
@@ -91,12 +99,14 @@ function adaptNodeHandler(handler) {
         json(data) {
           if (finished) return;
           finished = true;
+          finalize();
           headers.set("content-type", "application/json; charset=utf-8");
           resolve(new Response(JSON.stringify(data), { status: statusCode, headers }));
         },
         send(data) {
           if (finished) return;
           finished = true;
+          finalize();
           if (typeof data === "object" && !(data instanceof Uint8Array)) {
             headers.set("content-type", "application/json; charset=utf-8");
             resolve(new Response(JSON.stringify(data), { status: statusCode, headers }));
@@ -107,6 +117,7 @@ function adaptNodeHandler(handler) {
         end(data) {
           if (finished) return;
           finished = true;
+          finalize();
           resolve(new Response(data || null, { status: statusCode, headers }));
         }
       };
@@ -117,6 +128,7 @@ function adaptNodeHandler(handler) {
         console.error("Handler error:", err);
         if (!finished) {
           finished = true;
+          finalize();
           resolve(new Response(JSON.stringify({ error: err.message || "Internal Server Error" }), {
             status: 500,
             headers: { "content-type": "application/json; charset=utf-8" }
