@@ -11,7 +11,7 @@
 
   const init = () => {
     onScroll();
-    const targets = document.querySelectorAll('[data-reveal], [data-stagger]');
+    const targets = document.querySelectorAll('[data-reveal], [data-stagger], .pd-rule-draw, [data-rule-draw]');
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -20,14 +20,14 @@
             io.unobserve(entry.target);
           }
         });
-      }, { rootMargin: '0px 0px -10% 0px' });
+      }, { rootMargin: '0px 0px -5% 0px' });
       targets.forEach(el => io.observe(el));
     } else {
       targets.forEach(el => el.classList.add('is-revealed'));
     }
 
     setTimeout(() => {
-      document.querySelectorAll('[data-reveal], [data-stagger]').forEach(el => el.classList.add('is-revealed'));
+      document.querySelectorAll('[data-reveal], [data-stagger], .pd-rule-draw, [data-rule-draw]').forEach(el => el.classList.add('is-revealed'));
     }, 1500);
 
     const cells = document.querySelectorAll('[data-cell-price], [data-cell-pct], [data-cell-p50], #pdCardP50, #pdCardP10, #pdCardP90, #pdCardChange, #pd-p10, #pd-p50, #pd-p90');

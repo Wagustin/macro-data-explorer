@@ -46,7 +46,8 @@ const PAGES = {
   "/precios": "precios.html",
   "/cuenta": "cuenta.html",
   "/restablecer": "restablecer.html",
-  "/privacidad": "privacidad.html"
+  "/privacidad": "privacidad.html",
+  "/empresas": "empresas.html"
 };
 
 const server = http.createServer(async (req, res) => {
@@ -106,8 +107,19 @@ const server = http.createServer(async (req, res) => {
   }
 
   // --- Clean URL mappings to HTML subpages ---
+  if (pathname === "/data/empresas.json") {
+    const jsonPath = path.join(process.cwd(), "data", "empresas.json");
+    if (fs.existsSync(jsonPath)) {
+      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+      return fs.createReadStream(jsonPath).pipe(res);
+    }
+  }
+
   const cleanPath = pathname.replace(/\.html$/, "").replace(/\/+$/, "") || "/";
   let targetFile = PAGES[cleanPath === "/index" ? "/" : cleanPath] || null;
+  if (!targetFile && cleanPath.startsWith("/empresa/")) {
+    targetFile = "empresa.html";
+  }
   if (!targetFile) {
     let relativePath = null;
     try {
