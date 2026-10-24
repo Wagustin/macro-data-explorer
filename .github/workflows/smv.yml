@@ -1,0 +1,32 @@
+name: Hechos de importancia (SMV)
+
+on:
+  schedule:
+    - cron: "23 1 * * *"    # 20:23 en Lima
+    - cron: "53 5 * * *"    # 00:53 en Lima, recoge lo publicado tarde
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: smv
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Leer la página del día de la SMV
+        run: node scripts/fetch-smv.js
+      - name: Guardar si hay hechos nuevos
+        run: |
+          git config user.name "perdata-bot"
+          git config user.email "perdata-bot@users.noreply.github.com"
+          git add data/smv-hechos.json
+          git diff --cached --quiet || (git commit -m "data(smv): hechos de importancia $(date -u +%F)" && git push)
