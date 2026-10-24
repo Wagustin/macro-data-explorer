@@ -232,6 +232,7 @@
 
         <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
           <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a>
+          <a href="/empresas" class="hover:text-ink transition no-underline">Empresas</a>
           <a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a>
           <a href="/metodologia" class="text-ink font-semibold border-b border-ink pb-0.5 no-underline">Metodología</a>
           <a href="/guia" class="hover:text-ink transition no-underline">Guía</a>
@@ -260,6 +261,7 @@
     <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors">
       <nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft">
         <a href="/explorer" class="hover:text-ink py-1 transition no-underline">Terminal</a>
+          <a href="/empresas" class="hover:text-ink py-1 transition no-underline">Empresas</a>
         <a href="/noticias" class="hover:text-ink py-1 transition no-underline">Noticias</a>
         <a href="/metodologia" class="text-ink font-semibold py-1 no-underline">Metodología</a>
         <a href="/guia" class="hover:text-ink py-1 transition no-underline">Guía</a>
@@ -370,5 +372,31 @@
 
   <!-- Auth -->
   <script src="/auth.js"></script>
+  <nav class="mobile-nav" aria-label="Navegación móvil">
+    <a href="/explorer" class="nav-item">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </div>
+      <span>Terminal</span>
+    </a>
+    <a href="/empresas" class="nav-item">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M8 7h6M8 11h4"/></svg>
+      </div>
+      <span>Empresas</span>
+    </a>
+    <a href="/noticias" class="nav-item">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/></svg>
+      </div>
+      <span>Noticias</span>
+    </a>
+    <a href="/cuenta" class="nav-item">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <span>Mi cuenta</span>
+    </a>
+  </nav>
 </body>
 </html>
