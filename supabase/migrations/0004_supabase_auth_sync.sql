@@ -2,6 +2,8 @@
 -- Run in Supabase SQL Editor (or supabase db push). Idempotent.
 -- DO NOT EXECUTE AUTOMATICALLY (as per migration protocol).
 
+-- user_metadata is writable by the user (signUp/updateUser), so plan never comes from it.
+
 -- 1. Function to handle new user signup from Supabase Auth
 create or replace function public.handle_new_auth_user()
 returns trigger
@@ -17,8 +19,6 @@ begin
     v_plan := 'pro';
   elsif (new.raw_app_meta_data->>'plan') is not null then
     v_plan := new.raw_app_meta_data->>'plan';
-  elsif (new.raw_user_meta_data->>'plan') is not null then
-    v_plan := new.raw_user_meta_data->>'plan';
   end if;
 
   v_name := coalesce(new.raw_user_meta_data->>'name', split_part(new.email, '@', 1));
@@ -67,7 +67,6 @@ begin
     plan = case
       when lower(new.email) = 'venturasaldanaa@gmail.com' then 'pro'
       when (new.raw_app_meta_data->>'plan') is not null then new.raw_app_meta_data->>'plan'
-      when (new.raw_user_meta_data->>'plan') is not null then new.raw_user_meta_data->>'plan'
       else public.users.plan
     end,
     updated_at = now()
