@@ -172,6 +172,11 @@ export default {
       return adaptedAuth(request, env, ctx);
     }
 
+    // Ficha de empresa: una sola página que lee el nemónico de la URL
+    if (/^\/empresa\/[^/]+\/?$/.test(pathname)) {
+      return env.ASSETS.fetch(new Request(new URL("/empresa", request.url).toString(), request));
+    }
+
     // 2. Delegate to Static Assets (handles clean URLs, trailing slashes, etc.)
     const assetResponse = await env.ASSETS.fetch(request);
     if (assetResponse.status === 404) {

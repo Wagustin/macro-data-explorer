@@ -20,6 +20,9 @@ const FILES_TO_COPY = [
   "privacidad.html",
   "terms.html",
   "404.html",
+  "empresas.html",
+  "empresa.html",
+  "data/empresas.json",
   "pd.css",
   "pd-chart.js",
   "motion.js",
@@ -40,6 +43,7 @@ if (!fs.existsSync(publicDir)) {
 for (const file of FILES_TO_COPY) {
   const src = path.join(rootDir, file);
   const dest = path.join(publicDir, file);
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
   if (fs.existsSync(src)) {
     fs.copyFileSync(src, dest);
   }
