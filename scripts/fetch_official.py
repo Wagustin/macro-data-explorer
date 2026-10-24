@@ -6,6 +6,9 @@ Writes to data/official/:
                     (World Bank Pink Sheet, CC BY 4.0)
   sunat-fx.json     USD/PEN buy and sell published by SUNAT, one point per day,
                     accumulated from the day this job started (SUNAT only publishes today's rate)
+  bcrp-daily.json   BCRP daily series: USD/PEN (SBS, sell) and international copper, gold,
+                    silver, zinc and WTI quotes. Downloaded once a day here so the site never
+                    calls the BCRP API on visitor requests (its API started showing a bot check).
 
 Identified User-Agent, a few requests per day, nothing behind logins or bot checks.
 Needs: xlrd, openpyxl.  Usage: python scripts/fetch_official.py
@@ -120,9 +123,54 @@ def sunat_fx():
     return f"SUNAT: {point}"
 
 
+BCRP_SERIES = {
+    "PEN": ("PD04640PD", "S/ por US$", 1),
+    "COBRE": ("PD04701XD", "US$ por libra (Londres)", 0.01),  # published in US cents
+    "ORO": ("PD04704XD", "US$ por onza troy (Londres)", 1),
+    "PLATA": ("PD04702XD", "US$ por onza troy", 1),
+    "ZINC": ("PD04703XD", "US$ por libra (Londres)", 0.01),
+    "WTI": ("PD04705XD", "US$ por barril", 1),
+}
+BCRP_MONTHS = {"Ene": "01", "Feb": "02", "Mar": "03", "Abr": "04", "May": "05", "Jun": "06",
+               "Jul": "07", "Ago": "08", "Set": "09", "Sep": "09", "Oct": "10", "Nov": "11", "Dic": "12"}
+
+
+def bcrp_daily():
+    import time
+    end = dt.date.today()
+    start = end - dt.timedelta(days=3 * 365)
+    out = {}
+    for name, (code, unit, scale) in BCRP_SERIES.items():
+        raw = get(f"https://estadisticas.bcrp.gob.pe/estadisticas/series/api/{code}/json/{start}/{end}").decode("utf-8", "replace")
+        if raw.lstrip().startswith("<"):
+            raise RuntimeError(f"BCRP {code}: devolvió HTML (¿comprobación antibots?)")
+        cut = raw[: raw.index("<")] if raw.find("<") > 0 else raw
+        data = json.loads(cut[: cut.rindex("}") + 1])
+        points = []
+        for per in data.get("periods", []):
+            m = re.match(r"^(\d{2})\.([A-Za-z]{3})\.(\d{2})$", per.get("name", ""))
+            try:
+                value = float(per["values"][0])
+            except (ValueError, KeyError, IndexError):
+                continue  # "n.d." (not yet published)
+            if m and m.group(2) in BCRP_MONTHS:
+                points.append([f"20{m.group(3)}-{BCRP_MONTHS[m.group(2)]}-{m.group(1)}", round(value * scale, 6)])
+        if len(points) < 100:
+            raise RuntimeError(f"BCRP {code}: solo {len(points)} datos")
+        out[name] = {"codigo": code, "unidad": unit, "serie": points}
+        time.sleep(6)  # one request every few seconds, once a day
+    save("bcrp-daily.json", {
+        "fuente": "Banco Central de Reserva del Perú (BCRP), estadísticas diarias",
+        "url": "https://estadisticas.bcrp.gob.pe/estadisticas/series/",
+        "licencia": "Información pública del BCRP, citando la fuente",
+        "series": out,
+    })
+    return "BCRP: " + ", ".join(f"{k} {v['serie'][-1]}" for k, v in out.items())
+
+
 if __name__ == "__main__":
     errors = []
-    for job in (eia_oil, wb_metals, sunat_fx):
+    for job in (bcrp_daily, eia_oil, wb_metals, sunat_fx):
         try:
             print(job())
         except Exception as e:  # one source failing must not block the others
