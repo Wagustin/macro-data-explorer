@@ -52,29 +52,50 @@
 
   <style>
     /* Direct editorial table styles */
-    .controls {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
+    .finder { margin-bottom: 8px; }
+    .finder-search {
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 2px solid var(--pd-ink);
+      padding: 6px 0 10px;
     }
-    .controls input, .controls select {
-      background: var(--pd-card);
-      border: 1px solid var(--pd-rule);
-      color: var(--pd-ink);
-      font-family: var(--pd-font-ui);
-      font-size: 13px;
-      padding: 9px 14px;
-      flex: 1;
-      min-width: 160px;
-      appearance: none;
-      -webkit-appearance: none;
-      border-radius: 2px;
-      outline: none;
-      transition: border-color 0.15s, background-color 0.2s;
+    .finder-search svg { width: 22px; height: 22px; flex: none; fill: none; stroke: var(--pd-ink-soft); stroke-width: 2; }
+    .finder-search input {
+      flex: 1; min-width: 0; border: 0; background: transparent; outline: none;
+      font-family: var(--pd-font-serif, "Source Serif 4", Georgia, serif);
+      font-size: clamp(19px, 2.4vw, 26px); color: var(--pd-ink);
     }
-    .controls input:focus, .controls select:focus {
-      border-color: var(--pd-ink-soft);
+    .finder-search input::placeholder { color: var(--pd-ink-soft); opacity: .8; }
+    .finder-search:focus-within { border-bottom-color: var(--pd-ink); }
+    .finder-search:focus-within svg { stroke: var(--pd-ink); }
+    .finder-kbd {
+      font-family: var(--pd-font-mono, monospace); font-size: 12px; color: var(--pd-ink-soft);
+      border: 1px solid var(--pd-rule); padding: 1px 7px; border-radius: 3px;
+    }
+    @media (max-width: 640px) { .finder-kbd { display: none; } }
+    .finder-hint { font-size: 13px; color: var(--pd-ink-soft); margin: 10px 0 18px; }
+    .finder-hint button {
+      color: var(--pd-ink); text-decoration: underline; text-underline-offset: 3px;
+      text-decoration-color: var(--pd-rule); font: inherit; background: none; border: 0; padding: 0; cursor: pointer;
+    }
+    .finder-hint button:hover { text-decoration-color: var(--pd-ink); }
+    .finder-tabs {
+      display: flex; gap: 22px; overflow-x: auto; scrollbar-width: none;
+      border-bottom: 1px solid var(--pd-rule); margin-bottom: 4px;
+    }
+    .finder-tabs::-webkit-scrollbar { display: none; }
+    .finder-tabs button {
+      flex: none; background: none; border: 0; cursor: pointer;
+      padding: 10px 0 9px; margin-bottom: -1px; border-bottom: 2px solid transparent;
+      font-family: var(--pd-font-ui); font-size: 14px; color: var(--pd-ink-soft);
+      transition: color .2s, border-color .25s cubic-bezier(.05,.7,.1,1);
+    }
+    .finder-tabs button span { font-family: var(--pd-font-mono, monospace); font-size: 12px; margin-left: 4px; font-variant-numeric: tabular-nums; }
+    .finder-tabs button:hover { color: var(--pd-ink); }
+    .finder-tabs button[aria-selected="true"] { color: var(--pd-ink); font-weight: 600; border-bottom-color: var(--pd-ink); }
+    .finder-sectors button { font-size: 13px; }
+    .finder-empty-actions button {
+      margin-top: 12px; font: 600 14px var(--pd-font-ui); color: var(--pd-ink);
+      background: none; border: 0; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
     }
     .controls input::placeholder {
       color: var(--pd-ink-muted);
@@ -339,28 +360,32 @@ html.dark .ui-switch {
       </p>
     </div>
 
-    <div class="controls">
-      <input type="search" id="searchInput" placeholder="Buscar por nombre o nemónico..." aria-label="Buscar empresa" />
-      <select id="sectorFilter" aria-label="Filtrar por sector">
-        <option value="">Todos los sectores</option>
-        <option value="DIVERSAS">Diversas</option>
-        <option value="BANCOS Y FINANCIERAS">Bancos y Financieras</option>
-        <option value="INDUSTRIALES">Industriales</option>
-        <option value="MINERAS">Mineras</option>
-        <option value="SERVICIOS PÚBLICOS">Servicios Públicos</option>
-        <option value="SEGUROS">Seguros</option>
-        <option value="AGRARIO">Agrario</option>
-        <option value="ADMINISTRADORAS DE FONDOS DE PENSIONES">AFP</option>
-      </select>
-      <select id="activityFilter" aria-label="Filtrar por actividad">
-        <option value="">Toda actividad</option>
-        <option value="activo">Activas (89)</option>
-        <option value="yahoo">Con proyección (36)</option>
-        <option value="sin">Sin negociación reciente (93)</option>
-      </select>
+    <div class="finder">
+      <label class="finder-search" for="searchInput">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="searchInput" placeholder="Busca empresa, nemónico o sector" aria-label="Buscar empresa" autocomplete="off" spellcheck="false" />
+        <kbd class="finder-kbd" aria-hidden="true">/</kbd>
+      </label>
+      <p class="finder-hint">Por ejemplo: <button type="button" data-try="alicorp">Alicorp</button>, <button type="button" data-try="BVN">BVN</button>, <button type="button" data-try="bancos">bancos</button>, <button type="button" data-try="mineras">mineras</button>.</p>
+      <div class="finder-tabs" role="tablist" aria-label="Qué empresas mostrar" id="actTabs">
+        <button type="button" role="tab" data-act="" aria-selected="true">Todas <span>182</span></button>
+        <button type="button" role="tab" data-act="yahoo" aria-selected="false">Con proyección <span>36</span></button>
+        <button type="button" role="tab" data-act="activo" aria-selected="false" title="Con negociación en los últimos 12 meses">Activas <span>89</span></button>
+      </div>
+      <div class="finder-tabs finder-sectors" role="tablist" aria-label="Sector" id="secTabs">
+        <button type="button" role="tab" data-sec="" aria-selected="true">Todos los sectores</button>
+        <button type="button" role="tab" data-sec="DIVERSAS" aria-selected="false">Diversas <span>51</span></button>
+        <button type="button" role="tab" data-sec="BANCOS Y FINANCIERAS" aria-selected="false">Bancos <span>32</span></button>
+        <button type="button" role="tab" data-sec="INDUSTRIALES" aria-selected="false">Industriales <span>25</span></button>
+        <button type="button" role="tab" data-sec="SERVICIOS PÚBLICOS" aria-selected="false">Servicios Públicos <span>19</span></button>
+        <button type="button" role="tab" data-sec="SEGUROS" aria-selected="false">Seguros <span>18</span></button>
+        <button type="button" role="tab" data-sec="MINERAS" aria-selected="false">Mineras <span>17</span></button>
+        <button type="button" role="tab" data-sec="AGRARIO" aria-selected="false">Agrario <span>16</span></button>
+        <button type="button" role="tab" data-sec="ADMINISTRADORAS DE FONDOS DE PENSIONES" aria-selected="false">AFP <span>4</span></button>
+      </div>
     </div>
 
-    <p class="stat-bar" id="statBar">182 empresas · 89 activas · 36 con proyección</p>
+    <p class="stat-bar" id="statBar" aria-live="polite">182 empresas</p>
 
     <div class="table-head">
       <div>Nemónico</div>
@@ -462,7 +487,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Banco BBVA Peru</div>
             <div class="company-sub text-ink-soft"><span class="badge-dot"></span>Con proyección PerData Engine</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">…</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -474,7 +499,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Banco Pichincha</div>
             <div class="company-sub text-ink-soft"><span class="badge-dot"></span>Con proyección PerData Engine</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">…</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -534,7 +559,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Banco de Credito del Peru</div>
             <div class="company-sub text-ink-soft"><span class="badge-dot"></span>Con proyección PerData Engine</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">…</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -666,7 +691,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Banco Internacional del Peru S.A.A. - Interbank</div>
             <div class="company-sub text-ink-soft"><span class="badge-dot"></span>Con proyección PerData Engine</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">…</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -750,7 +775,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Scotiabank Peru S.A.A.</div>
             <div class="company-sub text-ink-soft"><span class="badge-dot"></span>Con proyección PerData Engine</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">…</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1026,7 +1051,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Financiera Proempresa S.A.</div>
             <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1134,7 +1159,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Infinance XP S.A. (Antes Financiera OH! S.A.)</div>
             <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1470,7 +1495,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Alfin Banco S.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1542,7 +1567,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Banco de Comercio</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1554,7 +1579,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Banco Falabella Peru S.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1566,7 +1591,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Banco Bci Peru S.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1578,7 +1603,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Banco Interamericano de Finanzas S.A. - Banbif</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1590,7 +1615,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Bank Of China (Peru) S.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1602,7 +1627,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Banco Ripley Perú S.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1722,7 +1747,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Citibank del Peru S.A. - Citibank Peru</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1734,7 +1759,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Caja Municipal de Ahorro y Credito de Arequipa S.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1746,7 +1771,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Corporacion Financiera de Desarrollo S.A. - Cofide</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1758,7 +1783,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Compartamos Banco S.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1782,7 +1807,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Caja Rural de Ahorro y Credito los Andes S.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1842,7 +1867,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Banco Efectiva S.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1938,7 +1963,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Financiera Confianza S.A.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1950,7 +1975,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Financiera Credinka S.A. - en Liquidacion</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1974,7 +1999,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Financiera Tfc S.A. - en Liquidación</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -2010,7 +2035,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Banco Gnb Perú S.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -2034,7 +2059,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Icbc Perú Bank S.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -2190,7 +2215,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Mibanco Banco de la Micro Empresa S.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -2202,7 +2227,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Mitsui Auto Finance Perú S.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -2358,7 +2383,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Financiera Qapaq S.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -2418,7 +2443,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Banco Santander Perú S.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -2430,7 +2455,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Santander Financiamientos S.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -2454,7 +2479,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Santander Consumer Bank S.A.</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -2526,7 +2551,7 @@ html.dark .ui-switch {
             <div class="company-name font-medium">Total Servicios Financieros Empresa de Creditos</div>
             <div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>
           </div>
-          <div class="sector-col sector-label">Bancos y Fin.</div>
+          <div class="sector-col sector-label">Bancos</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -2558,7 +2583,9 @@ html.dark .ui-switch {
     </div>
 
     <div id="emptyMessage" class="hidden py-12 text-center text-ink-soft text-sm font-sans">
-      No se encontraron empresas con los criterios seleccionados.
+      <p id="emptyText">No encontramos esa empresa.</p>
+      <p>Prueba con el nemónico (por ejemplo, ALICORC1) o con una parte del nombre.</p>
+      <div class="finder-empty-actions"><button type="button" id="clearFilters">Ver todas las empresas</button></div>
     </div>
 
     <p class="text-xs text-ink-soft mt-8 text-center">
@@ -2652,61 +2679,62 @@ html.dark .ui-switch {
   <script>
     (function() {
       const searchInput = document.getElementById("searchInput");
-      const sectorFilter = document.getElementById("sectorFilter");
-      const activityFilter = document.getElementById("activityFilter");
       const statBar = document.getElementById("statBar");
       const emptyMessage = document.getElementById("emptyMessage");
       const rows = Array.from(document.querySelectorAll("#listado .row-link"));
+      const TOTAL = rows.length;
+      const fold = (t) => String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      // Sinónimos para que «bancos» o «minería» encuentren su sector
+      const ALIAS = { banco: "bancos y financieras", bancos: "bancos y financieras", financiera: "bancos y financieras",
+        mineria: "mineras", minera: "mineras", mina: "mineras", seguro: "seguros", electricas: "servicios publicos",
+        energia: "servicios publicos", agro: "agrario", azucar: "agrario", afp: "administradoras de fondos de pensiones" };
+      rows.forEach(r => { r._hay = fold(r.dataset.nemo + " " + r.dataset.name + " " + r.dataset.sector); });
+      const state = { q: "", act: "", sec: "" };
 
+      function setTab(group, attr, value) {
+        group.querySelectorAll("button").forEach(b => b.setAttribute("aria-selected", String(b.dataset[attr] === value)));
+      }
       function filterRows() {
-        const q = (searchInput.value || "").trim().toLowerCase();
-        const sec = sectorFilter.value;
-        const act = activityFilter.value;
-
-        let visibleCount = 0;
-        let activeCount = 0;
-        let yahooCount = 0;
-
+        const words = fold(state.q).split(/\s+/).filter(Boolean).map(w => ALIAS[w] || w);
+        let shown = 0;
         rows.forEach(row => {
-          const nemo = (row.dataset.nemo || "").toLowerCase();
-          const name = (row.dataset.name || "").toLowerCase();
-          const sector = row.dataset.sector || "";
           const tier = row.dataset.tier || "";
-
-          const matchesQuery = !q || nemo.includes(q) || name.includes(q);
-          const matchesSector = !sec || sector === sec;
-          let matchesAct = true;
-          if (act === "activo") matchesAct = (tier === "activo" || tier === "yahoo");
-          else if (act === "yahoo") matchesAct = (tier === "yahoo");
-          else if (act === "sin") matchesAct = (tier === "sin");
-
-          const match = matchesQuery && matchesSector && matchesAct;
-          if (match) {
-            row.style.display = "";
-            visibleCount++;
-            if (tier === "activo" || tier === "yahoo") activeCount++;
-            if (tier === "yahoo") yahooCount++;
-          } else {
-            row.style.display = "none";
-          }
+          const ok = words.every(w => row._hay.includes(w))
+            && (!state.sec || row.dataset.sector === state.sec)
+            && (!state.act || (state.act === "yahoo" ? tier === "yahoo" : tier !== "sin"));
+          row.style.display = ok ? "" : "none";
+          if (ok) shown++;
         });
-
-        if (visibleCount === 0) {
-          emptyMessage.classList.remove("hidden");
-        } else {
-          emptyMessage.classList.add("hidden");
-        }
-
-        if (!q && !sec && !act) {
-          statBar.textContent = "182 empresas · 89 activas · 36 con proyección";
-        } else {
-          statBar.textContent = `${visibleCount} empresas encontradas · ${activeCount} activas · ${yahooCount} con proyección`;
-        }
+        emptyMessage.classList.toggle("hidden", shown > 0);
+        if (!shown) document.getElementById("emptyText").textContent = state.q ? `No encontramos «${state.q}».` : "Ninguna empresa con estos filtros.";
+        statBar.textContent = shown === TOTAL ? `${TOTAL} empresas` : `${shown} de ${TOTAL} empresas`;
+        const u = new URL(location.href);
+        ["q", "act", "sec"].forEach(k => state[k] ? u.searchParams.set(k, state[k]) : u.searchParams.delete(k));
+        history.replaceState(null, "", u);
+        if (typeof processQueue === "function") setTimeout(processQueue, 0);
       }
 
-      searchInput.addEventListener("input", filterRows);
-      sectorFilter.addEventListener("change", filterRows);
-      activityFilter.addEventListener("change", filterRows);
+      const actTabs = document.getElementById("actTabs");
+      const secTabs = document.getElementById("secTabs");
+      actTabs.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; state.act = b.dataset.act; setTab(actTabs, "act", state.act); filterRows(); });
+      secTabs.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; state.sec = b.dataset.sec; setTab(secTabs, "sec", state.sec); b.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" }); filterRows(); });
+      searchInput.addEventListener("input", () => { state.q = searchInput.value.trim(); filterRows(); });
+      searchInput.addEventListener("keydown", e => {
+        if (e.key === "Escape") { searchInput.value = ""; state.q = ""; filterRows(); }
+        if (e.key === "Enter") { const first = rows.find(r => r.style.display !== "none"); if (first && rows.filter(r => r.style.display !== "none").length === 1) location.href = first.href; }
+      });
+      document.addEventListener("keydown", e => {
+        if (e.key === "/" && document.activeElement !== searchInput && !/input|textarea|select/i.test(document.activeElement.tagName)) { e.preventDefault(); searchInput.focus(); }
+      });
+      document.querySelectorAll(".finder-hint [data-try]").forEach(b => b.addEventListener("click", () => { searchInput.value = b.dataset.try; state.q = b.dataset.try; filterRows(); searchInput.focus(); }));
+      document.getElementById("clearFilters").addEventListener("click", () => {
+        searchInput.value = ""; Object.assign(state, { q: "", act: "", sec: "" }); setTab(actTabs, "act", ""); setTab(secTabs, "sec", ""); filterRows();
+      });
+      // Estado inicial desde la URL (?q=&act=&sec=)
+      const params = new URLSearchParams(location.search);
+      state.q = params.get("q") || ""; state.act = params.get("act") || ""; state.sec = params.get("sec") || "";
+      searchInput.value = state.q; setTab(actTabs, "act", state.act); setTab(secTabs, "sec", state.sec);
+      if (state.q || state.act || state.sec) filterRows();
 
       // Lazy Loading Batch for Yahoo Prices
       const priceCache = {};
