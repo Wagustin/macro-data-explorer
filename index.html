@@ -331,7 +331,7 @@
                   <canvas id="pdHeroChart" role="img" aria-label="Historia de USD/PEN con abanico de proyección P10-P90"></canvas>
                 </div>
                 <p class="mt-2 text-xs text-ink-soft leading-normal font-sans">Línea: precio real · Zona sombreada: dónde estaría el dólar el próximo mes (8 de cada 10 veces)</p>
-                <p class="mt-1 text-[11px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);"><span id="heroModelBadge" class="font-mono">Modelo: PerData Engine v3</span> · Fuente: Yahoo Finance · Datos al <span id="pdChartDate">—</span></p>
+                <p class="mt-1 text-[11px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);"><span id="heroModelBadge" class="font-mono">Modelo: PerData Engine v3</span> · Fuente: <span id="pdChartSource">Yahoo Finance</span> · Datos al <span id="pdChartDate">—</span></p>
                 <a href="/explorer?symbol=PEN%3DX" class="pdl-link mt-2 inline-block">Abrir en la terminal &rarr;</a>
               </div>
             </div>
@@ -730,6 +730,8 @@
         var hist = res[0];
         var fc = res[1];
         var series = hist && hist.series ? (window.pdMonthlyCloses ? window.pdMonthlyCloses(hist.series) : hist.series) : [];
+        var srcEl = document.getElementById('pdChartSource');
+        if (srcEl && hist && hist.dailySource) srcEl.textContent = hist.dailySource;
         var last = series[series.length - 1];
         var lastClose = last && typeof last.close === 'number' ? last.close : null;
 

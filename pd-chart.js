@@ -122,7 +122,11 @@
         const H = Number(options.horizonMonths || 1);
         // Móvil: ~3 meses de historia para que la proyección se vea; ordenador: 1 año
         const dayLimit = isMobile ? 63 : 252;
-        const sliced = seriesPoints.slice(-dayLimit);
+        let sliced = seriesPoints.slice(-dayLimit);
+        // Gráfico compacto (landing): cierres semanales, contando desde el último cierre para conservarlo
+        if (options.compact && sliced.length > 120) {
+          sliced = sliced.filter((_, i) => (sliced.length - 1 - i) % 5 === 0);
+        }
         if (sliced.length > 1) {
           seriesLabels = sliced.map(h => h.d);
           seriesData = sliced.map(h => h.v);
