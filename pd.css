@@ -590,14 +590,17 @@ input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focu
 
 /* ---------- Terminal Surface & Chart Area ---------- */
 .terminal-surface {
-  background-color: var(--pd-card);
-  border: 1px solid var(--pd-border);
-  border-radius: 4px;
-  box-shadow: none;
+  background-color: transparent !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-radius: 0 !important;
+  border-top: 1px solid var(--pd-rule) !important;
+  border-bottom: 1px solid var(--pd-rule) !important;
+  box-shadow: none !important;
 }
 
 html.dark .terminal-surface {
-  border-color: var(--pd-border);
+  border-color: var(--pd-rule) !important;
 }
 
 /* Table styles */
@@ -960,16 +963,54 @@ html.dark .pd-tabs button[aria-selected="true"] { background: var(--pd-surface);
 .pd-interval button[aria-checked="true"] { background: var(--pd-card); color: var(--pd-ink); box-shadow: none; }
 html.dark .pd-interval button[aria-checked="true"] { background: var(--pd-surface); color: #FFFFFF; }
 
-.pd-plans { display: grid; gap: 32px 48px; grid-template-columns: 1fr; margin: 0; max-width: 960px; }
-@media (min-width: 768px) { .pd-plans { grid-template-columns: 1fr 1fr; } }
-
-.pd-plan {
-  display: flex; flex-direction: column; gap: 20px; padding: 24px 0 0; border-radius: 0;
-  background: transparent; border: none; border-top: 1px solid var(--pd-rule); transition: border-color 0.18s ease;
+.pd-plans {
+  display: grid;
+  gap: 0;
+  grid-template-columns: 1fr;
+  margin: 0;
+  max-width: 960px;
+  border-top: 1px solid var(--pd-rule);
+  border-bottom: 1px solid var(--pd-rule);
+}
+@media (min-width: 768px) {
+  .pd-plans { grid-template-columns: 1fr 1fr; }
 }
 
-.pd-plan-featured { border-top: 2px solid var(--pd-accent); position: relative; }
-html.dark .pd-plan-featured { border-top-color: var(--pd-accent); }
+.pd-plan {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 28px 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  border-left: 0;
+  border-right: 0;
+  box-shadow: none;
+  transition: border-color 0.18s ease;
+}
+
+.pd-plan-featured {
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .pd-plans > .pd-plan:first-child {
+    padding-right: 32px;
+  }
+  .pd-plans > .pd-plan + .pd-plan {
+    border-left: 1px solid var(--pd-rule);
+    padding-left: 32px;
+  }
+}
+
+@media (max-width: 767px) {
+  .pd-plans > .pd-plan + .pd-plan {
+    border-top: 1px solid var(--pd-rule);
+    padding-top: 24px;
+    margin-top: 0;
+  }
+}
 
 .pd-plan-head { display: flex; flex-direction: column; gap: 8px; }
 .pd-plan-name { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; margin: 0; color: var(--pd-ink); }
@@ -998,7 +1039,19 @@ html.dark .pd-plan-featured { border-top-color: var(--pd-accent); }
 .pd-faq details[open] summary::after { content: "−"; }
 .pd-faq details p { margin: 0 0 18px; color: var(--pd-ink-soft); line-height: 1.6; font-size: 14px; }
 
-.pd-panel { padding: 28px; border-radius: 4px; background: var(--pd-card); border: 1px solid var(--pd-border); margin-bottom: 20px; }
+.pd-panel {
+  padding: 24px 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--pd-rule);
+  border-bottom: 1px solid var(--pd-rule);
+  margin-bottom: 0;
+  box-shadow: none;
+}
+.pd-panel + .pd-panel {
+  border-top: 0;
+}
 .pd-panel[hidden] { display: none; }
 .pd-panel-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .pd-panel-title { font-size: 1.35rem; margin: 0; }
@@ -1229,15 +1282,49 @@ html.dark .pdl-btn-primary:hover { background: #FFFFFF; border-color: #FFFFFF; c
 .pdl-stats dd { margin: 4px 0 0; }
 .pdl-stat-val { font-family: var(--pd-font-mono); font-size: 15px; font-weight: 600; color: var(--pd-ink); font-variant-numeric: tabular-nums; }
 
-.pdl-card { background: var(--pd-card); border: 1px solid var(--pd-rule); padding: 24px; box-shadow: 0 4px 24px -6px rgba(27,25,22,.10); }
-html.dark .pdl-card { background: var(--pd-card); border: 1px solid var(--pd-rule); box-shadow: 0 4px 24px -6px rgba(0,0,0,.45); }
+.pdl-card {
+  background: transparent !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-radius: 0 !important;
+  border-top: 1px solid var(--pd-rule) !important;
+  border-bottom: 1px solid var(--pd-rule) !important;
+  padding: 24px 0 !important;
+  box-shadow: none !important;
+}
+html.dark .pdl-card {
+  background: transparent !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-radius: 0 !important;
+  border-top: 1px solid var(--pd-rule) !important;
+  border-bottom: 1px solid var(--pd-rule) !important;
+  box-shadow: none !important;
+}
 .pdl-card-head { display: flex; align-items: center; justify-content: space-between; padding-bottom: 16px; border-bottom: 1px solid var(--pd-rule); }
 .pdl-card-body { padding: 20px 0; border-bottom: 1px solid var(--pd-rule); }
 .pdl-big { font-family: var(--pd-font-read); font-size: clamp(44px, 5vw, 56px); font-weight: 500; letter-spacing: -.02em; color: var(--pd-ink); line-height: 1.1; }
 .pdl-chip { font-size: 12px; color: var(--pd-accent); border: 1px solid var(--pd-rule); padding: 2px 8px; background: var(--pd-surface); }
 html.dark .pdl-chip { background: var(--pd-chip, #2B2823); border-color: var(--pd-rule); color: #FFFFFF; }
-.pdl-band { margin-top: 16px; padding: 12px 14px; background: var(--pd-surface); border: 1px solid var(--pd-rule); display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: end; }
-html.dark .pdl-band { background: var(--pd-surface); border-color: var(--pd-rule); }
+.pdl-band {
+  margin-top: 16px;
+  padding: 12px 0;
+  background: transparent !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-radius: 0 !important;
+  border-top: 1px solid var(--pd-rule) !important;
+  border-bottom: 1px solid var(--pd-rule) !important;
+  box-shadow: none !important;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: end;
+}
+html.dark .pdl-band {
+  background: transparent !important;
+  border-color: var(--pd-rule) !important;
+}
 .pdl-band > div > .pdl-label { font-size: 10px; margin-bottom: 2px; }
 .pdl-card-chart { padding-top: 18px; }
 .pdl-link { font-family: var(--pd-font-ui); font-size: 13px; font-weight: 500; color: var(--pd-accent); text-decoration: none; }
