@@ -6,6 +6,8 @@ VENV_PY="/home/wagustin/kathy_workspace/timesfm-backtest/venv/bin/python3"
 BITACORA="/home/wagustin/obsidian_vault/02 🚀 Proyectos & IA/00 📈 PerData - Bitácora de Kathy.md"
 
 cd "$DIR" || exit 1
+# Refresh the monthly history first, so the model sees this month's closes (non-fatal)
+node scripts/refresh-history.js >/dev/null 2>&1
 OUTPUT=$("$VENV_PY" scripts/timesfm_batch.py 2>&1)
 STATUS=$?
 

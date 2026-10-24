@@ -1,0 +1,51 @@
+name: Proyecciones diarias (TimesFM)
+
+# Replaces the cron on the home server: refreshes the monthly history, runs TimesFM 2.5 on CPU
+# and upserts the forecasts into Supabase. Needs the repository secrets SUPABASE_URL and
+# SUPABASE_SERVICE_KEY; until they exist the job stops at the first step without doing anything.
+# The schedule is commented out until the home-server cron is switched off, so both never run.
+on:
+  # schedule:
+  #   - cron: "7 11 * * *"   # 06:07 en Lima
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: timesfm
+  cancel-in-progress: false
+
+jobs:
+  forecast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+    steps:
+      - name: Comprobar secretos
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_KEY" ]; then
+            echo "Faltan los secretos SUPABASE_URL y SUPABASE_SERVICE_KEY"; exit 1
+          fi
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Caché del modelo
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-timesfm-2.5-200m
+      - name: Instalar TimesFM (CPU)
+        run: |
+          pip install --index-url https://download.pytorch.org/whl/cpu torch==2.14.1
+          pip install timesfm==3.0.2 numpy==2.4.6
+      - name: Actualizar el historial mensual
+        run: node scripts/refresh-history.js
+      - name: Calcular y guardar en Supabase
+        run: python scripts/timesfm_batch.py
