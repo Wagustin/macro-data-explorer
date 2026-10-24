@@ -66,6 +66,13 @@ const checks = [
     if (!n.count) throw new Error("0 noticias");
     return `${n.count} noticias, hace ${n.ageHours} h`;
   }],
+  ["Hechos de importancia (SMV)", async () => {
+    const r = await fetch(`https://raw.githubusercontent.com/${process.env.GITHUB_REPOSITORY || "Wagustin/macro-data-explorer"}/main/data/smv-hechos.json`, { signal: AbortSignal.timeout(15000) });
+    const d = await r.json();
+    const age = (Date.now() - Date.parse(d.actualizado)) / 36e5;
+    if (!(age <= 30)) throw new Error(`última lectura hace ${Math.round(age)} h (${d.actualizado})`);
+    return `leído hace ${Math.round(age)} h`;
+  }],
 ];
 
 async function gh(method, path, body) {
