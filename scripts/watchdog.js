@@ -74,6 +74,14 @@ const checks = [
     if (!(age <= 30)) throw new Error(`última lectura hace ${Math.round(age)} h (${d.actualizado})`);
     return `leído hace ${Math.round(age)} h`;
   }],
+  ["Datos oficiales (EIA, Banco Mundial, SUNAT)", async () => {
+    const repo = process.env.GITHUB_REPOSITORY || "Wagustin/macro-data-explorer";
+    const r = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/official/sunat-fx.json`, { signal: AbortSignal.timeout(15000) });
+    const d = await r.json();
+    const age = (Date.now() - Date.parse(d.actualizado)) / 864e5;
+    if (!(age <= 4)) throw new Error(`última descarga hace ${Math.round(age)} días (${d.actualizado})`);
+    return `descargados hace ${Math.round(age * 24)} h`;
+  }],
 ];
 
 async function gh(method, path, body) {
