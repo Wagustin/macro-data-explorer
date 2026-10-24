@@ -29,6 +29,10 @@
   /* Positivo / Negativo */
   --pd-pos: #1E7A46;
   --pd-neg: #B3261E;
+  --pd-ink-muted: #8F8672;
+  --pd-hover: rgba(27, 25, 22, 0.04);
+  --pd-red: var(--pd-peru);
+  --pd-green: var(--pd-pos);
 
   /* Focus */
   --pd-focus: rgba(27, 25, 22, 0.35);
@@ -68,6 +72,10 @@ html.dark {
   /* Positivo / Negativo */
   --pd-pos: #5FBF85;
   --pd-neg: #F07A72;
+  --pd-ink-muted: #8F8672;
+  --pd-hover: rgba(237, 232, 220, 0.05);
+  --pd-red: var(--pd-peru);
+  --pd-green: var(--pd-pos);
 
   /* Focus */
   --pd-focus: rgba(237, 232, 220, 0.5);
@@ -590,14 +598,17 @@ input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focu
 
 /* ---------- Terminal Surface & Chart Area ---------- */
 .terminal-surface {
-  background-color: var(--pd-card);
-  border: 1px solid var(--pd-border);
-  border-radius: 4px;
-  box-shadow: none;
+  background-color: transparent !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-radius: 0 !important;
+  border-top: 1px solid var(--pd-rule) !important;
+  border-bottom: 1px solid var(--pd-rule) !important;
+  box-shadow: none !important;
 }
 
 html.dark .terminal-surface {
-  border-color: var(--pd-border);
+  border-color: var(--pd-rule) !important;
 }
 
 /* Table styles */
@@ -960,16 +971,54 @@ html.dark .pd-tabs button[aria-selected="true"] { background: var(--pd-surface);
 .pd-interval button[aria-checked="true"] { background: var(--pd-card); color: var(--pd-ink); box-shadow: none; }
 html.dark .pd-interval button[aria-checked="true"] { background: var(--pd-surface); color: #FFFFFF; }
 
-.pd-plans { display: grid; gap: 32px 48px; grid-template-columns: 1fr; margin: 0; max-width: 960px; }
-@media (min-width: 768px) { .pd-plans { grid-template-columns: 1fr 1fr; } }
-
-.pd-plan {
-  display: flex; flex-direction: column; gap: 20px; padding: 24px 0 0; border-radius: 0;
-  background: transparent; border: none; border-top: 1px solid var(--pd-rule); transition: border-color 0.18s ease;
+.pd-plans {
+  display: grid;
+  gap: 0;
+  grid-template-columns: 1fr;
+  margin: 0;
+  max-width: 960px;
+  border-top: 1px solid var(--pd-rule);
+  border-bottom: 1px solid var(--pd-rule);
+}
+@media (min-width: 768px) {
+  .pd-plans { grid-template-columns: 1fr 1fr; }
 }
 
-.pd-plan-featured { border-top: 2px solid var(--pd-accent); position: relative; }
-html.dark .pd-plan-featured { border-top-color: var(--pd-accent); }
+.pd-plan {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 28px 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  border-left: 0;
+  border-right: 0;
+  box-shadow: none;
+  transition: border-color 0.18s ease;
+}
+
+.pd-plan-featured {
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .pd-plans > .pd-plan:first-child {
+    padding-right: 32px;
+  }
+  .pd-plans > .pd-plan + .pd-plan {
+    border-left: 1px solid var(--pd-rule);
+    padding-left: 32px;
+  }
+}
+
+@media (max-width: 767px) {
+  .pd-plans > .pd-plan + .pd-plan {
+    border-top: 1px solid var(--pd-rule);
+    padding-top: 24px;
+    margin-top: 0;
+  }
+}
 
 .pd-plan-head { display: flex; flex-direction: column; gap: 8px; }
 .pd-plan-name { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; margin: 0; color: var(--pd-ink); }
@@ -998,7 +1047,19 @@ html.dark .pd-plan-featured { border-top-color: var(--pd-accent); }
 .pd-faq details[open] summary::after { content: "−"; }
 .pd-faq details p { margin: 0 0 18px; color: var(--pd-ink-soft); line-height: 1.6; font-size: 14px; }
 
-.pd-panel { padding: 28px; border-radius: 4px; background: var(--pd-card); border: 1px solid var(--pd-border); margin-bottom: 20px; }
+.pd-panel {
+  padding: 24px 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--pd-rule);
+  border-bottom: 1px solid var(--pd-rule);
+  margin-bottom: 0;
+  box-shadow: none;
+}
+.pd-panel + .pd-panel {
+  border-top: 0;
+}
 .pd-panel[hidden] { display: none; }
 .pd-panel-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .pd-panel-title { font-size: 1.35rem; margin: 0; }
@@ -1044,7 +1105,7 @@ html.dark .pd-interval-save {
 }
 
 /* ==========================================================================
-   Motion System (Tarea 7): Sutil, serio y progresivo
+   Motion System (Editorial Newspaper — DESIGN.md)
    ========================================================================== */
 
 /* 1. Cabecera fija con filete inferior al bajar > 8px */
@@ -1062,24 +1123,26 @@ html.dark.pd-motion header.bg-card.is-scrolled {
   border-bottom-color: rgba(245, 241, 232, 0.35) !important;
 }
 
-/* 2. Entrada de secciones data-reveal (250ms, 8px, cubic-bezier(.05,.7,.1,1)) */
-html.pd-motion [data-reveal] {
+/* 2. Entrada de secciones data-reveal (450ms, 12px, cubic-bezier(.05,.7,.1,1)) */
+html.pd-motion [data-reveal],
+html.pd-motion .pd-reveal {
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 250ms cubic-bezier(0.05, 0.7, 0.1, 1), transform 250ms cubic-bezier(0.05, 0.7, 0.1, 1);
+  transform: translateY(12px);
+  transition: opacity 450ms cubic-bezier(0.05, 0.7, 0.1, 1), transform 450ms cubic-bezier(0.05, 0.7, 0.1, 1);
   will-change: opacity, transform;
 }
 
-html.pd-motion [data-reveal].is-revealed {
+html.pd-motion [data-reveal].is-revealed,
+html.pd-motion .pd-reveal.is-revealed {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* 3. Filas escalonadas data-stagger (40ms por fila, sobrio) */
+/* 3. Filas escalonadas data-stagger (40ms por fila, fundido + 12px, 450ms) */
 html.pd-motion [data-stagger] > * {
   opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 220ms cubic-bezier(0.16, 1, 0.3, 1), transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(12px);
+  transition: opacity 450ms cubic-bezier(0.05, 0.7, 0.1, 1), transform 450ms cubic-bezier(0.05, 0.7, 0.1, 1);
   will-change: opacity, transform;
 }
 
@@ -1089,14 +1152,59 @@ html.pd-motion [data-stagger].is-revealed > * {
 }
 
 html.pd-motion [data-stagger] > *:nth-child(1) { transition-delay: 0ms; }
-html.pd-motion [data-stagger] > *:nth-child(2) { transition-delay: 40ms; }
-html.pd-motion [data-stagger] > *:nth-child(3) { transition-delay: 80ms; }
-html.pd-motion [data-stagger] > *:nth-child(4) { transition-delay: 120ms; }
-html.pd-motion [data-stagger] > *:nth-child(5) { transition-delay: 160ms; }
-html.pd-motion [data-stagger] > *:nth-child(6) { transition-delay: 200ms; }
-html.pd-motion [data-stagger] > *:nth-child(7) { transition-delay: 240ms; }
-html.pd-motion [data-stagger] > *:nth-child(8) { transition-delay: 280ms; }
-html.pd-motion [data-stagger] > *:nth-child(n+9) { transition-delay: 0ms; }
+html.pd-motion [data-stagger] > *:nth-child(2) { transition-delay: 25ms; }
+html.pd-motion [data-stagger] > *:nth-child(3) { transition-delay: 50ms; }
+html.pd-motion [data-stagger] > *:nth-child(4) { transition-delay: 75ms; }
+html.pd-motion [data-stagger] > *:nth-child(5) { transition-delay: 100ms; }
+html.pd-motion [data-stagger] > *:nth-child(6) { transition-delay: 125ms; }
+html.pd-motion [data-stagger] > *:nth-child(7) { transition-delay: 150ms; }
+html.pd-motion [data-stagger] > *:nth-child(8) { transition-delay: 175ms; }
+html.pd-motion [data-stagger] > *:nth-child(n+9) { transition-delay: 200ms; }
+
+/* 4. Dibujo de filetes nuevos de izquierda a derecha (scaleX 0→1, 400ms) */
+.pd-rule-draw {
+  position: relative;
+}
+.pd-rule-draw::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--pd-rule);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 400ms cubic-bezier(0.05, 0.7, 0.1, 1);
+}
+html.pd-motion .pd-rule-draw.is-revealed::after,
+html.pd-motion [data-reveal].is-revealed .pd-rule-draw::after {
+  transform: scaleX(1);
+}
+hr.pd-rule-draw {
+  border: none;
+  height: 1px;
+  background: var(--pd-rule);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 400ms cubic-bezier(0.05, 0.7, 0.1, 1);
+}
+html.pd-motion hr.pd-rule-draw.is-revealed,
+html.pd-motion [data-reveal].is-revealed hr.pd-rule-draw {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.pd-motion [data-reveal],
+  html.pd-motion .pd-reveal,
+  html.pd-motion [data-stagger] > *,
+  .pd-rule-draw::after,
+  hr.pd-rule-draw {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
 
 /* 4. Tarjetas de metodología: entrada con peso en viewport */
 html.pd-motion .pdl-principle[data-reveal] {
@@ -1229,15 +1337,49 @@ html.dark .pdl-btn-primary:hover { background: #FFFFFF; border-color: #FFFFFF; c
 .pdl-stats dd { margin: 4px 0 0; }
 .pdl-stat-val { font-family: var(--pd-font-mono); font-size: 15px; font-weight: 600; color: var(--pd-ink); font-variant-numeric: tabular-nums; }
 
-.pdl-card { background: var(--pd-card); border: 1px solid var(--pd-rule); padding: 24px; box-shadow: 0 4px 24px -6px rgba(27,25,22,.10); }
-html.dark .pdl-card { background: var(--pd-card); border: 1px solid var(--pd-rule); box-shadow: 0 4px 24px -6px rgba(0,0,0,.45); }
+.pdl-card {
+  background: transparent !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-radius: 0 !important;
+  border-top: 1px solid var(--pd-rule) !important;
+  border-bottom: 1px solid var(--pd-rule) !important;
+  padding: 24px 0 !important;
+  box-shadow: none !important;
+}
+html.dark .pdl-card {
+  background: transparent !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-radius: 0 !important;
+  border-top: 1px solid var(--pd-rule) !important;
+  border-bottom: 1px solid var(--pd-rule) !important;
+  box-shadow: none !important;
+}
 .pdl-card-head { display: flex; align-items: center; justify-content: space-between; padding-bottom: 16px; border-bottom: 1px solid var(--pd-rule); }
 .pdl-card-body { padding: 20px 0; border-bottom: 1px solid var(--pd-rule); }
 .pdl-big { font-family: var(--pd-font-read); font-size: clamp(44px, 5vw, 56px); font-weight: 500; letter-spacing: -.02em; color: var(--pd-ink); line-height: 1.1; }
 .pdl-chip { font-size: 12px; color: var(--pd-accent); border: 1px solid var(--pd-rule); padding: 2px 8px; background: var(--pd-surface); }
 html.dark .pdl-chip { background: var(--pd-chip, #2B2823); border-color: var(--pd-rule); color: #FFFFFF; }
-.pdl-band { margin-top: 16px; padding: 12px 14px; background: var(--pd-surface); border: 1px solid var(--pd-rule); display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: end; }
-html.dark .pdl-band { background: var(--pd-surface); border-color: var(--pd-rule); }
+.pdl-band {
+  margin-top: 16px;
+  padding: 12px 0;
+  background: transparent !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-radius: 0 !important;
+  border-top: 1px solid var(--pd-rule) !important;
+  border-bottom: 1px solid var(--pd-rule) !important;
+  box-shadow: none !important;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: end;
+}
+html.dark .pdl-band {
+  background: transparent !important;
+  border-color: var(--pd-rule) !important;
+}
 .pdl-band > div > .pdl-label { font-size: 10px; margin-bottom: 2px; }
 .pdl-card-chart { padding-top: 18px; }
 .pdl-link { font-family: var(--pd-font-ui); font-size: 13px; font-weight: 500; color: var(--pd-accent); text-decoration: none; }
@@ -1287,12 +1429,28 @@ html.dark .pdl-band { background: var(--pd-surface); border-color: var(--pd-rule
 .pdl-ind-val { white-space: nowrap; }
 @media (max-width: 767px) { .pdl-ind { padding: 14px 12px; } .pdl-ind-val { font-size: 16px; } }
 
-/* Títulos de las páginas de lectura en serif, como la landing (diseño de Stitch) */
-html.pd-marketing main h1,
-html.pd-marketing main h2 {
+/* Títulos y titulares de todo el sitio en serif editorial, igual que la landing (diseño de Stitch) */
+html main h1,
+html main h2,
+html main h3,
+.pd-page-title,
+.pd-section-title,
+.pd-panel-title,
+.pdl-h1,
+.pdl-h2,
+.pdl-h3 {
   font-family: var(--pd-font-read) !important;
   font-weight: 400 !important;
   letter-spacing: -0.02em;
+}
+
+/* Entradillas en serif cursiva */
+.pd-page-lede,
+.pdl-lede,
+.entradilla {
+  font-family: var(--pd-font-read) !important;
+  font-style: italic !important;
+  color: var(--pd-ink-soft) !important;
 }
 
 /* Guía: «Los tres pasos» (el contenedor usa .pd-guide, que no tenía estilo) */
@@ -1345,33 +1503,21 @@ html.dark .pd-val {
 /* ============================================================
    Terminal Panel del Gráfico (estilo pantalla de terminal de grafito)
    ============================================================ */
+/* Panel de la terminal: sin pantalla oscura. El gráfico va sobre el papel, como en un periódico,
+   separado solo por filetes de lado a lado arriba y abajo. */
 .pd-terminal-panel {
-  background-color: #17181B !important;
-  border: 1px solid #2A2C31 !important;
-  color: #EDE8DC !important;
-  border-radius: 6px;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-top: 1px solid var(--pd-rule) !important;
+  border-bottom: 1px solid var(--pd-rule) !important;
+  color: var(--pd-ink);
+  border-radius: 0;
   position: relative;
   overflow: hidden;
 }
-html.dark .pd-terminal-panel {
-  border-color: #3A3D45 !important;
-}
-
-.pd-terminal-panel .text-ink {
-  color: #EDE8DC !important;
-}
-.pd-terminal-panel .text-ink-soft {
-  color: #A59E90 !important;
-}
-.pd-terminal-panel .border-rule {
-  border-color: #2A2C31 !important;
-}
-html.dark .pd-terminal-panel .border-rule {
-  border-color: #3A3D45 !important;
-}
 
 .pd-terminal-header {
-  border-bottom: 1px solid #2A2C31;
+  border-bottom: 1px solid var(--pd-rule);
   padding-bottom: 10px;
   margin-bottom: 12px;
 }
@@ -1383,7 +1529,7 @@ html.dark .pd-terminal-header {
   font-family: var(--pd-font-ui);
   font-size: 13px;
   line-height: 1.5;
-  color: #EDE8DC;
+  color: var(--pd-ink);
   font-weight: 500;
 }
 @media (max-width: 640px) {
@@ -1411,13 +1557,13 @@ html.dark .pd-terminal-header {
 .pd-direct-label {
   position: absolute;
   right: 8px;
-  background: #17181B;
-  border: 1px solid #2A2C31;
+  background: var(--pd-paper);
+  border: 1px solid var(--pd-rule);
   border-radius: 4px;
   padding: 3px 8px;
   font-family: var(--pd-font-mono);
   font-size: 12px;
-  color: #EDE8DC;
+  color: var(--pd-ink);
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -1434,14 +1580,14 @@ html.dark .pd-terminal-header {
   }
 }
 .pd-direct-label a.pd-pill-link {
-  color: #A59E90;
+  color: var(--pd-ink-soft);
   font-size: 11px;
   text-decoration: underline;
   text-decoration-color: #5E584E;
 }
 .pd-direct-label a.pd-pill-link:hover {
-  color: #EDE8DC;
-  text-decoration-color: #EDE8DC;
+  color: var(--pd-ink);
+  text-decoration-color: var(--pd-ink);
 }
 
 /* Crosshair vertical line */
@@ -1494,7 +1640,7 @@ html.dark .pd-terminal-header {
   padding: 10px 14px;
   background: #1E2024;
   border: 1px solid #3A3D45;
-  color: #EDE8DC;
+  color: var(--pd-ink);
   border-radius: 6px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
   font-family: var(--pd-font-mono);
@@ -1517,9 +1663,9 @@ html.dark .pd-terminal-header {
   font-weight: 700;
   font-size: 12px;
   margin-bottom: 5px;
-  border-bottom: 1px solid #2A2C31;
+  border-bottom: 1px solid var(--pd-rule);
   padding-bottom: 4px;
-  color: #EDE8DC;
+  color: var(--pd-ink);
 }
 .pd-chip-row {
   display: flex;
@@ -1529,19 +1675,19 @@ html.dark .pd-terminal-header {
   margin-top: 3px;
 }
 .pd-chip-label {
-  color: #A59E90;
+  color: var(--pd-ink-soft);
 }
 .pd-chip-val {
   font-variant-numeric: tabular-nums;
   font-weight: 600;
-  color: #EDE8DC;
+  color: var(--pd-ink);
 }
 .pd-chip-note {
   font-size: 10.5px;
-  color: #A59E90;
+  color: var(--pd-ink-soft);
   margin-top: 6px;
   padding-top: 4px;
-  border-top: 1px solid #2A2C31;
+  border-top: 1px solid var(--pd-rule);
   line-height: 1.3;
 }
 .pd-chip-val.pd-pos {
@@ -1597,4 +1743,341 @@ html.dark .pd-help:hover {
   color: var(--pd-ink-soft);
   margin-top: 2px;
   line-height: 1.4;
+}
+
+
+
+/* ============================================================
+   Terminal Móvil: Tabs de Horizonte y Tabla Fiduciaria (Variante C)
+   ============================================================ */
+.chart-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--pd-rule);
+  margin-bottom: 8px;
+  gap: 2px;
+}
+
+.chart-tab {
+  flex: 1;
+  padding: 6px 2px;
+  text-align: center;
+  font-family: var(--pd-font-mono, monospace);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--pd-ink-soft);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.chart-tab:hover {
+  color: var(--pd-ink);
+}
+
+.chart-tab.is-active,
+.chart-tab.active {
+  color: var(--pd-ink);
+  font-weight: 700;
+  border-bottom-color: var(--pd-ink);
+}
+
+.ledger-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--pd-rule);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--pd-card);
+}
+
+.ledger-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--pd-rule);
+  font-size: 12px;
+}
+
+.ledger-row:last-child {
+  border-bottom: none;
+}
+
+.ledger-label {
+  font-family: var(--pd-font-ui, sans-serif);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--pd-ink-soft);
+}
+
+.ledger-val {
+  font-family: var(--pd-font-mono, monospace);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pd-ink);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ledger-table.fade-in {
+    animation: pdLedgerFade 200ms ease-out forwards;
+  }
+  @keyframes pdLedgerFade {
+    from { opacity: 0.35; transform: translateY(2px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* ============================================================
+   MOBILE BOTTOM NAVIGATION (≤768px: Terminal, Empresas, Noticias, Mi cuenta)
+   Activo en tinta con subrayado fino --pd-peru.
+   ============================================================ */
+.mobile-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 64px;
+  }
+
+  .mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--pd-card);
+    border-top: 1px solid var(--pd-rule);
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0 calc(env(safe-area-inset-bottom, 8px) + 4px);
+    z-index: 50;
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+
+  .mobile-nav .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--pd-ink-soft);
+    font-size: 11px;
+    font-weight: 500;
+    gap: 3px;
+    min-width: 56px;
+    transition: color 0.15s;
+    font-family: var(--pd-font-ui);
+  }
+
+  .mobile-nav .nav-item:hover {
+    color: var(--pd-ink);
+  }
+
+  .mobile-nav .nav-item.active {
+    color: var(--pd-ink);
+    font-weight: 600;
+  }
+
+  .mobile-nav .nav-item.active .nav-icon-wrap {
+    border-bottom: 2px solid var(--pd-peru);
+    padding-bottom: 2px;
+  }
+
+  .mobile-nav .nav-item svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+/* ==========================================================================
+   Periódico fino — filetes de lado a lado + ritmo de sección
+   BRIEF_PERIODICO.md rev_A — style(layout): full-bleed rules, fine newspaper rhythm
+   ========================================================================== */
+
+/* ---- 1. Filete doble bajo la cabecera (1px + 3px de aire + 1px) ----- */
+/* El header ya tiene border-bottom:1px. Le añadimos un segundo filete
+   con ::after de modo que el conjunto sea 1px regla / 3px aire / 1px.    */
+header {
+  position: relative;
+}
+header::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px; /* desplaza 1px borde existente + 3px aire = 4px */
+  height: 1px;
+  background: var(--pd-rule);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Asegurar sticky header tiene stacking correcto */
+header[class*="sticky"] {
+  z-index: 29;
+}
+header[class*="sticky"]::after {
+  z-index: 30;
+}
+
+/* ---- 2. Sección de datos full-bleed (tabla de cotizaciones) ---------- */
+.pdl-data-sec {
+  border-top: 1px solid var(--pd-rule);
+  border-bottom: 1px solid var(--pd-rule);
+  padding: 64px 0;
+}
+@media (max-width: 767px) {
+  .pdl-data-sec { padding: 40px 0; }
+}
+
+/* ---- 3. Completar bordería de secciones existentes ------------------ */
+/* Strip: añadir border-top para que el filete del hero no quede suelto */
+.pdl-strip {
+  border-top: 1px solid var(--pd-rule);
+}
+/* Cierre: borde superior explícito (el de la meth llega hasta aquí) */
+.pdl-close {
+  border-top: 1px solid var(--pd-rule);
+}
+
+/* ---- 4. Sin cajas en contenedores de contenido (no gráficos) --------- */
+/* Eliminamos fondos de tarjeta en el hero (pdl-hero ya es transparente);
+   nos aseguramos que pdl-close no use bg-card en modo light como caja.   */
+.pdl-close {
+  background: var(--pd-paper);
+}
+html.dark .pdl-close {
+  background: var(--pd-surface);
+}
+
+/* ---- 5. Hover link con subrayado que crece de izq a der (250ms) ----- */
+/* Se aplica a enlaces de navgación y de contenido. No a botones.
+   Los botones conservan su estilo propio.                                 */
+html.pd-motion .pdl-link,
+html.pd-motion .pd-table a,
+html.pd-motion footer nav a,
+html.pd-motion header nav a {
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0% 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  transition: background-size 250ms cubic-bezier(0.05, 0.7, 0.1, 1),
+              color 120ms cubic-bezier(0.2, 0, 0, 1);
+}
+html.pd-motion .pdl-link:hover,
+html.pd-motion .pd-table a:hover,
+html.pd-motion footer nav a:hover,
+html.pd-motion header nav a:hover {
+  background-size: 100% 1px;
+}
+
+/* ---- 6. Hover filas tabla: desplazamiento 2px + filete inferior oscuro */
+html.pd-motion .pd-table tbody tr {
+  transition: transform 200ms cubic-bezier(0.05, 0.7, 0.1, 1),
+              border-bottom-color 200ms cubic-bezier(0.05, 0.7, 0.1, 1);
+  will-change: transform;
+}
+html.pd-motion .pd-table tbody tr:hover {
+  transform: translateX(2px);
+  border-bottom-color: var(--pd-ink-soft) !important;
+}
+
+/* ---- 7. Stagger ajustado a 40ms entre hijos (BRIEF_PERIODICO req B.1) */
+html.pd-motion [data-stagger] > *:nth-child(1)  { transition-delay: 0ms; }
+html.pd-motion [data-stagger] > *:nth-child(2)  { transition-delay: 40ms; }
+html.pd-motion [data-stagger] > *:nth-child(3)  { transition-delay: 80ms; }
+html.pd-motion [data-stagger] > *:nth-child(4)  { transition-delay: 120ms; }
+html.pd-motion [data-stagger] > *:nth-child(5)  { transition-delay: 160ms; }
+html.pd-motion [data-stagger] > *:nth-child(6)  { transition-delay: 200ms; }
+html.pd-motion [data-stagger] > *:nth-child(7)  { transition-delay: 240ms; }
+html.pd-motion [data-stagger] > *:nth-child(8)  { transition-delay: 280ms; }
+html.pd-motion [data-stagger] > *:nth-child(n+9){ transition-delay: 280ms; }
+
+/* ---- 8. Dibujo de filetes full-bleed (scaleX 0→1, 700ms) ----------- */
+/* Clase aplicada por JS a secciones con data-section-rule:
+   el filete es un pseudo-elemento del ancho del viewport.                 */
+html.pd-motion [data-section-rule] {
+  position: relative;
+}
+html.pd-motion [data-section-rule]::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--pd-rule);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 700ms cubic-bezier(0.05, 0.7, 0.1, 1);
+  pointer-events: none;
+}
+html.pd-motion [data-section-rule].rule-drawn::before {
+  transform: scaleX(1);
+}
+
+/* ---- 9. Carga hero: elementos visibles de base (JS añade clases) ----- */
+/* Los elementos con data-hero-seq son visibles sin JS.
+   Con pd-motion, JS añade .hero-ready al wrapper y la secuencia arranca. */
+[data-hero-seq] {
+  /* visible sin JS como fallback */
+}
+html.pd-motion [data-hero-seq] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 450ms cubic-bezier(0.05, 0.7, 0.1, 1),
+              transform 450ms cubic-bezier(0.05, 0.7, 0.1, 1);
+}
+html.pd-motion.hero-ready [data-hero-seq="0"]  { opacity: 1; transform: translateY(0); transition-delay: 0ms;   }
+html.pd-motion.hero-ready [data-hero-seq="1"]  { opacity: 1; transform: translateY(0); transition-delay: 120ms; }
+html.pd-motion.hero-ready [data-hero-seq="2"]  { opacity: 1; transform: translateY(0); transition-delay: 240ms; }
+html.pd-motion.hero-ready [data-hero-seq="3"]  { opacity: 1; transform: translateY(0); transition-delay: 360ms; }
+
+/* ---- 10. prefers-reduced-motion: desactivar todo -------------------- */
+@media (prefers-reduced-motion: reduce) {
+  header::after { transition: none; }
+  html.pd-motion [data-section-rule]::before { transform: scaleX(1); transition: none; }
+  html.pd-motion [data-hero-seq] { opacity: 1; transform: none; transition: none; }
+  html.pd-motion .pdl-link,
+  html.pd-motion .pd-table a,
+  html.pd-motion footer nav a,
+  html.pd-motion header nav a {
+    background-size: 0% 1px;
+    transition: none;
+  }
+  html.pd-motion .pd-table tbody tr { transition: none; }
+}
+
+/* Terminal en móvil: el panel va de borde a borde; solo filetes arriba y abajo, sin cápsula */
+@media (max-width: 640px) {
+  .pd-terminal-panel {
+    margin-left: -16px;
+    margin-right: -16px;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-radius: 0;
+  }
+  .pd-terminal-panel .pd-chip {
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-radius: 0 !important;
+  }
+  #assetSymbolBadge {
+    border: 0 !important;
+    padding-left: 0 !important;
+  }
 }

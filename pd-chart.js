@@ -52,16 +52,19 @@
   }
 
   function getComputedTokens(el) {
-    const cs = window.getComputedStyle(el);
+    const cs = window.getComputedStyle(el || document.documentElement);
+    const rootCs = window.getComputedStyle(document.documentElement);
     return {
-      ink: cs.getPropertyValue("--pd-ink").trim() || "#1B1916",
-      inkSoft: cs.getPropertyValue("--pd-ink-soft").trim() || "#5E584E",
-      surface: cs.getPropertyValue("--pd-surface").trim() || "#ECE6D9",
-      accent: cs.getPropertyValue("--pd-accent").trim() || "#1B1916",
-      sky: cs.getPropertyValue("--pd-sky").trim() || "#B9AF9A",
-      rule: cs.getPropertyValue("--pd-rule").trim() || "#DCD4C4",
-      pos: cs.getPropertyValue("--pd-pos").trim() || "#1E7A46",
-      neg: cs.getPropertyValue("--pd-neg").trim() || "#B3261E",
+      ink: cs.getPropertyValue("--pd-ink").trim() || rootCs.getPropertyValue("--pd-ink").trim() || "#1B1916",
+      inkSoft: cs.getPropertyValue("--pd-ink-soft").trim() || rootCs.getPropertyValue("--pd-ink-soft").trim() || "#5E584E",
+      paper: cs.getPropertyValue("--pd-paper").trim() || rootCs.getPropertyValue("--pd-paper").trim() || "#F5F1E8",
+      surface: cs.getPropertyValue("--pd-surface").trim() || rootCs.getPropertyValue("--pd-surface").trim() || "#ECE6D9",
+      accent: cs.getPropertyValue("--pd-accent").trim() || rootCs.getPropertyValue("--pd-accent").trim() || "#1B1916",
+      sky: cs.getPropertyValue("--pd-sky").trim() || rootCs.getPropertyValue("--pd-sky").trim() || "#B9AF9A",
+      rule: cs.getPropertyValue("--pd-rule").trim() || rootCs.getPropertyValue("--pd-rule").trim() || "#DCD4C4",
+      card: cs.getPropertyValue("--pd-card").trim() || rootCs.getPropertyValue("--pd-card").trim() || "#1C1B18",
+      pos: cs.getPropertyValue("--pd-pos").trim() || rootCs.getPropertyValue("--pd-pos").trim() || "#1E7A46",
+      neg: cs.getPropertyValue("--pd-neg").trim() || rootCs.getPropertyValue("--pd-neg").trim() || "#B3261E",
     };
   }
 
@@ -117,15 +120,20 @@
       // Rango automático según horizonte (6 meses para H=1, 1 año para H=3-6 y 3 años para H=12)
       if (useDaily) {
         const H = Number(options.horizonMonths || 1);
-        const dayLimit = H <= 1 ? 126 : 252;
-        const sliced = seriesPoints.slice(-dayLimit);
+        // Móvil: ~3 meses de historia para que la proyección se vea; ordenador: 1 año
+        const dayLimit = isMobile ? 63 : 252;
+        let sliced = seriesPoints.slice(-dayLimit);
+        // Gráfico compacto (landing): cierres semanales, contando desde el último cierre para conservarlo
+        if (options.compact && sliced.length > 120) {
+          sliced = sliced.filter((_, i) => (sliced.length - 1 - i) % 5 === 0);
+        }
         if (sliced.length > 1) {
           seriesLabels = sliced.map(h => h.d);
           seriesData = sliced.map(h => h.v);
         }
       } else if (history && history.length > 0 && options.horizonMonths) {
         const H = Number(options.horizonMonths);
-        const months = H <= 1 ? 6 : H <= 6 ? 12 : 36;
+        const months = isMobile ? (H <= 6 ? 3 : 12) : (H <= 6 ? 12 : 36);
         const lastItem = seriesPoints[seriesPoints.length - 1];
         const lastDate = lastItem ? new Date(lastItem.d + "-01T00:00:00") : new Date();
         const cutoff = new Date(lastDate);
@@ -428,7 +436,8 @@
               min: yMin - yPad,
               max: yMax + yPad,
               ticks: {
-                display: !options.plainLabels,
+                // En móvil las cifras del eje se pisaban con las etiquetas directas: se ocultan
+                display: !options.plainLabels && !isMobile,
                 maxTicksLimit: options.compact ? 4 : (isMobile ? 4 : 5),
                 callback: function (val) {
                   return sym + Number(val).toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -519,7 +528,7 @@
                     }
                     c.fill();
 
-                    c.fillStyle = tokens.card || "#FFFFFF";
+                    c.fillStyle = tokens.paper || (isDark ? "#141311" : "#F5F1E8");
                     c.textAlign = "center";
                     c.textBaseline = "middle";
                     c.fillText(priceStr, pillX + pillW / 2, yClose);
@@ -645,6 +654,27 @@
         container.style.position = container.style.position || "relative";
         container.appendChild(chip);
       }
+      // Móvil: la ficha va en un hueco encima del gráfico, que se abre y empuja el gráfico hacia abajo,
+      // para que el dedo no la tape.
+      let slot = null;
+      if (isMobile && container.parentNode) {
+        slot = container.previousElementSibling && container.previousElementSibling.classList.contains("pd-chip-slot")
+          ? container.previousElementSibling : null;
+        if (!slot) {
+          slot = document.createElement("div");
+          slot.className = "pd-chip-slot";
+          container.parentNode.insertBefore(slot, container);
+        }
+        const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        slot.style.cssText = "height:0;overflow:hidden;" + (reduce ? "" : "transition:height 200ms cubic-bezier(.05,.7,.1,1);");
+        slot.querySelectorAll(".pd-chip").forEach((old) => { if (old !== chip) old.remove(); });
+        slot.appendChild(chip);
+        chip.style.position = "static";
+        chip.style.boxShadow = "none";
+        chip.style.minHeight = "96px";
+        chip.style.margin = "0 0 8px";
+      }
+      let slotTimer = null;
       let vline = container.querySelector(".pd-vline");
       if (!vline) {
         vline = document.createElement("div");
@@ -716,12 +746,19 @@
         chip.style.background = tokens.card;
         chip.style.border = "1px solid " + tokens.rule;
         chip.style.boxShadow = "0 6px 18px rgba(0,0,0,0.18)";
-        chip.style.whiteSpace = "nowrap";
+        chip.style.whiteSpace = (container.clientWidth || 400) < 640 ? "normal" : "nowrap";
+        chip.style.maxWidth = Math.max(160, (container.clientWidth || 400) - 8) + "px";
+        chip.style.boxSizing = "border-box";
+        chip.style.color = tokens.ink;
+        if ((container.clientWidth || 400) < 640) chip.style.fontSize = "12px";
 
         const cWidth = container.clientWidth || 400;
         const chipWidth = chip.offsetWidth || 230;
-        if (cWidth < 640) {
-          // Móvil: ficha fija arriba, centrada, para que el dedo no la tape
+        if (slot) {
+          clearTimeout(slotTimer);
+          chip.style.maxWidth = "none";
+          slot.style.height = (chip.offsetHeight + 8) + "px";
+        } else if (cWidth < 640) {
           chip.style.left = Math.max(4, (cWidth - chipWidth) / 2) + "px";
           chip.style.top = "4px";
         } else {
@@ -733,7 +770,9 @@
       function removeCrosshair() {
         vline.style.display = "none";
         dotHalo.style.display = "none";
-        chip.style.display = "none";
+        if (!slot) { chip.style.display = "none"; return; }
+        clearTimeout(slotTimer);
+        slotTimer = setTimeout(() => { slot.style.height = "0px"; }, 1500);
       }
 
       function onMouseMove(e) {
@@ -758,9 +797,8 @@
         if (!e.touches || !e.touches[0]) return;
         const rect = chart.canvas.getBoundingClientRect();
         const x = e.touches[0].clientX - rect.left;
-        const y = e.touches[0].clientY - rect.top;
         const area = chart.chartArea;
-        if (!area || x < area.left || x > area.right || y < area.top || y > area.bottom) {
+        if (!area || x < area.left || x > area.right) {
           removeCrosshair();
           return;
         }
@@ -775,6 +813,7 @@
 
       chart.canvas.addEventListener("mousemove", onMouseMove);
       chart.canvas.addEventListener("mouseleave", removeCrosshair);
+      chart.canvas.addEventListener("touchstart", onTouchMove, { passive: true });
       chart.canvas.addEventListener("touchmove", onTouchMove, { passive: true });
       chart.canvas.addEventListener("touchend", removeCrosshair);
 
@@ -832,11 +871,13 @@
         destroy() {
           chart.canvas.removeEventListener("mousemove", onMouseMove);
           chart.canvas.removeEventListener("mouseleave", removeCrosshair);
+          chart.canvas.removeEventListener("touchstart", onTouchMove);
           chart.canvas.removeEventListener("touchmove", onTouchMove);
           chart.canvas.removeEventListener("touchend", removeCrosshair);
           chart.destroy();
           PdChart.instances.delete(container);
           if (chip) chip.remove();
+          if (slot) slot.remove();
           if (vline) vline.remove();
           if (dotHalo) dotHalo.remove();
           if (a11y) a11y.remove();

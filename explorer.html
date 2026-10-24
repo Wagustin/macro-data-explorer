@@ -473,15 +473,19 @@
     .stat-strip {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      border-top: 1px solid #E5E5EA;
+      border-top: 1px solid var(--pd-rule);
+      border-bottom: 1px solid var(--pd-rule);
+      background: transparent;
     }
-    html.dark .stat-strip { border-top-color: #2C2C2E; }
+    html.dark .stat-strip { border-top-color: var(--pd-rule); border-bottom-color: var(--pd-rule); }
     .stat {
       padding: 10px 16px 11px;
-      border-left: 1px solid #E5E5EA;
+      border-left: 1px solid var(--pd-rule);
+      background: transparent;
+      border-radius: 0;
       text-align: left;
     }
-    html.dark .stat { border-left-color: #2C2C2E; }
+    html.dark .stat { border-left-color: var(--pd-rule); }
     .stat:nth-child(odd) { border-left: none; }
     .stat .stat-value {
       font-size: 15px; font-weight: 700; margin-top: 3px;
@@ -491,12 +495,16 @@
     }
     .stat .stat-sub { font-size: 10px; color: var(--pd-ink-soft); margin-top: 1px; }
 
+    @media (max-width: 639px) {
+      .stat:nth-child(n+3) { border-top: 1px solid var(--pd-rule); }
+    }
+
     @media (min-width: 640px) {
       .stat-strip-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
       .stat-strip-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-      .stat-strip-5 .stat, .stat-strip-4 .stat { border-left: 1px solid #E5E5EA; }
-      html.dark .stat-strip-5 .stat, html.dark .stat-strip-4 .stat { border-left-color: #2C2C2E; }
-      .stat-strip-5 .stat:nth-child(5n+1), .stat-strip-4 .stat:nth-child(4n+1) { border-left: none; }
+      .stat-strip-5 .stat, .stat-strip-4 .stat { border-left: 1px solid var(--pd-rule); border-top: none; }
+      html.dark .stat-strip-5 .stat, html.dark .stat-strip-4 .stat { border-left-color: var(--pd-rule); }
+      .stat-strip-5 .stat:first-child, .stat-strip-4 .stat:first-child { border-left: none; }
     }
   </style>
   <!-- Identidad PerData (DESIGN.md) -->
@@ -519,6 +527,7 @@
 
         <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
           <a href="/explorer" class="text-ink font-semibold border-b border-ink pb-0.5 no-underline">Terminal</a>
+          <a href="/empresas" class="hover:text-ink transition no-underline">Empresas</a>
           <a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a>
           <a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a>
           <a href="/guia" class="hover:text-ink transition no-underline">Guía</a>
@@ -555,6 +564,7 @@
     <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors">
       <nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft">
         <a href="/explorer" class="text-ink font-semibold py-1 no-underline">Terminal</a>
+          <a href="/empresas" class="hover:text-ink py-1 transition no-underline">Empresas</a>
         <a href="/noticias" class="hover:text-ink py-1 transition no-underline">Noticias</a>
         <a href="/metodologia" class="hover:text-ink py-1 transition no-underline">Metodología</a>
         <a href="/guia" class="hover:text-ink py-1 transition no-underline">Guía</a>
@@ -564,11 +574,28 @@
   </header>
 
   <!-- Main Container -->
-  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-  <div class="terminal-surface bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg overflow-hidden">
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
+
+    <!-- Aviso de Términos: Franja breve no intrusiva (Variante C) -->
+    <div id="termsNotice" class="hidden mb-4 border-y border-rule bg-transparent overflow-hidden transition-all duration-300">
+      <div class="px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+        <div class="flex items-center gap-2 text-xs text-ink leading-relaxed">
+          <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background: var(--pd-peru, #C8102E);"></span>
+          <span>
+            <strong>Entorno de análisis:</strong> no constituye asesoramiento financiero ni recomendación de inversión.
+            <a href="/terms" class="underline hover:text-ink ml-1 font-semibold" target="_blank">Leer los términos</a>
+          </span>
+        </div>
+        <button id="btnDismissTerms" type="button" class="self-start sm:self-auto px-3.5 py-1 text-xs font-semibold rounded shrink-0 transition" style="background: var(--pd-ink); color: var(--pd-paper);">
+          Entendido
+        </button>
+      </div>
+    </div>
+
+  <div class="terminal-surface bg-transparent border-y border-rule overflow-hidden">
 
     <!-- Command Header -->
-    <section class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 pt-3 pb-2.5 sm:pt-4 sm:pb-3">
+    <section class="hidden sm:block border-b border-rule px-4 sm:px-6 pt-3 pb-2.5 sm:pt-4 sm:pb-3">
       <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
         <div>
           <div class="band-label">PerData Terminal · BVL · Metales · Macro</div>
@@ -583,7 +610,7 @@
     </section>
 
     <!-- Guided Steps Band: 3 blocks with vertical dividers -->
-    <section class="border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FAFAFC] dark:bg-[#161618]">
+    <section class="hidden sm:block border-b border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#FAFAFC] dark:bg-[#161618]">
       <div class="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-[#E5E5EA] dark:divide-[#2C2C2E]">
         
         <!-- Step 1: ¿Qué quieres ver? -->
@@ -716,7 +743,7 @@
         <div class="min-w-0">
           <div class="flex items-center flex-wrap gap-2.5">
             <h2 id="assetTitle" class="text-lg sm:text-xl font-bold tracking-tight text-black dark:text-white">Compañía de Minas Buenaventura</h2>
-            <span id="assetSymbolBadge" class="micro-label font-mono tnum px-1.5 py-0.5 bg-black dark:bg-white text-white dark:text-black rounded">BVN</span>
+            <span id="assetSymbolBadge" class="micro-label font-mono tnum px-1.5 py-0.5 rounded" style="border:1px solid var(--pd-rule);color:var(--pd-ink-soft);background:transparent;">BVN</span>
           </div>
           <p id="assetMeta" class="text-[11px] sm:text-xs text-ink-soft mt-1">Minería · Perú · Moneda: USD · 10 Años de Datos</p>
         </div>
@@ -738,12 +765,20 @@
     <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-4">
       <!-- Terminal Panel (Pantalla de terminal grafito) -->
       <div class="pd-terminal-panel p-3.5 sm:p-5">
+        <!-- Mobile Tabs (Visible only on mobile <= 640px) -->
+        <div class="chart-tabs sm:hidden" role="tablist" aria-label="Horizonte de proyección móvil">
+          <button type="button" class="chart-tab horizon-btn is-active active font-bold" data-horizon="1">1 MES</button>
+          <button type="button" class="chart-tab horizon-btn locked-option" data-horizon="3">3 MESES</button>
+          <button type="button" class="chart-tab horizon-btn locked-option" data-horizon="6">6 MESES</button>
+          <button type="button" class="chart-tab horizon-btn locked-option" data-horizon="12">1 AÑO</button>
+          <button type="button" class="chart-tab horizon-btn locked-option" id="btnCustomHorizonMobile" data-horizon="custom">OTRO</button>
+        </div>
         <div class="pd-terminal-header flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
           <div id="chartGlance" class="pd-chart-glance">
             Proyección probabilística estocástica
           </div>
           <div id="chartModelHeader" class="flex justify-end items-center shrink-0 min-h-[16px]">
-            <span id="chartModelBadge" class="font-mono tnum text-[11px]" style="color: #A59E90; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px;"></span>
+            <span id="chartModelBadge" class="font-mono tnum text-[11px]" style="color: var(--pd-ink-soft); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px;"></span>
           </div>
         </div>
         <div id="chartContainer" class="relative w-full h-[300px] sm:h-[360px] md:h-[400px]">
@@ -755,12 +790,12 @@
       <div id="macroPanel" class="pd-terminal-panel mt-4 p-3.5 sm:p-4 flex flex-col gap-1.5">
         <div class="flex items-center justify-between text-[11px]">
           <div class="flex items-center gap-2">
-            <span class="w-2 h-0.5" style="background: #A59E90;"></span>
-            <span id="macroPanelTitle" class="font-bold text-[#EDE8DC]">Cruce Macro</span>
-            <span id="macroPanelUnit" class="text-[#A59E90]"></span>
+            <span class="w-2 h-0.5" style="background: var(--pd-ink-soft);"></span>
+            <span id="macroPanelTitle" class="font-bold text-ink">Cruce Macro</span>
+            <span id="macroPanelUnit" class="text-ink-soft"></span>
           </div>
-          <div class="font-mono tnum text-[11px] font-semibold text-[#EDE8DC]">
-            Correlación: <span id="macroPanelR" class="font-bold text-[#EDE8DC]">—</span>
+          <div class="font-mono tnum text-[11px] font-semibold text-ink">
+            Correlación: <span id="macroPanelR" class="font-bold text-ink">—</span>
           </div>
         </div>
         <div class="relative w-full h-[70px] sm:h-[90px]">
@@ -769,7 +804,7 @@
       </div>
 
       <!-- Interpretación Cuantitativa y Cobertura de Riesgo (Pegada debajo del panel macro) -->
-      <div class="mt-5 p-4 rounded border border-rule bg-surface text-left space-y-3">
+      <div class="mt-5 py-4 border-y border-rule bg-transparent text-left space-y-3">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div class="inline-flex items-center gap-2">
             <span class="w-2 h-2 rounded-full" style="background: var(--pd-brand);"></span>
@@ -782,21 +817,21 @@
           </span>
         </div>
         
-        <p id="tsTakeaway" class="text-xs sm:text-sm text-ink leading-relaxed p-3 bg-card rounded border-l-4 border border-rule" style="border-left-color: var(--pd-brand);">
+        <p id="tsTakeaway" class="text-xs sm:text-sm text-ink leading-relaxed py-2 pl-3 bg-transparent border-l-2 border-rule" style="border-left-color: var(--pd-brand);">
           Cargando análisis cuantitativo de la serie y envolvente estocástica...
         </p>
 
         <!-- Sub-Indicators: Macro Beta, Volatilidad, Cobertura -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
-          <div class="p-3 rounded bg-card border border-rule">
+        <div class="grid grid-cols-1 sm:grid-cols-3 border-y border-rule divide-y sm:divide-y-0 sm:divide-x divide-rule text-left">
+          <div class="py-2.5 sm:px-3">
             <div class="text-[10px] uppercase font-bold text-ink-soft">Sensibilidad Macro (Beta)</div>
             <div id="tsBeta" class="text-xs sm:text-sm font-bold font-mono tnum text-ink mt-0.5">Alta (+0.74)</div>
           </div>
-          <div class="p-3 rounded bg-card border border-rule">
+          <div class="py-2.5 sm:px-3">
             <div class="text-[10px] uppercase font-bold text-ink-soft">Régimen de Volatilidad</div>
             <div id="tsRegime" class="text-xs sm:text-sm font-bold text-ink mt-0.5">Cíclico Moderado</div>
           </div>
-          <div class="p-3 rounded bg-card border border-rule">
+          <div class="py-2.5 sm:px-3">
             <div class="text-[10px] uppercase font-bold text-ink-soft">Intervalo de Riesgo</div>
             <div id="tsEngine" class="text-xs sm:text-sm font-bold font-mono tnum text-ink mt-0.5">80% Densidad P10-P90</div>
           </div>
@@ -815,94 +850,185 @@
       </div>
     </section>
 
-    <!-- Forecast Band (TimesFM) -->
-    <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-4">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-        <div class="inline-flex items-center gap-2">
-          <span class="w-1.5 h-1.5 rounded-sm" style="background: var(--pd-accent)"></span>
-          <span class="text-xs font-bold text-black dark:text-white">Proyección probabilística</span>
-          <span class="hidden sm:inline micro-label text-ink-soft">Banda P10–P90</span>
+    <!-- Mobile Ledger: Métricas en Tabla Fiduciaria (Solo móvil <= 640px) -->
+    <section class="px-4 py-3 sm:hidden border-t border-rule bg-surface">
+      <div class="ledger-table">
+        <div class="ledger-row">
+          <span class="ledger-label">P50 Objetivo (Horizonte)</span>
+          <span class="ledger-val tnum"><span id="mP50">$39.34</span> <span id="mReturn" class="text-xs ml-1 font-semibold text-emerald-600 dark:text-emerald-400">+13.3%</span></span>
         </div>
-        <span id="forecastModelBadge" class="text-[11px] text-ink-soft font-mono">Modelo: PerData Engine v3</span>
-      </div>
-
-      <!-- Skeleton Loading State -->
-      <div id="forecastSkeleton" class="hidden mt-3 p-4 bg-[#FAFAFC] dark:bg-[#161618] border border-rule rounded text-center animate-pulse">
-        <div class="text-xs font-medium text-ink-soft">Calculando proyección probabilística...</div>
-      </div>
-
-      <!-- Active Forecast Results -->
-      <div id="forecastContent" class="mt-3">
-        <div class="stat-strip stat-strip-5">
-          <div class="stat">
-            <div class="band-label">P50 al Horizonte <a href="/aprende#p10-p50-p90" class="pd-help" title="Percentil 50: el valor central que proyecta el modelo al final del horizonte.">?</a></div>
-            <div id="tfmP50" class="stat-value text-black dark:text-white">$39.34</div>
-            <div id="tfmHorizonDate" class="stat-sub">Precio central esperado en el horizonte</div>
-          </div>
-          <div class="stat">
-            <div class="band-label">Retorno Proyectado <a href="/aprende#probabilidad" class="pd-help" title="Ganancia o pérdida porcentual esperada del P50 frente a hoy.">?</a></div>
-            <div id="tfmReturn" class="stat-value text-emerald-600 dark:text-emerald-400">+13.3%</div>
-            <div id="tfmTrend" class="stat-sub">Variación esperada frente a hoy</div>
-          </div>
-          <div class="stat">
-            <div class="band-label">Prob. de Alza <a href="/aprende#probabilidad" class="pd-help" title="Proporción de trayectorias simuladas que terminan por encima del precio actual.">?</a></div>
-            <div id="tfmProbRise" class="stat-value text-black dark:text-white">—</div>
-            <div class="stat-sub">De 10 escenarios, cuántos terminan por encima de hoy</div>
-          </div>
-          <div class="stat">
-            <div class="band-label">Rango 80% (P10–P90) <a href="/aprende#p10-p50-p90" class="pd-help" title="Intervalo donde caen 8 de cada 10 escenarios simulados por el modelo.">?</a></div>
-            <div id="tfmRange" class="stat-value text-black dark:text-white" style="font-size:13px">$21.97 — $56.71</div>
-            <div class="stat-sub">8 de cada 10 veces el precio queda aquí <span id="tfmRangeInner" class="hidden"></span></div>
-          </div>
-          <div class="stat">
-            <div class="band-label">Volatilidad Anualizada <a href="/aprende#volatilidad" class="pd-help" title="Dispersión o vaivén típico del precio proyectado a doce meses.">?</a></div>
-            <div id="tfmVol" class="stat-value text-black dark:text-white">48.7%</div>
-            <div class="stat-sub" id="tfmModelInfo">Vaivén esperado a 1 año (400 trayectorias)</div>
-          </div>
+        <div class="ledger-row">
+          <span class="ledger-label">Rango 80% (P10–P90)</span>
+          <span class="ledger-val tnum" id="mRange">$21.97 — $56.71</span>
         </div>
-
-        <!-- Forecast note + toggle, slim row -->
-        <div class="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-[#E5E5EA] dark:border-[#2C2C2E] pt-3">
-          <span id="tfmExplainText" class="text-[11px] text-ink-soft leading-relaxed">
-            Gráfica ampliada con fechas futuras: trayectoria P50 (discontinua) y banda P10–P90.
-          </span>
-          <button id="btnToggleForecastChart" class="btn-pro self-start sm:self-auto px-3 py-1.5 bg-black dark:bg-white hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black rounded-md font-semibold text-[11px] transition whitespace-nowrap">
-            Ocultar Proyección
-          </button>
+        <div class="ledger-row">
+          <span class="ledger-label">Probabilidad de Alza (&gt;0)</span>
+          <span class="ledger-val tnum" id="mProbRise">58.2%</span>
+        </div>
+        <div class="ledger-row">
+          <span class="ledger-label">Volatilidad Anualizada</span>
+          <span class="ledger-val tnum" id="mVol">48.7%</span>
+        </div>
+        <div class="ledger-row">
+          <span class="ledger-label">Retorno en el Periodo</span>
+          <span class="ledger-val tnum" id="mHistReturn">+184.2%</span>
+        </div>
+        <div class="ledger-row">
+          <span class="ledger-label">Máx / Mín en Rango</span>
+          <span class="ledger-val tnum" id="mHighLow">$36.50 / $4.10</span>
+        </div>
+        <div class="ledger-row">
+          <span class="ledger-label">Correlación Cruce Macro</span>
+          <span class="ledger-val tnum" id="mCorrelation">+0.74</span>
         </div>
       </div>
     </section>
 
-    <!-- Historical KPI Strip -->
-    <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-3">
-      <div class="stat-strip stat-strip-5 -mx-4 sm:-mx-6">
-        <div class="stat">
-          <div class="band-label">Retorno <a href="/guia#glosario" class="pd-help" title="Variación acumulada entre el inicio y el final del periodo seleccionado.">?</a></div>
-          <div id="metricReturn" class="stat-value text-emerald-600 dark:text-emerald-400">+184.2%</div>
-          <div class="stat-sub">Variación acumulada en el rango</div>
+    <!-- Mobile Controls: Rango y Comparar con en fila deslizable (Solo móvil <= 640px) -->
+    <section class="px-4 py-2.5 sm:hidden border-t border-rule bg-card">
+      <div class="flex items-center gap-3 overflow-x-auto no-scrollbar py-0.5 text-xs">
+        <div class="flex items-center gap-1.5 shrink-0">
+          <span class="band-label uppercase font-bold text-[10px] text-ink-soft tracking-wider">Historia:</span>
+          <div class="seg shrink-0" role="group" aria-label="Rango de historia móvil">
+            <button type="button" class="range-btn" data-range="1y">1 año</button>
+            <button type="button" class="range-btn is-active active font-semibold" data-range="3y">3 años</button>
+            <button type="button" class="range-btn" data-range="5y">5 años</button>
+            <button type="button" class="range-btn locked-option text-stone-400 dark:text-stone-600 cursor-pointer" data-range="10y">10 años</button>
+          </div>
         </div>
-        <div class="stat">
-          <div class="band-label">Máximo <a href="/guia#glosario" class="pd-help" title="Precio de cierre más alto dentro del rango observado.">?</a></div>
-          <div id="metricHigh" class="stat-value text-black dark:text-white">$36.50</div>
-          <div id="metricHighDate" class="stat-sub">Pico registrado en el periodo</div>
-        </div>
-        <div class="stat">
-          <div class="band-label">Mínimo <a href="/guia#glosario" class="pd-help" title="Precio de cierre más bajo dentro del rango observado.">?</a></div>
-          <div id="metricLow" class="stat-value text-black dark:text-white">$4.10</div>
-          <div id="metricLowDate" class="stat-sub">Valle registrado en el periodo</div>
-        </div>
-        <div class="stat">
-          <div class="band-label">Correlación (r) <a href="/guia#glosario" class="pd-help" title="Coeficiente entre -1 y +1 que mide cómo se mueve el activo frente al cruce macro.">?</a></div>
-          <div id="metricCorrelation" class="stat-value text-black dark:text-white">+0.74</div>
-          <div id="metricCorrelationDesc" class="stat-sub">Si se mueven juntos (+1) o al revés (−1)</div>
-        </div>
-        <div class="stat">
-          <div class="band-label">Observaciones <a href="/guia#glosario" class="pd-help" title="Cantidad de meses de datos reales analizados en este rango.">?</a></div>
-          <div id="metricPoints" class="stat-value text-black dark:text-white">121</div>
-          <div class="stat-sub">Meses analizados</div>
+        <span class="text-ink-soft shrink-0">|</span>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <span class="band-label uppercase font-bold text-[10px] text-ink-soft tracking-wider">Comparar:</span>
+          <select id="macroOverlayMobile" class="text-xs py-1 px-2 rounded border border-rule bg-surface text-ink font-sans focus:outline-none focus:ring-1 focus:ring-ink">
+            <option value="HG=F" selected>Cobre (COMEX)</option>
+            <option value="GC=F">Oro</option>
+            <option value="SI=F">Plata</option>
+            <option value="CL=F">Petróleo</option>
+            <option value="PEN=X">Dólar (USD/PEN)</option>
+            <option value="^TNX">Bono EE. UU. 10A</option>
+            <option value="PERU_CPI">Inflación Perú</option>
+            <option value="PERU_GDP">PBI Perú</option>
+            <option value="none">Ninguno</option>
+          </select>
         </div>
       </div>
     </section>
+
+    <!-- Mobile Search Strip: Atajos de activos y buscador rápido (Solo móvil <= 640px) -->
+    <section class="px-4 py-2.5 sm:hidden border-t border-rule bg-surface">
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+        <span class="band-label uppercase font-bold text-[10px] text-ink-soft tracking-wider shrink-0">Atajos:</span>
+        <button type="button" class="chip-btn shrink-0 whitespace-nowrap border border-rule bg-card text-ink hover:border-ink transition text-[11px] px-2 py-0.5 rounded" data-symbol="BVN">BVN</button>
+        <button type="button" class="chip-btn shrink-0 whitespace-nowrap border border-rule bg-card text-ink hover:border-ink transition text-[11px] px-2 py-0.5 rounded" data-symbol="SCCO">SCCO</button>
+        <button type="button" class="chip-btn shrink-0 whitespace-nowrap border border-rule bg-card text-ink hover:border-ink transition text-[11px] px-2 py-0.5 rounded" data-symbol="VOLCABC1.LM">Volcan</button>
+        <button type="button" class="chip-btn shrink-0 whitespace-nowrap border border-rule bg-card text-ink hover:border-ink transition text-[11px] px-2 py-0.5 rounded" data-symbol="MINSURI1.LM">Minsur</button>
+        <button type="button" class="chip-btn shrink-0 whitespace-nowrap border border-rule bg-card text-ink hover:border-ink transition text-[11px] px-2 py-0.5 rounded" data-symbol="BAP">Credicorp</button>
+        <button type="button" class="chip-btn shrink-0 whitespace-nowrap border border-rule bg-card text-ink hover:border-ink transition text-[11px] px-2 py-0.5 rounded" data-symbol="HG=F">Cobre</button>
+        <button type="button" class="chip-btn shrink-0 whitespace-nowrap border border-rule bg-card text-ink hover:border-ink transition text-[11px] px-2 py-0.5 rounded" data-symbol="PEN=X">USD/PEN</button>
+      </div>
+      <div class="relative w-full mt-2" id="searchContainerMobile">
+        <input 
+          type="text" 
+          id="companySearchMobile" 
+          autocomplete="off"
+          placeholder="Buscar activo (ej. Buenaventura, Dólar...)" 
+          class="w-full text-xs rounded border border-rule bg-card text-ink px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-ink"
+        />
+        <div id="searchResultsMobile" class="hidden absolute left-0 right-0 mt-1 bg-white dark:bg-[#1C1C1E] border border-rule rounded-md shadow-xl max-h-60 overflow-y-auto z-40 divide-y divide-[#F5F5F7] dark:divide-[#2C2C2E]"></div>
+      </div>
+    </section>
+
+    <!-- Desktop Only: Strips de Forecast y KPIs históricos (Ocultos en móvil para dar paso a la tabla) -->
+    <div class="hidden sm:block">
+      <!-- Forecast Band (TimesFM) -->
+      <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+          <div class="inline-flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-sm" style="background: var(--pd-accent)"></span>
+            <span class="text-xs font-bold text-black dark:text-white">Proyección probabilística</span>
+            <span class="hidden sm:inline micro-label text-ink-soft">Banda P10–P90</span>
+          </div>
+          <span id="forecastModelBadge" class="text-[11px] text-ink-soft font-mono">Modelo: PerData Engine v3</span>
+        </div>
+
+        <!-- Skeleton Loading State -->
+        <div id="forecastSkeleton" class="hidden mt-3 p-4 bg-[#FAFAFC] dark:bg-[#161618] border border-rule rounded text-center animate-pulse">
+          <div class="text-xs font-medium text-ink-soft">Calculando proyección probabilística...</div>
+        </div>
+
+        <!-- Active Forecast Results -->
+        <div id="forecastContent" class="mt-3">
+          <div class="stat-strip stat-strip-5">
+            <div class="stat">
+              <div class="band-label">P50 al Horizonte <a href="/aprende#p10-p50-p90" class="pd-help" title="Percentil 50: el valor central que proyecta el modelo al final del horizonte.">?</a></div>
+              <div id="tfmP50" class="stat-value text-black dark:text-white">$39.34</div>
+              <div id="tfmHorizonDate" class="stat-sub">Precio central esperado en el horizonte</div>
+            </div>
+            <div class="stat">
+              <div class="band-label">Retorno Proyectado <a href="/aprende#probabilidad" class="pd-help" title="Ganancia o pérdida porcentual esperada del P50 frente a hoy.">?</a></div>
+              <div id="tfmReturn" class="stat-value text-emerald-600 dark:text-emerald-400">+13.3%</div>
+              <div id="tfmTrend" class="stat-sub">Variación esperada frente a hoy</div>
+            </div>
+            <div class="stat">
+              <div class="band-label">Prob. de Alza <a href="/aprende#probabilidad" class="pd-help" title="Proporción de trayectorias simuladas que terminan por encima del precio actual.">?</a></div>
+              <div id="tfmProbRise" class="stat-value text-black dark:text-white">—</div>
+              <div class="stat-sub">De 10 escenarios, cuántos terminan por encima de hoy</div>
+            </div>
+            <div class="stat">
+              <div class="band-label">Rango 80% (P10–P90) <a href="/aprende#p10-p50-p90" class="pd-help" title="Intervalo donde caen 8 de cada 10 escenarios simulados por el modelo.">?</a></div>
+              <div id="tfmRange" class="stat-value text-black dark:text-white" style="font-size:13px">$21.97 — $56.71</div>
+              <div class="stat-sub">8 de cada 10 veces el precio queda aquí <span id="tfmRangeInner" class="hidden"></span></div>
+            </div>
+            <div class="stat">
+              <div class="band-label">Volatilidad Anualizada <a href="/aprende#volatilidad" class="pd-help" title="Dispersión o vaivén típico del precio proyectado a doce meses.">?</a></div>
+              <div id="tfmVol" class="stat-value text-black dark:text-white">48.7%</div>
+              <div class="stat-sub" id="tfmModelInfo">Vaivén esperado a 1 año (400 trayectorias)</div>
+            </div>
+          </div>
+
+          <!-- Forecast note + toggle, slim row -->
+          <div class="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-[#E5E5EA] dark:border-[#2C2C2E] pt-3">
+            <span id="tfmExplainText" class="text-[11px] text-ink-soft leading-relaxed">
+              Gráfica ampliada con fechas futuras: trayectoria P50 (discontinua) y banda P10–P90.
+            </span>
+            <button id="btnToggleForecastChart" class="btn-pro self-start sm:self-auto px-3 py-1.5 bg-black dark:bg-white hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] text-white dark:text-black rounded-md font-semibold text-[11px] transition whitespace-nowrap">
+              Ocultar Proyección
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Historical KPI Strip -->
+      <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-3">
+        <div class="stat-strip stat-strip-5 -mx-4 sm:-mx-6">
+          <div class="stat">
+            <div class="band-label">Retorno <a href="/guia#glosario" class="pd-help" title="Variación acumulada entre el inicio y el final del periodo seleccionado.">?</a></div>
+            <div id="metricReturn" class="stat-value text-emerald-600 dark:text-emerald-400">+184.2%</div>
+            <div class="stat-sub">Variación acumulada en el rango</div>
+          </div>
+          <div class="stat">
+            <div class="band-label">Máximo <a href="/guia#glosario" class="pd-help" title="Precio de cierre más alto dentro del rango observado.">?</a></div>
+            <div id="metricHigh" class="stat-value text-black dark:text-white">$36.50</div>
+            <div id="metricHighDate" class="stat-sub">Pico registrado en el periodo</div>
+          </div>
+          <div class="stat">
+            <div class="band-label">Mínimo <a href="/guia#glosario" class="pd-help" title="Precio de cierre más bajo dentro del rango observado.">?</a></div>
+            <div id="metricLow" class="stat-value text-black dark:text-white">$4.10</div>
+            <div id="metricLowDate" class="stat-sub">Valle registrado en el periodo</div>
+          </div>
+          <div class="stat">
+            <div class="band-label">Correlación (r) <a href="/guia#glosario" class="pd-help" title="Coeficiente entre -1 y +1 que mide cómo se mueve el activo frente al cruce macro.">?</a></div>
+            <div id="metricCorrelation" class="stat-value text-black dark:text-white">+0.74</div>
+            <div id="metricCorrelationDesc" class="stat-sub">Si se mueven juntos (+1) o al revés (−1)</div>
+          </div>
+          <div class="stat">
+            <div class="band-label">Observaciones <a href="/guia#glosario" class="pd-help" title="Cantidad de meses de datos reales analizados en este rango.">?</a></div>
+            <div id="metricPoints" class="stat-value text-black dark:text-white">121</div>
+            <div class="stat-sub">Meses analizados</div>
+          </div>
+        </div>
+      </section>
+    </div>
 
     <!-- Data Table Band -->
     <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E]">
@@ -1019,108 +1145,6 @@
     </div>
   </footer>
 
-  <!-- Modal / Pop-up de Términos y Condiciones -->
-  <div id="termsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
-    <div id="termsModalBox" class="bg-white dark:bg-[#1C1C1E] border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden transition-all duration-300 transform scale-95">
-      
-      <!-- Modal Header -->
-      <div class="px-6 py-5 border-b border-[#E5E5EA] dark:border-[#2C2C2E] flex items-center justify-between bg-white dark:bg-[#1C1C1E] sticky top-0 z-10">
-        <div class="flex items-center space-x-3">
-          <div class="w-8 h-8 rounded-lg bg-black dark:bg-white text-white dark:text-black flex items-center justify-center font-black text-sm">
-            P
-          </div>
-          <div>
-            <h2 class="text-base sm:text-lg font-bold text-black dark:text-white tracking-tight">Términos y Condiciones de Uso</h2>
-            <p class="text-[11px] text-ink-soft">Marco Legal · Descargo Cuantitativo · Versión 1.0 (2026)</p>
-          </div>
-        </div>
-        <button id="btnCloseTermsModal" type="button" class="text-ink-soft hover:text-black dark:hover:text-white p-2 rounded-md hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] transition" title="Cerrar modal">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-      </div>
-
-      <!-- Modal Body (Scrollable) -->
-      <div class="overflow-y-auto px-6 py-5 space-y-5 text-xs sm:text-sm text-[#1D1D1F] dark:text-[#E5E5EA] leading-relaxed">
-        
-        <!-- Summary Alert -->
-        <div class="p-3.5 rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] flex items-start space-x-3">
-          <svg class="w-5 h-5 text-ink-soft shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          <div class="text-xs text-[#1D1D1F] dark:text-[#F5F5F7]">
-            <strong>Bienvenido a PerData:</strong> Este entorno computacional provee herramientas de modelado de series temporales macroeconómicas y activos financieros. Por favor revise los términos antes de continuar.
-          </div>
-        </div>
-
-        <!-- Section 1: Disclaimer Financiero -->
-        <div class="space-y-1.5">
-          <div class="flex items-center space-x-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
-            <h3 class="font-bold text-black dark:text-white text-sm sm:text-base">1. Naturaleza Analítica y Descargo Financiero</h3>
-          </div>
-          <p class="text-ink-soft pl-3.5">
-            PerData es una plataforma orientada exclusivamente a fines de investigación cuantitativa, análisis técnico y educación financiera. Ningún dato, métrica, gráfico o cálculo presentado constituye una oferta, solicitud ni asesoramiento financiero, tributario o recomendación para la compra o venta de instrumentos de renta variable, materias primas o divisas. Las decisiones de inversión recaen de manera única y exclusiva sobre el criterio y responsabilidad del usuario.
-          </p>
-        </div>
-
-        <!-- Section 2: Proyección Cuantitativa -->
-        <div class="space-y-1.5">
-          <div class="flex items-center space-x-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
-            <h3 class="font-bold text-black dark:text-white text-sm sm:text-base">2. Proyección probabilística</h3>
-          </div>
-          <p class="text-ink-soft pl-3.5">
-            Las proyecciones se calculan con el modelo estadístico propio de PerData (tendencia amortiguada, reversión a la media y estacionalidad), y la lectura que las acompaña se genera con reglas fijas a partir de esas cifras. Los resultados se estructuran en abanicos probabilísticos multi-cuantil: <strong>P10</strong> (escenario pesimista o soporte inferior), <strong>P50</strong> (mediana esperada) y <strong>P90</strong> (escenario optimista o resistencia superior) para modelar escenarios de volatilidad. El usuario reconoce que todo modelo matemático está sujeto a regímenes estocásticos y volatilidad de mercado, por lo que el comportamiento histórico de las series temporales no garantiza rendimientos futuros.
-          </p>
-        </div>
-
-        <!-- Section 3: Privacidad y Local Storage -->
-        <div class="space-y-1.5">
-          <div class="flex items-center space-x-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-black dark:bg-white"></span>
-            <h3 class="font-bold text-black dark:text-white text-sm sm:text-base">3. Privacidad</h3>
-          </div>
-          <p class="text-ink-soft pl-3.5">
-            PerData no usa rastreadores publicitarios ni analítica de terceros. Tus preferencias (tema claro u oscuro y la aceptación de estos términos) se guardan en tu navegador con <code class="font-mono text-[11px]">localStorage</code>. Si creas una cuenta, guardamos tu correo y tu plan para darte acceso, como explica la <a href="/privacidad" class="underline">política de privacidad</a>.
-          </p>
-        </div>
-
-        <!-- Collapsible / Full legal text -->
-        <div class="pt-1">
-          <button id="btnToggleFullLegal" type="button" class="text-xs font-semibold text-black dark:text-white hover:underline inline-flex items-center space-x-1.5">
-            <span id="toggleLegalText">Ver articulado legal completo</span>
-            <svg id="toggleLegalIcon" class="w-3.5 h-3.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-          </button>
-
-          <div id="fullLegalSection" class="hidden mt-3 p-4 rounded-lg bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#E5E5EA] dark:border-[#3A3A3C] space-y-3 text-xs text-ink-soft">
-            <p>
-              <strong>Cláusula 4. Integridad de Fuentes de Información:</strong> Los datos históricos provienen de agregadores de mercado público, interfaces del Banco Mundial y Yahoo Finance. La plataforma no asume responsabilidad civil ni contractual por eventuales discrepancias, latencias o interrupciones en la disponibilidad de feeds externos.
-            </p>
-            <p>
-              <strong>Cláusula 5. Propiedad Intelectual:</strong> El software, heurísticas de visualización, componentes de interfaz y canalización algorítmica son propiedad intelectual reservada de PerData (2026).
-            </p>
-            <p>
-              <strong>Cláusula 6. Modificaciones de los Términos:</strong> Nos reservamos el derecho de actualizar estos términos para reflejar evoluciones metodológicas del modelo predictivo o exigencias normativas vigentes.
-            </p>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Modal Footer -->
-      <div class="px-6 py-4 border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-white dark:bg-[#1C1C1E] flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div class="text-[11px] text-ink-soft flex items-center space-x-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          <span id="termsStatusText">Consentimiento requerido para habilitar análisis</span>
-        </div>
-        <div class="flex items-center space-x-2 w-full sm:w-auto">
-          <button id="btnAcceptTerms" type="button" class="w-full sm:w-auto inline-flex items-center justify-center font-semibold text-xs sm:text-sm bg-black dark:bg-white text-white dark:text-black hover:bg-[#1D1D1F] dark:hover:bg-[#E5E5EA] px-6 py-2.5 rounded-full transition">
-            Aceptar y Continuar
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
   <!-- Application Script -->
   <script>
     // State management
@@ -1228,7 +1252,7 @@ const state = {
     // Initialize Application
     function initializeApp() {
       initTheme();
-      setupTermsModal();
+      setupTermsNotice();
       setupSearch();
       setupQuickChips();
       setupRangeButtons();
@@ -1261,114 +1285,51 @@ const state = {
       return false;
     }
 
-    // Modal de Términos y Condiciones
-    function setupTermsModal() {
-      const modal = document.getElementById("termsModal");
-      const modalBox = document.getElementById("termsModalBox");
-      const btnClose = document.getElementById("btnCloseTermsModal");
-      const btnAccept = document.getElementById("btnAcceptTerms");
+    // Franja de Aviso de Términos (No bloqueante, Variante C)
+    function setupTermsNotice() {
+      const STORAGE_KEY = "mde_terms_accepted_v1";
+      const notice = document.getElementById("termsNotice");
+      const btnDismiss = document.getElementById("btnDismissTerms");
       const btnOpenHeader = document.getElementById("btnOpenTermsHeader");
       const btnOpenFooter = document.getElementById("btnOpenTermsFooter");
-      const btnToggleLegal = document.getElementById("btnToggleFullLegal");
-      const fullLegalSection = document.getElementById("fullLegalSection");
-      const toggleLegalIcon = document.getElementById("toggleLegalIcon");
-      const toggleLegalText = document.getElementById("toggleLegalText");
-      const termsStatusText = document.getElementById("termsStatusText");
 
-      const STORAGE_KEY = "mde_terms_accepted_v1";
+      if (!notice) return;
 
-      function updateStatusDisplay(isAccepted) {
-        if (termsStatusText) {
-          if (isAccepted) {
-            termsStatusText.textContent = "Consentimiento registrado localmente";
-            termsStatusText.className = "text-[11px] text-emerald-600 dark:text-emerald-400 font-medium";
-          } else {
-            termsStatusText.textContent = "Consentimiento requerido para habilitar análisis";
-            termsStatusText.className = "text-[11px] text-ink-soft";
-          }
-        }
-        if (btnAccept) {
-          btnAccept.textContent = isAccepted ? "Entendido" : "Aceptar y Continuar";
-        }
+      const isAccepted = localStorage.getItem(STORAGE_KEY) === "true";
+      if (!isAccepted) {
+        notice.classList.remove("hidden");
       }
 
-      function openModal() {
-        if (!modal || !modalBox) return;
-        const isAccepted = localStorage.getItem(STORAGE_KEY) === "true";
-        updateStatusDisplay(isAccepted);
-        modal.classList.remove("opacity-0", "pointer-events-none");
-        modal.classList.add("opacity-100", "pointer-events-auto");
-        modalBox.classList.remove("scale-95");
-        modalBox.classList.add("scale-100");
-        document.body.style.overflow = "hidden";
-      }
-
-      function closeModal() {
-        if (!modal || !modalBox) return;
-        modal.classList.remove("opacity-100", "pointer-events-auto");
-        modal.classList.add("opacity-0", "pointer-events-none");
-        modalBox.classList.remove("scale-100");
-        modalBox.classList.add("scale-95");
-        document.body.style.overflow = "";
-      }
-
-      // Check on load: if not accepted, show modal automatically
-      if (localStorage.getItem(STORAGE_KEY) !== "true") {
-        setTimeout(() => {
-          openModal();
-        }, 400);
-      }
-
-      if (btnAccept) {
-        btnAccept.addEventListener("click", () => {
+      if (btnDismiss) {
+        btnDismiss.addEventListener("click", () => {
           localStorage.setItem(STORAGE_KEY, "true");
-          closeModal();
+          notice.style.maxHeight = notice.offsetHeight + "px";
+          notice.style.overflow = "hidden";
+          requestAnimationFrame(() => {
+            notice.style.transition = "max-height 0.25s ease-out, opacity 0.2s ease-out, padding 0.25s ease-out";
+            notice.style.maxHeight = "0";
+            notice.style.opacity = "0";
+            notice.style.paddingTop = "0";
+            notice.style.paddingBottom = "0";
+            setTimeout(() => {
+              notice.classList.add("hidden");
+            }, 260);
+          });
         });
       }
 
-      if (btnClose) {
-        btnClose.addEventListener("click", closeModal);
+      function reopenNotice() {
+        notice.style.transition = "";
+        notice.style.maxHeight = "";
+        notice.style.opacity = "";
+        notice.style.paddingTop = "";
+        notice.style.paddingBottom = "";
+        notice.classList.remove("hidden");
+        notice.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
 
-      if (btnOpenHeader) {
-        btnOpenHeader.addEventListener("click", openModal);
-      }
-
-      if (btnOpenFooter) {
-        btnOpenFooter.addEventListener("click", openModal);
-      }
-
-      // Backdrop click closes modal
-      if (modal) {
-        modal.addEventListener("click", (e) => {
-          if (e.target === modal) {
-            closeModal();
-          }
-        });
-      }
-
-      // Escape key closes modal
-      window.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && modal && !modal.classList.contains("pointer-events-none")) {
-          closeModal();
-        }
-      });
-
-      // Toggle legal details
-      if (btnToggleLegal && fullLegalSection) {
-        btnToggleLegal.addEventListener("click", () => {
-          const isHidden = fullLegalSection.classList.contains("hidden");
-          if (isHidden) {
-            fullLegalSection.classList.remove("hidden");
-            if (toggleLegalText) toggleLegalText.textContent = "Ocultar articulado legal completo";
-            if (toggleLegalIcon) toggleLegalIcon.classList.add("rotate-180");
-          } else {
-            fullLegalSection.classList.add("hidden");
-            if (toggleLegalText) toggleLegalText.textContent = "Ver articulado legal completo";
-            if (toggleLegalIcon) toggleLegalIcon.classList.remove("rotate-180");
-          }
-        });
-      }
+      if (btnOpenHeader) btnOpenHeader.addEventListener("click", reopenNotice);
+      if (btnOpenFooter) btnOpenFooter.addEventListener("click", reopenNotice);
     }
 
     if (document.readyState === "loading") {
@@ -1389,36 +1350,49 @@ const state = {
     // Setup Search Autocomplete
     function setupSearch() {
       let debounceTimer = null;
+      const searchMobileInput = document.getElementById("companySearchMobile");
+      const searchResultsMobileDiv = document.getElementById("searchResultsMobile");
 
-      companySearchInput.addEventListener("input", (e) => {
-        const query = e.target.value.trim();
-        clearTimeout(debounceTimer);
+      function attachSearch(inputEl, resultsDiv) {
+        if (!inputEl || !resultsDiv) return;
+        inputEl.addEventListener("input", (e) => {
+          const query = e.target.value.trim();
+          clearTimeout(debounceTimer);
 
-        if (query.length < 2) {
-          searchResultsDiv.innerHTML = "";
-          searchResultsDiv.classList.add("hidden");
-          searchSpinner.classList.add("hidden");
-          return;
-        }
-
-        searchSpinner.classList.remove("hidden");
-        debounceTimer = setTimeout(async () => {
-          try {
-            const res = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}`);
-            const data = await res.json();
-            searchSpinner.classList.add("hidden");
-            renderSearchResults(data.results || []);
-          } catch (err) {
-            console.error("Search error:", err);
-            searchSpinner.classList.add("hidden");
+          if (query.length < 2) {
+            resultsDiv.innerHTML = "";
+            resultsDiv.classList.add("hidden");
+            if (searchSpinner) searchSpinner.classList.add("hidden");
+            return;
           }
-        }, 250);
-      });
+
+          if (searchSpinner) searchSpinner.classList.remove("hidden");
+          debounceTimer = setTimeout(async () => {
+            try {
+              const res = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}`);
+              const data = await res.json();
+              if (searchSpinner) searchSpinner.classList.add("hidden");
+              renderSearchResults(data.results || [], resultsDiv, inputEl);
+            } catch (err) {
+              console.error("Search error:", err);
+              if (searchSpinner) searchSpinner.classList.add("hidden");
+            }
+          }, 250);
+        });
+      }
+
+      attachSearch(companySearchInput, searchResultsDiv);
+      attachSearch(searchMobileInput, searchResultsMobileDiv);
 
       // Close dropdown when clicking outside
       document.addEventListener("click", (e) => {
-        if (!document.getElementById("searchContainer").contains(e.target)) {
+        const sc = document.getElementById("searchContainer");
+        const scm = document.getElementById("searchContainerMobile");
+        if (sc && !sc.contains(e.target) && searchResultsDiv) {
           searchResultsDiv.classList.add("hidden");
+        }
+        if (scm && !scm.contains(e.target) && searchResultsMobileDiv) {
+          searchResultsMobileDiv.classList.add("hidden");
         }
       });
     }
@@ -1439,14 +1413,15 @@ const state = {
     }
 
     // Render Search Results (Sanitized against XSS)
-    function renderSearchResults(results) {
+    function renderSearchResults(results, targetDiv = searchResultsDiv, sourceInput = companySearchInput) {
+      if (!targetDiv) return;
       if (!results || results.length === 0) {
-        searchResultsDiv.innerHTML = `<div class="p-3 text-xs text-ink-soft">No se encontraron resultados coincidentes.</div>`;
-        searchResultsDiv.classList.remove("hidden");
+        targetDiv.innerHTML = `<div class="p-3 text-xs text-ink-soft">No se encontraron resultados coincidentes.</div>`;
+        targetDiv.classList.remove("hidden");
         return;
       }
 
-      searchResultsDiv.innerHTML = results.map(item => `
+      targetDiv.innerHTML = results.map(item => `
         <div class="search-item p-3 hover:bg-[#F5F5F7] dark:hover:bg-[#2C2C2E] cursor-pointer flex items-center justify-between transition" data-symbol="${escapeHTML(item.symbol)}">
           <div>
             <div class="font-semibold text-xs sm:text-sm text-black dark:text-white">${escapeHTML(item.name)}</div>
@@ -1456,13 +1431,13 @@ const state = {
         </div>
       `).join("");
 
-      searchResultsDiv.classList.remove("hidden");
+      targetDiv.classList.remove("hidden");
 
-      document.querySelectorAll(".search-item").forEach(el => {
+      targetDiv.querySelectorAll(".search-item").forEach(el => {
         el.addEventListener("click", () => {
           const sym = el.getAttribute("data-symbol");
-          companySearchInput.value = "";
-          searchResultsDiv.classList.add("hidden");
+          if (sourceInput) sourceInput.value = "";
+          targetDiv.classList.add("hidden");
           // Unlisted / private companies: informative profile, NO dead API call
           if (sym.endsWith("-PRIV") || sym === "COSAPI") {
             const name = el.querySelector(".font-semibold") ? el.querySelector(".font-semibold").textContent : sym;
@@ -1538,25 +1513,31 @@ const state = {
     }
 
     function setActiveRangeBtn(btn) {
+      const rng = typeof btn === "string" ? btn : (btn ? btn.getAttribute("data-range") : null);
       document.querySelectorAll(".range-btn").forEach(b => {
-        b.classList.remove("is-active", "bg-black", "bg-white", "text-white", "text-black", "font-bold");
-        b.classList.add("text-ink-soft");
+        const isMatch = rng && b.getAttribute("data-range") === rng;
+        if (isMatch) {
+          b.classList.remove("text-ink-soft");
+          b.classList.add("is-active", "active", "font-bold");
+        } else {
+          b.classList.remove("is-active", "active", "bg-black", "bg-white", "text-white", "text-black", "font-bold");
+          b.classList.add("text-ink-soft");
+        }
       });
-      if (btn) {
-        btn.classList.remove("text-ink-soft");
-        btn.classList.add("is-active", "font-bold");
-      }
     }
 
     function setActiveHorizonBtn(btn) {
+      const h = typeof btn === "string" ? btn : (btn ? btn.getAttribute("data-horizon") : null);
       document.querySelectorAll(".horizon-btn").forEach(b => {
-        b.classList.remove("is-active", "bg-black", "bg-white", "text-white", "text-black", "font-bold");
-        b.classList.add("text-ink-soft");
+        const isMatch = h && b.getAttribute("data-horizon") === String(h);
+        if (isMatch) {
+          b.classList.remove("text-ink-soft");
+          b.classList.add("is-active", "active", "font-bold");
+        } else if (b.id !== "btnCustomHorizon" && b.id !== "btnCustomHorizonMobile") {
+          b.classList.remove("is-active", "active", "bg-black", "bg-white", "text-white", "text-black", "font-bold");
+          b.classList.add("text-ink-soft");
+        }
       });
-      if (btn) {
-        btn.classList.remove("text-ink-soft");
-        btn.classList.add("is-active", "font-bold");
-      }
     }
 
     // Setup Range Buttons (1A, 3A, 5A, 10A)
@@ -1579,11 +1560,12 @@ const state = {
       const customContainer = document.getElementById("customHorizonContainer");
       const customInput = document.getElementById("customHorizonInput");
       const btnCustom = document.getElementById("btnCustomHorizon");
+      const btnCustomMobile = document.getElementById("btnCustomHorizonMobile");
       const btnApplyCustom = document.getElementById("btnApplyCustomHorizon");
       const customLabel = document.getElementById("customHorizonBtnLabel");
 
       document.querySelectorAll(".horizon-btn").forEach(btn => {
-        if (btn.id === "btnCustomHorizon") return;
+        if (btn.id === "btnCustomHorizon" || btn.id === "btnCustomHorizonMobile") return;
         btn.addEventListener("click", () => {
           const h = parseInt(btn.getAttribute("data-horizon"), 10);
           if (window.MDE_Auth && !window.MDE_Auth.gate("horizon", h)) return;
@@ -1606,6 +1588,12 @@ const state = {
           fetchForecastOnly(state.primarySymbol, h);
         });
       });
+
+      if (btnCustomMobile) {
+        btnCustomMobile.addEventListener("click", () => {
+          if (btnCustom) btnCustom.click();
+        });
+      }
 
       // Custom Horizon Handling
       if (btnCustom) {
@@ -1681,14 +1669,27 @@ const state = {
 
     // Setup Macro Selector
     function setupMacroSelect() {
+      const macroOverlayMobile = document.getElementById("macroOverlayMobile");
       if (macroOverlaySelect) {
         macroOverlaySelect.addEventListener("change", (e) => {
           const val = e.target.value;
           state.macroSymbol = val;
+          if (macroOverlayMobile && macroOverlayMobile.value !== val) {
+            macroOverlayMobile.value = val;
+          }
           updateMacroOptionDesc(val);
           loadPerData(val, state.range);
         });
         updateMacroOptionDesc(macroOverlaySelect.value);
+      }
+      if (macroOverlayMobile) {
+        macroOverlayMobile.addEventListener("change", (e) => {
+          const val = e.target.value;
+          if (macroOverlaySelect && macroOverlaySelect.value !== val) {
+            macroOverlaySelect.value = val;
+            macroOverlaySelect.dispatchEvent(new Event("change"));
+          }
+        });
       }
     }
 
@@ -1709,6 +1710,8 @@ const state = {
       try {
         if (macroOverlaySelect && macroSymbol) {
           macroOverlaySelect.value = macroSymbol;
+          const macroOverlayMobile = document.getElementById("macroOverlayMobile");
+          if (macroOverlayMobile) macroOverlayMobile.value = macroSymbol;
           updateMacroOptionDesc(macroSymbol);
         }
         // 1. Fetch Primary Historical Data
@@ -1924,11 +1927,25 @@ const state = {
       const returnEl = document.getElementById("metricReturn");
       returnEl.textContent = `${returnPct >= 0 ? '+' : ''}${returnPct.toFixed(1)}%`;
 
-      document.getElementById("metricHigh").textContent = `${p.currency === 'PEN' ? 'S/' : '$'}${highVal.toFixed(2)}`;
+      const mHistReturn = document.getElementById("mHistReturn");
+      if (mHistReturn) {
+        mHistReturn.textContent = `${returnPct >= 0 ? '+' : ''}${returnPct.toFixed(1)}%`;
+        mHistReturn.className = `ledger-val tnum ${returnPct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`;
+      }
+
+      const highStr = `${p.currency === 'PEN' ? 'S/' : '$'}${highVal.toFixed(2)}`;
+      const lowStr = `${p.currency === 'PEN' ? 'S/' : '$'}${lowVal.toFixed(2)}`;
+
+      document.getElementById("metricHigh").textContent = highStr;
       document.getElementById("metricHighDate").textContent = `En ${highDate.substring(0, 7)}`;
 
-      document.getElementById("metricLow").textContent = `${p.currency === 'PEN' ? 'S/' : '$'}${lowVal.toFixed(2)}`;
+      document.getElementById("metricLow").textContent = lowStr;
       document.getElementById("metricLowDate").textContent = `En ${lowDate.substring(0, 7)}`;
+
+      const mHighLow = document.getElementById("mHighLow");
+      if (mHighLow) {
+        mHighLow.textContent = `${highStr} / ${lowStr}`;
+      }
 
       document.getElementById("metricPoints").textContent = series.length;
 
@@ -1951,6 +1968,9 @@ const state = {
         const r = calculateCorrelation(matchedP, matchedM);
         const rFormatted = (r >= 0 ? "+" : "") + r.toFixed(2);
         document.getElementById("metricCorrelation").textContent = rFormatted;
+        const mCorrelation = document.getElementById("mCorrelation");
+        if (mCorrelation) mCorrelation.textContent = rFormatted;
+
         const shortMacro = m.name ? m.name.split('(')[0].trim() : 'cruce';
         document.getElementById("metricCorrelationDesc").textContent = `vs ${shortMacro} · si van juntos (+1) o al revés (−1)`;
         const legM = document.getElementById("legendMacro");
@@ -1958,6 +1978,8 @@ const state = {
         document.getElementById("tableHeaderMacro").textContent = `${shortMacro} (${m.currency || ''})${m.stale ? ' · datos guardados' : ''}`;
       } else {
         document.getElementById("metricCorrelation").textContent = "N/A";
+        const mCorrelation = document.getElementById("mCorrelation");
+        if (mCorrelation) mCorrelation.textContent = "N/A";
         document.getElementById("metricCorrelationDesc").textContent = "Sin comparar · elige un cruce macro";
         const legM = document.getElementById("legendMacro");
         if (legM) legM.classList.add("hidden");
@@ -2021,6 +2043,39 @@ const state = {
       const volValue = f.volatilityAnnualized ?? f.metrics?.annualizedVolatilityPct ?? '32.4';
       document.getElementById("tfmVol").textContent = `${volValue}%`;
       document.getElementById("tfmExplainText").textContent = `Proyección calculada a ${f.horizonLabel}. La gráfica inferior amplía el horizonte temporal incorporando el intervalo probabilístico P10-P90.`;
+
+      // Update Mobile Ledger Table (Variante C)
+      const mP50 = document.getElementById("mP50");
+      if (mP50) mP50.textContent = `${currencyPrefix}${f.predictedPrice.toFixed(2)}`;
+
+      const mReturn = document.getElementById("mReturn");
+      if (mReturn) {
+        mReturn.textContent = `${f.expectedReturnPct >= 0 ? '+' : ''}${f.expectedReturnPct.toFixed(1)}%`;
+        mReturn.className = `text-xs ml-1 font-semibold ${f.expectedReturnPct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`;
+      }
+
+      const mRange = document.getElementById("mRange");
+      if (mRange) mRange.textContent = `${currencyPrefix}${f.quantiles.p10.toFixed(2)} — ${currencyPrefix}${f.quantiles.p90.toFixed(2)}`;
+
+      const mProb = document.getElementById("mProbRise");
+      if (mProb) {
+        if (typeof f.probabilityOfRise === "number") {
+          mProb.textContent = f.probabilityOfRise.toFixed(1) + "%";
+          mProb.className = "ledger-val tnum " + (f.probabilityOfRise >= 55 ? "text-emerald-600 dark:text-emerald-400" : f.probabilityOfRise <= 45 ? "text-rose-600 dark:text-rose-400" : "");
+        } else {
+          mProb.textContent = "—";
+        }
+      }
+
+      const mVol = document.getElementById("mVol");
+      if (mVol) mVol.textContent = `${volValue}%`;
+
+      const ledger = document.querySelector(".ledger-table");
+      if (ledger && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        ledger.classList.remove("fade-in");
+        void ledger.offsetWidth;
+        ledger.classList.add("fade-in");
+      }
     }
 
     // Render Chart via Componente PdChart aislado
@@ -2069,7 +2124,7 @@ const state = {
       const glanceEl = document.getElementById("chartGlance");
       if (glanceEl) {
         if (!f || !f.forecastSeries || !f.forecastSeries.length) {
-          glanceEl.innerHTML = `<span style="color:#A59E90;">Elige un activo para ver su proyección</span>`;
+          glanceEl.innerHTML = `<span style="color:var(--pd-ink-soft);">Elige un activo para ver su proyección</span>`;
         } else {
           const sym = p.currency === "PEN" ? "S/ " : "$";
           const lastReal = Number(p.series[p.series.length - 1].close);
@@ -2079,7 +2134,7 @@ const state = {
           const p90 = Number(targetItem.p90);
           const pct = ((p50 - lastReal) / lastReal) * 100;
           const pctStr = (pct >= 0 ? "+" : "") + pct.toFixed(1).replace(".", ",") + " %";
-          const pctColor = pct >= 0 ? "#4EBA7A" : "#E55C55";
+          const pctColor = pct >= 0 ? "var(--pd-pos)" : "var(--pd-neg)";
 
           let hText = "1 mes";
           const h = Number(state.horizon || 1);
@@ -2090,7 +2145,7 @@ const state = {
           else hText = `${h} meses`;
 
           const assetName = p.shortName || p.name || state.symbol || "el activo";
-          glanceEl.innerHTML = `Dentro de <strong style="color:#EDE8DC;">${escapeHTML(hText)}</strong>, <strong style="color:#EDE8DC;">${escapeHTML(assetName)}</strong> estaría entre <strong style="color:#EDE8DC;">${sym}${p10.toFixed(2)}</strong> y <strong style="color:#EDE8DC;">${sym}${p90.toFixed(2)}</strong> (8 de cada 10 veces). Lo más probable: <strong style="color:#EDE8DC;">${sym}${p50.toFixed(2)}</strong>, un <strong style="color:${pctColor}; font-variant-numeric:tabular-nums;">${pctStr}</strong> frente a hoy.`;
+          glanceEl.innerHTML = `Dentro de <strong class="text-ink">${escapeHTML(hText)}</strong>, <strong class="text-ink">${escapeHTML(assetName)}</strong> estaría entre <strong class="text-ink">${sym}${p10.toFixed(2)}</strong> y <strong class="text-ink">${sym}${p90.toFixed(2)}</strong> (8 de cada 10 veces). Lo más probable: <strong class="text-ink">${sym}${p50.toFixed(2)}</strong>, un <strong style="color:${pctColor}; font-variant-numeric:tabular-nums;">${pctStr}</strong> frente a hoy.`;
         }
       }
 
@@ -2129,7 +2184,7 @@ const state = {
           datasets: [{
             label: m.name || "Macro",
             data: base100,
-            borderColor: "#EDE8DC",
+            borderColor: getComputedStyle(document.documentElement).getPropertyValue("--pd-ink").trim() || "#1B1916",
             backgroundColor: "transparent",
             borderWidth: 1.2,
             pointRadius: 0,
@@ -2157,14 +2212,14 @@ const state = {
       const elR = document.getElementById("macroPanelR");
 
       const MACRO_TITLES = {
-        "HG=F": 'Cobre (futuro de COMEX) <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(HG=F)</span> <a href="/aprende#futuros" style="color:#A59E90; text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
-        "GC=F": 'Oro (futuro de COMEX) <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(GC=F)</span> <a href="/aprende#futuros" style="color:#A59E90; text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
-        "SI=F": 'Plata (futuro de COMEX) <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(SI=F)</span> <a href="/aprende#futuros" style="color:#A59E90; text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
-        "CL=F": 'Petróleo WTI (futuro de NYMEX) <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(CL=F)</span> <a href="/aprende#futuros" style="color:#A59E90; text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
-        "PEN=X": 'Dólar (USD/PEN) <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(PEN=X)</span>',
-        "^TNX": 'Bono del Tesoro EE. UU. 10Y <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(^TNX)</span>',
-        "PERU_CPI": 'Inflación Perú <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(PERU_CPI)</span>',
-        "PERU_GDP": 'Crecimiento PBI Perú <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(PERU_GDP)</span>'
+        "HG=F": 'Cobre (futuro de COMEX) <span style="color:var(--pd-ink-soft); font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(HG=F)</span> <a href="/aprende#futuros" style="color:var(--pd-ink-soft); text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
+        "GC=F": 'Oro (futuro de COMEX) <span style="color:var(--pd-ink-soft); font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(GC=F)</span> <a href="/aprende#futuros" style="color:var(--pd-ink-soft); text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
+        "SI=F": 'Plata (futuro de COMEX) <span style="color:var(--pd-ink-soft); font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(SI=F)</span> <a href="/aprende#futuros" style="color:var(--pd-ink-soft); text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
+        "CL=F": 'Petróleo WTI (futuro de NYMEX) <span style="color:var(--pd-ink-soft); font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(CL=F)</span> <a href="/aprende#futuros" style="color:var(--pd-ink-soft); text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
+        "PEN=X": 'Dólar (USD/PEN) <span style="color:var(--pd-ink-soft); font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(PEN=X)</span>',
+        "^TNX": 'Bono del Tesoro EE. UU. 10Y <span style="color:var(--pd-ink-soft); font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(^TNX)</span>',
+        "PERU_CPI": 'Inflación Perú <span style="color:var(--pd-ink-soft); font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(PERU_CPI)</span>',
+        "PERU_GDP": 'Crecimiento PBI Perú <span style="color:var(--pd-ink-soft); font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(PERU_GDP)</span>'
       };
 
       if (elTitle) {
@@ -2379,5 +2434,31 @@ const state = {
   </script>
   <!-- Authentication & Feature Gating Modal -->
   <script src="/auth.js"></script>
+  <nav class="mobile-nav" aria-label="Navegación móvil">
+    <a href="/explorer" class="nav-item active" aria-current="page">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </div>
+      <span>Terminal</span>
+    </a>
+    <a href="/empresas" class="nav-item">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M8 7h6M8 11h4"/></svg>
+      </div>
+      <span>Empresas</span>
+    </a>
+    <a href="/noticias" class="nav-item">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/></svg>
+      </div>
+      <span>Noticias</span>
+    </a>
+    <a href="/cuenta" class="nav-item">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <span>Mi cuenta</span>
+    </a>
+  </nav>
 </body>
 </html>
