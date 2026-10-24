@@ -2081,3 +2081,23 @@ html.pd-motion.hero-ready [data-hero-seq="3"]  { opacity: 1; transform: translat
   }
   html.pd-motion .pd-table tbody tr { transition: none; }
 }
+
+/* Terminal en móvil: el panel va de borde a borde; solo filetes arriba y abajo, sin cápsula */
+@media (max-width: 640px) {
+  .pd-terminal-panel {
+    margin-left: -16px;
+    margin-right: -16px;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-radius: 0;
+  }
+  .pd-terminal-panel .pd-chip {
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-radius: 0 !important;
+  }
+  #assetSymbolBadge {
+    border: 0 !important;
+    padding-left: 0 !important;
+  }
+}
