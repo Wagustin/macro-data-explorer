@@ -1123,12 +1123,12 @@ html.dark.pd-motion header.bg-card.is-scrolled {
   border-bottom-color: rgba(245, 241, 232, 0.35) !important;
 }
 
-/* 2. Entrada de secciones data-reveal (250ms, 8px, cubic-bezier(.05,.7,.1,1)) */
+/* 2. Entrada de secciones data-reveal (450ms, 12px, cubic-bezier(.05,.7,.1,1)) */
 html.pd-motion [data-reveal],
 html.pd-motion .pd-reveal {
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 250ms cubic-bezier(0.05, 0.7, 0.1, 1), transform 250ms cubic-bezier(0.05, 0.7, 0.1, 1);
+  transform: translateY(12px);
+  transition: opacity 450ms cubic-bezier(0.05, 0.7, 0.1, 1), transform 450ms cubic-bezier(0.05, 0.7, 0.1, 1);
   will-change: opacity, transform;
 }
 
@@ -1138,11 +1138,11 @@ html.pd-motion .pd-reveal.is-revealed {
   transform: translateY(0);
 }
 
-/* 3. Filas escalonadas data-stagger (25ms por fila, sobrio) */
+/* 3. Filas escalonadas data-stagger (40ms por fila, fundido + 12px, 450ms) */
 html.pd-motion [data-stagger] > * {
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 250ms cubic-bezier(0.05, 0.7, 0.1, 1), transform 250ms cubic-bezier(0.05, 0.7, 0.1, 1);
+  transform: translateY(12px);
+  transition: opacity 450ms cubic-bezier(0.05, 0.7, 0.1, 1), transform 450ms cubic-bezier(0.05, 0.7, 0.1, 1);
   will-change: opacity, transform;
 }
 
@@ -1918,4 +1918,166 @@ html.dark .pd-help:hover {
     stroke-linecap: round;
     stroke-linejoin: round;
   }
+}
+
+/* ==========================================================================
+   Periódico fino — filetes de lado a lado + ritmo de sección
+   BRIEF_PERIODICO.md rev_A — style(layout): full-bleed rules, fine newspaper rhythm
+   ========================================================================== */
+
+/* ---- 1. Filete doble bajo la cabecera (1px + 3px de aire + 1px) ----- */
+/* El header ya tiene border-bottom:1px. Le añadimos un segundo filete
+   con ::after de modo que el conjunto sea 1px regla / 3px aire / 1px.    */
+header {
+  position: relative;
+}
+header::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px; /* desplaza 1px borde existente + 3px aire = 4px */
+  height: 1px;
+  background: var(--pd-rule);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Asegurar sticky header tiene stacking correcto */
+header[class*="sticky"] {
+  z-index: 29;
+}
+header[class*="sticky"]::after {
+  z-index: 30;
+}
+
+/* ---- 2. Sección de datos full-bleed (tabla de cotizaciones) ---------- */
+.pdl-data-sec {
+  border-top: 1px solid var(--pd-rule);
+  border-bottom: 1px solid var(--pd-rule);
+  padding: 64px 0;
+}
+@media (max-width: 767px) {
+  .pdl-data-sec { padding: 40px 0; }
+}
+
+/* ---- 3. Completar bordería de secciones existentes ------------------ */
+/* Strip: añadir border-top para que el filete del hero no quede suelto */
+.pdl-strip {
+  border-top: 1px solid var(--pd-rule);
+}
+/* Cierre: borde superior explícito (el de la meth llega hasta aquí) */
+.pdl-close {
+  border-top: 1px solid var(--pd-rule);
+}
+
+/* ---- 4. Sin cajas en contenedores de contenido (no gráficos) --------- */
+/* Eliminamos fondos de tarjeta en el hero (pdl-hero ya es transparente);
+   nos aseguramos que pdl-close no use bg-card en modo light como caja.   */
+.pdl-close {
+  background: var(--pd-paper);
+}
+html.dark .pdl-close {
+  background: var(--pd-surface);
+}
+
+/* ---- 5. Hover link con subrayado que crece de izq a der (250ms) ----- */
+/* Se aplica a enlaces de navgación y de contenido. No a botones.
+   Los botones conservan su estilo propio.                                 */
+html.pd-motion .pdl-link,
+html.pd-motion .pd-table a,
+html.pd-motion footer nav a,
+html.pd-motion header nav a {
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0% 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  transition: background-size 250ms cubic-bezier(0.05, 0.7, 0.1, 1),
+              color 120ms cubic-bezier(0.2, 0, 0, 1);
+}
+html.pd-motion .pdl-link:hover,
+html.pd-motion .pd-table a:hover,
+html.pd-motion footer nav a:hover,
+html.pd-motion header nav a:hover {
+  background-size: 100% 1px;
+}
+
+/* ---- 6. Hover filas tabla: desplazamiento 2px + filete inferior oscuro */
+html.pd-motion .pd-table tbody tr {
+  transition: transform 200ms cubic-bezier(0.05, 0.7, 0.1, 1),
+              border-bottom-color 200ms cubic-bezier(0.05, 0.7, 0.1, 1);
+  will-change: transform;
+}
+html.pd-motion .pd-table tbody tr:hover {
+  transform: translateX(2px);
+  border-bottom-color: var(--pd-ink-soft) !important;
+}
+
+/* ---- 7. Stagger ajustado a 40ms entre hijos (BRIEF_PERIODICO req B.1) */
+html.pd-motion [data-stagger] > *:nth-child(1)  { transition-delay: 0ms; }
+html.pd-motion [data-stagger] > *:nth-child(2)  { transition-delay: 40ms; }
+html.pd-motion [data-stagger] > *:nth-child(3)  { transition-delay: 80ms; }
+html.pd-motion [data-stagger] > *:nth-child(4)  { transition-delay: 120ms; }
+html.pd-motion [data-stagger] > *:nth-child(5)  { transition-delay: 160ms; }
+html.pd-motion [data-stagger] > *:nth-child(6)  { transition-delay: 200ms; }
+html.pd-motion [data-stagger] > *:nth-child(7)  { transition-delay: 240ms; }
+html.pd-motion [data-stagger] > *:nth-child(8)  { transition-delay: 280ms; }
+html.pd-motion [data-stagger] > *:nth-child(n+9){ transition-delay: 280ms; }
+
+/* ---- 8. Dibujo de filetes full-bleed (scaleX 0→1, 700ms) ----------- */
+/* Clase aplicada por JS a secciones con data-section-rule:
+   el filete es un pseudo-elemento del ancho del viewport.                 */
+html.pd-motion [data-section-rule] {
+  position: relative;
+}
+html.pd-motion [data-section-rule]::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--pd-rule);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 700ms cubic-bezier(0.05, 0.7, 0.1, 1);
+  pointer-events: none;
+}
+html.pd-motion [data-section-rule].rule-drawn::before {
+  transform: scaleX(1);
+}
+
+/* ---- 9. Carga hero: elementos visibles de base (JS añade clases) ----- */
+/* Los elementos con data-hero-seq son visibles sin JS.
+   Con pd-motion, JS añade .hero-ready al wrapper y la secuencia arranca. */
+[data-hero-seq] {
+  /* visible sin JS como fallback */
+}
+html.pd-motion [data-hero-seq] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 450ms cubic-bezier(0.05, 0.7, 0.1, 1),
+              transform 450ms cubic-bezier(0.05, 0.7, 0.1, 1);
+}
+html.pd-motion .hero-ready [data-hero-seq="0"]  { opacity: 1; transform: translateY(0); transition-delay: 0ms;   }
+html.pd-motion .hero-ready [data-hero-seq="1"]  { opacity: 1; transform: translateY(0); transition-delay: 120ms; }
+html.pd-motion .hero-ready [data-hero-seq="2"]  { opacity: 1; transform: translateY(0); transition-delay: 240ms; }
+html.pd-motion .hero-ready [data-hero-seq="3"]  { opacity: 1; transform: translateY(0); transition-delay: 360ms; }
+
+/* ---- 10. prefers-reduced-motion: desactivar todo -------------------- */
+@media (prefers-reduced-motion: reduce) {
+  header::after { transition: none; }
+  html.pd-motion [data-section-rule]::before { transform: scaleX(1); transition: none; }
+  html.pd-motion [data-hero-seq] { opacity: 1; transform: none; transition: none; }
+  html.pd-motion .pdl-link,
+  html.pd-motion .pd-table a,
+  html.pd-motion footer nav a,
+  html.pd-motion header nav a {
+    background-size: 0% 1px;
+    transition: none;
+  }
+  html.pd-motion .pd-table tbody tr { transition: none; }
 }

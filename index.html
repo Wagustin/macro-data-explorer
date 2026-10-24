@@ -237,7 +237,7 @@
       <!-- Brand & Navigation -->
       <div class="flex items-center space-x-6">
         <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
-          <span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
+          <span class="pd-wordmark" data-hero-seq="0">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
         </a>
 
         <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
@@ -286,18 +286,18 @@
       <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-16 lg:pt-20 lg:pb-24">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           <div class="lg:col-span-7">
-            <h1 class="pdl-h1">
+            <h1 class="pdl-h1" data-hero-seq="1">
               <span class="pdl-mask"><span class="pdl-rise">El mercado peruano,</span></span>
               <span class="pdl-mask"><span class="pdl-rise pdl-rise-2 pdl-h1-soft">con su rango probable.</span></span>
             </h1>
-            <div class="pdl-quote">
+            <div class="pdl-quote" data-hero-seq="2">
               <p class="pdl-question">¿A cuánto estará el dólar el próximo mes?</p>
               <p class="pd-hero-answer pdl-answer">
                 Entre <span class="pd-num">S/&nbsp;<span id="pd-p10">—</span></span> y <span class="pd-num">S/&nbsp;<span id="pd-p90">—</span></span>, con un <span class="pd-num">80&nbsp;%</span> de probabilidad. Valor central: <span class="pd-num">S/&nbsp;<span id="pd-p50">—</span></span>.
               </p>
               <p id="pd-forecast-fallback" class="pdl-answer hidden">Abre la terminal para ver la proyección de hoy.</p>
             </div>
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3" data-hero-seq="3">
               <a href="/explorer?symbol=PEN%3DX" class="pdl-btn pdl-btn-primary">Abrir la terminal <span aria-hidden="true">&#8599;</span></a>
               <a href="#metodologia" class="pdl-btn pdl-btn-secondary">Cómo lo calculamos</a>
             </div>
@@ -341,7 +341,7 @@
     </section>
 
     <!-- FRANJA DE INDICADORES (en vivo) -->
-    <section class="pdl-strip full-bleed" aria-label="Indicadores de mercado">
+    <section class="pdl-strip full-bleed" data-section-rule aria-label="Indicadores de mercado">
       <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="pdl-strip-grid">
           <a class="pdl-ind" href="/explorer?symbol=PEN%3DX" data-ind="PEN=X" data-dec="4" data-prefix="S/ "><span class="pdl-label">Dólar · USD/PEN</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val>—</span><span class="pdl-ind-chg font-mono" data-ind-chg>—</span></span><span class="pdl-ind-unit">S/ por dólar · hoy</span></a>
@@ -353,7 +353,8 @@
     </section>
 
     <!-- SECCIÓN TABLA: sobre --pd-paper -->
-    <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-12 sm:pb-20 space-y-6">
+    <section class="pdl-data-sec full-bleed" data-section-rule>
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
       <div class="pdl-sec-head" data-reveal>
         <div>
           <span class="pdl-label pdl-label-accent">Cotizaciones y proyecciones</span>
@@ -421,10 +422,11 @@
       <p class="text-sm sm:text-base text-ink-soft leading-relaxed mt-4">
         Escribe <span class="mono text-ink">"cobre"</span> en <a href="/explorer" class="text-ink hover:text-brand underline font-medium">la terminal</a>, elige un horizonte y descarga la serie en Excel.
       </p>
+      </div>
     </section>
 
     <!-- METODOLOGÍA: 3 principios (diseño de Stitch, contenido verificado contra el código) -->
-    <section id="metodologia" class="pdl-meth full-bleed">
+    <section id="metodologia" class="pdl-meth full-bleed" data-section-rule>
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-20 lg:py-28">
         <div class="pdl-sec-head" data-reveal>
           <div class="max-w-3xl">
@@ -473,7 +475,7 @@
     </section>
 
     <!-- CIERRE (diseño de Stitch) -->
-    <section class="pdl-close full-bleed">
+    <section class="pdl-close full-bleed" data-section-rule>
       <div class="max-w-3xl mx-auto px-4 sm:px-6 py-20 lg:py-28 text-center flex flex-col items-center" data-reveal>
         <h2 class="pdl-h2 pdl-h2-xl">Empieza con cualquier activo.</h2>
         <p class="pdl-lede mt-4 mb-9">Busca una empresa, un metal o el tipo de cambio: la historia y la proyección salen en segundos.</p>
