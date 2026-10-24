@@ -4,7 +4,7 @@
  */
 
 import crypto from "crypto";
-import { findUserById, IS_PRODUCTION } from "./users.js";
+import { findUserById, findUserByEmail, IS_PRODUCTION } from "./users.js";
 
 const TOKEN_TTL_SECONDS = 30 * 24 * 60 * 60;
 const PBKDF2_ITERATIONS = 210000;
@@ -191,7 +191,8 @@ export async function getAuthUser(req) {
 
   const email = String(claims.email || "").toLowerCase();
   const isAgustin = email === "venturasaldanaa@gmail.com";
-  let plan = isAgustin ? "pro" : (claims.app_metadata?.plan || claims.user_metadata?.plan || "free");
+  // user_metadata is writable by the user, so it never grants a plan; public.users is the source of truth.
+  let plan = isAgustin ? "pro" : (claims.app_metadata?.plan === "pro" ? "pro" : "free");
   let name = claims.user_metadata?.name || (email ? email.split("@")[0] : "Usuario");
 
   // Check cache or store
@@ -201,7 +202,7 @@ export async function getAuthUser(req) {
   }
 
   try {
-    const dbUser = await findUserById(claims.sub);
+    const dbUser = (await findUserById(claims.sub)) || (email ? await findUserByEmail(email) : null);
     if (dbUser) {
       if (dbUser.password_changed_at && claims.iat * 1000 < Date.parse(dbUser.password_changed_at) - 1000) {
         return null;
