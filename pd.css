@@ -1503,33 +1503,21 @@ html.dark .pd-val {
 /* ============================================================
    Terminal Panel del Gráfico (estilo pantalla de terminal de grafito)
    ============================================================ */
+/* Panel de la terminal: sin pantalla oscura. El gráfico va sobre el papel, como en un periódico,
+   separado solo por filetes de lado a lado arriba y abajo. */
 .pd-terminal-panel {
-  background-color: #17181B !important;
-  border: 1px solid #2A2C31 !important;
-  color: #EDE8DC !important;
-  border-radius: 6px;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-top: 1px solid var(--pd-rule) !important;
+  border-bottom: 1px solid var(--pd-rule) !important;
+  color: var(--pd-ink);
+  border-radius: 0;
   position: relative;
   overflow: hidden;
 }
-html.dark .pd-terminal-panel {
-  border-color: #3A3D45 !important;
-}
-
-.pd-terminal-panel .text-ink {
-  color: #EDE8DC !important;
-}
-.pd-terminal-panel .text-ink-soft {
-  color: #A59E90 !important;
-}
-.pd-terminal-panel .border-rule {
-  border-color: #2A2C31 !important;
-}
-html.dark .pd-terminal-panel .border-rule {
-  border-color: #3A3D45 !important;
-}
 
 .pd-terminal-header {
-  border-bottom: 1px solid #2A2C31;
+  border-bottom: 1px solid var(--pd-rule);
   padding-bottom: 10px;
   margin-bottom: 12px;
 }
@@ -1541,7 +1529,7 @@ html.dark .pd-terminal-header {
   font-family: var(--pd-font-ui);
   font-size: 13px;
   line-height: 1.5;
-  color: #EDE8DC;
+  color: var(--pd-ink);
   font-weight: 500;
 }
 @media (max-width: 640px) {
@@ -1569,13 +1557,13 @@ html.dark .pd-terminal-header {
 .pd-direct-label {
   position: absolute;
   right: 8px;
-  background: #17181B;
-  border: 1px solid #2A2C31;
+  background: var(--pd-paper);
+  border: 1px solid var(--pd-rule);
   border-radius: 4px;
   padding: 3px 8px;
   font-family: var(--pd-font-mono);
   font-size: 12px;
-  color: #EDE8DC;
+  color: var(--pd-ink);
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -1592,14 +1580,14 @@ html.dark .pd-terminal-header {
   }
 }
 .pd-direct-label a.pd-pill-link {
-  color: #A59E90;
+  color: var(--pd-ink-soft);
   font-size: 11px;
   text-decoration: underline;
   text-decoration-color: #5E584E;
 }
 .pd-direct-label a.pd-pill-link:hover {
-  color: #EDE8DC;
-  text-decoration-color: #EDE8DC;
+  color: var(--pd-ink);
+  text-decoration-color: var(--pd-ink);
 }
 
 /* Crosshair vertical line */
@@ -1652,7 +1640,7 @@ html.dark .pd-terminal-header {
   padding: 10px 14px;
   background: #1E2024;
   border: 1px solid #3A3D45;
-  color: #EDE8DC;
+  color: var(--pd-ink);
   border-radius: 6px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
   font-family: var(--pd-font-mono);
@@ -1675,9 +1663,9 @@ html.dark .pd-terminal-header {
   font-weight: 700;
   font-size: 12px;
   margin-bottom: 5px;
-  border-bottom: 1px solid #2A2C31;
+  border-bottom: 1px solid var(--pd-rule);
   padding-bottom: 4px;
-  color: #EDE8DC;
+  color: var(--pd-ink);
 }
 .pd-chip-row {
   display: flex;
@@ -1687,19 +1675,19 @@ html.dark .pd-terminal-header {
   margin-top: 3px;
 }
 .pd-chip-label {
-  color: #A59E90;
+  color: var(--pd-ink-soft);
 }
 .pd-chip-val {
   font-variant-numeric: tabular-nums;
   font-weight: 600;
-  color: #EDE8DC;
+  color: var(--pd-ink);
 }
 .pd-chip-note {
   font-size: 10.5px;
-  color: #A59E90;
+  color: var(--pd-ink-soft);
   margin-top: 6px;
   padding-top: 4px;
-  border-top: 1px solid #2A2C31;
+  border-top: 1px solid var(--pd-rule);
   line-height: 1.3;
 }
 .pd-chip-val.pd-pos {
@@ -1757,15 +1745,7 @@ html.dark .pd-help:hover {
   line-height: 1.4;
 }
 
-/* Panel de terminal: siempre pantalla oscura, con SUS propios tokens para que el gráfico
-   (pd-chart.js lee los tokens del contenedor) y los textos se lean igual en los dos temas. */
-.pd-terminal-panel {
-  --pd-paper: #17181B; --pd-card: #1F2023; --pd-surface: #24262A;
-  --pd-ink: #EDE8DC; --pd-ink-soft: #A59E90; --pd-rule: #2E3035;
-  --pd-accent: #EDE8DC; --pd-sky: #A89F8C;
-  --pd-pos: #5FBF85; --pd-neg: #F07A72;
-  color: var(--pd-ink);
-}
+
 
 /* ============================================================
    Terminal Móvil: Tabs de Horizonte y Tabla Fiduciaria (Variante C)

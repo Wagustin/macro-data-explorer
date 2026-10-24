@@ -776,7 +776,7 @@
             Proyección probabilística estocástica
           </div>
           <div id="chartModelHeader" class="flex justify-end items-center shrink-0 min-h-[16px]">
-            <span id="chartModelBadge" class="font-mono tnum text-[11px]" style="color: #A59E90; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px;"></span>
+            <span id="chartModelBadge" class="font-mono tnum text-[11px]" style="color: var(--pd-ink-soft); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px;"></span>
           </div>
         </div>
         <div id="chartContainer" class="relative w-full h-[300px] sm:h-[360px] md:h-[400px]">
@@ -788,12 +788,12 @@
       <div id="macroPanel" class="pd-terminal-panel mt-4 p-3.5 sm:p-4 flex flex-col gap-1.5">
         <div class="flex items-center justify-between text-[11px]">
           <div class="flex items-center gap-2">
-            <span class="w-2 h-0.5" style="background: #A59E90;"></span>
-            <span id="macroPanelTitle" class="font-bold text-[#EDE8DC]">Cruce Macro</span>
-            <span id="macroPanelUnit" class="text-[#A59E90]"></span>
+            <span class="w-2 h-0.5" style="background: var(--pd-ink-soft);"></span>
+            <span id="macroPanelTitle" class="font-bold text-ink">Cruce Macro</span>
+            <span id="macroPanelUnit" class="text-ink-soft"></span>
           </div>
-          <div class="font-mono tnum text-[11px] font-semibold text-[#EDE8DC]">
-            Correlación: <span id="macroPanelR" class="font-bold text-[#EDE8DC]">—</span>
+          <div class="font-mono tnum text-[11px] font-semibold text-ink">
+            Correlación: <span id="macroPanelR" class="font-bold text-ink">—</span>
           </div>
         </div>
         <div class="relative w-full h-[70px] sm:h-[90px]">
@@ -2122,7 +2122,7 @@ const state = {
       const glanceEl = document.getElementById("chartGlance");
       if (glanceEl) {
         if (!f || !f.forecastSeries || !f.forecastSeries.length) {
-          glanceEl.innerHTML = `<span style="color:#A59E90;">Elige un activo para ver su proyección</span>`;
+          glanceEl.innerHTML = `<span style="color:var(--pd-ink-soft);">Elige un activo para ver su proyección</span>`;
         } else {
           const sym = p.currency === "PEN" ? "S/ " : "$";
           const lastReal = Number(p.series[p.series.length - 1].close);
@@ -2132,7 +2132,7 @@ const state = {
           const p90 = Number(targetItem.p90);
           const pct = ((p50 - lastReal) / lastReal) * 100;
           const pctStr = (pct >= 0 ? "+" : "") + pct.toFixed(1).replace(".", ",") + " %";
-          const pctColor = pct >= 0 ? "#4EBA7A" : "#E55C55";
+          const pctColor = pct >= 0 ? "var(--pd-pos)" : "var(--pd-neg)";
 
           let hText = "1 mes";
           const h = Number(state.horizon || 1);
@@ -2143,7 +2143,7 @@ const state = {
           else hText = `${h} meses`;
 
           const assetName = p.shortName || p.name || state.symbol || "el activo";
-          glanceEl.innerHTML = `Dentro de <strong style="color:#EDE8DC;">${escapeHTML(hText)}</strong>, <strong style="color:#EDE8DC;">${escapeHTML(assetName)}</strong> estaría entre <strong style="color:#EDE8DC;">${sym}${p10.toFixed(2)}</strong> y <strong style="color:#EDE8DC;">${sym}${p90.toFixed(2)}</strong> (8 de cada 10 veces). Lo más probable: <strong style="color:#EDE8DC;">${sym}${p50.toFixed(2)}</strong>, un <strong style="color:${pctColor}; font-variant-numeric:tabular-nums;">${pctStr}</strong> frente a hoy.`;
+          glanceEl.innerHTML = `Dentro de <strong class="text-ink">${escapeHTML(hText)}</strong>, <strong class="text-ink">${escapeHTML(assetName)}</strong> estaría entre <strong class="text-ink">${sym}${p10.toFixed(2)}</strong> y <strong class="text-ink">${sym}${p90.toFixed(2)}</strong> (8 de cada 10 veces). Lo más probable: <strong class="text-ink">${sym}${p50.toFixed(2)}</strong>, un <strong style="color:${pctColor}; font-variant-numeric:tabular-nums;">${pctStr}</strong> frente a hoy.`;
         }
       }
 
@@ -2182,7 +2182,7 @@ const state = {
           datasets: [{
             label: m.name || "Macro",
             data: base100,
-            borderColor: "#EDE8DC",
+            borderColor: getComputedStyle(document.documentElement).getPropertyValue("--pd-ink").trim() || "#1B1916",
             backgroundColor: "transparent",
             borderWidth: 1.2,
             pointRadius: 0,
@@ -2210,14 +2210,14 @@ const state = {
       const elR = document.getElementById("macroPanelR");
 
       const MACRO_TITLES = {
-        "HG=F": 'Cobre (futuro de COMEX) <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(HG=F)</span> <a href="/aprende#futuros" style="color:#A59E90; text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
-        "GC=F": 'Oro (futuro de COMEX) <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(GC=F)</span> <a href="/aprende#futuros" style="color:#A59E90; text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
-        "SI=F": 'Plata (futuro de COMEX) <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(SI=F)</span> <a href="/aprende#futuros" style="color:#A59E90; text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
-        "CL=F": 'Petróleo WTI (futuro de NYMEX) <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(CL=F)</span> <a href="/aprende#futuros" style="color:#A59E90; text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
-        "PEN=X": 'Dólar (USD/PEN) <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(PEN=X)</span>',
-        "^TNX": 'Bono del Tesoro EE. UU. 10Y <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(^TNX)</span>',
-        "PERU_CPI": 'Inflación Perú <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(PERU_CPI)</span>',
-        "PERU_GDP": 'Crecimiento PBI Perú <span style="color:#A59E90; font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(PERU_GDP)</span>'
+        "HG=F": 'Cobre (futuro de COMEX) <span style="color:var(--pd-ink-soft); font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(HG=F)</span> <a href="/aprende#futuros" style="color:var(--pd-ink-soft); text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
+        "GC=F": 'Oro (futuro de COMEX) <span style="color:var(--pd-ink-soft); font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(GC=F)</span> <a href="/aprende#futuros" style="color:var(--pd-ink-soft); text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
+        "SI=F": 'Plata (futuro de COMEX) <span style="color:var(--pd-ink-soft); font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(SI=F)</span> <a href="/aprende#futuros" style="color:var(--pd-ink-soft); text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
+        "CL=F": 'Petróleo WTI (futuro de NYMEX) <span style="color:var(--pd-ink-soft); font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(CL=F)</span> <a href="/aprende#futuros" style="color:var(--pd-ink-soft); text-decoration:underline; font-size:10px; margin-left:4px;">¿Qué es un futuro?</a>',
+        "PEN=X": 'Dólar (USD/PEN) <span style="color:var(--pd-ink-soft); font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(PEN=X)</span>',
+        "^TNX": 'Bono del Tesoro EE. UU. 10Y <span style="color:var(--pd-ink-soft); font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(^TNX)</span>',
+        "PERU_CPI": 'Inflación Perú <span style="color:var(--pd-ink-soft); font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(PERU_CPI)</span>',
+        "PERU_GDP": 'Crecimiento PBI Perú <span style="color:var(--pd-ink-soft); font-family:\'IBM Plex Mono\', monospace; font-size:10px;">(PERU_GDP)</span>'
       };
 
       if (elTitle) {
