@@ -103,6 +103,12 @@ if (args.includes("--full")) {
   }]);
 }
 
+if (args.includes("--test-email")) {
+  await email("PerData: prueba del vigilante", "Si lees esto, las alertas de PerData llegan bien a tu correo.\n\nNo hay que hacer nada.");
+  console.log("Correo de prueba enviado");
+  process.exit(0);
+}
+
 const results = [];
 for (const [name, fn] of checks) {
   try {
