@@ -784,6 +784,7 @@
         <div id="chartContainer" class="relative w-full h-[300px] sm:h-[360px] md:h-[400px]">
           <canvas id="mainChart"></canvas>
         </div>
+        <p id="chartSource" class="font-mono text-[11px] text-ink-soft mt-2" style="font-family: 'IBM Plex Mono', ui-monospace, monospace;"></p>
       </div>
 
       <!-- Panel Macro Aparte (Visible si hay macro activo, ~90px desktop / 70px mobile) -->
@@ -1726,6 +1727,8 @@ const state = {
           return;
         }
         state.primaryData = primaryJson;
+        const srcEl = document.getElementById("chartSource");
+        if (srcEl) srcEl.textContent = `Precios diarios: ${primaryJson.dailySource || "Yahoo Finance"} · Serie mensual: Yahoo Finance`;
 
         // 2. Fetch Macro Indicator
         if (macroSymbol && macroSymbol !== "none") {

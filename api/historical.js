@@ -3,6 +3,37 @@ import { PLANS, planForUser, canUseRange, upgradeRequired } from "./_lib/plans.j
 import { getAuthUserOrNull } from "./_lib/session.js";
 import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
 
+const OFFICIAL_BASE = "https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data/official/";
+const OFFICIAL_DAILY = {
+  "PEN=X": { file: "bcrp-daily.json", key: "PEN", label: "BCRP (tipo de cambio SBS, venta)" },
+  "HG=F": { file: "bcrp-daily.json", key: "COBRE", label: "BCRP (cobre, Londres)" },
+  "GC=F": { file: "bcrp-daily.json", key: "ORO", label: "BCRP (oro, Londres)" },
+  "SI=F": { file: "bcrp-daily.json", key: "PLATA", label: "BCRP (plata)" },
+  "CL=F": { file: "bcrp-daily.json", key: "WTI", label: "BCRP (petróleo WTI)" },
+  "BZ=F": { file: "eia-oil.json", key: "BRENT", label: "EIA (Brent spot)" },
+};
+const officialCache = new Map(); // file -> { at, data }
+
+async function officialSeries(file, key) {
+  const hit = officialCache.get(file);
+  let data = hit && Date.now() - hit.at < 30 * 60 * 1000 ? hit.data : null;
+  if (!data) {
+    try {
+      const r = await fetch(OFFICIAL_BASE + file, { signal: AbortSignal.timeout(4000) });
+      if (r.ok) {
+        data = await r.json();
+        officialCache.set(file, { at: Date.now(), data });
+      }
+    } catch (e) { /* sin datos oficiales: se usa Yahoo */ }
+    if (!data && hit) data = hit.data;
+  }
+  const s = data?.series?.[key];
+  const points = Array.isArray(s) ? s : s?.serie;
+  if (!points) return null;
+  const cutoff = new Date(Date.now() - 400 * 864e5).toISOString().slice(0, 10);
+  return points.filter(([d]) => d >= cutoff);
+}
+
 const SYMBOL_REGEX = /^[A-Za-z0-9=._\-\^]{1,20}$/;
 const ALLOWED_RANGES = new Set(["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y", "10y", "max"]);
 const ALLOWED_INTERVALS = new Set(["1d", "1wk", "1mo", "1y"]);
@@ -218,30 +249,17 @@ export default async function handler(req, res) {
       }
     } catch (e) { /* daily context is best-effort */ }
 
-    // USD/PEN: la serie diaria de Yahoo mezcla dos cotizaciones y salta a diario entre ellas.
-    // Se usa el tipo de cambio oficial del BCRP (TC sistema bancario SBS, venta, PD04640PD).
+    // Serie diaria oficial (BCRP para el dólar y los metales, EIA para el Brent) cuando existe.
+    // La descarga un proceso diario de GitHub Actions (scripts/fetch_official.py), así la web no
+    // consulta al BCRP en cada visita. Si no está disponible, se queda la serie de Yahoo.
     let dailySource = "Yahoo Finance";
-    if (symbol === "PEN=X") {
-      try {
-        const MES = { Ene: "01", Feb: "02", Mar: "03", Abr: "04", May: "05", Jun: "06", Jul: "07", Ago: "08", Set: "09", Sep: "09", Oct: "10", Nov: "11", Dic: "12" };
-        const end = new Date();
-        const start = new Date(end.getTime() - 400 * 864e5);
-        const iso = (d) => d.toISOString().slice(0, 10);
-        const bRes = await fetch(`https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PD04640PD/json/${iso(start)}/${iso(end)}`, { signal: AbortSignal.timeout(6000) });
-        if (bRes.ok) {
-          // Con rangos largos el BCRP añade un aviso HTML detrás del JSON: se corta en el último «}» antes del HTML
-          const raw = await bRes.text();
-          const cut = raw.indexOf("<") > 0 ? raw.slice(0, raw.indexOf("<")) : raw;
-          const bData = JSON.parse(cut.slice(0, cut.lastIndexOf("}") + 1));
-          const pts = [];
-          for (const per of (bData.periods || [])) {
-            const m = /^(\d{2})\.([A-Za-z]{3})\.(\d{2})$/.exec(per.name || "");
-            const v = parseFloat((per.values || [])[0]);
-            if (m && MES[m[2]] && isFinite(v)) pts.push({ date: `20${m[3]}-${MES[m[2]]}-${m[1]}`, close: v });
-          }
-          if (pts.length > 20) { daily = pts; dailySource = "BCRP (tipo de cambio SBS, venta)"; }
-        }
-      } catch (e) { /* si el BCRP no responde, se queda la serie de Yahoo */ }
+    const official = OFFICIAL_DAILY[symbol];
+    if (official) {
+      const series = await officialSeries(official.file, official.key);
+      if (series && series.length > 20) {
+        daily = series.map(([date, close]) => ({ date, close }));
+        dailySource = official.label;
+      }
     }
 
     return res.status(200).json({
