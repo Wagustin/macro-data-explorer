@@ -650,6 +650,27 @@
         container.style.position = container.style.position || "relative";
         container.appendChild(chip);
       }
+      // Móvil: la ficha va en un hueco encima del gráfico, que se abre y empuja el gráfico hacia abajo,
+      // para que el dedo no la tape.
+      let slot = null;
+      if (isMobile && container.parentNode) {
+        slot = container.previousElementSibling && container.previousElementSibling.classList.contains("pd-chip-slot")
+          ? container.previousElementSibling : null;
+        if (!slot) {
+          slot = document.createElement("div");
+          slot.className = "pd-chip-slot";
+          container.parentNode.insertBefore(slot, container);
+        }
+        const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        slot.style.cssText = "height:0;overflow:hidden;" + (reduce ? "" : "transition:height 200ms cubic-bezier(.05,.7,.1,1);");
+        slot.querySelectorAll(".pd-chip").forEach((old) => { if (old !== chip) old.remove(); });
+        slot.appendChild(chip);
+        chip.style.position = "static";
+        chip.style.boxShadow = "none";
+        chip.style.minHeight = "96px";
+        chip.style.margin = "0 0 8px";
+      }
+      let slotTimer = null;
       let vline = container.querySelector(".pd-vline");
       if (!vline) {
         vline = document.createElement("div");
@@ -729,8 +750,11 @@
 
         const cWidth = container.clientWidth || 400;
         const chipWidth = chip.offsetWidth || 230;
-        if (cWidth < 640) {
-          // Móvil: ficha fija arriba, centrada, para que el dedo no la tape
+        if (slot) {
+          clearTimeout(slotTimer);
+          chip.style.maxWidth = "none";
+          slot.style.height = (chip.offsetHeight + 8) + "px";
+        } else if (cWidth < 640) {
           chip.style.left = Math.max(4, (cWidth - chipWidth) / 2) + "px";
           chip.style.top = "4px";
         } else {
@@ -742,7 +766,9 @@
       function removeCrosshair() {
         vline.style.display = "none";
         dotHalo.style.display = "none";
-        chip.style.display = "none";
+        if (!slot) { chip.style.display = "none"; return; }
+        clearTimeout(slotTimer);
+        slotTimer = setTimeout(() => { slot.style.height = "0px"; }, 1500);
       }
 
       function onMouseMove(e) {
@@ -767,9 +793,8 @@
         if (!e.touches || !e.touches[0]) return;
         const rect = chart.canvas.getBoundingClientRect();
         const x = e.touches[0].clientX - rect.left;
-        const y = e.touches[0].clientY - rect.top;
         const area = chart.chartArea;
-        if (!area || x < area.left || x > area.right || y < area.top || y > area.bottom) {
+        if (!area || x < area.left || x > area.right) {
           removeCrosshair();
           return;
         }
@@ -784,6 +809,7 @@
 
       chart.canvas.addEventListener("mousemove", onMouseMove);
       chart.canvas.addEventListener("mouseleave", removeCrosshair);
+      chart.canvas.addEventListener("touchstart", onTouchMove, { passive: true });
       chart.canvas.addEventListener("touchmove", onTouchMove, { passive: true });
       chart.canvas.addEventListener("touchend", removeCrosshair);
 
@@ -841,11 +867,13 @@
         destroy() {
           chart.canvas.removeEventListener("mousemove", onMouseMove);
           chart.canvas.removeEventListener("mouseleave", removeCrosshair);
+          chart.canvas.removeEventListener("touchstart", onTouchMove);
           chart.canvas.removeEventListener("touchmove", onTouchMove);
           chart.canvas.removeEventListener("touchend", removeCrosshair);
           chart.destroy();
           PdChart.instances.delete(container);
           if (chip) chip.remove();
+          if (slot) slot.remove();
           if (vline) vline.remove();
           if (dotHalo) dotHalo.remove();
           if (a11y) a11y.remove();
