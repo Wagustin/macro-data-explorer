@@ -44,6 +44,7 @@ const checks = [
     if (!last) throw new Error(`sin datos (HTTP ${r.status})`);
     const age = (Date.now() - Date.parse(last)) / 864e5;
     if (age > MAX_FX_AGE_DAYS) throw new Error(`último dato del ${last}`);
+    if (!/BCRP/.test(r.body?.dailySource || "")) throw new Error(`el BCRP no responde; se está usando ${r.body?.dailySource || "otra fuente"}`);
     return `último dato ${last}`;
   }],
   ["Proyección a 1 mes", async () => {
