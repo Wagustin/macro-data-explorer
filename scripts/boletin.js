@@ -14,7 +14,7 @@ const RAW = "https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main
 const FROM = process.env.BOLETIN_FROM || "PerData <boletin@perdata.site>";
 // Preferred NIM models, in order (catalog checked 25-Oct-2026); each available one is tried until one answers
 const NIM_PREFERRED = (process.env.NIM_MODEL ? [process.env.NIM_MODEL] : []).concat([
-  "deepseek-ai/deepseek-v4.1-flash", "moonshotai/kimi-k2.6", "z-ai/glm-5.3", "google/gemma-4-31b-it",
+  "z-ai/glm-5.3-flash", "z-ai/glm-5.3", "deepseek-ai/deepseek-v4.1-flash", "google/gemma-4-31b-it", "moonshotai/kimi-k2.6",
   "mistralai/mistral-large-2-instruct", "nvidia/nemotron-3-super-120b-a12b",
 ]);
 
@@ -124,12 +124,16 @@ Devuelve SOLO un JSON con:
       const r = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${process.env.NVIDIA_API_KEY}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ model, temperature: 0.2, max_tokens: 1500, messages: [{ role: "user", content: prompt }] }),
-        signal: AbortSignal.timeout(120000),
+        body: JSON.stringify({ model, temperature: 0.2, max_tokens: 3000, messages: [{ role: "user", content: prompt }] }),
+        signal: AbortSignal.timeout(180000),
       });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      const text = (await r.json()).choices?.[0]?.message?.content || "";
-      const out = JSON.parse(text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1));
+      const msg = (await r.json()).choices?.[0]?.message || {};
+      // Reasoning models may leave the answer after their thinking, or only in reasoning_content
+      const text = String(msg.content || msg.reasoning_content || "").replace(/<think>[\s\S]*?<\/think>/g, "");
+      const start = text.lastIndexOf("{\"entradilla\"") > -1 ? text.lastIndexOf("{\"entradilla\"") : text.indexOf("{");
+      if (start < 0) throw new Error(`respuesta sin JSON: ${text.slice(0, 160).replace(/\s+/g, " ")}`);
+      const out = JSON.parse(text.slice(start, text.lastIndexOf("}") + 1));
       for (const k of Object.keys(out)) out[k] = grounded(String(out[k] || ""), factsText);
       console.log(`Interpretación: ${model}`);
       return out;
