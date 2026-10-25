@@ -336,7 +336,7 @@ function setCachedMemoryForecast(symbol, H, data) {
 const V4_WEIGHTS = [[1, 0.48], [3, 0.30], [6, 0.43], [12, 0.58]];
 const TFM_BATCH_HORIZONS = [3, 6, 12, 24, 36];
 
-function v4Weight(h) {
+export function v4Weight(h) {
   if (h <= V4_WEIGHTS[0][0]) return V4_WEIGHTS[0][1];
   for (let i = 1; i < V4_WEIGHTS.length; i++) {
     const [h1, w1] = V4_WEIGHTS[i];
@@ -346,7 +346,7 @@ function v4Weight(h) {
   return V4_WEIGHTS[V4_WEIGHTS.length - 1][1];
 }
 
-function blendV4(tfmPath, v3Points, H) {
+export function blendV4(tfmPath, v3Points, H) {
   const out = [];
   for (let i = 0; i < H; i++) {
     const t = tfmPath[i];
@@ -364,7 +364,7 @@ function blendV4(tfmPath, v3Points, H) {
 }
 
 // Normal approximation in log space from the blended P10-P90
-function probRise(last, p) {
+export function probRise(last, p) {
   const sigma = (Math.log(p.p90) - Math.log(p.p10)) / (2 * 1.2816);
   if (!(sigma > 0)) return p.p50 >= last ? 100 : 0;
   const z = (Math.log(p.p50) - Math.log(last)) / sigma;

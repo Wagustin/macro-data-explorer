@@ -48,3 +48,5 @@ jobs:
         run: node scripts/refresh-history.js
       - name: Calcular y guardar en Supabase
         run: python scripts/timesfm_batch.py
+      - name: PerData Engine v4 (TimesFM + v3) para todos los activos
+        run: node scripts/precompute-v4.js
