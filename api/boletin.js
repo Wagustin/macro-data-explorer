@@ -4,14 +4,27 @@
  *   GET  /api/boletin?accion=confirmar&t=TOKEN  -> activates and redirects to /boletin?estado=confirmado
  *   GET  /api/boletin?accion=baja&t=TOKEN       -> unsubscribes and redirects to /boletin?estado=baja
  *   POST /api/boletin?accion=baja&t=TOKEN       -> one-click unsubscribe (List-Unsubscribe-Post)
+ *   GET  /api/boletin?accion=preferencias&t=TOKEN          -> {email (masked), estado, empresas}
+ *   POST /api/boletin?accion=preferencias&t=TOKEN {empresas} -> saves up to 15 tickers from data/empresas.json
  * The answer to POST never says whether an address was already subscribed.
  */
 import crypto from "crypto";
+import EMPRESAS from "../data/empresas.json" with { type: "json" };
 import { applyCors, handleRateLimit } from "./_lib/ratelimit.js";
 import { sendEmail, EMAIL_ENABLED } from "./_lib/email.js";
 
 const TABLE = "boletin_suscriptores";
 const SITE = process.env.APP_URL || "https://perdata.site";
+const MAX_EMPRESAS = 15;
+let validTickers = null;
+function tickers() {
+  if (!validTickers) {
+    validTickers = new Set(EMPRESAS.emisores.flatMap((e) => e.valores.map((v) => v.nemonico)));
+  }
+  return validTickers;
+}
+const mask = (email) => email.replace(/^(.)(.*)(@.*)$/, (m, a, b, c) => a + "•".repeat(Math.min(6, b.length)) + c);
+
 const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,190}\.[a-z]{2,24}$/i;
 
 function db(path, init = {}) {
@@ -69,6 +82,25 @@ export default async function handler(req, res) {
   const accion = url.searchParams.get("accion");
   const token = url.searchParams.get("t") || "";
 
+  if (accion === "preferencias") {
+    if (!/^[a-f0-9]{48}$/.test(token)) return send(res, 400, { error: "Enlace no válido." });
+    if (req.method === "GET") {
+      const r = await db(`?token=eq.${token}&select=email,estado,empresas`);
+      const row = r.ok ? (await r.json())[0] : null;
+      if (!row) return send(res, 404, { error: "Enlace no válido o vencido." });
+      return send(res, 200, { email: mask(row.email), estado: row.estado, empresas: row.empresas || [] });
+    }
+    if (req.method !== "POST") return send(res, 405, { error: "Método no permitido" });
+    const body = await readBody(req);
+    const list = [...new Set((Array.isArray(body.empresas) ? body.empresas : []).map((x) => String(x).toUpperCase()))]
+      .filter((x) => tickers().has(x));
+    if (list.length > MAX_EMPRESAS) return send(res, 400, { error: `Puedes seguir hasta ${MAX_EMPRESAS} empresas.` });
+    const r = await db(`?token=eq.${token}`, { method: "PATCH", body: JSON.stringify({ empresas: list }) });
+    const rows = r.ok ? await r.json() : [];
+    if (!rows.length) return send(res, 404, { error: "Enlace no válido o vencido." });
+    return send(res, 200, { ok: true, empresas: list });
+  }
+
   if (accion === "confirmar" || accion === "baja") {
     if (!/^[a-f0-9]{48}$/.test(token)) return redirect(res, "invalido");
     const patch = accion === "confirmar"
@@ -77,6 +109,12 @@ export default async function handler(req, res) {
     const r = await db(`?token=eq.${token}`, { method: "PATCH", body: JSON.stringify(patch) });
     const rows = r.ok ? await r.json() : [];
     if (req.method === "POST") return send(res, rows.length ? 200 : 404, { ok: rows.length > 0 });
+    if (rows.length && accion === "confirmar") {
+      res.statusCode = 303;
+      res.setHeader("Location", `/boletin?estado=confirmado&t=${token}#empresas`);
+      res.setHeader("Cache-Control", "no-store");
+      return res.end();
+    }
     return redirect(res, rows.length ? (accion === "confirmar" ? "confirmado" : "baja") : "invalido");
   }
 

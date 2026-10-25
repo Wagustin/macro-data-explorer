@@ -245,6 +245,7 @@ function render(f, ai, dateLabel) {
     <div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:6px;text-transform:none">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
   </td></tr>
   ${ai?.entradilla ? `<tr><td style="padding:22px 0 4px">${para(ai.entradilla, 20)}</td></tr>` : ""}
+  {{PERSONAL}}
   ${section("Mercados")}
   ${ai?.mercados ? `<tr><td style="padding:12px 0 0">${para(ai.mercados)}</td></tr>` : ""}
   <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid ${C.rule}">${rows}</table>
@@ -259,9 +260,60 @@ function render(f, ai, dateLabel) {
     ${ai ? "La interpretación la redacta un modelo de IA a partir de los datos de este correo; las cifras se comprueban contra la fuente.<br>" : ""}
     Información con fines informativos; no es una recomendación de inversión.<br>
     <a href="${SITE}" style="color:${C.ink}">perdata.site</a> · Equipo de PerData<br>
-    Recibes este correo porque te suscribiste al boletín. <a href="{{BAJA}}" style="color:${C.soft}">Darme de baja</a>
+    Recibes este correo porque te suscribiste al boletín. <a href="{{EMPRESAS}}" style="color:${C.soft}">Elegir mis empresas</a> · <a href="{{BAJA}}" style="color:${C.soft}">Darme de baja</a>
   </td></tr>
 </table></td></tr></table></body></html>`;
+}
+
+
+// ---- Personal section: the companies each subscriber follows ----
+const issuers = (await getJson(`${RAW}/empresas.json`).catch(() => ({ emisores: [] }))).emisores || [];
+const issuerOf = (nemo) => issuers.find((e) => e.valores.some((v) => v.nemonico === nemo));
+
+async function companyCard(nemo, smvAll, laya, newsById) {
+  const e = issuerOf(nemo);
+  if (!e) return null;
+  const nemos = e.valores.map((v) => v.nemonico);
+  const yahoo = (e.valores.find((v) => v.nemonico === nemo && v.yahoo) || e.valores.find((v) => v.yahoo))?.yahoo;
+  const card = { nemo, name: prettyName(e.razonSocial), yahoo, price: null, change: null, currency: null, forecast: null, smv: [], news: [] };
+  if (yahoo) {
+    const h = await getJson(`${SITE}/api/historical?symbol=${encodeURIComponent(yahoo)}&range=1y`).catch(() => null);
+    if (h?.live?.price) { card.price = h.live.price; card.change = h.live.changePct ?? null; }
+    else if (h?.series?.length) card.price = h.series[h.series.length - 1].close;
+    card.currency = h?.currency === "USD" ? "US$" : "S/";
+    const fc = await getJson(`${SITE}/api/forecast?symbol=${encodeURIComponent(yahoo)}&horizon=1`).catch(() => null);
+    if (fc?.quantiles) card.forecast = { p50: fc.predictedPrice, p10: fc.quantiles.p10 ?? fc.quantiles.P10, p90: fc.quantiles.p90 ?? fc.quantiles.P90, date: fc.horizonDate, prob: fc.probabilityOfRise };
+  }
+  const since = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10);
+  for (const n of nemos) for (const h of smvAll[n] || []) if (h.fecha >= since) card.smv.push({ ...h, titulo: sentence(h.titulo) || sentence(h.tipo) });
+  card.smv = card.smv.slice(0, 3);
+  for (const [id, c] of Object.entries(laya)) {
+    if ((c.empresas || []).some((x) => nemos.includes(x)) && newsById[id]) card.news.push(newsById[id]);
+  }
+  card.news = card.news.slice(0, 3);
+  return card;
+}
+
+function renderPersonal(cards) {
+  const C = { ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", card: "#FBF9F4" };
+  const serif = "'Source Serif 4',Georgia,'Times New Roman',serif";
+  const ui = "'Libre Franklin',Helvetica,Arial,sans-serif";
+  const mono = "'IBM Plex Mono',Menlo,Consolas,monospace";
+  const body = cards.map((c) => {
+    const ch = c.change == null ? "" : `<span style="color:${c.change >= 0 ? C.pos : C.neg}">${c.change >= 0 ? "&#9650;" : "&#9660;"} ${fmt(Math.abs(c.change))}&nbsp;%</span>`;
+    const fc = c.forecast ? `<div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:4px">Proyección al ${esc(c.forecast.date)}: ${c.currency} ${fmt(c.forecast.p50)}${c.forecast.p10 ? ` (entre ${fmt(c.forecast.p10)} y ${fmt(c.forecast.p90)}, 8 de cada 10 veces)` : ""}</div>` : "";
+    const smv = c.smv.map((h) => `<div style="margin-top:6px;font-family:${ui};font-size:13px"><span style="color:${C.soft}">SMV ${esc(h.fecha.slice(0, 10))}:</span> <a href="${esc(h.url_oficial)}" style="color:${C.ink}">${esc(h.titulo)}</a></div>`).join("");
+    const news = c.news.map((n) => `<div style="margin-top:6px;font-family:${ui};font-size:13px"><a href="${esc(n.url)}" style="color:${C.ink}">${esc(n.titulo)}</a> <span style="color:${C.soft}">· ${esc(n.fuente)}</span></div>`).join("");
+    const quiet = !c.smv.length && !c.news.length ? `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">Sin hechos de importancia ni noticias en los últimos días.</div>` : "";
+    return `<tr><td style="padding:14px 0;border-bottom:1px solid ${C.rule}">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+        <td style="font-family:${ui};font-size:15px;font-weight:600;color:${C.ink}">${esc(c.name)} <span style="font-family:${mono};font-size:11px;font-weight:400;color:${C.soft}">${esc(c.nemo)}</span></td>
+        <td align="right" style="font-family:${mono};font-size:15px;color:${C.ink};white-space:nowrap">${c.price != null ? `${c.currency} ${fmt(c.price)}` : `<a href="${SITE}/empresa/${encodeURIComponent(c.nemo)}" style="color:${C.soft};font-family:${ui};font-size:12px">Ver ficha</a>`}<br><span style="font-size:13px">${ch}</span></td>
+      </tr></table>${fc}${smv}${news}${quiet}</td></tr>`;
+  }).join("");
+  return `<tr><td style="padding:30px 0 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:2px solid ${C.ink};padding-top:10px;font-family:${serif};font-size:22px;font-weight:600;color:${C.ink}">Tus empresas</td></tr></table></td></tr>
+  <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${body}</table>
+  <div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:6px">Precios: Yahoo Finance. Hechos: SMV. La proyección es estadística y no incorpora las noticias.</div></td></tr>`;
 }
 
 const f = await facts();
@@ -269,7 +321,17 @@ const ai = await interpret(f);
 const lima = new Date(Date.now() - 5 * 36e5);
 const dateLabel = lima.toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 const html = render(f, ai, dateLabel);
-fs.writeFileSync("boletin-preview.html", html.replace("{{BAJA}}", `${SITE}/boletin`));
+// Preview: PREVIEW_EMPRESAS="BVN,ALICORC1" adds a sample personal section
+let previewPersonal = "";
+if (process.env.PREVIEW_EMPRESAS) {
+  const smvAll = (await getJson(`${RAW}/smv-hechos.json`).catch(() => ({ hechos: {} }))).hechos || {};
+  const laya = (await getJson(`${RAW}/noticias-laya.json`).catch(() => ({ items: {} }))).items || {};
+  const newsById = Object.fromEntries(((await getJson(`${RAW}/noticias.json`).catch(() => ({ noticias: [] }))).noticias || []).map((n) => [n.id, n]));
+  const cards = [];
+  for (const n of process.env.PREVIEW_EMPRESAS.split(",")) { const c = await companyCard(n.trim(), smvAll, laya, newsById); if (c) cards.push(c); }
+  previewPersonal = renderPersonal(cards);
+}
+fs.writeFileSync("boletin-preview.html", html.replace("{{BAJA}}", `${SITE}/boletin`).replace("{{EMPRESAS}}", `${SITE}/boletin`).replace("{{PERSONAL}}", previewPersonal));
 console.log(`Mercados: ${f.markets.length} · SMV: ${f.smvFacts.length} · titulares: ${f.headlines.length} · IA: ${ai ? "sí" : "no"}`);
 
 if (!DRY) {
@@ -278,21 +340,33 @@ if (!DRY) {
   const list = [];
   const base = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
   if (base && process.env.SUPABASE_SERVICE_KEY) {
-    const r = await fetch(`${base}/rest/v1/boletin_suscriptores?estado=eq.activo&select=email,token`, {
+    const r = await fetch(`${base}/rest/v1/boletin_suscriptores?estado=eq.activo&select=email,token,empresas`, {
       headers: { apikey: process.env.SUPABASE_SERVICE_KEY, Authorization: `Bearer ${process.env.SUPABASE_SERVICE_KEY}` },
     });
     if (r.ok) list.push(...(await r.json()));
     else console.error(`Suscriptores no disponibles (HTTP ${r.status}); se envía solo a BOLETIN_TO`);
   }
   for (const email of (process.env.BOLETIN_TO || "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean)) {
-    if (!list.some((x) => x.email === email)) list.push({ email, token: null });
+    if (!list.some((x) => x.email === email)) list.push({ email, token: null, empresas: [] });
   }
   if (!list.length) throw new Error("Sin destinatarios");
 
   // One personalised email each (own unsubscribe link), sent in batches of 100 (Resend batch API)
-  const emails = list.map(({ email, token }) => {
+  // Company cards are built once per company and shared between subscribers
+  const wanted = [...new Set(list.flatMap((x) => x.empresas || []))];
+  const smvAll = (await getJson(`${RAW}/smv-hechos.json`).catch(() => ({ hechos: {} }))).hechos || {};
+  const laya = (await getJson(`${RAW}/noticias-laya.json`).catch(() => ({ items: {} }))).items || {};
+  const newsById = Object.fromEntries(((await getJson(`${RAW}/noticias.json`).catch(() => ({ noticias: [] }))).noticias || []).map((n) => [n.id, n]));
+  const cards = {};
+  for (const nemo of wanted) cards[nemo] = await companyCard(nemo, smvAll, laya, newsById);
+  console.log(`Empresas seguidas: ${wanted.length}`);
+
+  const emails = list.map(({ email, token, empresas }) => {
     const baja = token ? `${SITE}/api/boletin?accion=baja&t=${token}` : `${SITE}/boletin`;
-    const msg = { from: FROM, to: [email], subject: `PerData · ${dateLabel}`, html: html.replace("{{BAJA}}", baja) };
+    const prefs = token ? `${SITE}/boletin?t=${token}#empresas` : `${SITE}/boletin`;
+    const mine = (empresas || []).map((n) => cards[n]).filter(Boolean);
+    const personal = mine.length ? renderPersonal(mine) : "";
+    const msg = { from: FROM, to: [email], subject: `PerData · ${dateLabel}`, html: html.replace("{{BAJA}}", baja).replace("{{EMPRESAS}}", prefs).replace("{{PERSONAL}}", personal) };
     if (token) msg.headers = { "List-Unsubscribe": `<${baja}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" };
     return msg;
   });
