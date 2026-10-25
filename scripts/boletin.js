@@ -194,75 +194,72 @@ Devuelve SOLO un JSON con:
 }
 
 function render(f, ai, dateLabel) {
-  const C = { paper: "#F5F1E8", ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318" };
+  const C = { paper: "#F5F1E8", card: "#FBF9F4", ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", peru: "#D91023" };
   const serif = "'Source Serif 4',Georgia,'Times New Roman',serif";
   const ui = "'Libre Franklin',Helvetica,Arial,sans-serif";
   const mono = "'IBM Plex Mono',Menlo,Consolas,monospace";
-  const p = (t) => t ? `<p style="margin:0 0 14px;font:17px/1.55 ${serif};color:${C.ink}">${esc(t)}</p>` : "";
-  const h2 = (t) => `<h2 style="margin:28px 0 10px;padding-top:18px;border-top:1px solid ${C.rule};font:600 20px/1.25 ${serif};color:${C.ink}">${t}</h2>`;
-  const rows = f.markets.map((m) => `<tr>
-    <td style="padding:8px 0;border-bottom:1px solid ${C.rule};font:14px ${ui};color:${C.ink}">${esc(m.name)}</td>
-    <td style="padding:8px 0;border-bottom:1px solid ${C.rule};font:14px ${mono};color:${C.ink};text-align:right">${fmt(m.value, m.dec)} <span style="color:${C.soft};font-size:12px">${esc(m.unit)}</span></td>
-    <td style="padding:8px 0 8px 12px;border-bottom:1px solid ${C.rule};font:14px ${mono};text-align:right;color:${m.change >= 0 ? C.pos : C.neg}">${m.change >= 0 ? "+" : ""}${fmt(m.change)} %</td></tr>`).join("");
-  const fc = f.forecast ? `<p style="margin:12px 0 0;font:14px/1.5 ${ui};color:${C.soft}">Proyección del dólar al ${esc(f.forecast.horizon)} (${esc(f.forecast.model)}): lo más probable <b style="color:${C.ink}">S/ ${fmt(f.forecast.p50, 3)}</b>${f.forecast.p10 ? `, entre S/ ${fmt(f.forecast.p10, 3)} y S/ ${fmt(f.forecast.p90, 3)} (8 de cada 10 veces)` : ""}. <a href="${SITE}/explorer?symbol=PEN%3DX" style="color:${C.ink}">Ver en la terminal</a></p>` : "";
-  const smv = f.smvFacts.map((h) => `<li style="margin:0 0 10px;font:15px/1.45 ${ui};color:${C.ink}"><a href="${esc(h.url_oficial)}" style="color:${C.ink}">${esc(h.titulo || h.tipo)}</a> <span style="color:${C.soft};font-size:12px">· ${esc(h.empresa)} · ${esc(h.fecha)}</span></li>`).join("");
-  const news = f.headlines.map((n) => `<li style="margin:0 0 10px;font:15px/1.45 ${ui};color:${C.ink}"><a href="${esc(n.url)}" style="color:${C.ink}">${esc(n.title)}</a> <span style="color:${C.soft};font-size:12px">· ${esc(n.source)}</span></li>`).join("");
+  const edition = Math.floor((Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()) - Date.UTC(2026, 9, 26)) / 864e5) + 1;
+  const para = (t, size = 17) => t ? `<p style="margin:0 0 14px;font-family:${serif};font-size:${size}px;line-height:1.55;color:${C.ink}">${esc(t)}</p>` : "";
+  const section = (title) => `<tr><td style="padding:30px 0 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:2px solid ${C.ink};padding-top:10px;font-family:${serif};font-size:22px;font-weight:600;color:${C.ink}">${title}</td></tr></table></td></tr>`;
+  const flag = `<table role="presentation" cellpadding="0" cellspacing="0" style="display:inline-table;vertical-align:middle;margin-left:8px;border:1px solid ${C.ink}"><tr><td width="5" height="12" style="background:${C.peru}"></td><td width="5" style="background:#ffffff"></td><td width="5" style="background:${C.peru}"></td></tr></table>`;
+
+  const rows = f.markets.map((m) => {
+    const up = m.change >= 0;
+    return `<tr>
+      <td style="padding:11px 0;border-bottom:1px solid ${C.rule};font-family:${ui};font-size:15px;color:${C.ink}">${esc(m.name)}<br><span style="font-size:12px;color:${C.soft}">${esc(m.unit)}</span></td>
+      <td align="right" style="padding:11px 0;border-bottom:1px solid ${C.rule};font-family:${mono};font-size:16px;color:${C.ink};white-space:nowrap">${fmt(m.value, m.dec)}</td>
+      <td align="right" style="padding:11px 0 11px 14px;border-bottom:1px solid ${C.rule};font-family:${mono};font-size:14px;color:${up ? C.pos : C.neg};white-space:nowrap">${up ? "&#9650;" : "&#9660;"} ${fmt(Math.abs(m.change))}&nbsp;%</td></tr>`;
+  }).join("");
   const dates = [...new Set(f.markets.map((m) => m.date))].join(", ");
 
-  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Boletín PerData</title></head>
-<body style="margin:0;background:${C.paper}">
-<div style="max-width:620px;margin:0 auto;padding:28px 20px 40px;background:${C.paper}">
-  <div style="border-bottom:3px double ${C.ink};padding-bottom:12px;margin-bottom:20px">
-    <span style="font:italic 600 26px ${serif};color:${C.ink}">PerData</span>
-    <span style="display:inline-block;width:14px;height:10px;margin-left:6px;vertical-align:middle;border:1px solid ${C.ink};background:linear-gradient(90deg,#D91023 33%,#fff 33% 66%,#D91023 66%)"></span>
-    <div style="font:12px ${ui};color:${C.soft};margin-top:4px">Boletín del ${esc(dateLabel)}</div>
-  </div>
-  ${ai?.entradilla ? p(ai.entradilla) : ""}
-  ${h2("Mercados")}
-  ${ai?.mercados ? p(ai.mercados) : ""}
-  <table role="presentation" style="width:100%;border-collapse:collapse;border-top:1px solid ${C.rule}">${rows}</table>
-  <p style="margin:6px 0 0;font:11px ${ui};color:${C.soft}">Fuente: BCRP${f.markets.some((m) => m.name.includes("Brent")) ? " y EIA" : ""}. Último dato publicado: ${esc(dates)}. Variación frente al dato anterior.</p>
+  const fc = f.forecast ? `<tr><td style="padding:18px 0 0">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.card};border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule}"><tr><td style="padding:16px 4px">
+      <div style="font-family:${ui};font-size:13px;color:${C.soft}">Dólar al ${esc(f.forecast.horizon)} · ${esc(f.forecast.model)}</div>
+      <div style="font-family:${serif};font-size:30px;line-height:1.2;color:${C.ink};margin-top:4px">S/ ${fmt(f.forecast.p50, 3)}</div>
+      ${f.forecast.p10 ? `<div style="font-family:${ui};font-size:14px;color:${C.soft};margin-top:4px">Entre S/ ${fmt(f.forecast.p10, 3)} y S/ ${fmt(f.forecast.p90, 3)}, 8 de cada 10 veces · probabilidad de alza ${esc(f.forecast.probRise)} %</div>` : ""}
+    </td></tr></table></td></tr>` : "";
+
+  const smv = f.smvFacts.map((h) => `<tr><td style="padding:12px 0;border-bottom:1px solid ${C.rule}">
+      <div style="font-family:${ui};font-size:14px;font-weight:600;color:${C.ink}">${esc(h.empresa)}</div>
+      <a href="${esc(h.url_oficial)}" style="font-family:${serif};font-size:16px;line-height:1.45;color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(h.titulo || h.tipo)}</a>
+      <div style="font-family:${mono};font-size:11px;color:${C.soft};margin-top:3px">${esc(h.fecha)}</div></td></tr>`).join("");
+  const news = f.headlines.map((n) => `<tr><td style="padding:12px 0;border-bottom:1px solid ${C.rule}">
+      <a href="${esc(n.url)}" style="font-family:${serif};font-size:16px;line-height:1.45;color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(n.title)}</a>
+      <div style="font-family:${ui};font-size:12px;color:${C.soft};margin-top:3px">${esc(n.source)}</div></td></tr>`).join("");
+  const preheader = esc(ai?.entradilla || `Dólar, cobre, oro y petróleo; hechos de importancia de la SMV y titulares del ${dateLabel}.`);
+
+  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light only">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Libre+Franklin:wght@400;600&family=Source+Serif+4:ital,wght@0,400;0,600;1,600&display=swap" rel="stylesheet">
+<title>Boletín PerData</title></head>
+<body style="margin:0;padding:0;background:${C.paper}">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0">${preheader}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.paper}"><tr><td align="center" style="padding:0 16px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px">
+  <tr><td style="padding:28px 0 12px;border-bottom:4px double ${C.ink}">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+      <td style="font-family:${serif};font-size:32px;font-style:italic;font-weight:600;color:${C.ink};white-space:nowrap">PerData${flag}</td>
+      <td align="right" style="font-family:${ui};font-size:12px;line-height:1.5;color:${C.soft}">Boletín diario<br>Edición ${edition > 0 ? edition : 1}</td>
+    </tr></table>
+    <div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:6px;text-transform:none">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
+  </td></tr>
+  ${ai?.entradilla ? `<tr><td style="padding:22px 0 4px">${para(ai.entradilla, 20)}</td></tr>` : ""}
+  ${section("Mercados")}
+  ${ai?.mercados ? `<tr><td style="padding:12px 0 0">${para(ai.mercados)}</td></tr>` : ""}
+  <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid ${C.rule}">${rows}</table>
+    <div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:6px">Fuente: BCRP${f.markets.some((m) => m.name.includes("Brent")) ? " y EIA" : ""}. Último dato publicado: ${esc(dates)}. Variación frente al dato anterior.</div></td></tr>
   ${fc}
-  ${f.smvFacts.length ? h2("Hechos de importancia") + (ai?.empresas ? p(ai.empresas) : "") + `<ul style="padding-left:18px;margin:0">${smv}</ul><p style="margin:6px 0 0;font:11px ${ui};color:${C.soft}">Fuente: Superintendencia del Mercado de Valores (SMV).</p>` : ""}
-  ${f.headlines.length ? h2("Titulares") + `<ul style="padding-left:18px;margin:0">${news}</ul>` : ""}
-  <div style="margin-top:32px;padding-top:14px;border-top:1px solid ${C.rule};font:12px/1.5 ${ui};color:${C.soft}">
-    ${ai ? "Los textos de interpretación los redacta un modelo de IA a partir de los datos de arriba; las cifras se comprueban contra la fuente." : ""}
+  ${f.smvFacts.length ? section("Hechos de importancia") + (ai?.empresas ? `<tr><td style="padding:12px 0 0">${para(ai.empresas)}</td></tr>` : "") + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${smv}</table><div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:6px">Fuente: Superintendencia del Mercado de Valores (SMV).</div></td></tr>` : ""}
+  ${f.headlines.length ? section("Titulares") + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${news}</table></td></tr>` : ""}
+  <tr><td align="center" style="padding:32px 0 8px">
+    <a href="${SITE}/explorer" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${ui};font-size:15px;font-weight:600;text-decoration:none;padding:13px 26px">Abrir la terminal</a>
+  </td></tr>
+  <tr><td style="padding:24px 0 36px;border-top:1px solid ${C.rule};font-family:${ui};font-size:12px;line-height:1.6;color:${C.soft}">
+    ${ai ? "La interpretación la redacta un modelo de IA a partir de los datos de este correo; las cifras se comprueban contra la fuente.<br>" : ""}
     Información con fines informativos; no es una recomendación de inversión.<br>
     <a href="${SITE}" style="color:${C.ink}">perdata.site</a> · Equipo de PerData
-  </div>
-</div></body></html>`;
-}
-
-// Tries every chat model of the catalog in parallel with a tiny prompt and reports status and time
-if (process.argv.includes("--probe")) {
-  const key = process.env.NVIDIA_API_KEY;
-  const r = await fetch("https://integrate.api.nvidia.com/v1/models", { headers: { Authorization: `Bearer ${key}` } });
-  const ids = ((await r.json()).data || []).map((m) => m.id)
-    .filter((id) => !/embed|guard|safety|reward|parse|retriever|vlm|vision|code|diffusion|clip|nemoretriever|reranker|deplot|kosmos|neva|fuyu|paligemma|recurrent|whisper|asr|tts/i.test(id));
-  const results = await Promise.all(ids.map(async (model) => {
-    const t0 = Date.now();
-    try {
-      const q = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ model, max_tokens: 40, temperature: 0, messages: [{ role: "user", content: 'Responde solo con este JSON: {"ok":true}' }] }),
-        signal: AbortSignal.timeout(90000),
-      });
-      const j = await q.json().catch(() => ({}));
-      const c = j.choices?.[0]?.message?.content || "";
-      return `${q.status} ${String(Date.now() - t0).padStart(6)} ms  ${model}  ${q.ok ? JSON.stringify(c.slice(0, 40)) : ""}`;
-    } catch (e) {
-      return `ERR ${String(Date.now() - t0).padStart(6)} ms  ${model}  ${e.name}`;
-    }
-  }));
-  console.log(results.sort().join("\n"));
-  process.exit(0);
-}
-
-if (process.argv.includes("--list-models")) {
-  const r = await fetch("https://integrate.api.nvidia.com/v1/models", { headers: { Authorization: `Bearer ${process.env.NVIDIA_API_KEY}` } });
-  console.log(((await r.json()).data || []).map((m) => m.id).filter((id) => /deepseek|qwen|llama|mistral|nemotron|gemma|kimi|glm|gpt-oss/i.test(id)).join("\n"));
-  process.exit(0);
+  </td></tr>
+</table></td></tr></table></body></html>`;
 }
 
 const f = await facts();
