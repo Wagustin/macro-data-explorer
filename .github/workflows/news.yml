@@ -1,0 +1,31 @@
+name: Noticias financieras (Feeds autorizados)
+
+on:
+  schedule:
+    - cron: "17 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: news
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Ingestar feeds de noticias autorizados
+        run: node scripts/fetch-news.js
+      - name: Guardar cambios si hay noticias nuevas
+        run: |
+          git config user.name "perdata-bot"
+          git config user.email "perdata-bot@users.noreply.github.com"
+          git add data/noticias.json
+          git diff --cached --quiet || (git commit -m "data(news): feeds actualizados $(date -u +'%Y-%m-%d %H:%M UTC')" && git pull --rebase -q && git push)
