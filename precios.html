@@ -242,8 +242,8 @@
 
   <main class="flex-1 w-full flex flex-col">
     <section class="pd-page-head max-w-6xl mx-auto px-4 sm:px-6 w-full">
-      <h1 class="pd-page-title">Empieza gratis. Pasa a Pro cuando lo necesites.</h1>
-      <p class="pd-page-lede font-serif">La cuenta gratuita cubre el análisis del día a día. Pro abre la historia completa, los horizontes largos y la exportación para tu propio modelo.</p>
+      <h1 class="pd-page-title">Empieza gratis. Sigue tus empresas o pasa a Pro.</h1>
+      <p class="pd-page-lede font-serif">La cuenta gratuita cubre el análisis del día a día y el boletín general. Boletín añade cada mañana tus propias empresas. Pro abre la historia completa, los horizontes largos y la exportación.</p>
       <p id="pdCheckoutNotice" class="pd-notice" hidden>No se realizó ningún cobro. Puedes suscribirte cuando quieras.</p>
     </section>
 
@@ -265,9 +265,29 @@
             <li><span>Historia de hasta 5 años</span></li>
             <li><span>Proyecciones P10 / P50 / P90 de 1 a 6 meses</span></li>
             <li><span>Cruce macro e interpretación del gráfico</span></li>
+            <li><span>Boletín diario general: mercados, lo importante del día y hechos de la SMV</span></li>
           </ul>
           <div id="pdFreeCta" class="pd-plan-cta">
             <button type="button" class="pd-btn pd-btn-ghost pd-btn-block" data-auth-open="signup">Crear cuenta gratis</button>
+          </div>
+        </article>
+
+        <article class="pd-plan" data-reveal>
+          <div class="pd-plan-head">
+            <h2 class="pd-plan-name">Boletín</h2>
+            <p class="pd-plan-price"><span id="pdBolAmount" class="pd-plan-amount font-mono tnum">—</span><span id="pdBolPer" class="pd-plan-per"></span></p>
+            <p class="pd-plan-desc">Para quien sigue empresas concretas: cada mañana, lo que pasó con las suyas.</p>
+          </div>
+          <ul class="pd-perks">
+            <li><span>Todo lo del plan Gratis</span></li>
+            <li><span>Hasta 15 empresas de la BVL elegidas por ti</span></li>
+            <li><span>Cada día, para cada una: precio, proyección, hechos de importancia y noticias que la mencionan</span></li>
+            <li><span>Lunes a viernes a las 06:00, hora de Lima</span></li>
+            <li><span>Cancela cuando quieras desde tu cuenta</span></li>
+          </ul>
+          <div class="pd-plan-cta">
+            <button type="button" id="pdBolCta" class="pd-btn pd-btn-ghost pd-btn-block" disabled>Cargando…</button>
+            <p id="pdBolStatus" class="pd-form-status" role="status"></p>
           </div>
         </article>
 
@@ -282,6 +302,7 @@
             <li><span>Series históricas de 10 años</span></li>
             <li><span>Horizontes de 1 a 36 meses y a medida</span></li>
             <li><span>Exportación completa a Excel (.xlsx)</span></li>
+            <li><span>Incluye el boletín con tus empresas</span></li>
             <li><span>Cancela cuando quieras desde tu cuenta</span></li>
           </ul>
           <div class="pd-plan-cta">
@@ -403,14 +424,36 @@
           } catch (e) {}
         }
 
+        // Boletín plan
+        var bolPrice = A.priceLabel(interval, "boletin");
+        var bolYear = (billing.boletinPrices || []).find(function (p) { return p.interval === "year"; });
+        document.getElementById("pdBolAmount").textContent = bolPrice || "—";
+        var bolPer = bolPrice ? (interval === "year" ? "al año" : "al mes") : (billing.enabled ? "" : "muy pronto");
+        if (interval === "year" && bolYear) { try { bolPer = "al año · " + A.formatMoney(Math.round(bolYear.amount / 12), bolYear.currency) + " al mes"; } catch (e) {} }
+        document.getElementById("pdBolPer").textContent = bolPer;
+        var bolCta = document.getElementById("pdBolCta");
+        if (user && (user.plan === "boletin" || user.plan === "pro")) {
+          bolCta.disabled = user.plan === "pro";
+          bolCta.textContent = user.plan === "pro" ? "Incluido en tu plan Pro" : "Gestionar suscripción";
+          bolCta.dataset.action = user.plan === "pro" ? "" : "portal";
+        } else if (!billing.enabled || !bolPrice) {
+          bolCta.disabled = true; bolCta.textContent = "Disponible muy pronto"; bolCta.dataset.action = "";
+        } else {
+          bolCta.disabled = false; bolCta.textContent = user ? "Suscribirme al Boletín" : "Crear cuenta y suscribirme"; bolCta.dataset.action = "checkout";
+        }
+
         var freeCta = document.getElementById("pdFreeCta");
         if (user) {
-          freeCta.innerHTML = user.plan === "pro"
+          freeCta.innerHTML = user.plan !== "free"
             ? '<a href="/explorer" class="pd-btn pd-btn-ghost pd-btn-block">Abrir la terminal</a>'
             : '<button type="button" class="pd-btn pd-btn-ghost pd-btn-block" disabled>Tu plan actual</button>';
         }
 
-        if (user && user.plan === "pro") {
+        if (user && user.plan === "boletin") {
+          cta.disabled = false;
+          cta.textContent = "Pasar a Pro";
+          cta.dataset.action = "checkout";
+        } else if (user && user.plan === "pro") {
           cta.disabled = false;
           cta.textContent = "Gestionar suscripción";
           cta.dataset.action = "portal";
@@ -424,6 +467,21 @@
           cta.dataset.action = "checkout";
         }
       }
+
+      document.getElementById("pdBolCta").addEventListener("click", async function (e) {
+        var btn = e.currentTarget;
+        var status = document.getElementById("pdBolStatus");
+        var action = btn.dataset.action;
+        if (!action) return;
+        btn.disabled = true;
+        btn.textContent = "Abriendo pago seguro…";
+        status.textContent = "";
+        var r = action === "portal" ? await window.MDE_Auth.openPortal() : await window.MDE_Auth.startCheckout(interval, "boletin");
+        if (!r.success) {
+          if (r.error) { status.textContent = r.error; status.className = "pd-form-status is-error"; }
+          render();
+        }
+      });
 
       document.getElementById("pdProCta").addEventListener("click", async function (e) {
         var btn = e.currentTarget;

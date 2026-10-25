@@ -371,15 +371,16 @@
         document.getElementById("pdAcctName").textContent = u.name || "—";
         document.getElementById("pdAcctEmail").textContent = u.email;
 
-        var isPro = u.plan === "pro";
+        var isPro = u.plan === "pro" || u.plan === "boletin";
+        var planName = u.plan === "pro" ? "Pro" : (u.plan === "boletin" ? "Boletín" : "Gratis");
         var copy = "";
         if (isPro && u.cancelAtPeriodEnd && u.currentPeriodEnd) copy = "Tu suscripción termina el " + fmtDate(u.currentPeriodEnd) + ". No se volverá a cobrar.";
         else if (isPro && u.subscriptionStatus === "trialing" && u.currentPeriodEnd) copy = "Prueba gratuita hasta el " + fmtDate(u.currentPeriodEnd) + ".";
         else if (isPro && u.currentPeriodEnd) copy = "Se renueva el " + fmtDate(u.currentPeriodEnd) + ".";
-        else if (!isPro && u.subscriptionStatus === "past_due") copy = "No pudimos cobrar tu último pago. Actualiza tu tarjeta para recuperar Pro.";
+        else if (!isPro && u.subscriptionStatus === "past_due") copy = "No pudimos cobrar tu último pago. Actualiza tu tarjeta para recuperar tu plan.";
         else if (!isPro) copy = "Historia de hasta 5 años y proyecciones de hasta 6 meses.";
 
-        document.getElementById("pdAcctPlan").textContent = isPro ? "Pro" : "Gratis";
+        document.getElementById("pdAcctPlan").textContent = planName;
         document.getElementById("pdAcctPlanCopy").textContent = copy;
         document.getElementById("pdAcctPlanBadge").hidden = !isPro;
 

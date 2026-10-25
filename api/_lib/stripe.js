@@ -12,6 +12,11 @@ export const PRICE_IDS = {
   month: process.env.STRIPE_PRICE_ID_MONTHLY || process.env.STRIPE_PRICE_ID || "",
   year: process.env.STRIPE_PRICE_ID_YEARLY || ""
 };
+// Boletín plan (US$2/month, US$15/year). Price ids aren't secret; env vars override them.
+export const BOLETIN_PRICE_IDS = {
+  month: process.env.STRIPE_PRICE_ID_BOLETIN_MONTHLY || "price_1UTeMjPohxxHwL5esukDkd26",
+  year: process.env.STRIPE_PRICE_ID_BOLETIN_YEARLY || "price_1UTeMjPohxxHwL5eXY6ZSQpj"
+};
 export const STRIPE_ENABLED = !!(STRIPE_SECRET_KEY && PRICE_IDS.month);
 
 /** Flattens {a:{b:[{c:1}]}} into Stripe's form encoding: a[b][0][c]=1 */

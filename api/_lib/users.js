@@ -116,7 +116,7 @@ export function publicUser(user) {
     id: user.id,
     email: user.email,
     name: user.name || user.email.split("@")[0],
-    plan: user.plan === "pro" ? "pro" : "free",
+    plan: user.plan === "pro" || user.plan === "boletin" ? user.plan : "free",
     subscriptionStatus: user.subscription_status || null,
     currentPeriodEnd: user.current_period_end || null,
     cancelAtPeriodEnd: !!user.cancel_at_period_end,

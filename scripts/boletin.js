@@ -363,8 +363,21 @@ if (!DRY) {
   if (!list.length) throw new Error("Sin destinatarios");
 
   // One personalised email each (own unsubscribe link), sent in batches of 100 (Resend batch API)
+  // The personal section is part of the Boletín and Pro plans (and the owner's copy). Plans come from
+  // the users table by email; subscribers on other plans who picked companies get a short note instead.
+  const paid = new Set();
+  if (base && process.env.SUPABASE_SERVICE_KEY && list.length) {
+    const emails = list.map((x) => `"${x.email}"`).join(",");
+    const r = await fetch(`${base}/rest/v1/users?select=email,plan&plan=in.(boletin,pro)&email=in.(${encodeURIComponent(emails)})`, {
+      headers: { apikey: process.env.SUPABASE_SERVICE_KEY, Authorization: `Bearer ${process.env.SUPABASE_SERVICE_KEY}` },
+    });
+    if (r.ok) for (const u of await r.json()) paid.add(String(u.email).toLowerCase());
+  }
+  const owners = new Set((process.env.BOLETIN_TO || "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean));
+  for (const x of list) x.personal = paid.has(x.email) || owners.has(x.email);
+
   // Company cards are built once per company and shared between subscribers
-  const wanted = [...new Set(list.flatMap((x) => x.empresas || []))];
+  const wanted = [...new Set(list.filter((x) => x.personal).flatMap((x) => x.empresas || []))];
   const smvAll = (await getJson(`${RAW}/smv-hechos.json`).catch(() => ({ hechos: {} }))).hechos || {};
   const laya = (await getJson(`${RAW}/noticias-laya.json`).catch(() => ({ items: {} }))).items || {};
   const newsById = Object.fromEntries(((await getJson(`${RAW}/noticias.json`).catch(() => ({ noticias: [] }))).noticias || []).map((n) => [n.id, n]));
@@ -372,11 +385,12 @@ if (!DRY) {
   for (const nemo of wanted) cards[nemo] = await companyCard(nemo, smvAll, laya, newsById);
   console.log(`Empresas seguidas: ${wanted.length}`);
 
-  const emails = list.map(({ email, token, empresas }) => {
+  const upsell = `<tr><td style="padding:24px 0 0;font-family:'Libre Franklin',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#5E584E">Elegiste empresas para seguir. La sección «Tus empresas» (precio, proyección, hechos y noticias de cada una) es parte del plan Boletín, por US$&nbsp;2 al mes. <a href="${SITE}/precios" style="color:#1B1916">Ver planes</a></td></tr>`;
+  const emails = list.map(({ email, token, empresas, personal: allowed }) => {
     const baja = token ? `${SITE}/api/boletin?accion=baja&t=${token}` : `${SITE}/boletin`;
     const prefs = token ? `${SITE}/boletin?t=${token}#empresas` : `${SITE}/boletin`;
     const mine = (empresas || []).map((n) => cards[n]).filter(Boolean);
-    const personal = mine.length ? renderPersonal(mine) : "";
+    const personal = !allowed ? ((empresas || []).length ? upsell : "") : (mine.length ? renderPersonal(mine) : "");
     const msg = { from: FROM, to: [email], subject: `PerData · ${dateLabel}`, html: html.replace("{{BAJA}}", baja).replace("{{EMPRESAS}}", prefs).replace("{{PERSONAL}}", personal) };
     if (token) msg.headers = { "List-Unsubscribe": `<${baja}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" };
     return msg;
