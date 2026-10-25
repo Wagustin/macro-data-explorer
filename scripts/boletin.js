@@ -167,7 +167,7 @@ Devuelve SOLO un JSON con:
     } catch (e) {}
     const rank = (n) => (/preview|exp/i.test(n) ? 2 : 0) + (/lite/i.test(n) ? 1 : 0);
     names.sort((a, b) => rank(a) - rank(b) || b.localeCompare(a));
-    for (const model of names.slice(0, 5)) {
+    for (const model of names.slice(0, 8)) {
       if (deadline - Date.now() < 15000) break;
       try {
         const g = await fetch(`https://generativelanguage.googleapis.com/v1beta/${model}:generateContent?key=${key}`, {
