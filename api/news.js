@@ -443,6 +443,36 @@ export async function getMacroNews(force = false) {
   };
 }
 
+const FEED_URL = "https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data/noticias.json";
+let feedCache = null; // { at, value }
+
+function agoLabel(ms) {
+  const m = Math.max(1, Math.round((Date.now() - ms) / 60000));
+  if (m < 60) return `hace ${m} min`;
+  const h = Math.round(m / 60);
+  return h < 48 ? `hace ${h}h` : `hace ${Math.round(h / 24)} d`;
+}
+
+async function ownFeed() {
+  if (feedCache && Date.now() - feedCache.at < 10 * 60 * 1000) return feedCache.value;
+  try {
+    const r = await fetch(FEED_URL, { signal: AbortSignal.timeout(4000) });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const d = await r.json();
+    // A feed older than a day means the job stopped: fall back to the live pipeline
+    if (!d.actualizado || Date.now() - Date.parse(d.actualizado) > 24 * 36e5) throw new Error("feed antiguo");
+    const news = (d.noticias || []).slice(0, 80).map((n) => {
+      const ts = Date.parse(n.fecha_iso) || Date.now();
+      return { id: n.id, title: n.titulo, source: n.fuente, url: n.url, timestamp: ts, time: agoLabel(ts), category: n.categoria, impact: n.categoria, impactColor: "emerald" };
+    });
+    const value = news.length ? { news, updatedAt: d.actualizado } : null;
+    feedCache = { at: Date.now(), value };
+    return value;
+  } catch (e) {
+    return feedCache?.value || null;
+  }
+}
+
 export default async function handler(req, res) {
   // CORS and Security Headers
   applyCors(req, res, "GET, OPTIONS");
@@ -461,6 +491,16 @@ export default async function handler(req, res) {
 
   const hasAuth = Boolean(req.headers?.authorization);
   setCdnCache(res, hasAuth);
+
+  // Primary: our own feed (scripts/fetch-news.js on GitHub Actions, approved sources only).
+  // Fallback: the older Google News pipeline below.
+  const feed = await ownFeed();
+  if (feed) {
+    const body = { status: "ok", source: "PerData (fuentes aprobadas)", updatedAt: feed.updatedAt, cached: true, refreshed: false, count: feed.news.length, news: feed.news };
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    return res.end(JSON.stringify(body));
+  }
 
   const forceRefresh = req.query && (req.query.refresh === "1" || req.query.refresh === "true");
   const { news, updatedAt, cached, refreshed } = await getMacroNews(forceRefresh);
