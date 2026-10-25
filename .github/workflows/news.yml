@@ -43,9 +43,16 @@ jobs:
       - name: Clasificar noticias con Laya
         run: python scripts/classify_news.py
 
+      - name: Resumen «Lo importante de hoy» (NIM, Gemini de respaldo)
+        continue-on-error: true
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node scripts/news-digest.js
+
       - name: Guardar cambios si hay noticias nuevas o clasificaciones
         run: |
           git config user.name "perdata-bot"
           git config user.email "perdata-bot@users.noreply.github.com"
-          git add data/noticias.json data/noticias-laya.json
+          git add data/noticias.json data/noticias-laya.json data/noticias-resumen.json 2>/dev/null; git add data/noticias.json data/noticias-laya.json
           git diff --cached --quiet || (git commit -m "data(news): feeds y clasificaciones Laya actualizados $(date -u +'%Y-%m-%d %H:%M UTC')" && git pull --rebase -q && git push)
