@@ -1,10 +1,10 @@
 name: Boletín diario
 
-# Lunes a viernes a las 07:00 en Lima. Por ahora solo se envía a ALERT_EMAIL (fase de prueba);
+# Lunes a viernes a las 06:00 en Lima. Por ahora solo se envía a ALERT_EMAIL (fase de prueba);
 # cuando exista la lista de suscriptores con doble confirmación, se enviará a ella.
 on:
   schedule:
-    - cron: "41 11 * * 1-5"   # 06:41 en Lima, para que llegue antes de las 07:00 aunque GitHub se retrase
+    - cron: "47 10 * * 1-5"   # 05:47 en Lima: sale hacia las 06:00 aunque GitHub se retrase unos minutos
   workflow_dispatch:
     inputs:
       mode:
