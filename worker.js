@@ -6,6 +6,8 @@ import newsHandler, { refreshNewsCache } from "./api/news.js";
 import authHandler from "./api/auth.js";
 import billingHandler from "./api/billing.js";
 import stripeWebhookHandler from "./api/stripe-webhook.js";
+import statusHandler from "./api/status.js";
+import boletinHandler from "./api/boletin.js";
 
 // Clean URL route map for static subpages
 const CLEAN_PAGES = {
@@ -20,7 +22,9 @@ const CLEAN_PAGES = {
   "/precios": "precios.html",
   "/cuenta": "cuenta.html",
   "/restablecer": "restablecer.html",
-  "/privacidad": "privacidad.html"
+  "/privacidad": "privacidad.html",
+  "/boletin": "boletin.html",
+  "/empresas": "empresas.html"
 };
 
 function adaptNodeHandler(handler) {
@@ -77,6 +81,8 @@ function adaptNodeHandler(handler) {
       let finished = false;
 
       function finalize() {
+        // Handlers may set res.statusCode directly (e.g. 303 redirects) instead of calling status()
+        statusCode = res.statusCode || statusCode;
         const dur = (performance.now() - startCpu).toFixed(3);
         headers.set("Server-Timing", `edge;dur=${dur}`);
         headers.set("X-Edge-Duration", `${dur}ms`);
@@ -146,7 +152,9 @@ const routes = {
   "/api/interpret": adaptNodeHandler(interpretHandler),
   "/api/news": adaptNodeHandler(newsHandler),
   "/api/billing": adaptNodeHandler(billingHandler),
-  "/api/stripe-webhook": adaptNodeHandler(stripeWebhookHandler)
+  "/api/stripe-webhook": adaptNodeHandler(stripeWebhookHandler),
+  "/api/status": adaptNodeHandler(statusHandler),
+  "/api/boletin": adaptNodeHandler(boletinHandler)
 };
 
 const adaptedAuth = adaptNodeHandler(authHandler);

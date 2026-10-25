@@ -21,6 +21,8 @@ const FILES_TO_COPY = [
   "terms.html",
   "404.html",
   "empresas.html",
+  "boletin.html",
+  "data/smv-hechos.json",
   "empresa.html",
   "data/empresas.json",
   "pd.css",
