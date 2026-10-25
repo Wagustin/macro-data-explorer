@@ -385,7 +385,7 @@ if (!DRY) {
   for (const nemo of wanted) cards[nemo] = await companyCard(nemo, smvAll, laya, newsById);
   console.log(`Empresas seguidas: ${wanted.length}`);
 
-  const upsell = `<tr><td style="padding:24px 0 0;font-family:'Libre Franklin',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#5E584E">Elegiste empresas para seguir. La sección «Tus empresas» (precio, proyección, hechos y noticias de cada una) es parte del plan Boletín, por US$&nbsp;2 al mes. <a href="${SITE}/precios" style="color:#1B1916">Ver planes</a></td></tr>`;
+  const upsell = `<tr><td style="padding:24px 0 0;font-family:'Libre Franklin',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#5E584E">Elegiste empresas para seguir. La sección «Tus empresas» (precio, proyección, hechos y noticias de cada una) es parte del plan Boletín, por US$&nbsp;1.99 al mes. <a href="${SITE}/precios" style="color:#1B1916">Ver planes</a></td></tr>`;
   const emails = list.map(({ email, token, empresas, personal: allowed }) => {
     const baja = token ? `${SITE}/api/boletin?accion=baja&t=${token}` : `${SITE}/boletin`;
     const prefs = token ? `${SITE}/boletin?t=${token}#empresas` : `${SITE}/boletin`;
