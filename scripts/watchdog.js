@@ -82,6 +82,14 @@ const checks = [
     if (!(age <= 4)) throw new Error(`última descarga hace ${Math.round(age)} días (${d.actualizado})`);
     return `descargados hace ${Math.round(age * 24)} h`;
   }],
+  ["Resumen de noticias (IA)", async () => {
+    const repo = process.env.GITHUB_REPOSITORY || "Wagustin/macro-data-explorer";
+    const r = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/noticias-resumen.json`, { signal: AbortSignal.timeout(15000) });
+    const d = await r.json();
+    const age = (Date.now() - Date.parse(d.actualizado)) / 36e5;
+    if (!(age <= 12)) throw new Error(`último resumen hace ${Math.round(age)} h`);
+    return `${d.historias?.length || 0} historias, hace ${Math.round(age)} h (${d.modelo})`;
+  }],
 ];
 
 async function gh(method, path, body) {
