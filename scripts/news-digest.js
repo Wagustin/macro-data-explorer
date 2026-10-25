@@ -29,7 +29,7 @@ const prompt = `Eres el editor de PerData, un medio sobre economía y bolsa del 
 ${lines}
 
 Elige de 3 a 6 historias importantes para alguien que sigue la economía y la bolsa del Perú: BCRP y tipo de cambio, inflación, PBI y finanzas públicas, minería y metales, energía, empresas listadas (resultados, dividendos, inversiones, emisiones, sanciones), regulación que afecte a empresas. Descarta sucesos policiales, consejos de consumo, horóscopos y notas de servicio («precio del dólar hoy: consulta…») salvo que traigan un dato nuevo. La relevancia del clasificador es solo una pista: decide tú.
-Agrupa en una misma historia los titulares que hablen del mismo hecho.
+Agrupa en una misma historia SOLO los titulares que cuenten exactamente el mismo hecho (misma entidad y mismo acontecimiento). Dos hechos distintos van en historias distintas aunque sean del mismo sector; si no caben, elige el más importante.
 Para cada historia escribe una nota PROPIA de 1 a 3 frases en español claro, usando SOLO los hechos de esos titulares (no inventes cifras, causas ni consecuencias; no copies frases enteras de los titulares).
 
 Devuelve SOLO este JSON:
