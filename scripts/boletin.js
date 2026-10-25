@@ -12,9 +12,10 @@ const DRY = process.argv.includes("--dry-run");
 const SITE = "https://perdata.site";
 const RAW = "https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data";
 const FROM = process.env.BOLETIN_FROM || "PerData <boletin@perdata.site>";
-// Preferred NIM models, in order (catalog checked 25-Oct-2026); each available one is tried until one answers
+// NIM models that answered in seconds in the probe of 25-Oct-2026 (node scripts/boletin.js --probe),
+// in order; each available one is tried until one answers
 const NIM_PREFERRED = (process.env.NIM_MODEL ? [process.env.NIM_MODEL] : []).concat([
-  "z-ai/glm-5.3", "deepseek-ai/deepseek-v4.1-flash", "google/gemma-4-31b-it", "z-ai/glm-5.3-flash",
+  "nvidia/nemotron-3-ultra-550b-a55b", "minimaxai/minimax-m3.1-flash", "openai/gpt-oss-20b", "meta/muse-glimmer-30b", "z-ai/glm-5.3",
   "mistralai/mistral-large-2-instruct", "nvidia/nemotron-3-super-120b-a12b",
 ]);
 
