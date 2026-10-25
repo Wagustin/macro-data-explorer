@@ -165,8 +165,10 @@ Devuelve SOLO un JSON con:
       names = (list.models || []).filter((m) => (m.supportedGenerationMethods || []).includes("generateContent")).map((m) => m.name)
         .filter((n) => /flash/i.test(n) && !/image|tts|audio|live|embedding|thinking/i.test(n));
     } catch (e) {}
-    const rank = (n) => (/preview|exp/i.test(n) ? 2 : 0) + (/lite/i.test(n) ? 1 : 0);
-    names.sort((a, b) => rank(a) - rank(b) || b.localeCompare(a));
+    // Older stable models (2.5, 2.0) are the least saturated on the free tier: try them first
+    const OLD = ["models/gemini-2.5-flash", "models/gemini-2.5-flash-lite", "models/gemini-2.0-flash", "models/gemini-2.0-flash-lite"];
+    const rank = (n) => (OLD.includes(n) ? -10 + OLD.indexOf(n) : 0) + (/preview|exp/i.test(n) ? 2 : 0) + (/lite/i.test(n) ? 1 : 0);
+    names.sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
     for (const model of names.slice(0, 8)) {
       if (deadline - Date.now() < 15000) break;
       try {
