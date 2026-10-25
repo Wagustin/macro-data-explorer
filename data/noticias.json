@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-25T15:16:37.925Z",
+  "actualizado": "2026-10-25T15:41:24.976Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 42
+      "items": 44
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -34,7 +34,7 @@
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 5
+      "items": 6
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -44,7 +44,7 @@
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 25
+      "items": 24
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -63,6 +63,51 @@
     }
   },
   "noticias": [
+    {
+      "id": "andina-c663bdb3da",
+      "titulo": "¡Quesos de cabra peruanos conquistan medallas en concurso internacional de Uruguay!",
+      "url": "https://andina.pe/agencia/noticia-quesos-cabra-peruanos-conquistan-medallas-concurso-internacional-uruguay-1097284.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-10-25T15:40:47.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "andina-3de9fd3e64",
+      "titulo": "Productores agrarios cuentan con Seguro Agrícola Catastrófico: cubre S/1,000 por hectárea",
+      "url": "https://andina.pe/agencia/noticia-productores-agrarios-cuentan-seguro-agricola-catastrofico-cubre-s1000-hectarea-1066126.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-10-25T15:26:13.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-7e0356e25e",
+      "titulo": "Gobierno declara en emergencia el sector Vivienda: 15 millones de peruanos no tienen desagüe",
+      "url": "https://gestion.pe/economia/sector-vivienda-en-emergencia-que-medidas-adoptara-el-gobierno-ante-la-falta-de-agua-y-desague-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-25T15:25:23.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-c5d8aaeb20",
+      "titulo": "Serfor actualiza protocolo para la presentación y revisión de expedientes de zonificación forestal",
+      "url": "https://gestion.pe/economia/serfor-actualiza-protocolo-de-zonificacion-forestal-en-peru-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-25T15:22:54.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-dcc9799dd2",
+      "titulo": "Ministro de Vivienda pide a población dejar las torrenteras y cauces ante posibilidad de desbordes: “Que piensen en sus vidas”",
+      "url": "https://rpp.pe/politica/gobierno/ministro-de-vivienda-pide-a-poblacion-dejar-las-torrenteras-y-cauces-ante-posibilidad-de-desbordes-que-piensen-en-sus-vidas-noticia-1714398",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-25T15:20:10.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "la_republica-1543dc5de7",
       "titulo": "Precio del dólar hoy en Perú, domingo 25 de octubre: consulta el tipo de cambio para compra y venta",
@@ -730,33 +775,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-1cf5543fa4",
-      "titulo": "Retiro de CTS: 5 claves financieras para administrar y rentabilizar tu ahorro",
-      "url": "https://andina.pe/agencia/noticia-retiro-cts-5-claves-financieras-para-administrar-y-rentabilizar-tu-ahorro-1097234.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-10-24T18:27:21.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "andina-fe84899251",
-      "titulo": "¿Qué hace un gestor cultural y dónde puede trabajar? Aquí cinco sectores a tomar en cuenta",
-      "url": "https://andina.pe/agencia/noticia-que-hace-un-gestor-cultural-y-donde-puede-trabajar-aqui-cinco-sectores-a-tomar-cuenta-1097233.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-10-24T18:19:20.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "infobae-21d2636878",
-      "titulo": "Días no laborales para trabajadores privados: Empresas deben decidir si los aplicarán",
-      "url": "https://www.infobae.com/peru/2026/10/24/dias-no-laborales-para-trabajadores-privados-empresas-deben-decidir-si-los-aplicaran/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-24T17:28:08.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-bb5d1b9b71",
       "titulo": "Concytec: Perú genera conocimiento, ¿pero cuántas universidades lo convierten en negocio?",
       "url": "https://gestion.pe/economia/concytec-universidades-peruanas-no-tienen-modelos-de-transferencia-tecnologica-consolidados-noticia/",
@@ -838,18 +856,18 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-30211eef18",
-      "titulo": "Redefiniendo contraciclicamente la trayectoria fiscal",
-      "url": "https://elcomercio.pe/economia/opinion/redefiniendo-contraciclicamente-la-trayectoria-fiscal-por-juan-jose-marthans-opinion-la-mirada-noticia/",
+      "id": "el_comercio-d6ef13e786",
+      "titulo": "No tenemos que elegir entre Halloween y la canción criolla",
+      "url": "https://elcomercio.pe/economia/opinion/no-tenemos-que-elegir-entre-halloween-y-la-cancion-criolla-por-luis-miguel-sanchez-tapia-havas-opinion-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-10-24T12:00:00.000Z",
       "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-d6ef13e786",
-      "titulo": "No tenemos que elegir entre Halloween y la canción criolla",
-      "url": "https://elcomercio.pe/economia/opinion/no-tenemos-que-elegir-entre-halloween-y-la-cancion-criolla-por-luis-miguel-sanchez-tapia-havas-opinion-noticia/",
+      "id": "el_comercio-30211eef18",
+      "titulo": "Redefiniendo contraciclicamente la trayectoria fiscal",
+      "url": "https://elcomercio.pe/economia/opinion/redefiniendo-contraciclicamente-la-trayectoria-fiscal-por-juan-jose-marthans-opinion-la-mirada-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-10-24T12:00:00.000Z",
       "categoria": "Otros",
@@ -1124,24 +1142,6 @@
       "fecha_iso": "2026-10-23T19:38:00.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-f0162edc66",
-      "titulo": "Julio Velarde advierte: “Ahora, El Niño está preocupando”, ¿qué indicadores afecta?",
-      "url": "https://gestion.pe/economia/julio-velarde-advierte-ahora-el-fenomeno-el-nino-esta-preocupando-que-indicadores-afecta-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-23T19:34:00.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-fc719d9030",
-      "titulo": "Fitch Ratings mantiene la calificación soberana de Perú en ‘BBB’ con perspectiva estable",
-      "url": "https://elcomercio.pe/economia/peru/fitch-ratings-mantiene-la-calificacion-soberana-de-peru-en-bbb-con-perspectiva-estable-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-10-23T19:32:55.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
     }
   ]
 }
