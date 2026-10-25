@@ -27,6 +27,86 @@ async function availableModels(key) {
     return NIM_PREFERRED;
   }
 }
+// Sources we cite (headline + link). Aggregators, social networks and unknown sites are left out.
+const SOURCES = ["Agencia Andina", "Andina", "Gestión", "El Comercio", "RPP", "La República", "Infobae",
+  "Semana Económica", "Bloomberg Línea", "Energiminas", "Rumbo Minero", "Mining.com", "Reuters", "BCRP", "SMV", "MEF", "INEI"];
+
+const getJson = async (url) => {
+  const r = await fetch(url, { headers: { "User-Agent": "PerDataBot/1.0 (+https://perdata.site)" }, signal: AbortSignal.timeout(20000) });
+  if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
+  return r.json();
+};
+const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmt = (v, d = 2) => Number(v).toLocaleString("es-PE", { minimumFractionDigits: d, maximumFractionDigits: d });
+const pct = (a, b) => ((a / b - 1) * 100);
+// SMV subjects often come in capitals: "INFORMACIÓN FINANCIERA" -> "Información financiera"
+// "GRUPO BVL S.A.A." -> "Grupo BVL S.A.A." (same rules as the Empresas directory)
+const KEEP = new Set(["BBVA", "AFP", "BVL", "FTE", "IDE", "SEAL", "AIB", "XP", "OH!"]);
+const SMALL = new Set(["de", "del", "la", "las", "los", "y", "e", "en"]);
+const prettyName = (raw) => String(raw || "").trim().split(/\s+/).map((w, i) => {
+  if (KEEP.has(w.toUpperCase()) || /^\(?([A-Za-z]\.){2,}[-)]*$/.test(w)) return w.toUpperCase();
+  const lw = w.toLowerCase();
+  return i > 0 && SMALL.has(lw) ? lw : lw.replace(/(^|[-(«"])(\p{L})/gu, (m, a, b) => a + b.toUpperCase());
+}).join(" ");
+const sentence = (t) => { const x = String(t || "").trim(); return x && x === x.toUpperCase() ? x.charAt(0) + x.slice(1).toLowerCase() : x; };
+
+async function facts() {
+  const [bcrp, eia, smv, news, fx, empresas] = await Promise.all([
+    getJson(`${RAW}/official/bcrp-daily.json`),
+    getJson(`${RAW}/official/eia-oil.json`).catch(() => null),
+    getJson(`${RAW}/smv-hechos.json`).catch(() => ({ hechos: {} })),
+    getJson(`${SITE}/api/news`).catch(() => ({ news: [] })),
+    getJson(`${SITE}/api/forecast?symbol=PEN%3DX&horizon=1`).catch(() => null),
+    getJson(`${RAW}/empresas.json`).catch(() => ({ emisores: [] })),
+  ]);
+  const nameOf = {};
+  for (const e of empresas.emisores || []) for (const v of e.valores) nameOf[v.nemonico] = e.razonSocial;
+
+  const markets = [];
+  const add = (name, unit, points, dec = 2) => {
+    if (!points || points.length < 2) return;
+    const [d1, v1] = points[points.length - 1];
+    const [, v0] = points[points.length - 2];
+    markets.push({ name, unit, date: d1, value: v1, change: pct(v1, v0), dec });
+  };
+  const s = bcrp.series;
+  add("Dólar (USD/PEN)", "S/", s.PEN?.serie, 3);
+  add("Cobre", "US$/lb", s.COBRE?.serie);
+  add("Oro", "US$/oz", s.ORO?.serie, 0);
+  add("Plata", "US$/oz", s.PLATA?.serie);
+  add("Zinc", "US$/lb", s.ZINC?.serie);
+  add("Petróleo WTI", "US$/barril", s.WTI?.serie);
+  if (eia) add("Petróleo Brent", "US$/barril", eia.series.BRENT);
+
+  // SMV facts published in the last 2 days (covers the evening and night before)
+  const since = new Date(Date.now() - 2 * 864e5).toISOString().slice(0, 10);
+  const smvFacts = [];
+  for (const [nemo, list] of Object.entries(smv.hechos || {})) {
+    for (const h of list) if (h.fecha >= since) smvFacts.push({ nemo, empresa: prettyName(nameOf[nemo] || nemo), ...h, titulo: sentence(h.titulo), tipo: sentence(h.tipo) });
+  }
+  smvFacts.sort((a, b) => b.fecha.localeCompare(a.fecha));
+
+  const headlines = (news.news || [])
+    .filter((n) => SOURCES.some((src) => (n.source || "").toLowerCase().includes(src.toLowerCase())))
+    .slice(0, 8)
+    .map((n) => ({ title: n.title, source: n.source, url: n.url, tema: n.impact }));
+
+  const forecast = fx && fx.quantiles ? {
+    horizon: fx.horizonDate, p50: fx.predictedPrice, p10: fx.quantiles.p10 ?? fx.quantiles.P10,
+    p90: fx.quantiles.p90 ?? fx.quantiles.P90, probRise: fx.probabilityOfRise, model: fx.architecture?.split(" (")[0],
+  } : null;
+
+  return { markets, smvFacts: smvFacts.slice(0, 8), headlines, forecast };
+}
+
+// Numbers in the model's text must exist in the facts; otherwise the sentence is dropped.
+function grounded(text, factsText) {
+  const known = new Set((factsText.match(/\d+(?:[.,]\d+)?/g) || []).map((n) => n.replace(",", ".")));
+  return text.split(/(?<=[.!?])\s+/).filter((sentence) => {
+    const nums = (sentence.match(/\d+(?:[.,]\d+)?/g) || []).map((n) => n.replace(",", "."));
+    return nums.every((n) => known.has(n) || known.has(String(Number(n))) || Number(n) < 32); // days of month
+  }).join(" ");
+}
 
 async function interpret(f) {
   if (!process.env.NVIDIA_API_KEY) return null;
