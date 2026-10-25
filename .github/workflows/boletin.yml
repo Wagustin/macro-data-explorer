@@ -1,0 +1,37 @@
+name: Boletín diario
+
+# Lunes a viernes a las 07:00 en Lima. Por ahora solo se envía a ALERT_EMAIL (fase de prueba);
+# cuando exista la lista de suscriptores con doble confirmación, se enviará a ella.
+on:
+  schedule:
+    - cron: "41 11 * * 1-5"   # 06:41 en Lima, para que llegue antes de las 07:00 aunque GitHub se retrase
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: boletin
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Preparar y enviar
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          BOLETIN_TO: ${{ secrets.ALERT_EMAIL }}
+        run: node scripts/boletin.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: boletin-preview
+          path: boletin-preview.html
+          retention-days: 7
