@@ -12,100 +12,20 @@ const DRY = process.argv.includes("--dry-run");
 const SITE = "https://perdata.site";
 const RAW = "https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data";
 const FROM = process.env.BOLETIN_FROM || "PerData <boletin@perdata.site>";
-// Preferred NIM models, in order; the first one the catalog still lists is used
+// Preferred NIM models, in order (catalog checked 25-Oct-2026); each available one is tried until one answers
 const NIM_PREFERRED = (process.env.NIM_MODEL ? [process.env.NIM_MODEL] : []).concat([
-  "deepseek-ai/deepseek-v4-pro", "deepseek-ai/deepseek-v3.2", "deepseek-ai/deepseek-v3.1", "qwen/qwen3-235b-a22b",
-  "meta/llama-4-maverick-17b-128e-instruct", "meta/llama-3.3-70b-instruct",
+  "deepseek-ai/deepseek-v4.1-flash", "moonshotai/kimi-k2.6", "z-ai/glm-5.3", "google/gemma-4-31b-it",
+  "mistralai/mistral-large-2-instruct", "nvidia/nemotron-3-super-120b-a12b",
 ]);
 
-async function pickModel(key) {
+async function availableModels(key) {
   try {
     const r = await fetch("https://integrate.api.nvidia.com/v1/models", { headers: { Authorization: `Bearer ${key}` }, signal: AbortSignal.timeout(15000) });
     const ids = new Set(((await r.json()).data || []).map((m) => m.id));
-    return NIM_PREFERRED.find((m) => ids.has(m)) || [...ids].find((m) => /instruct|chat|deepseek|qwen/i.test(m)) || NIM_PREFERRED[0];
+    return NIM_PREFERRED.filter((m) => ids.has(m));
   } catch (e) {
-    return NIM_PREFERRED[0];
+    return NIM_PREFERRED;
   }
-}
-// Sources we cite (headline + link). Aggregators, social networks and unknown sites are left out.
-const SOURCES = ["Agencia Andina", "Andina", "Gestión", "El Comercio", "RPP", "La República", "Infobae",
-  "Semana Económica", "Bloomberg Línea", "Energiminas", "Rumbo Minero", "Mining.com", "Reuters", "BCRP", "SMV", "MEF", "INEI"];
-
-const getJson = async (url) => {
-  const r = await fetch(url, { headers: { "User-Agent": "PerDataBot/1.0 (+https://perdata.site)" }, signal: AbortSignal.timeout(20000) });
-  if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
-  return r.json();
-};
-const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const fmt = (v, d = 2) => Number(v).toLocaleString("es-PE", { minimumFractionDigits: d, maximumFractionDigits: d });
-const pct = (a, b) => ((a / b - 1) * 100);
-// SMV subjects often come in capitals: "INFORMACIÓN FINANCIERA" -> "Información financiera"
-// "GRUPO BVL S.A.A." -> "Grupo BVL S.A.A." (same rules as the Empresas directory)
-const KEEP = new Set(["BBVA", "AFP", "BVL", "FTE", "IDE", "SEAL", "AIB", "XP", "OH!"]);
-const SMALL = new Set(["de", "del", "la", "las", "los", "y", "e", "en"]);
-const prettyName = (raw) => String(raw || "").trim().split(/\s+/).map((w, i) => {
-  if (KEEP.has(w.toUpperCase()) || /^\(?([A-Za-z]\.){2,}[-)]*$/.test(w)) return w.toUpperCase();
-  const lw = w.toLowerCase();
-  return i > 0 && SMALL.has(lw) ? lw : lw.replace(/(^|[-(«"])(\p{L})/gu, (m, a, b) => a + b.toUpperCase());
-}).join(" ");
-const sentence = (t) => { const x = String(t || "").trim(); return x && x === x.toUpperCase() ? x.charAt(0) + x.slice(1).toLowerCase() : x; };
-
-async function facts() {
-  const [bcrp, eia, smv, news, fx, empresas] = await Promise.all([
-    getJson(`${RAW}/official/bcrp-daily.json`),
-    getJson(`${RAW}/official/eia-oil.json`).catch(() => null),
-    getJson(`${RAW}/smv-hechos.json`).catch(() => ({ hechos: {} })),
-    getJson(`${SITE}/api/news`).catch(() => ({ news: [] })),
-    getJson(`${SITE}/api/forecast?symbol=PEN%3DX&horizon=1`).catch(() => null),
-    getJson(`${RAW}/empresas.json`).catch(() => ({ emisores: [] })),
-  ]);
-  const nameOf = {};
-  for (const e of empresas.emisores || []) for (const v of e.valores) nameOf[v.nemonico] = e.razonSocial;
-
-  const markets = [];
-  const add = (name, unit, points, dec = 2) => {
-    if (!points || points.length < 2) return;
-    const [d1, v1] = points[points.length - 1];
-    const [, v0] = points[points.length - 2];
-    markets.push({ name, unit, date: d1, value: v1, change: pct(v1, v0), dec });
-  };
-  const s = bcrp.series;
-  add("Dólar (USD/PEN)", "S/", s.PEN?.serie, 3);
-  add("Cobre", "US$/lb", s.COBRE?.serie);
-  add("Oro", "US$/oz", s.ORO?.serie, 0);
-  add("Plata", "US$/oz", s.PLATA?.serie);
-  add("Zinc", "US$/lb", s.ZINC?.serie);
-  add("Petróleo WTI", "US$/barril", s.WTI?.serie);
-  if (eia) add("Petróleo Brent", "US$/barril", eia.series.BRENT);
-
-  // SMV facts published in the last 2 days (covers the evening and night before)
-  const since = new Date(Date.now() - 2 * 864e5).toISOString().slice(0, 10);
-  const smvFacts = [];
-  for (const [nemo, list] of Object.entries(smv.hechos || {})) {
-    for (const h of list) if (h.fecha >= since) smvFacts.push({ nemo, empresa: prettyName(nameOf[nemo] || nemo), ...h, titulo: sentence(h.titulo), tipo: sentence(h.tipo) });
-  }
-  smvFacts.sort((a, b) => b.fecha.localeCompare(a.fecha));
-
-  const headlines = (news.news || [])
-    .filter((n) => SOURCES.some((src) => (n.source || "").toLowerCase().includes(src.toLowerCase())))
-    .slice(0, 8)
-    .map((n) => ({ title: n.title, source: n.source, url: n.url, tema: n.impact }));
-
-  const forecast = fx && fx.quantiles ? {
-    horizon: fx.horizonDate, p50: fx.predictedPrice, p10: fx.quantiles.p10 ?? fx.quantiles.P10,
-    p90: fx.quantiles.p90 ?? fx.quantiles.P90, probRise: fx.probabilityOfRise, model: fx.architecture?.split(" (")[0],
-  } : null;
-
-  return { markets, smvFacts: smvFacts.slice(0, 8), headlines, forecast };
-}
-
-// Numbers in the model's text must exist in the facts; otherwise the sentence is dropped.
-function grounded(text, factsText) {
-  const known = new Set((factsText.match(/\d+(?:[.,]\d+)?/g) || []).map((n) => n.replace(",", ".")));
-  return text.split(/(?<=[.!?])\s+/).filter((sentence) => {
-    const nums = (sentence.match(/\d+(?:[.,]\d+)?/g) || []).map((n) => n.replace(",", "."));
-    return nums.every((n) => known.has(n) || known.has(String(Number(n))) || Number(n) < 32); // days of month
-  }).join(" ");
 }
 
 async function interpret(f) {
@@ -119,24 +39,26 @@ Devuelve SOLO un JSON con:
 {"entradilla": "2 frases: lo más importante de hoy",
  "mercados": "3 o 4 frases sobre los precios (dólar, cobre, oro, petróleo) y qué significa para el Perú, sin inventar causas",
  "empresas": "1 o 2 frases sobre los hechos de importancia de la SMV, o cadena vacía si no hay"}`;
-  try {
-    const model = await pickModel(process.env.NVIDIA_API_KEY);
-    console.log(`Modelo NIM: ${model}`);
-    const r = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${process.env.NVIDIA_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ model, temperature: 0.2, max_tokens: 1500, messages: [{ role: "user", content: prompt }] }),
-      signal: AbortSignal.timeout(120000),
-    });
-    if (!r.ok) throw new Error(`NIM HTTP ${r.status} (${model})`);
-    const text = (await r.json()).choices?.[0]?.message?.content || "";
-    const out = JSON.parse(text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1));
-    for (const k of Object.keys(out)) out[k] = grounded(String(out[k] || ""), factsText);
-    return out;
-  } catch (e) {
-    console.error(`Interpretación omitida: ${e.message}`);
-    return null;
+  for (const model of await availableModels(process.env.NVIDIA_API_KEY)) {
+    try {
+      const r = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${process.env.NVIDIA_API_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ model, temperature: 0.2, max_tokens: 1500, messages: [{ role: "user", content: prompt }] }),
+        signal: AbortSignal.timeout(120000),
+      });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const text = (await r.json()).choices?.[0]?.message?.content || "";
+      const out = JSON.parse(text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1));
+      for (const k of Object.keys(out)) out[k] = grounded(String(out[k] || ""), factsText);
+      console.log(`Interpretación: ${model}`);
+      return out;
+    } catch (e) {
+      console.error(`NIM ${model}: ${e.message}`);
+    }
   }
+  console.error("Interpretación omitida: ningún modelo respondió");
+  return null;
 }
 
 function render(f, ai, dateLabel) {
