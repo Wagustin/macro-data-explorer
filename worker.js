@@ -159,8 +159,25 @@ const routes = {
 
 const adaptedAuth = adaptNodeHandler(authHandler);
 
+// Security headers on every response (Vercel set them in vercel.json)
+const SECURITY_HEADERS = {
+  "Strict-Transport-Security": "max-age=63072000; includeSubDomains",
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "X-Frame-Options": "SAMEORIGIN",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+  "Content-Security-Policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+};
+
 export default {
   async fetch(request, env, ctx) {
+    const response = await this.route(request, env, ctx);
+    const r = new Response(response.body, response);
+    for (const [k, v] of Object.entries(SECURITY_HEADERS)) if (!r.headers.has(k)) r.headers.set(k, v);
+    return r;
+  },
+
+  async route(request, env, ctx) {
     if (env && typeof env === "object") {
       Object.assign(process.env, env);
       if (env.PERDATA_KV) {

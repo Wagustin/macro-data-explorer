@@ -223,20 +223,29 @@ async function forgot(req, res, body) {
     return sendJson(res, 429, { success: false, error: "Demasiadas solicitudes. Espera unos minutos." });
   }
 
+  // We generate the recovery token ourselves (admin API) and send the email through Resend from our
+  // domain: Supabase's built-in mailer allows very few emails per hour and often lands in spam.
+  // The link carries a hashed token that /api/auth "reset" exchanges for a session.
   try {
-    await fetch(`${SUPABASE_URL}/auth/v1/recover`, {
+    const gl = await fetch(`${SUPABASE_URL}/auth/v1/admin/generate_link`, {
       method: "POST",
-      headers: {
-        apikey: SUPABASE_SERVICE_KEY,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        email,
-        redirect_to: `${appUrl(req)}/restablecer`
-      })
+      headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "recovery", email })
     });
-  } catch (e) {}
+    if (gl.ok) {
+      const data = await gl.json();
+      const hashed = data.hashed_token || data.properties?.hashed_token;
+      const name = data.user_metadata?.name || data.user?.user_metadata?.name || "";
+      if (hashed && EMAIL_ENABLED) {
+        const msg = passwordResetEmail(name, `${appUrl(req)}/restablecer?token=${encodeURIComponent(hashed)}`);
+        await sendEmail({ to: email, ...msg });
+      }
+    }
+  } catch (e) {
+    console.error("[auth] forgot failed:", e.message);
+  }
 
+  // Same answer whether or not the account exists
   return sendJson(res, 200, {
     success: true,
     message: "Si existe una cuenta con ese correo, te enviamos un enlace para restablecer la contraseña. Revisa tu bandeja y la carpeta de spam."
@@ -253,13 +262,24 @@ async function reset(req, res, body) {
     return sendJson(res, 400, { success: false, error: `La contraseña debe tener al menos ${MIN_PASSWORD} caracteres.` });
   }
 
-  // Update password in Supabase Auth via access_token from recovery
+  if (!/^[A-Za-z0-9_-]{20,200}$/.test(token)) {
+    return sendJson(res, 400, { success: false, error: "El enlace no es válido o ya venció. Solicita uno nuevo." });
+  }
+  // Exchange the one-time hashed token for a session, then set the new password with it
   try {
+    const vr = await fetch(`${SUPABASE_URL}/auth/v1/verify`, {
+      method: "POST",
+      headers: { apikey: SUPABASE_SERVICE_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "recovery", token_hash: token })
+    });
+    const session = vr.ok ? await vr.json() : null;
+    if (!session?.access_token) throw new Error(`verify HTTP ${vr.status}`);
+    const accessToken = session.access_token;
     const sbRes = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
       method: "PUT",
       headers: {
         apikey: SUPABASE_SERVICE_KEY,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({ password })
@@ -267,7 +287,8 @@ async function reset(req, res, body) {
     if (sbRes.ok) {
       const sbUser = await sbRes.json();
       const isAgustin = sbUser.email?.toLowerCase() === "venturasaldanaa@gmail.com";
-      const plan = isAgustin ? "pro" : (sbUser.user_metadata?.plan || "free");
+      // Display only; the real plan always comes from public.users (session.js)
+      const plan = isAgustin ? "pro" : (sbUser.app_metadata?.plan === "pro" ? "pro" : "free");
       const userObj = {
         id: sbUser.id,
         email: sbUser.email,
@@ -275,9 +296,11 @@ async function reset(req, res, body) {
         plan,
         role: isAgustin ? "pro" : "user"
       };
-      return sendJson(res, 200, { success: true, user: publicUser(userObj), token });
+      return sendJson(res, 200, { success: true, user: publicUser(userObj), token: accessToken });
     }
-  } catch (e) {}
+  } catch (e) {
+    console.error("[auth] reset failed:", e.message);
+  }
 
   return sendJson(res, 400, { success: false, error: "El enlace no es válido o ya venció. Solicita uno nuevo." });
 }

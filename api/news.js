@@ -536,7 +536,8 @@ export default async function handler(req, res) {
     return res.end(JSON.stringify(body));
   }
 
-  const forceRefresh = req.query && (req.query.refresh === "1" || req.query.refresh === "true");
+  // Refreshing is done by the scheduled job only; a public ?refresh=1 would let anyone trigger upstream calls
+  const forceRefresh = false;
   const { news, updatedAt, cached, refreshed } = await getMacroNews(forceRefresh);
 
   const responseBody = {
