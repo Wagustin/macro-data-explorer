@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "send = enviar · dry = preparar sin enviar · models = listar modelos NIM · probe = probar todos"
+        description: "send = enviar · dry = preparar sin enviar · models = listar modelos NIM · probe = probar todos · gemini = probar solo el respaldo de Gemini, sin enviar"
         default: send
 
 permissions:
@@ -30,11 +30,11 @@ jobs:
       - name: Preparar y enviar
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          NVIDIA_API_KEY: ${{ inputs.mode != 'gemini' && secrets.NVIDIA_API_KEY || '' }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           BOLETIN_TO: ${{ secrets.ALERT_EMAIL }}
           MODE: ${{ inputs.mode || 'send' }}
-        run: node scripts/boletin.js $([ "$MODE" = "dry" ] && echo --dry-run) $([ "$MODE" = "models" ] && echo --list-models) $([ "$MODE" = "probe" ] && echo --probe)
+        run: node scripts/boletin.js $([ "$MODE" = "dry" ] || [ "$MODE" = "gemini" ] && echo --dry-run) $([ "$MODE" = "models" ] && echo --list-models) $([ "$MODE" = "probe" ] && echo --probe)
       - uses: actions/upload-artifact@v4
         if: always()
         with:
