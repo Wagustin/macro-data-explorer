@@ -4,7 +4,8 @@
 // 2. NVIDIA NIM writes short plain-Spanish blocks using ONLY those facts; any sentence with a
 //    number that is not in the facts is dropped, and if NIM fails the email goes out without it.
 // 3. Renders an editorial HTML email and sends it with Resend.
-// Env: RESEND_API_KEY, BOLETIN_TO (comma list), NVIDIA_API_KEY (optional), NIM_MODEL (optional)
+// Env: RESEND_API_KEY, BOLETIN_TO (comma list), SUPABASE_URL + SUPABASE_SERVICE_KEY (subscribers),
+//      NVIDIA_API_KEY and GEMINI_API_KEY (optional), NIM_MODEL (optional)
 // Usage: node scripts/boletin.js [--dry-run] (writes boletin-preview.html, sends nothing)
 import fs from "fs";
 
@@ -257,7 +258,8 @@ function render(f, ai, dateLabel) {
   <tr><td style="padding:24px 0 36px;border-top:1px solid ${C.rule};font-family:${ui};font-size:12px;line-height:1.6;color:${C.soft}">
     ${ai ? "La interpretación la redacta un modelo de IA a partir de los datos de este correo; las cifras se comprueban contra la fuente.<br>" : ""}
     Información con fines informativos; no es una recomendación de inversión.<br>
-    <a href="${SITE}" style="color:${C.ink}">perdata.site</a> · Equipo de PerData
+    <a href="${SITE}" style="color:${C.ink}">perdata.site</a> · Equipo de PerData<br>
+    Recibes este correo porque te suscribiste al boletín. <a href="{{BAJA}}" style="color:${C.soft}">Darme de baja</a>
   </td></tr>
 </table></td></tr></table></body></html>`;
 }
@@ -267,17 +269,42 @@ const ai = await interpret(f);
 const lima = new Date(Date.now() - 5 * 36e5);
 const dateLabel = lima.toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 const html = render(f, ai, dateLabel);
-fs.writeFileSync("boletin-preview.html", html);
+fs.writeFileSync("boletin-preview.html", html.replace("{{BAJA}}", `${SITE}/boletin`));
 console.log(`Mercados: ${f.markets.length} · SMV: ${f.smvFacts.length} · titulares: ${f.headlines.length} · IA: ${ai ? "sí" : "no"}`);
 
 if (!DRY) {
-  const to = (process.env.BOLETIN_TO || "").split(",").map((s) => s.trim()).filter(Boolean);
-  if (!process.env.RESEND_API_KEY || !to.length) throw new Error("Faltan RESEND_API_KEY o BOLETIN_TO");
-  const r = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: FROM, to, subject: `PerData · ${dateLabel}`, html }),
+  if (!process.env.RESEND_API_KEY) throw new Error("Falta RESEND_API_KEY");
+  // Recipients: confirmed subscribers (Supabase) plus BOLETIN_TO (the owner's copy, no unsubscribe token)
+  const list = [];
+  const base = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
+  if (base && process.env.SUPABASE_SERVICE_KEY) {
+    const r = await fetch(`${base}/rest/v1/boletin_suscriptores?estado=eq.activo&select=email,token`, {
+      headers: { apikey: process.env.SUPABASE_SERVICE_KEY, Authorization: `Bearer ${process.env.SUPABASE_SERVICE_KEY}` },
+    });
+    if (r.ok) list.push(...(await r.json()));
+    else console.error(`Suscriptores no disponibles (HTTP ${r.status}); se envía solo a BOLETIN_TO`);
+  }
+  for (const email of (process.env.BOLETIN_TO || "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean)) {
+    if (!list.some((x) => x.email === email)) list.push({ email, token: null });
+  }
+  if (!list.length) throw new Error("Sin destinatarios");
+
+  // One personalised email each (own unsubscribe link), sent in batches of 100 (Resend batch API)
+  const emails = list.map(({ email, token }) => {
+    const baja = token ? `${SITE}/api/boletin?accion=baja&t=${token}` : `${SITE}/boletin`;
+    const msg = { from: FROM, to: [email], subject: `PerData · ${dateLabel}`, html: html.replace("{{BAJA}}", baja) };
+    if (token) msg.headers = { "List-Unsubscribe": `<${baja}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" };
+    return msg;
   });
-  if (!r.ok) throw new Error(`Resend: HTTP ${r.status} ${await r.text()}`);
-  console.log(`Enviado a ${to.length} destinatario(s)`);
+  let sent = 0;
+  for (let i = 0; i < emails.length; i += 100) {
+    const r = await fetch("https://api.resend.com/emails/batch", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify(emails.slice(i, i + 100)),
+    });
+    if (!r.ok) throw new Error(`Resend: HTTP ${r.status} ${await r.text()}`);
+    sent += emails.slice(i, i + 100).length;
+  }
+  console.log(`Enviado a ${sent} destinatario(s)`);
 }
