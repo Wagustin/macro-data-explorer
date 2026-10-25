@@ -15,7 +15,7 @@ concurrency:
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -23,9 +23,29 @@ jobs:
           node-version: 22
       - name: Ingestar feeds de noticias autorizados
         run: node scripts/fetch-news.js
-      - name: Guardar cambios si hay noticias nuevas
+
+      - name: Configurar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache modelos Hugging Face
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-laya-typed-decisions
+
+      - name: Instalar dependencias Laya CPU
+        run: |
+          pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+          pip install --no-cache-dir laya --extra-index-url https://download.pytorch.org/whl/cpu
+
+      - name: Clasificar noticias con Laya
+        run: python scripts/classify_news.py
+
+      - name: Guardar cambios si hay noticias nuevas o clasificaciones
         run: |
           git config user.name "perdata-bot"
           git config user.email "perdata-bot@users.noreply.github.com"
-          git add data/noticias.json
-          git diff --cached --quiet || (git commit -m "data(news): feeds actualizados $(date -u +'%Y-%m-%d %H:%M UTC')" && git pull --rebase -q && git push)
+          git add data/noticias.json data/noticias-laya.json
+          git diff --cached --quiet || (git commit -m "data(news): feeds y clasificaciones Laya actualizados $(date -u +'%Y-%m-%d %H:%M UTC')" && git pull --rebase -q && git push)
