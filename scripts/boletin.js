@@ -110,16 +110,22 @@ function grounded(text, factsText) {
 }
 
 async function interpret(f) {
-  if (!process.env.NVIDIA_API_KEY) return null;
+  if (!process.env.NVIDIA_API_KEY && !process.env.GEMINI_API_KEY) return null;
   const factsText = JSON.stringify(f);
   const prompt = `Eres el redactor del boletín de PerData, sobre economía y mercados del Perú. Escribe en español neutro, claro, para principiantes y expertos.
 Usa SOLO estos datos (no añadas cifras, fechas, causas ni hechos que no estén aquí; no des recomendaciones de inversión):
 ${factsText}
 
+Reglas:
+- La tabla de precios ya va en el correo: no repitas todas las cifras; cita como mucho dos y explica qué significan.
+- Si el dólar (USD/PEN) sube, el sol se deprecia; si baja, el sol se aprecia. No digas «el dólar se aprecia frente al sol».
+- No atribuyas causas que no estén en los datos. Puedes explicar relaciones generales (por ejemplo, el cobre es la principal exportación del Perú).
+- Frases cortas. Sin adjetivos de marketing.
+
 Devuelve SOLO un JSON con:
-{"entradilla": "2 frases: lo más importante de hoy",
- "mercados": "3 o 4 frases sobre los precios (dólar, cobre, oro, petróleo) y qué significa para el Perú, sin inventar causas",
- "empresas": "1 o 2 frases sobre los hechos de importancia de la SMV, o cadena vacía si no hay"}`;
+{"entradilla": "1 o 2 frases: lo más importante de hoy, sin repetir lo que dirá «mercados»",
+ "mercados": "2 o 3 frases: qué movimiento importa más hoy y qué significa para el Perú",
+ "empresas": "1 frase que destaque el hecho de importancia más relevante para un inversionista (dividendos, resultados, emisiones), o cadena vacía si no hay"}`;
   // The whole interpretation gets at most 6 minutes, so the email always goes out on time
   const deadline = Date.now() + 6 * 60 * 1000;
   for (const model of await availableModels(process.env.NVIDIA_API_KEY)) {
@@ -147,6 +153,28 @@ Devuelve SOLO un JSON con:
       return out;
     } catch (e) {
       console.error(`NIM ${model}: ${e.message}`);
+    }
+  }
+  // Fallback: Google Gemini (AI Studio), if a key is configured
+  if (process.env.GEMINI_API_KEY && deadline - Date.now() > 20000) {
+    try {
+      const key = process.env.GEMINI_API_KEY;
+      const list = await (await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`, { signal: AbortSignal.timeout(15000) })).json();
+      const model = (list.models || []).map((m) => m.name).filter((n) => /flash/i.test(n) && !/image|tts|audio|live|embedding/i.test(n)).sort().pop();
+      const g = await fetch(`https://generativelanguage.googleapis.com/v1beta/${model}:generateContent?key=${key}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.2, responseMimeType: "application/json" } }),
+        signal: AbortSignal.timeout(Math.min(60000, deadline - Date.now())),
+      });
+      if (!g.ok) throw new Error(`HTTP ${g.status}`);
+      const text = (await g.json()).candidates?.[0]?.content?.parts?.map((x) => x.text).join("") || "";
+      const out = JSON.parse(text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1));
+      for (const k of Object.keys(out)) out[k] = grounded(String(out[k] || ""), factsText);
+      console.log(`Interpretación: Gemini ${model}`);
+      return out;
+    } catch (e) {
+      console.error(`Gemini: ${e.message}`);
     }
   }
   console.error("Interpretación omitida: ningún modelo respondió");
