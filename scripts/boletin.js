@@ -192,6 +192,32 @@ function render(f, ai, dateLabel) {
 </div></body></html>`;
 }
 
+// Tries every chat model of the catalog in parallel with a tiny prompt and reports status and time
+if (process.argv.includes("--probe")) {
+  const key = process.env.NVIDIA_API_KEY;
+  const r = await fetch("https://integrate.api.nvidia.com/v1/models", { headers: { Authorization: `Bearer ${key}` } });
+  const ids = ((await r.json()).data || []).map((m) => m.id)
+    .filter((id) => !/embed|guard|safety|reward|parse|retriever|vlm|vision|code|diffusion|clip|nemoretriever|reranker|deplot|kosmos|neva|fuyu|paligemma|recurrent|whisper|asr|tts/i.test(id));
+  const results = await Promise.all(ids.map(async (model) => {
+    const t0 = Date.now();
+    try {
+      const q = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ model, max_tokens: 40, temperature: 0, messages: [{ role: "user", content: 'Responde solo con este JSON: {"ok":true}' }] }),
+        signal: AbortSignal.timeout(90000),
+      });
+      const j = await q.json().catch(() => ({}));
+      const c = j.choices?.[0]?.message?.content || "";
+      return `${q.status} ${String(Date.now() - t0).padStart(6)} ms  ${model}  ${q.ok ? JSON.stringify(c.slice(0, 40)) : ""}`;
+    } catch (e) {
+      return `ERR ${String(Date.now() - t0).padStart(6)} ms  ${model}  ${e.name}`;
+    }
+  }));
+  console.log(results.sort().join("\n"));
+  process.exit(0);
+}
+
 if (process.argv.includes("--list-models")) {
   const r = await fetch("https://integrate.api.nvidia.com/v1/models", { headers: { Authorization: `Bearer ${process.env.NVIDIA_API_KEY}` } });
   console.log(((await r.json()).data || []).map((m) => m.id).filter((id) => /deepseek|qwen|llama|mistral|nemotron|gemma|kimi|glm|gpt-oss/i.test(id)).join("\n"));

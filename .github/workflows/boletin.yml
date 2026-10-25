@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "send = enviar · dry = preparar sin enviar · models = listar modelos NIM"
+        description: "send = enviar · dry = preparar sin enviar · models = listar modelos NIM · probe = probar todos"
         default: send
 
 permissions:
@@ -33,7 +33,7 @@ jobs:
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           BOLETIN_TO: ${{ secrets.ALERT_EMAIL }}
           MODE: ${{ inputs.mode || 'send' }}
-        run: node scripts/boletin.js $([ "$MODE" = "dry" ] && echo --dry-run) $([ "$MODE" = "models" ] && echo --list-models)
+        run: node scripts/boletin.js $([ "$MODE" = "dry" ] && echo --dry-run) $([ "$MODE" = "models" ] && echo --list-models) $([ "$MODE" = "probe" ] && echo --probe)
       - uses: actions/upload-artifact@v4
         if: always()
         with:
