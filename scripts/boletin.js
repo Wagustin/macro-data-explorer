@@ -119,13 +119,19 @@ Devuelve SOLO un JSON con:
 {"entradilla": "2 frases: lo más importante de hoy",
  "mercados": "3 o 4 frases sobre los precios (dólar, cobre, oro, petróleo) y qué significa para el Perú, sin inventar causas",
  "empresas": "1 o 2 frases sobre los hechos de importancia de la SMV, o cadena vacía si no hay"}`;
+  // The whole interpretation gets at most 6 minutes, so the email always goes out on time
+  const deadline = Date.now() + 6 * 60 * 1000;
   for (const model of await availableModels(process.env.NVIDIA_API_KEY)) {
+    const left = deadline - Date.now();
+    if (left < 30000) break;
     try {
       const r = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${process.env.NVIDIA_API_KEY}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ model, temperature: 0.2, max_tokens: 3000, messages: [{ role: "user", content: prompt }] }),
-        signal: AbortSignal.timeout(180000),
+        // Ask reasoning models to answer directly (each family reads its own flag; others ignore it)
+        body: JSON.stringify({ model, temperature: 0.2, max_tokens: 1200, messages: [{ role: "user", content: prompt }],
+          chat_template_kwargs: { thinking: false, enable_thinking: false } }),
+        signal: AbortSignal.timeout(Math.min(150000, left)),
       });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const msg = (await r.json()).choices?.[0]?.message || {};
