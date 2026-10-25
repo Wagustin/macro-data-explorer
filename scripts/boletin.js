@@ -179,6 +179,12 @@ function render(f, ai, dateLabel) {
 </div></body></html>`;
 }
 
+if (process.argv.includes("--list-models")) {
+  const r = await fetch("https://integrate.api.nvidia.com/v1/models", { headers: { Authorization: `Bearer ${process.env.NVIDIA_API_KEY}` } });
+  console.log(((await r.json()).data || []).map((m) => m.id).filter((id) => /deepseek|qwen|llama|mistral|nemotron|gemma|kimi|glm|gpt-oss/i.test(id)).join("\n"));
+  process.exit(0);
+}
+
 const f = await facts();
 const ai = await interpret(f);
 const lima = new Date(Date.now() - 5 * 36e5);

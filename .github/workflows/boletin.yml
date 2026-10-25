@@ -6,6 +6,10 @@ on:
   schedule:
     - cron: "41 11 * * 1-5"   # 06:41 en Lima, para que llegue antes de las 07:00 aunque GitHub se retrase
   workflow_dispatch:
+    inputs:
+      mode:
+        description: "send = enviar · dry = preparar sin enviar · models = listar modelos NIM"
+        default: send
 
 permissions:
   contents: read
@@ -28,7 +32,8 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           BOLETIN_TO: ${{ secrets.ALERT_EMAIL }}
-        run: node scripts/boletin.js
+          MODE: ${{ inputs.mode || 'send' }}
+        run: node scripts/boletin.js $([ "$MODE" = "dry" ] && echo --dry-run) $([ "$MODE" = "models" ] && echo --list-models)
       - uses: actions/upload-artifact@v4
         if: always()
         with:
