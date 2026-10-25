@@ -2029,7 +2029,7 @@ const state = {
       }
       const modelBadge = document.getElementById("forecastModelBadge");
       if (modelBadge) {
-        if (f.model === "timesfm-2.5") {
+        if (f.model === "perdata-engine-v4") {
           let timeStr = "hoy 06:00";
           if (f.runAt) {
             try {
@@ -2039,7 +2039,7 @@ const state = {
               timeStr = `hoy ${hh}:${mm} UTC`;
             } catch (e) {}
           }
-          modelBadge.textContent = `Modelo: TimesFM 2.5 (Google), calculado ${timeStr}`;
+          modelBadge.textContent = `Modelo: PerData Engine v4 (TimesFM 2.5 + v3), calculado ${timeStr}`;
         } else {
           modelBadge.textContent = "Modelo: PerData Engine v3";
         }
