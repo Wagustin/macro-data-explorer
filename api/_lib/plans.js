@@ -19,12 +19,22 @@ export const PLANS = {
     maxHorizon: 6,
     excel: false
   },
+  // Boletín: the terminal stays as in Gratis; adds the personal section of the daily newsletter.
+  boletin: {
+    id: "boletin",
+    label: "Boletín",
+    ranges: ["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y"],
+    maxHorizon: 6,
+    excel: false,
+    boletinPersonal: true
+  },
   pro: {
     id: "pro",
     label: "Pro",
     ranges: ["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y", "10y", "max"],
     maxHorizon: 36,
-    excel: true
+    excel: true,
+    boletinPersonal: true
   }
 };
 
@@ -33,7 +43,7 @@ export const ACTIVE_STATUSES = new Set(["active", "trialing"]);
 
 export function planForUser(user) {
   if (!user) return PLANS.anon;
-  return user.plan === "pro" ? PLANS.pro : PLANS.free;
+  return PLANS[user.plan] && user.plan !== "anon" ? PLANS[user.plan] : PLANS.free;
 }
 
 export function canUseRange(plan, range) {

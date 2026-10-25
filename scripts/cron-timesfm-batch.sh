@@ -6,6 +6,11 @@ VENV_PY="/home/wagustin/kathy_workspace/timesfm-backtest/venv/bin/python3"
 BITACORA="/home/wagustin/obsidian_vault/02 🚀 Proyectos & IA/00 📈 PerData - Bitácora de Kathy.md"
 
 cd "$DIR" || exit 1
+# Refresh the monthly history first, so the model sees this month's closes (non-fatal)
+node scripts/refresh-history.js >/dev/null 2>&1
+# If another process holds the GPU (Laya uses ~2.5 GB of the 3.6 GB), run on CPU instead
+FREE_MB=$(nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits 2>/dev/null | head -1)
+if [ -z "$FREE_MB" ] || [ "$FREE_MB" -lt 1500 ]; then export CUDA_VISIBLE_DEVICES=""; fi
 OUTPUT=$("$VENV_PY" scripts/timesfm_batch.py 2>&1)
 STATUS=$?
 

@@ -2081,3 +2081,13 @@ html.pd-motion.hero-ready [data-hero-seq="3"]  { opacity: 1; transform: translat
     padding-left: 0 !important;
   }
 }
+
+/* Precios: tres planes (Gratis · Boletín · Pro) */
+@media (min-width: 900px) {
+  .pd-plans { grid-template-columns: 1fr 1fr 1fr; max-width: 1100px; }
+  .pd-plans > .pd-plan + .pd-plan { padding-right: 24px; }
+}
+@media (min-width: 768px) and (max-width: 899px) {
+  .pd-plans { grid-template-columns: 1fr; }
+  .pd-plans > .pd-plan + .pd-plan { border-left: 0; padding-left: 0; border-top: 1px solid var(--pd-rule); }
+}

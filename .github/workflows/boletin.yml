@@ -1,0 +1,45 @@
+name: Boletín diario
+
+# Lunes a viernes a las 06:00 en Lima, a los suscriptores confirmados (tabla boletin_suscriptores)
+# y a ALERT_EMAIL (copia del dueño).
+on:
+  schedule:
+    - cron: "47 10 * * 1-5"   # 05:47 en Lima: sale hacia las 06:00 aunque GitHub se retrase unos minutos
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "send = enviar · dry = preparar sin enviar · models = listar modelos NIM · probe = probar todos · gemini = probar solo el respaldo de Gemini, sin enviar"
+        default: send
+
+permissions:
+  contents: read
+
+concurrency:
+  group: boletin
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Preparar y enviar
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NVIDIA_API_KEY: ${{ inputs.mode != 'gemini' && secrets.NVIDIA_API_KEY || '' }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          BOLETIN_TO: ${{ secrets.ALERT_EMAIL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          MODE: ${{ inputs.mode || 'send' }}
+        run: node scripts/boletin.js $([ "$MODE" = "dry" ] || [ "$MODE" = "gemini" ] && echo --dry-run) $([ "$MODE" = "models" ] && echo --list-models) $([ "$MODE" = "probe" ] && echo --probe)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: boletin-preview
+          path: boletin-preview.html
+          retention-days: 7

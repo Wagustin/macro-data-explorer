@@ -1,0 +1,38 @@
+name: Watchdog
+
+on:
+  schedule:
+    - cron: "17 * * * *"   # cada hora
+    - cron: "41 12 * * *"  # pruebas completas, 07:41 en Lima
+  workflow_dispatch:
+    inputs:
+      test_email:
+        description: "Enviar solo un correo de prueba"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: watchdog
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Comprobar la web y los procesos diarios
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL: ${{ secrets.ALERT_EMAIL }}
+          FULL: ${{ github.event.schedule == '41 12 * * *' || github.event_name == 'workflow_dispatch' }}
+          TEST_EMAIL: ${{ inputs.test_email }}
+        run: node scripts/watchdog.js --base https://perdata.site $([ "$FULL" = "true" ] && echo --full) $([ "$TEST_EMAIL" = "true" ] && echo --test-email)

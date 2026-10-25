@@ -7,6 +7,8 @@ import historicalHandler from "./api/historical.js";
 import forecastHandler from "./api/forecast.js";
 import interpretHandler from "./api/interpret.js";
 import newsHandler from "./api/news.js";
+import statusHandler from "./api/status.js";
+import boletinHandler from "./api/boletin.js";
 import authHandler from "./api/auth.js";
 import billingHandler from "./api/billing.js";
 import stripeWebhookHandler from "./api/stripe-webhook.js";
@@ -39,6 +41,7 @@ const PAGES = {
   "/explorer": "explorer.html",
   "/metodologia": "metodologia.html",
   "/aprende": "aprende.html",
+  "/boletin": "boletin.html",
   "/guia": "guia.html",
   "/terms": "terms.html",
   "/noticias": "news.html",
@@ -96,6 +99,12 @@ const server = http.createServer(async (req, res) => {
   if (pathname === "/api/news") {
     return newsHandler(req, res);
   }
+  if (pathname === "/api/status") {
+    return statusHandler(req, res);
+  }
+  if (pathname === "/api/boletin") {
+    return boletinHandler(req, res);
+  }
   if (pathname === "/api/auth" || pathname.startsWith("/api/auth/")) {
     return authHandler(req, res);
   }
@@ -107,8 +116,8 @@ const server = http.createServer(async (req, res) => {
   }
 
   // --- Clean URL mappings to HTML subpages ---
-  if (pathname === "/data/empresas.json") {
-    const jsonPath = path.join(process.cwd(), "data", "empresas.json");
+  if (pathname === "/data/empresas.json" || pathname === "/data/smv-hechos.json") {
+    const jsonPath = path.join(process.cwd(), "data", path.basename(pathname));
     if (fs.existsSync(jsonPath)) {
       res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
       return fs.createReadStream(jsonPath).pipe(res);

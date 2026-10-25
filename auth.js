@@ -132,7 +132,7 @@
     plan() {
       const u = this.getUser();
       if (!u) return PLANS.anon;
-      return u.plan === "pro" ? PLANS.pro : PLANS.free;
+      return PLANS[u.plan] && u.plan !== "anon" ? PLANS[u.plan] : PLANS.free;
     },
 
     plans() {
@@ -149,7 +149,7 @@
           .then(r => r.json())
           .then(cfg => {
             if (cfg && cfg.plans) PLANS = cfg.plans;
-            billing = { enabled: !!(cfg && cfg.enabled), prices: (cfg && cfg.prices) || [] };
+            billing = { enabled: !!(cfg && cfg.enabled), prices: (cfg && cfg.prices) || [], boletinPrices: (cfg && cfg.boletinPrices) || [] };
             window.dispatchEvent(new CustomEvent("mde:billing-loaded", { detail: billing }));
             this.render();
             return billing;
@@ -161,8 +161,9 @@
 
     formatMoney: formatMoney,
 
-    priceLabel(interval) {
-      const p = billing.prices.find(x => x.interval === (interval || "month"));
+    priceLabel(interval, plan) {
+      const list = plan === "boletin" ? (billing.boletinPrices || []) : billing.prices;
+      const p = list.find(x => x.interval === (interval || "month"));
       return p ? formatPrice(p) : "";
     },
 
@@ -209,7 +210,7 @@
     },
 
     // ---------- Billing actions ----------
-    async startCheckout(interval) {
+    async startCheckout(interval, plan) {
       if (!this.isAuthenticated()) {
         this.openModal("Crea tu cuenta o inicia sesión para suscribirte a Pro.", "signup", "checkout");
         return { success: false };
@@ -218,7 +219,7 @@
         const res = await this.authFetch("/api/billing", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "checkout", interval: interval || "month" })
+          body: JSON.stringify({ action: "checkout", interval: interval || "month", plan: plan === "boletin" ? "boletin" : "pro" })
         });
         const data = await res.json();
         if (res.status === 401) this.setSession(null);
@@ -311,7 +312,7 @@
           '<button id="pdAcctBtn" type="button" class="pd-acct-btn" aria-haspopup="menu" aria-expanded="false">' +
             '<span class="pd-avatar" aria-hidden="true">' + escapeHTML(name.charAt(0).toUpperCase()) + "</span>" +
             '<span class="pd-acct-name">' + escapeHTML(name) + "</span>" +
-            (isPro ? '<span class="pd-plan-badge">Pro</span>' : "") +
+            (isPro ? '<span class="pd-plan-badge">Pro</span>' : (u.plan === "boletin" ? '<span class="pd-plan-badge">Boletín</span>' : "")) +
           "</button>" +
           '<div id="pdAcctMenu" class="pd-acct-menu" role="menu" hidden>' +
             '<div class="pd-acct-head"><div class="pd-acct-head-name">' + escapeHTML(name) + '</div><div class="pd-acct-head-mail">' + escapeHTML(u.email) + "</div>" +

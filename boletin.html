@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es-PE" class="light pd-marketing">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Boletín diario · PerData</title>
+  <meta name="description" content="El boletín diario de PerData: dólar, cobre, oro y petróleo con fuentes oficiales, hechos de importancia de la SMV y titulares del Perú. Gratis, de lunes a viernes a las 06:00." />
+  <link rel="canonical" href="https://perdata.site/boletin" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- SEO & Social Open Graph -->
+  <meta property="og:locale" content="es_PE" />
+  <meta property="og:site_name" content="PerData" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://perdata.site/boletin" />
+  <meta property="og:title" content="Boletín diario · PerData" />
+  <meta property="og:description" content="El boletín diario de PerData: dólar, cobre, oro y petróleo con fuentes oficiales, hechos de importancia de la SMV y titulares del Perú. Gratis, de lunes a viernes a las 06:00." />
+  <meta property="og:image" content="https://perdata.site/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Boletín diario · PerData" />
+  <meta name="twitter:description" content="El boletín diario de PerData: dólar, cobre, oro y petróleo con fuentes oficiales, hechos de importancia de la SMV y titulares del Perú. Gratis, de lunes a viernes a las 06:00." />
+  <meta name="twitter:image" content="https://perdata.site/og-image.png" />
+
+  <!-- Structured Data JSON-LD -->
+  
+  
+  <!-- Early Theme Init -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
+      } else {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.classList.add("light");
+      }
+    })();
+  </script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            appleLight: '#FFFFFF',
+            appleDark: '#0D0D0E',
+            appleCardDark: '#1C1C1E',
+            appleTextDark: '#F5F5F7',
+            appleSubDark: '#8E8E93',
+            appleBorderDark: '#2C2C2E',
+            appleBorderLight: '#E5E5EA',
+          }
+        }
+      }
+    }
+  </script>
+
+<style>
+    html, body {
+      overflow-x: hidden !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      letter-spacing: -0.011em;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tnum {
+      font-feature-settings: "tnum" 1, "cv01" 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .micro-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .ui-switch {
+      --switch-bg: rgb(229, 229, 234);
+      --switch-checked-bg: rgb(0, 0, 0);
+      --circle-diameter: 18px;
+      --circle-bg: #FFFFFF;
+      --circle-inset: 2px;
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    html.dark .ui-switch {
+      --switch-bg: rgb(44, 44, 46);
+      --switch-checked-bg: rgb(255, 255, 255);
+      --circle-bg: #0D0D0E;
+    }
+
+    .ui-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--switch-bg);
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 9999px;
+    }
+
+    .slider .circle {
+      top: var(--circle-inset);
+      left: var(--circle-inset);
+      width: var(--circle-diameter);
+      height: var(--circle-diameter);
+      position: absolute;
+      background: var(--circle-bg);
+      border-radius: inherit;
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .ui-switch input:checked + .slider {
+      background-color: var(--switch-checked-bg);
+    }
+
+    .ui-switch input:checked + .slider .circle {
+      left: calc(100% - var(--circle-diameter) - var(--circle-inset));
+    }
+
+    .math-formula {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      letter-spacing: normal;
+      font-feature-settings: "tnum" 1;
+      font-variant-numeric: tabular-nums;
+    }
+  
+    /* ===== Apple-style motion: gentle fade, no stagger, no lift ===== */
+    @keyframes mde-rise {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    main > section,
+    .rise-in {
+      animation: mde-rise 0.6s ease both;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      main > section, .rise-in { animation: none; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+
+    .hover-lift {
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+    .hover-lift:hover {
+      border-color: rgba(0, 0, 0, 0.30);
+    }
+    html.dark .hover-lift:hover {
+      border-color: rgba(255, 255, 255, 0.40);
+    }
+
+    /* Apple layout helpers */
+    .full-bleed { width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); }
+    .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0; color: #6e6e73; }
+    html.dark .eyebrow { color: #86868b; }
+  </style>
+  <!-- Identidad PerData (DESIGN.md) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/pd.css">
+  <script defer src="/motion.js"></script>
+</head>
+<body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
+
+  <!-- Shared Institutional Header -->
+  <header class="border-b border-rule bg-card sticky top-0 z-30 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
+      <!-- Brand & Navigation -->
+      <div class="flex items-center space-x-6">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
+        </a>
+
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
+          <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a>
+          <a href="/empresas" class="hover:text-ink transition no-underline">Empresas</a>
+          <a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a>
+          <a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a>
+          <a href="/guia" class="hover:text-ink transition no-underline">Guía</a>
+          <a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
+        </nav>
+      </div>
+
+      <!-- Right Actions -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <div id="navbarAuthContainer"></div>
+
+        <label class="ui-switch" title="Alternar modo claro / oscuro">
+          <input id="themeToggle" type="checkbox" />
+          <div class="slider">
+            <div class="circle"></div>
+          </div>
+        </label>
+
+        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menú" aria-expanded="false">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors">
+      <nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft">
+        <a href="/explorer" class="hover:text-ink py-1 transition no-underline">Terminal</a>
+          <a href="/empresas" class="hover:text-ink py-1 transition no-underline">Empresas</a>
+        <a href="/noticias" class="hover:text-ink py-1 transition no-underline">Noticias</a>
+        <a href="/metodologia" class="hover:text-ink py-1 transition no-underline">Metodología</a>
+        <a href="/guia" class="hover:text-ink py-1 transition no-underline">Guía</a>
+        <a href="/precios" class="hover:text-ink py-1 transition no-underline">Precios</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16 space-y-10 w-full">
+    <div class="space-y-4" data-reveal>
+      <h1 class="text-4xl sm:text-5xl text-ink" style="line-height:1.05;">El boletín de PerData, <em>cada mañana</em></h1>
+      <p class="pdl-lede">De lunes a viernes a las 06:00 (hora de Lima): el dólar, el cobre, el oro y el petróleo con fuentes oficiales, la proyección del dólar, los hechos de importancia de la SMV y los titulares del día. Gratis.</p>
+    </div>
+
+    <div id="estadoMsg" class="hidden pdl-text" role="status"></div>
+
+    <section id="empresas" class="hidden border-t border-rule pt-8 space-y-4">
+      <h2 class="text-3xl text-ink">Tus empresas</h2>
+      <p class="pdl-text">Elige hasta 15 empresas de la Bolsa de Valores de Lima. Cada mañana verás su precio, su proyección, sus hechos de importancia y las noticias que las mencionan. Esta sección es parte del <a href="/precios" class="pdl-link">plan Boletín</a> (US$&nbsp;2 al mes); con la suscripción gratuita recibes el boletín general. <span id="prefEmail" class="text-ink-soft"></span></p>
+      <div id="prefChips" class="flex flex-wrap gap-x-5 gap-y-2" aria-live="polite"></div>
+      <label for="prefSearch" class="block text-sm text-ink-soft pt-2">Añadir empresa</label>
+      <input id="prefSearch" type="search" autocomplete="off" placeholder="Busca por nombre o nemónico: Alicorp, BVN, banco…"
+        class="w-full px-0 py-2 bg-transparent text-ink" style="border:0;border-bottom:2px solid var(--pd-ink);font-family:var(--pd-font-serif,'Source Serif 4',Georgia,serif);font-size:19px;outline:none" />
+      <ul id="prefResults" class="border-t border-rule" style="list-style:none;margin:0;padding:0"></ul>
+      <div class="flex items-center gap-4 pt-2">
+        <button id="prefSave" type="button" class="pdl-btn pdl-btn-primary">Guardar mis empresas</button>
+        <span id="prefSaved" class="text-sm text-ink-soft" role="status"></span>
+      </div>
+    </section>
+
+    <section id="suscribirse" class="border-t border-rule pt-8 space-y-4" data-reveal>
+      <form id="boletinForm" class="space-y-3" novalidate>
+        <label for="boletinEmail" class="block text-sm text-ink-soft">Tu correo</label>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input id="boletinEmail" name="email" type="email" required autocomplete="email" placeholder="nombre@correo.com"
+            class="flex-1 min-w-0 px-4 py-3 bg-transparent text-ink" style="border:0;border-bottom:2px solid var(--pd-ink);font-family:var(--pd-font-serif,'Source Serif 4',Georgia,serif);font-size:20px;outline:none" />
+          <button type="submit" class="pdl-btn pdl-btn-primary">Suscribirme</button>
+        </div>
+        <p class="text-xs text-ink-soft">Te enviaremos un correo para confirmar. Cada boletín trae un enlace para darte de baja con un clic. No compartimos tu correo.</p>
+      </form>
+    </section>
+
+    <section class="border-t border-rule pt-8 space-y-3" data-reveal>
+      <h2 class="text-3xl text-ink">Qué trae</h2>
+      <p class="pdl-text"><strong>Mercados.</strong> Dólar, cobre, oro, plata, zinc y petróleo del BCRP y la EIA, con la variación del día.</p>
+      <p class="pdl-text"><strong>Proyección.</strong> Dónde estaría el dólar en un mes según PerData Engine, con su rango probable.</p>
+      <p class="pdl-text"><strong>Empresas.</strong> Los hechos de importancia publicados en la SMV, con enlace al documento oficial.</p>
+      <p class="pdl-text"><strong>Titulares.</strong> Lo más relevante de la prensa económica, con su fuente.</p>
+      <p class="pdl-text text-ink-soft">La interpretación de cada mañana la redacta un modelo de IA usando solo esos datos; las cifras se comprueban contra la fuente. No es una recomendación de inversión.</p>
+    </section>
+  </main>
+
+  <!-- Shared Institutional Footer -->
+  <footer class="border-t border-rule bg-card py-10 px-4 sm:px-6 transition-colors">
+    <div class="max-w-6xl mx-auto flex flex-col gap-6 text-left">
+      <!-- Fila 1: Logo y enlaces cortos -->
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-rule">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
+        </a>
+        <nav class="flex flex-wrap items-center gap-6 text-xs text-ink-soft" aria-label="Navegación secundaria">
+          <a href="/boletin" class="hover:text-ink transition no-underline">Boletín</a>
+          <a href="/terms" class="hover:text-ink transition no-underline">Términos</a>
+          <a href="/privacidad" class="hover:text-ink transition no-underline">Privacidad</a>
+          <a href="mailto:soporte@perdata.site" class="hover:text-ink transition no-underline">Contacto</a>
+        </nav>
+      </div>
+
+      <!-- Fila 2: Copyright y aviso legal corto -->
+      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 text-[11px] text-ink-soft leading-relaxed">
+        <span class="font-medium text-ink shrink-0">© 2026 PerData</span>
+        <p class="max-w-2xl m-0 text-ink-soft">
+          Información financiera y cuantitativa con fines estrictamente informativos y de investigación. No constituye asesoramiento de inversión ni oferta pública de valores.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById("themeToggle");
+    const isDark = document.documentElement.classList.contains("dark");
+    if (themeToggle) {
+      themeToggle.checked = isDark;
+      themeToggle.addEventListener("change", (e) => {
+        if (e.target.checked) {
+          document.documentElement.classList.add("dark");
+          document.documentElement.classList.remove("light");
+          localStorage.setItem("theme", "dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+          document.documentElement.classList.add("light");
+          localStorage.setItem("theme", "light");
+        }
+      });
+    }
+  </script>
+
+
+  <!-- Mobile Menu Toggle -->
+  <script>
+    (function() {
+      var btn = document.getElementById('mobileMenuBtn');
+      var menu = document.getElementById('mobileMenu');
+      if (btn && menu) {
+        btn.addEventListener('click', function() {
+          var open = menu.classList.toggle('hidden');
+          btn.setAttribute('aria-expanded', String(!open));
+        });
+      }
+    })();
+  </script>
+
+  <!-- Auth -->
+  <script src="/auth.js"></script>
+  <nav class="mobile-nav" aria-label="Navegación móvil">
+    <a href="/explorer" class="nav-item">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </div>
+      <span>Terminal</span>
+    </a>
+    <a href="/empresas" class="nav-item">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M8 7h6M8 11h4"/></svg>
+      </div>
+      <span>Empresas</span>
+    </a>
+    <a href="/noticias" class="nav-item">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/></svg>
+      </div>
+      <span>Noticias</span>
+    </a>
+    <a href="/cuenta" class="nav-item">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <span>Mi cuenta</span>
+    </a>
+  </nav>
+<script>
+  (function () {
+    var msg = document.getElementById("estadoMsg");
+    var form = document.getElementById("boletinForm");
+    var input = document.getElementById("boletinEmail");
+    function show(t) { msg.textContent = t; msg.classList.remove("hidden"); }
+    var estado = new URLSearchParams(location.search).get("estado");
+    var textos = {
+      confirmado: "Listo: tu suscripción está confirmada. Recibirás el próximo boletín a las 06:00 (hora de Lima). Ahora puedes elegir tus empresas.",
+      baja: "Te diste de baja. No recibirás más boletines. Puedes volver a suscribirte cuando quieras.",
+      invalido: "El enlace no es válido o ya se usó. Si quieres suscribirte, escribe tu correo abajo."
+    };
+    if (textos[estado]) show(textos[estado]);
+
+    // Preferences: the personal link of each newsletter carries ?t=TOKEN
+    var token = new URLSearchParams(location.search).get("t");
+    if (token && /^[a-f0-9]{48}$/.test(token)) {
+      var sec = document.getElementById("empresas");
+      var chips = document.getElementById("prefChips");
+      var search = document.getElementById("prefSearch");
+      var results = document.getElementById("prefResults");
+      var saved = document.getElementById("prefSaved");
+      var chosen = [], catalog = [];
+      var fold = function (t) { return String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); };
+      var KEEP = ["BBVA", "AFP", "BVL", "FTE", "IDE", "SEAL", "AIB", "XP", "OH!"], SMALL = ["de", "del", "la", "las", "los", "y", "e", "en"];
+      var pretty = function (t) {
+        return String(t).trim().split(/\s+/).map(function (w, i) {
+          if (KEEP.indexOf(w.toUpperCase()) > -1 || /^\(?([A-Za-z]\.){2,}[-)]*$/.test(w)) return w.toUpperCase();
+          var lw = w.toLowerCase();
+          return i > 0 && SMALL.indexOf(lw) > -1 ? lw : lw.charAt(0).toUpperCase() + lw.slice(1);
+        }).join(" ");
+      };
+      var nameOf = function (n) { var e = catalog.find(function (x) { return x.nemos.indexOf(n) > -1; }); return e ? e.name : n; };
+      var esc = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+      function drawChips() {
+        chips.innerHTML = chosen.length ? chosen.map(function (n) {
+          return '<span class="text-ink" style="border-bottom:1px solid var(--pd-rule);padding-bottom:2px">' + esc(nameOf(n)) +
+            ' <span class="font-mono text-xs text-ink-soft">' + esc(n) + '</span> <button type="button" data-quitar="' + esc(n) + '" class="text-ink-soft" aria-label="Quitar ' + esc(n) + '" style="background:none;border:0;cursor:pointer;font-size:16px">&times;</button></span>';
+        }).join("") : '<span class="text-ink-soft">Aún no sigues ninguna empresa.</span>';
+      }
+      function drawResults() {
+        var q = fold(search.value.trim());
+        if (!q) { results.innerHTML = ""; return; }
+        var hits = catalog.filter(function (e) { return e.hay.indexOf(q) > -1; }).slice(0, 8);
+        results.innerHTML = hits.map(function (e) {
+          var on = e.nemos.some(function (n) { return chosen.indexOf(n) > -1; });
+          return '<li class="flex items-center justify-between gap-3 border-b border-rule py-2"><span class="min-w-0"><span class="text-ink">' + esc(e.name) + '</span> <span class="font-mono text-xs text-ink-soft">' + esc(e.nemo) + '</span></span>' +
+            '<button type="button" data-seguir="' + esc(e.nemo) + '" class="text-sm font-semibold text-ink underline" style="background:none;border:0;cursor:pointer"' + (on ? ' disabled' : '') + '>' + (on ? 'Siguiendo' : 'Seguir') + '</button></li>';
+        }).join("") || '<li class="py-2 text-ink-soft text-sm">Sin resultados. Prueba con el nemónico.</li>';
+      }
+      sec.classList.remove("hidden");
+      document.getElementById("suscribirse").classList.add("hidden");
+      Promise.all([
+        fetch("/api/boletin?accion=preferencias&t=" + token).then(function (r) { return r.json(); }),
+        fetch("/data/empresas.json").then(function (r) { return r.json(); })
+      ]).then(function (res) {
+        var pref = res[0], data = res[1];
+        if (pref.error) { show(pref.error); sec.classList.add("hidden"); return; }
+        document.getElementById("prefEmail").textContent = "Suscripción: " + pref.email + ".";
+        chosen = pref.empresas || [];
+        catalog = data.emisores.map(function (e) {
+          var v = e.valores.find(function (x) { return x.yahoo; }) || e.valores[0];
+          return { nemo: v.nemonico, nemos: e.valores.map(function (x) { return x.nemonico; }), name: pretty(e.razonSocial), hay: fold(e.razonSocial + " " + e.valores.map(function (x) { return x.nemonico; }).join(" ") + " " + e.sector) };
+        });
+        drawChips();
+      });
+      search.addEventListener("input", drawResults);
+      results.addEventListener("click", function (e) {
+        var b = e.target.closest("[data-seguir]"); if (!b) return;
+        if (chosen.length >= 15) { saved.textContent = "Máximo 15 empresas."; return; }
+        chosen.push(b.getAttribute("data-seguir")); drawChips(); drawResults(); saved.textContent = "";
+      });
+      chips.addEventListener("click", function (e) {
+        var b = e.target.closest("[data-quitar]"); if (!b) return;
+        chosen = chosen.filter(function (n) { return n !== b.getAttribute("data-quitar"); }); drawChips(); drawResults(); saved.textContent = "";
+      });
+      document.getElementById("prefSave").addEventListener("click", function () {
+        saved.textContent = "Guardando…";
+        fetch("/api/boletin?accion=preferencias&t=" + token, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ empresas: chosen }) })
+          .then(function (r) { return r.json(); })
+          .then(function (d) { saved.textContent = d.ok ? "Guardado. Las verás en el próximo boletín." : (d.error || "No se pudo guardar."); })
+          .catch(function () { saved.textContent = "No se pudo conectar."; });
+      });
+    }
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var btn = form.querySelector("button");
+      btn.disabled = true;
+      fetch("/api/boletin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: input.value, origen: "boletin" }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) { show(d.mensaje || d.error || "Algo salió mal. Inténtalo más tarde."); if (d.ok) form.reset(); })
+        .catch(function () { show("No pudimos conectar. Inténtalo más tarde."); })
+        .finally(function () { btn.disabled = false; });
+    });
+  })();
+</script>
+</body>
+</html>

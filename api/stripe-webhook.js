@@ -8,7 +8,7 @@
 import { findUserById, findUserByCustomerId, updateUser } from "./_lib/users.js";
 import { ACTIVE_STATUSES } from "./_lib/plans.js";
 import { sendJson, readRawBody } from "./_lib/session.js";
-import { stripe, verifyWebhookSignature } from "./_lib/stripe.js";
+import { stripe, verifyWebhookSignature, BOLETIN_PRICE_IDS } from "./_lib/stripe.js";
 
 // Signature verification needs the exact bytes Stripe sent.
 export const config = { api: { bodyParser: false } };
@@ -57,8 +57,11 @@ async function applySubscription(sub, userIdHint) {
     return;
   }
   const periodEnd = sub.current_period_end || (sub.items && sub.items.data && sub.items.data[0] && sub.items.data[0].current_period_end);
+  // The plan follows the price that was bought: Boletín prices grant "boletin", the rest "pro"
+  const priceIds = ((sub.items && sub.items.data) || []).map((i) => i.price && i.price.id);
+  const paidPlan = priceIds.some((id) => Object.values(BOLETIN_PRICE_IDS).includes(id)) ? "boletin" : "pro";
   await updateUser(user.id, {
-    plan: ACTIVE_STATUSES.has(sub.status) ? "pro" : "free",
+    plan: ACTIVE_STATUSES.has(sub.status) ? paidPlan : "free",
     stripe_customer_id: sub.customer,
     stripe_subscription_id: sub.id,
     subscription_status: sub.status,

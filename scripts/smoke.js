@@ -163,7 +163,7 @@ async function testForecast() {
 
       const monotone = f.p10 <= f.p25 && f.p25 <= f.p50 && f.p50 <= f.p75 && f.p75 <= f.p90;
       const positive = f.p10 > 0 && f.p25 > 0 && f.p50 > 0 && f.p75 > 0 && f.p90 > 0;
-      const isEngineV3 = data.model === "engine-v3" || /engine v3/i.test(data.architecture || "");
+      const isEngineV3 = data.model === "engine-v3" || data.model === "perdata-engine-v4" || /engine v[34]/i.test(data.architecture || "");
 
       const pass = monotone && positive && isEngineV3;
       record(

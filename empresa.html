@@ -298,7 +298,16 @@ html.dark .ui-switch {
     }
 .ui-switch input:checked + .slider .circle {
       left: calc(100% - var(--circle-diameter) - var(--circle-inset));
-    }</style>
+    }    .hechos-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--pd-rule); }
+    .hechos-list li { border-bottom: 1px solid var(--pd-rule); padding: 12px 0; }
+    .hechos-list a { color: var(--pd-ink); text-decoration: none; display: grid; gap: 3px; }
+    .hechos-list a:hover .hecho-titulo { text-decoration: underline; text-underline-offset: 3px; }
+    .hecho-meta { font-family: var(--pd-font-mono, monospace); font-size: 11px; color: var(--pd-ink-soft); font-variant-numeric: tabular-nums; }
+    .hecho-titulo { font-size: 14px; line-height: 1.45; }
+    .hecho-tipo { font-size: 12px; color: var(--pd-ink-soft); }
+    .hechos-empty { font-size: 13px; color: var(--pd-ink-soft); }
+    .hechos-source { font-size: 11px; color: var(--pd-ink-soft); margin: 8px 0 0; }
+</style>
 
   <!-- Early Theme Init -->
   <script>
@@ -436,17 +445,12 @@ html.dark .ui-switch {
         <!-- Hechos de Importancia -->
         <div class="section">
           <h2 class="section-title">Hechos de importancia</h2>
-          <div class="p-4 border border-rule bg-card text-xs leading-relaxed">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="badge-dot"></span>
-              <span class="font-medium text-ink">Próximamente: hechos de importancia de la SMV</span>
-            </div>
-            <p class="text-ink-soft m-0">
-              Módulo de sincronización oficial en desarrollo con la Superintendencia del Mercado de Valores para eventos societarios, dividendos y estados financieros.
-            </p>
-          </div>
+          <ol id="hechosList" class="hechos-list" aria-live="polite">
+            <li class="hechos-empty">Cargando hechos de importancia…</li>
+          </ol>
+          <p class="hechos-source">Fuente: Superintendencia del Mercado de Valores (SMV). Cada enlace abre el documento oficial.</p>
           <a href="https://www.smv.gob.pe" target="_blank" rel="noopener" class="link-smv">
-            Consultar hechos de importancia en SMV &rarr;
+            Ver todos en la SMV &rarr;
           </a>
         </div>
 
@@ -541,6 +545,7 @@ html.dark .ui-switch {
           <span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
         </a>
         <nav class="flex flex-wrap items-center gap-6 text-xs text-ink-soft" aria-label="Navegación secundaria">
+          <a href="/boletin" class="hover:text-ink transition no-underline">Boletín</a>
           <a href="/terms" class="hover:text-ink transition no-underline">Términos</a>
           <a href="/privacidad" class="hover:text-ink transition no-underline">Privacidad</a>
           <a href="mailto:soporte@perdata.site" class="hover:text-ink transition no-underline">Contacto</a>
@@ -688,6 +693,8 @@ html.dark .ui-switch {
           document.getElementById("chartLabel").textContent = "Sin cotización en Yahoo Finance";
         }
 
+        loadHechos(primaryValor.nemonico);
+
         // Populate Datos de la Empresa (SOLO datos del JSON)
         document.getElementById("datoCodigo").textContent = emitter.codigoBVL || "—";
         document.getElementById("datoSector").textContent = sectorName(emitter.sector);
@@ -799,7 +806,27 @@ html.dark .ui-switch {
         }
       }
     })();
-  </script>
+  
+      // Hechos de importancia de la SMV, recopilados a diario por scripts/fetch-smv.js
+      async function loadHechos(nemo) {
+        const list = document.getElementById("hechosList");
+        const esc = (t) => String(t || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+        const sentence = (t) => { const x = String(t || "").trim(); return x === x.toUpperCase() ? x.charAt(0) + x.slice(1).toLowerCase() : x; };
+        let data = null;
+        for (const src of ["https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data/smv-hechos.json", "/data/smv-hechos.json"]) {
+          try { const r = await fetch(src, { cache: "no-cache" }); if (r.ok) { data = await r.json(); break; } } catch (e) {}
+        }
+        const items = data?.hechos?.[nemo] || [];
+        if (!items.length) {
+          list.innerHTML = '<li class="hechos-empty">Aún no hay hechos de importancia de esta empresa. Los recopilamos de la SMV cada día desde el 24 de octubre de 2026.</li>';
+          return;
+        }
+        list.innerHTML = items.map((h) => `<li><a href="${esc(h.url_oficial)}" target="_blank" rel="noopener">
+          <span class="hecho-meta">${esc(h.fecha)} · Exp. ${esc(h.expediente)}</span>
+          <span class="hecho-titulo">${esc(sentence(h.titulo) || sentence(h.tipo))}</span>
+          ${h.titulo && h.tipo && h.titulo.toUpperCase() !== h.tipo.toUpperCase() ? `<span class="hecho-tipo">${esc(sentence(h.tipo))}</span>` : ""}</a></li>`).join("");
+      }
+</script>
 
   <!-- Auth -->
   <script src="/auth.js"></script>

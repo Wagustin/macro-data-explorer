@@ -4,7 +4,7 @@
   "rewrites": [
     { "source": "/empresa/:nemonico", "destination": "/empresa.html" }
   ],
-  "functions": { "server.js": { "includeFiles": "{*.html,*.js,*.css,*.txt,*.xml,*.png,*.ico,*.svg,*.webmanifest,assets/**,data/news-cache.json,data/empresas.json}" } },
+  "functions": { "server.js": { "includeFiles": "{*.html,*.js,*.css,*.txt,*.xml,*.png,*.ico,*.svg,*.webmanifest,assets/**,data/news-cache.json,data/empresas.json,data/smv-hechos.json}" } },
   "headers": [
     {
       "source": "/(.*)",

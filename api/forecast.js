@@ -317,6 +317,17 @@ function setCachedMemoryForecast(symbol, H, data) {
   memoryForecastCache.set(key, { data, cachedAt: Date.now() });
 }
 
+// Normal approximation in log space from P10-P90 (same as the Vercel API)
+function probRise(last, p) {
+  const sigma = (Math.log(p.p90) - Math.log(p.p10)) / (2 * 1.2816);
+  if (!(sigma > 0)) return p.p50 >= last ? 100 : 0;
+  const z = (Math.log(p.p50) - Math.log(last)) / sigma;
+  const t = 1 / (1 + 0.2316419 * Math.abs(z));
+  const d = 0.3989423 * Math.exp(-z * z / 2);
+  const tail = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+  return Number(((z >= 0 ? 1 - tail : tail) * 100).toFixed(1));
+}
+
 export function formatForecastPayload(row, symbol, H) {
   if (!row) return null;
   // If row is already formatted (e.g. from KV)
@@ -336,12 +347,15 @@ export function formatForecastPayload(row, symbol, H) {
   };
 
   const isTfm = row.model === "timesfm-2.5";
+  const isV4 = row.model === "perdata-engine-v4";
 
   return {
     symbol,
     model: row.model || (isTfm ? "timesfm-2.5" : "engine-v3"),
-    architecture: isTfm
-      ? "TimesFM 2.5 (Google, 200M PyTorch — batch diario en GPU)"
+    architecture: isV4
+      ? "PerData Engine v4 (TimesFM 2.5 de Google Research, Apache 2.0, + Engine v3; ensamble por horizonte)"
+      : isTfm
+      ? "TimesFM 2.5 (Google, 200M PyTorch)"
       : "PerData Engine v3 (tendencia amortiguada + reversión al ancla + abanico OU)",
     runAt: row.run_at,
     calibration: calibrationPayload,
@@ -354,7 +368,7 @@ export function formatForecastPayload(row, symbol, H) {
     expectedReturnPct,
     trend: expectedReturnPct >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
     volatilityAnnualized: Number(((Math.abs(expectedReturnPct) / Math.sqrt(H / 12))).toFixed(1)),
-    probabilityOfRise: predictedPrice >= lastClose ? 65.0 : 35.0,
+    probabilityOfRise: probRise(lastClose, { p10: Number(row.p10), p50: predictedPrice, p90: Number(row.p90) }),
     quantiles: {
       p10: Number(row.p10),
       p25: Number(row.p25),
@@ -365,7 +379,7 @@ export function formatForecastPayload(row, symbol, H) {
     metrics: {
       confidenceLevel: "80% (P10 - P90)",
       driftDirection: expectedReturnPct >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
-      modelArchitecture: isTfm ? "google/timesfm-2.5-200m-pytorch" : "engine-v3-precomputed",
+      modelArchitecture: isV4 ? "PerData Engine v4" : (isTfm ? "google/timesfm-2.5-200m-pytorch" : "engine-v3-precomputed"),
       batchRunAt: row.run_at
     },
     forecastSeries: row.path
@@ -377,7 +391,27 @@ export async function fetchPrecomputedForecast(symbol, H) {
   const mem = getCachedMemoryForecast(symbol, H);
   if (mem) return mem;
 
-  // 2. Cloudflare KV (PERDATA_KV)
+  // 2. PerData Engine v4 of today (Supabase, written by precompute-v4.js after the TimesFM batch)
+  const sbUrl = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
+  const sbKey = process.env.SUPABASE_SERVICE_KEY || "";
+  if (sbUrl && sbKey) {
+    try {
+      const r = await fetch(`${sbUrl}/rest/v1/forecasts?symbol=eq.${encodeURIComponent(symbol)}&horizon=eq.${H}&model=eq.perdata-engine-v4&select=*&limit=1`, {
+        headers: { apikey: sbKey, Authorization: `Bearer ${sbKey}` },
+        signal: AbortSignal.timeout(2000)
+      });
+      const rows = r.ok ? await r.json() : [];
+      if (rows[0] && (Date.now() - Date.parse(rows[0].run_at)) < 48 * 36e5) {
+        const payload = formatForecastPayload(rows[0], symbol, H);
+        setCachedMemoryForecast(symbol, H, payload);
+        return payload;
+      }
+    } catch (e) {
+      // Continuar con KV
+    }
+  }
+
+  // 3. Cloudflare KV (PERDATA_KV)
   const kv = globalThis.PERDATA_KV || globalThis.__PERDATA_KV__;
   if (kv && typeof kv.get === "function") {
     try {
