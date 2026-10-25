@@ -155,26 +155,36 @@ Devuelve SOLO un JSON con:
       console.error(`NIM ${model}: ${e.message}`);
     }
   }
-  // Fallback: Google Gemini (AI Studio), if a key is configured
-  if (process.env.GEMINI_API_KEY && deadline - Date.now() > 20000) {
+  // Fallback: Google Gemini (AI Studio), if a key is configured. Stable "flash" models first (previews often
+  // have no free quota), then the rest, until one answers.
+  if (process.env.GEMINI_API_KEY) {
+    const key = process.env.GEMINI_API_KEY;
+    let names = [];
     try {
-      const key = process.env.GEMINI_API_KEY;
       const list = await (await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`, { signal: AbortSignal.timeout(15000) })).json();
-      const model = (list.models || []).map((m) => m.name).filter((n) => /flash/i.test(n) && !/image|tts|audio|live|embedding/i.test(n)).sort().pop();
-      const g = await fetch(`https://generativelanguage.googleapis.com/v1beta/${model}:generateContent?key=${key}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.2, responseMimeType: "application/json" } }),
-        signal: AbortSignal.timeout(Math.min(60000, deadline - Date.now())),
-      });
-      if (!g.ok) throw new Error(`HTTP ${g.status}`);
-      const text = (await g.json()).candidates?.[0]?.content?.parts?.map((x) => x.text).join("") || "";
-      const out = JSON.parse(text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1));
-      for (const k of Object.keys(out)) out[k] = grounded(String(out[k] || ""), factsText);
-      console.log(`Interpretación: Gemini ${model}`);
-      return out;
-    } catch (e) {
-      console.error(`Gemini: ${e.message}`);
+      names = (list.models || []).filter((m) => (m.supportedGenerationMethods || []).includes("generateContent")).map((m) => m.name)
+        .filter((n) => /flash/i.test(n) && !/image|tts|audio|live|embedding|thinking/i.test(n));
+    } catch (e) {}
+    const rank = (n) => (/preview|exp/i.test(n) ? 2 : 0) + (/lite/i.test(n) ? 1 : 0);
+    names.sort((a, b) => rank(a) - rank(b) || b.localeCompare(a));
+    for (const model of names.slice(0, 5)) {
+      if (deadline - Date.now() < 15000) break;
+      try {
+        const g = await fetch(`https://generativelanguage.googleapis.com/v1beta/${model}:generateContent?key=${key}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.2, responseMimeType: "application/json" } }),
+          signal: AbortSignal.timeout(Math.min(60000, deadline - Date.now())),
+        });
+        if (!g.ok) throw new Error(`HTTP ${g.status}`);
+        const text = (await g.json()).candidates?.[0]?.content?.parts?.map((x) => x.text).join("") || "";
+        const out = JSON.parse(text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1));
+        for (const k of Object.keys(out)) out[k] = grounded(String(out[k] || ""), factsText);
+        console.log(`Interpretación: Gemini ${model}`);
+        return out;
+      } catch (e) {
+        console.error(`Gemini ${model}: ${e.message}`);
+      }
     }
   }
   console.error("Interpretación omitida: ningún modelo respondió");
