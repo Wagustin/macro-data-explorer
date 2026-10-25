@@ -14,7 +14,8 @@ const RAW = "https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main
 const FROM = process.env.BOLETIN_FROM || "PerData <boletin@perdata.site>";
 // Preferred NIM models, in order (catalog checked 25-Oct-2026); each available one is tried until one answers
 const NIM_PREFERRED = (process.env.NIM_MODEL ? [process.env.NIM_MODEL] : []).concat([
-  "z-ai/glm-5.3-flash", "z-ai/glm-5.3", "deepseek-ai/deepseek-v4.1-flash", "google/gemma-4-31b-it", "moonshotai/kimi-k2.6",
+  "nvidia/llama-3.1-nemotron-70b-instruct", "nv-mistralai/mistral-nemo-12b-instruct", "z-ai/glm-5.3",
+  "deepseek-ai/deepseek-v4.1-flash", "google/gemma-4-31b-it", "moonshotai/kimi-k2.6",
   "mistralai/mistral-large-2-instruct", "nvidia/nemotron-3-super-120b-a12b",
 ]);
 
@@ -129,7 +130,8 @@ Devuelve SOLO un JSON con:
         method: "POST",
         headers: { Authorization: `Bearer ${process.env.NVIDIA_API_KEY}`, "Content-Type": "application/json" },
         // Ask reasoning models to answer directly (each family reads its own flag; others ignore it)
-        body: JSON.stringify({ model, temperature: 0.2, max_tokens: 1200, messages: [{ role: "user", content: prompt }],
+        body: JSON.stringify({ model, temperature: 0.2, max_tokens: 2500,
+          messages: [{ role: "system", content: "Respondes solo con el JSON pedido, sin análisis previo ni texto adicional." }, { role: "user", content: prompt }],
           chat_template_kwargs: { thinking: false, enable_thinking: false } }),
         signal: AbortSignal.timeout(Math.min(150000, left)),
       });
