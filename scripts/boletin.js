@@ -12,7 +12,21 @@ const DRY = process.argv.includes("--dry-run");
 const SITE = "https://perdata.site";
 const RAW = "https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data";
 const FROM = process.env.BOLETIN_FROM || "PerData <boletin@perdata.site>";
-const NIM_MODEL = process.env.NIM_MODEL || "meta/llama-3.3-70b-instruct";
+// Preferred NIM models, in order; the first one the catalog still lists is used
+const NIM_PREFERRED = (process.env.NIM_MODEL ? [process.env.NIM_MODEL] : []).concat([
+  "deepseek-ai/deepseek-v4-pro", "deepseek-ai/deepseek-v3.2", "deepseek-ai/deepseek-v3.1", "qwen/qwen3-235b-a22b",
+  "meta/llama-4-maverick-17b-128e-instruct", "meta/llama-3.3-70b-instruct",
+]);
+
+async function pickModel(key) {
+  try {
+    const r = await fetch("https://integrate.api.nvidia.com/v1/models", { headers: { Authorization: `Bearer ${key}` }, signal: AbortSignal.timeout(15000) });
+    const ids = new Set(((await r.json()).data || []).map((m) => m.id));
+    return NIM_PREFERRED.find((m) => ids.has(m)) || [...ids].find((m) => /instruct|chat|deepseek|qwen/i.test(m)) || NIM_PREFERRED[0];
+  } catch (e) {
+    return NIM_PREFERRED[0];
+  }
+}
 // Sources we cite (headline + link). Aggregators, social networks and unknown sites are left out.
 const SOURCES = ["Agencia Andina", "Andina", "Gestión", "El Comercio", "RPP", "La República", "Infobae",
   "Semana Económica", "Bloomberg Línea", "Energiminas", "Rumbo Minero", "Mining.com", "Reuters", "BCRP", "SMV", "MEF", "INEI"];
@@ -106,13 +120,15 @@ Devuelve SOLO un JSON con:
  "mercados": "3 o 4 frases sobre los precios (dólar, cobre, oro, petróleo) y qué significa para el Perú, sin inventar causas",
  "empresas": "1 o 2 frases sobre los hechos de importancia de la SMV, o cadena vacía si no hay"}`;
   try {
+    const model = await pickModel(process.env.NVIDIA_API_KEY);
+    console.log(`Modelo NIM: ${model}`);
     const r = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${process.env.NVIDIA_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ model: NIM_MODEL, temperature: 0.2, max_tokens: 700, messages: [{ role: "user", content: prompt }] }),
-      signal: AbortSignal.timeout(60000),
+      body: JSON.stringify({ model, temperature: 0.2, max_tokens: 1500, messages: [{ role: "user", content: prompt }] }),
+      signal: AbortSignal.timeout(120000),
     });
-    if (!r.ok) throw new Error(`NIM HTTP ${r.status}`);
+    if (!r.ok) throw new Error(`NIM HTTP ${r.status} (${model})`);
     const text = (await r.json()).choices?.[0]?.message?.content || "";
     const out = JSON.parse(text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1));
     for (const k of Object.keys(out)) out[k] = grounded(String(out[k] || ""), factsText);
