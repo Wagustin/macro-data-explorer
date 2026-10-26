@@ -816,7 +816,7 @@
             <span class="text-[10px] font-semibold uppercase tracking-wider text-ink-soft">Modelo y econometría</span>
           </div>
           <span id="tsConfidence" class="font-mono tnum text-[11px] font-bold text-ink px-2.5 py-1 rounded bg-card border border-rule w-fit">
-            Confianza estimada: —
+            Cobertura del rango: —
           </span>
         </div>
         
@@ -1836,11 +1836,11 @@ const state = {
         // Render Quantitative Interpretation UI elements
         if (data.executiveTakeaway || data.interpretation) {
           const interp = data.interpretation || data;
-          document.getElementById("tsConfidence").textContent = `Confianza estimada: ${interp.confidencePercentage || (interp.calibratedConfidencePct + '%')}`;
-          document.getElementById("tsTakeaway").textContent = interp.executiveTakeaway || "Análisis interpretativo generado.";
+          document.getElementById("tsConfidence").textContent = `Cobertura del rango: ${interp.confidencePercentage || "80 %"}`;
+          document.getElementById("tsTakeaway").textContent = (interp.aiNote ? interp.aiNote + " " : "") + (interp.executiveTakeaway || "");
           document.getElementById("tsBeta").textContent = interp.macroSensitivity || "Moderada";
           document.getElementById("tsRegime").textContent = interp.regime || interp.marketRegime || "Cíclico";
-          document.getElementById("tsEngine").textContent = `${data.model || 'perdata-rules-1'}`;
+          document.getElementById("tsEngine").textContent = data.source || "PerData Engine v4";
         }
       } catch (err) {
         console.error("Error fetching interpretation:", err);
@@ -2312,7 +2312,7 @@ const state = {
         const p = state.primaryData;
         const m = state.macroData;
         const f = state.forecastData;
-        const interp = state.interpretationData?.interpretation;
+        const interp = state.interpretationData?.interpretation || state.interpretationData;
         if (!p || !p.series) return;
 
         const wb = XLSX.utils.book_new();
@@ -2346,7 +2346,7 @@ const state = {
           ["Volatilidad Anualizada:", f ? f.volatilityAnnualized + "%" : "N/A"],
           [],
           ["LECTURA AUTOMÁTICA (REGLAS PERDATA)"],
-          ["Confianza estimada:", interp ? interp.calibratedConfidencePct + "%" : "N/A"],
+          ["Cobertura del rango P10–P90:", interp ? (interp.confidencePercentage || "80 %") : "N/A"],
           ["Sensibilidad Macro:", interp ? interp.macroSensitivity : "N/A"],
           ["Régimen:", interp ? interp.marketRegime : "N/A"],
           ["Síntesis Ejecutiva:", interp ? interp.executiveTakeaway : "N/A"]

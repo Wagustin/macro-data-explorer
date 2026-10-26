@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: timesfm
@@ -50,3 +50,15 @@ jobs:
         run: python scripts/timesfm_batch.py
       - name: PerData Engine v4 (TimesFM + v3) para todos los activos
         run: node scripts/precompute-v4.js
+      - name: Nota del día por activo (IA)
+        continue-on-error: true
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node scripts/interpretations.js
+      - name: Guardar las notas
+        run: |
+          git config user.name "perdata-bot"
+          git config user.email "perdata-bot@users.noreply.github.com"
+          git add data/interpretaciones.json 2>/dev/null || true
+          git diff --cached --quiet || (git commit -m "data(notas): notas del día $(date -u +%F)" && git pull --rebase -q && git push)

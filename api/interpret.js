@@ -1,32 +1,43 @@
 /**
- * Quantitative Macro & Time-Series Semantic Interpretation Endpoint
- * Provides confidence scores, macro-sensitivity analysis, and verified executive summaries.
+ * PerData - Plain-language reading of a projection for the terminal.
+ * Uses only the numbers the page already shows (projection, P10-P90 range, correlation with the
+ * chosen comparison) and the coverage we actually measured in the backtest. No invented
+ * "regimes", betas or confidence scores, and no investment advice.
+ * When the daily AI note for the asset exists (data/interpretaciones.json, written by
+ * scripts/interpretations.js), it is added as `aiNote`.
  */
 
 import { applyCors, handleRateLimit } from "./_lib/ratelimit.js";
 
+const NOTES_URL = "https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data/interpretaciones.json";
+let notesCache = null; // { at, data }
+
+async function dailyNote(symbol) {
+  if (!notesCache || Date.now() - notesCache.at > 30 * 60 * 1000) {
+    try {
+      const r = await fetch(NOTES_URL, { signal: AbortSignal.timeout(3000) });
+      notesCache = { at: Date.now(), data: r.ok ? await r.json() : null };
+    } catch (e) {
+      notesCache = { at: Date.now(), data: notesCache?.data || null };
+    }
+  }
+  const d = notesCache.data;
+  if (!d || Date.now() - Date.parse(d.actualizado) > 48 * 36e5) return null;
+  return d.notas?.[symbol] ? { text: d.notas[symbol], model: d.modelo, date: d.actualizado } : null;
+}
+
+const fmt = (v) => (v >= 100 ? v.toFixed(0) : v >= 10 ? v.toFixed(2) : v.toFixed(3));
+
 export default async function handler(req, res) {
-  // CORS and Security Headers
   applyCors(req, res, "POST, GET, OPTIONS");
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  if (handleRateLimit(req, res)) {
-    return;
-  }
-
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (handleRateLimit(req, res)) return;
   res.setHeader("Cache-Control", "private, no-store");
 
   let body = {};
   if (req.method === "POST") {
     if (typeof req.body === "string") {
-      try {
-        body = JSON.parse(req.body);
-      } catch (e) {
-        body = {};
-      }
+      try { body = JSON.parse(req.body); } catch (e) { body = {}; }
     } else if (req.body) {
       body = req.body;
     }
@@ -35,111 +46,64 @@ export default async function handler(req, res) {
   }
 
   const symbol = String(body.symbol || "BVN").slice(0, 20).toUpperCase();
-  const assetName = String(body.name || (body.historical?.name) || symbol).slice(0, 100);
-  const macroSymbol = String(body.macroSymbol || "HG=F").slice(0, 20);
+  const assetName = String(body.name || body.historical?.name || symbol).slice(0, 100);
+  const macroSymbol = String(body.macroSymbol || "none").slice(0, 20);
   const macroName = String(body.macroName || macroSymbol).slice(0, 100);
-  const horizon = parseInt(body.horizon || 6, 10);
-  const correlation = typeof body.correlation === "number" ? body.correlation : (parseFloat(body.correlation) || 0.65);
-  const currentPrice = typeof body.currentPrice === "number" ? body.currentPrice : (body.historical?.series?.length > 0 ? body.historical.series[body.historical.series.length - 1].close : null);
-  const predictedPrice = typeof body.predictedPrice === "number" ? body.predictedPrice : (body.forecast?.predictedPrice || null);
-  const expectedReturnPct = typeof body.expectedReturnPct === "number" ? body.expectedReturnPct : (body.forecast?.expectedReturnPct ?? null);
-  const p10 = typeof body.p10 === "number" ? body.p10 : (body.forecast?.quantiles?.p10 || null);
-  const p90 = typeof body.p90 === "number" ? body.p90 : (body.forecast?.quantiles?.p90 || null);
+  const horizon = Math.max(1, Math.min(36, parseInt(body.horizon || 1, 10) || 1));
+  const corrRaw = typeof body.correlation === "number" ? body.correlation : parseFloat(String(body.correlation || "").replace(",", "."));
+  const correlation = Number.isFinite(corrRaw) ? corrRaw : null;
+  const f = body.forecast || {};
+  const q = f.quantiles || {};
+  const expectedReturnPct = Number.isFinite(f.expectedReturnPct) ? f.expectedReturnPct : null;
+  const p10 = Number(q.p10) || null;
+  const p50 = Number(q.p50 || f.predictedPrice) || null;
+  const p90 = Number(q.p90) || null;
+  const probRise = Number.isFinite(f.probabilityOfRise) ? f.probabilityOfRise : null;
+  const plazo = horizon === 1 ? "1 mes" : horizon === 12 ? "1 año" : `${horizon} meses`;
 
-  // Check if TypeSafe AI API Key is available in environment
-  const typesafeApiKey = process.env.TYPESAFE_API_KEY || process.env.JEV_API_KEY;
+  // Direction, said plainly (a small expected change is "sin una dirección clara")
+  let direction = "sin una dirección clara";
+  if (expectedReturnPct !== null && expectedReturnPct >= 1) direction = "al alza";
+  else if (expectedReturnPct !== null && expectedReturnPct <= -1) direction = "a la baja";
 
-  if (typesafeApiKey) {
-    try {
-      const response = await fetch("https://api.typesafe.ai/v1/models/jev/interpret", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${typesafeApiKey}`,
-          "Content-Type": "application/json",
-          "User-Agent": "PerDataExplorer/2.5"
-        },
-        body: JSON.stringify({
-          symbol,
-          assetName,
-          macroSymbol,
-          macroName,
-          horizonMonths: horizon,
-          metrics: {
-            correlation,
-            currentPrice,
-            predictedPrice,
-            expectedReturnPct,
-            p10,
-            p90
-          }
-        }),
-        signal: AbortSignal.timeout(5000)
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        return res.status(200).json({
-          source: "TypeSafe AI (Jev System One)",
-          calibratedConfidence: data.confidence || 0.892,
-          regime: data.regime || "Expansión Macroeconómica Moderada",
-          macroSensitivity: data.sensitivity || `Alta sensibilidad a variaciones de ${macroName}`,
-          executiveTakeaway: data.takeaway,
-          riskFactors: data.riskFactors || [],
-          timestamp: new Date().toISOString()
-        });
-      }
-    } catch (apiErr) {
-      // Graceful fallback to verified calibrated engine
-    }
+  const parts = [];
+  if (p50) {
+    parts.push(`Para dentro de ${plazo}, el valor más probable de ${assetName} según PerData Engine es ${fmt(p50)}` +
+      (expectedReturnPct !== null ? ` (${expectedReturnPct >= 0 ? "+" : ""}${expectedReturnPct.toFixed(1)} % frente a hoy), una proyección ${direction}.` : "."));
   }
-
-  // High-precision Deterministic Semantic Engine (System One Calibrated Logic)
-  // Calibrated confidence based on sample size, correlation strength, and volatility spread
-  const spreadPct = (p10 && p90 && currentPrice) ? ((p90 - p10) / currentPrice) : 0.25;
-  const absCorr = Math.abs(correlation);
-  let baseConfidence = 0.72 + (absCorr * 0.18) - Math.min(spreadPct * 0.15, 0.12);
-  baseConfidence = Math.max(0.68, Math.min(0.96, baseConfidence));
-
-  // Determine market regime & sensitivity
-  let regime = "Equilibrio Neutral con Baja Dispersión";
-  let sensitivityLevel = "Moderada";
-  let correlationNarrative = "correlación positiva sólida";
-
-  if (correlation > 0.7) {
-    regime = "Fase de Fuerte Tracción Macroeconómica Cíclica";
-    sensitivityLevel = "Muy Alta (Beta > 1.2)";
-    correlationNarrative = `fuerte acoplamiento estructural (${correlation >= 0 ? '+' : ''}${correlation.toFixed(2)}) con los ciclos de ${macroName}`;
-  } else if (correlation > 0.3) {
-    regime = "Dinámica Creciente de Expansión Industrial";
-    sensitivityLevel = "Media-Alta";
-    correlationNarrative = `correlación moderada positiva (${correlation >= 0 ? '+' : ''}${correlation.toFixed(2)}) con ${macroName}`;
-  } else if (correlation < -0.4) {
-    regime = "Comportamiento Defensivo / Cobertura de Divisa";
-    sensitivityLevel = "Inversa Significativa";
-    correlationNarrative = `relación inversa pronunciada (${correlation.toFixed(2)}) actuando como amortiguador de riesgo`;
+  if (p10 && p90) {
+    parts.push(`Con los mismos datos, el precio estaría entre ${fmt(p10)} y ${fmt(p90)} en 8 de cada 10 casos; un rango ancho significa que el activo se mueve mucho, no que el modelo falle.`);
   }
+  if (probRise !== null) parts.push(`De cada 10 escenarios simulados, unos ${Math.round(probRise / 10)} terminan por encima del precio de hoy.`);
 
-  const direction = (expectedReturnPct !== null && expectedReturnPct >= 0) ? "alcista" : "bajista / correctivo";
-  const returnStr = expectedReturnPct !== null ? `${expectedReturnPct >= 0 ? '+' : ''}${expectedReturnPct.toFixed(1)}%` : "estable";
+  let macroSensitivity = "Sin comparación elegida";
+  if (correlation !== null && macroSymbol !== "none") {
+    const a = Math.abs(correlation);
+    const strength = a >= 0.7 ? "fuerte" : a >= 0.4 ? "moderada" : a >= 0.2 ? "débil" : "casi nula";
+    const sense = correlation >= 0 ? "suelen moverse en la misma dirección" : "suelen moverse en direcciones opuestas";
+    macroSensitivity = `Relación ${strength} con ${macroName} (${correlation >= 0 ? "+" : ""}${correlation.toFixed(2)})`;
+    if (a >= 0.2) parts.push(`En el periodo del gráfico, ${assetName} y ${macroName} ${sense} (correlación ${correlation.toFixed(2)}); eso no significa que uno cause al otro.`);
+  }
+  parts.push("Es una proyección estadística, no una recomendación de inversión: no anticipa noticias, crisis ni cambios de reglas.");
 
-  const executiveTakeaway = `La proyección del modelo de PerData señala un sesgo ${direction} estimado en ${returnStr} a un horizonte de ${horizon} meses para ${assetName} (${symbol}). El activo exhibe un ${correlationNarrative}. El intervalo de confianza calibrado P10-P90 delimita un corredor de precios entre $${p10 ? p10.toFixed(2) : '-'} y $${p90 ? p90.toFixed(2) : '-'}, recomendando monitorear la persistencia de inventarios y tasas internacionales para validar el impulso proyectado.`;
-
-  const riskFactors = [
-    `Volatilidad macroeconómica asociada al precio de referencia en ${macroName}`,
-    `Incertidumbre temporal acumulativa a horizonte ${horizon}M en el percentil de cola P10`,
-    `Riesgo de liquidez y fluctuaciones cambiarias en la cotización subyacente`
-  ];
+  const note = await dailyNote(symbol);
 
   return res.status(200).json({
-    source: "PerData (lectura automática por reglas)",
-    model: "perdata-rules-1",
-    calibratedConfidence: Number(baseConfidence.toFixed(3)),
-    confidencePercentage: `${(baseConfidence * 100).toFixed(1)}%`,
-    regime,
-    macroSensitivity: `${sensitivityLevel} frente a ${macroName}`,
-    executiveTakeaway,
-    riskFactors,
-    calibrationMethod: "RLCD + Quantile Dispersion Verification",
+    source: note ? `PerData Engine v4 + nota del día redactada con IA (${note.model})` : "PerData Engine v4 (lectura automática de las cifras)",
+    model: note ? "perdata-v4+ai-note" : "perdata-plain-1",
+    // The one confidence figure we can stand behind: measured P10-P90 coverage in the backtest
+    calibratedConfidence: 0.8,
+    confidencePercentage: "80 % (cobertura medida del rango P10–P90)",
+    regime: expectedReturnPct === null ? "Sin proyección" : `Proyección ${direction}`,
+    macroSensitivity,
+    executiveTakeaway: parts.join(" "),
+    aiNote: note ? note.text : null,
+    riskFactors: [
+      "El modelo aprende del pasado: no anticipa noticias, elecciones ni cambios regulatorios.",
+      `A ${plazo} la incertidumbre es la del rango P10–P90; a más plazo, rango más ancho.`,
+      "Las acciones con poca negociación pueden tener saltos que el modelo no recoge bien."
+    ],
+    calibrationMethod: "Backtest de PerData Engine v4: 826 evaluaciones por horizonte, cobertura P10–P90 ≈ 80 %",
     timestamp: new Date().toISOString()
   });
 }
