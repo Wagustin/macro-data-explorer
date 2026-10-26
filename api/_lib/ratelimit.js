@@ -3,7 +3,7 @@
  * Zero external dependencies.
  */
 
-import { verifySession, extractToken } from "./session.js";
+import { decodeJwtClaims, extractToken } from "./session.js";
 
 const ALLOWED_ORIGIN_PATTERNS = [
   /^https:\/\/(www\.)?perdata\.site$/i,
@@ -67,15 +67,15 @@ export function getClientIp(req) {
 
 // In-memory per-IP buckets: `${ip}:${type}` -> { count, resetAt }
 const buckets = new Map();
+let lastCleanup = 0;
 
-// Periodic cleanup every 5 minutes
-const cleanupTimer = setInterval(() => {
-  const now = Date.now();
+function cleanupExpiredBuckets(now) {
+  if (now - lastCleanup < 60 * 1000) return;
+  lastCleanup = now;
   for (const [key, b] of buckets.entries()) {
     if (b.resetAt <= now) buckets.delete(key);
   }
-}, 5 * 60 * 1000);
-if (cleanupTimer.unref) cleanupTimer.unref();
+}
 
 /**
  * Per-IP rate limiter (120 req/min anon, 300 req/min with a Bearer token).
@@ -92,6 +92,7 @@ export function handleRateLimit(req, res) {
   // 120 req/min for anonymous, 300 req/min with a Bearer token
   const limit = hasAuthHint ? 300 : 120; // 120: en Perú muchos móviles comparten IP (CGNAT)
   const now = Date.now();
+  cleanupExpiredBuckets(now);
   const windowMs = 60 * 1000;
 
   const key = `${ip}:${hasAuthHint ? "auth" : "anon"}`;
@@ -107,7 +108,7 @@ export function handleRateLimit(req, res) {
     // If request had an auth hint and exceeded 300/min, verify session
     if (hasAuthHint) {
       const token = extractToken(req);
-      const claims = token ? verifySession(token) : null;
+      const claims = token ? decodeJwtClaims(token) : null;
       if (!claims) {
         // Invalid session, reject immediately with 429
         const retryAfter = Math.max(1, Math.ceil((bucket.resetAt - now) / 1000));

@@ -6,7 +6,7 @@
  */
 
 import { PLANS } from "./_lib/plans.js";
-import { updateUser } from "./_lib/users.js";
+import { updateUser, findUserById, findUserByEmail } from "./_lib/users.js";
 import { getAuthUser, sendJson, securityHeaders, readJsonBody } from "./_lib/session.js";
 import { stripe, STRIPE_ENABLED, PRICE_IDS, BOLETIN_PRICE_IDS } from "./_lib/stripe.js";
 
@@ -69,6 +69,11 @@ export default async function handler(req, res) {
     return sendJson(res, 503, { success: false, error: "El servicio de cuentas no está disponible. Intenta de nuevo." });
   }
   if (!user) return sendJson(res, 401, { success: false, code: "auth_required", error: "Inicia sesión para continuar." });
+  // The session only carries id, email, name and plan: load the billing fields (Stripe customer) from the DB
+  try {
+    const dbUser = (await findUserById(user.id)) || (await findUserByEmail(user.email));
+    if (dbUser) user = { ...user, dbId: dbUser.id, stripe_customer_id: dbUser.stripe_customer_id || null };
+  } catch (e) {}
 
   try {
     if (action === "checkout") {
@@ -131,6 +136,7 @@ async function ensureCustomer(user) {
     name: user.name || undefined,
     metadata: { user_id: user.id }
   });
-  await updateUser(user.id, { stripe_customer_id: customer.id });
+  // Older accounts keep their original row id in public.users, so update that row
+  await updateUser(user.dbId || user.id, { stripe_customer_id: customer.id });
   return customer.id;
 }

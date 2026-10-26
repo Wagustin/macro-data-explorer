@@ -45,17 +45,26 @@ async function supabase(method, query, body) {
   return json;
 }
 
+let _memoryUsers = [];
 function readLocal() {
   try {
-    const parsed = JSON.parse(fs.readFileSync(LOCAL_PATH, "utf-8"));
-    return Array.isArray(parsed) ? parsed : (parsed.users || []);
+    if (typeof fs?.readFileSync === "function") {
+      const parsed = JSON.parse(fs.readFileSync(LOCAL_PATH, "utf-8"));
+      return Array.isArray(parsed) ? parsed : (parsed.users || []);
+    }
   } catch (e) {
-    return [];
+    return _memoryUsers;
   }
+  return _memoryUsers;
 }
 
 function writeLocal(users) {
-  fs.writeFileSync(LOCAL_PATH, JSON.stringify({ users }, null, 2), "utf-8");
+  _memoryUsers = users;
+  try {
+    if (typeof fs?.writeFileSync === "function") {
+      fs.writeFileSync(LOCAL_PATH, JSON.stringify({ users }, null, 2), "utf-8");
+    }
+  } catch (e) {}
 }
 
 function assertStoreAvailable() {

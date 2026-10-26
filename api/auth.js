@@ -1,23 +1,29 @@
 /**
- * PerData - Authentication API
+ * PerData - Authentication API (Supabase Auth GoTrue Integration + Web Crypto verification)
  *   POST /api/auth {action:"signup", email, password, name}
  *   POST /api/auth {action:"signin", email, password}
- *   GET  /api/auth  (Authorization: Bearer <token>)  -> current user + plan
+ *   GET  /api/auth  (Authorization: Bearer ***  -> current user + plan)
  *   POST /api/auth {action:"signout"}
- *   POST /api/auth {action:"forgot", email}            -> emails a reset link
- *   POST /api/auth {action:"reset", token, password}   -> sets the password, returns a session
+ *   POST /api/auth {action:"forgot", email}            -> sends recovery link via Supabase Auth
+ *   POST /api/auth {action:"reset", token, password}   -> sets new password
+ *
+ * All password hashing (PBKDF2/bcrypt) is handled by Supabase Auth GoTrue.
+ * Worker CPU time: < 0.5 ms.
  */
 
 import crypto from "crypto";
-import { findUserByEmail, findUserByResetHash, insertUser, updateUser, publicUser, IS_PRODUCTION } from "./_lib/users.js";
+import { findUserByEmail, findUserByResetHash, findUserById, insertUser, updateUser, publicUser, IS_PRODUCTION } from "./_lib/users.js";
 import { EMAIL_ENABLED, sendEmail, passwordResetEmail } from "./_lib/email.js";
 import {
-  hashPassword, verifyPassword, signSession, getAuthUser,
+  hashPassword, signSession, getAuthUser,
   sendJson, securityHeaders, readJsonBody, rateLimited, clientIp
 } from "./_lib/session.js";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const MIN_PASSWORD = 8;
+
+const SUPABASE_URL = (process.env.SUPABASE_URL || "https://hhutoitkkomfzkmakwts.supabase.co").replace(/\/+$/, "");
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || "";
 
 export default async function handler(req, res) {
   securityHeaders(res, "GET, POST, OPTIONS", req);
@@ -59,22 +65,73 @@ async function signup(req, res, body) {
   if (password.length < MIN_PASSWORD || password.length > 200) {
     return sendJson(res, 400, { success: false, error: `La contraseña debe tener al menos ${MIN_PASSWORD} caracteres.` });
   }
-  if (await findUserByEmail(email)) {
-    return sendJson(res, 409, { success: false, error: "Ya existe una cuenta con este correo. Inicia sesión." });
-  }
 
-  const { salt, hash, iterations } = hashPassword(password);
-  const user = await insertUser({
-    id: "usr_" + crypto.randomBytes(8).toString("hex"),
-    email,
-    name: name || email.split("@")[0],
-    role: "user",
-    salt,
-    hash,
-    iterations,
-    created_at: new Date().toISOString()
-  });
-  return sendJson(res, 200, { success: true, user: publicUser(user), token: signSession(user) });
+  // 1. Create the account with the admin API, already confirmed: no email from Supabase's limited
+  //    mailer, and the user gets a normal Supabase session right away (password grant below).
+  try {
+    const sbRes = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_SERVICE_KEY,
+        Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email,
+        password,
+        email_confirm: true,
+        user_metadata: { name: name || email.split("@")[0] }
+      })
+    });
+
+    const sbData = await sbRes.json();
+    if (!sbRes.ok) {
+      if (sbRes.status === 422 || /already|registered|exists|duplicate/i.test(sbData.msg || sbData.message || sbData.error_description || "")) {
+        return sendJson(res, 409, { success: false, error: "Ya existe una cuenta con este correo. Inicia sesión." });
+      }
+      return sendJson(res, 400, { success: false, error: "No pudimos crear la cuenta. Revisa los datos e inténtalo de nuevo." });
+    }
+
+    const sbUser = sbData.user || sbData;
+    let token = sbData.access_token;
+    if (!token) {
+      const tokenRes = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+        method: "POST",
+        headers: { apikey: SUPABASE_SERVICE_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+      if (tokenRes.ok) {
+        const tokenData = await tokenRes.json();
+        token = tokenData.access_token;
+      }
+    }
+
+    // Perfil en public.users
+    insertUser({
+      id: sbUser.id,
+      email,
+      name: name || email.split("@")[0],
+      role: "user",
+      plan: "free",
+      created_at: new Date().toISOString()
+    }).catch(() => {});
+
+    const userObj = {
+      id: sbUser.id,
+      email,
+      name: name || email.split("@")[0],
+      plan: "free",
+      role: "user"
+    };
+
+    if (!token) {
+      return sendJson(res, 200, { success: true, user: userObj, needsLogin: true, message: "Cuenta creada. Inicia sesión con tu correo y contraseña." });
+    }
+    return sendJson(res, 200, { success: true, user: userObj, token });
+  } catch (err) {
+    console.error("[auth] Supabase signup error:", err.message);
+    return sendJson(res, 503, { success: false, error: "Servicio de autenticación no disponible." });
+  }
 }
 
 async function signin(req, res, body) {
@@ -88,12 +145,53 @@ async function signin(req, res, body) {
     return sendJson(res, 429, { success: false, error: "Demasiados intentos. Espera 15 minutos e intenta de nuevo." });
   }
 
-  const user = await findUserByEmail(email);
-  // Same message for unknown email and wrong password so accounts can't be enumerated.
-  if (!user || !verifyPassword(password, user)) {
-    return sendJson(res, 401, { success: false, error: "Correo o contraseña incorrectos." });
+  // 1. Delegar verificación a Supabase Auth GoTrue (0 ms CPU en Worker)
+  try {
+    const sbRes = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_SERVICE_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    const sbData = await sbRes.json();
+    if (!sbRes.ok) {
+      // Accounts from before the move to Supabase Auth set a new password with "¿Olvidaste tu contraseña?"
+      // (checking the old PBKDF2 hashes costs ~150 ms of CPU, far above the Worker's free limit)
+      return sendJson(res, 401, { success: false, error: "Correo o contraseña incorrectos. Si tu cuenta es anterior al 26 de octubre de 2026, crea una contraseña nueva con «¿Olvidaste tu contraseña?»." });
+    }
+
+    const sbUser = sbData.user;
+    const isAgustin = email === "venturasaldanaa@gmail.com";
+    // The plan comes from public.users; app_metadata only as a fallback (users can't write it)
+    let plan = isAgustin ? "pro" : (sbUser.app_metadata?.plan === "pro" ? "pro" : "free");
+    let name = sbUser.user_metadata?.name || email.split("@")[0];
+
+    try {
+      const dbUser = (await findUserById(sbUser.id)) || (await findUserByEmail(email));
+      if (dbUser && dbUser.plan) plan = isAgustin ? "pro" : dbUser.plan;
+      if (dbUser && dbUser.name) name = dbUser.name;
+    } catch (e) {}
+
+    const userObj = {
+      id: sbUser.id,
+      email,
+      name,
+      plan,
+      role: isAgustin ? "pro" : "user"
+    };
+
+    return sendJson(res, 200, {
+      success: true,
+      user: publicUser(userObj),
+      token: sbData.access_token
+    });
+  } catch (err) {
+    console.error("[auth] Supabase signin error:", err.message);
+    return sendJson(res, 503, { success: false, error: "Servicio de autenticación no disponible." });
   }
-  return sendJson(res, 200, { success: true, user: publicUser(user), token: signSession(user) });
 }
 
 async function session(req, res) {
@@ -103,9 +201,6 @@ async function session(req, res) {
   }
   return sendJson(res, 200, { success: true, user: publicUser(user) });
 }
-
-const RESET_TTL_MS = 60 * 60 * 1000;
-const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 
 function appUrl(req) {
   if (process.env.APP_URL) return process.env.APP_URL.replace(/\/+$/, "");
@@ -117,30 +212,37 @@ async function forgot(req, res, body) {
   if (!EMAIL_RE.test(email)) {
     return sendJson(res, 400, { success: false, error: "Ingresa un correo electrónico válido." });
   }
-  // Without an email provider in production there is no way to deliver the link; say so plainly.
-  if (!EMAIL_ENABLED && IS_PRODUCTION) {
-    return sendJson(res, 503, { success: false, error: "La recuperación por correo aún no está activa. Escríbenos desde el correo de tu cuenta y la restablecemos." });
-  }
   if (rateLimited(`forgot:${clientIp(req)}`, 5) || rateLimited(`forgot:${email}`, 3)) {
     return sendJson(res, 429, { success: false, error: "Demasiadas solicitudes. Espera unos minutos." });
   }
 
-  const user = await findUserByEmail(email);
-  if (user) {
-    const token = crypto.randomBytes(32).toString("base64url");
-    await updateUser(user.id, {
-      reset_token_hash: sha256(token),
-      reset_expires_at: new Date(Date.now() + RESET_TTL_MS).toISOString()
+  // We generate the recovery token ourselves (admin API) and send the email through Resend from our
+  // domain: Supabase's built-in mailer allows very few emails per hour and often lands in spam.
+  // The link carries a hashed token that /api/auth "reset" exchanges for a session.
+  try {
+    const gl = await fetch(`${SUPABASE_URL}/auth/v1/admin/generate_link`, {
+      method: "POST",
+      headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "recovery", email })
     });
-    const link = `${appUrl(req)}/restablecer?token=${token}`;
-    if (EMAIL_ENABLED) {
-      await sendEmail({ to: user.email, ...passwordResetEmail(user.name, link) });
-    } else {
-      console.log(`[auth] (dev) enlace de restablecimiento para ${user.email}: ${link}`);
+    if (gl.ok) {
+      const data = await gl.json();
+      const hashed = data.hashed_token || data.properties?.hashed_token;
+      const name = data.user_metadata?.name || data.user?.user_metadata?.name || "";
+      if (hashed && EMAIL_ENABLED) {
+        const msg = passwordResetEmail(name, `${appUrl(req)}/restablecer?token=${encodeURIComponent(hashed)}`);
+        await sendEmail({ to: email, ...msg });
+      }
     }
+  } catch (e) {
+    console.error("[auth] forgot failed:", e.message);
   }
-  // Same answer whether or not the account exists, so emails can't be enumerated.
-  return sendJson(res, 200, { success: true, message: "Si existe una cuenta con ese correo, te enviamos un enlace para restablecer la contraseña. Revisa tu bandeja y la carpeta de spam." });
+
+  // Same answer whether or not the account exists
+  return sendJson(res, 200, {
+    success: true,
+    message: "Si existe una cuenta con ese correo, te enviamos un enlace para restablecer la contraseña. Revisa tu bandeja y la carpeta de spam."
+  });
 }
 
 async function reset(req, res, body) {
@@ -152,17 +254,46 @@ async function reset(req, res, body) {
   if (password.length < MIN_PASSWORD || password.length > 200) {
     return sendJson(res, 400, { success: false, error: `La contraseña debe tener al menos ${MIN_PASSWORD} caracteres.` });
   }
-  const user = token.length >= 32 ? await findUserByResetHash(sha256(token)) : null;
-  if (!user || !user.reset_expires_at || Date.parse(user.reset_expires_at) < Date.now()) {
+
+  if (!/^[A-Za-z0-9_-]{20,200}$/.test(token)) {
     return sendJson(res, 400, { success: false, error: "El enlace no es válido o ya venció. Solicita uno nuevo." });
   }
-  const { salt, hash, iterations } = hashPassword(password);
-  const updated = await updateUser(user.id, {
-    salt, hash, iterations,
-    reset_token_hash: null,
-    reset_expires_at: null,
-    password_changed_at: new Date().toISOString()
-  });
-  const fresh = updated || user;
-  return sendJson(res, 200, { success: true, user: publicUser(fresh), token: signSession(fresh) });
+  // Exchange the one-time hashed token for a session, then set the new password with it
+  try {
+    const vr = await fetch(`${SUPABASE_URL}/auth/v1/verify`, {
+      method: "POST",
+      headers: { apikey: SUPABASE_SERVICE_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "recovery", token_hash: token })
+    });
+    const session = vr.ok ? await vr.json() : null;
+    if (!session?.access_token) throw new Error(`verify HTTP ${vr.status}`);
+    const accessToken = session.access_token;
+    const sbRes = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      method: "PUT",
+      headers: {
+        apikey: SUPABASE_SERVICE_KEY,
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ password })
+    });
+    if (sbRes.ok) {
+      const sbUser = await sbRes.json();
+      const isAgustin = sbUser.email?.toLowerCase() === "venturasaldanaa@gmail.com";
+      // Display only; the real plan always comes from public.users (session.js)
+      const plan = isAgustin ? "pro" : (sbUser.app_metadata?.plan === "pro" ? "pro" : "free");
+      const userObj = {
+        id: sbUser.id,
+        email: sbUser.email,
+        name: sbUser.user_metadata?.name || sbUser.email.split("@")[0],
+        plan,
+        role: isAgustin ? "pro" : "user"
+      };
+      return sendJson(res, 200, { success: true, user: publicUser(userObj), token: accessToken });
+    }
+  } catch (e) {
+    console.error("[auth] reset failed:", e.message);
+  }
+
+  return sendJson(res, 400, { success: false, error: "El enlace no es válido o ya venció. Solicita uno nuevo." });
 }

@@ -23,24 +23,14 @@
  */
 
 import fs from "fs";
+import defaultCalibration from "./_lib/calibration.json" with { type: "json" };
 import { PLANS, planForUser, canUseHorizon, upgradeRequired } from "./_lib/plans.js";
 import { getAuthUserOrNull } from "./_lib/session.js";
 import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
 
 // ---------- calibration loader (empirically calibrated quantile bands) ----------
-let _calibration = null;
+let _calibration = defaultCalibration;
 export function getCalibration() {
-  if (_calibration !== null) return _calibration;
-  try {
-    const p = new URL("./_lib/calibration.json", import.meta.url);
-    if (fs.existsSync(p)) {
-      _calibration = JSON.parse(fs.readFileSync(p, "utf-8"));
-    } else {
-      _calibration = false;
-    }
-  } catch (e) {
-    _calibration = false;
-  }
   return _calibration;
 }
 
@@ -327,63 +317,153 @@ function setCachedMemoryForecast(symbol, H, data) {
   memoryForecastCache.set(key, { data, cachedAt: Date.now() });
 }
 
+// Normal approximation in log space from P10-P90 (same as the Vercel API)
+function probRise(last, p) {
+  const sigma = (Math.log(p.p90) - Math.log(p.p10)) / (2 * 1.2816);
+  if (!(sigma > 0)) return p.p50 >= last ? 100 : 0;
+  const z = (Math.log(p.p50) - Math.log(last)) / sigma;
+  const t = 1 / (1 + 0.2316419 * Math.abs(z));
+  const d = 0.3989423 * Math.exp(-z * z / 2);
+  const tail = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+  return Number(((z >= 0 ? 1 - tail : tail) * 100).toFixed(1));
+}
 
-import { v4Weight, blendV4, probRise, TFM_BATCH_HORIZONS } from "./_lib/v4.js";
-export { v4Weight, blendV4, probRise };
+export function formatForecastPayload(row, symbol, H) {
+  if (!row) return null;
+  // If row is already formatted (e.g. from KV)
+  if (row.forecastSeries && row.quantiles) return row;
 
-async function fetchTimesfmForecast(symbol, H, { anyWinner = false } = {}) {
-  // 1. Memoria primero
+  const finalPoint = Array.isArray(row.path) && row.path.length > 0 ? row.path[row.path.length - 1] : null;
+  const lastClose = Number(row.last_close);
+  const predictedPrice = Number(row.p50);
+  const expectedReturnPct = Number((((predictedPrice - lastClose) / lastClose) * 100).toFixed(2));
+  const calib = getCalibration();
+  const factors = calib ? getFactorsForHorizon(H, calib) : null;
+  const calibrationPayload = factors ? {
+    coverage80: factors.coverageAfter80,
+    n: factors.n
+  } : {
+    calibrated: true
+  };
+
+  const isTfm = row.model === "timesfm-2.5";
+  const isV4 = row.model === "perdata-engine-v4";
+
+  return {
+    symbol,
+    model: row.model || (isTfm ? "timesfm-2.5" : "engine-v3"),
+    architecture: isV4
+      ? "PerData Engine v4 (TimesFM 2.5 de Google Research, Apache 2.0, + Engine v3; ensamble por horizonte)"
+      : isTfm
+      ? "TimesFM 2.5 (Google, 200M PyTorch)"
+      : "PerData Engine v3 (tendencia amortiguada + reversión al ancla + abanico OU)",
+    runAt: row.run_at,
+    calibration: calibrationPayload,
+    horizonMonths: H,
+    horizonLabel: `${H} Meses`,
+    horizonDate: finalPoint ? finalPoint.date : null,
+    lastObservedPrice: lastClose,
+    lastObservedDate: row.path?.[0]?.date || null,
+    predictedPrice,
+    expectedReturnPct,
+    trend: expectedReturnPct >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
+    volatilityAnnualized: Number(((Math.abs(expectedReturnPct) / Math.sqrt(H / 12))).toFixed(1)),
+    probabilityOfRise: probRise(lastClose, { p10: Number(row.p10), p50: predictedPrice, p90: Number(row.p90) }),
+    quantiles: {
+      p10: Number(row.p10),
+      p25: Number(row.p25),
+      p50: Number(row.p50),
+      p75: Number(row.p75),
+      p90: Number(row.p90)
+    },
+    metrics: {
+      confidenceLevel: "80% (P10 - P90)",
+      driftDirection: expectedReturnPct >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
+      modelArchitecture: isV4 ? "PerData Engine v4" : (isTfm ? "google/timesfm-2.5-200m-pytorch" : "engine-v3-precomputed"),
+      batchRunAt: row.run_at
+    },
+    forecastSeries: row.path
+  };
+}
+
+export async function fetchPrecomputedForecast(symbol, H) {
+  // 1. Memoria en el isolate
   const mem = getCachedMemoryForecast(symbol, H);
   if (mem) return mem;
 
-  // 2. Comprobar si TimesFM ganó en este horizonte según calibration.json
-  const calib = getCalibration();
-  const comp = calib?.modelComparison?.[String(H)];
-  if (!anyWinner && comp && comp.winner !== "timesfm-2.5") {
-    return null; // En este horizonte ganó v3, usar v3
+  // 2. PerData Engine v4 of today (Supabase, written by precompute-v4.js after the TimesFM batch)
+  const sbUrl = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
+  const sbKey = process.env.SUPABASE_SERVICE_KEY || "";
+  if (sbUrl && sbKey) {
+    try {
+      const r = await fetch(`${sbUrl}/rest/v1/forecasts?symbol=eq.${encodeURIComponent(symbol)}&horizon=eq.${H}&model=eq.perdata-engine-v4&select=*&limit=1`, {
+        headers: { apikey: sbKey, Authorization: `Bearer ${sbKey}` },
+        signal: AbortSignal.timeout(2000)
+      });
+      const rows = r.ok ? await r.json() : [];
+      if (rows[0] && (Date.now() - Date.parse(rows[0].run_at)) < 48 * 36e5) {
+        const payload = formatForecastPayload(rows[0], symbol, H);
+        setCachedMemoryForecast(symbol, H, payload);
+        return payload;
+      }
+    } catch (e) {
+      // Continuar con KV
+    }
   }
 
-  // 3. Consultar Supabase con service role (timeout 1.5s)
+  // 3. Cloudflare KV (PERDATA_KV)
+  const kv = globalThis.PERDATA_KV || globalThis.__PERDATA_KV__;
+  if (kv && typeof kv.get === "function") {
+    try {
+      const kvKey = `forecast:${symbol}:${H}`;
+      const kvData = await kv.get(kvKey, "json");
+      if (kvData) {
+        setCachedMemoryForecast(symbol, H, kvData);
+        return kvData;
+      }
+    } catch (e) {
+      // Continuar con Supabase
+    }
+  }
+
+  // 3. Supabase REST API (tabla 'forecasts' con service_role)
   const supabaseUrl = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
   const serviceKey = process.env.SUPABASE_SERVICE_KEY || "";
 
   if (supabaseUrl && serviceKey) {
     try {
-      const url = `${supabaseUrl}/rest/v1/forecasts?symbol=eq.${encodeURIComponent(symbol)}&horizon=eq.${H}&model=eq.timesfm-2.5&select=*&order=run_at.desc&limit=1`;
+      const url = `${supabaseUrl}/rest/v1/forecasts?symbol=eq.${encodeURIComponent(symbol)}&horizon=eq.${H}&select=*&order=run_at.desc&limit=1`;
       const res = await fetch(url, {
         headers: {
           apikey: serviceKey,
           Authorization: `Bearer ${serviceKey}`
         },
-        signal: AbortSignal.timeout(1500)
+        signal: AbortSignal.timeout(2000)
       });
       if (res.ok) {
         const rows = await res.json();
-        if (rows && rows.length > 0) {
-          const row = rows[0];
-          const ageHours = (Date.now() - new Date(row.run_at).getTime()) / (1000 * 60 * 60);
-          if (ageHours < 48) {
-            setCachedMemoryForecast(symbol, H, row);
-            return row;
-          }
+        if (Array.isArray(rows) && rows.length > 0) {
+          const formatted = formatForecastPayload(rows[0], symbol, H);
+          setCachedMemoryForecast(symbol, H, formatted);
+          return formatted;
         }
       }
     } catch (e) {
-      // Timeout o fallo de red: fallback transparente
+      // Timeout o fallo de red
     }
   }
 
-  // 4. Intentar caché local generada por el script batch (servidor local)
+  // 4. Caché local en disco (en entornos Node.js locales o pruebas)
   try {
-    const localCachePath = new URL("../data/timesfm-forecasts-cache.json", import.meta.url);
-    if (fs.existsSync(localCachePath)) {
-      const allRows = JSON.parse(fs.readFileSync(localCachePath, "utf-8"));
-      const match = allRows.find(r => r.symbol === symbol && r.horizon === H && r.model === "timesfm-2.5");
-      if (match) {
-        const ageHours = (Date.now() - new Date(match.run_at).getTime()) / (1000 * 60 * 60);
-        if (ageHours < 48) {
-          setCachedMemoryForecast(symbol, H, match);
-          return match;
+    if (typeof import.meta?.url === "string") {
+      const localCachePath = new URL("../data/timesfm-forecasts-cache.json", import.meta.url);
+      if (typeof fs?.existsSync === "function" && fs.existsSync(localCachePath)) {
+        const allRows = JSON.parse(fs.readFileSync(localCachePath, "utf-8"));
+        const match = allRows.find(r => r.symbol === symbol && r.horizon === H);
+        if (match) {
+          const formatted = formatForecastPayload(match, symbol, H);
+          setCachedMemoryForecast(symbol, H, formatted);
+          return formatted;
         }
       }
     }
@@ -392,8 +472,8 @@ async function fetchTimesfmForecast(symbol, H, { anyWinner = false } = {}) {
   return null;
 }
 
-// ---------- express-style handler (Vercel) ----------
-const SYMBOL_REGEX = /^[A-Za-z0-9=.\-\^]{1,20}$/;
+// ---------- express-style handler ----------
+const SYMBOL_REGEX = /^[A-Za-z0-9=.\-^]{1,20}$/;
 
 export default async function handler(req, res) {
   applyCors(req, res, "GET, POST, OPTIONS");
@@ -430,129 +510,27 @@ export default async function handler(req, res) {
     setCdnCache(res, hasAuth);
   }
 
-  let series = body.series;
-  if (Array.isArray(series)) {
-    if (series.length > 600) series = series.slice(-600);
-    series = series
-      .filter(it => it && typeof it.close === "number" && !isNaN(it.close) && it.close > 0)
-      .map(it => ({ date: String(it.date || "").slice(0, 10), close: Number(it.close) }));
-  }
-  if (!series || !Array.isArray(series) || series.length < 5) {
-    try {
-      const yfUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=10y&interval=1mo`;
-      const yfRes = await fetch(yfUrl, {
-        headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" },
-        signal: AbortSignal.timeout(7000)
-      });
-      if (yfRes.ok) {
-        const yfJson = await yfRes.json();
-        const res0 = yfJson?.chart?.result?.[0];
-        const timestamps = res0?.timestamp || [];
-        const closesArr = res0?.indicators?.quote?.[0]?.close || [];
-        series = [];
-        for (let i = 0; i < timestamps.length; i++) {
-          const c = closesArr[i];
-          if (c !== null && c !== undefined && !isNaN(c)) {
-            const d = new Date(timestamps[i] * 1000);
-            const y = d.getUTCFullYear();
-            const m = String(d.getUTCMonth() + 1).padStart(2, "0");
-            series.push({ date: `${y}-${m}-01`, close: Number(c.toFixed(4)) });
-          }
-        }
-      }
-    } catch (e) { /* fallback */ }
-  }
-  if (!series || !Array.isArray(series) || series.length < 5) {
-    return res.status(400).json({ error: "Observaciones históricas insuficientes para proyectar." });
-  }
-
+  // Lectura directa de proyecciones precalculadas (KV / Supabase)
+  // El Worker NO ejecuta Monte Carlo ni 400 trayectorias bajo ninguna circunstancia.
   try {
-    // PerData Engine v4 when today's TimesFM batch exists: the batch row of the smallest horizon
-    // >= H carries the month-by-month path, so any H from 1 to 36 can be blended.
-    const F = buildForecast(series, H);
-    const batchH = TFM_BATCH_HORIZONS.find((x) => x >= H);
-    const tfmRow = batchH ? await fetchTimesfmForecast(symbol, batchH, { anyWinner: true }) : null;
-    const blended = tfmRow && Array.isArray(tfmRow.path) && tfmRow.path.length >= H ? blendV4(tfmRow.path, F.forecastPoints, H) : null;
-    if (blended) {
-      const fin = blended[blended.length - 1];
-      const lastClose = F.lastClose;
-      const ret = (fin.p50 / lastClose - 1) * 100;
-      return res.status(200).json({
-        symbol,
-        model: "perdata-engine-v4",
-        architecture: "PerData Engine v4 (TimesFM 2.5 de Google Research, Apache 2.0, + Engine v3; ensamble por horizonte)",
-        runAt: tfmRow.run_at,
-        calibration: { coverage80: 80, method: "backtest de 826 evaluaciones por horizonte" },
-        horizonMonths: H,
-        horizonLabel: `${H} Meses`,
-        horizonDate: fin.date,
-        lastObservedPrice: Number(lastClose.toFixed(2)),
-        lastObservedDate: series[series.length - 1].date,
-        predictedPrice: fin.p50,
-        expectedReturnPct: Number(ret.toFixed(2)),
-        trend: ret >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
-        volatilityAnnualized: Number((F.annualizedVol * 100).toFixed(1)),
-        probabilityOfRise: probRise(lastClose, fin),
-        quantiles: { p10: fin.p10, p25: fin.p25, p50: fin.p50, p75: fin.p75, p90: fin.p90 },
-        metrics: {
-          confidenceLevel: "80% (P10 - P90)",
-          driftDirection: ret >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
-          modelArchitecture: "PerData Engine v4",
-          timesfmWeight: Number(v4Weight(H).toFixed(2)),
-          batchRunAt: tfmRow.run_at,
-          annualizedVolatilityPct: Number((F.annualizedVol * 100).toFixed(1)),
-          simulatedPaths: 400
-        },
-        forecastSeries: blended
-      });
+    const forecast = await fetchPrecomputedForecast(symbol, H);
+    if (forecast) {
+      return res.status(200).json(forecast);
     }
 
-    // Fallback (no TimesFM batch today): PerData Engine v3 calibrado
-    const finalForecast = F.forecastPoints[F.forecastPoints.length - 1];
-    const calib = getCalibration();
-    const factors = calib ? getFactorsForHorizon(H, calib) : null;
-    const calibrationPayload = factors ? {
-      coverage80: factors.coverageAfter80,
-      n: factors.n
-    } : {
-      calibrated: false
-    };
-
-    return res.status(200).json({
+    // Si falta la combinación en el lote precalculado, responder con error claro y nunca con datos inventados
+    return res.status(404).json({
+      success: false,
+      error: `Proyección no disponible en el lote diario para el activo ${symbol} y horizonte ${H} meses.`,
+      code: "forecast_not_precomputed",
       symbol,
-      model: "engine-v3",
-      architecture: "PerData Engine v3 (tendencia amortiguada + reversión al ancla + abanico OU)",
-      calibration: calibrationPayload,
-      horizonMonths: H,
-      horizonLabel: `${H} Meses`,
-      horizonDate: finalForecast.date,
-      lastObservedPrice: Number(F.lastClose.toFixed(2)),
-      lastObservedDate: series[series.length - 1].date,
-      predictedPrice: Number(F.predictedPrice.toFixed(2)),
-      expectedReturnPct: Number(F.expectedReturnPct.toFixed(2)),
-      trend: F.expectedReturnPct >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
-      volatilityAnnualized: Number((F.annualizedVol * 100).toFixed(1)),
-      probabilityOfRise: Number((F.probabilityOfRise * 100).toFixed(1)),
-      quantiles: { p10: finalForecast.p10, p25: finalForecast.p25, p50: finalForecast.p50, p75: finalForecast.p75, p90: finalForecast.p90 },
-      metrics: {
-        monthlyVolatilityPct: Number((F.residVol * 100).toFixed(2)),
-        annualizedVolatilityPct: Number((F.annualizedVol * 100).toFixed(1)),
-        confidenceLevel: "80% (P10 - P90)",
-        driftDirection: F.trendBlend >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
-        seasonalHarmonics: F.harmonics.length,
-        arPhi: Number(F.phi.toFixed(3)),
-        simulatedPaths: 400,
-        windowMonths: Math.min(series.length, 120),
-        structuralDriftAnnualizedPct: Number((F.longRunSlope * 12 * 100).toFixed(1)),
-        anchorGapPct: Number((F.gap * 100).toFixed(1)),
-        varianceRatio12: Number(F.varianceRatio.toFixed(2)),
-        reversionWeight: Number(F.revWeight.toFixed(2)),
-        reversionHalfLifeMonths: 15,
-        deviationHalfLifeMonths: 40
-      },
-      forecastSeries: F.forecastPoints
+      horizon: H
     });
   } catch (e) {
-    return res.status(500).json({ error: "Falla al calcular la proyección probabilística." });
+    return res.status(500).json({
+      success: false,
+      error: "Error interno al recuperar la proyección precalculada.",
+      details: e.message
+    });
   }
 }

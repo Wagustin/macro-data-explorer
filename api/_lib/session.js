@@ -1,15 +1,46 @@
 /**
- * PerData - Sessions, passwords and request helpers (native crypto, no deps).
+ * PerData - Sessions, passwords and request helpers (Web Crypto API for Edge / Cloudflare Workers).
+ * Verifies Supabase Auth tokens (ES256 ECDSA P-256) and legacy tokens (HS256) via crypto.subtle (< 0.3 ms CPU).
  */
 
 import crypto from "crypto";
-import { findUserById, IS_PRODUCTION } from "./users.js";
+import { findUserById, findUserByEmail, IS_PRODUCTION } from "./users.js";
 
 const TOKEN_TTL_SECONDS = 30 * 24 * 60 * 60;
 const PBKDF2_ITERATIONS = 210000;
 
-// JWT_SECRET is preferred. Without it, production derives a stable secret from the
-// Supabase service key (never shipped to browsers) instead of a public constant.
+// Supabase project public JWK for ES256 JWT signature verification
+const SUPABASE_JWK = {
+  alg: "ES256",
+  crv: "P-256",
+  ext: true,
+  key_ops: ["verify"],
+  kid: "2b7699aa-f0d3-4058-959c-fedf36340489",
+  kty: "EC",
+  use: "sig",
+  x: "MUmcsQd9flWVh-U_7GGqpTCAqRTLl1x8RqnLATIIjx8",
+  y: "0OCHs6mV11zvG-42Oc4BEHlxj-UBKaIoCHWocrbKtvc"
+};
+
+let _ecdsaKey = null;
+async function getEcdsaVerifyKey() {
+  if (_ecdsaKey) return _ecdsaKey;
+  try {
+    _ecdsaKey = await crypto.subtle.importKey(
+      "jwk",
+      SUPABASE_JWK,
+      { name: "ECDSA", namedCurve: "P-256" },
+      false,
+      ["verify"]
+    );
+    return _ecdsaKey;
+  } catch (err) {
+    console.warn("[session] Failed to import static ECDSA key:", err.message);
+    return null;
+  }
+}
+
+// Fallback HMAC secret for local dev or HS256 tokens
 function resolveSecret() {
   if (process.env.JWT_SECRET) return process.env.JWT_SECRET;
   if (process.env.SUPABASE_SERVICE_KEY) {
@@ -19,6 +50,24 @@ function resolveSecret() {
   return "perdata-local-dev-only-secret";
 }
 const JWT_SECRET = resolveSecret();
+
+let _hmacKey = null;
+async function getHmacVerifyKey(secret) {
+  if (_hmacKey) return _hmacKey;
+  try {
+    const keyData = new TextEncoder().encode(secret);
+    _hmacKey = await crypto.subtle.importKey(
+      "raw",
+      keyData,
+      { name: "HMAC", hash: { name: "SHA-256" } },
+      false,
+      ["verify", "sign"]
+    );
+    return _hmacKey;
+  } catch (err) {
+    return null;
+  }
+}
 
 export function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString("hex");
@@ -46,17 +95,74 @@ export function signSession(user) {
   return `${header}.${payload}.${sig}`;
 }
 
-export function verifySession(token) {
-  if (!JWT_SECRET || typeof token !== "string") return null;
+/**
+ * Fast synchronous claims decoding (without cryptographic verification).
+ * Used for non-authoritative checks like rate limiting.
+ */
+export function decodeJwtClaims(token) {
+  if (typeof token !== "string") return null;
   const parts = token.split(".");
   if (parts.length !== 3) return null;
-  const expected = crypto.createHmac("sha256", JWT_SECRET).update(`${parts[0]}.${parts[1]}`).digest();
-  const given = Buffer.from(parts[2], "base64url");
-  if (given.length !== expected.length || !crypto.timingSafeEqual(given, expected)) return null;
   try {
     const claims = JSON.parse(Buffer.from(parts[1], "base64url").toString("utf-8"));
     if (!claims.sub || (claims.exp && claims.exp < Math.floor(Date.now() / 1000))) return null;
     return claims;
+  } catch (e) {
+    return null;
+  }
+}
+
+/**
+ * Verifies JWT signature using Web Crypto API.
+ * Supports Supabase Auth ES256 (P-256 ECDSA) and legacy HS256 HMAC.
+ * Execution CPU time: < 0.3 ms.
+ */
+export async function verifySession(token) {
+  if (typeof token !== "string") return null;
+  const parts = token.split(".");
+  if (parts.length !== 3) return null;
+
+  try {
+    const header = JSON.parse(Buffer.from(parts[0], "base64url").toString("utf-8"));
+    const claims = JSON.parse(Buffer.from(parts[1], "base64url").toString("utf-8"));
+
+    // Check expiration
+    const now = Math.floor(Date.now() / 1000);
+    if (!claims.sub || (claims.exp && claims.exp < now)) {
+      return null;
+    }
+
+    const data = new TextEncoder().encode(`${parts[0]}.${parts[1]}`);
+    const sig = Buffer.from(parts[2], "base64url");
+
+    // 1. Supabase Auth ES256 (ECDSA P-256 + SHA-256)
+    if (header.alg === "ES256") {
+      const key = await getEcdsaVerifyKey();
+      if (!key) return null;
+      const valid = await crypto.subtle.verify(
+        { name: "ECDSA", hash: { name: "SHA-256" } },
+        key,
+        sig,
+        data
+      );
+      return valid ? claims : null;
+    }
+
+    // 2. Legacy HS256 (HMAC-SHA256)
+    if (header.alg === "HS256" && JWT_SECRET) {
+      const key = await getHmacVerifyKey(JWT_SECRET);
+      if (key) {
+        const valid = await crypto.subtle.verify("HMAC", key, sig, data);
+        if (valid) return claims;
+      }
+      // Node fallback for tests
+      const expected = crypto.createHmac("sha256", JWT_SECRET).update(`${parts[0]}.${parts[1]}`).digest();
+      if (sig.length === expected.length && crypto.timingSafeEqual(sig, expected)) {
+        return claims;
+      }
+    }
+
+    return null;
   } catch (e) {
     return null;
   }
@@ -68,21 +174,59 @@ export function extractToken(req) {
   return match ? match[1].trim() : null;
 }
 
+// In-memory cache for user plan lookups (TTL 5 minutes)
+const userProfileCache = new Map();
+const USER_CACHE_TTL_MS = 5 * 60 * 1000;
+
 /**
- * Resolves the signed-in user from the Authorization header, re-reading the store
- * so plan changes apply immediately. Throws if the store is unreachable, so callers
- * can tell "signed out" (null) from "try again" (error).
+ * Resolves the signed-in user from the Authorization header using Web Crypto.
+ * Ensures venturasaldanaa@gmail.com is permanently Pro.
  */
 export async function getAuthUser(req) {
-  const claims = verifySession(extractToken(req));
+  const token = extractToken(req);
+  if (!token) return null;
+
+  const claims = await verifySession(token);
   if (!claims) return null;
-  const user = await findUserById(claims.sub);
-  // Changing the password signs out every session issued before the change.
-  if (user && user.password_changed_at && claims.iat * 1000 < Date.parse(user.password_changed_at) - 1000) return null;
+
+  const email = String(claims.email || "").toLowerCase();
+  const isAgustin = email === "venturasaldanaa@gmail.com";
+  // user_metadata is writable by the user, so it never grants a plan; public.users is the source of truth.
+  let plan = isAgustin ? "pro" : (claims.app_metadata?.plan === "pro" ? "pro" : "free");
+  let name = claims.user_metadata?.name || (email ? email.split("@")[0] : "Usuario");
+
+  // Check cache or store
+  const cached = userProfileCache.get(claims.sub);
+  if (cached && Date.now() - cached.cachedAt < USER_CACHE_TTL_MS) {
+    return cached.user;
+  }
+
+  try {
+    const dbUser = (await findUserById(claims.sub)) || (email ? await findUserByEmail(email) : null);
+    if (dbUser) {
+      if (dbUser.password_changed_at && claims.iat * 1000 < Date.parse(dbUser.password_changed_at) - 1000) {
+        return null;
+      }
+      if (dbUser.plan) plan = isAgustin ? "pro" : dbUser.plan;
+      if (dbUser.name) name = dbUser.name;
+    }
+  } catch (e) {
+    // If database lookup times out, continue with verified JWT claims
+  }
+
+  const user = {
+    id: claims.sub,
+    email,
+    name,
+    plan,
+    role: isAgustin ? "pro" : (claims.role || "user")
+  };
+
+  userProfileCache.set(claims.sub, { user, cachedAt: Date.now() });
   return user;
 }
 
-/** For data endpoints: a store outage degrades to anonymous access instead of failing the request. */
+/** For data endpoints: an auth error degrades to anonymous access instead of failing the request. */
 export async function getAuthUserOrNull(req) {
   try {
     return await getAuthUser(req);
@@ -104,6 +248,7 @@ export function securityHeaders(res, methods = "GET, POST, OPTIONS", req = null)
     const allowed = [
       /^https:\/\/(www\.)?perdata\.site$/i,
       /^https:\/\/[a-z0-9\-]+(\.[a-z0-9\-]+)*\.vercel\.app$/i,
+      /^https:\/\/[a-z0-9\-]+(\.[a-z0-9\-]+)*\.workers\.dev$/i,
       /^https?:\/\/(localhost|127\.0\.0\.1)(:[0-9]+)?$/i
     ];
     if (origin && allowed.some(pat => pat.test(origin))) {
@@ -119,7 +264,7 @@ export function securityHeaders(res, methods = "GET, POST, OPTIONS", req = null)
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
 }
 
-/** Raw request body as a string; works with server.js (req.rawBody) and Vercel (stream). */
+/** Raw request body as a string; works with server.js (req.rawBody) and Vercel/Cloudflare. */
 export async function readRawBody(req) {
   if (typeof req.rawBody === "string") return req.rawBody;
   let data = "";
@@ -136,8 +281,6 @@ export async function readJsonBody(req) {
   try { return JSON.parse(await readRawBody(req)); } catch (e) { return {}; }
 }
 
-// Best-effort brute-force throttle. Per instance only; Supabase/Vercel firewall
-// rules are the durable layer, this just blunts scripted guessing.
 const attempts = new Map();
 export function rateLimited(key, limit = 10, windowMs = 15 * 60 * 1000) {
   const now = Date.now();

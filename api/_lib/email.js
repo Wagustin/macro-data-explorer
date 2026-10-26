@@ -27,12 +27,12 @@ export function passwordResetEmail(name, link) {
   return {
     subject: "Restablece tu contraseña de PerData",
     text: `${greeting}\n\nRecibimos una solicitud para restablecer tu contraseña. Abre este enlace (vence en 1 hora):\n\n${link}\n\nSi no fuiste tú, ignora este correo; tu contraseña no cambiará.\n\nPerData`,
-    html: `<div style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;max-width:480px;margin:0 auto;padding:24px;color:#0D2A1C">
-  <p style="font-weight:700;font-size:16px;margin:0 0 20px">PerData</p>
-  <p style="margin:0 0 12px">${greeting.replace(/</g, "&lt;")}</p>
-  <p style="margin:0 0 20px">Recibimos una solicitud para restablecer tu contraseña. El enlace vence en 1 hora.</p>
-  <p style="margin:0 0 24px"><a href="${link}" style="display:inline-block;background:#0D2A1C;color:#F6E016;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:6px">Elegir nueva contraseña</a></p>
-  <p style="margin:0;color:#5F6B64;font-size:13px">Si no fuiste tú, ignora este correo; tu contraseña no cambiará.</p>
-</div>`
+    html: `<div style="background:#F5F1E8;padding:28px 16px"><div style="max-width:480px;margin:0 auto;font-family:Helvetica,Arial,sans-serif;color:#1B1916">
+  <p style="font-family:Georgia,serif;font-style:italic;font-weight:600;font-size:26px;margin:0 0 20px">PerData</p>
+  <p style="margin:0 0 12px;font-size:16px">${greeting.replace(/</g, "&lt;")}</p>
+  <p style="margin:0 0 20px;font-size:16px;line-height:1.5">Recibimos una solicitud para restablecer tu contraseña. El enlace vence en 1 hora.</p>
+  <p style="margin:0 0 24px"><a href="${link}" style="display:inline-block;background:#1B1916;color:#F5F1E8;text-decoration:none;font-weight:600;padding:13px 24px">Elegir nueva contraseña</a></p>
+  <p style="margin:0;color:#5E584E;font-size:13px;line-height:1.5">Si no fuiste tú, ignora este correo; tu contraseña no cambiará.<br>Equipo de PerData</p>
+</div></div>`
   };
 }
