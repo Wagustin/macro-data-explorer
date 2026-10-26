@@ -6,7 +6,8 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { buildForecast, blendV4 } from "../api/forecast.js";
+import { buildForecast } from "../api/forecast.js";
+import { blendV4 } from "../api/_lib/v4.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const HORIZONS = [1, 3, 6, 12, 24, 36];
