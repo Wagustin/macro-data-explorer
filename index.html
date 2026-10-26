@@ -445,21 +445,21 @@
             <h3 class="pdl-h3">Datos de mercado, sin retoques</h3>
           </div>
           <div class="lg:col-span-5">
-            <p class="pdl-text">Las cotizaciones de acciones de la BVL y de EE.&nbsp;UU., metales, divisas y tasas vienen de Yahoo Finance; los indicadores de Perú (PBI, inflación), del Banco Mundial. Guardamos cierres diarios y mensuales tal como los publica la fuente.</p>
+            <p class="pdl-text">El dólar y los metales vienen del BCRP y el petróleo de la EIA de EE.&nbsp;UU., fuentes oficiales; las acciones de la BVL y de EE.&nbsp;UU., de Yahoo Finance; los hechos de importancia, de la SMV. Guardamos cierres diarios y mensuales tal como los publica cada fuente.</p>
             <p class="pdl-quote-sm">Si una fuente no responde, mostramos la última copia guardada y lo decimos.</p>
           </div>
-          <dl class="lg:col-span-3 pdl-facts"><div class="pdl-fact"><dt>Fuentes</dt><dd>Yahoo Finance · Banco Mundial</dd></div><div class="pdl-fact"><dt>Frecuencia</dt><dd>Cierres diarios y mensuales</dd></div><div class="pdl-fact"><dt>Ajustes a mano</dt><dd>Ninguno</dd></div></dl>
+          <dl class="lg:col-span-3 pdl-facts"><div class="pdl-fact"><dt>Fuentes</dt><dd>BCRP · EIA · SMV · Yahoo Finance</dd></div><div class="pdl-fact"><dt>Frecuencia</dt><dd>Cierres diarios y mensuales</dd></div><div class="pdl-fact"><dt>Ajustes a mano</dt><dd>Ninguno</dd></div></dl>
         </div>
         <div class="pdl-principle" data-reveal style="transition-delay:120ms">
           <div class="lg:col-span-4">
             <div class="pdl-num-row"><span class="pdl-num">02</span><span class="pdl-num-line"></span><span class="pdl-label">Modelo</span></div>
-            <h3 class="pdl-h3">Dos modelos, el que mejor acierta</h3>
+            <h3 class="pdl-h3">Dos modelos, combinados</h3>
           </div>
           <div class="lg:col-span-5">
-            <p class="pdl-text">A 1 mes usamos nuestro modelo estadístico (tendencia amortiguada, vuelta a su nivel de largo plazo y estacionalidad). De 3 a 36 meses, TimesFM 2.5 de Google, que en nuestras pruebas falla menos en esos plazos.</p>
+            <p class="pdl-text">PerData Engine v4 combina nuestro modelo estadístico (tendencia amortiguada, vuelta a su nivel de largo plazo y estacionalidad) con TimesFM 2.5 de Google. El peso de cada uno depende del plazo y salió de pruebas con unos 800 casos por horizonte: combinados fallan menos que cada uno por separado.</p>
             <p class="pdl-quote-sm">Cada proyección dice qué modelo la calculó.</p>
           </div>
-          <dl class="lg:col-span-3 pdl-facts"><div class="pdl-fact"><dt>1 mes</dt><dd>PerData Engine v3</dd></div><div class="pdl-fact"><dt>3 a 36 meses</dt><dd>TimesFM 2.5 (Google)</dd></div><div class="pdl-fact"><dt>Se recalcula</dt><dd>Cada día, 06:00 Lima</dd></div></dl>
+          <dl class="lg:col-span-3 pdl-facts"><div class="pdl-fact"><dt>Modelo</dt><dd>PerData Engine v4</dd></div><div class="pdl-fact"><dt>Base</dt><dd>Engine v3 + TimesFM 2.5 (Google)</dd></div><div class="pdl-fact"><dt>Se recalcula</dt><dd>Cada día, 06:00 Lima</dd></div></dl>
         </div>
         <div class="pdl-principle" data-reveal style="transition-delay:240ms">
           <div class="lg:col-span-4">
@@ -472,6 +472,26 @@
           </div>
           <dl class="lg:col-span-3 pdl-facts"><div class="pdl-fact"><dt>Cobertura a 1 mes</dt><dd>80&nbsp;%</dd></div><div class="pdl-fact"><dt>Cobertura a 6 meses</dt><dd>80&nbsp;%</dd></div><div class="pdl-fact"><dt>Casos de prueba</dt><dd>unos 800 por plazo</dd></div></dl>
         </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BOLETÍN -->
+    <section id="boletin" class="pdl-meth full-bleed" data-section-rule>
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 lg:py-20 grid gap-8 lg:grid-cols-2 lg:items-end" data-reveal>
+        <div>
+          <span class="pdl-label pdl-label-accent">Boletín</span>
+          <h2 class="pdl-h2 pdl-h2-lg">El mercado peruano, <em>cada mañana</em></h2>
+          <p class="pdl-lede">De lunes a viernes a las 06:00: el dólar, el cobre y el oro con fuentes oficiales, lo importante del día en notas propias con sus enlaces y los hechos de importancia de la SMV. Gratis.</p>
+        </div>
+        <div>
+          <form id="homeBoletinForm" class="flex flex-col sm:flex-row gap-3" novalidate>
+            <label for="homeBoletinEmail" class="sr-only">Tu correo</label>
+            <input id="homeBoletinEmail" type="email" required autocomplete="email" placeholder="tu@correo.com"
+              class="flex-1 min-w-0 px-0 py-3 bg-transparent text-ink" style="background:transparent !important;border-radius:0 !important;border:0 !important;border-bottom:2px solid var(--pd-ink) !important;font-family:var(--pd-font-serif,'Source Serif 4',Georgia,serif);font-size:20px;outline:none" />
+            <button type="submit" class="pdl-btn pdl-btn-primary">Suscribirme</button>
+          </form>
+          <p id="homeBoletinMsg" class="text-sm text-ink-soft mt-3" role="status">Te enviaremos un correo para confirmar. Con el plan Boletín (US$&nbsp;1.99 al mes) añades tus propias empresas. <a href="/boletin" class="pdl-link">Más detalles</a></p>
         </div>
       </div>
     </section>
@@ -489,6 +509,7 @@
         <ul class="pdl-perks">
           <li>Sin registro: proyecciones a 1 mes</li>
           <li>Cuenta gratuita: hasta 6 meses</li>
+          <li>Plan Boletín: tus empresas cada mañana</li>
           <li>Plan Pro: 36 meses, 10 años de historia y Excel</li>
         </ul>
       </div>
@@ -892,5 +913,22 @@
       <span>Mi cuenta</span>
     </a>
   </nav>
+<script>
+  (function () {
+    var form = document.getElementById("homeBoletinForm");
+    if (!form) return;
+    var msg = document.getElementById("homeBoletinMsg");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var btn = form.querySelector("button");
+      btn.disabled = true;
+      fetch("/api/boletin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: document.getElementById("homeBoletinEmail").value, origen: "portada" }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) { msg.textContent = d.mensaje || d.error || "Algo salió mal. Inténtalo más tarde."; if (d.ok) form.reset(); })
+        .catch(function () { msg.textContent = "No pudimos conectar. Inténtalo más tarde."; })
+        .finally(function () { btn.disabled = false; });
+    });
+  })();
+</script>
 </body>
 </html>
