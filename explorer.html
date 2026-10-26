@@ -544,7 +544,7 @@
 
         <!-- Switch Toggle Component -->
         <label class="ui-switch" title="Alternar modo claro / oscuro">
-          <input id="themeToggle" type="checkbox" />
+          <input id="themeToggle" type="checkbox" aria-label="Modo oscuro" />
           <div class="slider">
             <div class="circle"></div>
           </div>
@@ -629,7 +629,7 @@
               </div>
               <input 
                 type="text" 
-                id="companySearch" 
+                id="companySearch" aria-label="Buscar activo" 
                 autocomplete="off"
                 placeholder="Buscar activo — ej. Buenaventura, Volcan, Cobre..." 
                 class="w-full text-xs rounded-lg border transition"
@@ -673,7 +673,7 @@
                 </button>
               </div>
               <div id="customHorizonContainer" class="hidden items-center gap-1.5 bg-[#F5F5F7] dark:bg-[#141416] px-2 py-1 rounded-md border border-[#E5E5EA] dark:border-[#3A3A3C] transition-all">
-                <input id="customHorizonInput" type="number" min="1" max="36" value="18" placeholder="Meses">
+                <input id="customHorizonInput" aria-label="Horizonte en meses" type="number" min="1" max="36" value="18" placeholder="Meses">
                 <span class="text-[11px] font-medium text-ink-soft">meses</span>
                 <button id="btnApplyCustomHorizon" class="px-2.5 py-1 bg-black dark:bg-white text-white dark:text-black text-xs font-bold rounded-md hover:opacity-90 transition">
                   Calcular
@@ -769,11 +769,11 @@
       <div class="pd-terminal-panel p-3.5 sm:p-5">
         <!-- Mobile Tabs (Visible only on mobile <= 640px) -->
         <div class="chart-tabs sm:hidden" role="tablist" aria-label="Horizonte de proyección móvil">
-          <button type="button" class="chart-tab horizon-btn is-active active font-bold" data-horizon="1">1 MES</button>
-          <button type="button" class="chart-tab horizon-btn locked-option" data-horizon="3">3 MESES</button>
-          <button type="button" class="chart-tab horizon-btn locked-option" data-horizon="6">6 MESES</button>
-          <button type="button" class="chart-tab horizon-btn locked-option" data-horizon="12">1 AÑO</button>
-          <button type="button" class="chart-tab horizon-btn locked-option" id="btnCustomHorizonMobile" data-horizon="custom">OTRO</button>
+          <button type="button" role="tab" aria-selected="true" class="chart-tab horizon-btn is-active active font-bold" data-horizon="1">1 MES</button>
+          <button type="button" role="tab" aria-selected="false" class="chart-tab horizon-btn locked-option" data-horizon="3">3 MESES</button>
+          <button type="button" role="tab" aria-selected="false" class="chart-tab horizon-btn locked-option" data-horizon="6">6 MESES</button>
+          <button type="button" role="tab" aria-selected="false" class="chart-tab horizon-btn locked-option" data-horizon="12">1 AÑO</button>
+          <button type="button" role="tab" aria-selected="false" class="chart-tab horizon-btn locked-option" id="btnCustomHorizonMobile" data-horizon="custom">OTRO</button>
         </div>
         <div class="pd-terminal-header flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
           <div id="chartGlance" class="pd-chart-glance">
@@ -902,7 +902,7 @@
         <span class="text-ink-soft shrink-0">|</span>
         <div class="flex items-center gap-1.5 shrink-0">
           <span class="band-label uppercase font-bold text-[10px] text-ink-soft tracking-wider">Comparar:</span>
-          <select id="macroOverlayMobile" class="text-xs py-1 px-2 rounded border border-rule bg-surface text-ink font-sans focus:outline-none focus:ring-1 focus:ring-ink">
+          <select id="macroOverlayMobile" aria-label="Comparar con" class="text-xs py-1 px-2 rounded border border-rule bg-surface text-ink font-sans focus:outline-none focus:ring-1 focus:ring-ink">
             <option value="HG=F" selected>Cobre (COMEX)</option>
             <option value="GC=F">Oro</option>
             <option value="SI=F">Plata</option>
@@ -932,7 +932,7 @@
       <div class="relative w-full mt-2" id="searchContainerMobile">
         <input 
           type="text" 
-          id="companySearchMobile" 
+          id="companySearchMobile" aria-label="Buscar activo" 
           autocomplete="off"
           placeholder="Buscar activo (ej. Buenaventura, Dólar...)" 
           class="w-full text-xs rounded border border-rule bg-card text-ink px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-ink"
@@ -1534,6 +1534,7 @@ const state = {
       const h = typeof btn === "string" ? btn : (btn ? btn.getAttribute("data-horizon") : null);
       document.querySelectorAll(".horizon-btn").forEach(b => {
         const isMatch = h && b.getAttribute("data-horizon") === String(h);
+        if (b.getAttribute("role") === "tab") b.setAttribute("aria-selected", String(!!isMatch));
         if (isMatch) {
           b.classList.remove("text-ink-soft");
           b.classList.add("is-active", "active", "font-bold");

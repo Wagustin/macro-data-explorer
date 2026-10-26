@@ -301,7 +301,7 @@
       if (!container) return;
       const u = this.getUser();
       if (!u) {
-        container.innerHTML = '<button id="btnOpenAuthModal" type="button" class="pd-nav-btn">' + ICON_USER + "<span>Iniciar sesión</span></button>";
+        container.innerHTML = '<button id="btnOpenAuthModal" type="button" class="pd-nav-btn" aria-label="Iniciar sesión">' + ICON_USER + "<span>Iniciar sesión</span></button>";
         document.getElementById("btnOpenAuthModal").addEventListener("click", () => Auth.openModal());
         return;
       }
