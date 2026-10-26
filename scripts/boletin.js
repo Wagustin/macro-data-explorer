@@ -81,8 +81,8 @@ async function facts() {
   add("Petróleo WTI", "US$/barril", s.WTI?.serie);
   if (eia) add("Petróleo Brent", "US$/barril", eia.series.BRENT);
 
-  // SMV facts published in the last 2 days (covers the evening and night before)
-  const since = new Date(Date.now() - 2 * 864e5).toISOString().slice(0, 10);
+  // SMV facts published in the last 3 days (so Monday shows Friday evening's facts)
+  const since = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10);
   const smvFacts = [];
   for (const [nemo, list] of Object.entries(smv.hechos || {})) {
     for (const h of list) if (h.fecha >= since) smvFacts.push({ nemo, empresa: prettyName(nameOf[nemo] || nemo), ...h, titulo: sentence(h.titulo), tipo: sentence(h.tipo) });
