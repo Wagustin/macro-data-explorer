@@ -178,6 +178,14 @@ export default {
   },
 
   async route(request, env, ctx) {
+    // One canonical address for search engines: https and no www (permanent redirects)
+    const incoming = new URL(request.url);
+    if (incoming.hostname === "www.perdata.site" || (incoming.protocol === "http:" && incoming.hostname === "perdata.site")) {
+      incoming.protocol = "https:";
+      incoming.hostname = "perdata.site";
+      return Response.redirect(incoming.toString(), 301);
+    }
+
     if (env && typeof env === "object") {
       Object.assign(process.env, env);
       if (env.PERDATA_KV) {
