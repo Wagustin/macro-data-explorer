@@ -347,6 +347,17 @@ console.log(`Mercados: ${f.markets.length} · SMV: ${f.smvFacts.length} · titul
 
 if (!DRY) {
   if (!process.env.RESEND_API_KEY) throw new Error("Falta RESEND_API_KEY");
+  // One send per day (Lima): the scheduled run and the server's backup trigger can both fire,
+  // whichever comes first sends and the other stops. FORCE=true (manual tests) skips the check.
+  const today = new Date(Date.now() - 5 * 36e5).toISOString().slice(0, 10);
+  const LAST = new URL("../data/boletin-last.json", import.meta.url);
+  if (process.env.FORCE !== "true" && fs.existsSync(LAST)) {
+    const last = JSON.parse(fs.readFileSync(LAST, "utf8"));
+    if (last.date === today) {
+      console.log(`Ya se envió hoy (${last.sentAt}); no se repite`);
+      process.exit(0);
+    }
+  }
   // Recipients: confirmed subscribers (Supabase) plus BOLETIN_TO (the owner's copy, no unsubscribe token)
   const list = [];
   const base = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
@@ -406,4 +417,5 @@ if (!DRY) {
     sent += emails.slice(i, i + 100).length;
   }
   console.log(`Enviado a ${sent} destinatario(s)`);
+  if (process.env.FORCE !== "true") fs.writeFileSync(LAST, JSON.stringify({ date: today, sentAt: new Date().toISOString(), recipients: sent }) + "\n");
 }
