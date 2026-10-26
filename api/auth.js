@@ -66,9 +66,10 @@ async function signup(req, res, body) {
     return sendJson(res, 400, { success: false, error: `La contraseña debe tener al menos ${MIN_PASSWORD} caracteres.` });
   }
 
-  // 1. Delegar creación y hash a Supabase Auth GoTrue (0 ms CPU en Worker)
+  // 1. Create the account with the admin API, already confirmed: no email from Supabase's limited
+  //    mailer, and the user gets a normal Supabase session right away (password grant below).
   try {
-    const sbRes = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+    const sbRes = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
       method: "POST",
       headers: {
         apikey: SUPABASE_SERVICE_KEY,
@@ -78,16 +79,17 @@ async function signup(req, res, body) {
       body: JSON.stringify({
         email,
         password,
-        data: { name: name || email.split("@")[0], plan: "free" }
+        email_confirm: true,
+        user_metadata: { name: name || email.split("@")[0] }
       })
     });
 
     const sbData = await sbRes.json();
     if (!sbRes.ok) {
-      if (sbRes.status === 400 && /already registered|duplicate/i.test(sbData.msg || sbData.error_description || "")) {
+      if (sbRes.status === 422 || /already|registered|exists|duplicate/i.test(sbData.msg || sbData.message || sbData.error_description || "")) {
         return sendJson(res, 409, { success: false, error: "Ya existe una cuenta con este correo. Inicia sesión." });
       }
-      return sendJson(res, 400, { success: false, error: sbData.msg || sbData.error_description || "Error al registrar la cuenta." });
+      return sendJson(res, 400, { success: false, error: "No pudimos crear la cuenta. Revisa los datos e inténtalo de nuevo." });
     }
 
     const sbUser = sbData.user || sbData;
@@ -122,11 +124,10 @@ async function signup(req, res, body) {
       role: "user"
     };
 
-    return sendJson(res, 200, {
-      success: true,
-      user: userObj,
-      token: token || signSession(userObj)
-    });
+    if (!token) {
+      return sendJson(res, 200, { success: true, user: userObj, needsLogin: true, message: "Cuenta creada. Inicia sesión con tu correo y contraseña." });
+    }
+    return sendJson(res, 200, { success: true, user: userObj, token });
   } catch (err) {
     console.error("[auth] Supabase signup error:", err.message);
     return sendJson(res, 503, { success: false, error: "Servicio de autenticación no disponible." });
@@ -157,27 +158,19 @@ async function signin(req, res, body) {
 
     const sbData = await sbRes.json();
     if (!sbRes.ok) {
-      // Fallback a public.users local si aún no migró contraseña
-      const legacyUser = await findUserByEmail(email);
-      if (legacyUser && legacyUser.salt && legacyUser.hash) {
-        const { verifyPassword } = await import("./_lib/session.js");
-        if (verifyPassword(password, legacyUser)) {
-          const isAgustin = email === "venturasaldanaa@gmail.com";
-          const plan = isAgustin ? "pro" : (legacyUser.plan || "free");
-          const userObj = { ...legacyUser, plan, role: isAgustin ? "pro" : (legacyUser.role || "user") };
-          return sendJson(res, 200, { success: true, user: publicUser(userObj), token: signSession(userObj) });
-        }
-      }
-      return sendJson(res, 401, { success: false, error: "Correo o contraseña incorrectos." });
+      // Accounts from before the move to Supabase Auth set a new password with "¿Olvidaste tu contraseña?"
+      // (checking the old PBKDF2 hashes costs ~150 ms of CPU, far above the Worker's free limit)
+      return sendJson(res, 401, { success: false, error: "Correo o contraseña incorrectos. Si tu cuenta es anterior al 26 de octubre de 2026, crea una contraseña nueva con «¿Olvidaste tu contraseña?»." });
     }
 
     const sbUser = sbData.user;
     const isAgustin = email === "venturasaldanaa@gmail.com";
-    let plan = isAgustin ? "pro" : (sbUser.user_metadata?.plan || sbUser.app_metadata?.plan || "free");
+    // The plan comes from public.users; app_metadata only as a fallback (users can't write it)
+    let plan = isAgustin ? "pro" : (sbUser.app_metadata?.plan === "pro" ? "pro" : "free");
     let name = sbUser.user_metadata?.name || email.split("@")[0];
 
     try {
-      const dbUser = await findUserById(sbUser.id);
+      const dbUser = (await findUserById(sbUser.id)) || (await findUserByEmail(email));
       if (dbUser && dbUser.plan) plan = isAgustin ? "pro" : dbUser.plan;
       if (dbUser && dbUser.name) name = dbUser.name;
     } catch (e) {}
