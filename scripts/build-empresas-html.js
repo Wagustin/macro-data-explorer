@@ -426,6 +426,8 @@ html.dark .ui-switch {
       }
     })();
   </script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3342536112010915"
+     crossorigin="anonymous"></script>
 </head>
 <body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 

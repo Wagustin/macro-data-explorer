@@ -34,6 +34,7 @@ const FILES_TO_COPY = [
   "apple-touch-icon.png",
   "og-image.png",
   "robots.txt",
+  "ads.txt",
   "sitemap.xml",
   "tailwind.theme.json"
 ];
