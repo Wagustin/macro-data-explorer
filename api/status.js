@@ -24,11 +24,12 @@ async function latestForecastRun() {
   }
 }
 
-async function latestNews(origin) {
+// Reads the feed file the news job publishes (a Worker cannot fetch its own domain)
+async function latestNews() {
   try {
-    const r = await fetch(`${origin}/api/news`, { signal: AbortSignal.timeout(6000) });
+    const r = await fetch("https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data/noticias.json", { signal: AbortSignal.timeout(6000) });
     const d = await r.json();
-    return { updatedAt: d.updatedAt || null, ageHours: ageHours(d.updatedAt), count: d.count ?? null };
+    return { updatedAt: d.actualizado || null, ageHours: ageHours(d.actualizado), count: (d.noticias || []).length };
   } catch (e) {
     return { error: "news_unreachable" };
   }
@@ -37,10 +38,7 @@ async function latestNews(origin) {
 export default async function handler(req, res) {
   applyCors(req, res, "GET, OPTIONS");
   if (handleRateLimit(req, res)) return;
-  // Fixed origin (never the Host header), so this endpoint can't be pointed at another server
-  const origin = process.env.APP_URL
-    || (process.env.VERCEL_ENV === "production" ? "https://perdata.site" : `http://localhost:${process.env.PORT || 4321}`);
-  const [forecasts, news] = await Promise.all([latestForecastRun(), latestNews(origin)]);
+  const [forecasts, news] = await Promise.all([latestForecastRun(), latestNews()]);
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
