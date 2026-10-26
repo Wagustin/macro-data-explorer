@@ -763,6 +763,7 @@ ${rowsHtml}
 
   <!-- Auth -->
   <script src="/auth.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "bc9abca1e97b4bcaa6261b23afc498e5"}'></script>
 </body>
 </html>
 `;
