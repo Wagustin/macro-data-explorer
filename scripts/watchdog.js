@@ -90,6 +90,18 @@ const checks = [
     if (!(age <= 12)) throw new Error(`último resumen hace ${Math.round(age)} h`);
     return `${d.historias?.length || 0} historias, hace ${Math.round(age)} h (${d.modelo})`;
   }],
+  ["Boletín de hoy", async () => {
+    const lima = new Date(Date.now() - 5 * 36e5);
+    const weekday = lima.getUTCDay() >= 1 && lima.getUTCDay() <= 5;
+    const minutes = lima.getUTCHours() * 60 + lima.getUTCMinutes();
+    if (!weekday || minutes < 7 * 60 + 30) return "no toca revisar todavía";
+    const repo = process.env.GITHUB_REPOSITORY || "Wagustin/macro-data-explorer";
+    const r = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/boletin-last.json?t=${Date.now()}`, { signal: AbortSignal.timeout(15000) });
+    const d = r.ok ? await r.json() : {};
+    const today = lima.toISOString().slice(0, 10);
+    if (d.date !== today) throw new Error(`no se ha enviado hoy (último envío: ${d.date || "nunca"})`);
+    return `enviado a ${d.recipients} destinatario(s)`;
+  }],
 ];
 
 async function gh(method, path, body) {
