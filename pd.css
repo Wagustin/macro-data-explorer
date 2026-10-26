@@ -2091,3 +2091,33 @@ html.pd-motion.hero-ready [data-hero-seq="3"]  { opacity: 1; transform: translat
   .pd-plans { grid-template-columns: 1fr; }
   .pd-plans > .pd-plan + .pd-plan { border-left: 0; padding-left: 0; border-top: 1px solid var(--pd-rule); }
 }
+
+/* Publicidad (ads.js): oculta hasta que el script la activa; mismo lenguaje de filetes que el resto */
+.pd-ad { display: none; }
+.pd-ad.is-armed { display: block; height: 1px; }
+.pd-ad.is-armed.is-on { height: auto; }
+.pd-ad.is-on {
+  display: block;
+  margin: 28px 0;
+  padding: 10px 0 16px;
+  border-top: 1px solid var(--pd-rule);
+  border-bottom: 1px solid var(--pd-rule);
+}
+/* The next section already draws its top rule: no bottom rule here, except inside the news list */
+.pd-ad.is-on { border-bottom: 0; padding-bottom: 0; }
+#newsList > .pd-ad.is-on { margin: 0; border-top: 0; border-bottom: 1px solid var(--pd-rule); padding-bottom: 16px; }
+.pd-ad-label {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--pd-font-ui, "Libre Franklin", sans-serif);
+  font-size: 11px;
+  color: var(--pd-ink-soft);
+}
+.pd-ad-box { min-height: 250px; }
+.pd-ad-infeed .pd-ad-box { min-height: 120px; }
+.pd-ad-box.is-preview {
+  display: flex; align-items: center; justify-content: center;
+  background: var(--pd-surface);
+  font-family: var(--pd-font-ui, "Libre Franklin", sans-serif);
+  font-size: 13px; color: var(--pd-ink-soft);
+}

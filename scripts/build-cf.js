@@ -28,6 +28,7 @@ const FILES_TO_COPY = [
   "pd.css",
   "pd-chart.js",
   "motion.js",
+  "ads.js",
   "auth.js",
   "favicon.ico",
   "icon.svg",

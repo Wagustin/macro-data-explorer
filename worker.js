@@ -205,9 +205,34 @@ export default {
       return adaptedAuth(request, env, ctx);
     }
 
-    // Ficha de empresa: una sola página que lee el nemónico de la URL
-    if (/^\/empresa\/[^/]+\/?$/.test(pathname)) {
-      return env.ASSETS.fetch(new Request(new URL("/empresa", request.url).toString(), request));
+    // Ficha de empresa: one page that reads the ticker from the URL. The Worker writes the company's
+    // title, description and canonical into the HTML so search engines don't depend on JavaScript,
+    // and answers 404 for tickers that don't exist.
+    const fichaMatch = /^\/empresa\/([^/]+)\/?$/.exec(pathname);
+    if (fichaMatch) {
+      const nemo = decodeURIComponent(fichaMatch[1]).toUpperCase();
+      const page = await env.ASSETS.fetch(new Request(new URL("/empresa", request.url).toString(), request));
+      const issuer = await findIssuer(env, request, nemo);
+      if (!issuer) {
+        const nf = await env.ASSETS.fetch(new Request(new URL("/404.html", request.url).toString(), request));
+        return new Response(nf.body, { status: 404, headers: nf.headers });
+      }
+      const name = prettyName(issuer.razonSocial);
+      const title = `${name} (${nemo}): precio, proyección y hechos de importancia · PerData`;
+      const kind = SECTOR_PHRASE[String(issuer.sector || "").toUpperCase()] || "empresa";
+      const desc = `${name}, ${kind} que cotiza en la Bolsa de Valores de Lima: último precio, gráfico, proyección de PerData Engine y hechos de importancia de la SMV.`;
+      const url = `https://perdata.site/empresa/${encodeURIComponent(nemo)}`;
+      return new HTMLRewriter()
+        .on("title", { element(e) { e.setInnerContent(title); } })
+        .on('meta[name="description"]', { element(e) { e.setAttribute("content", desc); } })
+        .on("head", { element(e) {
+          e.append(`<link rel="canonical" href="${url}" />` +
+            `<meta property="og:title" content="${escapeAttr(title)}" />` +
+            `<meta property="og:description" content="${escapeAttr(desc)}" />` +
+            `<meta property="og:url" content="${url}" /><meta property="og:type" content="website" />` +
+            `<meta property="og:image" content="https://perdata.site/og-image.png" />`, { html: true });
+        } })
+        .transform(page);
     }
 
     // 2. Delegate to Static Assets (handles clean URLs, trailing slashes, etc.)
@@ -277,4 +302,32 @@ async function dispatchDueWorkflows(env) {
       console.error(`[cron] ${job.file}: ${e.message}`);
     }
   }
+}
+
+// ---- Company pages (SEO) ----
+let issuersCache = null;
+async function findIssuer(env, request, nemo) {
+  if (!issuersCache) {
+    const r = await env.ASSETS.fetch(new Request(new URL("/data/empresas.json", request.url).toString()));
+    issuersCache = r.ok ? ((await r.json()).emisores || []) : [];
+  }
+  return issuersCache.find((e) => (e.valores || []).some((v) => v.nemonico === nemo)) || null;
+}
+
+const SECTOR_PHRASE = {
+  "MINERAS": "empresa minera", "BANCOS Y FINANCIERAS": "entidad financiera", "INDUSTRIALES": "empresa industrial",
+  "SERVICIOS PÚBLICOS": "empresa de servicios públicos", "SEGUROS": "aseguradora", "AGRARIO": "empresa agraria",
+  "ADMINISTRADORAS DE FONDOS DE PENSIONES": "administradora de fondos de pensiones", "DIVERSAS": "empresa"
+};
+const KEEP_UPPER = new Set(["BBVA", "AFP", "BVL", "FTE", "IDE", "SEAL", "AIB", "XP", "OH!"]);
+const SMALL_WORDS = new Set(["de", "del", "la", "las", "los", "y", "e", "en"]);
+function prettyName(raw) {
+  return String(raw || "").trim().split(/\s+/).map((w, i) => {
+    if (KEEP_UPPER.has(w.toUpperCase()) || /^\(?([A-Za-z]\.){2,}[-)]*$/.test(w)) return w.toUpperCase();
+    const lw = w.toLowerCase();
+    return i > 0 && SMALL_WORDS.has(lw) ? lw : lw.replace(/(^|[-("])(\p{L})/gu, (m, a, b) => a + b.toUpperCase());
+  }).join(" ");
+}
+function escapeAttr(t) {
+  return String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 }

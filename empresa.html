@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title id="metaTitle">Ficha de Empresa · PerData</title>
-  <meta name="description" id="metaDesc" content="Ficha financiera, cotización en tiempo real, hechos de importancia y proyecciones cuantitativas en PerData." />
+  <meta name="description" id="metaDesc" content="Ficha de empresa de la Bolsa de Valores de Lima: último precio, gráfico, proyección y hechos de importancia de la SMV en PerData." />
 
   <!-- Favicon -->
   <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -170,6 +170,9 @@
       padding: 20px 16px;
       border-top: 1px solid var(--pd-rule);
     }
+    /* Ad slot aligned with the sections' inner padding */
+    .pd-ad-inset.is-on { margin-left: 16px; margin-right: 16px; }
+    @media (min-width: 768px) { .pd-ad-inset.is-on { margin-left: 28px; margin-right: 28px; } }
     .section-title {
       font-family: var(--pd-font-read);
       font-size: 18px;
@@ -455,6 +458,8 @@ html.dark .ui-switch {
             Ver todos en la SMV &rarr;
           </a>
         </div>
+
+        <div class="pd-ad pd-ad-inset" data-ad-kind="display"></div>
 
         <!-- Datos de la Empresa (SOLO del JSON) -->
         <div class="section">
@@ -833,5 +838,6 @@ html.dark .ui-switch {
   <!-- Auth -->
   <script src="/auth.js"></script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "bc9abca1e97b4bcaa6261b23afc498e5"}'></script>
+<script defer src="/ads.js"></script>
 </body>
 </html>
