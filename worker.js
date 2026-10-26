@@ -2,7 +2,7 @@ import searchHandler from "./api/search.js";
 import historicalHandler from "./api/historical.js";
 import forecastHandler from "./api/forecast.js";
 import interpretHandler from "./api/interpret.js";
-import newsHandler, { refreshNewsCache } from "./api/news.js";
+import newsHandler from "./api/news.js";
 import authHandler from "./api/auth.js";
 import billingHandler from "./api/billing.js";
 import stripeWebhookHandler from "./api/stripe-webhook.js";
@@ -227,15 +227,54 @@ export default {
     return assetResponse;
   },
 
+  // Every 30 minutes (wrangler.jsonc). GitHub's free scheduler delays or skips jobs, so the Worker
+  // starts the GitHub Actions workflows that are due and haven't run. Needs the GH_DISPATCH_TOKEN
+  // secret (fine-grained token, Actions read and write on this repository); without it, does nothing.
   async scheduled(event, env, ctx) {
-    if (env && typeof env === "object") {
-      Object.assign(process.env, env);
-      if (env.PERDATA_KV) {
-        globalThis.PERDATA_KV = env.PERDATA_KV;
-        globalThis.__PERDATA_KV__ = env.PERDATA_KV;
-      }
-    }
-    console.log("[cron] Running scheduled macro news refresh at", new Date().toISOString());
-    ctx.waitUntil(refreshNewsCache());
+    ctx.waitUntil(dispatchDueWorkflows(env));
   }
 };
+
+const REPO = "Wagustin/macro-data-explorer";
+// due(now): whether the job should have run by now; minGapMin: don't start it again if it ran this recently
+const JOBS = [
+  { file: "watchdog.yml", minGapMin: 55, due: () => true },
+  { file: "news.yml", minGapMin: 170, due: () => true },
+  { file: "smv.yml", minGapMin: 350, due: () => true },
+  { file: "timesfm.yml", minGapMin: 1200, due: (d) => d.getUTCHours() >= 11 },
+  { file: "official-data.yml", minGapMin: 600, due: (d) => d.getUTCHours() >= 22 && d.getUTCDay() >= 1 && d.getUTCDay() <= 5 },
+  // Newsletter: weekdays from 05:50 Lima until noon, only if today's send isn't recorded yet
+  { file: "boletin.yml", minGapMin: 25, due: (d) => {
+      const lima = new Date(d.getTime() - 5 * 36e5);
+      const mins = lima.getUTCHours() * 60 + lima.getUTCMinutes();
+      return lima.getUTCDay() >= 1 && lima.getUTCDay() <= 5 && mins >= 350 && mins <= 720;
+    }, check: async (d) => {
+      const today = new Date(d.getTime() - 5 * 36e5).toISOString().slice(0, 10);
+      const r = await fetch(`https://raw.githubusercontent.com/${REPO}/main/data/boletin-last.json?t=${d.getTime()}`);
+      return !(r.ok && (await r.json()).date === today);
+    } },
+];
+
+async function dispatchDueWorkflows(env) {
+  const token = env && env.GH_DISPATCH_TOKEN;
+  if (!token) return;
+  const gh = (path, init = {}) => fetch(`https://api.github.com/repos/${REPO}${path}`, {
+    ...init,
+    headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "User-Agent": "perdata-worker", ...(init.headers || {}) },
+  });
+  const now = new Date();
+  for (const job of JOBS) {
+    try {
+      if (!job.due(now)) continue;
+      if (job.check && !(await job.check(now))) continue;
+      const runs = await (await gh(`/actions/workflows/${job.file}/runs?per_page=1`)).json();
+      const last = runs.workflow_runs && runs.workflow_runs[0];
+      const ageMin = last ? (now - Date.parse(last.created_at)) / 60000 : Infinity;
+      if (ageMin < job.minGapMin) continue;
+      const r = await gh(`/actions/workflows/${job.file}/dispatches`, { method: "POST", body: JSON.stringify({ ref: "main" }) });
+      console.log(`[cron] ${job.file}: last run ${Math.round(ageMin)} min ago -> dispatch ${r.status}`);
+    } catch (e) {
+      console.error(`[cron] ${job.file}: ${e.message}`);
+    }
+  }
+}
