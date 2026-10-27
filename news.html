@@ -424,12 +424,16 @@
         const targetUrl = sym ? `/explorer?symbol=${encodeURIComponent(sym)}` : "/explorer";
         const sourceUrl = /^https?:\/\//.test(n.url || "") ? n.url : "https://news.google.com";
         const cat = escapeHTML(n.category || n.impact || "Mercados");
+        const sentimentLabels = { POSITIVO: "Positiva", NEGATIVO: "Negativa", NEUTRO: "Neutra" };
+        const sentiment = sentimentLabels[n.sentimiento] || "";
+        const companies = Array.isArray(n.empresas) ? n.empresas.filter(symbol => /^[A-Z0-9.-]{1,20}$/.test(symbol)) : [];
         return `
           <article class="py-3.5 border-b border-rule flex items-baseline justify-between gap-4">
             <div class="min-w-0 flex-grow">
               <a href="${escapeHTML(sourceUrl)}" target="_blank" rel="noopener noreferrer" class="block font-semibold text-[17px] text-ink leading-snug no-underline hover:underline">
                 ${escapeHTML(title)}
               </a>
+              ${sentiment || companies.length ? `<div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-ink-soft">${sentiment ? `<span>${escapeHTML(sentiment)}</span>` : ""}${companies.map(symbol => `<a href="/empresa/${encodeURIComponent(symbol)}" class="mono tnum text-ink-soft hover:text-ink hover:underline">${escapeHTML(symbol)}</a>`).join("")}</div>` : ""}
               <div class="mt-1 flex flex-wrap items-center gap-2 text-xs text-ink-soft">
                 <span>${cat}</span>
                 <span>·</span>

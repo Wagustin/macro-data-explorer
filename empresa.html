@@ -673,9 +673,7 @@ html.dark .ui-switch {
         if (hasYahoo) {
           pm.textContent = "…";
         } else {
-          pm.innerHTML = '<a href="https://www.bvl.com.pe" target="_blank" rel="noopener" class="underline underline-offset-4">Ver precio en la BVL</a>';
-          pm.style.fontSize = "20px";
-          const pv = document.getElementById("priceVar"); if (pv) pv.classList.add("hidden");
+          pm.textContent = "…";
         }
         document.getElementById("priceDate").textContent = hasYahoo
           ? ""
@@ -691,13 +689,12 @@ html.dark .ui-switch {
           // Fetch live price & 90-day history from /api/historical
           fetchHistorical(primaryValor.yahoo, primaryValor.moneda);
         } else {
-          // No market data: Hide projection button, show disabled note and BVL notice
+          // Keep projections disabled while checking for SMV historical quotes.
           document.getElementById("btnProyeccion").classList.add("hidden");
           document.getElementById("proyeccionDisabled").classList.remove("hidden");
           document.getElementById("noYahooNotice").classList.remove("hidden");
-          document.getElementById("chartSection").classList.add("hidden");
-          document.getElementById("chartEmptyText").classList.remove("hidden");
-          document.getElementById("chartLabel").textContent = "Sin historial de precios disponible";
+          document.getElementById("chartLabel").textContent = "Historial SMV · Cierre mensual";
+          fetchHistorical(`${primaryValor.nemonico}.LM`, primaryValor.moneda, true);
         }
 
         loadHechos(primaryValor.nemonico);
@@ -718,11 +715,39 @@ html.dark .ui-switch {
         loadingState.innerHTML = `<p class="text-sm text-neg">Error al cargar la ficha: ${err.message}</p>`;
       }
 
-      async function fetchHistorical(symbol, defaultMoneda) {
+      async function fetchHistorical(symbol, defaultMoneda, smvFallback = false) {
         try {
-          const res = await fetch(`/api/historical?symbol=${encodeURIComponent(symbol)}&range=3mo&interval=1d`);
+          const range = smvFallback ? "1y" : "3mo";
+          const interval = smvFallback ? "1mo" : "1d";
+          const res = await fetch(`/api/historical?symbol=${encodeURIComponent(symbol)}&range=${range}&interval=${interval}`);
           if (!res.ok) return;
           const data = await res.json();
+
+          if (smvFallback) {
+            const points = Array.isArray(data.series) ? data.series.filter(point => Number.isFinite(Number(point.close)) && Number(point.close) > 0) : [];
+            if (points.length) {
+              const lastPt = points[points.length - 1];
+              const previousPt = points.length > 1 ? points[points.length - 2] : null;
+              const close = Number(lastPt.close);
+              const currency = defaultMoneda === "US$" ? "US$" : "S/";
+              document.getElementById("priceMain").textContent = `${currency} ${close.toFixed(close < 1 ? 3 : 2)}`;
+              document.getElementById("priceDate").textContent = `Fuente: SMV · Cierre ${lastPt.date || ""}`;
+              document.getElementById("noYahooNotice").classList.add("hidden");
+              const varEl = document.getElementById("priceVar");
+              if (previousPt) {
+                const changePct = ((close - Number(previousPt.close)) / Number(previousPt.close)) * 100;
+                varEl.classList.remove("pos", "neg", "none", "hidden");
+                varEl.classList.add(changePct > 0 ? "pos" : changePct < 0 ? "neg" : "none");
+                varEl.textContent = `${changePct > 0 ? "+" : ""}${changePct.toFixed(2)}%`;
+              } else {
+                varEl.classList.add("hidden");
+              }
+              if (points.length >= 2) renderChart(points);
+              else document.getElementById("chartEmptyText").classList.remove("hidden");
+              document.getElementById("chartLabel").textContent = "Historial SMV · Cierre mensual";
+            }
+            return;
+          }
 
           // Update live price if present
           if (data.live && typeof data.live.price === "number") {

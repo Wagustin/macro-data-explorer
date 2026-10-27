@@ -3,6 +3,7 @@ import path from "path";
 import dns from "node:dns";
 import { fileURLToPath } from "url";
 import defaultNewsCache from "../data/news-cache.json" with { type: "json" };
+import newsAnalysis from "../data/noticias-laya.json" with { type: "json" };
 import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
 
 // Prioritize IPv4 for DNS resolution in Node to prevent RSS fetch timeouts
@@ -486,7 +487,12 @@ async function ownFeed() {
     if (!d.actualizado || Date.now() - Date.parse(d.actualizado) > 24 * 36e5) throw new Error("feed antiguo");
     const news = (d.noticias || []).slice(0, 80).map((n) => {
       const ts = Date.parse(n.fecha_iso) || Date.now();
-      return { id: n.id, title: n.titulo, source: n.fuente, url: n.url, timestamp: ts, time: agoLabel(ts), category: n.categoria, impact: n.categoria, impactColor: "emerald" };
+      const analysis = newsAnalysis.items?.[n.id];
+      const sentimiento = ["POSITIVO", "NEGATIVO", "NEUTRO"].includes(analysis?.sentimiento) ? analysis.sentimiento : null;
+      const empresas = Array.isArray(analysis?.empresas)
+        ? analysis.empresas.filter((symbol) => typeof symbol === "string" && /^[A-Z0-9.-]{1,20}$/.test(symbol))
+        : [];
+      return { id: n.id, title: n.titulo, source: n.fuente, url: n.url, timestamp: ts, time: agoLabel(ts), category: n.categoria, impact: n.categoria, impactColor: "emerald", sentimiento, empresas };
     });
     const value = news.length ? { news, updatedAt: d.actualizado } : null;
     feedCache = { at: Date.now(), value };
