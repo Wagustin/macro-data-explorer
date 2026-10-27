@@ -266,6 +266,8 @@ const JOBS = [
   { file: "watchdog.yml", minGapMin: 55, due: () => true },
   { file: "news.yml", minGapMin: 170, due: () => true },
   { file: "smv.yml", minGapMin: 350, due: () => true },
+  // Lima closes (SMV) overnight, Tuesday to Saturday UTC, before the daily model run at 11:00 UTC
+  { file: "smv-precios.yml", minGapMin: 600, due: (d) => d.getUTCHours() >= 1 && d.getUTCHours() < 10 && d.getUTCDay() >= 2 && d.getUTCDay() <= 6 },
   { file: "timesfm.yml", minGapMin: 1200, due: (d) => d.getUTCHours() >= 11 },
   { file: "official-data.yml", minGapMin: 600, due: (d) => d.getUTCHours() >= 22 && d.getUTCDay() >= 1 && d.getUTCDay() <= 5 },
   // Newsletter: weekdays from 05:50 Lima until noon, only if today's send isn't recorded yet

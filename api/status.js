@@ -1,5 +1,5 @@
 /**
- * PerData - Public status for the watchdog: how fresh the forecasts and the news are.
+ * PerData - Public status for the watchdog: how fresh the forecasts, the news and the Lima closes are.
  * No user data and no secrets, only timestamps and ages in hours.
  */
 import { applyCors, handleRateLimit } from "./_lib/ratelimit.js";
@@ -24,6 +24,24 @@ async function latestForecastRun() {
   }
 }
 
+// Latest Lima close stored from the SMV (fetch-smv-precios.js)
+async function latestSmvClose() {
+  const base = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
+  const key = process.env.SUPABASE_SERVICE_KEY || "";
+  if (!base || !key) return { error: "supabase_not_configured" };
+  try {
+    const r = await fetch(`${base}/rest/v1/cotizaciones_smv?select=fecha&order=fecha.desc&limit=1`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      signal: AbortSignal.timeout(4000),
+    });
+    if (!r.ok) return { error: `supabase_${r.status}` };
+    const fecha = (await r.json())[0]?.fecha || null;
+    return { fecha, ageDays: fecha ? Math.floor((Date.now() - Date.parse(fecha)) / 864e5) : null };
+  } catch (e) {
+    return { error: "supabase_unreachable" };
+  }
+}
+
 // Reads the feed file the news job publishes (a Worker cannot fetch its own domain)
 async function latestNews() {
   try {
@@ -38,9 +56,9 @@ async function latestNews() {
 export default async function handler(req, res) {
   applyCors(req, res, "GET, OPTIONS");
   if (handleRateLimit(req, res)) return;
-  const [forecasts, news] = await Promise.all([latestForecastRun(), latestNews()]);
+  const [forecasts, news, smv] = await Promise.all([latestForecastRun(), latestNews(), latestSmvClose()]);
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
-  res.end(JSON.stringify({ ok: true, now: new Date().toISOString(), forecasts, news }));
+  res.end(JSON.stringify({ ok: true, now: new Date().toISOString(), forecasts, news, smv }));
 }

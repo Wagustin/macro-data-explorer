@@ -1,17 +1,47 @@
 // Refreshes data/history-120.json (10 years of monthly closes per asset) before the daily
-// TimesFM run, so the model sees this month's data instead of a frozen file.
+// model run, so the model sees this month's data instead of a frozen file. Lima stocks (".LM")
+// come from the SMV registry in Supabase (api/_lib/smv.js) when it has them, the rest from market data.
 // Keeps the previous series for any symbol that fails, drops symbols that have none,
 // and fails only if most of them fail.
 // Usage: node scripts/refresh-history.js
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { nemonicoOf, smvRows } from "../api/_lib/smv.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FILE = path.join(ROOT, "data", "history-120.json");
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
+async function smvMonthly(nemo) {
+  const from = new Date(); from.setUTCFullYear(from.getUTCFullYear() - 10);
+  const rows = await smvRows(nemo, from.toISOString().slice(0, 10), { monthly: true, timeoutMs: 15000 });
+  const byMonth = new Map(rows.map((r) => [r.fecha.slice(0, 7), r.cierre]));
+  const months = [...byMonth.keys()].sort();
+  if (!months.length) return [];
+  // Months without trades keep the last close, so the model sees one point per calendar month
+  const out = [];
+  let [y, m] = months[0].split("-").map(Number);
+  const end = new Date().toISOString().slice(0, 7);
+  let close = byMonth.get(months[0]);
+  for (;;) {
+    const k = `${y}-${String(m).padStart(2, "0")}`;
+    if (k > end) break;
+    if (byMonth.has(k)) close = byMonth.get(k);
+    out.push({ date: `${k}-01`, close });
+    if (++m > 12) { m = 1; y++; }
+  }
+  return out;
+}
+
 async function monthly(symbol) {
+  const nemo = nemonicoOf(symbol);
+  if (nemo) {
+    try {
+      const out = await smvMonthly(nemo);
+      if (out.length >= 24) { smvCount++; return out; }
+    } catch (e) { /* market data below */ }
+  }
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=10y&interval=1mo`;
   const res = await fetch(url, { headers: { "User-Agent": UA }, signal: AbortSignal.timeout(15000) });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -38,6 +68,7 @@ if (!Object.keys(cache).length) {
 }
 const symbols = Object.keys(cache);
 let ok = 0;
+let smvCount = 0;
 const failed = [];
 for (const s of symbols) {
   try {
@@ -50,6 +81,6 @@ for (const s of symbols) {
 }
 for (const s of symbols) if (!cache[s]?.length) delete cache[s];
 fs.writeFileSync(FILE, JSON.stringify(cache));
-console.log(`Historial actualizado: ${ok}/${symbols.length}${failed.length ? ` · sin actualizar: ${failed.join(", ")}` : ""}`);
+console.log(`Historial actualizado: ${ok}/${symbols.length} (${smvCount} de la SMV)${failed.length ? ` · sin actualizar: ${failed.join(", ")}` : ""}`);
 // The catalog also lists private companies and macro series without a market ticker (~25)
 if (ok < symbols.length * 0.75) process.exit(1);

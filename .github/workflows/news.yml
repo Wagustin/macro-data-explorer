@@ -43,6 +43,13 @@ jobs:
       - name: Clasificar noticias con Laya
         run: python scripts/classify_news.py
 
+      - name: Sentimiento diario por empresa y tema (Supabase)
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: node scripts/sentimiento-diario.js
+
       - name: Resumen «Lo importante de hoy» (NIM, Gemini de respaldo)
         continue-on-error: true
         env:

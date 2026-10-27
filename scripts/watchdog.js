@@ -59,6 +59,14 @@ const checks = [
     if (f.ageHours > MAX_FORECAST_AGE_H) throw new Error(`la última corrida fue hace ${f.ageHours} h (${f.runAt})`);
     return `hace ${f.ageHours} h`;
   }],
+  ["Cotizaciones de Lima (SMV)", async () => {
+    const r = await get("/api/status", { json: true });
+    const s = r.body?.smv;
+    if (!s || s.error) throw new Error(s?.error || `HTTP ${r.status}`);
+    // Weekends and holidays: up to 4 days without a session is normal
+    if (!(s.ageDays <= 4)) throw new Error(`último cierre guardado: ${s.fecha}`);
+    return `último cierre ${s.fecha}`;
+  }],
   ["Noticias", async () => {
     const r = await get("/api/status", { json: true });
     const n = r.body?.news;

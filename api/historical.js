@@ -2,6 +2,10 @@ import { CATALOG } from "./search.js";
 import { PLANS, planForUser, canUseRange, upgradeRequired } from "./_lib/plans.js";
 import { getAuthUserOrNull } from "./_lib/session.js";
 import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
+import { nemonicoOf, smvRows } from "./_lib/smv.js";
+import EMPRESAS from "../data/empresas.json" with { type: "json" };
+
+const MONEDA = new Map(EMPRESAS.emisores.flatMap((e) => e.valores.map((v) => [v.nemonico, v.moneda === "US$" ? "USD" : "PEN"])));
 
 const OFFICIAL_BASE = "https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data/official/";
 const OFFICIAL_DAILY = {
@@ -69,6 +73,32 @@ function fallbackMacroRecords(symbol) {
   const fb = MACRO_FALLBACK[symbol];
   if (!fb) return [];
   return fb.values.map((value, i) => toMacroRecord(MACRO_FALLBACK_START_YEAR + i, value));
+}
+
+const RANGE_MONTHS = { "1mo": 1, "3mo": 3, "6mo": 6, "1y": 12, "2y": 24, "3y": 36, "5y": 60, "10y": 120, max: 400 };
+const isoMonthsAgo = (n) => { const d = new Date(); d.setUTCMonth(d.getUTCMonth() - n); return d.toISOString().slice(0, 10); };
+const point = (r, date) => ({ date, timestamp: Math.floor(Date.parse(r.fecha) / 1000), open: r.apertura ?? r.cierre, high: r.maximo ?? r.cierre,
+  low: r.minimo ?? r.cierre, close: r.cierre, volume: Math.round(r.monto || 0) });
+
+// Lima stocks: daily closes from the SMV registry (Supabase). null when there are no rows yet.
+async function smvPayload(symbol, nemo, range, interval) {
+  const monthly = interval === "1mo" || interval === "1y";
+  const [main, daily] = await Promise.all([
+    smvRows(nemo, isoMonthsAgo(RANGE_MONTHS[range] || 60), { monthly }),
+    monthly ? smvRows(nemo, isoMonthsAgo(12)) : null,
+  ]);
+  const dailyRows = (daily || main).slice().reverse();
+  if (main.length < 3 || dailyRows.length < 2) return null;
+  const series = main.slice().reverse().map((r) => point(r, monthly ? r.fecha.slice(0, 8) + "01" : r.fecha));
+  const last = dailyRows[dailyRows.length - 1], prev = dailyRows[dailyRows.length - 2];
+  const catMeta = CATALOG.find((c) => c.symbol === symbol) || {};
+  return {
+    symbol, name: catMeta.name || nemo, sector: catMeta.sector || "Renta Variable", country: catMeta.country || "Perú",
+    currency: MONEDA.get(nemo) || "PEN", exchange: "Bolsa de Valores de Lima", range, interval, count: series.length, series,
+    live: { price: last.cierre, changePct: Number(((last.cierre / prev.cierre - 1) * 100).toFixed(2)), time: `${last.fecha}T21:00:00.000Z`, state: "CLOSED" },
+    daily: dailyRows.map((r) => ({ date: r.fecha, close: r.cierre })),
+    dailySource: "SMV (cierres de la Bolsa de Valores de Lima)",
+  };
 }
 
 export default async function handler(req, res) {
@@ -154,6 +184,14 @@ export default async function handler(req, res) {
       count: records.length,
       series: records
     });
+  }
+
+  const nemo = nemonicoOf(symbol);
+  if (nemo) {
+    try {
+      const smv = await smvPayload(symbol, nemo, range, interval);
+      if (smv) return res.status(200).json(smv);
+    } catch (e) { /* not loaded yet: market data below */ }
   }
 
   // Standard Market Quotes (Yahoo Finance v8 API)

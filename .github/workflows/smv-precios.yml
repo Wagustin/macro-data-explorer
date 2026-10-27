@@ -1,0 +1,31 @@
+name: Cotizaciones de Lima (SMV)
+
+# Daily closes of every Lima stock from the SMV public registry into Supabase
+# (scripts/fetch-smv-precios.js), before the daily model run so it sees today's closes.
+# ~200 securities, one request every 3 s: about 20 minutes.
+on:
+  schedule:
+    - cron: "23 1 * * 2-6"   # 20:23 en Lima, de lunes a viernes
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smv-precios
+  cancel-in-progress: false
+
+jobs:
+  cotizaciones:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Cierres de los últimos dos meses
+        run: node scripts/fetch-smv-precios.js
