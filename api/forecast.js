@@ -535,10 +535,10 @@ export default async function handler(req, res) {
       horizon: H
     });
   } catch (e) {
+    console.error("[forecast] Failed to retrieve precomputed forecast:", e.message);
     return res.status(500).json({
       success: false,
-      error: "Error interno al recuperar la proyección precalculada.",
-      details: e.message
+      error: "Error interno al recuperar la proyección precalculada."
     });
   }
 }

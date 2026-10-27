@@ -8,6 +8,8 @@ import { findUserById, findUserByEmail, IS_PRODUCTION } from "./users.js";
 
 const TOKEN_TTL_SECONDS = 30 * 24 * 60 * 60;
 const PBKDF2_ITERATIONS = 210000;
+const SUPABASE_URL = (process.env.SUPABASE_URL || "https://hhutoitkkomfzkmakwts.supabase.co").replace(/\/+$/, "");
+const SUPABASE_ISSUER = `${SUPABASE_URL}/auth/v1`;
 
 // Supabase project public JWK for ES256 JWT signature verification
 const SUPABASE_JWK = {
@@ -105,7 +107,7 @@ export function decodeJwtClaims(token) {
   if (parts.length !== 3) return null;
   try {
     const claims = JSON.parse(Buffer.from(parts[1], "base64url").toString("utf-8"));
-    if (!claims.sub || (claims.exp && claims.exp < Math.floor(Date.now() / 1000))) return null;
+    if (!claims.sub || typeof claims.exp !== "number" || !Number.isFinite(claims.exp) || claims.exp <= Math.floor(Date.now() / 1000)) return null;
     return claims;
   } catch (e) {
     return null;
@@ -128,8 +130,17 @@ export async function verifySession(token) {
 
     // Check expiration
     const now = Math.floor(Date.now() / 1000);
-    if (!claims.sub || (claims.exp && claims.exp < now)) {
+    if (!claims.sub || typeof claims.exp !== "number" || !Number.isFinite(claims.exp) || claims.exp <= now) {
       return null;
+    }
+
+    const hasIssuer = Object.hasOwn(claims, "iss");
+    const hasAudience = Object.hasOwn(claims, "aud");
+    if (hasIssuer !== hasAudience) return null;
+    const isSupabaseToken = hasIssuer || header.alg === "ES256" || Boolean(claims.role || claims.aal);
+    if (isSupabaseToken) {
+      const audiences = Array.isArray(claims.aud) ? claims.aud : [claims.aud];
+      if (claims.iss !== SUPABASE_ISSUER || !audiences.includes("authenticated")) return null;
     }
 
     const data = new TextEncoder().encode(`${parts[0]}.${parts[1]}`);
@@ -137,6 +148,7 @@ export async function verifySession(token) {
 
     // 1. Supabase Auth ES256 (ECDSA P-256 + SHA-256)
     if (header.alg === "ES256") {
+      if (!isSupabaseToken || claims.iss !== SUPABASE_ISSUER) return null;
       const key = await getEcdsaVerifyKey();
       if (!key) return null;
       const valid = await crypto.subtle.verify(
@@ -294,6 +306,8 @@ export function rateLimited(key, limit = 10, windowMs = 15 * 60 * 1000) {
 }
 
 export function clientIp(req) {
+  const cfIp = req.headers?.["cf-connecting-ip"];
+  if (typeof cfIp === "string" && cfIp.trim()) return cfIp.trim();
   const fwd = req.headers?.["x-forwarded-for"];
   return (typeof fwd === "string" && fwd.split(",")[0].trim()) || req.socket?.remoteAddress || "unknown";
 }

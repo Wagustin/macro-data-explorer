@@ -75,8 +75,6 @@ function adaptNodeHandler(handler) {
       }
     }
 
-    const startCpu = performance.now();
-
     return new Promise(async (resolve) => {
       let statusCode = 200;
       const headers = new Headers();
@@ -85,9 +83,6 @@ function adaptNodeHandler(handler) {
       function finalize() {
         // Handlers may set res.statusCode directly (e.g. 303 redirects) instead of calling status()
         statusCode = res.statusCode || statusCode;
-        const dur = (performance.now() - startCpu).toFixed(3);
-        headers.set("Server-Timing", `edge;dur=${dur}`);
-        headers.set("X-Edge-Duration", `${dur}ms`);
       }
 
       const res = {
@@ -169,7 +164,7 @@ const SECURITY_HEADERS = {
   "Referrer-Policy": "strict-origin-when-cross-origin",
   "X-Frame-Options": "SAMEORIGIN",
   "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
-  "Content-Security-Policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+  "Content-Security-Policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
 };
 
 export default {

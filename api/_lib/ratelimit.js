@@ -57,6 +57,8 @@ export function setCdnCache(res, hasAuth = false) {
 }
 
 export function getClientIp(req) {
+  const cfIp = req.headers?.["cf-connecting-ip"];
+  if (typeof cfIp === "string" && cfIp.trim()) return cfIp.trim();
   const fwd = req.headers?.["x-forwarded-for"];
   if (typeof fwd === "string") {
     const first = fwd.split(",")[0].trim();
