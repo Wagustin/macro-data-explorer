@@ -35,19 +35,13 @@ function prettyName(raw) {
   }).join(" ");
 }
 
-function formatCurrency(moneda, precio) {
-  if (precio == null || isNaN(precio)) return null;
-  const m = moneda === "US$" ? "US$" : "S/";
-  return `${m} ${Number(precio).toFixed(precio < 1 ? 3 : 2)}`;
-}
-
 // Process emitters
 const rows = data.emisores.map(e => {
   // Determine primary valor
   let primary = e.valores.find(v => v.yahoo && (v.yahoo === v.nemonico || v.nemonico === "BVN" || v.nemonico.endsWith("C1")));
   if (!primary) primary = e.valores.find(v => v.yahoo);
-  if (!primary) primary = e.valores.find(v => v.ultimoPrecio != null);
-  if (!primary) primary = e.valores[0] || { nemonico: "S/N", moneda: "S/", ultimoPrecio: null };
+  if (!primary) primary = e.valores.find(v => v.fechaUltimaNegociacion);
+  if (!primary) primary = e.valores[0] || { nemonico: "S/N", moneda: "S/", fechaUltimaNegociacion: null };
 
   const hasYahoo = Boolean(primary.yahoo);
   const isActiva = Boolean(e.negociadaUltimos12m);
@@ -71,8 +65,6 @@ const rows = data.emisores.map(e => {
     sectorFormatted: formatSector(e.sector),
     nemonico: primary.nemonico,
     moneda: primary.moneda || "S/",
-    ultimoPrecio: primary.ultimoPrecio,
-    formattedPrice: formatCurrency(primary.moneda, primary.ultimoPrecio),
     fechaUltima: primary.fechaUltimaNegociacion || e.fechaUltimaNegociacion,
     yahoo: primary.yahoo,
     tier,

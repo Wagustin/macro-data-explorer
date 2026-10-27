@@ -228,22 +228,11 @@ export function parseItems(xmlText, feed) {
   });
 }
 
+// Google News search feeds are no longer used (their terms don't allow this reuse). The news
+// pipeline (scripts/fetch-news.js) reads the publishers' own RSS feeds instead.
 export async function fetchMacroNews() {
   const results = [];
-  const fetchPromises = FEEDS.map(async (feed) => {
-    try {
-      const url = "https://news.google.com/rss/search?q=" + encodeURIComponent(feed.query) + "&hl=es-419&gl=PE&ceid=PE:es-419";
-      const res = await fetch(url, {
-        headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) PerDataExplorer/2.5" },
-        signal: AbortSignal.timeout(4500)
-      });
-      if (!res.ok) return [];
-      const text = await res.text();
-      return parseItems(text, feed);
-    } catch {
-      return [];
-    }
-  });
+  const fetchPromises = [];
 
   const settled = await Promise.allSettled(fetchPromises);
   for (const s of settled) {

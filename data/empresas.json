@@ -1,5 +1,5 @@
 {
- "fuente": "BVL, listado público de cotizaciones (dataondemand.bvl.com.pe/v1/stock-quote/market), consultado el 2026-10-24",
+ "fuente": "BVL, listado público de emisores y valores (sin cotizaciones), consultado el 2026-10-24",
  "criterio": "Emisores con acciones comunes o de inversión en la BVL (segmentos RV1 y RV2) más los emisores ligados a Perú que cotizan en el segmento extranjero (BAP, IFS, AUNA, SCCO, BVN, CPAC). Se excluyen fondos de inversión, ETF y emisores extranjeros sin vínculo con Perú. Las empresas que no cotizan, como Antamina, quedan fuera.",
  "totalEmisores": 182,
  "negociadasUltimos12m": 89,
@@ -14,7 +14,6 @@
      "nemonico": "INTEGRC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -31,7 +30,6 @@
      "nemonico": "AIPC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.3,
      "fechaUltimaNegociacion": "2025-02-03",
      "yahoo": null
     }
@@ -48,7 +46,6 @@
      "nemonico": "AENZAC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 0.396,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": null,
      "yahooUltimo": null
@@ -66,7 +63,6 @@
      "nemonico": "HABITAC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -83,7 +79,6 @@
      "nemonico": "PARAMOC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 6.9,
      "fechaUltimaNegociacion": "2022-12-26",
      "yahoo": null
     }
@@ -100,7 +95,6 @@
      "nemonico": "PUCALAC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.61,
      "fechaUltimaNegociacion": "2026-05-22",
      "yahoo": null,
      "yahooUltimo": null
@@ -118,7 +112,6 @@
      "nemonico": "LAREDOC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 19.0,
      "fechaUltimaNegociacion": "2026-09-25",
      "yahoo": null,
      "yahooUltimo": null
@@ -136,7 +129,6 @@
      "nemonico": "AIBC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -153,7 +145,6 @@
      "nemonico": "SNJACIC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 9.0,
      "fechaUltimaNegociacion": "2026-09-08",
      "yahoo": null,
      "yahooUltimo": null
@@ -171,7 +162,6 @@
      "nemonico": "CAYALTC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 1.0,
      "fechaUltimaNegociacion": "2025-10-09",
      "yahoo": null
     }
@@ -188,7 +178,6 @@
      "nemonico": "PALOALC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -205,7 +194,6 @@
      "nemonico": "ALFINAC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.202,
      "fechaUltimaNegociacion": "2022-12-28",
      "yahoo": null
     },
@@ -213,7 +201,6 @@
      "nemonico": "ALFINBC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -230,7 +217,6 @@
      "nemonico": "ALICORC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 13.3,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "ALICORC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -239,7 +225,6 @@
      "nemonico": "ALICORI1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 11.3,
      "fechaUltimaNegociacion": "2026-10-12",
      "yahoo": "ALICORI1.LM",
      "yahooUltimo": "2026-10-23"
@@ -257,7 +242,6 @@
      "nemonico": "AIHC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 1.2,
      "fechaUltimaNegociacion": "2026-10-05",
      "yahoo": "AIHC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -275,7 +259,6 @@
      "nemonico": "ASSAINC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -292,7 +275,6 @@
      "nemonico": "AUGUSC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -309,7 +291,6 @@
      "nemonico": "AUNA",
      "segmento": "RV3",
      "moneda": "US$",
-     "ultimoPrecio": 5.21,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "AUNA",
      "yahooUltimo": "2026-10-23"
@@ -327,7 +308,6 @@
      "nemonico": "AUSTRAC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 1.4,
      "fechaUltimaNegociacion": "2026-10-01",
      "yahoo": "AUSTRAC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -345,7 +325,6 @@
      "nemonico": "AVLASGC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -362,7 +341,6 @@
      "nemonico": "AZZAROC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -379,7 +357,6 @@
      "nemonico": "BBVAC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 2.3,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "BBVAC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -397,7 +374,6 @@
      "nemonico": "BCIPEC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -414,7 +390,6 @@
      "nemonico": "BANCOMC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -431,7 +406,6 @@
      "nemonico": "CREDITC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 6.72,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "CREDITC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -449,7 +423,6 @@
      "nemonico": "EFECTIC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -466,7 +439,6 @@
      "nemonico": "BANFALC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -483,7 +455,6 @@
      "nemonico": "GNBC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -500,7 +471,6 @@
      "nemonico": "BIFC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -517,7 +487,6 @@
      "nemonico": "INTERBC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 2.25,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "INTERBC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -535,7 +504,6 @@
      "nemonico": "BPICHC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.2,
      "fechaUltimaNegociacion": "2025-03-20",
      "yahoo": "BPICHC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -544,7 +512,6 @@
      "nemonico": "BPICHC2",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null,
      "yahooUltimo": null
@@ -553,7 +520,6 @@
      "nemonico": "BPICHPC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.22,
      "fechaUltimaNegociacion": "2026-10-14",
      "yahoo": null,
      "yahooUltimo": null
@@ -571,7 +537,6 @@
      "nemonico": "BRIPLEC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -588,7 +553,6 @@
      "nemonico": "SANC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -605,7 +569,6 @@
      "nemonico": "BOCPEC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -622,7 +585,6 @@
      "nemonico": "CARDIFC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -639,7 +601,6 @@
      "nemonico": "BVLC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -656,7 +617,6 @@
      "nemonico": "BAMC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 2.32,
      "fechaUltimaNegociacion": "2026-04-08",
      "yahoo": null,
      "yahooUltimo": null
@@ -674,7 +634,6 @@
      "nemonico": "CMAQPC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -691,7 +650,6 @@
      "nemonico": "CRANDEC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 1.32,
      "fechaUltimaNegociacion": "2016-07-22",
      "yahoo": null
     }
@@ -708,7 +666,6 @@
      "nemonico": "CARTAVC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 32.29,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": null,
      "yahooUltimo": null
@@ -726,7 +683,6 @@
      "nemonico": "CASAGRC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 8.3,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": null,
      "yahooUltimo": null
@@ -744,7 +700,6 @@
      "nemonico": "CASTROC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     },
@@ -752,7 +707,6 @@
      "nemonico": "CASTROI1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -769,7 +723,6 @@
      "nemonico": "CAVALIC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 6.69,
      "fechaUltimaNegociacion": "2024-07-19",
      "yahoo": null
     }
@@ -786,7 +739,6 @@
      "nemonico": "CPAC",
      "segmento": "RV3",
      "moneda": "US$",
-     "ultimoPrecio": 12.75,
      "fechaUltimaNegociacion": "2026-09-08",
      "yahoo": "CPAC",
      "yahooUltimo": "2026-10-23"
@@ -795,7 +747,6 @@
      "nemonico": "CPACASI1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 7.0,
      "fechaUltimaNegociacion": "2026-10-22",
      "yahoo": "CPACASI1.LM",
      "yahooUltimo": "2026-10-23"
@@ -813,7 +764,6 @@
      "nemonico": "CHUCARC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 3.0,
      "fechaUltimaNegociacion": "2021-04-09",
      "yahoo": null
     }
@@ -830,7 +780,6 @@
      "nemonico": "SNJUANC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 67.2,
      "fechaUltimaNegociacion": "2026-09-30",
      "yahoo": null,
      "yahooUltimo": null
@@ -839,7 +788,6 @@
      "nemonico": "SNJUANI1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 74.0,
      "fechaUltimaNegociacion": "2026-10-13",
      "yahoo": "SNJUANI1.LM",
      "yahooUltimo": "2026-10-23"
@@ -857,7 +805,6 @@
      "nemonico": "CESCEPC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -874,7 +821,6 @@
      "nemonico": "CHUBSGC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -891,7 +837,6 @@
      "nemonico": "CITIBKC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -908,7 +853,6 @@
      "nemonico": "COLCAC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 1.0,
      "fechaUltimaNegociacion": "2026-03-05",
      "yahoo": null,
      "yahooUltimo": null
@@ -926,7 +870,6 @@
      "nemonico": "COMPARC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -943,7 +886,6 @@
      "nemonico": "BUENAVI1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 69.0,
      "fechaUltimaNegociacion": "2026-10-16",
      "yahoo": "BUENAVI1.LM",
      "yahooUltimo": "2026-10-23"
@@ -952,7 +894,6 @@
      "nemonico": "BVN",
      "segmento": "RV3",
      "moneda": "US$",
-     "ultimoPrecio": 27.9,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "BVN",
      "yahooUltimo": "2026-10-23"
@@ -970,7 +911,6 @@
      "nemonico": "PODERC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 8.8,
      "fechaUltimaNegociacion": "2026-10-22",
      "yahoo": null,
      "yahooUltimo": null
@@ -988,7 +928,6 @@
      "nemonico": "MOROCOC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.7,
      "fechaUltimaNegociacion": "2026-07-27",
      "yahoo": null,
      "yahooUltimo": null
@@ -997,7 +936,6 @@
      "nemonico": "MOROCOI1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 0.68,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "MOROCOI1.LM",
      "yahooUltimo": "2026-10-23"
@@ -1015,7 +953,6 @@
      "nemonico": "LUISAI1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 335.0,
      "fechaUltimaNegociacion": "2026-10-20",
      "yahoo": null,
      "yahooUltimo": null
@@ -1033,7 +970,6 @@
      "nemonico": "UNITEXC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.33,
      "fechaUltimaNegociacion": "2023-08-08",
      "yahoo": null
     },
@@ -1041,7 +977,6 @@
      "nemonico": "UNITEXI1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.286,
      "fechaUltimaNegociacion": "2025-02-17",
      "yahoo": null
     }
@@ -1058,7 +993,6 @@
      "nemonico": "CONCESI1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 4.11,
      "fechaUltimaNegociacion": "2026-10-02",
      "yahoo": null,
      "yahooUltimo": null
@@ -1076,7 +1010,6 @@
      "nemonico": "COPENC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1093,7 +1026,6 @@
      "nemonico": "CORAREC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 2.04,
      "fechaUltimaNegociacion": "2026-10-13",
      "yahoo": null,
      "yahooUltimo": null
@@ -1102,7 +1034,6 @@
      "nemonico": "CORAREI1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 1.73,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "CORAREI1.LM",
      "yahooUltimo": "2026-10-23"
@@ -1120,7 +1051,6 @@
      "nemonico": "COCESUC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 7.8,
      "fechaUltimaNegociacion": "2026-09-24",
      "yahoo": null,
      "yahooUltimo": null
@@ -1129,7 +1059,6 @@
      "nemonico": "COCESUI1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.8,
      "fechaUltimaNegociacion": "2026-09-22",
      "yahoo": null,
      "yahooUltimo": null
@@ -1147,7 +1076,6 @@
      "nemonico": "COFIDCC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1164,7 +1092,6 @@
      "nemonico": "CRECERC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1181,7 +1108,6 @@
      "nemonico": "CRECAPC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 1.9,
      "fechaUltimaNegociacion": "2026-10-14",
      "yahoo": null,
      "yahooUltimo": null
@@ -1199,7 +1125,6 @@
      "nemonico": "FIBCCAP",
      "segmento": "RV1",
      "moneda": "US$",
-     "ultimoPrecio": 50.0,
      "fechaUltimaNegociacion": "2026-10-22",
      "yahoo": null,
      "yahooUltimo": null
@@ -1217,7 +1142,6 @@
      "nemonico": "BAP",
      "segmento": "RV3",
      "moneda": "US$",
-     "ultimoPrecio": 370.9,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "BAP",
      "yahooUltimo": "2026-10-23"
@@ -1235,7 +1159,6 @@
      "nemonico": "CRETEXC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.86,
      "fechaUltimaNegociacion": "2026-03-17",
      "yahoo": null,
      "yahooUltimo": null
@@ -1244,7 +1167,6 @@
      "nemonico": "CRETEXI1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.8,
      "fechaUltimaNegociacion": "2025-05-22",
      "yahoo": "CRETEXI1.LM",
      "yahooUltimo": "2026-10-23"
@@ -1262,7 +1184,6 @@
      "nemonico": "CUMBRAC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 0.065,
      "fechaUltimaNegociacion": "2026-10-16",
      "yahoo": null,
      "yahooUltimo": null
@@ -1280,7 +1201,6 @@
      "nemonico": "DESXXIC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1297,7 +1217,6 @@
      "nemonico": "DUNENC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1314,7 +1233,6 @@
      "nemonico": "EDUNASC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1331,7 +1249,6 @@
      "nemonico": "EPUNOBC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1348,7 +1265,6 @@
      "nemonico": "ESUREBC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.248,
      "fechaUltimaNegociacion": "2021-04-06",
      "yahoo": null
     }
@@ -1365,7 +1281,6 @@
      "nemonico": "HIDRA2C1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 1.1,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": null,
      "yahooUltimo": null
@@ -1383,7 +1298,6 @@
      "nemonico": "ANDAHUC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.15,
      "fechaUltimaNegociacion": "2026-02-10",
      "yahoo": null,
      "yahooUltimo": null
@@ -1401,7 +1315,6 @@
      "nemonico": "CHIQUIC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1418,7 +1331,6 @@
      "nemonico": "GANSALC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1435,7 +1347,6 @@
      "nemonico": "AUNIONC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1452,7 +1363,6 @@
      "nemonico": "ASJUANC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 1.63,
      "fechaUltimaNegociacion": "2026-08-13",
      "yahoo": null,
      "yahooUltimo": null
@@ -1470,7 +1380,6 @@
      "nemonico": "POMALCC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 0.29,
      "fechaUltimaNegociacion": "2026-10-22",
      "yahoo": null,
      "yahooUltimo": null
@@ -1488,7 +1397,6 @@
      "nemonico": "TUMANC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 0.66,
      "fechaUltimaNegociacion": "2026-10-13",
      "yahoo": null,
      "yahooUltimo": null
@@ -1506,7 +1414,6 @@
      "nemonico": "SANGABC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1523,7 +1430,6 @@
      "nemonico": "EGESUBC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1540,7 +1446,6 @@
      "nemonico": "ELCOMEI1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 0.52,
      "fechaUltimaNegociacion": "2026-10-16",
      "yahoo": "ELCOMEI1.LM",
      "yahooUltimo": "2026-10-23"
@@ -1558,7 +1463,6 @@
      "nemonico": "ELECPBC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1575,7 +1479,6 @@
      "nemonico": "ELESUDC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1592,7 +1495,6 @@
      "nemonico": "SIDERC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 3.26,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "SIDERC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -1610,7 +1512,6 @@
      "nemonico": "EGEPIBC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 4.5,
      "fechaUltimaNegociacion": "2026-10-07",
      "yahoo": null,
      "yahooUltimo": null
@@ -1628,7 +1529,6 @@
      "nemonico": "ENPACIC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.25,
      "fechaUltimaNegociacion": "2024-12-03",
      "yahoo": null,
      "yahooUltimo": null
@@ -1637,7 +1537,6 @@
      "nemonico": "ENPACII1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.24,
      "fechaUltimaNegociacion": "2026-06-26",
      "yahoo": null,
      "yahooUltimo": null
@@ -1655,7 +1554,6 @@
      "nemonico": "ENGIEC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 5.1,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "ENGIEC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -1673,7 +1571,6 @@
      "nemonico": "EXPERTC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1690,7 +1587,6 @@
      "nemonico": "ETNAI1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.72,
      "fechaUltimaNegociacion": "2026-08-25",
      "yahoo": "ETNAI1.LM",
      "yahooUltimo": "2026-10-23"
@@ -1708,7 +1604,6 @@
      "nemonico": "ETERNII1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 2.05,
      "fechaUltimaNegociacion": "2026-08-25",
      "yahoo": null,
      "yahooUltimo": null
@@ -1726,7 +1621,6 @@
      "nemonico": "FERREYC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 4.29,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "FERREYC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -1744,7 +1638,6 @@
      "nemonico": "FILAMEI1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 1.23,
      "fechaUltimaNegociacion": "2024-01-18",
      "yahoo": null
     }
@@ -1761,7 +1654,6 @@
      "nemonico": "FCONFIC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 55.5,
      "fechaUltimaNegociacion": "2022-11-22",
      "yahoo": null
     }
@@ -1778,7 +1670,6 @@
      "nemonico": "FCREDIC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 2.0,
      "fechaUltimaNegociacion": "2017-02-09",
      "yahoo": null
     }
@@ -1795,7 +1686,6 @@
      "nemonico": "FPROEMC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 15.1,
      "fechaUltimaNegociacion": "2019-09-18",
      "yahoo": null,
      "yahooUltimo": null
@@ -1804,7 +1694,6 @@
      "nemonico": "FPROEMP1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 10.0,
      "fechaUltimaNegociacion": "2025-12-24",
      "yahoo": null,
      "yahooUltimo": null
@@ -1822,7 +1711,6 @@
      "nemonico": "QAPAQC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1839,7 +1727,6 @@
      "nemonico": "FINTFCC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1856,7 +1743,6 @@
      "nemonico": "FOSPACC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -1873,7 +1759,6 @@
      "nemonico": "FOSSALC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.9,
      "fechaUltimaNegociacion": "2026-04-30",
      "yahoo": null,
      "yahooUltimo": null
@@ -1882,7 +1767,6 @@
      "nemonico": "FOSSALI1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null,
      "yahooUltimo": null
@@ -1900,7 +1784,6 @@
      "nemonico": "FUTURAC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 3.8,
      "fechaUltimaNegociacion": "2024-06-28",
      "yahoo": null,
      "yahooUltimo": null
@@ -1909,7 +1792,6 @@
      "nemonico": "FUTURAI1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 1.69,
      "fechaUltimaNegociacion": "2026-07-06",
      "yahoo": null,
      "yahooUltimo": null
@@ -1927,7 +1809,6 @@
      "nemonico": "GRHOLDC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 2.3,
      "fechaUltimaNegociacion": "2026-07-27",
      "yahoo": null,
      "yahooUltimo": null
@@ -1945,7 +1826,6 @@
      "nemonico": "GBVLAC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 2.47,
      "fechaUltimaNegociacion": "2026-07-15",
      "yahoo": null,
      "yahooUltimo": null
@@ -1954,7 +1834,6 @@
      "nemonico": "GBVLBC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 1.89,
      "fechaUltimaNegociacion": "2022-08-25",
      "yahoo": null,
      "yahooUltimo": null
@@ -1972,7 +1851,6 @@
      "nemonico": "FIBPRIME",
      "segmento": "RV1",
      "moneda": "US$",
-     "ultimoPrecio": 6.84,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": null,
      "yahooUltimo": null
@@ -1990,7 +1868,6 @@
      "nemonico": "HERMESC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 11.5,
      "fechaUltimaNegociacion": "2026-09-04",
      "yahoo": null,
      "yahooUltimo": null
@@ -2008,7 +1885,6 @@
      "nemonico": "HIDROSI1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 1.58,
      "fechaUltimaNegociacion": "2025-12-30",
      "yahoo": null,
      "yahooUltimo": null
@@ -2026,7 +1902,6 @@
      "nemonico": "ICBCC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -2043,7 +1918,6 @@
      "nemonico": "INCRAIC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -2060,7 +1934,6 @@
      "nemonico": "INDECOI1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 6.4,
      "fechaUltimaNegociacion": "2026-03-27",
      "yahoo": null,
      "yahooUltimo": null
@@ -2078,7 +1951,6 @@
      "nemonico": "PIURAC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.04,
      "fechaUltimaNegociacion": "2021-02-04",
      "yahoo": null
     },
@@ -2086,7 +1958,6 @@
      "nemonico": "PIURAI1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.02,
      "fechaUltimaNegociacion": "2021-02-04",
      "yahoo": null
     }
@@ -2103,7 +1974,6 @@
      "nemonico": "IEQSAI1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.212,
      "fechaUltimaNegociacion": "2024-11-20",
      "yahoo": null
     }
@@ -2120,7 +1990,6 @@
      "nemonico": "INFIXPC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 1.13,
      "fechaUltimaNegociacion": "2025-11-12",
      "yahoo": null,
      "yahooUltimo": null
@@ -2138,7 +2007,6 @@
      "nemonico": "IIDEC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null,
      "yahooUltimo": null
@@ -2147,7 +2015,6 @@
      "nemonico": "IIDEI1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.9,
      "fechaUltimaNegociacion": "2026-07-22",
      "yahoo": null,
      "yahooUltimo": null
@@ -2165,7 +2032,6 @@
      "nemonico": "ISICC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 2.8,
      "fechaUltimaNegociacion": "2021-10-13",
      "yahoo": null
     }
@@ -2182,7 +2048,6 @@
      "nemonico": "INRETC1",
      "segmento": "RV1",
      "moneda": "US$",
-     "ultimoPrecio": 38.6,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "INRETC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -2200,7 +2065,6 @@
      "nemonico": "INSURC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -2217,7 +2081,6 @@
      "nemonico": "INTPEBC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 0.13,
      "fechaUltimaNegociacion": "2026-10-12",
      "yahoo": null,
      "yahooUltimo": null
@@ -2226,7 +2089,6 @@
      "nemonico": "INTPECC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 1.75,
      "fechaUltimaNegociacion": "2017-10-27",
      "yahoo": null,
      "yahooUltimo": null
@@ -2244,7 +2106,6 @@
      "nemonico": "IFS",
      "segmento": "RV3",
      "moneda": "US$",
-     "ultimoPrecio": 52.25,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "IFS",
      "yahooUltimo": "2026-10-23"
@@ -2262,7 +2123,6 @@
      "nemonico": "INTSEGC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -2279,7 +2139,6 @@
      "nemonico": "INVFALC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.15,
      "fechaUltimaNegociacion": "2026-07-27",
      "yahoo": null,
      "yahooUltimo": null
@@ -2297,7 +2156,6 @@
      "nemonico": "INVERPC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -2314,7 +2172,6 @@
      "nemonico": "INVCENC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 1.45,
      "fechaUltimaNegociacion": "2026-10-21",
      "yahoo": null,
      "yahooUltimo": null
@@ -2332,7 +2189,6 @@
      "nemonico": "INVCO2C1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 5.0,
      "fechaUltimaNegociacion": "2025-07-10",
      "yahoo": null
     },
@@ -2340,7 +2196,6 @@
      "nemonico": "INVCORI1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 3.0,
      "fechaUltimaNegociacion": "2025-04-07",
      "yahoo": null
     }
@@ -2357,7 +2212,6 @@
      "nemonico": "INVERTC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.183,
      "fechaUltimaNegociacion": "2019-12-26",
      "yahoo": null
     }
@@ -2374,7 +2228,6 @@
      "nemonico": "IPCHAC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 1.4,
      "fechaUltimaNegociacion": "2026-10-22",
      "yahoo": null,
      "yahooUltimo": null
@@ -2383,7 +2236,6 @@
      "nemonico": "IPCHBC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 0.119,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": null,
      "yahooUltimo": null
@@ -2401,7 +2253,6 @@
      "nemonico": "JPMORGC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -2418,7 +2269,6 @@
      "nemonico": "POSITIC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.78,
      "fechaUltimaNegociacion": "2026-05-13",
      "yahoo": null,
      "yahooUltimo": null
@@ -2436,7 +2286,6 @@
      "nemonico": "POSITVC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -2453,7 +2302,6 @@
      "nemonico": "LAIVEBC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.78,
      "fechaUltimaNegociacion": "2020-04-23",
      "yahoo": null
     }
@@ -2470,7 +2318,6 @@
      "nemonico": "GLORIAI1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 11.15,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "GLORIAI1.LM",
      "yahooUltimo": "2026-10-23"
@@ -2488,7 +2335,6 @@
      "nemonico": "LIBSEGC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -2505,7 +2351,6 @@
      "nemonico": "PORTAC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -2522,7 +2367,6 @@
      "nemonico": "LUSURC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 12.5,
      "fechaUltimaNegociacion": "2026-10-21",
      "yahoo": "LUSURC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -2540,7 +2384,6 @@
      "nemonico": "RECORDI1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.6,
      "fechaUltimaNegociacion": "2026-06-25",
      "yahoo": null,
      "yahooUltimo": null
@@ -2558,7 +2401,6 @@
      "nemonico": "MAPFSGC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 7.31,
      "fechaUltimaNegociacion": "2026-01-06",
      "yahoo": null,
      "yahooUltimo": null
@@ -2576,7 +2418,6 @@
      "nemonico": "MIBANC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 1.5,
      "fechaUltimaNegociacion": "2025-01-30",
      "yahoo": null
     }
@@ -2593,7 +2434,6 @@
      "nemonico": "MICHEI1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 4.3,
      "fechaUltimaNegociacion": "2026-10-14",
      "yahoo": null,
      "yahooUltimo": null
@@ -2611,7 +2451,6 @@
      "nemonico": "ANDEXAC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null,
      "yahooUltimo": null
@@ -2620,7 +2459,6 @@
      "nemonico": "ANDEXBC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 1.0,
      "fechaUltimaNegociacion": "2026-10-19",
      "yahoo": null,
      "yahooUltimo": null
@@ -2638,7 +2476,6 @@
      "nemonico": "MINSURI1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 7.44,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "MINSURI1.LM",
      "yahooUltimo": "2026-10-23"
@@ -2656,7 +2493,6 @@
      "nemonico": "MITSUFC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -2673,7 +2509,6 @@
      "nemonico": "NACSEGC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -2690,7 +2525,6 @@
      "nemonico": "ATACOAC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.5,
      "fechaUltimaNegociacion": "2026-08-27",
      "yahoo": "ATACOAC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -2699,7 +2533,6 @@
      "nemonico": "ATACOBC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 0.305,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "ATACOBC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -2717,7 +2550,6 @@
      "nemonico": "NEXAPEC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 4.22,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "NEXAPEC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -2726,7 +2558,6 @@
      "nemonico": "NEXAPEI1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 3.7,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": null,
      "yahooUltimo": null
@@ -2744,7 +2575,6 @@
      "nemonico": "ORYGENC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 2.37,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": null,
      "yahooUltimo": null
@@ -2762,7 +2592,6 @@
      "nemonico": "PACIFIC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 41.3,
      "fechaUltimaNegociacion": "2025-12-19",
      "yahoo": null,
      "yahooUltimo": null
@@ -2780,7 +2609,6 @@
      "nemonico": "PHTBC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.048,
      "fechaUltimaNegociacion": "2024-04-03",
      "yahoo": null
     }
@@ -2797,7 +2625,6 @@
      "nemonico": "PERENAC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null,
      "yahooUltimo": null
@@ -2806,7 +2633,6 @@
      "nemonico": "PERENBC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 18.52,
      "fechaUltimaNegociacion": "2026-07-14",
      "yahoo": null,
      "yahooUltimo": null
@@ -2824,7 +2650,6 @@
      "nemonico": "EXALMC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 2.35,
      "fechaUltimaNegociacion": "2026-10-05",
      "yahoo": "EXALMC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -2842,7 +2667,6 @@
      "nemonico": "PETROBC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -2859,7 +2683,6 @@
      "nemonico": "PLUZENC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 1.3,
      "fechaUltimaNegociacion": "2026-10-22",
      "yahoo": null,
      "yahooUltimo": null
@@ -2877,7 +2700,6 @@
      "nemonico": "PRIMAC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -2894,7 +2716,6 @@
      "nemonico": "PROFUTC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -2911,7 +2732,6 @@
      "nemonico": "PROTECC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -2928,7 +2748,6 @@
      "nemonico": "PVTBC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -2945,7 +2764,6 @@
      "nemonico": "QUALSGC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.16,
      "fechaUltimaNegociacion": "2019-03-27",
      "yahoo": null
     }
@@ -2962,7 +2780,6 @@
      "nemonico": "QUIMPAC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.272,
      "fechaUltimaNegociacion": "2025-05-15",
      "yahoo": null
     },
@@ -2970,7 +2787,6 @@
      "nemonico": "QUIMPAI1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 1.02,
      "fechaUltimaNegociacion": "2025-07-11",
      "yahoo": null
     }
@@ -2987,7 +2803,6 @@
      "nemonico": "RBCAC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     },
@@ -2995,7 +2810,6 @@
      "nemonico": "RBCBC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -3012,7 +2826,6 @@
      "nemonico": "RVIA5BC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -3029,7 +2842,6 @@
      "nemonico": "RIMSEGC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 1.38,
      "fechaUltimaNegociacion": "2026-09-22",
      "yahoo": "RIMSEGC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -3047,7 +2859,6 @@
      "nemonico": "SAGAC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 8.0,
      "fechaUltimaNegociacion": "2026-05-19",
      "yahoo": null,
      "yahooUltimo": null
@@ -3065,7 +2876,6 @@
      "nemonico": "SANTCOC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -3082,7 +2892,6 @@
      "nemonico": "SANFINC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -3099,7 +2908,6 @@
      "nemonico": "SCOTIAC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 21.0,
      "fechaUltimaNegociacion": "2026-10-22",
      "yahoo": "SCOTIAC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -3117,7 +2925,6 @@
      "nemonico": "SEDAPBC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -3134,7 +2941,6 @@
      "nemonico": "SHOUGEC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.311,
      "fechaUltimaNegociacion": "2017-02-16",
      "yahoo": null
     }
@@ -3151,7 +2957,6 @@
      "nemonico": "SHPC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 29.0,
      "fechaUltimaNegociacion": "2026-10-22",
      "yahoo": null,
      "yahooUltimo": null
@@ -3169,7 +2974,6 @@
      "nemonico": "FANUPEC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -3186,7 +2990,6 @@
      "nemonico": "SEALDC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 2.5,
      "fechaUltimaNegociacion": "2026-10-21",
      "yahoo": null,
      "yahooUltimo": null
@@ -3204,7 +3007,6 @@
      "nemonico": "CVERDEC1",
      "segmento": "RV1",
      "moneda": "US$",
-     "ultimoPrecio": 67.9,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "CVERDEC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -3222,7 +3024,6 @@
      "nemonico": "MINCORC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 41.0,
      "fechaUltimaNegociacion": "2026-10-06",
      "yahoo": null,
      "yahooUltimo": null
@@ -3231,7 +3032,6 @@
      "nemonico": "MINCORI1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 38.17,
      "fechaUltimaNegociacion": "2026-10-22",
      "yahoo": null,
      "yahooUltimo": null
@@ -3249,7 +3049,6 @@
      "nemonico": "BROCALC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 26.6,
      "fechaUltimaNegociacion": "2026-10-21",
      "yahoo": null,
      "yahooUltimo": null
@@ -3258,7 +3057,6 @@
      "nemonico": "BROCALI1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 17.7,
      "fechaUltimaNegociacion": "2026-09-17",
      "yahoo": "BROCALI1.LM",
      "yahooUltimo": "2026-10-23"
@@ -3276,7 +3074,6 @@
      "nemonico": "SOLUCIC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -3293,7 +3090,6 @@
      "nemonico": "SCCO",
      "segmento": "RV3",
      "moneda": "US$",
-     "ultimoPrecio": 185.02,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "SCCO",
      "yahooUltimo": "2026-10-23"
@@ -3311,7 +3107,6 @@
      "nemonico": "SPCCPI1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 264.0,
      "fechaUltimaNegociacion": "2026-10-22",
      "yahoo": null,
      "yahooUltimo": null
@@ -3320,7 +3115,6 @@
      "nemonico": "SPCCPI2",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 220.0,
      "fechaUltimaNegociacion": "2026-08-20",
      "yahoo": null,
      "yahooUltimo": null
@@ -3338,7 +3132,6 @@
      "nemonico": "TELCAAC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     },
@@ -3346,7 +3139,6 @@
      "nemonico": "TELCABC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -3363,7 +3155,6 @@
      "nemonico": "SNCRISC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -3380,7 +3171,6 @@
      "nemonico": "TOTALSC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null
     }
@@ -3397,7 +3187,6 @@
      "nemonico": "TRADIC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 0.62,
      "fechaUltimaNegociacion": "2026-09-03",
      "yahoo": null,
      "yahooUltimo": null
@@ -3415,7 +3204,6 @@
      "nemonico": "UNACEMC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 2.39,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "UNACEMC1.LM",
      "yahooUltimo": "2026-10-23"
@@ -3433,7 +3221,6 @@
      "nemonico": "BACKUAC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 248.05,
      "fechaUltimaNegociacion": "2026-08-04",
      "yahoo": null,
      "yahooUltimo": null
@@ -3442,7 +3229,6 @@
      "nemonico": "BACKUAC2",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null,
      "yahooUltimo": null
@@ -3451,7 +3237,6 @@
      "nemonico": "BACKUBC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 315.0,
      "fechaUltimaNegociacion": "2026-10-16",
      "yahoo": null,
      "yahooUltimo": null
@@ -3460,7 +3245,6 @@
      "nemonico": "BACKUBC2",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null,
      "yahooUltimo": null
@@ -3469,7 +3253,6 @@
      "nemonico": "BACKUSI1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 28.89,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "BACKUSI1.LM",
      "yahooUltimo": "2026-10-23"
@@ -3478,7 +3261,6 @@
      "nemonico": "BACKUSI2",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": null,
      "fechaUltimaNegociacion": null,
      "yahoo": null,
      "yahooUltimo": null
@@ -3496,7 +3278,6 @@
      "nemonico": "VIVSEGC1",
      "segmento": "RV2",
      "moneda": "S/",
-     "ultimoPrecio": 0.95,
      "fechaUltimaNegociacion": "2017-06-08",
      "yahoo": null
     }
@@ -3513,7 +3294,6 @@
      "nemonico": "VOLCAAC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 1.85,
      "fechaUltimaNegociacion": "2026-09-07",
      "yahoo": null,
      "yahooUltimo": null
@@ -3522,7 +3302,6 @@
      "nemonico": "VOLCABC1",
      "segmento": "RV1",
      "moneda": "S/",
-     "ultimoPrecio": 0.84,
      "fechaUltimaNegociacion": "2026-10-23",
      "yahoo": "VOLCABC1.LM",
      "yahooUltimo": "2026-10-23"
