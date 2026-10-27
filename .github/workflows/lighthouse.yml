@@ -1,0 +1,87 @@
+name: Lighthouse
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run Lighthouse CI on mobile
+        run: |
+          cat > lighthouserc.json <<'EOF'
+          {
+            "ci": {
+              "collect": {
+                "url": [
+                  "https://perdata.site/",
+                  "https://perdata.site/explorer",
+                  "https://perdata.site/noticias",
+                  "https://perdata.site/empresas",
+                  "https://perdata.site/empresa/ALICORC1",
+                  "https://perdata.site/precios"
+                ],
+                "numberOfRuns": 1,
+                "settings": {
+                  "preset": "mobile",
+                  "chromeFlags": "--no-sandbox"
+                }
+              },
+              "upload": {
+                "target": "filesystem",
+                "outputDir": "./lighthouse-reports"
+              }
+            }
+          }
+          EOF
+          npx --yes @lhci/cli@0.15.x autorun
+      - name: Add category scores to job summary
+        run: |
+          node --input-type=module <<'EOF'
+          import fs from 'node:fs';
+          import path from 'node:path';
+
+          const directory = 'lighthouse-reports';
+          const manifestPath = path.join(directory, 'manifest.json');
+          const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+          const labels = [
+            ['performance', 'Rendimiento'],
+            ['accessibility', 'Accesibilidad'],
+            ['best-practices', 'Buenas prácticas'],
+            ['seo', 'SEO'],
+          ];
+          const rows = manifest
+            .filter((entry) => entry.isRepresentativeRun)
+            .map((entry) => {
+              const report = JSON.parse(fs.readFileSync(path.join(directory, entry.jsonPath), 'utf8'));
+              const page = new URL(report.finalUrl).pathname || '/';
+              const scores = labels.map(([key]) => {
+                const score = report.categories[key]?.score;
+                return score == null ? 'N/D' : String(Math.round(score * 100));
+              });
+              return `| ${page} | ${scores.join(' | ')} |`;
+            });
+
+          if (!rows.length) throw new Error('No Lighthouse reports were found in the manifest.');
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, [
+            '## Lighthouse mobile scores',
+            '',
+            '| Página | Rendimiento | Accesibilidad | Buenas prácticas | SEO |',
+            '| --- | ---: | ---: | ---: | ---: |',
+            ...rows,
+            '',
+          ].join('\n'));
+          EOF
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: lighthouse-reports/
+          if-no-files-found: error
