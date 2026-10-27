@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es" class="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Estado de los datos · PerData</title>
+  <meta name="description" content="Consulta la hora de actualización de las fuentes de datos de PerData." />
+  <link rel="canonical" href="https://perdata.site/estado" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Libre+Franklin:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/pd.css" />
+  <script defer src="/motion.js"></script>
+  <style>
+    .status-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .status-table th, .status-table td { padding: 14px 12px; border-bottom: 1px solid var(--pd-rule); text-align: left; }
+    .status-table th { color: var(--pd-ink-soft); font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+    .status-table td:last-child, .status-table th:last-child { text-align: right; }
+    .status-time { font-family: var(--pd-font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .status-label { font-weight: 500; }
+    .status-label.is-stale, .status-label.is-unknown { color: var(--pd-ink-soft); }
+    @media (max-width: 560px) { .status-table th, .status-table td { padding: 12px 8px; } }
+  </style>
+</head>
+<body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
+  <header class="border-b border-rule bg-card sticky top-0 z-30 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
+      <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline"><span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span></a>
+      <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft" aria-label="Navegación principal"><a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a><a href="/empresas" class="hover:text-ink transition no-underline">Empresas</a><a href="/mercado" class="hover:text-ink transition no-underline">Mercado</a><a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a><a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a><a href="/guia" class="hover:text-ink transition no-underline">Guía</a><a href="/precios" class="hover:text-ink transition no-underline">Precios</a></nav>
+      <div class="flex items-center space-x-2 sm:space-x-3"><div id="navbarAuthContainer"></div><label class="ui-switch" title="Alternar modo claro / oscuro"><input id="themeToggle" type="checkbox" aria-label="Modo oscuro" /><div class="slider"><div class="circle"></div></div></label><button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menú" aria-expanded="false"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+    </div>
+    <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors"><nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft" aria-label="Menú móvil"><a href="/explorer" class="hover:text-ink py-1 no-underline">Terminal</a><a href="/empresas" class="hover:text-ink py-1 no-underline">Empresas</a><a href="/mercado" class="hover:text-ink py-1 no-underline">Mercado</a><a href="/noticias" class="hover:text-ink py-1 no-underline">Noticias</a><a href="/metodologia" class="hover:text-ink py-1 no-underline">Metodología</a><a href="/guia" class="hover:text-ink py-1 no-underline">Guía</a><a href="/precios" class="hover:text-ink py-1 no-underline">Precios</a></nav></div>
+  </header>
+  <main class="flex-grow max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-8 w-full">
+    <section class="space-y-2"><p class="micro-label text-ink-soft">Transparencia de datos</p><h1 class="text-3xl sm:text-5xl font-bold tracking-tight text-ink">Estado de las fuentes</h1><p class="pd-page-lede text-base sm:text-lg text-ink-soft leading-relaxed mt-2 max-w-2xl" style="font-family:var(--pd-font-read)">Última observación disponible y antigüedad de los datos usados en PerData.</p></section>
+    <p id="statusMessage" class="text-sm text-ink-soft" role="status" aria-live="polite">Cargando estado…</p>
+    <div class="overflow-x-auto">
+      <table class="status-table"><thead><tr><th>Fuente</th><th>Última actualización (Lima)</th><th>Estado</th></tr></thead><tbody id="statusRows"></tbody></table>
+    </div>
+    <p class="text-xs text-ink-soft">La página se actualiza automáticamente cada 60 segundos.</p>
+  </main>
+  <footer class="border-t border-rule bg-card py-10 px-4 sm:px-6"><div class="max-w-6xl mx-auto flex flex-col gap-6"><div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-rule"><a href="/" class="text-inherit no-underline"><span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span></a><nav class="flex flex-wrap items-center gap-6 text-xs text-ink-soft" aria-label="Navegación secundaria"><a href="/mercado" class="hover:text-ink no-underline">Mercado</a><a href="/estado" class="hover:text-ink no-underline">Estado</a><a href="/boletin" class="hover:text-ink no-underline">Boletín</a><a href="/terms" class="hover:text-ink no-underline">Términos</a><a href="/privacidad" class="hover:text-ink no-underline">Privacidad</a><a href="mailto:soporte@perdata.site" class="hover:text-ink no-underline">Contacto</a></nav></div><div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 text-[11px] text-ink-soft leading-relaxed"><span class="font-medium text-ink">© 2026 PerData</span><p class="max-w-2xl m-0">Información financiera y cuantitativa con fines estrictamente informativos y de investigación. No constituye asesoramiento de inversión ni oferta pública de valores.</p></div></div></footer>
+  <script>
+    const sources = [
+      ['forecasts', 'Proyecciones'], ['news', 'Noticias'], ['smv', 'Cierres de la SMV'],
+      ['bcrp', 'Datos oficiales del BCRP'], ['eia', 'Datos oficiales de la EIA'], ['d1Sync', 'Copia de datos a D1'],
+    ];
+    const limaDate = new Intl.DateTimeFormat('es-PE', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Lima' });
+    async function refreshStatus() {
+      const message = document.getElementById('statusMessage');
+      try {
+        const response = await fetch('/api/status', { cache: 'no-store' });
+        if (!response.ok) throw new Error('Status unavailable');
+        const data = await response.json();
+        const rows = document.getElementById('statusRows');
+        rows.replaceChildren();
+        for (const [key, label] of sources) {
+          const item = data[key] || {};
+          const tr = document.createElement('tr');
+          const name = document.createElement('td'); name.textContent = label;
+          const time = document.createElement('td'); time.className = 'status-time';
+          time.textContent = item.updatedAt ? limaDate.format(new Date(item.updatedAt)) : 'Sin datos';
+          const statusCell = document.createElement('td');
+          const status = document.createElement('span'); status.className = 'status-label';
+          const current = Number.isFinite(item.ageHours) && Number.isFinite(item.staleAfterHours);
+          status.textContent = current ? (item.ageHours <= item.staleAfterHours ? 'Al día' : 'Retrasado') : 'Sin datos';
+          if (!current) status.classList.add('is-unknown');
+          else if (item.ageHours > item.staleAfterHours) status.classList.add('is-stale');
+          statusCell.append(status); tr.append(name, time, statusCell); rows.append(tr);
+        }
+        message.textContent = `Actualizado: ${limaDate.format(new Date(data.now))}`;
+      } catch {
+        message.textContent = 'No fue posible actualizar el estado. Se volverá a intentar en un minuto.';
+      }
+    }
+    refreshStatus();
+    window.setInterval(refreshStatus, 60000);
+    const toggle = document.getElementById('themeToggle');
+    if (toggle) { toggle.checked = document.documentElement.classList.contains('dark'); toggle.addEventListener('change', (event) => { document.documentElement.classList.toggle('dark', event.target.checked); document.documentElement.classList.toggle('light', !event.target.checked); localStorage.setItem('theme', event.target.checked ? 'dark' : 'light'); }); }
+    const menuButton = document.getElementById('mobileMenuBtn');
+    menuButton.addEventListener('click', () => { const open = document.getElementById('mobileMenu').classList.toggle('hidden') === false; menuButton.setAttribute('aria-expanded', String(open)); });
+  </script>
+  <script src="/auth.js"></script>
+</body>
+</html>

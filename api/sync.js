@@ -51,5 +51,7 @@ export default async function handler(req, res) {
     `on conflict (${key.join(", ")}) do update set ${cols.filter((c) => !key.includes(c)).map((c) => `${c} = excluded.${c}`).join(", ")}`;
   const stmt = db.prepare(sql);
   await db.batch(rows.map(spec.map).map((r) => stmt.bind(...cols.map((c) => (r[c] === undefined ? null : r[c])))));
+  await db.prepare(`insert into sync_meta (table_name, synced_at) values (?, ?) on conflict (table_name) do update set synced_at = excluded.synced_at`)
+    .bind(body.table, new Date().toISOString()).run();
   return send(res, 200, { ok: true, rows: rows.length });
 }

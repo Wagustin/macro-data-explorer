@@ -7,6 +7,7 @@
 export const d1 = () => globalThis.PERDATA_DB || null;
 
 export const SCHEMA = [
+  `create table if not exists sync_meta (table_name text primary key, synced_at text not null)`,
   `create table if not exists forecasts (symbol text not null, horizon integer not null, model text not null, run_at text not null,
     last_close real, p10 real, p25 real, p50 real, p75 real, p90 real, path text, primary key (symbol, horizon, model))`,
   `create table if not exists cotizaciones_smv (nemonico text not null, fecha text not null, cierre real not null, apertura real,

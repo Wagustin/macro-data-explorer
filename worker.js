@@ -28,6 +28,7 @@ const CLEAN_PAGES = {
   "/boletin": "boletin.html",
   "/empresas": "empresas.html",
   "/mercado": "mercado.html",
+  "/estado": "estado.html",
   "/resumenes": "resumen.html"
 };
 
