@@ -9,6 +9,7 @@ import stripeWebhookHandler from "./api/stripe-webhook.js";
 import statusHandler from "./api/status.js";
 import boletinHandler from "./api/boletin.js";
 import syncHandler from "./api/sync.js";
+import mercadoHandler from "./api/mercado.js";
 
 // Clean URL route map for static subpages
 const CLEAN_PAGES = {
@@ -25,7 +26,8 @@ const CLEAN_PAGES = {
   "/restablecer": "restablecer.html",
   "/privacidad": "privacidad.html",
   "/boletin": "boletin.html",
-  "/empresas": "empresas.html"
+  "/empresas": "empresas.html",
+  "/mercado": "mercado.html"
 };
 
 function adaptNodeHandler(handler) {
@@ -152,6 +154,7 @@ const routes = {
   "/api/stripe-webhook": adaptNodeHandler(stripeWebhookHandler),
   "/api/status": adaptNodeHandler(statusHandler),
   "/api/boletin": adaptNodeHandler(boletinHandler),
+  "/api/mercado": adaptNodeHandler(mercadoHandler),
   "/api/internal/sync": adaptNodeHandler(syncHandler)
 };
 

@@ -41,6 +41,7 @@ const FILES_TO_COPY = [
   "terms.html",
   "404.html",
   "empresas.html",
+  "mercado.html",
   "boletin.html",
   "data/smv-hechos.json",
   "empresa.html",

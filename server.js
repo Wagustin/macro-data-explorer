@@ -9,6 +9,7 @@ import interpretHandler from "./api/interpret.js";
 import newsHandler from "./api/news.js";
 import statusHandler from "./api/status.js";
 import boletinHandler from "./api/boletin.js";
+import mercadoHandler from "./api/mercado.js";
 import authHandler from "./api/auth.js";
 import billingHandler from "./api/billing.js";
 import stripeWebhookHandler from "./api/stripe-webhook.js";
@@ -50,7 +51,8 @@ const PAGES = {
   "/cuenta": "cuenta.html",
   "/restablecer": "restablecer.html",
   "/privacidad": "privacidad.html",
-  "/empresas": "empresas.html"
+  "/empresas": "empresas.html",
+  "/mercado": "mercado.html"
 };
 
 const server = http.createServer(async (req, res) => {
@@ -104,6 +106,9 @@ const server = http.createServer(async (req, res) => {
   }
   if (pathname === "/api/boletin") {
     return boletinHandler(req, res);
+  }
+  if (pathname === "/api/mercado") {
+    return mercadoHandler(req, res);
   }
   if (pathname === "/api/auth" || pathname.startsWith("/api/auth/")) {
     return authHandler(req, res);
