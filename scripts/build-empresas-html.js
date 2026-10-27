@@ -83,7 +83,7 @@ rows.sort((a, b) => {
 // Generate HTML rows
 const rowsHtml = rows.map(r => {
   const isMuted = r.tier === 3;
-  // Precio solo de fuentes confirmadas (Yahoo, cargado en vivo). Los precios de la BVL quedan
+  // Precio solo de fuentes confirmadas (datos de mercado, cargados en vivo). Los precios de la BVL quedan
   // pendientes de revisar sus términos de uso: la ficha enlaza a la BVL.
   const priceDisplay = r.tier === 1
     ? '<span class="price-none">…</span>'
@@ -667,7 +667,7 @@ ${rowsHtml}
       searchInput.value = state.q; setTab(actTabs, "act", state.act); setTab(secTabs, "sec", state.sec);
       if (state.q || state.act || state.sec) filterRows();
 
-      // Lazy Loading Batch for Yahoo Prices
+      // Lazy Loading Batch for market prices
       const priceCache = {};
       const pendingQueue = [];
       let activeRequests = 0;
@@ -686,7 +686,7 @@ ${rowsHtml}
             .then(res => res.ok ? res.json() : null)
             .then(data => {
               if (!data) return;
-              // Sin cotización en vivo (acciones de Lima en Yahoo): último cierre de la serie, sin variación
+              // Sin cotización en vivo (acciones de Lima sin dato diario): último cierre de la serie, sin variación
               let live = data.live && typeof data.live.price === "number" ? data.live : null;
               const ser = Array.isArray(data.series) ? data.series : [];
               if (!live && ser.length) live = { price: Number(ser[ser.length - 1].close) };

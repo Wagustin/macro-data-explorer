@@ -942,7 +942,7 @@
 
     <!-- Desktop Only: Strips de Forecast y KPIs históricos (Ocultos en móvil para dar paso a la tabla) -->
     <div class="hidden sm:block">
-      <!-- Forecast Band (TimesFM) -->
+      <!-- Forecast Band -->
       <section class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] px-4 sm:px-6 py-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
           <div class="inline-flex items-center gap-2">
@@ -1730,7 +1730,7 @@ const state = {
         // Render basic dashboard
         renderDashboardBasics();
 
-        // 3. Fetch TimesFM Forecast with skeleton loader
+        // 3. Fetch forecast with skeleton loader
         await fetchForecastOnly(symbol, horizon);
       } catch (err) {
         console.error("Error loading dashboard data:", err);
@@ -1781,7 +1781,7 @@ const state = {
         }
         state.forecastData = forecastJson.error ? null : forecastJson;
       } catch (err) {
-        console.error("Error fetching TimesFM forecast:", err);
+        console.error("Error fetching forecast:", err);
         state.forecastData = null;
       } finally {
         state.isForecasting = false;

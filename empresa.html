@@ -412,7 +412,7 @@ html.dark .ui-switch {
             <span class="text-xs text-ink-soft ml-auto" id="price2ndDate"></span>
           </div>
 
-          <!-- Notice box when no Yahoo ticker -->
+          <!-- Notice box when no market symbol -->
           <div id="noYahooNotice" class="hidden p-4 mb-4 border border-rule bg-card text-xs leading-relaxed">
             <p class="font-medium text-ink mb-1">Sin historial de precios disponible</p>
             <p class="text-ink-soft mb-2">Este valor se negocia directamente en la Bolsa de Valores de Lima. Su precio se consulta en la ficha oficial de la BVL.</p>
@@ -621,7 +621,7 @@ html.dark .ui-switch {
         if (!res.ok) throw new Error("No se pudo cargar la base de empresas");
         const json = await res.json();
 
-        // Find emitter by matching nemonico in valores, or yahoo ticker
+        // Find emitter by matching nemonico in valores, or market symbol
         let emitter = json.emisores.find(e => 
           e.valores.some(v => v.nemonico.toUpperCase() === targetSymbol)
         );
@@ -637,7 +637,7 @@ html.dark .ui-switch {
           return;
         }
 
-        // Identify primary valor (matching target symbol, or with Yahoo)
+        // Identify primary valor (matching target symbol, or with market data)
         let primaryValor = emitter.valores.find(v => v.nemonico.toUpperCase() === targetSymbol);
         if (!primaryValor) {
           primaryValor = emitter.valores.find(v => v.yahoo) || emitter.valores[0];
@@ -667,7 +667,7 @@ html.dark .ui-switch {
         // Populate exchange label
         document.getElementById("exchangeLabel").textContent = `${marketLabel} · ${primaryValor.nemonico}`;
 
-        // Precio solo de Yahoo Finance (se carga abajo). Los precios de la BVL no se copian hasta
+        // Precio solo de la fuente de mercado (se carga abajo). Los precios de la BVL no se copian hasta
         // revisar sus términos de uso: se enlaza a la ficha oficial.
         const pm = document.getElementById("priceMain");
         if (hasYahoo) {
@@ -681,7 +681,7 @@ html.dark .ui-switch {
           ? ""
           : `Última negociación: ${emitter.fechaUltimaNegociacion || "sin registro"}`;
 
-        // Handle Yahoo vs No-Yahoo states
+        // Handle market vs no-market states
         if (hasYahoo) {
           document.getElementById("btnProyeccion").setAttribute("href", `/explorer?symbol=${encodeURIComponent(primaryValor.yahoo)}`);
           document.getElementById("btnProyeccion").classList.remove("hidden");
@@ -691,7 +691,7 @@ html.dark .ui-switch {
           // Fetch live price & 90-day history from /api/historical
           fetchHistorical(primaryValor.yahoo, primaryValor.moneda);
         } else {
-          // No Yahoo: Hide projection button, show disabled note and BVL notice
+          // No market data: Hide projection button, show disabled note and BVL notice
           document.getElementById("btnProyeccion").classList.add("hidden");
           document.getElementById("proyeccionDisabled").classList.remove("hidden");
           document.getElementById("noYahooNotice").classList.remove("hidden");

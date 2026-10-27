@@ -598,7 +598,7 @@
         return sign + pct.toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
       }
 
-      // Yahoo repite el mes en curso (p. ej. 2026-10-01 y 2026-10-21): un cierre por mes, el último
+      // La fuente de mercado repite el mes en curso (p. ej. 2026-10-01 y 2026-10-21): un cierre por mes, el último
       function monthlyCloses(series) {
         var byMonth = {};
         var order = [];
