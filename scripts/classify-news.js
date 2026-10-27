@@ -14,6 +14,8 @@ const FEED = path.join(ROOT, "data", "noticias.json");
 const OUT = path.join(ROOT, "data", "noticias-laya.json");
 const TEMAS = ["Dólar y BCRP", "Economía y fiscal", "Minería y metales", "Bolsa y empresas", "Energía", "Mundo"];
 const SENT = ["POSITIVO", "NEGATIVO", "NEUTRO"];
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 // Headlines with these words are never dropped, whatever the model says
 const MARKET_TERMS = /\b(d[oó]lar|tipo\s+de\s+cambio|bolsa|bvl|mercados?|acciones|bonos|pbi|inflaci[oó]n|bcrp?|reserva\s+federal|fed|aranceles?|presupuesto|subsidios?|impuestos?|exportaciones|cobre|oro|petr[oó]leo|elecciones|wall\s+street|nasdaq|ee\.?\s?uu\.?|china)\b/i;
 
@@ -30,6 +32,43 @@ const mainNemo = (vals) => (vals.find((v) => ["BAP", "BVN", "SCCO", "IFS", "CPAC
   || vals.find((v) => v.nemonico.endsWith("C1")) || vals.find((v) => v.nemonico.endsWith("I1")) || vals[0])?.nemonico;
 const companies = emisores.map((e) => [mainNemo(e.valores || []), e.razonSocial]).filter(([n]) => n);
 const known = new Set(companies.map(([n]) => n));
+
+async function saveLabels(rows) {
+  if (!rows.length) return;
+  try {
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) throw new Error("faltan SUPABASE_URL o SUPABASE_SERVICE_KEY");
+    const base = SUPABASE_URL.replace(/\/$/, "");
+    const response = await fetch(`${base}/rest/v1/etiquetas_noticias?on_conflict=id`, {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_SERVICE_KEY,
+        Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+        "Content-Type": "application/json",
+        Prefer: "resolution=merge-duplicates,return=minimal",
+      },
+      body: JSON.stringify(rows),
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+  } catch (error) {
+    console.warn(`No se pudieron guardar etiquetas en Supabase: ${error.message}`);
+  }
+}
+
+function labelRow(n, x, modelName) {
+  const relevancia = ["ALTA", "MEDIA", "BAJA"].includes(x?.relevancia) ? x.relevancia : "NINGUNA";
+  return {
+    id: n.id,
+    fecha: n.fecha_iso || new Date().toISOString(),
+    titulo: n.titulo,
+    fuente: n.fuente || null,
+    relevante: relevancia !== "NINGUNA",
+    relevancia,
+    tema: TEMAS.includes(x?.tema) ? x.tema : (n.categoria || null),
+    sentimiento: SENT.includes(x?.sentimiento) ? x.sentimiento : null,
+    empresas: (Array.isArray(x?.empresas) ? x.empresas : []).filter((e) => known.has(e)),
+    modelo: modelName || null,
+  };
+}
 
 const pending = (feed.noticias || []).filter((n) => n.id && !items[n.id] && !dropped.has(n.id));
 console.log(`Titulares nuevos: ${pending.length}`);
@@ -56,19 +95,40 @@ Devuelve SOLO este JSON: {"r":[{"i":0,"relevante":"ALTA","tema":"...","sentimien
   if (!Array.isArray(res?.out?.r)) { failedBatches++; console.error(`Lote ${i / 40 + 1}: sin respuesta válida`); continue; }
   model = res.model;
   const seen = new Set();
+  const labelRows = [];
   for (const x of res.out.r) {
     const n = Number.isInteger(x?.i) && !seen.has(x.i) ? batch[x.i] : null;
     if (!n || !["ALTA", "MEDIA", "BAJA", "NINGUNA"].includes(x.relevante)) continue;
     seen.add(x.i);
-    if (x.relevante === "NINGUNA" && !MARKET_TERMS.test(n.titulo)) { drop.add(n.id); continue; }
+    if (x.relevante === "NINGUNA" && !MARKET_TERMS.test(n.titulo)) {
+      drop.add(n.id);
+      labelRows.push(labelRow(n, { ...x, relevancia: "NINGUNA" }, model));
+      continue;
+    }
     items[n.id] = {
       relevancia: x.relevante,
       tema: TEMAS.includes(x.tema) ? x.tema : n.categoria,
       sentimiento: SENT.includes(x.sentimiento) ? x.sentimiento : "NEUTRO",
       empresas: (x.empresas || []).filter((e) => known.has(e)),
     };
+    labelRows.push(labelRow(n, x, model));
   }
+  await saveLabels(labelRows);
   if (seen.size < batch.length) console.error(`Lote ${i / 40 + 1}: ${batch.length - seen.size} titulares sin clasificar, se reintentan en la próxima pasada`);
+}
+
+if (process.argv.includes("--sync-all")) {
+  const laya = JSON.parse(fs.readFileSync(OUT, "utf8"));
+  const allNews = new Map();
+  for (const n of [...(feed.noticias || []), ...(laya.noticias || [])]) if (n?.id) allNews.set(n.id, n);
+  const discarded = new Set(laya.descartados || []);
+  const rows = [...allNews.values()].map((n) => labelRow(
+    n,
+    discarded.has(n.id) ? { relevancia: "NINGUNA" } : (laya.items || {})[n.id] || {},
+    laya.modelo || model,
+  ));
+  for (let i = 0; i < rows.length; i += 500) await saveLabels(rows.slice(i, i + 500));
+  console.log(`Sincronizadas ${rows.length} noticias históricas con Supabase`);
 }
 // With the model down there is nothing to publish: fail and keep the previous feed
 if (pending.length && failedBatches * 40 >= pending.length) throw new Error("ningún lote clasificado: se mantiene el feed anterior");
