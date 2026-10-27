@@ -36,10 +36,7 @@ console.log(`Titulares nuevos: ${pending.length}`);
 let model = prev.modelo && !/laya/i.test(prev.modelo) ? prev.modelo : null;
 const drop = new Set([...dropped].filter((id) => (feed.noticias || []).some((n) => n.id === id)));
 
-function failBatch(batchNumber, reason) {
-  throw new Error(`Lote ${batchNumber}: ${reason}; no se guardaron clasificaciones incompletas`);
-}
-
+let failedBatches = 0;
 for (let i = 0; i < pending.length; i += 40) {
   const batch = pending.slice(i, i + 40);
   const prompt = `Clasifica titulares de noticias para PerData, un sitio sobre la economía y la bolsa del Perú.
@@ -51,40 +48,38 @@ Para cada titular decide:
 Titulares:
 ${batch.map((n, j) => `${j}|${n.titulo}`).join("\n")}
 Devuelve SOLO este JSON: {"r":[{"i":0,"relevante":"ALTA","tema":"...","sentimiento":"...","empresas":[]}, ...]} con un elemento por titular.`;
-  let res;
-  try {
-    res = await askJSON(prompt, { budgetMs: 4 * 60 * 1000 });
-  } catch (error) {
-    failBatch(i / 40 + 1, `falló la llamada al modelo (${error.message})`);
+  // Two attempts; entries with a bad index or label are skipped and retried in the next run
+  let res = null;
+  for (let attempt = 0; attempt < 2 && !Array.isArray(res?.out?.r); attempt++) {
+    try { res = await askJSON(prompt, { budgetMs: 3 * 60 * 1000 }); } catch (error) { res = null; }
   }
-  if (!res || !Array.isArray(res.out?.r)) failBatch(i / 40 + 1, "respuesta del modelo ausente o inválida");
+  if (!Array.isArray(res?.out?.r)) { failedBatches++; console.error(`Lote ${i / 40 + 1}: sin respuesta válida`); continue; }
   model = res.model;
-  const classified = new Set();
-  for (const x of res.out.r || []) {
-    if (!Number.isInteger(x?.i) || x.i < 0 || x.i >= batch.length || classified.has(x.i)
-      || !["ALTA", "MEDIA", "BAJA", "NINGUNA"].includes(x.relevante)) {
-      failBatch(i / 40 + 1, "respuesta con índices inválidos o duplicados");
-    }
-    classified.add(x.i);
-    const n = batch[x.i];
+  const seen = new Set();
+  for (const x of res.out.r) {
+    const n = Number.isInteger(x?.i) && !seen.has(x.i) ? batch[x.i] : null;
+    if (!n || !["ALTA", "MEDIA", "BAJA", "NINGUNA"].includes(x.relevante)) continue;
+    seen.add(x.i);
     if (x.relevante === "NINGUNA" && !MARKET_TERMS.test(n.titulo)) { drop.add(n.id); continue; }
     items[n.id] = {
-      relevancia: ["ALTA", "MEDIA", "BAJA"].includes(x.relevante) ? x.relevante : "MEDIA",
+      relevancia: x.relevante,
       tema: TEMAS.includes(x.tema) ? x.tema : n.categoria,
       sentimiento: SENT.includes(x.sentimiento) ? x.sentimiento : "NEUTRO",
       empresas: (x.empresas || []).filter((e) => known.has(e)),
     };
   }
-  if (classified.size !== batch.length) failBatch(i / 40 + 1, "faltan titulares por clasificar");
+  if (seen.size < batch.length) console.error(`Lote ${i / 40 + 1}: ${batch.length - seen.size} titulares sin clasificar, se reintentan en la próxima pasada`);
 }
+// With the model down there is nothing to publish: fail and keep the previous feed
+if (pending.length && failedBatches * 40 >= pending.length) throw new Error("ningún lote clasificado: se mantiene el feed anterior");
 
 // Keep only the classifications of headlines still in the feed
 const ids = new Set((feed.noticias || []).map((n) => n.id));
 for (const id of Object.keys(items)) if (!ids.has(id) || drop.has(id)) delete items[id];
-if (drop.size) {
-  feed.noticias = feed.noticias.filter((n) => !drop.has(n.id));
-  fs.writeFileSync(FEED, JSON.stringify(feed, null, 2) + "\n");
-}
+// Publish only classified headlines; the rest come back with the next fetch and are retried
+const before = (feed.noticias || []).length;
+feed.noticias = (feed.noticias || []).filter((n) => items[n.id]);
+if (feed.noticias.length !== before) fs.writeFileSync(FEED, JSON.stringify(feed, null, 2) + "\n");
 const descartados = [...new Set([...dropped, ...drop])].slice(-1000);
 fs.writeFileSync(OUT, JSON.stringify({ actualizado: new Date().toISOString(), modelo: model, items, descartados }, null, 1) + "\n");
 console.log(`Clasificados: ${Object.keys(items).length} · descartados por irrelevantes: ${drop.size} (${model})`);
