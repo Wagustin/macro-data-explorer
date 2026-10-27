@@ -24,6 +24,19 @@ for (const name of ["timesfm", "chronos2", "tirex"]) {
   if (fs.existsSync(f)) models[name] = JSON.parse(fs.readFileSync(f, "utf8")).forecasts;
   else console.log(`Sin resultados de ${name}`);
 }
+// Ensembles: each quantile is the geometric mean of the members' quantiles
+function ensemble(names) {
+  const srcs = names.map((n) => models[n]);
+  if (srcs.some((s) => !s)) return;
+  const out = {};
+  for (const key of Object.keys(srcs[0])) {
+    if (srcs.some((s) => !s[key])) continue;
+    out[key] = srcs[0][key].map((row, i) => row.map((_, j) => Math.exp(srcs.reduce((a, s) => a + Math.log(Math.max(s[key][i][j], 1e-9)), 0) / srcs.length)));
+  }
+  models[names.join("+")] = out;
+}
+ensemble(["tirex", "chronos2"]);
+ensemble(["tirex", "chronos2", "timesfm"]);
 const keys = Object.keys(models.timesfm || Object.values(models)[0] || {});
 
 // Engine v3 on every cut (same series the Python side used: last, still open month dropped)
