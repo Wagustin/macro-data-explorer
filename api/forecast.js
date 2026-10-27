@@ -500,7 +500,9 @@ export default async function handler(req, res) {
 
   const hasAuth = Boolean(req.headers?.authorization);
 
-  if (!canUseHorizon(PLANS.anon, H)) {
+  // The homepage chart draws the 3-month path of USD/PEN for everyone (real monthly points)
+  const showcase = symbol === "PEN=X" && H <= 3;
+  if (!showcase && !canUseHorizon(PLANS.anon, H)) {
     const plan = planForUser(await getAuthUserOrNull(req));
     setCdnCache(res, true);
     if (!canUseHorizon(plan, H)) {

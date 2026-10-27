@@ -334,7 +334,7 @@
                 <div id="pdHeroChartContainer" class="relative w-full h-[210px] sm:h-[230px]">
                   <canvas id="pdHeroChart" role="img" aria-label="Historia de USD/PEN con abanico de proyección P10-P90"></canvas>
                 </div>
-                <p class="mt-2 text-xs text-ink-soft leading-normal font-sans">Línea: precio real · Zona sombreada: dónde estaría el dólar el próximo mes (8 de cada 10 veces)</p>
+                <p class="mt-2 text-xs text-ink-soft leading-normal font-sans">Línea: precio real · Zona sombreada: dónde estaría el dólar los próximos 3 meses (8 de cada 10 veces)</p>
                 <p class="mt-1 text-[11px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);"><span id="heroModelBadge" class="font-mono">Modelo: PerData Engine v3</span> · Fuente: <span id="pdChartSource">BCRP</span> · Datos al <span id="pdChartDate">—</span></p>
                 <a href="/explorer?symbol=PEN%3DX" class="pdl-link mt-2 inline-block">Abrir en la terminal &rarr;</a>
               </div>
@@ -751,10 +751,13 @@
 
       Promise.all([
         fetch('/api/historical?symbol=PEN=X&range=1y&interval=1mo').then(function (r) { return r.json(); }),
-        fetch('/api/forecast?symbol=PEN=X&horizon=1').then(function (r) { return r.json(); })
+        fetch('/api/forecast?symbol=PEN=X&horizon=1').then(function (r) { return r.json(); }),
+        // 3-month path only for the chart line, so it follows real monthly points
+        fetch('/api/forecast?symbol=PEN=X&horizon=3').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
       ]).then(function (res) {
         var hist = res[0];
         var fc = res[1];
+        var fcPath = res[2] && res[2].forecastSeries ? res[2] : fc;
         var series = hist && hist.series ? (window.pdMonthlyCloses ? window.pdMonthlyCloses(hist.series) : hist.series) : [];
         var srcEl = document.getElementById('pdChartSource');
         if (srcEl && hist && hist.dailySource) srcEl.textContent = hist.dailySource;
@@ -808,7 +811,7 @@
         var histPoints = series.map(function (s) {
           return { date: s.date.substring(0, 7), close: Number(s.close) };
         });
-        var fcSeries = (fc && fc.forecastSeries) ? fc.forecastSeries.map(function (it) {
+        var fcSeries = (fcPath && fcPath.forecastSeries) ? fcPath.forecastSeries.map(function (it) {
           return {
             date: it.date.substring(0, 7),
             p10: Number(it.p10),
@@ -833,7 +836,7 @@
             macro: { enabled: false },
             options: {
               currency: 'PEN',
-              horizonMonths: 1,
+              horizonMonths: fcSeries.length || 1,
               range: '6m',
               compact: true,
               plainLabels: true,
