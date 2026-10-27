@@ -3,7 +3,7 @@
 scripts/timesfm_batch.py
 
 Ejecución batch diaria de TimesFM 2.5 (Google 200M PyTorch en GPU GTX 1650).
-Calcula proyecciones multihorizonte (H=3..36) para los activos del catálogo,
+Calcula proyecciones multihorizonte (H=3..48) para los activos del catálogo,
 aplica calibración empírica y realiza upsert en la tabla 'forecasts' de Supabase
 con la service_role key.
 
@@ -26,7 +26,7 @@ HISTORY_PATH = os.path.join(ROOT_DIR, "data", "history-120.json")
 CALIBRATION_PATH = os.path.join(ROOT_DIR, "api", "_lib", "calibration.json")
 LOCAL_CACHE_PATH = os.path.join(ROOT_DIR, "data", "timesfm-forecasts-cache.json")
 
-HORIZONS = [3, 6, 12, 24, 36]
+HORIZONS = [3, 6, 12, 24, 36, 48]
 
 def load_credentials():
     url = os.environ.get("SUPABASE_URL")
@@ -60,7 +60,9 @@ def get_timesfm_calibration():
         6: {"k80": 1.35, "k50": 1.24},
         12: {"k80": 1.48, "k50": 1.30},
         24: {"k80": 1.55, "k50": 1.35},
-        36: {"k80": 1.58, "k50": 1.38}
+        36: {"k80": 1.58, "k50": 1.38},
+        # 48 months: no backtest at this horizon yet; keeps the 36-month factors (widest bands we measured)
+        48: {"k80": 1.58, "k50": 1.38}
     }
 
 def main():
@@ -119,8 +121,8 @@ def main():
     all_records = []
     run_timestamp = datetime.utcnow().isoformat() + "Z"
 
-    print("Calculando proyecciones para horizontes 3..36...")
-    max_h = 36
+    print("Calculando proyecciones para horizontes 3..48...")
+    max_h = 48
     inputs_list = []
     valid_symbols = []
 

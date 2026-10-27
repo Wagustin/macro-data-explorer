@@ -308,7 +308,7 @@
             <dl class="pdl-stats">
               <div><dt class="pdl-label">Activos con datos</dt><dd class="pdl-stat-val"><span data-stat="tradable-count">120</span></dd></div>
               <div><dt class="pdl-label">Rango P10–P90</dt><dd class="pdl-stat-val">acierta el 80&nbsp;%</dd></div>
-              <div><dt class="pdl-label">Horizontes</dt><dd class="pdl-stat-val">1 a 36 meses</dd></div>
+              <div><dt class="pdl-label">Horizontes</dt><dd class="pdl-stat-val">1 a 48 meses</dd></div>
             </dl>
           </div>
 
@@ -335,7 +335,7 @@
                   <canvas id="pdHeroChart" role="img" aria-label="Historia de USD/PEN con abanico de proyección P10-P90"></canvas>
                 </div>
                 <p class="mt-2 text-xs text-ink-soft leading-normal font-sans">Línea: precio real · Zona sombreada: dónde estaría el dólar el próximo mes (8 de cada 10 veces)</p>
-                <p class="mt-1 text-[11px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);"><span id="heroModelBadge" class="font-mono">Modelo: PerData Engine v3</span> · Fuente: <span id="pdChartSource">Yahoo Finance</span> · Datos al <span id="pdChartDate">—</span></p>
+                <p class="mt-1 text-[11px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);"><span id="heroModelBadge" class="font-mono">Modelo: PerData Engine v3</span> · Fuente: <span id="pdChartSource">BCRP</span> · Datos al <span id="pdChartDate">—</span></p>
                 <a href="/explorer?symbol=PEN%3DX" class="pdl-link mt-2 inline-block">Abrir en la terminal &rarr;</a>
               </div>
             </div>
@@ -422,7 +422,7 @@
           </tbody>
         </table>
       </div>
-      <p id="pdTableFooter" class="pie-ft text-[12px] text-ink-soft leading-normal border-t border-rule pt-2" style="font-family: var(--pd-font-ui);">Fuente: Yahoo Finance. Proyección: modelo de PerData. Datos al <span id="pdTableDate">—</span>.</p>
+      <p id="pdTableFooter" class="pie-ft text-[12px] text-ink-soft leading-normal border-t border-rule pt-2" style="font-family: var(--pd-font-ui);">Fuente: BCRP, EIA y datos de mercado. Proyección: PerData Engine v4. Datos al <span id="pdTableDate">—</span>.</p>
       <p class="text-sm sm:text-base text-ink-soft leading-relaxed mt-4">
         Escribe <span class="mono text-ink">"cobre"</span> en <a href="/explorer" class="text-ink hover:text-brand underline font-medium">la terminal</a>, elige un horizonte y descarga la serie en Excel.
       </p>
@@ -447,10 +447,10 @@
             <h3 class="pdl-h3">Datos de mercado, sin retoques</h3>
           </div>
           <div class="lg:col-span-5">
-            <p class="pdl-text">El dólar y los metales vienen del BCRP y el petróleo de la EIA de EE.&nbsp;UU., fuentes oficiales; las acciones de la BVL y de EE.&nbsp;UU., de Yahoo Finance; los hechos de importancia, de la SMV. Guardamos cierres diarios y mensuales tal como los publica cada fuente.</p>
+            <p class="pdl-text">El dólar y los metales vienen del BCRP y el petróleo de la EIA de EE.&nbsp;UU., fuentes oficiales; las acciones, datos de mercado de cierre con retraso; los hechos de importancia, de la SMV. Guardamos cierres diarios y mensuales tal como los publica cada fuente.</p>
             <p class="pdl-quote-sm">Si una fuente no responde, mostramos la última copia guardada y lo decimos.</p>
           </div>
-          <dl class="lg:col-span-3 pdl-facts"><div class="pdl-fact"><dt>Fuentes</dt><dd>BCRP · EIA · SMV · Yahoo Finance</dd></div><div class="pdl-fact"><dt>Frecuencia</dt><dd>Cierres diarios y mensuales</dd></div><div class="pdl-fact"><dt>Ajustes a mano</dt><dd>Ninguno</dd></div></dl>
+          <dl class="lg:col-span-3 pdl-facts"><div class="pdl-fact"><dt>Fuentes</dt><dd>BCRP · EIA · SMV · SUNAT</dd></div><div class="pdl-fact"><dt>Frecuencia</dt><dd>Cierres diarios y mensuales</dd></div><div class="pdl-fact"><dt>Ajustes a mano</dt><dd>Ninguno</dd></div></dl>
         </div>
         <div class="pdl-principle" data-reveal style="transition-delay:120ms">
           <div class="lg:col-span-4">
@@ -458,10 +458,10 @@
             <h3 class="pdl-h3">Dos modelos, combinados</h3>
           </div>
           <div class="lg:col-span-5">
-            <p class="pdl-text">PerData Engine v4 combina nuestro modelo estadístico (tendencia amortiguada, vuelta a su nivel de largo plazo y estacionalidad) con TimesFM 2.5 de Google. El peso de cada uno depende del plazo y salió de pruebas con unos 800 casos por horizonte: combinados fallan menos que cada uno por separado.</p>
+            <p class="pdl-text">PerData Engine v4 combina nuestro modelo estadístico (tendencia amortiguada, vuelta a su nivel de largo plazo y estacionalidad) con un modelo de series temporales de código abierto. El peso de cada uno depende del plazo y salió de pruebas con unos 800 casos por horizonte: combinados fallan menos que cada uno por separado.</p>
             <p class="pdl-quote-sm">Cada proyección dice qué modelo la calculó.</p>
           </div>
-          <dl class="lg:col-span-3 pdl-facts"><div class="pdl-fact"><dt>Modelo</dt><dd>PerData Engine v4</dd></div><div class="pdl-fact"><dt>Base</dt><dd>Engine v3 + TimesFM 2.5 (Google)</dd></div><div class="pdl-fact"><dt>Se recalcula</dt><dd>Cada día, 06:00 Lima</dd></div></dl>
+          <dl class="lg:col-span-3 pdl-facts"><div class="pdl-fact"><dt>Modelo</dt><dd>PerData Engine v4</dd></div><div class="pdl-fact"><dt>Base</dt><dd>Modelo propio + modelo de código abierto</dd></div><div class="pdl-fact"><dt>Se recalcula</dt><dd>Cada día, 06:00 Lima</dd></div></dl>
         </div>
         <div class="pdl-principle" data-reveal style="transition-delay:240ms">
           <div class="lg:col-span-4">
@@ -512,7 +512,7 @@
           <li>Sin registro: proyecciones a 1 mes</li>
           <li>Cuenta gratuita: hasta 6 meses</li>
           <li>Plan Boletín: tus empresas cada mañana</li>
-          <li>Plan Pro: 36 meses, 10 años de historia y Excel</li>
+          <li>Plan Pro: 48 meses, 10 años de historia y Excel</li>
         </ul>
       </div>
     </section>

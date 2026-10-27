@@ -252,7 +252,7 @@ export default async function handler(req, res) {
     // Serie diaria oficial (BCRP para el dólar y los metales, EIA para el Brent) cuando existe.
     // La descarga un proceso diario de GitHub Actions (scripts/fetch_official.py), así la web no
     // consulta al BCRP en cada visita. Si no está disponible, se queda la serie de Yahoo.
-    let dailySource = "Yahoo Finance";
+    let dailySource = "Datos de mercado (cierre)";
     const official = OFFICIAL_DAILY[symbol];
     if (official) {
       const series = await officialSeries(official.file, official.key);

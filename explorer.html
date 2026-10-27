@@ -578,19 +578,18 @@
   <!-- Main Container -->
   <main class="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
 
-    <!-- Aviso de Términos: Franja breve no intrusiva (Variante C) -->
-    <div id="termsNotice" class="hidden mb-4 border-y border-rule bg-transparent overflow-hidden transition-all duration-300">
-      <div class="px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-        <div class="flex items-center gap-2 text-xs text-ink leading-relaxed">
-          <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background: var(--pd-peru, #C8102E);"></span>
-          <span>
-            <strong>Entorno de análisis:</strong> no constituye asesoramiento financiero ni recomendación de inversión.
-            <a href="/terms" class="underline hover:text-ink ml-1 font-semibold" target="_blank">Leer los términos</a>
-          </span>
-        </div>
-        <button id="btnDismissTerms" type="button" class="self-start sm:self-auto px-3.5 py-1 text-xs font-semibold rounded shrink-0 transition" style="background: var(--pd-ink); color: var(--pd-paper);">
-          Entendido
-        </button>
+    <!-- Aviso de uso de la terminal: ventana que aparece una sola vez -->
+    <div id="termsNotice" class="hidden" role="dialog" aria-modal="true" aria-labelledby="termsTitle"
+      style="position:fixed;inset:0;z-index:60;background:rgba(20,19,17,.55);padding:16px;display:none;align-items:center;justify-content:center">
+      <div style="max-width:460px;width:100%;background:var(--pd-paper);color:var(--pd-ink);border-top:3px double var(--pd-ink);padding:24px 22px 20px">
+        <h2 id="termsTitle" style="font-family:var(--pd-font-serif,'Source Serif 4',Georgia,serif);font-size:24px;line-height:1.2;margin:0 0 12px">Antes de usar la terminal</h2>
+        <ul style="margin:0 0 16px;padding-left:18px;font-size:15px;line-height:1.5">
+          <li style="margin-bottom:6px">Las proyecciones son estadísticas: muestran un rango probable, no un precio seguro.</li>
+          <li style="margin-bottom:6px">Nada de lo que ves es una recomendación de inversión. Las decisiones son tuyas.</li>
+          <li>Los precios son de cierre y pueden llegar con retraso.</li>
+        </ul>
+        <p style="font-size:13px;color:var(--pd-ink-soft);margin:0 0 18px">Al continuar aceptas los <a href="/terms" target="_blank" style="color:var(--pd-ink);text-decoration:underline">términos de uso</a> y la <a href="/privacidad" target="_blank" style="color:var(--pd-ink);text-decoration:underline">política de privacidad</a>.</p>
+        <button id="btnDismissTerms" type="button" style="width:100%;padding:12px 16px;font-weight:600;font-size:15px;background:var(--pd-ink);color:var(--pd-paper);border:0;cursor:pointer">Entendido</button>
       </div>
     </div>
 
@@ -673,7 +672,7 @@
                 </button>
               </div>
               <div id="customHorizonContainer" class="hidden items-center gap-1.5 bg-[#F5F5F7] dark:bg-[#141416] px-2 py-1 rounded-md border border-[#E5E5EA] dark:border-[#3A3A3C] transition-all">
-                <input id="customHorizonInput" aria-label="Horizonte en meses" type="number" min="1" max="36" value="18" placeholder="Meses">
+                <input id="customHorizonInput" aria-label="Horizonte en meses" type="number" min="1" max="48" value="18" placeholder="Meses">
                 <span class="text-[11px] font-medium text-ink-soft">meses</span>
                 <button id="btnApplyCustomHorizon" class="px-2.5 py-1 bg-black dark:bg-white text-white dark:text-black text-xs font-bold rounded-md hover:opacity-90 transition">
                   Calcular
@@ -844,7 +843,7 @@
         <div class="mt-2 pt-2 border-t border-rule flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
           <div class="flex items-center gap-2 text-ink-soft">
             <svg class="w-4 h-4 shrink-0 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-            <span><strong>Protección & Cobertura Financiera:</strong> ¿Gestionas tesorería o riesgo corporativo? La proyección a 36 meses y exportación completa a Excel están disponibles en el plan Pro.</span>
+            <span><strong>Protección & Cobertura Financiera:</strong> ¿Gestionas tesorería o riesgo corporativo? La proyección a 48 meses y exportación completa a Excel están disponibles en el plan Pro.</span>
           </div>
           <a href="/precios" class="pd-btn pd-btn-primary shrink-0 text-[11px] py-1 px-3">
             Ver Cobertura Pro &rarr;
@@ -1291,49 +1290,34 @@ const state = {
 
     // Franja de Aviso de Términos (No bloqueante, Variante C)
     function setupTermsNotice() {
-      const STORAGE_KEY = "mde_terms_accepted_v1";
+      const STORAGE_KEY = "mde_terms_accepted_v2";
       const notice = document.getElementById("termsNotice");
       const btnDismiss = document.getElementById("btnDismissTerms");
-      const btnOpenHeader = document.getElementById("btnOpenTermsHeader");
-      const btnOpenFooter = document.getElementById("btnOpenTermsFooter");
 
       if (!notice) return;
 
-      const isAccepted = localStorage.getItem(STORAGE_KEY) === "true";
+      let isAccepted = false;
+      try { isAccepted = localStorage.getItem(STORAGE_KEY) === "true"; } catch (e) {}
       if (!isAccepted) {
         notice.classList.remove("hidden");
+        notice.style.display = "flex";
+        setTimeout(() => btnDismiss && btnDismiss.focus(), 50);
       }
 
       if (btnDismiss) {
         btnDismiss.addEventListener("click", () => {
-          localStorage.setItem(STORAGE_KEY, "true");
-          notice.style.maxHeight = notice.offsetHeight + "px";
-          notice.style.overflow = "hidden";
-          requestAnimationFrame(() => {
-            notice.style.transition = "max-height 0.25s ease-out, opacity 0.2s ease-out, padding 0.25s ease-out";
-            notice.style.maxHeight = "0";
-            notice.style.opacity = "0";
-            notice.style.paddingTop = "0";
-            notice.style.paddingBottom = "0";
-            setTimeout(() => {
-              notice.classList.add("hidden");
-            }, 260);
-          });
+          try { localStorage.setItem(STORAGE_KEY, "true"); } catch (e) {}
+          notice.style.display = "none";
+          notice.classList.add("hidden");
         });
       }
 
-      function reopenNotice() {
-        notice.style.transition = "";
-        notice.style.maxHeight = "";
-        notice.style.opacity = "";
-        notice.style.paddingTop = "";
-        notice.style.paddingBottom = "";
-        notice.classList.remove("hidden");
-        notice.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }
-
-      if (btnOpenHeader) btnOpenHeader.addEventListener("click", reopenNotice);
-      if (btnOpenFooter) btnOpenFooter.addEventListener("click", reopenNotice);
+      // Links that reopen the notice (if present on the page)
+      const reopenNotice = () => { notice.classList.remove("hidden"); notice.style.display = "flex"; };
+      ["btnOpenTermsHeader", "btnOpenTermsFooter"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("click", reopenNotice);
+      });
     }
 
     if (document.readyState === "loading") {
@@ -1488,7 +1472,7 @@ const state = {
       if (btn) btn.classList.remove("hidden");
       const span = el.querySelector("span.leading-snug");
       if (span && span.textContent.indexOf("sin cotización pública activa") !== -1) {
-        span.innerHTML = 'Con una <strong>cuenta gratuita</strong> proyectas hasta 6 meses. El plan <a href="/precios" class="underline">Pro</a> suma 10 años de historia, horizontes de hasta 36 meses y Excel.';
+        span.innerHTML = 'Con una <strong>cuenta gratuita</strong> proyectas hasta 6 meses. El plan <a href="/precios" class="underline">Pro</a> suma 10 años de historia, horizontes de hasta 48 meses y Excel.';
       }
     }
 
@@ -1604,7 +1588,7 @@ const state = {
       if (btnCustom) {
         btnCustom.addEventListener("click", () => {
           // The custom horizon goes past 12 months, so it's a Pro control.
-          if (window.MDE_Auth && !window.MDE_Auth.gate("horizon", 36)) return;
+          if (window.MDE_Auth && !window.MDE_Auth.gate("horizon", 48)) return;
           if (customContainer) {
             const isHidden = customContainer.classList.contains("hidden");
             if (isHidden) {
@@ -1623,7 +1607,7 @@ const state = {
         if (!customInput) return;
         let val = parseInt(customInput.value, 10);
         if (isNaN(val) || val < 1) val = 1;
-        if (val > 36) val = 36;
+        if (val > 48) val = 48;
         customInput.value = val;
         if (window.MDE_Auth && !window.MDE_Auth.gate("horizon", val)) return;
 
@@ -1732,7 +1716,7 @@ const state = {
         }
         state.primaryData = primaryJson;
         const srcEl = document.getElementById("chartSource");
-        if (srcEl) srcEl.textContent = `Precios diarios: ${primaryJson.dailySource || "Yahoo Finance"} · Serie mensual: Yahoo Finance`;
+        if (srcEl) srcEl.textContent = `Fuente de los precios diarios: ${primaryJson.dailySource || "datos de mercado (cierre)"}`;
 
         // 2. Fetch Macro Indicator
         if (macroSymbol && macroSymbol !== "none") {
@@ -2042,7 +2026,7 @@ const state = {
               timeStr = `hoy ${hh}:${mm} UTC`;
             } catch (e) {}
           }
-          modelBadge.textContent = `Modelo: PerData Engine v4 (TimesFM 2.5 + v3), calculado ${timeStr}`;
+          modelBadge.textContent = `PerData Engine v4 · calculado ${timeStr}`;
         } else {
           modelBadge.textContent = "Modelo: PerData Engine v3";
         }

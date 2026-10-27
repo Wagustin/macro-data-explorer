@@ -32,7 +32,7 @@ export const PLANS = {
     id: "pro",
     label: "Pro",
     ranges: ["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y", "10y", "max"],
-    maxHorizon: 36,
+    maxHorizon: 48,
     excel: true,
     boletinPersonal: true
   }

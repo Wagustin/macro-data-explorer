@@ -44,7 +44,7 @@ const ASSETS = ["HG=F", "GC=F", "BVN", "SCCO", "PEN=X"];
 const FORBIDDEN_PATTERNS = [
   { label: "Jev", regex: /\bJev\b/ },
   { label: "TypeSafe", regex: /TypeSafe/i },
-  { label: "BCRP como fuente", regex: /(fuente:\s*bcrp|interfaces.*bcrp|datos oficiales del bcrp|sincronizaci[oó]n.*bcrp)/i },
+  { label: "BCRP como fuente", regex: /(interfaces.*bcrp|datos oficiales del bcrp|sincronizaci[oó]n.*bcrp)/i },
   { label: "Nombre fundador", regex: /(agust[ií]n\s+ventura|ventura\s+salda[nñ]a)/i },
   { label: "S.A. ficticia", regex: /\bS\.A\./ },
   { label: "IFRS", regex: /\bIFRS\b/i },

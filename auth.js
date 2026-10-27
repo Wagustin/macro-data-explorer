@@ -11,7 +11,7 @@
   let PLANS = {
     anon: { id: "anon", ranges: ["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y"], maxHorizon: 1, excel: false },
     free: { id: "free", label: "Gratis", ranges: ["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y"], maxHorizon: 6, excel: false },
-    pro: { id: "pro", label: "Pro", ranges: ["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y", "10y", "max"], maxHorizon: 36, excel: true }
+    pro: { id: "pro", label: "Pro", ranges: ["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y", "10y", "max"], maxHorizon: 48, excel: true }
   };
   let billing = { enabled: false, prices: [] };
   let billingLoaded = null;
@@ -23,9 +23,9 @@
 
   const FEATURE_COPY = {
     range: "Las series de 10 años y el historial completo son parte del plan Pro.",
-    horizon: "Los horizontes de proyección largos (12 a 36 meses) son parte del plan Pro.",
+    horizon: "Los horizontes de proyección largos (12 a 48 meses) son parte del plan Pro.",
     excel: "La exportación a Excel es parte del plan Pro.",
-    default: "Desbloquea series de 10 años, horizontes de hasta 36 meses y exportación a Excel."
+    default: "Desbloquea series de 10 años, horizontes de hasta 48 meses y exportación a Excel."
   };
 
   function escapeHTML(str) {
@@ -546,14 +546,14 @@
       setTimeout(() => {
         Auth.closeModal();
         if (next === "checkout") Auth.startCheckout();
-        else if (next && !Auth.can(next, next === "range" ? "10y" : 36)) Auth.openUpgrade(next);
+        else if (next && !Auth.can(next, next === "range" ? "10y" : 48)) Auth.openUpgrade(next);
       }, 450);
     });
   }
 
   function ensureUpgrade() {
     if (document.getElementById("pdUpgradeModal")) return;
-    const perks = ["Series históricas de 10 años", "Proyecciones de 1 a 36 meses y horizonte a medida", "Exportación completa a Excel", "Cancela cuando quieras desde tu cuenta"];
+    const perks = ["Series históricas de 10 años", "Proyecciones de 1 a 48 meses y horizonte a medida", "Exportación completa a Excel", "Cancela cuando quieras desde tu cuenta"];
     document.body.insertAdjacentHTML("beforeend",
       '<div id="pdUpgradeModal" class="pd-dialog" hidden>' +
         '<div class="pd-dialog-box" role="dialog" aria-modal="true" aria-labelledby="pdUpgradeTitle">' +

@@ -657,7 +657,8 @@
       // Móvil: la ficha va en un hueco encima del gráfico, que se abre y empuja el gráfico hacia abajo,
       // para que el dedo no la tape.
       let slot = null;
-      if (isMobile && container.parentNode) {
+      // Also in compact charts (landing): the readout never covers the projection
+      if ((isMobile || options.compact) && container.parentNode) {
         slot = container.previousElementSibling && container.previousElementSibling.classList.contains("pd-chip-slot")
           ? container.previousElementSibling : null;
         if (!slot) {
@@ -780,7 +781,8 @@
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         const area = chart.chartArea;
-        if (!area || x < area.left || x > area.right || y < area.top || y > area.bottom) {
+        // With the readout slot the chart moves under the cursor, so only x matters there
+        if (!area || x < area.left || x > area.right || (!slot && (y < area.top || y > area.bottom))) {
           removeCrosshair();
           return;
         }
@@ -812,7 +814,10 @@
       }
 
       chart.canvas.addEventListener("mousemove", onMouseMove);
-      chart.canvas.addEventListener("mouseleave", removeCrosshair);
+      // With the slot, close only when the pointer leaves the whole block (slot + chart),
+      // otherwise moving onto the readout would close it and the chart would jump back
+      const leaveTarget = slot ? container.parentNode : chart.canvas;
+      leaveTarget.addEventListener("mouseleave", removeCrosshair);
       chart.canvas.addEventListener("touchstart", onTouchMove, { passive: true });
       chart.canvas.addEventListener("touchmove", onTouchMove, { passive: true });
       chart.canvas.addEventListener("touchend", removeCrosshair);
@@ -870,7 +875,7 @@
         },
         destroy() {
           chart.canvas.removeEventListener("mousemove", onMouseMove);
-          chart.canvas.removeEventListener("mouseleave", removeCrosshair);
+          leaveTarget.removeEventListener("mouseleave", removeCrosshair);
           chart.canvas.removeEventListener("touchstart", onTouchMove);
           chart.canvas.removeEventListener("touchmove", onTouchMove);
           chart.canvas.removeEventListener("touchend", removeCrosshair);

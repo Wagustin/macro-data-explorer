@@ -7,7 +7,7 @@
 // P50 = w·TimesFM + (1-w)·v3; each quantile's log-distance to the P50 is blended the same way
 // (both inputs are already calibrated to ~80 % coverage).
 export const V4_WEIGHTS = [[1, 0.48], [3, 0.30], [6, 0.43], [12, 0.58]];
-export const TFM_BATCH_HORIZONS = [3, 6, 12, 24, 36];
+export const TFM_BATCH_HORIZONS = [3, 6, 12, 24, 36, 48];
 
 export function v4Weight(h) {
   if (h <= V4_WEIGHTS[0][0]) return V4_WEIGHTS[0][1];

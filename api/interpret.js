@@ -49,7 +49,7 @@ export default async function handler(req, res) {
   const assetName = String(body.name || body.historical?.name || symbol).slice(0, 100);
   const macroSymbol = String(body.macroSymbol || "none").slice(0, 20);
   const macroName = String(body.macroName || macroSymbol).slice(0, 100);
-  const horizon = Math.max(1, Math.min(36, parseInt(body.horizon || 1, 10) || 1));
+  const horizon = Math.max(1, Math.min(48, parseInt(body.horizon || 1, 10) || 1));
   const corrRaw = typeof body.correlation === "number" ? body.correlation : parseFloat(String(body.correlation || "").replace(",", "."));
   const correlation = Number.isFinite(corrRaw) ? corrRaw : null;
   const f = body.forecast || {};
@@ -89,7 +89,7 @@ export default async function handler(req, res) {
   const note = await dailyNote(symbol);
 
   return res.status(200).json({
-    source: note ? `PerData Engine v4 + nota del día redactada con IA (${note.model})` : "PerData Engine v4 (lectura automática de las cifras)",
+    source: "Interpretado por PerData Engine v4",
     model: note ? "perdata-v4+ai-note" : "perdata-plain-1",
     // The one confidence figure we can stand behind: measured P10-P90 coverage in the backtest
     calibratedConfidence: 0.8,

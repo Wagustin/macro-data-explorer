@@ -324,7 +324,7 @@ function renderPersonal(cards) {
   }).join("");
   return `<tr><td style="padding:30px 0 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:2px solid ${C.ink};padding-top:10px;font-family:${serif};font-size:22px;font-weight:600;color:${C.ink}">Tus empresas</td></tr></table></td></tr>
   <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${body}</table>
-  <div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:6px">Precios: Yahoo Finance. Hechos: SMV. La proyección es estadística y no incorpora las noticias.</div></td></tr>`;
+  <div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:6px">Precios: datos de mercado de cierre. Hechos: SMV. La proyección es estadística y no incorpora las noticias.</div></td></tr>`;
 }
 
 const f = await facts();

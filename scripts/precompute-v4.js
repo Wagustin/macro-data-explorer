@@ -10,9 +10,9 @@ import { buildForecast } from "../api/forecast.js";
 import { blendV4 } from "../api/_lib/v4.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-// Every horizon the terminal offers (1-36 months, including custom ones)
-const HORIZONS = Array.from({ length: 36 }, (_, i) => i + 1);
-const BATCH = [3, 6, 12, 24, 36];
+// Every horizon the terminal offers (1-48 months, including custom ones)
+const HORIZONS = Array.from({ length: 48 }, (_, i) => i + 1);
+const BATCH = [3, 6, 12, 24, 36, 48];
 
 const history = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "history-120.json"), "utf8"));
 const tfm = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "timesfm-forecasts-cache.json"), "utf8"));

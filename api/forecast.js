@@ -353,9 +353,9 @@ export function formatForecastPayload(row, symbol, H) {
     symbol,
     model: row.model || (isTfm ? "timesfm-2.5" : "engine-v3"),
     architecture: isV4
-      ? "PerData Engine v4 (TimesFM 2.5 de Google Research, Apache 2.0, + Engine v3; ensamble por horizonte)"
+      ? "PerData Engine v4"
       : isTfm
-      ? "TimesFM 2.5 (Google, 200M PyTorch)"
+      ? "PerData Engine v4"
       : "PerData Engine v3 (tendencia amortiguada + reversión al ancla + abanico OU)",
     runAt: row.run_at,
     calibration: calibrationPayload,
@@ -379,7 +379,7 @@ export function formatForecastPayload(row, symbol, H) {
     metrics: {
       confidenceLevel: "80% (P10 - P90)",
       driftDirection: expectedReturnPct >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
-      modelArchitecture: isV4 ? "PerData Engine v4" : (isTfm ? "google/timesfm-2.5-200m-pytorch" : "engine-v3-precomputed"),
+      modelArchitecture: isV4 || isTfm ? "PerData Engine v4" : "PerData Engine v3",
       batchRunAt: row.run_at
     },
     forecastSeries: row.path
@@ -496,7 +496,7 @@ export default async function handler(req, res) {
   }
   const symbol = rawSymbol;
   const rawHorizon = parseInt(body.horizon || query.horizon || "1", 10);
-  const H = Math.max(1, Math.min(36, isNaN(rawHorizon) ? 1 : rawHorizon));
+  const H = Math.max(1, Math.min(48, isNaN(rawHorizon) ? 1 : rawHorizon));
 
   const hasAuth = Boolean(req.headers?.authorization);
 

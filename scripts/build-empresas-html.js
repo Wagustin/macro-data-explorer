@@ -485,7 +485,7 @@ html.dark .ui-switch {
     <div class="mb-8">
       <h1 class="pd-page-title mb-2">Directorio de Renta Variable <span class="italic text-ink-soft">BVL</span></h1>
       <p class="pd-lede max-w-2xl text-ink-soft">
-        Las 182 empresas con acciones en la Bolsa de Valores de Lima. Listado de la BVL al 23 de octubre de 2026; precios de Yahoo Finance; proyección de PerData Engine para las 36 que tienen historial suficiente.
+        Las 182 empresas con acciones en la Bolsa de Valores de Lima. Listado de la BVL al 23 de octubre de 2026; precios de cierre de mercado; proyección de PerData Engine para las 36 que tienen historial suficiente.
       </p>
     </div>
 
