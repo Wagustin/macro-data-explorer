@@ -18,6 +18,7 @@
 
   const ICON_USER = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>';
   const ICON_CLOSE = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+  const ICON_GOOGLE = '<svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.2l7.9 6.2C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.2C1 16.6 0 20.2 0 24s1 7.4 2.7 10.8l7.9-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.2 1.5-5 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.2C6.6 42.6 14.6 48 24 48z"/></svg>';
   const ICON_EYE = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>';
   const ICON_CHECK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>';
 
@@ -269,6 +270,7 @@
       banner.hidden = !prompt;
       setAuthMode(mode === "signup" ? "signup" : "signin");
       showDialog("pdAuthModal");
+      showGoogle();
       setTimeout(() => {
         const first = document.getElementById(mode === "signup" ? "pdAuthName" : "pdAuthEmail");
         if (first) first.focus();
@@ -353,6 +355,7 @@
     },
 
     init() {
+      consumeOAuthReturn();
       this.render();
       this.loadBilling();
       this.refresh();
@@ -453,6 +456,41 @@
     el.className = "pd-form-status" + (kind ? " is-" + kind : "");
   }
 
+  // Google sign-in shows only when it's switched on in Supabase Auth (checked once per page)
+  let googleChecked = null;
+  function showGoogle() {
+    const wrap = document.getElementById("pdGoogleWrap");
+    const btn = document.getElementById("pdGoogleBtn");
+    if (!wrap || !btn) return;
+    btn.href = "/api/auth?action=google&next=" + encodeURIComponent(location.pathname + location.search);
+    if (!googleChecked) {
+      googleChecked = fetch("/api/auth?action=providers").then(r => r.json()).then(d => !!d.google).catch(() => false);
+    }
+    googleChecked.then(on => { wrap.hidden = !on; });
+  }
+
+  // Back from Google: Supabase puts the session (or an error) in the URL hash
+  function consumeOAuthReturn() {
+    const h = new URLSearchParams(location.hash.slice(1));
+    const token = h.get("access_token");
+    const error = h.get("error");
+    if (!token && !error) return;
+    history.replaceState(null, "", location.pathname + location.search);
+    if (error) {
+      setTimeout(() => {
+        Auth.openModal("No se pudo entrar con Google. Prueba otra vez o usa tu correo.");
+      }, 300);
+      return;
+    }
+    fetch("/api/auth", { headers: { Authorization: "Bearer " + token }, cache: "no-store" })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success && data.user) Auth.setSession({ user: data.user, access_token: token });
+        else Auth.openModal("No se pudo entrar con Google. Prueba otra vez o usa tu correo.");
+      })
+      .catch(() => {});
+  }
+
   function ensureModal() {
     if (document.getElementById("pdAuthModal")) return;
     document.body.insertAdjacentHTML("beforeend",
@@ -465,6 +503,10 @@
           '<div class="pd-tabs" role="tablist">' +
             '<button id="pdTabSignIn" type="button" role="tab" aria-selected="true">Iniciar sesión</button>' +
             '<button id="pdTabSignUp" type="button" role="tab" aria-selected="false">Crear cuenta</button>' +
+          "</div>" +
+          '<div id="pdGoogleWrap" hidden>' +
+            '<a id="pdGoogleBtn" class="pd-btn pd-btn-ghost pd-btn-block" href="/api/auth?action=google">' + ICON_GOOGLE + '<span>Continuar con Google</span></a>' +
+            '<p class="pd-auth-or"><span>o con tu correo</span></p>' +
           "</div>" +
           '<form id="pdAuthForm" class="pd-form" novalidate>' +
             '<label id="pdGroupName" class="pd-field" hidden><span>Nombre</span>' +

@@ -6,6 +6,9 @@
  *   POST /api/auth {action:"signout"}
  *   POST /api/auth {action:"forgot", email}            -> sends recovery link via Supabase Auth
  *   POST /api/auth {action:"reset", token, password}   -> sets new password
+ *   GET  /api/auth?action=providers                    -> {google: bool}, whether Google sign-in is on
+ *   GET  /api/auth?action=google&next=/path            -> redirect to Google through Supabase Auth;
+ *        Supabase sends the user back to /path with the session in the URL hash (auth.js reads it)
  *
  * All password hashing (PBKDF2/bcrypt) is handled by Supabase Auth GoTrue.
  * Worker CPU time: < 0.5 ms.
@@ -44,6 +47,8 @@ export default async function handler(req, res) {
     if (action === "signout") return sendJson(res, 200, { success: true });
     if (action === "forgot") return await forgot(req, res, body);
     if (action === "reset") return await reset(req, res, body);
+    if (action === "providers") return await providers(res);
+    if (action === "google") return await google(req, res);
   } catch (e) {
     console.error(`[auth] ${action} failed:`, e.message);
     return sendJson(res, 503, { success: false, error: "El servicio de cuentas no está disponible. Intenta de nuevo en unos minutos." });
@@ -205,6 +210,38 @@ async function session(req, res) {
 function appUrl(req) {
   if (process.env.APP_URL) return process.env.APP_URL.replace(/\/+$/, "");
   return `${req.headers["x-forwarded-proto"] || "http"}://${req.headers.host}`;
+}
+
+let providersCache = null; // { at, google }
+async function googleEnabled() {
+  if (!providersCache || Date.now() - providersCache.at > 10 * 60 * 1000) {
+    let google = false;
+    try {
+      const r = await fetch(`${SUPABASE_URL}/auth/v1/settings`, { headers: { apikey: SUPABASE_SERVICE_KEY }, signal: AbortSignal.timeout(3000) });
+      google = r.ok && !!(await r.json()).external?.google;
+    } catch (e) {}
+    providersCache = { at: Date.now(), google };
+  }
+  return providersCache.google;
+}
+
+async function providers(res) {
+  return sendJson(res, 200, { success: true, google: await googleEnabled() });
+}
+
+async function google(req, res) {
+  // Only same-site paths, so the redirect can't be used to send people elsewhere
+  const raw = String(req.query?.next || "/");
+  const next = /^\/(?![\/\\])[\w\-./?=&%]*$/.test(raw) ? raw : "/";
+  if (!(await googleEnabled())) {
+    res.statusCode = 302;
+    res.setHeader("Location", `${next}#error=google_disabled`);
+    return res.end();
+  }
+  const url = `${SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(appUrl(req) + next)}`;
+  res.statusCode = 302;
+  res.setHeader("Location", url);
+  return res.end();
 }
 
 async function forgot(req, res, body) {

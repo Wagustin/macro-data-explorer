@@ -940,6 +940,9 @@ html.dark .pd-tabs button[aria-selected="true"] { background: var(--pd-surface);
 }
 .pd-field-pw button.is-on, .pd-field-pw button:hover { color: var(--pd-ink); }
 
+.pd-auth-or { display: flex; align-items: center; gap: 12px; margin: 16px 0; font: 500 12px/1 var(--pd-font-ui); color: var(--pd-ink-soft); }
+.pd-auth-or::before, .pd-auth-or::after { content: ""; flex: 1; border-top: 1px solid var(--pd-rule, currentColor); opacity: .5; }
+#pdGoogleBtn { text-decoration: none; }
 .pd-form-aside { text-align: right; margin-top: -4px; }
 .pd-form-aside[hidden] { display: none; }
 .pd-form-aside button { border: 0; background: none; padding: 0; cursor: pointer; font: 500 12px/1.3 var(--pd-font-ui); color: var(--pd-ink-soft); text-decoration: underline; text-underline-offset: 2px; }
