@@ -36,6 +36,10 @@ console.log(`Titulares nuevos: ${pending.length}`);
 let model = prev.modelo && !/laya/i.test(prev.modelo) ? prev.modelo : null;
 const drop = new Set([...dropped].filter((id) => (feed.noticias || []).some((n) => n.id === id)));
 
+function failBatch(batchNumber, reason) {
+  throw new Error(`Lote ${batchNumber}: ${reason}; no se guardaron clasificaciones incompletas`);
+}
+
 for (let i = 0; i < pending.length; i += 40) {
   const batch = pending.slice(i, i + 40);
   const prompt = `Clasifica titulares de noticias para PerData, un sitio sobre la economía y la bolsa del Perú.
@@ -47,12 +51,22 @@ Para cada titular decide:
 Titulares:
 ${batch.map((n, j) => `${j}|${n.titulo}`).join("\n")}
 Devuelve SOLO este JSON: {"r":[{"i":0,"relevante":"ALTA","tema":"...","sentimiento":"...","empresas":[]}, ...]} con un elemento por titular.`;
-  const res = await askJSON(prompt, { budgetMs: 4 * 60 * 1000 });
-  if (!res) { console.error(`Lote ${i / 40 + 1}: sin respuesta, quedan sin clasificar`); continue; }
+  let res;
+  try {
+    res = await askJSON(prompt, { budgetMs: 4 * 60 * 1000 });
+  } catch (error) {
+    failBatch(i / 40 + 1, `falló la llamada al modelo (${error.message})`);
+  }
+  if (!res || !Array.isArray(res.out?.r)) failBatch(i / 40 + 1, "respuesta del modelo ausente o inválida");
   model = res.model;
+  const classified = new Set();
   for (const x of res.out.r || []) {
+    if (!Number.isInteger(x?.i) || x.i < 0 || x.i >= batch.length || classified.has(x.i)
+      || !["ALTA", "MEDIA", "BAJA", "NINGUNA"].includes(x.relevante)) {
+      failBatch(i / 40 + 1, "respuesta con índices inválidos o duplicados");
+    }
+    classified.add(x.i);
     const n = batch[x.i];
-    if (!n) continue;
     if (x.relevante === "NINGUNA" && !MARKET_TERMS.test(n.titulo)) { drop.add(n.id); continue; }
     items[n.id] = {
       relevancia: ["ALTA", "MEDIA", "BAJA"].includes(x.relevante) ? x.relevante : "MEDIA",
@@ -61,6 +75,7 @@ Devuelve SOLO este JSON: {"r":[{"i":0,"relevante":"ALTA","tema":"...","sentimien
       empresas: (x.empresas || []).filter((e) => known.has(e)),
     };
   }
+  if (classified.size !== batch.length) failBatch(i / 40 + 1, "faltan titulares por clasificar");
 }
 
 // Keep only the classifications of headlines still in the feed

@@ -29,18 +29,36 @@ export const bandFactor = (h) => interp(K80, h);
 // modelPath / v3Points: [{p10, p25, p50, p75, p90, date?}] per month. calibrate=false is for the backtest.
 export function blendEngine(modelPath, v3Points, H, { calibrate = true } = {}) {
   const out = [];
+  const positiveFinite = (x, fallback = 0.0001) => Number.isFinite(x) && x > 0 ? Math.max(0.0001, x) : fallback;
+  const roundedPositive = (x) => {
+    const safe = positiveFinite(x);
+    const rounded = Number(safe.toFixed(safe < 10 ? 4 : 2));
+    return positiveFinite(rounded);
+  };
   for (let i = 0; i < H; i++) {
     const t = modelPath[i];
     const v = v3Points[i];
-    if (!t || !v || !(t.p50 > 0) || !(v.p50 > 0)) return null;
+    if (!t || !v || !Number.isFinite(t.p50) || !(t.p50 > 0) || !Number.isFinite(v.p50) || !(v.p50 > 0)) return null;
     const w = engineWeight(i + 1);
     const k = calibrate ? bandFactor(i + 1) : 1;
-    const p50 = w * t.p50 + (1 - w) * v.p50;
-    const q = (key) => p50 * Math.exp(k * (w * Math.log(t[key] / t.p50) + (1 - w) * Math.log(v[key] / v.p50)));
+    const p50 = positiveFinite(w * t.p50 + (1 - w) * v.p50);
+    const q = (key) => {
+      const tv = positiveFinite(t[key], t.p50), vv = positiveFinite(v[key], v.p50);
+      const logDistance = k * (w * Math.log(tv / t.p50) + (1 - w) * Math.log(vv / v.p50));
+      return positiveFinite(p50 * Math.exp(Math.max(-700, Math.min(700, logDistance))));
+    };
     const p10 = q("p10"), p25 = Math.max(p10, q("p25")), p75 = Math.max(p50, q("p75")), p90 = Math.max(p75, q("p90"));
-    const r = (x) => Number(x.toFixed(x < 10 ? 4 : 2));
-    out.push({ step: i + 1, date: v.date, p10: r(Math.min(p10, p25)), p25: r(Math.min(p25, p50)), p50: r(p50), p75: r(p75), p90: r(p90),
-      uncertaintyPct: Number(((p90 - p10) / p50 * 100).toFixed(1)) });
+    const q10 = roundedPositive(Math.min(p10, p25));
+    const q25 = roundedPositive(Math.min(p25, p50));
+    const q50 = roundedPositive(p50);
+    const q75 = roundedPositive(p75);
+    const q90 = roundedPositive(p90);
+    const out10 = Math.min(q10, q50);
+    const out25 = Math.min(q50, Math.max(out10, q25));
+    const out75 = Math.max(q50, q75);
+    const out90 = Math.max(out75, q90);
+    out.push({ step: i + 1, date: v.date, p10: out10, p25: out25, p50: q50, p75: out75, p90: out90,
+      uncertaintyPct: Number((((out90 - out10) / q50) * 100).toFixed(1)) });
   }
   return out;
 }
