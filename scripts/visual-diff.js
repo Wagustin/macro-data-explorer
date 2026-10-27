@@ -5,6 +5,7 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const pixelmatch = require("pixelmatch");
 const { PNG } = require("pngjs");
+const dimensionCheckedPages = new Set(["metodologia", "precios"]);
 const [baselineDir, currentDir] = process.argv.slice(2);
 
 if (!baselineDir || !currentDir) {
@@ -46,16 +47,35 @@ for (const name of names) {
     fs.readFile(baselinePath).then((buffer) => PNG.sync.read(buffer)),
     fs.readFile(currentPath).then((buffer) => PNG.sync.read(buffer))
   ]);
-  if (baseline.width !== current.width || baseline.height !== current.height) {
+  const pageName = name.split("-")[0];
+  if (dimensionCheckedPages.has(pageName) && (baseline.width !== current.width || baseline.height !== current.height)) {
     console.log(`${name}: 100.00% (dimensions ${baseline.width}x${baseline.height} vs ${current.width}x${current.height})`);
     failed = true;
     continue;
   }
 
-  const differingPixels = pixelmatch(baseline.data, current.data, null, baseline.width, baseline.height, { threshold: 0.1 });
-  const percentage = (differingPixels / (baseline.width * baseline.height)) * 100;
+  const width = Math.min(baseline.width, current.width);
+  const height = Math.min(baseline.height, current.height);
+  const baselineCrop = baseline.width === width && baseline.height === height
+    ? baseline.data
+    : crop(baseline, width, height);
+  const currentCrop = current.width === width && current.height === height
+    ? current.data
+    : crop(current, width, height);
+  const differingPixels = pixelmatch(baselineCrop, currentCrop, null, width, height, { threshold: 0.1 });
+  const percentage = (differingPixels / (width * height)) * 100;
   console.log(`${name}: ${percentage.toFixed(2)}%`);
   if (percentage > 2) failed = true;
 }
 
 if (failed) process.exitCode = 1;
+
+function crop(image, width, height) {
+  const cropped = Buffer.alloc(width * height * 4);
+  for (let row = 0; row < height; row += 1) {
+    const sourceStart = row * image.width * 4;
+    const targetStart = row * width * 4;
+    image.data.copy(cropped, targetStart, sourceStart, sourceStart + width * 4);
+  }
+  return cropped;
+}

@@ -12,6 +12,11 @@ on:
         description: "Earlier workflow run id to compare against"
         required: false
         type: string
+      base_url:
+        description: "Base URL for page captures and checks"
+        required: false
+        default: "https://perdata.site"
+        type: string
 
 permissions:
   contents: read
@@ -34,6 +39,8 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Capture current pages
         run: node scripts/visual-capture.js
+        env:
+          BASE_URL: ${{ inputs.base_url || 'https://perdata.site' }}
       - name: Download previous screenshots
         if: inputs.comparar_con != ''
         uses: actions/download-artifact@v4

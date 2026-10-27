@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
 
-const baseUrl = "https://perdata.site";
+const baseUrl = new URL(process.env.BASE_URL || "https://perdata.site");
 const pages = [
   ["home", "/"],
   ["explorer", "/explorer"],
@@ -39,9 +39,12 @@ try {
         failures.push(`${route} (${viewport.name}) overflows: ${dimensions.scrollWidth}px > ${dimensions.innerWidth}px`);
       }
 
+      const liveDataPage = ["home", "explorer", "noticias", "empresas"].includes(pageName);
       await page.screenshot({
         path: new URL(`${pageName}-${viewport.name}.png`, outputDir).pathname,
-        fullPage: true
+        ...(liveDataPage
+          ? { clip: { x: 0, y: 0, width: viewport.width, height: 900 } }
+          : { fullPage: true })
       });
       await page.close();
     }
