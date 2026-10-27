@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Run Lighthouse CI on mobile
+      - name: Run Lighthouse CI
         run: |
           cat > lighthouserc.json <<'EOF'
           {
@@ -31,7 +31,6 @@ jobs:
                 ],
                 "numberOfRuns": 1,
                 "settings": {
-                  "preset": "mobile",
                   "chromeFlags": "--no-sandbox"
                 }
               },
@@ -72,7 +71,7 @@ jobs:
 
           if (!rows.length) throw new Error('No Lighthouse reports were found in the manifest.');
           fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, [
-            '## Lighthouse mobile scores',
+            '## Lighthouse scores',
             '',
             '| Página | Rendimiento | Accesibilidad | Buenas prácticas | SEO |',
             '| --- | ---: | ---: | ---: | ---: |',
