@@ -30,9 +30,9 @@ for (const n of news) {
     counts.get(k)[field]++;
   }
 }
-// The oldest day may be only partly in the feed: leave its earlier, complete count alone
-const oldest = [...counts.values()].reduce((m, x) => (x.fecha < m ? x.fecha : m), "9999");
-const rows = [...counts.values()].filter((x) => x.fecha > oldest);
+// When the feed spans several days, the oldest may be only partly in it: leave its earlier count alone
+const days = [...new Set([...counts.values()].map((x) => x.fecha))].sort();
+const rows = [...counts.values()].filter((x) => days.length < 2 || x.fecha > days[0]);
 if (!rows.length) { console.log("Sin noticias clasificadas"); process.exit(0); }
 const r = await fetch(`${base}/rest/v1/sentimiento_diario?on_conflict=fecha,clave`, {
   method: "POST",
