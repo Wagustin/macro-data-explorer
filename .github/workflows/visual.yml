@@ -1,0 +1,53 @@
+name: Visual check
+
+on:
+  workflow_dispatch:
+    inputs:
+      etiqueta:
+        description: "Name for this set of screenshots"
+        required: true
+        default: "manual"
+        type: string
+      comparar_con:
+        description: "Earlier workflow run id to compare against"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install browser and image comparison packages
+        run: |
+          npm i --no-save --package-lock=false playwright pixelmatch@5 pngjs
+          npx playwright install --with-deps chromium
+      - name: Capture current pages
+        run: node scripts/visual-capture.js
+      - name: Download previous screenshots
+        if: inputs.comparar_con != ''
+        uses: actions/download-artifact@v4
+        with:
+          pattern: visual-*
+          path: visual-baseline
+          merge-multiple: true
+          run-id: ${{ inputs.comparar_con }}
+          github-token: ${{ github.token }}
+      - name: Compare screenshots
+        if: inputs.comparar_con != ''
+        run: node scripts/visual-diff.js visual-baseline visual-current
+      - uses: actions/upload-artifact@v4
+        with:
+          name: visual-${{ inputs.etiqueta }}
+          path: visual-current
+          if-no-files-found: error
