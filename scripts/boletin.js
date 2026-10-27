@@ -8,8 +8,11 @@
 //      NVIDIA_API_KEY and GEMINI_API_KEY (optional), NIM_MODEL (optional)
 // Usage: node scripts/boletin.js [--dry-run] (writes boletin-preview.html, sends nothing)
 import fs from "fs";
+import path from "path";
+import { smvRows } from "../api/_lib/smv.js";
 
 const DRY = process.argv.includes("--dry-run");
+const PREVIEW = Boolean(process.env.PREVIEW_EMPRESAS);
 const SITE = "https://perdata.site";
 const RAW = "https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data";
 const FROM = process.env.BOLETIN_FROM || "PerData <boletin@perdata.site>";
@@ -286,8 +289,21 @@ async function companyCard(nemo, smvAll, laya, newsById) {
   if (!e) return null;
   const nemos = e.valores.map((v) => v.nemonico);
   const yahoo = (e.valores.find((v) => v.nemonico === nemo && v.yahoo) || e.valores.find((v) => v.yahoo))?.yahoo;
-  const card = { nemo, name: prettyName(e.razonSocial), yahoo, price: null, change: null, currency: null, forecast: null, smv: [], news: [] };
-  if (yahoo) {
+  const lima = e.valores.some((v) => v.nemonico === nemo && /\.LM$/i.test(v.yahoo || ""));
+  const card = { nemo, name: prettyName(e.razonSocial), yahoo, price: null, change: null, currency: null, forecast: null, smv: [], news: [], sentiment: null };
+  if (lima) {
+    try {
+      const rows = await smvRows(nemo, "2000-01-01", { limit: 2 });
+      if (rows.length) {
+        card.price = Number(rows[0].cierre);
+        card.currency = "S/";
+        if (rows[1] && Number(rows[1].cierre) !== 0) card.change = pct(Number(rows[0].cierre), Number(rows[1].cierre));
+        card.priceDate = rows[0].fecha;
+      }
+    } catch (e) {
+      console.error(`SMV ${nemo}: ${e.message}`);
+    }
+  } else if (yahoo) {
     const h = await getJson(`${SITE}/api/historical?symbol=${encodeURIComponent(yahoo)}&range=1y`).catch(() => null);
     if (h?.live?.price) { card.price = h.live.price; card.change = h.live.changePct ?? null; }
     else if (h?.series?.length) card.price = h.series[h.series.length - 1].close;
@@ -299,9 +315,19 @@ async function companyCard(nemo, smvAll, laya, newsById) {
   for (const n of nemos) for (const h of smvAll[n] || []) if (h.fecha >= since) card.smv.push({ ...h, titulo: sentence(h.titulo) || sentence(h.tipo) });
   card.smv = card.smv.slice(0, 3);
   for (const [id, c] of Object.entries(laya)) {
-    if ((c.empresas || []).some((x) => nemos.includes(x)) && newsById[id]) card.news.push(newsById[id]);
+    const story = newsById[id];
+    const recent = story?.fecha_iso && Date.parse(story.fecha_iso) >= Date.now() - 7 * 864e5;
+    if (recent && (c.empresas || []).some((x) => nemos.includes(x))) card.news.push({ ...story, sentimiento: c.sentimiento });
   }
+  card.news.sort((a, b) => String(b.fecha_iso).localeCompare(String(a.fecha_iso)));
   card.news = card.news.slice(0, 3);
+  if (card.news.length) {
+    const counts = { POSITIVO: 0, NEGATIVO: 0, NEUTRO: 0 };
+    for (const n of card.news) if (counts[n.sentimiento] != null) counts[n.sentimiento]++;
+    const parts = [["POSITIVO", "positivas"], ["NEGATIVO", "negativas"], ["NEUTRO", "neutras"]]
+      .filter(([key]) => counts[key]).map(([key, label]) => `${counts[key]} ${label}`);
+    card.sentiment = `Sentimiento de las últimas noticias: ${parts.join(", ")}.`;
+  }
   return card;
 }
 
@@ -316,11 +342,12 @@ function renderPersonal(cards) {
     const smv = c.smv.map((h) => `<div style="margin-top:6px;font-family:${ui};font-size:13px"><span style="color:${C.soft}">SMV ${esc(h.fecha.slice(0, 10))}:</span> <a href="${esc(h.url_oficial)}" style="color:${C.ink}">${esc(h.titulo)}</a></div>`).join("");
     const news = c.news.map((n) => `<div style="margin-top:6px;font-family:${ui};font-size:13px"><a href="${esc(n.url)}" style="color:${C.ink}">${esc(n.titulo)}</a> <span style="color:${C.soft}">· ${esc(n.fuente)}</span></div>`).join("");
     const quiet = !c.smv.length && !c.news.length ? `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">Sin hechos de importancia ni noticias en los últimos días.</div>` : "";
+    const sentiment = c.sentiment ? `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">${esc(c.sentiment)}</div>` : `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">Sin noticias recientes clasificadas por empresa.</div>`;
     return `<tr><td style="padding:14px 0;border-bottom:1px solid ${C.rule}">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
         <td style="font-family:${ui};font-size:15px;font-weight:600;color:${C.ink}">${esc(c.name)} <span style="font-family:${mono};font-size:11px;font-weight:400;color:${C.soft}">${esc(c.nemo)}</span></td>
-        <td align="right" style="font-family:${mono};font-size:15px;color:${C.ink};white-space:nowrap">${c.price != null ? `${c.currency} ${fmt(c.price)}` : `<a href="${SITE}/empresa/${encodeURIComponent(c.nemo)}" style="color:${C.soft};font-family:${ui};font-size:12px">Ver ficha</a>`}<br><span style="font-size:13px">${ch}</span></td>
-      </tr></table>${fc}${smv}${news}${quiet}</td></tr>`;
+        <td align="right" style="font-family:${mono};font-size:15px;color:${C.ink};white-space:nowrap">${c.price != null ? `${c.currency} ${fmt(c.price)}` : `<a href="${SITE}/empresa/${encodeURIComponent(c.nemo)}" style="color:${C.soft};font-family:${ui};font-size:12px">Ver ficha</a>`}<br><span style="font-size:13px">${ch}</span>${c.priceDate ? `<br><span style="font-size:10px;color:${C.soft}">${esc(c.priceDate)}</span>` : ""}</td>
+      </tr></table>${sentiment}${fc}${smv}${news}${quiet}</td></tr>`;
   }).join("");
   return `<tr><td style="padding:30px 0 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:2px solid ${C.ink};padding-top:10px;font-family:${serif};font-size:22px;font-weight:600;color:${C.ink}">Tus empresas</td></tr></table></td></tr>
   <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${body}</table>
@@ -342,10 +369,12 @@ if (process.env.PREVIEW_EMPRESAS) {
   for (const n of process.env.PREVIEW_EMPRESAS.split(",")) { const c = await companyCard(n.trim(), smvAll, laya, newsById); if (c) cards.push(c); }
   previewPersonal = renderPersonal(cards);
 }
-fs.writeFileSync("boletin-preview.html", html.replace("{{BAJA}}", `${SITE}/boletin`).replace("{{EMPRESAS}}", `${SITE}/boletin`).replace("{{PERSONAL}}", previewPersonal));
+const previewPath = process.env.BOLETIN_PREVIEW_PATH || "boletin-preview.html";
+fs.mkdirSync(path.dirname(path.resolve(previewPath)), { recursive: true });
+fs.writeFileSync(previewPath, html.replace("{{BAJA}}", `${SITE}/boletin`).replace("{{EMPRESAS}}", `${SITE}/boletin`).replace("{{PERSONAL}}", previewPersonal));
 console.log(`Mercados: ${f.markets.length} · SMV: ${f.smvFacts.length} · titulares: ${f.headlines.length} · IA: ${ai ? "sí" : "no"}`);
 
-if (!DRY) {
+if (!DRY && !PREVIEW) {
   if (!process.env.RESEND_API_KEY) throw new Error("Falta RESEND_API_KEY");
   // One send per day (Lima): the scheduled run and the server's backup trigger can both fire,
   // whichever comes first sends and the other stops. FORCE=true (manual tests) skips the check.
