@@ -10,7 +10,8 @@ import { buildForecast } from "../api/forecast.js";
 import { blendV4 } from "../api/_lib/v4.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const HORIZONS = [1, 3, 6, 12, 24, 36];
+// Every horizon the terminal offers (1-36 months, including custom ones)
+const HORIZONS = Array.from({ length: 36 }, (_, i) => i + 1);
 const BATCH = [3, 6, 12, 24, 36];
 
 const history = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "history-120.json"), "utf8"));
