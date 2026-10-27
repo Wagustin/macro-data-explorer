@@ -1,0 +1,67 @@
+name: Backtest de modelos
+
+# Rolling-origin backtest of TimesFM 2.5, Chronos-2 and TiRex against Engine v3 and a "no change"
+# baseline, 1 to 48 months (scripts/backtest_models.py + scripts/backtest-evaluate.js). Manual only;
+# runs on GitHub's CPUs, never on the home server. The report is uploaded as an artifact.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  model:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        model: [timesfm, chronos2, tirex]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Caché de modelos
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-backtest-${{ matrix.model }}
+      - name: Instalar
+        run: |
+          pip install --index-url https://download.pytorch.org/whl/cpu torch==2.14.1
+          case "${{ matrix.model }}" in
+            timesfm) pip install timesfm==3.0.2 numpy==2.4.6 ;;
+            chronos2) pip install "chronos-forecasting>=2.0" numpy ;;
+            tirex) pip install tirex-ts numpy ;;
+          esac
+      - name: Pronosticar en todos los cortes
+        run: python scripts/backtest_models.py ${{ matrix.model }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bt-${{ matrix.model }}
+          path: data/backtest/${{ matrix.model }}.json
+
+  evaluate:
+    needs: model
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: bt-*
+          path: data/backtest
+          merge-multiple: true
+      - name: Evaluar
+        run: node scripts/backtest-evaluate.js
+      - uses: actions/upload-artifact@v4
+        with:
+          name: backtest-informe
+          path: |
+            data/backtest/INFORME.md
+            data/backtest/results.json
