@@ -422,7 +422,7 @@
           </tbody>
         </table>
       </div>
-      <p id="pdTableFooter" class="pie-ft text-[12px] text-ink-soft leading-normal border-t border-rule pt-2" style="font-family: var(--pd-font-ui);">Fuente: BCRP, EIA y datos de mercado. Proyección: PerData Engine v4. Datos al <span id="pdTableDate">—</span>.</p>
+      <p id="pdTableFooter" class="pie-ft text-[12px] text-ink-soft leading-normal border-t border-rule pt-2" style="font-family: var(--pd-font-ui);">Fuente: BCRP, EIA y datos de mercado. Proyección: PerData Engine v5. Datos al <span id="pdTableDate">—</span>.</p>
       <p class="text-sm sm:text-base text-ink-soft leading-relaxed mt-4">
         Escribe <span class="mono text-ink">"cobre"</span> en <a href="/explorer" class="text-ink hover:text-brand underline font-medium">la terminal</a>, elige un horizonte y descarga la serie en Excel.
       </p>
@@ -458,10 +458,10 @@
             <h3 class="pdl-h3">Dos modelos, combinados</h3>
           </div>
           <div class="lg:col-span-5">
-            <p class="pdl-text">PerData Engine v4 combina nuestro modelo estadístico (tendencia amortiguada, vuelta a su nivel de largo plazo y estacionalidad) con un modelo de series temporales de código abierto. El peso de cada uno depende del plazo y salió de pruebas con unos 800 casos por horizonte: combinados fallan menos que cada uno por separado.</p>
+            <p class="pdl-text">PerData Engine v5 se apoya sobre todo en un modelo de series temporales de código abierto y suma, con menos peso, nuestro modelo estadístico (tendencia amortiguada, vuelta a su nivel de largo plazo y estacionalidad). Elegimos el modelo y los pesos comparando varios en pruebas con 118 activos y hasta 10 años de historia.</p>
             <p class="pdl-quote-sm">Cada proyección dice qué modelo la calculó.</p>
           </div>
-          <dl class="lg:col-span-3 pdl-facts"><div class="pdl-fact"><dt>Modelo</dt><dd>PerData Engine v4</dd></div><div class="pdl-fact"><dt>Base</dt><dd>Modelo propio + modelo de código abierto</dd></div><div class="pdl-fact"><dt>Se recalcula</dt><dd>Cada día, 06:00 Lima</dd></div></dl>
+          <dl class="lg:col-span-3 pdl-facts"><div class="pdl-fact"><dt>Modelo</dt><dd>PerData Engine v5</dd></div><div class="pdl-fact"><dt>Base</dt><dd>Modelo propio + modelo de código abierto</dd></div><div class="pdl-fact"><dt>Se recalcula</dt><dd>Cada día, 06:00 Lima</dd></div></dl>
         </div>
         <div class="pdl-principle" data-reveal style="transition-delay:240ms">
           <div class="lg:col-span-4">
@@ -472,7 +472,7 @@
             <p class="pdl-text">P50 es el valor central. Entre P10 y P90 debería caer el valor real 8 de cada 10 veces. Lo comprobamos con datos que el modelo no había visto y ajustamos las bandas hasta que se cumpliera.</p>
             <p class="pdl-quote-sm">No es una recomendación de inversión: el modelo no anticipa crisis ni cambios de reglas.</p>
           </div>
-          <dl class="lg:col-span-3 pdl-facts"><div class="pdl-fact"><dt>Cobertura a 1 mes</dt><dd>80&nbsp;%</dd></div><div class="pdl-fact"><dt>Cobertura a 6 meses</dt><dd>80&nbsp;%</dd></div><div class="pdl-fact"><dt>Casos de prueba</dt><dd>unos 800 por plazo</dd></div></dl>
+          <dl class="lg:col-span-3 pdl-facts"><div class="pdl-fact"><dt>Cobertura a 1 mes</dt><dd>80&nbsp;%</dd></div><div class="pdl-fact"><dt>Cobertura a 4 años</dt><dd>80&nbsp;%</dd></div><div class="pdl-fact"><dt>Casos de prueba</dt><dd>de 760 a 1.600 por plazo</dd></div></dl>
         </div>
         </div>
       </div>
@@ -774,8 +774,8 @@
 
         var heroBadge = document.getElementById('heroModelBadge');
         if (heroBadge) {
-          heroBadge.textContent = (fc && fc.model === 'perdata-engine-v4')
-            ? 'Modelo: PerData Engine v4'
+          heroBadge.textContent = (fc && /^perdata-engine-v\d/.test(fc.model || ''))
+            ? 'Modelo: ' + (fc.architecture || 'PerData Engine')
             : 'Modelo: PerData Engine v3';
         }
 

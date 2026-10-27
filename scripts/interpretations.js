@@ -1,5 +1,5 @@
-// Daily AI note per asset for the terminal (runs after precompute-v4.js in timesfm.yml).
-// For each asset: today's PerData Engine v4 projection at 1 month, its change over the last
+// Daily AI note per asset for the terminal (runs after precompute-engine.js in timesfm.yml).
+// For each asset: today's PerData Engine projection at 1 month, its change over the last
 // 3 months, and the headlines or SMV facts that mention it. The language model writes two short
 // plain-Spanish sentences from those facts only; sentences with numbers that aren't in the facts
 // are dropped. Writes data/interpretaciones.json, read by /api/interpret.
@@ -8,6 +8,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { CATALOG } from "../api/search.js";
 import { askJSON, grounded } from "./llm.js";
+import { ENGINE } from "../api/_lib/engine.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (f, d) => { try { return JSON.parse(fs.readFileSync(path.join(ROOT, "data", f), "utf8")); } catch (e) { return d; } };
@@ -16,7 +17,7 @@ const base = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
 const key = process.env.SUPABASE_SERVICE_KEY || "";
 if (!base || !key) { console.log("Sin Supabase: no hay proyecciones que leer"); process.exit(0); }
 
-const r = await fetch(`${base}/rest/v1/forecasts?model=eq.perdata-engine-v4&horizon=eq.1&select=symbol,last_close,p10,p50,p90,run_at`, {
+const r = await fetch(`${base}/rest/v1/forecasts?model=eq.${ENGINE.id}&horizon=eq.1&select=symbol,last_close,p10,p50,p90,run_at`, {
   headers: { apikey: key, Authorization: `Bearer ${key}` },
 });
 if (!r.ok) throw new Error(`Supabase HTTP ${r.status}`);
@@ -71,7 +72,7 @@ Devuelve SOLO este JSON: {"notas":{"SIMBOLO":"nota", ...}} con un elemento por c
 fs.writeFileSync(path.join(ROOT, "data", "interpretaciones.json"), JSON.stringify({
   actualizado: new Date().toISOString(),
   modelo: model,
-  nota: "Notas redactadas con IA a partir de la proyección de PerData Engine v4, la evolución reciente y titulares o hechos de la SMV que mencionan al activo.",
+  nota: `Notas redactadas con IA a partir de la proyección de ${ENGINE.label}, la evolución reciente y titulares o hechos de la SMV que mencionan al activo.`,
   notas: notes,
 }) + "\n");
 console.log(`Notas: ${Object.keys(notes).length}/${facts.length} (${model})`);

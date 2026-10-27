@@ -13,7 +13,7 @@ const { GITHUB_TOKEN, GITHUB_REPOSITORY, RESEND_API_KEY, ALERT_EMAIL } = process
 const ALERT_FROM = process.env.ALERT_FROM || "PerData Watchdog <soporte@perdata.site>";
 const LABEL = "watchdog";
 
-const MAX_FORECAST_AGE_H = 30; // daily TimesFM batch at 11:00 UTC
+const MAX_FORECAST_AGE_H = 30; // daily model batch at 11:00 UTC
 const MAX_NEWS_AGE_H = 30; // daily news refresh at 05:00 UTC
 const MAX_FX_AGE_DAYS = 5; // BCRP daily series (weekends and holidays)
 
@@ -52,7 +52,7 @@ const checks = [
     if (r.status !== 200 || r.body?.success === false) throw new Error(r.body?.error || `HTTP ${r.status}`);
     return `${r.ms} ms`;
   }],
-  ["Proyecciones diarias (TimesFM)", async () => {
+  ["Proyecciones diarias (PerData Engine)", async () => {
     const r = await get("/api/status", { json: true });
     const f = r.body?.forecasts;
     if (!f || f.error) throw new Error(f?.error || `HTTP ${r.status}`);

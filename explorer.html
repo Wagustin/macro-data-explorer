@@ -1825,7 +1825,7 @@ const state = {
           document.getElementById("tsTakeaway").textContent = (interp.aiNote ? interp.aiNote + " " : "") + (interp.executiveTakeaway || "");
           document.getElementById("tsBeta").textContent = interp.macroSensitivity || "Moderada";
           document.getElementById("tsRegime").textContent = interp.regime || interp.marketRegime || "Cíclico";
-          document.getElementById("tsEngine").textContent = data.source || "PerData Engine v4";
+          document.getElementById("tsEngine").textContent = data.source || "PerData Engine v5";
         }
       } catch (err) {
         console.error("Error fetching interpretation:", err);
@@ -2016,7 +2016,7 @@ const state = {
       }
       const modelBadge = document.getElementById("forecastModelBadge");
       if (modelBadge) {
-        if (f.model === "perdata-engine-v4") {
+        if (/^perdata-engine-v\d/.test(f.model || "")) {
           let timeStr = "hoy 06:00";
           if (f.runAt) {
             try {
@@ -2026,7 +2026,7 @@ const state = {
               timeStr = `hoy ${hh}:${mm} UTC`;
             } catch (e) {}
           }
-          modelBadge.textContent = `PerData Engine v4 · calculado ${timeStr}`;
+          modelBadge.textContent = `PerData Engine v5 · calculado ${timeStr}`;
         } else {
           modelBadge.textContent = "Modelo: PerData Engine v3";
         }

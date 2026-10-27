@@ -12,7 +12,7 @@ export const ENGINE = { id: "perdata-engine-v5", label: "PerData Engine v5" };
 // [months, weight of Chronos-2], linearly interpolated, flat after the last point
 export const WEIGHTS = [[1, 0.75], [6, 0.8], [12, 0.9], [48, 0.95]];
 // [months, band factor], measured on the blend above (out-of-sample coverage ~80 %)
-export const K80 = [[1, 1], [48, 1]];
+export const K80 = [[1, 1.04], [3, 1.18], [6, 1.21], [12, 1.4], [24, 1.41], [36, 1.5], [48, 1.72]];
 
 function interp(table, h) {
   if (h <= table[0][0]) return table[0][1];

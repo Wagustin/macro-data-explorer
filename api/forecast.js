@@ -27,6 +27,7 @@ import defaultCalibration from "./_lib/calibration.json" with { type: "json" };
 import { PLANS, planForUser, canUseHorizon, upgradeRequired } from "./_lib/plans.js";
 import { getAuthUserOrNull } from "./_lib/session.js";
 import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
+import { ENGINE } from "./_lib/engine.js";
 
 // ---------- calibration loader (empirically calibrated quantile bands) ----------
 let _calibration = defaultCalibration;
@@ -348,15 +349,12 @@ export function formatForecastPayload(row, symbol, H) {
 
   const isTfm = row.model === "timesfm-2.5";
   const isV4 = row.model === "perdata-engine-v4";
+  const label = row.model === ENGINE.id ? ENGINE.label : isV4 || isTfm ? "PerData Engine v4" : null;
 
   return {
     symbol,
     model: row.model || (isTfm ? "timesfm-2.5" : "engine-v3"),
-    architecture: isV4
-      ? "PerData Engine v4"
-      : isTfm
-      ? "PerData Engine v4"
-      : "PerData Engine v3 (tendencia amortiguada + reversión al ancla + abanico OU)",
+    architecture: label || "PerData Engine v3 (tendencia amortiguada + reversión al ancla + abanico OU)",
     runAt: row.run_at,
     calibration: calibrationPayload,
     horizonMonths: H,
@@ -379,7 +377,7 @@ export function formatForecastPayload(row, symbol, H) {
     metrics: {
       confidenceLevel: "80% (P10 - P90)",
       driftDirection: expectedReturnPct >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
-      modelArchitecture: isV4 || isTfm ? "PerData Engine v4" : "PerData Engine v3",
+      modelArchitecture: label || "PerData Engine v3",
       batchRunAt: row.run_at
     },
     forecastSeries: row.path
@@ -391,12 +389,12 @@ export async function fetchPrecomputedForecast(symbol, H) {
   const mem = getCachedMemoryForecast(symbol, H);
   if (mem) return mem;
 
-  // 2. PerData Engine v4 of today (Supabase, written by precompute-v4.js after the TimesFM batch)
+  // 2. Today's PerData Engine (Supabase, written by precompute-engine.js after the daily batch)
   const sbUrl = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
   const sbKey = process.env.SUPABASE_SERVICE_KEY || "";
   if (sbUrl && sbKey) {
     try {
-      const r = await fetch(`${sbUrl}/rest/v1/forecasts?symbol=eq.${encodeURIComponent(symbol)}&horizon=eq.${H}&model=eq.perdata-engine-v4&select=*&limit=1`, {
+      const r = await fetch(`${sbUrl}/rest/v1/forecasts?symbol=eq.${encodeURIComponent(symbol)}&horizon=eq.${H}&model=eq.${ENGINE.id}&select=*&limit=1`, {
         headers: { apikey: sbKey, Authorization: `Bearer ${sbKey}` },
         signal: AbortSignal.timeout(2000)
       });
