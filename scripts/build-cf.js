@@ -42,6 +42,7 @@ const FILES_TO_COPY = [
   "404.html",
   "empresas.html",
   "mercado.html",
+  "resumen.html",
   "boletin.html",
   "data/smv-hechos.json",
   "empresa.html",
@@ -72,6 +73,11 @@ for (const file of FILES_TO_COPY) {
   if (fs.existsSync(src)) {
     fs.copyFileSync(src, dest);
   }
+}
+
+const digestArchive = path.join(rootDir, "data/resumenes");
+if (fs.existsSync(digestArchive)) {
+  fs.cpSync(digestArchive, path.join(publicDir, "data/resumenes"), { recursive: true });
 }
 
 // Alias copy: news.html -> noticias.html for static serving of /noticias

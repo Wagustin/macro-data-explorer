@@ -50,5 +50,5 @@ jobs:
         run: |
           git config user.name "perdata-bot"
           git config user.email "perdata-bot@users.noreply.github.com"
-          git add data/noticias.json data/noticias-laya.json data/noticias-resumen.json 2>/dev/null; git add data/noticias.json data/noticias-laya.json
+          git add data/noticias.json data/noticias-laya.json data/noticias-resumen.json data/resumenes sitemap.xml 2>/dev/null; git add data/noticias.json data/noticias-laya.json
           git diff --cached --quiet || (git commit -m "data(news): feeds y clasificaciones Laya actualizados $(date -u +'%Y-%m-%d %H:%M UTC')" && git pull --rebase -q && git push)

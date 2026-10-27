@@ -2,7 +2,7 @@
 // stock market, groups headlines about the same event and writes a short note of our own for each,
 // using only the facts in the headlines (we never copy articles) and listing every source link.
 // Laya's labels go in as a hint; the language model makes the final choice.
-// Writes data/noticias-resumen.json. Runs after fetch-news.js and classify-news.js (news.yml).
+// Writes data/noticias-resumen.json and the dated public archive. Runs after fetch-news.js and classify-news.js (news.yml).
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -10,6 +10,27 @@ import { askJSON, grounded } from "./llm.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (f, fallback) => { try { return JSON.parse(fs.readFileSync(path.join(ROOT, "data", f), "utf8")); } catch (e) { return fallback; } };
+
+function limaDate(date = new Date()) {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Lima", year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
+}
+
+function updateArchive(summary) {
+  const archiveDir = path.join(ROOT, "data", "resumenes");
+  fs.mkdirSync(archiveDir, { recursive: true });
+  const dates = fs.readdirSync(archiveDir).filter((name) => /^\d{4}-\d{2}-\d{2}\.json$/.test(name)).map((name) => name.slice(0, 10));
+  const date = limaDate(new Date(summary.actualizado));
+  fs.writeFileSync(path.join(archiveDir, `${date}.json`), JSON.stringify({ ...summary, fecha: date }, null, 1) + "\n");
+  const allDates = [...new Set([...dates, date])].sort().reverse();
+  fs.writeFileSync(path.join(archiveDir, "index.json"), JSON.stringify({ fechas: allDates }, null, 1) + "\n");
+
+  const sitemapPath = path.join(ROOT, "sitemap.xml");
+  let sitemap = fs.readFileSync(sitemapPath, "utf8").replace(/\s*<url><loc>https:\/\/perdata\.site\/resumen(?:es|\/\d{4}-\d{2}-\d{2})<\/loc>[\s\S]*?<\/url>/g, "");
+  const entries = ["/resumenes", ...allDates.map((day) => `/resumen/${day}`)]
+    .map((url) => `  <url><loc>https://perdata.site${url}</loc><lastmod>${url === "/resumenes" ? date : url.slice(-10)}</lastmod><changefreq>daily</changefreq></url>`).join("\n");
+  sitemap = sitemap.replace("</urlset>", `${entries}\n</urlset>`);
+  fs.writeFileSync(sitemapPath, sitemap);
+}
 
 const feed = read("noticias.json", { noticias: [] });
 const laya = read("noticias-laya.json", { items: {} }).items || {};
@@ -57,10 +78,12 @@ const stories = (res.out.historias || []).map((h) => {
   };
 }).filter(Boolean).slice(0, 6);
 
-fs.writeFileSync(path.join(ROOT, "data", "noticias-resumen.json"), JSON.stringify({
+const summary = {
   actualizado: new Date().toISOString(),
   modelo: res.model,
-  nota: "Notas redactadas por PerData a partir de titulares de varias fuentes; cada historia enlaza a los medios originales.",
+  nota: "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
   historias: stories,
-}, null, 1) + "\n");
+};
+fs.writeFileSync(path.join(ROOT, "data", "noticias-resumen.json"), JSON.stringify(summary, null, 1) + "\n");
+updateArchive(summary);
 console.log(`Historias: ${stories.length} (${res.model})`);

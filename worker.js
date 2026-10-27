@@ -27,7 +27,8 @@ const CLEAN_PAGES = {
   "/privacidad": "privacidad.html",
   "/boletin": "boletin.html",
   "/empresas": "empresas.html",
-  "/mercado": "mercado.html"
+  "/mercado": "mercado.html",
+  "/resumenes": "resumen.html"
 };
 
 function adaptNodeHandler(handler) {
@@ -257,6 +258,38 @@ export default {
         .transform(page);
     }
 
+    const digestMatch = /^\/resumen\/(\d{4}-\d{2}-\d{2})\/?$/.exec(pathname);
+    if (pathname === "/resumenes" || pathname === "/resumenes/") {
+      const index = await env.ASSETS.fetch(new Request(new URL("/data/resumenes/index.json", request.url)));
+      if (!index.ok) return notFound(env, request);
+      return env.ASSETS.fetch(new Request(new URL("/resumen.html", request.url), request));
+    }
+    if (digestMatch) {
+      const date = digestMatch[1];
+      const dataResponse = await env.ASSETS.fetch(new Request(new URL(`/data/resumenes/${date}.json`, request.url)));
+      if (!dataResponse.ok) return notFound(env, request);
+      let digest;
+      try { digest = await dataResponse.json(); } catch { return notFound(env, request); }
+      const page = await env.ASSETS.fetch(new Request(new URL("/resumen.html", request.url), request));
+      const title = `Resumen del día, ${new Intl.DateTimeFormat("es-PE", { timeZone: "UTC", day: "numeric", month: "long", year: "numeric" }).format(new Date(`${date}T12:00:00Z`))}`;
+      const article = {
+        "@context": "https://schema.org",
+        "@type": "NewsArticle",
+        headline: title,
+        datePublished: digest.actualizado || `${date}T12:00:00-05:00`,
+        inLanguage: "es-PE",
+        mainEntityOfPage: `https://perdata.site/resumen/${date}`,
+        publisher: { "@type": "Organization", name: "PerData", url: "https://perdata.site/" }
+      };
+      const structuredData = `<script type="application/ld+json">${JSON.stringify(article).replace(/</g, "\\u003c")}</script>`;
+      return new HTMLRewriter()
+        .on("title", { element(e) { e.setInnerContent(`${title} · PerData`); } })
+        .on("#pageTitle", { element(e) { e.setInnerContent(title); } })
+        .on('meta[name="description"]', { element(e) { e.setAttribute("content", title); } })
+        .on("head", { element(e) { e.append(`<link rel="canonical" href="https://perdata.site/resumen/${date}" />${structuredData}`, { html: true }); } })
+        .transform(page);
+    }
+
     // 2. Delegate to Static Assets (handles clean URLs, trailing slashes, etc.)
     const assetResponse = await env.ASSETS.fetch(request);
     if (assetResponse.status === 404) {
@@ -281,6 +314,11 @@ export default {
     ctx.waitUntil(dispatchDueWorkflows(env));
   }
 };
+
+async function notFound(env, request) {
+  const response = await env.ASSETS.fetch(new Request(new URL("/404.html", request.url), request));
+  return new Response(response.body, { status: 404, headers: response.headers });
+}
 
 const REPO = "Wagustin/macro-data-explorer";
 // due(now): whether the job should have run by now; minGapMin: don't start it again if it ran this recently
