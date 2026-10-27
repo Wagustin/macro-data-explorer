@@ -7,6 +7,26 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, "..");
 const publicDir = path.join(rootDir, "public");
 
+function buildSitemap() {
+  const sitemapPath = path.join(rootDir, "sitemap.xml");
+  const sitemap = fs.readFileSync(sitemapPath, "utf8");
+  const staticUrls = [...sitemap.matchAll(/<url>[\s\S]*?<\/url>/g)]
+    .map(([entry]) => entry)
+    .filter((entry) => !/<loc>https:\/\/perdata\.site\/empresa\/[^<]+<\/loc>/.test(entry));
+  const catalog = JSON.parse(fs.readFileSync(path.join(rootDir, "data/empresas.json"), "utf8"));
+  const tickers = [...new Set((catalog.emisores || []).flatMap((issuer) =>
+    (issuer.valores || []).map((value) => value.nemonico).filter(Boolean)
+  ))].sort();
+  const lastmod = new Date().toISOString().slice(0, 10);
+  const issuerUrls = tickers.map((ticker) =>
+    `  <url><loc>https://perdata.site/empresa/${encodeURIComponent(ticker)}</loc><lastmod>${lastmod}</lastmod><changefreq>weekly</changefreq></url>`
+  );
+  const nextSitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[...staticUrls, ...issuerUrls].join("\n")}\n</urlset>\n`;
+  fs.writeFileSync(sitemapPath, nextSitemap);
+}
+
+buildSitemap();
+
 const FILES_TO_COPY = [
   "index.html",
   "explorer.html",

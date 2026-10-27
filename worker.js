@@ -221,6 +221,26 @@ export default {
       const kind = SECTOR_PHRASE[String(issuer.sector || "").toUpperCase()] || "empresa";
       const desc = `${name}, ${kind} que cotiza en la Bolsa de Valores de Lima: último precio, gráfico, proyección de PerData Engine y hechos de importancia de la SMV.`;
       const url = `https://perdata.site/empresa/${encodeURIComponent(nemo)}`;
+      const structuredData = [
+        {
+          "@context": "https://schema.org",
+          "@type": "Corporation",
+          name,
+          tickerSymbol: nemo,
+          exchange: "BVL",
+          industry: issuer.sector || "",
+          url
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Inicio", item: "https://perdata.site/" },
+            { "@type": "ListItem", position: 2, name: "Empresas", item: "https://perdata.site/empresas" },
+            { "@type": "ListItem", position: 3, name }
+          ]
+        }
+      ].map((data) => `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, "\\u003c")}</script>`).join("");
       return new HTMLRewriter()
         .on("title", { element(e) { e.setInnerContent(title); } })
         .on('meta[name="description"]', { element(e) { e.setAttribute("content", desc); } })
@@ -229,7 +249,7 @@ export default {
             `<meta property="og:title" content="${escapeAttr(title)}" />` +
             `<meta property="og:description" content="${escapeAttr(desc)}" />` +
             `<meta property="og:url" content="${url}" /><meta property="og:type" content="website" />` +
-            `<meta property="og:image" content="https://perdata.site/og-image.png" />`, { html: true });
+            `<meta property="og:image" content="https://perdata.site/og-image.png" />` + structuredData, { html: true });
         } })
         .transform(page);
     }
