@@ -7,7 +7,7 @@ Clasificación de noticias financieras y macroeconómicas de PerData mediante La
 
 Determina para cada titular:
 - relevancia: ALTA, MEDIA o BAJA (para un inversionista que sigue la economía peruana y la BVL)
-- tema: Dólar y BCRP, Economía y fiscal, Minería y metales, Bolsa y empresas, Energía, Otros
+- tema: Dólar y BCRP, Economía y fiscal, Minería y metales, Bolsa y empresas, Energía, Mundo, Otros
 - sentimiento: POSITIVO, NEUTRO o NEGATIVO
 - empresas: Nemónicos bursátiles BVL detectados en el titular (sin LLM)
 
@@ -113,6 +113,7 @@ QUESTIONS = {
             "Minería y metales": "Producción minera, exportaciones de cobre, oro, plata, cotización de metales o canon.",
             "Bolsa y empresas": "BVL, acciones, dividendos, utilidades trimestrales, emisiones corporativas o fusiones.",
             "Energía": "Hidrocarburos, petróleo, gas natural de Camisea, electricidad o tarifas energéticas.",
+            "Mundo": "Hechos internacionales que mueven los mercados: guerras, EE. UU. y China, Reserva Federal, aranceles, OPEP, inteligencia artificial y tecnología.",
             "Otros": "Cualquier otro tema no cubierto por las categorías anteriores."
         }
     },

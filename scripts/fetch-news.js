@@ -183,6 +183,24 @@ function classifyCategory(title) {
     return "Economía y fiscal";
   }
 
+  // 6. World events that move markets: wars, the big economies, central banks, trade, AI and tech
+  if (
+    /\b(guerra|conflicto\s+armado|ataque|misil(?:es)?|invasi[oó]n|otan|israel|ir[aá]n|gaza|rusia|ucrania|taiw[aá]n|china|chin[oa]s?|estados\s+unidos|ee\.?\s?uu\.?|eeuu|trump|casa\s+blanca|reserva\s+federal|fed|powell|bce|wall\s+street|nasdaq|dow\s+jones|s&p\s*500|recesi[oó]n|opep|sanciones|elecciones|inteligencia\s+artificial|ia\b|chatgpt|openai|nvidia|chips?|semiconductores?|tecnol[oó]gic[oa]s?)\b/i.test(
+      t
+    )
+  ) {
+    return "Mundo";
+  }
+
+  // 7. Other economic news (trade, real estate, investment, jobs, companies) without a specific topic
+  if (
+    /\b(export(?:aci[oó]n|aciones|adores?)|import(?:aci[oó]n|aciones)|agroexport\w*|comercio\s+exterior|inversi[oó]n(?:es)?|inversionistas?|viviendas?|inmobiliari[oa]s?|construcci[oó]n|empleo|desempleo|salario|sueldo\s+m[ií]nimo|remuneraci[oó]n|ventas|consumo|retail|empresas?|millones|crecimiento\s+econ[oó]mico|econom[ií]a|financier[oa]s?|bancos?|cr[eé]ditos?|afp|pensiones|turismo|aerol[ií]neas?|licitaci[oó]n|concesi[oó]n|buena\s+pro|obras?\s+p[uú]blicas|presupuesto|recaudaci[oó]n|mype|pymes?|startups?|fintech)\b/i.test(
+      t
+    )
+  ) {
+    return "Economía y fiscal";
+  }
+
   return "Otros";
 }
 
@@ -193,7 +211,7 @@ const NON_ECONOMIC_SECTION_REGEX =
   /\/(?:futbol|deportes?|famosos?|farandula|espectaculos?|celebridades?|cine-series?|entretenimiento|estilo-vida|virales?)\//i;
 
 const NOISE_TITLE_REGEX =
-  /\b(cine|cartelera|pel[ií]cula[s]?|hor[oó]scopo|clima|senamhi|temperatura|gar[uú]a|sismo|temblor|loter[ií]a|tinka|pron[oó]stico\s+del\s+tiempo|corte\s+de\s+agua)\b/i;
+  /\b(cine|cartelera|pel[ií]cula[s]?|hor[oó]scopo|clima|senamhi|temperatura|gar[uú]a|sismo|temblor|loter[ií]a|tinka|pron[oó]stico\s+del\s+tiempo|corte\s+de\s+agua|se[ñn]or\s+de\s+los\s+milagros|procesi[oó]n|concierto|streamer|v[oó]ley|f[uú]tbol|liga\s+\d*|selecci[oó]n\s+peruana|halloween|canci[oó]n\s+criolla)\b/i;
 
 const SOURCES_CONFIG = [
   // VERDE (Oficiales)
@@ -355,8 +373,8 @@ function parseRssXml(xmlText, sourceConfig) {
       continue;
     }
 
-    // Filter global feeds for Peru relevance
-    if (sourceConfig.esGlobal && !GLOBAL_PERU_REGEX.test(titulo)) {
+    // Global feeds: news about Peru, or world events that move markets
+    if (sourceConfig.esGlobal && !GLOBAL_PERU_REGEX.test(titulo) && classifyCategory(titulo) !== "Mundo") {
       continue;
     }
 
@@ -369,12 +387,9 @@ function parseRssXml(xmlText, sourceConfig) {
 
     const categoria = classifyCategory(titulo);
 
-    // If filterGeneral is on and it was classified as "Otros", discard unless has economic/national impact
-    if (sourceConfig.filterGeneral && categoria === "Otros") {
-      if (!GLOBAL_PERU_REGEX.test(titulo)) {
-        continue;
-      }
-    }
+    // General news feeds (RPP, Infobae Perú): economic and world topics only. Almost every headline
+    // there mentions Lima or Peru, so the Peru filter let processions, concerts and sports through.
+    if (sourceConfig.filterGeneral && categoria === "Otros") continue;
 
     const hash = crypto.createHash("sha256").update(url).digest("hex").slice(0, 10);
     const id = `${sourceConfig.id}-${hash}`;
