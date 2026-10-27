@@ -172,8 +172,39 @@ const SECURITY_HEADERS = {
   "Content-Security-Policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
 };
 
+const API_CACHE_TTLS = new Map([
+  ["/api/historical", 300],
+  ["/api/forecast", 1800],
+  ["/api/news", 180],
+  ["/api/mercado", 600]
+]);
+
 export default {
   async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    const ttl = API_CACHE_TTLS.get(url.pathname);
+    const canCache = ttl && request.method === "GET" && !request.headers.has("Authorization") && globalThis.caches?.default;
+    if (canCache) {
+      const cache = globalThis.caches.default;
+      let cached = null;
+      try { cached = await cache.match(request); } catch { /* Cache API is an optimization only. */ }
+      if (cached) {
+        const r = new Response(cached.body, cached);
+        for (const [k, v] of Object.entries(SECURITY_HEADERS)) if (!r.headers.has(k)) r.headers.set(k, v);
+        return r;
+      }
+      const response = await this.route(request, env, ctx);
+      const cacheControl = response.headers.get("Cache-Control") || "";
+      if (response.ok && /(?:^|,)\s*public\b/i.test(cacheControl) && !/no-store|private/i.test(cacheControl)) {
+        const cacheHeaders = new Headers(response.headers);
+        cacheHeaders.set("Cache-Control", `public, max-age=${ttl}, s-maxage=${ttl}`);
+        const cacheResponse = new Response(response.clone().body, { status: response.status, headers: cacheHeaders });
+        ctx.waitUntil(cache.put(request, cacheResponse).catch(() => {}));
+      }
+      const r = new Response(response.body, response);
+      for (const [k, v] of Object.entries(SECURITY_HEADERS)) if (!r.headers.has(k)) r.headers.set(k, v);
+      return r;
+    }
     const response = await this.route(request, env, ctx);
     const r = new Response(response.body, response);
     for (const [k, v] of Object.entries(SECURITY_HEADERS)) if (!r.headers.has(k)) r.headers.set(k, v);

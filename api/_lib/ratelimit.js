@@ -47,11 +47,11 @@ function appendVary(res, headerName) {
  * Public responses get s-maxage=600 and stale-while-revalidate=3600 with Vary: Origin.
  * Authenticated or user-dependent responses must NEVER have s-maxage (private, no-store).
  */
-export function setCdnCache(res, hasAuth = false) {
+export function setCdnCache(res, hasAuth = false, maxAge = 600) {
   if (hasAuth) {
     res.setHeader("Cache-Control", "private, no-store");
   } else {
-    res.setHeader("Cache-Control", "public, s-maxage=600, stale-while-revalidate=3600");
+    res.setHeader("Cache-Control", `public, s-maxage=${maxAge}, stale-while-revalidate=3600`);
     appendVary(res, "Origin");
   }
 }

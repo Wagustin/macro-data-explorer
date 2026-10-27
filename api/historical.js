@@ -135,7 +135,7 @@ export default async function handler(req, res) {
       return res.status(403).json(upgradeRequired(plan, "range"));
     }
   } else {
-    setCdnCache(res, hasAuth);
+    setCdnCache(res, hasAuth, 300);
   }
   const interval = ALLOWED_INTERVALS.has(rawInterval) ? rawInterval : "1mo";
 

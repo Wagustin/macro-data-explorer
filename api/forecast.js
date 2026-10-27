@@ -515,7 +515,7 @@ export default async function handler(req, res) {
       return res.status(403).json(upgradeRequired(plan, "horizon"));
     }
   } else {
-    setCdnCache(res, hasAuth);
+    setCdnCache(res, hasAuth, 1800);
   }
 
   // Lectura directa de proyecciones precalculadas (KV / Supabase)

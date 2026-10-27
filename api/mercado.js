@@ -80,7 +80,8 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "GET") return res.status(405).json({ error: "Método no permitido." });
   if (handleRateLimit(req, res)) return;
-  res.setHeader("Cache-Control", "public, max-age=600, s-maxage=600");
+  const hasAuth = Boolean(req.headers?.authorization);
+  res.setHeader("Cache-Control", hasAuth ? "private, no-store" : "public, max-age=0, s-maxage=600, stale-while-revalidate=3600");
 
   try {
     const desde = thirtyDaysAgo();

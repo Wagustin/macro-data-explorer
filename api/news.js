@@ -519,7 +519,7 @@ export default async function handler(req, res) {
   }
 
   const hasAuth = Boolean(req.headers?.authorization);
-  setCdnCache(res, hasAuth);
+  setCdnCache(res, hasAuth, 180);
 
   // Primary: our own feed (scripts/fetch-news.js on GitHub Actions, approved sources only).
   // Fallback: the older Google News pipeline below.
