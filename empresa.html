@@ -421,7 +421,7 @@ html.dark .ui-switch {
 
           <!-- Projection Button or Disabled State -->
           <div id="ctaBlock">
-            <a href="#" id="btnProyeccion" class="btn-primary">Ver proyección</a>
+            <a href="#" id="btnProyeccion" class="btn-primary">Ver proyección en la terminal</a>
             <p id="proyeccionDisabled" class="hidden text-xs text-ink-soft mt-2 text-center">
               Sin proyección: esta acción no tiene un historial de precios continuo.
             </p>
@@ -604,6 +604,9 @@ html.dark .ui-switch {
       const loadingState = document.getElementById("loadingState");
       const companyDetail = document.getElementById("companyDetail");
       const notFoundState = document.getElementById("notFoundState");
+      const escapeHTML = (value) => String(value ?? "").replace(/[&<>\"']/g, (char) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+      })[char]);
 
       // Extract symbol from URL path (/empresa/BVN) or query param (?symbol=BVN)
       const pathParts = window.location.pathname.split("/").filter(Boolean);
@@ -670,6 +673,7 @@ html.dark .ui-switch {
         // Precio solo de la fuente de mercado (se carga abajo). Los precios de la BVL no se copian hasta
         // revisar sus términos de uso: se enlaza a la ficha oficial.
         const pm = document.getElementById("priceMain");
+        const hasSmvHistory = !hasYahoo || /\.LM$/i.test(primaryValor.yahoo);
         if (hasYahoo) {
           pm.textContent = "…";
         } else {
@@ -687,7 +691,7 @@ html.dark .ui-switch {
           document.getElementById("noYahooNotice").classList.add("hidden");
 
           // Fetch live price & 90-day history from /api/historical
-          fetchHistorical(primaryValor.yahoo, primaryValor.moneda);
+          fetchHistorical(primaryValor.yahoo, primaryValor.moneda, hasSmvHistory);
         } else {
           // Keep projections disabled while checking for SMV historical quotes.
           document.getElementById("btnProyeccion").classList.add("hidden");
@@ -712,7 +716,7 @@ html.dark .ui-switch {
         loadingState.classList.add("hidden");
         companyDetail.classList.remove("hidden");
       } catch (err) {
-        loadingState.innerHTML = `<p class="text-sm text-neg">Error al cargar la ficha: ${err.message}</p>`;
+        loadingState.innerHTML = `<p class="text-sm text-neg">Error al cargar la ficha: ${escapeHTML(err.message)}</p>`;
       }
 
       async function fetchHistorical(symbol, defaultMoneda, smvFallback = false) {
@@ -744,7 +748,7 @@ html.dark .ui-switch {
               }
               if (points.length >= 2) renderChart(points);
               else document.getElementById("chartEmptyText").classList.remove("hidden");
-              document.getElementById("chartLabel").textContent = "Historial SMV · Cierre mensual";
+              document.getElementById("chartLabel").textContent = "Fuente: SMV · Cierres mensuales (12 meses)";
             }
             return;
           }
