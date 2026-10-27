@@ -427,7 +427,7 @@
         return `
           <article class="py-3.5 border-b border-rule flex items-baseline justify-between gap-4">
             <div class="min-w-0 flex-grow">
-              <a href="${sourceUrl}" target="_blank" rel="noopener noreferrer" class="block font-semibold text-[17px] text-ink leading-snug no-underline hover:underline">
+              <a href="${escapeHTML(sourceUrl)}" target="_blank" rel="noopener noreferrer" class="block font-semibold text-[17px] text-ink leading-snug no-underline hover:underline">
                 ${escapeHTML(title)}
               </a>
               <div class="mt-1 flex flex-wrap items-center gap-2 text-xs text-ink-soft">
