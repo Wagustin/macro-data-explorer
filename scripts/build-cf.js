@@ -22,7 +22,8 @@ function buildSitemap() {
     `  <url><loc>https://perdata.site/empresa/${encodeURIComponent(ticker)}</loc><lastmod>${lastmod}</lastmod><changefreq>weekly</changefreq></url>`
   );
   const nextSitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[...staticUrls, ...issuerUrls].join("\n")}\n</urlset>\n`;
-  fs.writeFileSync(sitemapPath, nextSitemap);
+  fs.mkdirSync(publicDir, { recursive: true });
+  fs.writeFileSync(path.join(publicDir, "sitemap.xml"), nextSitemap);
 }
 
 buildSitemap();
@@ -59,7 +60,6 @@ const FILES_TO_COPY = [
   "og-image.png",
   "robots.txt",
   "ads.txt",
-  "sitemap.xml",
   "tailwind.theme.json"
 ];
 

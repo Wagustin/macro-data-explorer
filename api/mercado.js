@@ -50,24 +50,34 @@ function summarize(rows) {
     bySymbol.set(row.nemonico, entries);
   }
 
-  const securities = [];
+  const histories = new Map();
+  const countsByDate = new Map();
   for (const [nemonico, entries] of bySymbol) {
     entries.sort((a, b) => b.fecha.localeCompare(a.fecha));
     const unique = entries.filter((row, i) => i === 0 || row.fecha !== entries[i - 1].fecha);
-    if (unique.length < 5 || !(unique[0].monto > 0) || !(unique[0].cierre > 0)) continue;
-    const previous = unique[1];
-    const changePct = previous?.cierre > 0 ? (unique[0].cierre / previous.cierre - 1) * 100 : null;
+    histories.set(nemonico, unique);
+    for (const row of unique) {
+      if (row.monto > 0) countsByDate.set(row.fecha, (countsByDate.get(row.fecha) || 0) + 1);
+    }
+  }
+
+  const session = [...countsByDate].filter(([, count]) => count >= 10).map(([date]) => date).sort().at(-1) || "";
+  const securities = [];
+  for (const [nemonico, unique] of histories) {
+    const current = unique.find((row) => row.fecha === session && row.monto > 0 && row.cierre > 0);
+    if (!current) continue;
+    const previous = unique.find((row) => row.fecha < session && row.monto > 0 && row.cierre > 0);
+    const changePct = previous ? (current.cierre / previous.cierre - 1) * 100 : null;
     securities.push({
       nemonico,
       nombre: COMPANY_NAMES.get(nemonico) || nemonico,
-      cierre: unique[0].cierre,
+      cierre: current.cierre,
       variacion: changePct === null ? null : Number(changePct.toFixed(2)),
-      monto: unique[0].monto,
-      fecha: unique[0].fecha,
+      monto: current.monto,
+      fecha: current.fecha,
     });
   }
 
-  const session = rows.reduce((latest, row) => row.fecha > latest ? row.fecha : latest, "");
   const current = securities.filter((row) => row.fecha === session);
   const gainers = current.filter((row) => row.variacion !== null).sort((a, b) => b.variacion - a.variacion).slice(0, 5);
   const losers = current.filter((row) => row.variacion !== null).sort((a, b) => a.variacion - b.variacion).slice(0, 5);

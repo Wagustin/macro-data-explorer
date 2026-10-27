@@ -34,8 +34,19 @@ const PAGES = [
   "/precios",
   "/terms",
   "/privacidad",
-  "/cuenta"
+  "/cuenta",
+  "/estado",
+  "/mercado",
+  "/resumenes",
+  "/empresas"
 ];
+
+const REQUIRED_PAGE_TITLES = new Map([
+  ["/estado", "Estado de los datos"],
+  ["/mercado", "Hoy en la Bolsa de Lima"],
+  ["/resumenes", "Resumen del día"],
+  ["/empresas", "Empresas de la Bolsa de Valores de Lima"]
+]);
 
 const STATIC_FILES = ["/robots.txt", "/sitemap.xml"];
 
@@ -80,6 +91,10 @@ async function testPages() {
       htmlMap.set(page, text);
       const pass = res.status === 200;
       record(`Página ${page}`, pass, `HTTP ${res.status}`);
+      const expectedTitle = REQUIRED_PAGE_TITLES.get(page);
+      if (expectedTitle) {
+        record(`Título ${page}`, text.includes(expectedTitle), text.includes(expectedTitle) ? expectedTitle : `No aparece "${expectedTitle}"`);
+      }
     } catch (err) {
       record(`Página ${page}`, false, `Error: ${err.message}`);
     }
@@ -229,8 +244,40 @@ async function testNews() {
 
     const pass = hasCount && allValid;
     record("API News", pass, `titulares: ${items.length}, válidos: ${allValid}${invalidReason ? ` (${invalidReason})` : ""}`);
+    const hasSentiment = items.length > 0 && items.every((item) => Object.hasOwn(item, "sentimiento"));
+    record("API News sentimiento", hasSentiment, `titulares con campo sentimiento: ${items.filter((item) => Object.hasOwn(item, "sentimiento")).length}/${items.length}`);
   } catch (err) {
     record("API News", false, `Error: ${err.message}`);
+  }
+}
+
+async function testMarketAndStatus() {
+  try {
+    const res = await fetchWithTimeout(`${base}/api/mercado`);
+    if (!res.ok) {
+      record("API Mercado", false, `HTTP ${res.status}`);
+    } else {
+      const data = await res.json();
+      const lengths = ["subidas", "bajadas", "negociadas"].map((key) => Array.isArray(data[key]) ? data[key].length : 0);
+      const pass = lengths.every((length) => length > 0);
+      record("API Mercado", pass, `subidas: ${lengths[0]}, bajadas: ${lengths[1]}, negociadas: ${lengths[2]}`);
+    }
+  } catch (err) {
+    record("API Mercado", false, `Error: ${err.message}`);
+  }
+
+  try {
+    const res = await fetchWithTimeout(`${base}/api/status`);
+    if (!res.ok) {
+      record("API Status", false, `HTTP ${res.status}`);
+    } else {
+      const data = await res.json();
+      const keys = ["forecasts", "news", "smv", "d1Sync"];
+      const missing = keys.filter((key) => !Object.hasOwn(data, key));
+      record("API Status", missing.length === 0, missing.length ? `Faltan claves: ${missing.join(", ")}` : `Claves presentes: ${keys.join(", ")}`);
+    }
+  } catch (err) {
+    record("API Status", false, `Error: ${err.message}`);
   }
 }
 
@@ -296,6 +343,7 @@ async function main() {
   await testHistorical();
   await testForecast();
   await testNews();
+  await testMarketAndStatus();
   await testBilling();
 
   let passCount = 0;
