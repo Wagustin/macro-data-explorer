@@ -1,8 +1,8 @@
-// Daily news sentiment from Laya's classification, stored in Supabase (sentimiento_diario) so the
+// Daily news sentiment from the headline classification (classify-news.js), stored in Supabase (sentimiento_diario) so the
 // engine can be tested with it once there are a few months of history. For each Lima day in the
 // feed it counts positive, negative and neutral headlines per company (nemónico) and per topic
 // ("tema:<tema>"). Recounts the feed each run (except its oldest, possibly partial, day).
-// Runs after scripts/classify_news.py in news.yml.
+// Runs after scripts/classify-news.js in news.yml.
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";

@@ -24,24 +24,12 @@ jobs:
       - name: Ingestar feeds de noticias autorizados
         run: node scripts/fetch-news.js
 
-      - name: Configurar Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Cache modelos Hugging Face
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/huggingface
-          key: hf-laya-typed-decisions
-
-      - name: Instalar dependencias Laya CPU
-        run: |
-          pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
-          pip install --no-cache-dir laya --extra-index-url https://download.pytorch.org/whl/cpu
-
-      - name: Clasificar noticias con Laya
-        run: python scripts/classify_news.py
+      - name: Clasificar titulares con IA (NIM, Gemini de respaldo)
+        continue-on-error: true
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node scripts/classify-news.js
 
       - name: Sentimiento diario por empresa y tema (Supabase)
         continue-on-error: true

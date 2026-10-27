@@ -2,7 +2,7 @@
 // stock market, groups headlines about the same event and writes a short note of our own for each,
 // using only the facts in the headlines (we never copy articles) and listing every source link.
 // Laya's labels go in as a hint; the language model makes the final choice.
-// Writes data/noticias-resumen.json. Runs after fetch-news.js and classify_news.py (news.yml).
+// Writes data/noticias-resumen.json. Runs after fetch-news.js and classify-news.js (news.yml).
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
