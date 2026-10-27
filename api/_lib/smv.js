@@ -1,8 +1,11 @@
 /**
- * Lima stock exchange closes from the SMV public registry, stored in Supabase (cotizaciones_smv)
- * by scripts/fetch-smv-precios.js. Used by /api/historical and scripts/refresh-history.js for the
- * ".LM" symbols; both fall back to the previous source when there are no rows yet.
+ * Lima stock exchange closes from the SMV public registry, stored by scripts/fetch-smv-precios.js in
+ * Supabase (cotizaciones_smv) and in the Worker's D1 copy, which is read first. Used by
+ * /api/historical and scripts/refresh-history.js for the ".LM" symbols; both fall back to the
+ * previous source when there are no rows yet.
  */
+import { d1Rows } from "./d1.js";
+
 const base = () => (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
 const key = () => process.env.SUPABASE_SERVICE_KEY || "";
 
@@ -11,6 +14,9 @@ export const nemonicoOf = (symbol) => (/\.LM$/i.test(symbol) ? symbol.replace(/\
 // Rows of one security, newest first, from `desde` (YYYY-MM-DD). monthly=true keeps one row per month
 // (the last trading day; for the current month, the latest close).
 export async function smvRows(nemonico, desde, { monthly = false, limit = 1000, timeoutMs = 3000 } = {}) {
+  const local = await d1Rows(`select fecha, cierre, apertura, maximo, minimo, monto from cotizaciones_smv
+    where nemonico = ? and fecha >= ?${monthly ? " and fin_de_mes = 1" : ""} order by fecha desc limit ?`, nemonico, desde, limit);
+  if (local && local.length) return local.map((x) => ({ ...x, monto: x.monto || 0 }));
   if (!base() || !key()) return [];
   const url = `${base()}/rest/v1/cotizaciones_smv?nemonico=eq.${encodeURIComponent(nemonico)}&fecha=gte.${desde}` +
     `${monthly ? "&fin_de_mes=is.true" : ""}&select=fecha,cierre,apertura,maximo,minimo,monto&order=fecha.desc&limit=${limit}`;

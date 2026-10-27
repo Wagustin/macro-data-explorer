@@ -8,6 +8,7 @@ import billingHandler from "./api/billing.js";
 import stripeWebhookHandler from "./api/stripe-webhook.js";
 import statusHandler from "./api/status.js";
 import boletinHandler from "./api/boletin.js";
+import syncHandler from "./api/sync.js";
 
 // Clean URL route map for static subpages
 const CLEAN_PAGES = {
@@ -35,6 +36,7 @@ function adaptNodeHandler(handler) {
         globalThis.PERDATA_KV = env.PERDATA_KV;
         globalThis.__PERDATA_KV__ = env.PERDATA_KV;
       }
+      if (env.PERDATA_DB) globalThis.PERDATA_DB = env.PERDATA_DB;
     }
 
     const url = new URL(request.url);
@@ -154,7 +156,8 @@ const routes = {
   "/api/billing": adaptNodeHandler(billingHandler),
   "/api/stripe-webhook": adaptNodeHandler(stripeWebhookHandler),
   "/api/status": adaptNodeHandler(statusHandler),
-  "/api/boletin": adaptNodeHandler(boletinHandler)
+  "/api/boletin": adaptNodeHandler(boletinHandler),
+  "/api/internal/sync": adaptNodeHandler(syncHandler)
 };
 
 const adaptedAuth = adaptNodeHandler(authHandler);
@@ -192,6 +195,7 @@ export default {
         globalThis.PERDATA_KV = env.PERDATA_KV;
         globalThis.__PERDATA_KV__ = env.PERDATA_KV;
       }
+      if (env.PERDATA_DB) globalThis.PERDATA_DB = env.PERDATA_DB;
     }
 
     const url = new URL(request.url);

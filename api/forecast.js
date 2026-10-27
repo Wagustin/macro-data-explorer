@@ -28,6 +28,7 @@ import { PLANS, planForUser, canUseHorizon, upgradeRequired } from "./_lib/plans
 import { getAuthUserOrNull } from "./_lib/session.js";
 import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
 import { ENGINE } from "./_lib/engine.js";
+import { d1Rows } from "./_lib/d1.js";
 
 // ---------- calibration loader (empirically calibrated quantile bands) ----------
 let _calibration = defaultCalibration;
@@ -389,7 +390,14 @@ export async function fetchPrecomputedForecast(symbol, H) {
   const mem = getCachedMemoryForecast(symbol, H);
   if (mem) return mem;
 
-  // 2. Today's PerData Engine (Supabase, written by precompute-engine.js after the daily batch)
+  // 2. Today's PerData Engine: D1 first (same network as the Worker), then Supabase; both are
+  // written by precompute-engine.js after the daily batch
+  const d1 = await d1Rows("select * from forecasts where symbol = ? and horizon = ? and model = ? limit 1", symbol, H, ENGINE.id);
+  if (d1 && d1[0] && (Date.now() - Date.parse(d1[0].run_at)) < 48 * 36e5) {
+    const payload = formatForecastPayload({ ...d1[0], path: d1[0].path ? JSON.parse(d1[0].path) : null }, symbol, H);
+    setCachedMemoryForecast(symbol, H, payload);
+    return payload;
+  }
   const sbUrl = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
   const sbKey = process.env.SUPABASE_SERVICE_KEY || "";
   if (sbUrl && sbKey) {

@@ -10,6 +10,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { markMonthEnds } from "../api/_lib/smv.js";
+import { syncD1 } from "./d1-sync.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const URL_SMV = "https://www.smv.gob.pe/simv/Frm_EstadisticasCotizaciones?data=78BBEA2E92DD58D85BD256A49A1281F9EF5F1945C6";
@@ -93,15 +94,17 @@ const nemos = [...new Set(emisores.flatMap((e) => e.valores.map((v) => v.nemonic
 const now = new Date();
 const desde = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1));
 let ok = 0, filas = 0;
+const toD1 = [];
 const fallos = [];
 for (const nemo of nemos) {
   try {
     const rows = await query(nemo, dmy(desde), dmy(now));
-    if (rows.length) { await upsert(markMonthEnds(rows)); filas += rows.length; }
+    if (rows.length) { await upsert(markMonthEnds(rows)); toD1.push(...rows); filas += rows.length; }
     ok++;
   } catch (e) {
     fallos.push(`${nemo} (${e.message})`);
   }
 }
+await syncD1("cotizaciones_smv", toD1, 500);
 console.log(`SMV: ${ok}/${nemos.length} valores consultados, ${filas} filas guardadas${fallos.length ? ` · fallos: ${fallos.slice(0, 10).join(", ")}` : ""}`);
 if (ok < nemos.length * 0.8) process.exit(1);

@@ -1,0 +1,24 @@
+name: Copiar datos a D1
+
+# Manual: copies Supabase's public data (forecasts and Lima closes) into the Worker's D1 database
+# (scripts/d1-backfill.js). The daily pipelines keep it up to date after that.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  copy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+      SYNC_SECRET: ${{ secrets.SYNC_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/d1-backfill.js

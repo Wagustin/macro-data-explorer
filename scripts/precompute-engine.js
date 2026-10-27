@@ -7,6 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { buildForecast } from "../api/forecast.js";
 import { ENGINE, blendEngine } from "../api/_lib/engine.js";
+import { syncD1 } from "./d1-sync.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const HORIZONS = Array.from({ length: 48 }, (_, i) => i + 1);
@@ -49,3 +50,4 @@ for (let i = 0; i < rows.length; i += 200) {
   if (!r.ok) throw new Error(`Supabase HTTP ${r.status}: ${(await r.text()).slice(0, 200)}`);
 }
 console.log(`Guardadas ${rows.length} filas en Supabase`);
+await syncD1("forecasts", rows, 100);
