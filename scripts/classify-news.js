@@ -8,6 +8,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { askJSON } from "./llm.js";
+import { classifyBatch } from "./news-classification.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FEED = path.join(ROOT, "data", "noticias.json");
@@ -94,27 +95,27 @@ Devuelve SOLO este JSON: {"r":[{"i":0,"relevante":"ALTA","tema":"...","sentimien
   }
   if (!Array.isArray(res?.out?.r)) { failedBatches++; console.error(`Lote ${i / 40 + 1}: sin respuesta válida`); continue; }
   model = res.model;
-  const seen = new Set();
   const labelRows = [];
-  for (const x of res.out.r) {
-    const n = Number.isInteger(x?.i) && !seen.has(x.i) ? batch[x.i] : null;
-    if (!n || !["ALTA", "MEDIA", "BAJA", "NINGUNA"].includes(x.relevante)) continue;
-    seen.add(x.i);
-    if (x.relevante === "NINGUNA" && !MARKET_TERMS.test(n.titulo)) {
-      drop.add(n.id);
-      labelRows.push(labelRow(n, { ...x, relevancia: "NINGUNA" }, model));
-      continue;
-    }
-    items[n.id] = {
-      relevancia: x.relevante,
-      tema: TEMAS.includes(x.tema) ? x.tema : n.categoria,
-      sentimiento: SENT.includes(x.sentimiento) ? x.sentimiento : "NEUTRO",
-      empresas: (x.empresas || []).filter((e) => known.has(e)),
+  const result = classifyBatch(batch, res.out.r, { knownCompanies: known, marketTerms: MARKET_TERMS });
+  for (const id of result.discarded) {
+    drop.add(id);
+    const n = batch.find((item) => item.id === id);
+    const x = res.out.r.find((label) => label.i === batch.indexOf(n));
+    labelRows.push(labelRow(n, { ...x, relevancia: "NINGUNA" }, model));
+  }
+  for (const { id, item } of result.classified) {
+    const news = batch.find((entry) => entry.id === id);
+    items[id] = {
+      ...item,
+      tema: TEMAS.includes(item.tema) ? item.tema : news.categoria,
+      sentimiento: SENT.includes(item.sentimiento) ? item.sentimiento : "NEUTRO",
     };
+    const n = batch.find((item) => item.id === id);
+    const x = res.out.r.find((label) => label.i === batch.indexOf(n));
     labelRows.push(labelRow(n, x, model));
   }
   await saveLabels(labelRows);
-  if (seen.size < batch.length) console.error(`Lote ${i / 40 + 1}: ${batch.length - seen.size} titulares sin clasificar, se reintentan en la próxima pasada`);
+  if (result.seen.size < batch.length) console.error(`Lote ${i / 40 + 1}: ${batch.length - result.seen.size} titulares sin clasificar, se reintentan en la próxima pasada`);
 }
 
 if (process.argv.includes("--sync-all")) {

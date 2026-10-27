@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Check JavaScript syntax
+        run: find api scripts -name '*.js' -type f -print0 | xargs -0 -n1 node --check
+      - run: npm test
+      - name: Smoke test on main
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          PORT: 4354
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          node server.js > /tmp/macro-data-explorer-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --silent --fail http://localhost:4354/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/smoke.js --base http://localhost:4354
