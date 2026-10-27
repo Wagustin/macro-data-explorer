@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-27T20:35:03.342Z",
+  "actualizado": "2026-10-27T22:13:38.808Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,17 +24,17 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 73
+      "items": 71
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 52
+      "items": 56
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 17
+      "items": 20
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -44,7 +44,7 @@
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 22
+      "items": 18
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 17
+      "items": 18
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -64,12 +64,318 @@
   },
   "noticias": [
     {
+      "id": "el_comercio-3bcd8cf2f5",
+      "titulo": "CADE Ejecutivos 2026 reunirá a inversionistas internacionales para analizar cómo atraer más capitales a las regiones del Perú",
+      "url": "https://elcomercio.pe/economia/peru/cade-ejecutivos-2026-reunira-a-inversionistas-internacionales-para-analizar-como-atraer-mas-capitales-a-las-regiones-del-peru-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-10-27T22:09:44.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-9f9e17a2f4",
+      "titulo": "DLA Piper: “Este es un momento sin precedentes para el sistema financiero”",
+      "url": "https://elcomercio.pe/economia/peru/dla-piper-este-es-un-momento-sin-precedentes-para-el-sistema-financiero-inperu-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-10-27T22:09:31.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-02dfe06955",
+      "titulo": "ProInversión en inPerú: “El plan específico para Talara se presentará en enero de 2027”",
+      "url": "https://elcomercio.pe/economia/peru/proinversion-en-inperu-el-plan-especifico-para-talara-se-presentara-en-enero-de-2027-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-10-27T22:09:21.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-6482cb4620",
+      "titulo": "InPerú: ProInversión se reúne con bonistas de Petro-Perú",
+      "url": "https://elcomercio.pe/economia/peru/inperu-proinversion-se-reune-con-bonistas-de-petro-peru-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-10-27T22:09:08.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-6fddd629fa",
+      "titulo": "Estados Unidos concederá visados a Flávio Bolsonaro y su familia tras huir de Brasil",
+      "url": "https://www.bloomberglinea.com/latinoamerica/brasil/flavio-bolsonaro-habria-huido-de-brasil-tras-perder-las-elecciones-y-crecen-dudas-sobre-su-paradero/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-10-27T22:08:51.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-abe851adca",
+      "titulo": "Ministro de Vivienda ante pedido de reubicación de viviendas por El Niño: “El Estado no puede hacer eso, cada familia tiene que tomar conciencia”",
+      "url": "https://www.infobae.com/peru/2026/10/27/ministro-de-vivienda-ante-pedido-de-reubicacion-de-viviendas-por-el-nino-el-estado-no-puede-hacer-eso-cada-familia-tiene-que-tomar-conciencia/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-10-27T22:06:53.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-774e2d8f2a",
+      "titulo": "Confiep plantea destrabar inversiones en el sur del país",
+      "url": "https://andina.pe/agencia/noticia-confiep-plantea-destrabar-inversiones-el-sur-del-pais-1097559.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-10-27T21:55:51.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-04e90bda4d",
+      "titulo": "Pleno verá este miércoles 28 dictamen de crédito suplementario por más de S/ 8,228 millones",
+      "url": "https://gestion.pe/peru/politica/pleno-vera-este-miercoles-28-dictamen-de-credito-suplementario-por-mas-de-s-8228-millones-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-27T21:54:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-d30c614ab9",
+      "titulo": "El dólar cierra en S/3,45 ante cautela de los mercados por decisión de la Fed",
+      "url": "https://elcomercio.pe/economia/peru/el-dolar-cierra-en-s345-ante-cautela-de-los-mercados-por-decision-de-la-fed-l-cotizacion-del-dolar-l-tipo-de-cambio-l-dolar-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-10-27T21:53:25.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-98ff5b0186",
+      "titulo": "Produce presentará 17 proyectos de ley al Congreso: ¿qué piden para pesca, industria y mypes?",
+      "url": "https://gestion.pe/economia/produce-presentara-17-proyectos-de-ley-al-congreso-que-piden-para-pesca-industria-y-mypes-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-27T21:53:16.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-3bebb23575",
+      "titulo": "Ministro de Vivienda descarta reubicación de viviendas en quebradas ante fenómeno El Niño: \"El Estado no puede cubrir todo eso\"",
+      "url": "https://rpp.pe/politica/gobierno/ministro-de-vivienda-mauricio-arnillas-descarta-reubicacion-de-viviendas-que-viven-en-quebradas-ante-fenomeno-el-nino-noticia-1714741",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-27T21:51:40.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-1b3315e7f2",
+      "titulo": "Donald Trump dice que Venezuela debería ser un estado de EE. UU. y tener gobernador, no presidente",
+      "url": "https://rpp.pe/mundo/estados-unidos/donald-trump-dice-que-venezuela-deberia-ser-un-estado-de-ee-uu-y-tener-gobernador-no-presidente-noticia-1714738",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-27T21:39:18.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-eeabeecc6d",
+      "titulo": "EE.UU. prevé emitir visas a Flavio Bolsonaro y su familia tras salir de Brasil",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/eeuu-preve-emitir-visas-a-flavio-bolsonaro-y-su-familia-tras-su-salida-de-brasil/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-10-27T21:38:57.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-caa71f5201",
+      "titulo": "LaLiga se reúne con el embajador chino en España para buscar soluciones tras caso Mbappé",
+      "url": "https://rpp.pe/mundo/china/caso-kylian-mbappe-laliga-se-reune-con-el-embajador-chino-en-espana-para-buscar-soluciones-noticia-1714733",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-27T21:36:45.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-a056023e82",
+      "titulo": "Netanyahu ganaría elecciones pero el bloque opositor le supera en escaños, según sondeos",
+      "url": "https://rpp.pe/mundo/medio-oriente/netanyahu-ganaria-elecciones-pero-el-bloque-opositor-le-supera-en-escanos-segun-sondeos-noticia-1714745",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-27T21:33:24.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-4cf84d491c",
+      "titulo": "Gadi Eisenkot destaca \"victoria\" de la oposición en elecciones de Israel frente a Netanyahu",
+      "url": "https://rpp.pe/mundo/actualidad/elecciones-israel-benjamin-netanyahu-ganaria-comicios-y-eisenkot-reconoce-resultados-noticia-1714723",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-27T21:29:35.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-7d37a3a12e",
+      "titulo": "La Alcoholería se expande con nuevas tiendas y hotel",
+      "url": "https://gestion.pe/economia/empresas/grupo-ferrethon-reordena-su-negocio-y-acelera-la-expansion-de-la-alcoholeria-prepara-nuevas-tiendas-franquicias-y-mas-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-27T21:28:39.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-eaade23011",
+      "titulo": "Nuevos empleos duplican promedio de última década, pero El Niño acecha, ¿qué está en riesgo?",
+      "url": "https://gestion.pe/economia/nuevos-empleos-formales-privados-duplican-promedio-de-ultima-decada-pero-el-nino-afectaria-en-el-peru-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-27T21:28:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-4133ba5d1b",
+      "titulo": "Chile producirá menos cobre, ¿podría ser una oportunidad para el Perú?",
+      "url": "https://gestion.pe/economia/chile-producira-menos-cobre-este-ano-podria-ser-una-oportunidad-para-la-mineria-en-peru-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-27T21:27:00.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-28a627515d",
+      "titulo": "¿Paradoja del oro se “fortalece”? Producción sigue en picada, pero exportación está fuerte",
+      "url": "https://gestion.pe/economia/oro-en-peru-produccion-en-picada-pero-su-exportacion-se-dispara-solo-la-mineria-ilegal-es-la-explicacion-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-27T21:27:00.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-13d46b336b",
+      "titulo": "San Luis: madre busca a hijo de 10 años que desapareció tras salir de su vivienda",
+      "url": "https://rpp.pe/rotafono/servicios-a-la-comunidad/san-luis-madre-busca-a-hijo-de-10-anos-que-desaparecio-tras-salir-de-su-vivienda-noticia-1714736",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-27T21:23:17.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-7618390726",
+      "titulo": "Wall Street sube gracias a los chips y AMD gana 5,4%, mientras Boeing cae 10,6%",
+      "url": "https://elcomercio.pe/economia/mercados/wall-street-sube-gracias-a-los-chips-y-amd-gana-54-mientras-boeing-cae-106-l-mercados-l-wall-street-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-10-27T21:19:35.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-47da91b13f",
+      "titulo": "Estados Unidos anuncia que acogerá a Flávio Bolsonaro y a su familia, según la agencia EFE",
+      "url": "https://rpp.pe/mundo/actualidad/estados-unidos-anuncia-que-acogera-a-flavio-bolsonaro-y-a-su-familia-segun-la-agencia-efe-noticia-1714740",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-27T21:13:45.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-b3a7dbb306",
+      "titulo": "La creciente ola de la IA \"hundirá algunos barcos\", advierte Pablo Salame, de Citadel",
+      "url": "https://www.bloomberglinea.com/negocios/la-creciente-ola-de-la-ia-hundira-algunos-barcos-advierte-pablo-salame-de-citadel/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-10-27T21:11:09.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-15cb6d4a81",
+      "titulo": "Asesor clave de Marco Rubio sobre Venezuela y Cuba deja el Departamento de Estado en EEUU",
+      "url": "https://rpp.pe/mundo/estados-unidos/asesor-clave-de-marco-rubio-sobre-venezuela-y-cuba-deja-el-departamento-de-estado-en-eeuu-noticia-1714731",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-27T21:10:36.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-d397fc3e0a",
+      "titulo": "¿Ya revisaste los cimientos de tu casa? Indecopi alerta sobre los materiales ante las lluvias por El Niño",
+      "url": "https://www.infobae.com/peru/2026/10/27/ya-revisaste-los-cimientos-de-tu-casa-indecopi-alerta-sobre-los-materiales-ante-las-lluvias-por-el-nino/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-10-27T21:10:02.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-0a7f8f60bf",
+      "titulo": "Apefac reunirá a líderes para impulsar el factoring al 10% del PBI a 2030",
+      "url": "https://andina.pe/agencia/noticia-apefac-reunira-a-lideres-para-impulsar-factoring-al-10-del-pbi-a-2030-1097549.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-10-27T21:09:51.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
       "id": "el_comercio-11a729f1ae",
       "titulo": "Smart Fit: “Vamos a abrir un nuevo Bio Ritmo, nuestro gimnasio premium, en San Isidro y ampliaremos Smart Fit en Cusco”",
       "url": "https://elcomercio.pe/economia/dia-1/smart-fit-vamos-a-abrir-un-nuevo-bio-ritmo-en-san-isidro-y-ampliaremos-smart-fit-en-cusco-noticia/",
       "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-10-27T20:27:15.000Z",
+      "fecha_iso": "2026-10-27T21:06:08.000Z",
       "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-665ee45486",
+      "titulo": "Video | Gritos, insultos y reproches: así fue el enfrentamiento entre EE.UU. y Cuba en la ONU",
+      "url": "https://www.bloomberglinea.com/2026/10/27/video-gritos-insultos-y-reproches-asi-fue-el-enfrentamiento-entre-eeuu-y-cuba-en-la-onu/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-10-27T21:01:17.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-ed65b95a66",
+      "titulo": "La 60ª Asamblea Anual de Felaban en Lima reunirá a más de 2.000 líderes financieros de 54 países",
+      "url": "https://elcomercio.pe/economia/mas-de-2000-lideres-54-paises-y-una-sola-cita-lima-recibe-la-60-asamblea-anual-de-felaban-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-10-27T20:53:02.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-e086a55d21",
+      "titulo": "Nombramientos de la semana: Gerente general de Geoblast Perú, Country Manager de Stefanini Group Perú y más",
+      "url": "https://elcomercio.pe/economia/dia-1/nombramientos-de-la-semana-gerente-general-de-geoblast-peru-country-manager-de-stefanini-group-peru-y-mas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-10-27T20:49:09.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-e453bfb5c3",
+      "titulo": "Cafeína, el nuevo proyecto de un conocido grupo gastronómico peruano, va por su cuarto local en el Boulevard de Asia: así alista su expansión y cómo se prepara ante El Niño",
+      "url": "https://elcomercio.pe/economia/dia-1/cafeina-el-nuevo-proyecto-de-un-conocido-grupo-gastronomico-peruano-va-por-su-cuarto-local-en-el-boulevard-de-asia-asi-alista-su-expansion-y-como-se-prepara-ante-el-nino-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-10-27T20:47:30.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-093ed7008b",
+      "titulo": "Tren Lima-Chosica: adenda se firmará en diciembre, ¿qué etapas se alistan?",
+      "url": "https://gestion.pe/economia/tren-lima-chosica-en-diciembre-se-firmara-adenda-para-transportar-personas-que-fases-tendra-el-proyecto-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-27T20:37:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-9cc1286a70",
+      "titulo": "Negocios aumentan hasta 20% su inversión para Halloween y el Día de la Canción Criolla, ¿será una buena campaña de ‘dulce o truco’ y jarana?",
+      "url": "https://elcomercio.pe/economia/peru/negocios-aumentan-hasta-20-su-inversion-para-halloween-y-el-dia-de-la-cancion-criolla-31-de-octubre-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-10-27T20:36:50.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-cc7774317d",
+      "titulo": "Macrorregión sur: el plan de Confiep para destrabar proyectos y crear inversiones",
+      "url": "https://gestion.pe/economia/macrorregion-sur-la-apuesta-de-confiep-para-destrabar-proyectos-y-crear-inversiones-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-27T20:36:31.000Z",
+      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -82,30 +388,12 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-e453bfb5c3",
-      "titulo": "Cafeína, el nuevo proyecto de un conocido grupo gastronómico peruano, va por su cuarto local en el Boulevard de Asia: así alista su expansión y cómo se prepara ante El Niño",
-      "url": "https://elcomercio.pe/economia/dia-1/cafeina-el-nuevo-proyecto-de-un-conocido-grupo-gastronomico-peruano-va-por-su-cuarto-local-en-el-boulevard-de-asia-asi-alista-su-expansion-y-como-se-prepara-ante-el-nino-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-10-27T20:08:56.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "rpp-358a0aac49",
       "titulo": "Áncash: trabajador de Antamina pierde la vida mientras realizaba labores",
       "url": "https://rpp.pe/peru/actualidad/antamina-trabajador-muere-cuando-realizaba-labores-en-minera-yanacocha-ancash-noticia-1714715",
       "fuente": "RPP Noticias",
       "fecha_iso": "2026-10-27T20:06:09.000Z",
       "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-6fddd629fa",
-      "titulo": "Flávio Bolsonaro habría huido de Brasil tras perder las elecciones y crecen dudas sobre su paradero",
-      "url": "https://www.bloomberglinea.com/latinoamerica/brasil/flavio-bolsonaro-habria-huido-de-brasil-tras-perder-las-elecciones-y-crecen-dudas-sobre-su-paradero/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-10-27T20:03:36.000Z",
-      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     },
     {
@@ -136,15 +424,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "el_comercio-9cc1286a70",
-      "titulo": "Negocios aumentan hasta 20% su inversión para Halloween y el Día de la Canción Criolla, ¿será una buena campaña de ‘dulce o truco’ y jarana?",
-      "url": "https://elcomercio.pe/economia/peru/negocios-aumentan-hasta-20-su-inversion-para-halloween-y-el-dia-de-la-cancion-criolla-31-de-octubre-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-10-27T19:42:06.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-241826e9be",
       "titulo": "Cadena mexicana de tecnología Steren apuesta por B2B y busca más tiendas en Perú al 2030",
       "url": "https://gestion.pe/economia/empresas/steren-retail-mexicano-de-electronica-apuesta-por-b2b-en-peru-y-alista-tiendas-al-2030-noticia/",
@@ -169,69 +448,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-10-27T19:37:48.000Z",
       "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-9f9e17a2f4",
-      "titulo": "DLA Piper: “Este es un momento sin precedentes para el sistema financiero”",
-      "url": "https://elcomercio.pe/economia/peru/dla-piper-este-es-un-momento-sin-precedentes-para-el-sistema-financiero-inperu-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-10-27T19:37:29.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-02dfe06955",
-      "titulo": "ProInversión en inPerú: “El plan específico para Talara se presentará en enero de 2027”",
-      "url": "https://elcomercio.pe/economia/peru/proinversion-en-inperu-el-plan-especifico-para-talara-se-presentara-en-enero-de-2027-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-10-27T19:37:18.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-6482cb4620",
-      "titulo": "inPerú: ProInversión se reúne con bonistas de Petro-Perú",
-      "url": "https://elcomercio.pe/economia/peru/inperu-proinversion-se-reune-con-bonistas-de-petro-peru-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-10-27T19:37:10.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-eaade23011",
-      "titulo": "Nuevos empleos duplican promedio de última década, pero El Niño acecha, ¿qué está en riesgo?",
-      "url": "https://gestion.pe/economia/nuevos-empleos-formales-privados-duplican-promedio-de-ultima-decada-pero-el-nino-afectaria-en-el-peru-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-27T19:28:06.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-28a627515d",
-      "titulo": "¿Paradoja del oro se “fortalece”? Producción sigue en picada, pero exportación está fuerte",
-      "url": "https://gestion.pe/economia/oro-en-peru-produccion-en-picada-pero-su-exportacion-se-dispara-solo-la-mineria-ilegal-es-la-explicacion-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-27T19:27:39.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-4133ba5d1b",
-      "titulo": "Chile producirá menos cobre, ¿podría ser una oportunidad para el Perú?",
-      "url": "https://gestion.pe/economia/chile-producira-menos-cobre-este-ano-podria-ser-una-oportunidad-para-la-mineria-en-peru-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-27T19:27:14.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-ed65b95a66",
-      "titulo": "La 60ª Asamblea Anual de Felaban en Lima reunirá a más de 2.000 líderes financieros de 54 países",
-      "url": "https://elcomercio.pe/economia/mas-de-2000-lideres-54-paises-y-una-sola-cita-lima-recibe-la-60-asamblea-anual-de-felaban-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-10-27T19:22:23.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -335,20 +551,11 @@
     },
     {
       "id": "rpp-a8fa5b9ecb",
-      "titulo": "Nvidia y Meta anuncian un acuerdo de colaboración para el desarrollo y entrenamiento del modelo de IA 'Muse'",
+      "titulo": "AMD y Nvidia amplían sus acuerdos de colaboración con Meta para impulsar el desarrollo de su IA",
       "url": "https://rpp.pe/tecnologia/innovaciones/nvidia-y-meta-anuncian-un-acuerdo-de-colaboracion-para-el-desarrollo-y-entrenamiento-del-modelo-de-ia-muse-noticia-1714707",
       "fuente": "RPP Noticias",
       "fecha_iso": "2026-10-27T18:46:00.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-093ed7008b",
-      "titulo": "Tren Lima-Chosica: adenda se firmará en diciembre, ¿qué etapas se alistan?",
-      "url": "https://gestion.pe/economia/tren-lima-chosica-en-diciembre-se-firmara-adenda-para-transportar-personas-que-fases-tendra-el-proyecto-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-27T18:37:09.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -658,15 +865,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "rpp-0321852077",
-      "titulo": "ProInversión: Petroperú está cerca de cerrar financiamiento por US$ 2.000 millones con cuatro bancos de Estados Unidos y Europa",
-      "url": "https://rpp.pe/economia/economia/proinversion-petroperu-esta-cerca-de-cerrar-financiamiento-por-us-2000-millones-con-cuatro-bancos-de-estados-unidos-y-europa-noticia-1714670",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-10-27T16:04:06.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-8a356c8953",
       "titulo": "El dólar abre a la baja en S/3,43 pero repunta ante mayor demanda en el mercado local",
       "url": "https://elcomercio.pe/economia/peru/el-dolar-abre-a-la-baja-en-s343-pero-repunta-ante-mayor-demanda-en-el-mercado-local-l-tipo-de-cambio-l-ultimas-noticia/",
@@ -703,24 +901,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "rpp-493c5c853c",
-      "titulo": "Policía Federal de Brasil investiga intento de fuga de Flávio Bolsonaro a EE. UU.: no se conoce el paradero del excandidato",
-      "url": "https://rpp.pe/mundo/latinoamerica/policia-federal-de-brasil-investiga-intento-de-fuga-de-flavio-bolsonaro-a-ee-uu-noticia-1714665",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-10-27T15:39:00.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-2335b4c0d3",
-      "titulo": "Argentina dice que Flávio Bolsonaro no pidió asilo tras derrota en elecciones",
-      "url": "https://rpp.pe/mundo/argentina/argentina-dice-que-flavio-bolsonaro-no-pidio-asilo-tras-derrota-en-elecciones-noticia-1714661",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-10-27T15:34:42.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-918a9c26af",
       "titulo": "Fondepes acelera desembarcadero de Pucusana y garantiza entrega a fines de noviembre",
       "url": "https://andina.pe/agencia/noticia-fondepes-acelera-desembarcadero-pucusana-y-garantiza-entrega-a-fines-noviembre-1097485.aspx",
@@ -730,29 +910,11 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "rpp-cb7ed7f527",
-      "titulo": "China convierte a Kylian Mbappé en persona no grata para marcas, televisión y redes",
-      "url": "https://rpp.pe/mundo/china/china-convierte-a-kylian-mbappe-en-persona-no-grata-para-marcas-television-y-redes-noticia-1714657",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-10-27T15:14:05.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-c98e07b6de",
       "titulo": "Venta de viviendas nuevas en Lima y Callao crece 26% y supera las 23,600 unidades",
       "url": "https://gestion.pe/economia/empresas/venta-de-viviendas-nuevas-en-lima-y-callao-crece-26-y-supera-las-23600-unidades-entre-enero-y-septiembre-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-10-27T15:10:48.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-64fec69e35",
-      "titulo": "Inversión en ecosistemas altoandinos: la clave para asegurar el agua y mitigar el impacto de El Niño",
-      "url": "https://rpp.pe/videos/actualidad/inversion-en-ecosistemas-altoandinos-la-clave-para-asegurar-el-agua-y-mitigar-el-impacto-de-el-nino-noticia-1714659",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-10-27T15:00:22.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
@@ -784,15 +946,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "infobae-6d8c2a88d8",
-      "titulo": "Furor por departamentos en Lima: ventas se disparan 26% hasta septiembre y la oferta se agotaría siete meses antes",
-      "url": "https://www.infobae.com/peru/2026/10/27/furor-por-departamentos-en-lima-ventas-se-disparan-26-hasta-septiembre-y-la-oferta-se-agotaria-siete-meses-antes/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-27T14:30:43.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-47ca6dca61",
       "titulo": "¿Cuál es la cotización del dólar hoy martes 27 de octubre de 2026?",
       "url": "https://andina.pe/agencia/noticia-cual-es-cotizacion-del-dolar-hoy-martes-27-octubre-2026-1097476.aspx",
@@ -817,15 +970,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-10-27T14:17:43.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-5693195c3d",
-      "titulo": "¿Qué dispositivos tecnológicos ayudan a monitorear el fenómeno El Niño?",
-      "url": "https://www.infobae.com/peru/2026/10/24/que-dispositivos-tecnologicos-ayudan-a-monitorear-el-fenomeno-el-nino/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-27T14:14:11.000Z",
-      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     },
     {
@@ -892,15 +1036,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-3a234bee0f",
-      "titulo": "Del K-Beauty al K-Fragrance: la apuesta de la colombiana Recaminer para crecer en el Perú",
-      "url": "https://gestion.pe/economia/empresas/recamier-prepara-nuevas-marcas-coreanas-y-su-plan-para-crecer-en-peru-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-27T11:00:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-bcb513e2cd",
       "titulo": "Visita del Papa impulsa inversión por más de S/ 6 millones en hotel casino de Chiclayo",
       "url": "https://gestion.pe/economia/gladcon-group-invierte-mas-de-s-6-millones-en-chiclayo-y-alista-expansion-de-win-win-noticia/",
@@ -910,120 +1045,12 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "rpp-85846d73f1",
-      "titulo": "Argentina: dólar blue hoy a cuánto cotiza este martes 27 de octubre",
-      "url": "https://rpp.pe/mundo/argentina/argentina-dolar-blue-hoy-a-cuanto-cotiza-este-martes-27-de-octubre-noticia-1714623",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-10-27T10:59:39.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-54695633de",
-      "titulo": "Proveedor peruano de infraestructura para centros de datos apunta a crecer en Chile y Ecuador",
-      "url": "https://gestion.pe/economia/mercados/de-cirion-a-ecuador-voyant-busca-nuevos-proyectos-de-centros-de-datos-para-2027-noticia/",
+      "id": "gestion-3a234bee0f",
+      "titulo": "Del K-Beauty al K-Fragrance: la apuesta de la colombiana Recaminer para crecer en el Perú",
+      "url": "https://gestion.pe/economia/empresas/recamier-prepara-nuevas-marcas-coreanas-y-su-plan-para-crecer-en-peru-noticia/",
       "fuente": "Gestión",
-      "fecha_iso": "2026-10-27T10:45:00.000Z",
+      "fecha_iso": "2026-10-27T11:00:00.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-e1fe37b8c2",
-      "titulo": "¿Hidrovía Amazónica “reviviría” en 2027?: ProInversión maneja fecha clave para adjudicarla",
-      "url": "https://gestion.pe/economia/hidrovia-amazonica-reviviria-en-2027-proinversion-maneja-fecha-clave-para-adjudicarla-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-27T10:41:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-afe4be66ce",
-      "titulo": "Perú cierra pesca de anchoveta: Chile y los otros países que cubrirían demanda de harina",
-      "url": "https://gestion.pe/economia/peru-cierra-la-pesca-de-anchoveta-que-paises-dependen-mas-de-su-harina-de-pescado-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-27T10:32:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-7d37a3a12e",
-      "titulo": "La Alcoholería se expande con nuevas tiendas y hotel",
-      "url": "https://gestion.pe/economia/empresas/grupo-ferrethon-reordena-su-negocio-y-acelera-la-expansion-de-la-alcoholeria-prepara-nuevas-tiendas-franquicias-y-mas-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-27T10:15:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-d7102fc043",
-      "titulo": "Minsur, del Grupo Breca, plantea reaprovechar relaves y nuevas exploraciones en San Rafael",
-      "url": "https://gestion.pe/economia/empresas/minsur-plantea-nuevas-exploraciones-y-mejoras-operativas-en-su-mina-de-estano-san-rafael-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-27T10:15:00.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-afb879a997",
-      "titulo": "La chilena Geoblast evalúa centro geológico de US$ 4 millones en el sur minero del Perú",
-      "url": "https://gestion.pe/economia/empresas/mineria-proveedor-de-anglo-american-y-glencore-evalua-centro-de-us-4-millones-en-el-sur-peruano-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-27T10:15:00.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-f80d5af195",
-      "titulo": "¿Qué AFP recomienda o muestra más ChatGPT cuando los peruanos preguntan por su dinero?",
-      "url": "https://gestion.pe/economia/empresas/afp-bajo-la-lupa-de-la-ia-quien-lidera-en-rentabilidad-retiros-y-traspasos-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-27T09:30:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-918091149f",
-      "titulo": "Leyes que elevan gasto del Estado: ¿qué dice el MEF sobre las dos que más preocupan?",
-      "url": "https://gestion.pe/economia/leyes-que-elevan-gasto-del-estado-peruano-que-dice-el-mef-sobre-las-dos-que-mas-preocupan-para-el-bolsillo-del-pais-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-27T09:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-0d3c478379",
-      "titulo": "CADE Ejecutivos 2026 reunirá a inversionistas para impulsar capitales en regiones",
-      "url": "https://andina.pe/agencia/noticia-cade-ejecutivos-2026-reunira-a-inversionistas-para-impulsar-capitales-regiones-1097421.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-10-27T08:00:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-4bff3df007",
-      "titulo": "Agro en Perú “temblaría” más allá del verano 2027 por El Niño: esto alerta el Midagri",
-      "url": "https://gestion.pe/economia/agro-en-peru-temblaria-mas-alla-del-verano-2027-por-el-nino-esto-alerta-el-midagri-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-27T08:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-1c84750ba8",
-      "titulo": "Perú y Brasil: qué le vendemos al gigante sudamericano, nuestro principal socio en la región",
-      "url": "https://gestion.pe/economia/exportaciones-peruanas-a-brasil-que-le-vende-peru-al-gigante-sudamericano-su-principal-destino-de-comercio-exterior-en-la-region-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-27T07:01:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-2073f10197",
-      "titulo": "Detalles que debe saber si quiere invertir en Anthropic tras su salida al Nasdaq",
-      "url": "https://www.bloomberglinea.com/mercados/detalles-que-debe-saber-si-quiere-invertir-en-anthropic-tras-su-salida-al-nasdaq/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-10-27T06:00:00.000Z",
-      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     }
   ]
