@@ -11,7 +11,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { buildForecast } from "../api/forecast.js";
-import { v4Weight } from "../api/_lib/v4.js";
+import { blendEngine, engineWeight } from "../api/_lib/engine.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DIR = path.join(ROOT, "data", "backtest");
@@ -119,16 +119,24 @@ for (const h of HS) {
     if (!rows.length) continue;
     r[name] = { mape: Number(mape(rows).toFixed(2)), ...calib(rows), blendWithV3: bestWeight(src, h, list) };
   }
-  if (models.timesfm) {
-    const cur = blendRows(models.timesfm, h, list, v4Weight(h));
-    r.v4Today = { w: Number(v4Weight(h).toFixed(2)), mape: Number(mape(cur).toFixed(2)), ...calib(cur) };
+  // The production blend (api/_lib/engine.js): k80 here is the band factor it needs before calibration,
+  // coverageCal the share of real closes inside the calibrated band
+  if (models.chronos2) {
+    const toPts = (rows) => rows.map(([p10, p25, p50, p75, p90]) => ({ p10, p25, p50, p75, p90 }));
+    const eng = (calibrate) => list.filter((e) => models.chronos2[e.key] && v3[e.key]).map((e) => {
+      const b = blendEngine(toPts(models.chronos2[e.key]), toPts(v3[e.key]), h, { calibrate });
+      return b ? { ...e, ...b[h - 1] } : null;
+    }).filter(Boolean);
+    const raw = eng(false), cal = eng(true);
+    r.engine = { w: Number(engineWeight(h).toFixed(2)), mape: Number(mape(raw).toFixed(2)), ...calib(raw),
+      coverageCal: Number((cal.filter((x) => x.actual >= x.p10 && x.actual <= x.p90).length / cal.length * 100).toFixed(1)) };
   }
   results[h] = r;
   console.log(`h=${h}`, JSON.stringify(r));
 }
 
 fs.writeFileSync(path.join(DIR, "results.json"), JSON.stringify({ generated: new Date().toISOString(), results }, null, 1));
-const names = ["naive", "v3", ...Object.keys(models), "v4Today"];
+const names = ["naive", "v3", ...Object.keys(models), "engine"];
 let md = `# Backtest de modelos (${new Date().toISOString().slice(0, 10)})\n\n` +
   `Cortes cada 6 meses con al menos 36 meses de historia, ${Object.keys(history).length} activos. ` +
   `MAPE del P50 (menor es mejor). Cobertura fuera de muestra del rango P10-P90 tras calibrar con k80 ajustado en la otra mitad de los activos.\n\n` +
