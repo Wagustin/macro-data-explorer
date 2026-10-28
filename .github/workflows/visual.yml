@@ -8,6 +8,14 @@ on:
         required: true
         default: "manual"
         type: string
+      tema:
+        description: "Color theme for page captures"
+        required: true
+        default: "claro"
+        type: choice
+        options:
+          - claro
+          - oscuro
       comparar_con:
         description: "Earlier workflow run id to compare against"
         required: false
@@ -41,6 +49,7 @@ jobs:
         run: node scripts/visual-capture.js
         env:
           BASE_URL: ${{ inputs.base_url || 'https://perdata.site' }}
+          TEMA: ${{ inputs.tema || 'claro' }}
       - name: Download previous screenshots
         if: inputs.comparar_con != ''
         uses: actions/download-artifact@v4
