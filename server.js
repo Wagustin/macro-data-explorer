@@ -52,9 +52,7 @@ const PAGES = {
   "/restablecer": "restablecer.html",
   "/privacidad": "privacidad.html",
   "/empresas": "empresas.html",
-  "/mercado": "mercado.html",
-  "/estado": "estado.html",
-  "/resumenes": "resumen.html"
+  "/mercado": "mercado.html"
 };
 
 const server = http.createServer(async (req, res) => {
@@ -131,27 +129,8 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
-  // Digest assets are public only by a tightly validated basename.
-  const digestAsset = /^\/data\/resumenes\/(index|\d{4}-\d{2}-\d{2})\.json$/.exec(pathname);
-  if (digestAsset) {
-    const jsonPath = path.join(__dirname, "data", "resumenes", `${digestAsset[1]}.json`);
-    if (fs.existsSync(jsonPath) && fs.statSync(jsonPath).isFile()) {
-      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
-      return fs.createReadStream(jsonPath).pipe(res);
-    }
-  }
-
   const cleanPath = pathname.replace(/\.html$/, "").replace(/\/+$/, "") || "/";
   let targetFile = PAGES[cleanPath === "/index" ? "/" : cleanPath] || null;
-  const digestPage = /^\/resumen\/(\d{4}-\d{2}-\d{2})$/.exec(cleanPath);
-  if (digestPage) {
-    const jsonPath = path.join(__dirname, "data", "resumenes", `${digestPage[1]}.json`);
-    if (!fs.existsSync(jsonPath) || !fs.statSync(jsonPath).isFile()) {
-      targetFile = null;
-    } else {
-      targetFile = "resumen.html";
-    }
-  }
   if (!targetFile && cleanPath.startsWith("/empresa/")) {
     targetFile = "empresa.html";
   }
