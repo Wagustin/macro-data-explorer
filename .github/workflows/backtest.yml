@@ -25,6 +25,9 @@ jobs:
         with:
           node-version: 22
       - name: Historial mensual
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: node scripts/refresh-history.js
       - uses: actions/upload-artifact@v4
         with:
