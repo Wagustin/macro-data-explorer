@@ -13,7 +13,7 @@ OUT = os.path.join(ROOT, "data", "official", "epu.json")
 UA = "PerDataBot/1.0 (+https://perdata.site)"
 SOURCES = {
     "GLOBAL": ("https://www.policyuncertainty.com/media/Global_Policy_Uncertainty_Data.xlsx", "GEPU_current"),
-    "USA": ("https://www.policyuncertainty.com/media/US_Policy_Uncertainty_Data.xlsx", "USEPU_current"),
+    "USA": ("https://www.policyuncertainty.com/media/US_Policy_Uncertainty_Data.xlsx", "News_Based_Policy_Uncert_Index"),
     "LATAM": ("https://www.bde.es/f/webbe/SES/AnalisisEconomico/AnalisisEconomico/America_latina/Publicaciones/EPU_LATAM.xlsx", None),
 }
 
