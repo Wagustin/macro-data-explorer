@@ -59,6 +59,13 @@ const checks = [
     if (f.ageHours > MAX_FORECAST_AGE_H) throw new Error(`la última corrida fue hace ${f.ageHours} h (${f.runAt})`);
     return `hace ${f.ageHours} h`;
   }],
+  ["Copia de seguridad", async () => {
+    const r = await get("/api/status", { json: true });
+    const b = r.body?.backup;
+    if (!b || b.error) throw new Error(b?.error || `HTTP ${r.status}`);
+    if (b.edadHoras > 30) throw new Error(`última copia de ${b.fecha}, hace ${b.edadHoras} h`);
+    return `${b.fecha}, hace ${b.edadHoras} h`;
+  }],
   ["Cotizaciones de Lima (SMV)", async () => {
     const r = await get("/api/status", { json: true });
     const s = r.body?.smv;

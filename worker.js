@@ -10,6 +10,7 @@ import statusHandler from "./api/status.js";
 import boletinHandler from "./api/boletin.js";
 import syncHandler from "./api/sync.js";
 import mercadoHandler from "./api/mercado.js";
+import { runBackup } from "./api/_lib/backup.js";
 
 // Clean URL route map for static subpages
 const CLEAN_PAGES = {
@@ -41,6 +42,7 @@ function adaptNodeHandler(handler) {
         globalThis.__PERDATA_KV__ = env.PERDATA_KV;
       }
       if (env.PERDATA_DB) globalThis.PERDATA_DB = env.PERDATA_DB;
+      if (env.BACKUPS) globalThis.PERDATA_BACKUPS = env.BACKUPS;
     }
 
     const url = new URL(request.url);
@@ -227,6 +229,7 @@ export default {
         globalThis.__PERDATA_KV__ = env.PERDATA_KV;
       }
       if (env.PERDATA_DB) globalThis.PERDATA_DB = env.PERDATA_DB;
+      if (env.BACKUPS) globalThis.PERDATA_BACKUPS = env.BACKUPS;
     }
 
     const url = new URL(request.url);
@@ -344,6 +347,7 @@ export default {
   // secret (fine-grained token, Actions read and write on this repository); without it, does nothing.
   async scheduled(event, env, ctx) {
     ctx.waitUntil(dispatchDueWorkflows(env));
+    ctx.waitUntil(runBackup(env));
   }
 };
 

@@ -1,6 +1,7 @@
 /** Public freshness information for the data sources used by PerData. */
 import { applyCors, handleRateLimit } from "./_lib/ratelimit.js";
 import { d1 } from "./_lib/d1.js";
+import { backupStatus } from "./_lib/backup.js";
 
 const hoursSince = (value) => {
   const time = Date.parse(value);
@@ -97,11 +98,11 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "GET") return res.status(405).json({ error: "Método no permitido." });
   if (handleRateLimit(req, res)) return;
-  const [forecasts, news, smv, bcrp, eia, d1Sync] = await Promise.all([
-    latestForecastRun(), latestNews(), latestSmvClose(), latestOfficial("bcrp-daily", 96), latestOfficial("eia-oil", 96), latestD1Sync(),
+  const [forecasts, news, smv, bcrp, eia, d1Sync, backup] = await Promise.all([
+    latestForecastRun(), latestNews(), latestSmvClose(), latestOfficial("bcrp-daily", 96), latestOfficial("eia-oil", 96), latestD1Sync(), backupStatus(globalThis.PERDATA_BACKUPS ? { BACKUPS: globalThis.PERDATA_BACKUPS } : null),
   ]);
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
-  res.end(JSON.stringify({ ok: true, now: new Date().toISOString(), forecasts, news, smv, bcrp, eia, d1Sync }));
+  res.end(JSON.stringify({ ok: true, now: new Date().toISOString(), forecasts, news, smv, bcrp, eia, d1Sync, backup }));
 }
