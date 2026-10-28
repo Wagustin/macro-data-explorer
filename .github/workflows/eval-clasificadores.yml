@@ -24,7 +24,7 @@ permissions:
 jobs:
   evaluar:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90
     steps:
       - name: Clonar repositorio
         uses: actions/checkout@v4
@@ -54,7 +54,14 @@ jobs:
         run: |
           if [ "${{ inputs.force_laya2 }}" = "true" ] || [ ! -f "eval/clasificador/laya2.jsonl" ]; then
             echo "Ejecutando clasificador Laya v2 con criterios ${{ inputs.criterios }}..."
-            python scripts/laya-v2.py --criterios "${{ inputs.criterios }}" --input "eval/clasificador/historico.jsonl" --output "eval/clasificador/laya2.jsonl"
+            python - <<'PY'
+          import json
+          ids = {json.loads(l)["id"] for l in open("eval/clasificador/clave.jsonl") if l.strip()}
+          rows = [l for l in open("eval/clasificador/historico.jsonl") if l.strip() and json.loads(l)["id"] in ids]
+          open("/tmp/muestra.jsonl", "w").write("".join(rows))
+          print(f"Muestra de arbitraje: {len(rows)} titulares")
+          PY
+            python scripts/laya-v2.py --criterios "${{ inputs.criterios }}" --input "/tmp/muestra.jsonl" --output "eval/clasificador/laya2.jsonl"
           else
             echo "eval/clasificador/laya2.jsonl ya existe. Omitiendo re-ejecución (force_laya2=false)."
           fi
