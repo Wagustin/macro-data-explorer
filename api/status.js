@@ -8,6 +8,8 @@ const hoursSince = (value) => {
   return Number.isFinite(time) ? Math.max(0, Math.round(((Date.now() - time) / 36e5) * 10) / 10) : null;
 };
 
+let smvDateCache = { fecha: null, at: 0 };
+
 function source(updatedAt, staleAfterHours, extra = {}) {
   return { updatedAt: updatedAt || null, ageHours: hoursSince(updatedAt), staleAfterHours, ...extra };
 }
@@ -34,13 +36,17 @@ async function latestSmvClose() {
     observationDate: fecha || null,
     ageDays: fecha ? Math.max(0, Math.floor((Date.now() - Date.parse(fecha)) / 864e5)) : null,
   });
+  const hasFreshCache = Date.now() - smvDateCache.at < 5 * 60 * 1000;
+  let fecha = hasFreshCache ? smvDateCache.fecha : null;
   const db = d1();
-  if (db) {
+  if (!hasFreshCache && db) {
     try {
-      const row = await db.prepare("select fecha from cotizaciones_smv order by fecha desc limit 1").first();
-      if (row?.fecha) return smvSource(row.fecha);
+      const row = await db.prepare("select max(fecha) as fecha from cotizaciones_smv").first();
+      fecha = row?.fecha || null;
+      smvDateCache = { fecha, at: Date.now() };
     } catch { /* Try Supabase when D1 is unavailable or empty. */ }
   }
+  if (fecha) return smvSource(fecha);
   const base = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
   const key = process.env.SUPABASE_SERVICE_KEY || "";
   if (!base || !key) return source(null, 96, { error: "supabase_not_configured" });
@@ -50,6 +56,7 @@ async function latestSmvClose() {
     });
     if (!r.ok) return source(null, 96, { error: `supabase_${r.status}` });
     const fecha = (await r.json())[0]?.fecha || null;
+    smvDateCache = { fecha, at: Date.now() };
     return smvSource(fecha);
   } catch {
     return source(null, 96, { error: "supabase_unreachable" });

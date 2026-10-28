@@ -14,8 +14,10 @@ function response() {
 
 function database() {
   const writes = [];
+  const schema = [];
   return {
     writes,
+    schema,
     prepare(sql) {
       return {
         sql,
@@ -28,7 +30,11 @@ function database() {
         },
       };
     },
-    async batch(statements) { writes.push(statements); return []; },
+    async batch(statements) {
+      schema.push(...statements.map(({ sql }) => sql));
+      writes.push(statements);
+      return [];
+    },
   };
 }
 
@@ -74,6 +80,7 @@ test("sync writes rows for every supported table and rejects unknown tables or o
     assert.ok(insert, `${table} insert statement`);
     assert.deepEqual(insert.values, expectedValues, `${table} bound values`);
   }
+  assert.ok(db.schema.includes("create index if not exists cotizaciones_smv_fecha on cotizaciones_smv (fecha)"));
 
   for (const body of [
     { table: "users", rows: [{ id: 1 }] },

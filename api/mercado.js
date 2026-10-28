@@ -6,11 +6,13 @@ const COMPANY_NAMES = new Map((EMPRESAS.emisores || []).flatMap((issuer) =>
   (issuer.valores || []).map((value) => [value.nemonico, issuer.razonSocial])
 ));
 
-function thirtyDaysAgo() {
+function twentyOneDaysAgo() {
   const limaNow = new Date(Date.now() - 5 * 60 * 60 * 1000);
-  limaNow.setUTCDate(limaNow.getUTCDate() - 30);
+  limaNow.setUTCDate(limaNow.getUTCDate() - 21);
   return limaNow.toISOString().slice(0, 10);
 }
+
+let marketCache = { data: null, at: 0 };
 
 async function readD1(desde) {
   const db = d1();
@@ -92,12 +94,17 @@ export default async function handler(req, res) {
   if (handleRateLimit(req, res)) return;
   const hasAuth = Boolean(req.headers?.authorization);
   res.setHeader("Cache-Control", hasAuth ? "private, no-store" : "public, max-age=0, s-maxage=600, stale-while-revalidate=3600");
+  if (marketCache.data && Date.now() - marketCache.at < 10 * 60 * 1000) {
+    return res.status(200).json(marketCache.data);
+  }
 
   try {
-    const desde = thirtyDaysAgo();
+    const desde = twentyOneDaysAgo();
     let rows = await readD1(desde);
     if (!rows?.length) rows = await readSupabase(desde);
-    return res.status(200).json(summarize(rows));
+    const data = summarize(rows);
+    marketCache = { data, at: Date.now() };
+    return res.status(200).json(data);
   } catch (error) {
     console.error("Market data unavailable:", error.message);
     res.setHeader("Cache-Control", "no-store");

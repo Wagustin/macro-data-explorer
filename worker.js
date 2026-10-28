@@ -11,6 +11,7 @@ import boletinHandler from "./api/boletin.js";
 import syncHandler from "./api/sync.js";
 import mercadoHandler from "./api/mercado.js";
 import { runBackup } from "./api/_lib/backup.js";
+import { ensureSchema } from "./api/_lib/d1.js";
 
 // Clean URL route map for static subpages
 const CLEAN_PAGES = {
@@ -346,6 +347,11 @@ export default {
   // starts the GitHub Actions workflows that are due and haven't run. Needs the GH_DISPATCH_TOKEN
   // secret (fine-grained token, Actions read and write on this repository); without it, does nothing.
   async scheduled(event, env, ctx) {
+    if (env.PERDATA_DB) {
+      try { await ensureSchema(env.PERDATA_DB); } catch (error) {
+        console.error("D1 schema initialization failed:", error.message);
+      }
+    }
     ctx.waitUntil(dispatchDueWorkflows(env));
     ctx.waitUntil(runBackup(env));
   }

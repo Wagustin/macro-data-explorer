@@ -37,7 +37,7 @@
     <div class="overflow-x-auto">
       <table class="status-table"><thead><tr><th>Fuente</th><th>Última actualización (Lima)</th><th>Estado</th></tr></thead><tbody id="statusRows"></tbody></table>
     </div>
-    <p class="text-xs text-ink-soft">La página se actualiza automáticamente cada 60 segundos.</p>
+    <p class="text-xs text-ink-soft">La página se actualiza automáticamente cada 5 minutos mientras está visible.</p>
   </main>
   <footer class="border-t border-rule bg-card py-10 px-4 sm:px-6"><div class="max-w-6xl mx-auto flex flex-col gap-6"><div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-rule"><a href="/" class="text-inherit no-underline"><span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span></a><nav class="flex flex-wrap items-center gap-6 text-xs text-ink-soft" aria-label="Navegación secundaria"><a href="/mercado" class="hover:text-ink no-underline">Mercado</a><a href="/estado" class="hover:text-ink no-underline">Estado</a><a href="/boletin" class="hover:text-ink no-underline">Boletín</a><a href="/terms" class="hover:text-ink no-underline">Términos</a><a href="/privacidad" class="hover:text-ink no-underline">Privacidad</a><a href="mailto:soporte@perdata.site" class="hover:text-ink no-underline">Contacto</a></nav></div><div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 text-[11px] text-ink-soft leading-relaxed"><span class="font-medium text-ink">© 2026 PerData</span><p class="max-w-2xl m-0">Información financiera y cuantitativa con fines estrictamente informativos y de investigación. No constituye asesoramiento de inversión ni oferta pública de valores.</p></div></div></footer>
   <script>
@@ -70,11 +70,16 @@
         }
         message.textContent = `Actualizado: ${limaDate.format(new Date(data.now))}`;
       } catch {
-        message.textContent = 'No fue posible actualizar el estado. Se volverá a intentar en un minuto.';
+        message.textContent = 'No fue posible actualizar el estado. Se volverá a intentar en 5 minutos.';
       }
     }
     refreshStatus();
-    window.setInterval(refreshStatus, 60000);
+    window.setInterval(() => {
+      if (document.visibilityState === 'visible') refreshStatus();
+    }, 300000);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') refreshStatus();
+    });
     const toggle = document.getElementById('themeToggle');
     if (toggle) { toggle.checked = document.documentElement.classList.contains('dark'); toggle.addEventListener('change', (event) => { document.documentElement.classList.toggle('dark', event.target.checked); document.documentElement.classList.toggle('light', !event.target.checked); localStorage.setItem('theme', event.target.checked ? 'dark' : 'light'); }); }
     const menuButton = document.getElementById('mobileMenuBtn');
