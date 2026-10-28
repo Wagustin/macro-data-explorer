@@ -8,6 +8,7 @@
 import crypto from "crypto";
 import { d1, ensureSchema } from "./_lib/d1.js";
 import { readJsonBody } from "./_lib/session.js";
+import { handleRateLimit } from "./_lib/ratelimit.js";
 
 const TABLES = {
   forecasts: {
@@ -42,6 +43,7 @@ function authorized(req) {
 
 export default async function handler(req, res) {
   if (req.method !== "POST" || !authorized(req)) return send(res, 404, { error: "No encontrado." });
+  if (handleRateLimit(req, res)) return;
   const db = d1();
   if (!db) return send(res, 503, { error: "Sin base D1." });
   const body = await readJsonBody(req);

@@ -3,6 +3,7 @@ import path from "path";
 import { execFileSync } from "child_process";
 import { fileURLToPath } from "url";
 import { transform } from "esbuild";
+import crypto from "crypto";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -92,6 +93,34 @@ const STATIC_HEADERS = `/*.js
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 `;
 
+function scriptHashes(html) {
+  const hashes = new Set();
+  for (const [, attrs, body] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)) {
+    if (/\bsrc\s*=/.test(attrs)) continue;
+    const digest = crypto.createHash("sha256").update(body).digest("base64");
+    hashes.add(`'sha256-${digest}'`);
+  }
+  return [...hashes].sort();
+}
+
+function pageHeaders(html) {
+  const hashes = scriptHashes(html);
+  const policy = [
+    "default-src 'self'",
+    `script-src 'strict-dynamic' ${hashes.join(" ")} https:`,
+    "style-src 'self' 'unsafe-inline' https:",
+    "img-src 'self' data: blob: https:",
+    "font-src 'self' data: https:",
+    "connect-src 'self' https: wss:",
+    "frame-src 'self' https:",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self' https:",
+    "frame-ancestors 'self'"
+  ].join("; ");
+  return `  Content-Security-Policy-Report-Only: ${policy}\n`;
+}
+
 if (!fs.existsSync(publicDir)) {
   fs.mkdirSync(publicDir, { recursive: true });
 }
@@ -130,7 +159,18 @@ for (const file of FILES_TO_MINIFY) {
   }
 }
 
-fs.writeFileSync(path.join(publicDir, "_headers"), STATIC_HEADERS);
+const pageFiles = [...FILES_TO_COPY.filter((file) => file.endsWith(".html")), "noticias.html"];
+const pageHeaderBlocks = pageFiles.map((file) => {
+  const html = fs.readFileSync(path.join(publicDir, file === "noticias.html" ? "news.html" : file), "utf8");
+  const route = file === "index.html" ? ["/", "/index.html"] : [`/${file}`, `/${file.replace(/\.html$/, "")}`];
+  if (file === "news.html") route.push("/noticias");
+  if (file === "noticias.html") route.push("/noticias.html");
+  if (file === "resumen.html") route.push("/resumenes");
+  return route.map((pathname) => `${pathname}\n${pageHeaders(html)}`).join("\n");
+});
+const empresaHtml = fs.readFileSync(path.join(publicDir, "empresa.html"), "utf8");
+pageHeaderBlocks.push(`/empresa/*\n${pageHeaders(empresaHtml)}`);
+fs.writeFileSync(path.join(publicDir, "_headers"), `${STATIC_HEADERS}\n${pageHeaderBlocks.join("\n")}`);
 
 const digestArchive = path.join(rootDir, "data/resumenes");
 if (fs.existsSync(digestArchive)) {

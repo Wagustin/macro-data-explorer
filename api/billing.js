@@ -9,6 +9,7 @@ import { PLANS } from "./_lib/plans.js";
 import { updateUser, findUserById, findUserByEmail } from "./_lib/users.js";
 import { getAuthUser, sendJson, securityHeaders, readJsonBody } from "./_lib/session.js";
 import { stripe, STRIPE_ENABLED, PRICE_IDS, BOLETIN_PRICE_IDS } from "./_lib/stripe.js";
+import { handleRateLimit } from "./_lib/ratelimit.js";
 
 const priceCache = {};
 
@@ -57,6 +58,7 @@ export default async function handler(req, res) {
     });
   }
 
+  if (handleRateLimit(req, res)) return;
   if (req.method !== "POST") return sendJson(res, 405, { success: false, error: "Método no permitido." });
   if (!STRIPE_ENABLED) {
     return sendJson(res, 503, { success: false, error: "Los pagos aún no están habilitados. Vuelve pronto." });
