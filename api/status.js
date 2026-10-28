@@ -106,7 +106,7 @@ export default async function handler(req, res) {
   if (req.method !== "GET") return res.status(405).json({ error: "Método no permitido." });
   if (handleRateLimit(req, res)) return;
   const [forecasts, news, smv, bcrp, eia, d1Sync, backup] = await Promise.all([
-    latestForecastRun(), latestNews(), latestSmvClose(), latestOfficial("bcrp-daily", 96), latestOfficial("eia-oil", 96), latestD1Sync(), backupStatus({ BACKUPS: globalThis.PERDATA_BACKUPS, BACKUP_KEY: process.env.BACKUP_KEY }),
+    latestForecastRun(), latestNews(), latestSmvClose(), latestOfficial("bcrp-daily", 96), latestOfficial("eia-oil", 240), latestD1Sync(), backupStatus({ BACKUPS: globalThis.PERDATA_BACKUPS, BACKUP_KEY: process.env.BACKUP_KEY }),
   ]);
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
