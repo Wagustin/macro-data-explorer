@@ -1,0 +1,78 @@
+name: CLS trace
+
+on:
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: Comma-separated URLs or paths to trace
+        required: false
+        default: /explorer,/noticias,/empresa/ALICORC1,/
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  cls-trace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright and Chromium
+        run: |
+          npm i --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Trace layout shifts
+        env:
+          URLS: ${{ inputs.urls }}
+        run: node scripts/cls-trace.mjs
+      - name: Add trace details to job summary
+        if: always()
+        run: |
+          node --input-type=module <<'EOF'
+          import fs from 'node:fs';
+
+          const tracePath = 'cls-trace/trace.json';
+          if (!fs.existsSync(tracePath)) {
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, 'CLS trace did not produce a JSON artifact.\n');
+            process.exit(0);
+          }
+          const results = JSON.parse(fs.readFileSync(tracePath, 'utf8'));
+          const lines = ['## CLS trace', ''];
+          for (const result of results) {
+            const page = new URL(result.url).pathname || '/';
+            lines.push(`### ${page} — pass ${result.pass} (CLS ${result.cls.toFixed(4)})`, '');
+            if (result.navigationError) lines.push(`Navigation error: ${result.navigationError}`, '');
+            lines.push('| Time (ms) | Value | Source | Previous rect → current rect |');
+            lines.push('| ---: | ---: | --- | --- |');
+            if (!result.shifts.length) lines.push('| — | — | No layout shifts | — |');
+            for (const shift of result.shifts) {
+              const source = shift.sources.map((item) => item.selector).join(', ') || 'Unknown';
+              const rects = shift.sources.map((item) =>
+                `${JSON.stringify(item.previousRect)} → ${JSON.stringify(item.currentRect)}`
+              ).join('<br>') || '—';
+              lines.push(`| ${shift.startTime.toFixed(1)} | ${shift.value.toFixed(4)} | ${source} | ${rects} |`);
+              const earlier = result.mutations
+                .filter((mutation) => mutation.timestamp <= shift.startTime)
+                .sort((a, b) => b.timestamp - a.timestamp)
+                .slice(0, 6);
+              lines.push('', 'Mutations before this shift (nearest first):', '');
+              if (!earlier.length) lines.push('- None recorded before this shift.');
+              for (const mutation of earlier) {
+                lines.push(`- ${mutation.timestamp.toFixed(1)} ms — \`${mutation.selector}\` (${mutation.label})`);
+              }
+              lines.push('');
+            }
+            lines.push('');
+          }
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${lines.join('\n')}\n`);
+          EOF
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cls-trace
+          path: cls-trace/
+          if-no-files-found: warn
