@@ -103,7 +103,8 @@ body {
   color: var(--pd-ink);
 }
 
-.pd-data-main { min-height: 100vh; min-height: 100svh; }
+.pd-data-main { min-height: 70vh; }
+.pd-data-main.pd-fill { min-height: 100vh; min-height: 100svh; }
 
 h1, h2, h3, h4, .pd-display {
   font-family: var(--pd-font-ui);
