@@ -23,12 +23,37 @@ await fs.mkdir(outputDir, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 const failures = [];
 
+async function prepareCapture(page) {
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+
+    const waitForPaint = () => new Promise(resolve => setTimeout(resolve, 300));
+    const scrollHeight = document.documentElement.scrollHeight;
+    const step = Math.max(window.innerHeight, 1);
+
+    for (let y = 0; y < scrollHeight; y += step) {
+      window.scrollTo(0, y);
+      await waitForPaint();
+    }
+    window.scrollTo(0, scrollHeight);
+    await waitForPaint();
+
+    for (let y = scrollHeight - step; y > 0; y -= step) {
+      window.scrollTo(0, y);
+      await waitForPaint();
+    }
+    window.scrollTo(0, 0);
+    await waitForPaint();
+  });
+}
+
 try {
   for (const [pageName, route] of pages) {
     for (const viewport of viewports) {
       const page = await browser.newPage({
         viewport,
-        colorScheme: darkTheme ? "dark" : "light"
+        colorScheme: darkTheme ? "dark" : "light",
+        reducedMotion: "reduce"
       });
       const response = await page.goto(new URL(route, baseUrl).href, { waitUntil: "networkidle", timeout: 60000 });
       if (!response?.ok()) {
@@ -43,13 +68,12 @@ try {
         failures.push(`${route} (${viewport.name}) overflows: ${dimensions.scrollWidth}px > ${dimensions.innerWidth}px`);
       }
 
-      const liveDataPage = ["home", "explorer", "noticias", "empresas"].includes(pageName);
       const themeSuffix = darkTheme ? "-dark" : "";
+      await prepareCapture(page);
       await page.screenshot({
         path: new URL(`${pageName}-${viewport.name}${themeSuffix}.png`, outputDir).pathname,
-        ...(liveDataPage
-          ? { clip: { x: 0, y: 0, width: viewport.width, height: 900 } }
-          : { fullPage: true })
+        animations: "disabled",
+        fullPage: true
       });
 
       if (pageName === "home" && viewport.name === "desktop") {
@@ -58,6 +82,7 @@ try {
           ["menu", page.locator("nav.hidden.md\\:flex a").first()]
         ];
         for (const [targetName, target] of hoverTargets) {
+          await prepareCapture(page);
           await target.hover();
           const bounds = await target.boundingBox();
           if (!bounds) {
@@ -70,6 +95,7 @@ try {
           const y = Math.max(0, Math.min(viewport.height - height, bounds.y + bounds.height / 2 - height / 2));
           await page.screenshot({
             path: new URL(`home-desktop-hover-${targetName}${themeSuffix}.png`, outputDir).pathname,
+            animations: "disabled",
             clip: { x, y, width, height }
           });
         }
