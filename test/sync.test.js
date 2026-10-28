@@ -40,15 +40,40 @@ test("sync hides missing and incorrect credentials", async () => {
   }
 });
 
-test("sync writes supported rows and rejects unknown tables or over 500 rows", async () => {
+test("sync writes rows for every supported table and rejects unknown tables or over 500 rows", async () => {
   const db = database();
   globalThis.PERDATA_DB = db;
   const request = (body) => ({ method: "POST", headers: { authorization: `Bearer ${process.env.SYNC_SECRET}` }, body });
-  const ok = response();
-  await handler(request({ table: "forecasts", rows: [{ symbol: "BVN", horizon: 1, model: "test" }] }), ok);
-  assert.equal(ok.statusCode, 200);
-  assert.equal(JSON.parse(ok.body).rows, 1);
-  assert.ok(db.writes.flat().some((statement) => statement.sql.includes("insert into forecasts")));
+
+  const cases = [
+    {
+      table: "forecasts",
+      row: { symbol: "BVN", horizon: 1, model: "test", path: [1, 2] },
+      expectedValues: ["BVN", 1, "test", null, null, null, null, null, null, null, "[1,2]"],
+    },
+    {
+      table: "cotizaciones_smv",
+      row: { nemonico: "BVN", fecha: "2025-01-31", cierre: 10, fin_de_mes: true },
+      expectedValues: ["BVN", "2025-01-31", 10, null, null, null, null, 1],
+    },
+    {
+      table: "interpretaciones",
+      row: { symbol: "BVN", texto: "Nota", actualizado: "2025-01-31T00:00:00.000Z" },
+      expectedValues: ["BVN", "Nota", "2025-01-31T00:00:00.000Z"],
+    },
+  ];
+
+  for (const { table, row, expectedValues } of cases) {
+    const before = db.writes.length;
+    const res = response();
+    await handler(request({ table, rows: [row] }), res);
+    assert.equal(res.statusCode, 200, table);
+    assert.equal(JSON.parse(res.body).rows, 1, table);
+    const statements = db.writes.slice(before).flat();
+    const insert = statements.find((statement) => statement.sql.includes(`insert into ${table} `));
+    assert.ok(insert, `${table} insert statement`);
+    assert.deepEqual(insert.values, expectedValues, `${table} bound values`);
+  }
 
   for (const body of [
     { table: "users", rows: [{ id: 1 }] },
