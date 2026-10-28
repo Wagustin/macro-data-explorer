@@ -678,7 +678,7 @@ html.dark .ui-switch {
         };
         const statusEl = document.getElementById("issuerStatusText");
         statusEl.innerHTML = messages[status] || messages.sin_negociacion;
-        if (!hasProyeccion && Number.isFinite(lastClose)) statusEl.innerHTML += `<br>Último precio negociado: <span class="mono">${safePriceText}</span> el ${escapeHTML(statusFullDate)} · Fuente: SMV`;
+        if (!hasProyeccion && Number.isFinite(lastClose) && lastClose > 0 && validStatusDate) statusEl.innerHTML += `<br>Último precio negociado: <span class="mono">${safePriceText}</span> el ${escapeHTML(statusFullDate)} · Fuente: SMV`;
         const ruc = rucs[emitter.codigoBVL];
         const shareholderRows = shareholders.emisores?.[ruc]?.accionistas || [];
         if (shareholderRows.length) {
@@ -774,16 +774,24 @@ html.dark .ui-switch {
 
           if (smvFallback) {
             const points = Array.isArray(data.series) ? data.series.filter(point => Number.isFinite(Number(point.close)) && Number(point.close) > 0) : [];
-            if (points.length) {
-              const lastPt = points[points.length - 1];
-              const previousPt = points.length > 1 ? points[points.length - 2] : null;
+            const dailyPoints = Array.isArray(data.daily)
+                ? data.daily.filter(point => Number.isFinite(Number(point.close)) && Number(point.close) > 0 && point.date)
+                : [];
+            const quotePoints = dailyPoints.length
+              ? dailyPoints
+              : Number.isFinite(lastClose) && lastClose > 0 && lastStatusDate
+                ? [{ date: lastStatusDate, close: lastClose }]
+                : [];
+            if (quotePoints.length) {
+              const lastPt = quotePoints[quotePoints.length - 1];
+              const previousPt = quotePoints.length > 1 ? quotePoints[quotePoints.length - 2] : null;
               const close = Number(lastPt.close);
               const currency = defaultMoneda === "US$" ? "US$" : "S/";
               document.getElementById("priceMain").textContent = `${currency} ${close.toFixed(close < 1 ? 3 : 2)}`;
               document.getElementById("priceDate").textContent = `Fuente: SMV · Cierre ${lastPt.date || ""}`;
               document.getElementById("noProyeccionNotice").classList.add("hidden");
               const varEl = document.getElementById("priceVar");
-              if (previousPt) {
+              if (previousPt && Number(previousPt.close) > 0) {
                 const changePct = ((close - Number(previousPt.close)) / Number(previousPt.close)) * 100;
                 varEl.classList.remove("pos", "neg", "none", "hidden");
                 varEl.classList.add(changePct > 0 ? "pos" : changePct < 0 ? "neg" : "none");
