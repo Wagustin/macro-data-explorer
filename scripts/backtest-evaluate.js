@@ -19,7 +19,7 @@ const HS = [1, 3, 6, 12, 24, 36, 48];
 const history = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "history-120.json"), "utf8"));
 
 const models = {};
-for (const name of ["timesfm", "chronos2", "tirex"]) {
+for (const name of ["timesfm", "chronos2", "chronos2_epu", "tirex"]) {
   const f = path.join(DIR, `${name}.json`);
   if (fs.existsSync(f)) models[name] = JSON.parse(fs.readFileSync(f, "utf8")).forecasts;
   else console.log(`Sin resultados de ${name}`);
@@ -65,6 +65,10 @@ function evals(h) {
 
 const half = (sym) => [...sym].reduce((a, c) => a + c.charCodeAt(0), 0) % 2;
 const mape = (rows) => rows.reduce((a, r) => a + Math.abs(r.p50 / r.actual - 1), 0) / rows.length * 100;
+const medianMape = (rows) => {
+  const errors = rows.map((r) => Math.abs(r.p50 / r.actual - 1) * 100).sort((a, b) => a - b);
+  return errors.length ? Number(errors[Math.floor(errors.length / 2)].toFixed(2)) : null;
+};
 // stretch needed for the real close to fall inside the band
 const need = (r) => {
   const d = Math.log(r.actual / r.p50);
@@ -117,7 +121,7 @@ for (const h of HS) {
   for (const [name, src] of Object.entries(models)) {
     const rows = rowsFor(src, h, list);
     if (!rows.length) continue;
-    r[name] = { mape: Number(mape(rows).toFixed(2)), ...calib(rows), blendWithV3: bestWeight(src, h, list) };
+    r[name] = { mape: Number(mape(rows).toFixed(2)), medianMape: medianMape(rows), ...calib(rows), blendWithV3: bestWeight(src, h, list) };
   }
   // The production blend (api/_lib/engine.js): k80 here is the band factor it needs before calibration,
   // coverageCal the share of real closes inside the calibrated band
@@ -135,7 +139,20 @@ for (const h of HS) {
   console.log(`h=${h}`, JSON.stringify(r));
 }
 
-fs.writeFileSync(path.join(DIR, "results.json"), JSON.stringify({ generated: new Date().toISOString(), results }, null, 1));
+const epuComparison = {};
+let qualifyingHorizons = 0;
+for (const h of [1, 3, 6, 12]) {
+  const r = results[h];
+  if (!r?.chronos2 || !r?.chronos2_epu) continue;
+  const relativeMapePct = Number(((r.chronos2_epu.medianMape / r.chronos2.medianMape - 1) * 100).toFixed(2));
+  const coverageDeltaPp = Number((r.chronos2_epu.coverageOut - r.chronos2.coverageOut).toFixed(1));
+  epuComparison[h] = { relativeMapePct, coverageDeltaPp };
+  if (relativeMapePct <= -1 && coverageDeltaPp >= 0) qualifyingHorizons++;
+}
+const epuAdopted = Object.keys(epuComparison).length === 4 && qualifyingHorizons >= 3;
+
+fs.writeFileSync(path.join(DIR, "results.json"), JSON.stringify({ generated: new Date().toISOString(), results,
+  epuComparison, epuDecision: epuAdopted ? "adopt" : "keep-current-engine" }, null, 1));
 const names = ["naive", "v3", ...Object.keys(models), "engine"];
 let md = `# Backtest de modelos (${new Date().toISOString().slice(0, 10)})\n\n` +
   `Cortes cada 6 meses con al menos 36 meses de historia, ${Object.keys(history).length} activos. ` +
@@ -146,5 +163,8 @@ md += `\n## Calibración (k80, cobertura fuera de muestra, ancho mediano del ran
 for (const [h, r] of Object.entries(results)) md += `| ${h} | ${names.slice(1).map((m) => (r[m] && r[m].k80 ? `${r[m].k80} / ${r[m].coverageOut} % / ${r[m].medianWidthPct} %` : "-")).join(" | ")} |\n`;
 md += `\n## Mejor mezcla con v3 (peso del modelo, MAPE fuera de muestra)\n\n| Meses | ${Object.keys(models).join(" | ")} |\n|---|${Object.keys(models).map(() => "---").join("|")}|\n`;
 for (const [h, r] of Object.entries(results)) md += `| ${h} | ${Object.keys(models).map((m) => (r[m] ? `${r[m].blendWithV3.w} / ${r[m].blendWithV3.mapeOut}` : "-")).join(" | ")} |\n`;
+md += `\n## Comparación Chronos-2 con EPU\n\nCambio relativo de MAPE mediano frente a Chronos-2 y cambio de cobertura fuera de muestra calibrada P10-P90 (puntos porcentuales).\n\n| Meses | Δ MAPE mediano | Δ cobertura |\n|---|---:|---:|\n`;
+for (const [h, row] of Object.entries(epuComparison)) md += `| ${h} | ${row.relativeMapePct}% | ${row.coverageDeltaPp} pp |\n`;
+md += `\nRegla de decisión: EPU se adopta solo si el MAPE mediano baja al menos un 1 % relativo en 3 de los plazos 1, 3, 6 y 12 meses, sin empeorar la cobertura fuera de muestra del rango P10-P90 tras calibrar. Si no, el motor se queda como está. Resultado: **${epuAdopted ? "se cumple el criterio" : "no se cumple el criterio; el motor se queda como está"}**.\n`;
 fs.writeFileSync(path.join(DIR, "INFORME.md"), md);
 console.log(md);

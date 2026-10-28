@@ -24,6 +24,8 @@ jobs:
       - run: pip install xlrd==2.0.1 openpyxl==3.1.5
       - name: Descargar datos oficiales
         run: python scripts/fetch_official.py
+      - name: Descargar índices EPU
+        run: python scripts/fetch_epu.py
       - name: Guardar si hay cambios
         if: always()
         run: |

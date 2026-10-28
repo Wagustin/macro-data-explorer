@@ -38,7 +38,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        model: [timesfm, chronos2, tirex]
+        model: [timesfm, chronos2, chronos2_epu, tirex]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -58,7 +58,7 @@ jobs:
           pip install --index-url https://download.pytorch.org/whl/cpu torch==2.14.1
           case "${{ matrix.model }}" in
             timesfm) pip install timesfm==3.0.2 numpy==2.4.6 ;;
-            chronos2) pip install "chronos-forecasting>=2.0" numpy ;;
+            chronos2|chronos2_epu) pip install "chronos-forecasting>=2.0" numpy pandas ;;
             tirex) pip install tirex-ts numpy ;;
           esac
       - name: Pronosticar en todos los cortes

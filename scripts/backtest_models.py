@@ -60,6 +60,65 @@ def run_chronos2(ctx):
     return np.stack(res)
 
 
+def run_chronos2_epu(items):
+    """Chronos-2 with publication-lagged monthly EPU values known at each origin."""
+    import pandas as pd
+    from chronos import Chronos2Pipeline
+
+    path = os.path.join(ROOT, "data", "official", "epu.json")
+    with open(path, encoding="utf-8") as f:
+        epu = json.load(f)["series"]
+    covariates = {}
+    for name in ("PERU", "GLOBAL", "USA"):
+        raw = epu.get(name)
+        if not raw:
+            continue
+        # Indices are released with a one-month delay: at month M use the value for M-1.
+        covariates[f"epu_{name.lower()}"] = {
+            (int(month[:4]), int(month[5:7])): float(value)
+            for month, value in raw
+        }
+    if not covariates:
+        raise RuntimeError("No hay series EPU disponibles")
+
+    history = json.load(open(os.path.join(ROOT, "data", "history-120.json"), encoding="utf-8"))
+    frames, owners, kept = [], [], []
+    for sym, t, _ in items:
+        series = history[sym][:-1][:t]
+        values = []
+        for point in series:
+            year, mon = map(int, point["date"][:7].split("-"))
+            previous = (year - 1, 12) if mon == 1 else (year, mon - 1)
+            row = {"id": f"{sym}|{t}", "timestamp": pd.Timestamp(point["date"]), "target": float(point["close"])}
+            for col, points in covariates.items():
+                if previous not in points:
+                    break
+                row[col] = points[previous]
+            else:
+                values.append(row)
+        if len(values) < MIN_CONTEXT:
+            continue
+        frames.extend(values)
+        owners.append((f"{sym}|{t}", len(values)))
+        kept.append((sym, t, np.asarray([float(p["close"]) for p in series], dtype=np.float32)))
+    frame = pd.DataFrame(frames)
+    pipe = Chronos2Pipeline.from_pretrained("amazon/chronos-2", device_map="cpu")
+    predicted = pipe.predict_df(frame, prediction_length=MAX_H, quantile_levels=QUANTILES)
+    # predict_df returns one row per future timestamp; quantile columns are named by level.
+    qcols = [str(q) for q in QUANTILES]
+    if not all(c in predicted.columns for c in qcols):
+        raise RuntimeError(f"Chronos-2 predict_df: faltan cuantiles {qcols} en {list(predicted.columns)}")
+    by_id = {}
+    for cut_id, group in predicted.groupby("id", sort=False):
+        by_id[str(cut_id)] = group[qcols].to_numpy(dtype=np.float32)[:MAX_H]
+    results = []
+    for cut_id, _ in owners:
+        if cut_id not in by_id or len(by_id[cut_id]) < MAX_H:
+            raise RuntimeError(f"Chronos-2 no produjo horizonte completo para {cut_id}")
+        results.append(by_id[cut_id])
+    return kept, results
+
+
 def run_tirex(ctx):
     import torch
     from tirex import load_model
@@ -75,11 +134,14 @@ def run_tirex(ctx):
 
 def main():
     name = sys.argv[1]
-    runner = {"timesfm": run_timesfm, "chronos2": run_chronos2, "tirex": run_tirex}[name]
     items = origins()
     print(f"{name}: {len(items)} cortes")
     t0 = time.perf_counter()
-    q = runner([c for _, _, c in items])
+    if name == "chronos2_epu":
+        items, q = run_chronos2_epu(items)
+    else:
+        runner = {"timesfm": run_timesfm, "chronos2": run_chronos2, "tirex": run_tirex}[name]
+        q = runner([c for _, _, c in items])
     print(f"{name}: {time.perf_counter() - t0:.0f} s")
     out = {}
     for (sym, t, _), qs in zip(items, q):
