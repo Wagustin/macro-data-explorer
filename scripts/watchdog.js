@@ -59,6 +59,21 @@ const checks = [
     if (f.ageHours > MAX_FORECAST_AGE_H) throw new Error(`la última corrida fue hace ${f.ageHours} h (${f.runAt})`);
     return `hace ${f.ageHours} h`;
   }],
+  ["Motor: calidad del último cálculo", async () => {
+    const repo = process.env.GITHUB_REPOSITORY || "Wagustin/macro-data-explorer";
+    const r = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/engine-report.json?t=${Date.now()}`, { signal: AbortSignal.timeout(15000) });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const d = await r.json();
+    const updated = d.actualizado || d.run_at;
+    const age = (Date.now() - Date.parse(updated)) / 36e5;
+    if (age > 30) throw new Error(`informe de hace ${Math.round(age)} h (${updated})`);
+    const total = d.filas ?? d.total_filas ?? 0;
+    const discarded = d.descartadas ?? 0;
+    const pct = d.pct_descartadas ?? (total > 0 ? (discarded / total) * 100 : 0);
+    if (pct > 5) throw new Error(`descartadas: ${pct.toFixed(1)}% (${discarded}/${total})`);
+    if (d.exito === false) throw new Error("el motor falló la validación");
+    return `hace ${Math.round(age)} h, ${d.validas ?? total} válidas, descartadas ${pct.toFixed(1)}%`;
+  }],
   ["Copia de seguridad", async () => {
     const r = await get("/api/status", { json: true });
     const b = r.body?.backup;

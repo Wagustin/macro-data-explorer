@@ -1,8 +1,8 @@
 name: Proyecciones diarias (PerData Engine)
 
 # Replaces the cron on the home server: refreshes the monthly history, runs Chronos-2 on CPU,
-# blends it with Engine v3 (PerData Engine v5) and upserts the forecasts into Supabase. Needs the repository secrets SUPABASE_URL and
-# SUPABASE_SERVICE_KEY; until they exist the job stops at the first step without doing anything.
+# precomputes PerData Engine, validates quality criteria, and publishes only validated forecasts to Supabase and D1.
+# Needs repository secrets SUPABASE_URL and SUPABASE_SERVICE_KEY.
 on:
   schedule:
     - cron: "7 11 * * *"   # 06:07 en Lima
@@ -18,48 +18,106 @@ concurrency:
 jobs:
   forecast:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
       SYNC_SECRET: ${{ secrets.SYNC_SECRET }}
     steps:
       - name: Comprobar secretos
+        timeout-minutes: 2
         run: |
           if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_KEY" ]; then
             echo "Faltan los secretos SUPABASE_URL y SUPABASE_SERVICE_KEY"; exit 1
           fi
+
       - uses: actions/checkout@v4
+        timeout-minutes: 5
+
       - uses: actions/setup-node@v4
+        timeout-minutes: 5
         with:
           node-version: 22
+
       - uses: actions/setup-python@v5
+        timeout-minutes: 5
         with:
           python-version: "3.12"
+
       - name: Caché del modelo
+        timeout-minutes: 5
         uses: actions/cache@v4
         with:
           path: ~/.cache/huggingface
           key: hf-chronos-2
+
       - name: Instalar Chronos-2 (CPU)
+        timeout-minutes: 10
         run: |
           pip install --index-url https://download.pytorch.org/whl/cpu torch==2.14.1
           pip install "chronos-forecasting>=2.0" numpy
+
       - name: Actualizar el historial mensual
-        run: node scripts/refresh-history.js
+        timeout-minutes: 10
+        run: |
+          for i in 1 2 3; do
+            echo "Actualizando historial (intento $i)..."
+            node scripts/refresh-history.js && break || {
+              if [ "$i" -eq 3 ]; then echo "Error al actualizar historial tras 3 intentos"; exit 1; fi
+              echo "Fallo en intento $i, reintentando en 20s..."
+              sleep 20
+            }
+          done
+
+      - name: Descargar modelo Chronos-2 de Hugging Face
+        timeout-minutes: 15
+        run: |
+          for i in 1 2 3; do
+            echo "Descarga modelo Hugging Face (intento $i)..."
+            python -c "from chronos import BaseChronosPipeline; BaseChronosPipeline.from_pretrained('amazon/chronos-2', device_map='cpu')" && break || {
+              if [ "$i" -eq 3 ]; then echo "Error descargando modelo tras 3 intentos"; exit 1; fi
+              echo "Fallo en intento $i, reintentando en 20s..."
+              sleep 20
+            }
+          done
+
       - name: Chronos-2 a 48 meses para todos los activos
+        timeout-minutes: 20
         run: python scripts/chronos_batch.py
-      - name: PerData Engine v5 (Chronos-2 + v3), 1 a 48 meses, a Supabase
+
+      - name: Precomputar PerData Engine (1 a 48 meses)
+        timeout-minutes: 10
         run: node scripts/precompute-engine.js
+
+      - name: Validar proyecciones antes de publicar
+        timeout-minutes: 5
+        run: node scripts/validate-forecasts.js
+
+      - name: Subir informe de validación como artifact
+        if: always()
+        timeout-minutes: 5
+        uses: actions/upload-artifact@v4
+        with:
+          name: engine-report
+          path: data/engine-report.json
+          if-no-files-found: ignore
+
+      - name: Publicar proyecciones validadas a Supabase y D1
+        timeout-minutes: 10
+        run: node scripts/publish-forecasts.js
+
       - name: Nota del día por activo (IA)
+        timeout-minutes: 10
         continue-on-error: true
         env:
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: node scripts/interpretations.js
-      - name: Guardar las notas
+
+      - name: Guardar las notas y reporte
+        timeout-minutes: 5
         run: |
           git config user.name "perdata-bot"
           git config user.email "perdata-bot@users.noreply.github.com"
-          git add data/interpretaciones.json 2>/dev/null || true
+          git add data/interpretaciones.json data/engine-report.json 2>/dev/null || true
           git diff --cached --quiet || (git commit -m "data(notas): notas del día $(date -u +%F)" && git pull --rebase -q && git push)

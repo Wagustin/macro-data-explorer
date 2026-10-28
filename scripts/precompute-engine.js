@@ -1,23 +1,20 @@
 // Precomputes PerData Engine v5 for every asset and every horizon from 1 to 48 months, right after
-// the daily Chronos-2 batch (timesfm.yml), and upserts the rows into Supabase. The Cloudflare
-// Worker cannot run Engine v3 at request time within the free CPU limit, so it serves these rows.
+// the daily Chronos-2 batch (timesfm.yml), and writes them to data/engine-rows.json for validation.
+// The Cloudflare Worker cannot run Engine v3 at request time within the free CPU limit, so it serves these rows.
 // Needs data/history-120.json (refresh-history.js) and data/model-forecasts-cache.json (chronos_batch.py).
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { buildForecast } from "../api/forecast.js";
 import { ENGINE, blendEngine } from "../api/_lib/engine.js";
-import { syncD1 } from "./d1-sync.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const HORIZONS = Array.from({ length: 48 }, (_, i) => i + 1);
-const HISTORY_HORIZONS = new Set([1, 3, 6, 12]);
 
 const history = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "history-120.json"), "utf8"));
 const batch = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "model-forecasts-cache.json"), "utf8"));
 const pathBy = new Map(batch.map((r) => [r.symbol, r.path]));
 const runAt = new Date().toISOString();
-const runDate = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Lima", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
 
 const rows = [];
 let skipped = 0;
@@ -35,43 +32,6 @@ for (const [symbol, series] of Object.entries(history)) {
       p10: fin.p10, p25: fin.p25, p50: fin.p50, p75: fin.p75, p90: fin.p90, path: blended });
   }
 }
-console.log(`${ENGINE.label}: ${rows.length} proyecciones (${skipped} sin datos del modelo)`);
-
-const base = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
-const key = process.env.SUPABASE_SERVICE_KEY || "";
-if (!base || !key) {
-  console.log("Sin Supabase: no se guardan");
-  process.exit(0);
-}
-for (let i = 0; i < rows.length; i += 200) {
-  const r = await fetch(`${base}/rest/v1/forecasts?on_conflict=symbol,horizon,model`, {
-    method: "POST",
-    headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" },
-    body: JSON.stringify(rows.slice(i, i + 200)),
-  });
-  if (!r.ok) throw new Error(`Supabase HTTP ${r.status}: ${(await r.text()).slice(0, 200)}`);
-}
-console.log(`Guardadas ${rows.length} filas en Supabase`);
-
-const historyRows = rows.filter((row) => HISTORY_HORIZONS.has(row.horizon)).map(({ symbol, horizon, last_close, p10, p50, p90 }) => ({
-  symbol, horizon, run_date: runDate, last_close, p10, p50, p90,
-}));
-let historySaved = true;
-for (let i = 0; i < historyRows.length; i += 200) {
-  const r = await fetch(`${base}/rest/v1/forecast_history?on_conflict=symbol,horizon,run_date`, {
-    method: "POST",
-    headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" },
-    body: JSON.stringify(historyRows.slice(i, i + 200)),
-  });
-  if (!r.ok) {
-    const detail = await r.text();
-    if (r.status === 404 || /relation .* does not exist|could not find the table/i.test(detail)) {
-      console.warn(`Aviso: no se guardó forecast_history (tabla aún no disponible): HTTP ${r.status}`);
-      historySaved = false;
-      break;
-    }
-    throw new Error(`Supabase forecast_history HTTP ${r.status}: ${detail.slice(0, 200)}`);
-  }
-}
-if (historyRows.length && historySaved) console.log(`Guardadas ${historyRows.length} instantáneas en forecast_history`);
-await syncD1("forecasts", rows, 100);
+const outPath = path.join(ROOT, "data", "engine-rows.json");
+fs.writeFileSync(outPath, JSON.stringify(rows, null, 2));
+console.log(`${ENGINE.label}: ${rows.length} proyecciones escritas en data/engine-rows.json (${skipped} sin datos del modelo)`);
