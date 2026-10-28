@@ -2089,7 +2089,7 @@ html.pd-motion.hero-ready [data-hero-seq="3"]  { opacity: 1; transform: translat
 }
 
 @media (max-width: 639px) {
-  .quote-title-row { flex-wrap: nowrap; }
+  .quote-title-row.quote-title-row { flex-wrap: nowrap; }
   .quote-title-row #assetTitle {
     min-width: 0;
     overflow: hidden;
@@ -2097,6 +2097,13 @@ html.pd-motion.hero-ready [data-hero-seq="3"]  { opacity: 1; transform: translat
     white-space: nowrap;
   }
   .quote-title-row #assetSymbolBadge { flex: none; }
+}
+
+@media (max-width: 639px) {
+  #newsStatus { min-height: 60px; }
+}
+@media (min-width: 640px) {
+  #newsStatus { min-height: 32px; }
 }
 
 /* Precios: tres planes (Gratis · Boletín · Pro) */
