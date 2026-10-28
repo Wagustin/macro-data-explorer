@@ -211,13 +211,24 @@
   <style>
     /* Critical landing styles; pd.css and tw.css finish the full page without blocking its first paint. */
     .pdl-hero { background: var(--pd-paper, #f5f1e8); }
-    .pdl-h1 { font-family: 'Source Serif 4', Georgia, serif; font-weight: 400; font-size: clamp(40px, 5.4vw, 62px); line-height: 1.05; letter-spacing: -.03em; margin: 0 0 28px; }
-    .pdl-quote { min-height: 150px; border-left: 2px solid var(--pd-peru, #c83c2d); padding-left: 20px; margin: 0 0 32px; }
+    .pdl-h1 { font-family: 'Source Serif 4', Georgia, serif; font-weight: 400; font-size: clamp(40px, 5.4vw, 62px); line-height: 1.05; letter-spacing: -.03em; min-height: 2.2em; margin: 0 0 28px; }
+    .pdl-mask { display: block; overflow: hidden; padding-bottom: .08em; }
+    .pdl-rise { display: block; }
+    .pdl-quote { min-height: 190px; border-left: 2px solid var(--pd-peru, #c83c2d); padding-left: 20px; margin: 0 0 32px; }
+    #pdHeroChartContainer { position: relative; height: 210px; }
+    #pdHeroChart { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
     .pdl-question { font-size: 20px; line-height: 1.4; margin: 0 0 6px; }
     .pdl-answer { font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; line-height: 1.55; margin: 0; }
     .pd-hero-answer { min-height: 6em; font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; line-height: 1.5; }
-    @media (min-width: 1024px) { .pdl-quote { min-height: 120px; } .pd-hero-answer { min-height: 3em; } }
+    .hidden { display: none !important; }
+    @media (min-width: 1024px) { .pdl-quote { min-height: 130px; } .pd-hero-answer { min-height: 3em; } }
+    @media (min-width: 640px) { #pdHeroChartContainer { height: 230px; } }
     @media (min-width: 1024px) { .pdl-hero .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); } .pdl-hero .lg\:col-span-7 { grid-column: span 7 / span 7; } .pdl-hero .lg\:col-span-5 { grid-column: span 5 / span 5; } }
+    header > div:first-child { box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; position: relative; width: 100%; max-width: 1152px; height: 56px; margin: 0 auto; padding: 0 16px; }
+    header > div:first-child > div:first-child nav { display: none; }
+    #mobileMenuBtn { display: inline-flex; }
+    @media (min-width: 640px) { header > div:first-child { padding: 0 24px; } }
+    @media (min-width: 768px) { header > div:first-child > div:first-child nav { display: flex; } #mobileMenuBtn { display: none; } }
     .pd-opening-scene { position: absolute; inset: 0; z-index: 2; background: var(--pd-paper, #F5F1E8); opacity: 1; transition: opacity 260ms ease; }
     .pd-opening-scene.is-finished { opacity: 0; pointer-events: none; }
     .pd-opening-scene svg { display: block; width: 100%; height: 100%; }
@@ -233,13 +244,13 @@
     @media (prefers-reduced-motion: reduce) { ::view-transition-group(*) { animation-duration: 0s; } }
     .pd-home-status { min-height: 36px; margin: 14px 0 20px; color: var(--pd-ink-soft); font-size: 10px; line-height: 18px; font-variant-numeric: tabular-nums; }
     .pd-home-status.is-stale { opacity: .58; }
-    .pdl-quote { min-height: 150px; }
+    .pdl-quote { min-height: 190px; }
     .pd-home-actions { min-height: 104px; }
     .pdl-stats { min-height: 136px; }
     @media (min-width: 640px) { .pd-home-actions { min-height: 52px; } }
     @media (min-width: 1024px) {
       .pd-home-status { min-height: 36px; }
-      .pdl-quote { min-height: 120px; }
+      .pdl-quote { min-height: 130px; }
       .pd-home-actions { min-height: 52px; }
       .pdl-stats { min-height: 112px; }
     }
