@@ -206,6 +206,24 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/pd.css">
+  <style>
+    .pd-opening-scene { position: absolute; inset: 0; z-index: 2; background: var(--pd-paper, #F5F1E8); opacity: 1; transition: opacity 260ms ease; }
+    .pd-opening-scene.is-finished { opacity: 0; pointer-events: none; }
+    .pd-opening-scene svg { display: block; width: 100%; height: 100%; }
+    .pd-opening-line { fill: none; stroke: #1B1916; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: var(--line-length, 1000); stroke-dashoffset: var(--line-length, 1000); animation: pd-opening-draw 1050ms cubic-bezier(.2,.7,.2,1) 120ms forwards; }
+    .pd-opening-band { opacity: 0; animation: pd-opening-fan 850ms ease-out 1100ms forwards; }
+    .pd-opening-count { opacity: 0; animation: pd-opening-count-in 400ms ease-out 1850ms forwards; }
+    .pd-opening-note { fill: #71695d; font: 10px 'IBM Plex Mono', monospace; }
+    @keyframes pd-opening-draw { to { stroke-dashoffset: 0; } }
+    @keyframes pd-opening-fan { from { opacity: 0; transform: scaleY(.04); } to { opacity: .16; transform: scaleY(1); } }
+    @keyframes pd-opening-count-in { to { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { .pd-opening-scene { display: none; } }
+    @view-transition { navigation: auto; }
+    @media (prefers-reduced-motion: reduce) { ::view-transition-group(*) { animation-duration: 0s; } }
+    .pd-home-status { min-height: 36px; margin: 14px 0 20px; color: var(--pd-ink-soft); font-size: 10px; line-height: 18px; font-variant-numeric: tabular-nums; }
+    .pd-home-status.is-stale { opacity: .58; }
+    @media (min-width: 1024px) { .pd-home-status { min-height: 18px; } }
+  </style>
   <script defer src="/motion.js"></script>
   <!-- SEO & Social Open Graph -->
   <meta property="og:locale" content="es_PE" />
@@ -319,6 +337,7 @@
               <span class="pdl-mask"><span class="pdl-rise">El mercado peruano,</span></span>
               <span class="pdl-mask"><span class="pdl-rise pdl-rise-2 pdl-h1-soft">con su rango probable.</span></span>
             </h1>
+            <div id="homeStatus" class="pd-home-status mono tnum" role="status" aria-live="polite">Cargando estado del mercado…</div>
             <div class="pdl-quote" data-hero-seq="2">
               <p class="pdl-question">¿A cuánto estará el dólar el próximo mes?</p>
               <p class="pd-hero-answer pdl-answer">
@@ -358,6 +377,7 @@
               <div class="pdl-card-chart">
                 <div id="pdHeroChartContainer" class="relative w-full h-[210px] sm:h-[230px]">
                   <canvas id="pdHeroChart" role="img" aria-label="Historia de USD/PEN con abanico de proyección P10-P90"></canvas>
+                  <div id="pdOpeningScene" class="pd-opening-scene" hidden aria-hidden="true"></div>
                 </div>
                 <p class="mt-2 text-xs text-ink-soft leading-normal font-sans">Línea: precio real · Zona sombreada: dónde estaría el dólar los próximos 3 meses (8 de cada 10 veces)</p>
                 <p class="mt-1 text-[11px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);"><span id="heroModelBadge" class="font-mono">Modelo: PerData Engine v3</span> · Fuente: <span id="pdChartSource">BCRP</span> · Datos al <span id="pdChartDate">—</span></p>
@@ -770,6 +790,66 @@
         return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
       }
 
+      function startOpeningScene(history, forecasts) {
+        var scene = document.getElementById('pdOpeningScene');
+        if (!scene || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        try {
+          if (sessionStorage.getItem('pd-home-opening-v1')) return;
+          sessionStorage.setItem('pd-home-opening-v1', '1');
+        } catch (_) { return; }
+
+        var example = !history.length || !forecasts.length;
+        var closes = (history.length ? history : [
+          { close: 3.72 }, { close: 3.76 }, { close: 3.69 }, { close: 3.74 },
+          { close: 3.78 }, { close: 3.71 }, { close: 3.77 }, { close: 3.73 }
+        ]).slice(-12).map(function (point) { return Number(point.close); }).filter(Number.isFinite);
+        var pathPoints = forecasts.length ? forecasts.slice(0, 3) : [
+          { p10: 3.68, p50: 3.76, p90: 3.84 },
+          { p10: 3.66, p50: 3.77, p90: 3.88 },
+          { p10: 3.64, p50: 3.78, p90: 3.92 }
+        ];
+        if (closes.length < 2) return;
+        var values = closes.concat(pathPoints.flatMap(function (point) { return [point.p10, point.p50, point.p90]; })).filter(Number.isFinite);
+        var low = Math.min.apply(null, values), high = Math.max.apply(null, values);
+        var pad = Math.max((high - low) * 0.22, 0.025);
+        low -= pad; high += pad;
+        var x = function (index) { return 20 + index * (320 / (closes.length + pathPoints.length - 1)); };
+        var y = function (value) { return 168 - ((value - low) / (high - low)) * 132; };
+        var histPath = closes.map(function (value, index) { return (index ? 'L' : 'M') + x(index).toFixed(1) + ',' + y(value).toFixed(1); }).join(' ');
+        var median = pathPoints.map(function (point, index) { return 'L' + x(closes.length - 1 + index + 1).toFixed(1) + ',' + y(Number(point.p50)).toFixed(1); }).join(' ');
+        var upper = pathPoints.map(function (point, index) { return x(closes.length - 1 + index + 1).toFixed(1) + ',' + y(Number(point.p90)).toFixed(1); });
+        var lower = pathPoints.slice().reverse().map(function (point, index) {
+          var forecastIndex = pathPoints.length - index - 1;
+          return x(closes.length - 1 + forecastIndex + 1).toFixed(1) + ',' + y(Number(point.p10)).toFixed(1);
+        });
+        var firstForecastX = x(closes.length - 1);
+        var bandPath = 'M' + firstForecastX.toFixed(1) + ',' + y(closes[closes.length - 1]).toFixed(1) + ' L' + upper.join(' L') + ' L' + lower.join(' L') + ' Z';
+        var last = closes[closes.length - 1];
+        var projected = Number(pathPoints[pathPoints.length - 1].p50);
+        var fmt = function (value) { return value.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+        scene.innerHTML = '<svg viewBox="0 0 360 210" preserveAspectRatio="none" focusable="false">' +
+          '<path d="M20 36H340 M20 102H340 M20 168H340" stroke="var(--pd-rule,#DCD4C4)" stroke-width="1" fill="none"/>' +
+          '<path class="pd-opening-band" d="' + bandPath + '" fill="#1B1916" transform-box="fill-box" transform-origin="center"/>' +
+          '<path class="pd-opening-line" d="' + histPath + ' ' + median + '" style="--line-length:' + (closes.length * 42) + 'px"/>' +
+          '<text x="20" y="194" class="pd-opening-note">' + (example ? 'EJEMPLO ESTÁTICO · PEN=X' : 'PEN=X · HISTÓRICO Y PROYECCIÓN') + '</text>' +
+          '<text id="pdOpeningNumbers" x="340" y="22" text-anchor="end" class="pd-opening-note pd-opening-count">S/ 0,00 → 0,00</text></svg>';
+        scene.hidden = false;
+        var numberLabel = scene.querySelector('#pdOpeningNumbers');
+        var countStarted = 0;
+        function countUp(timestamp) {
+          if (!countStarted) countStarted = timestamp;
+          var progress = Math.min((timestamp - countStarted) / 900, 1);
+          var eased = 1 - Math.pow(1 - progress, 3);
+          numberLabel.textContent = 'S/ ' + fmt(last * eased) + ' → ' + fmt(projected * eased);
+          if (progress < 1) window.requestAnimationFrame(countUp);
+        }
+        window.setTimeout(function () { window.requestAnimationFrame(countUp); }, 1850);
+        window.setTimeout(function () {
+          scene.classList.add('is-finished');
+          window.setTimeout(function () { scene.hidden = true; }, 300);
+        }, 3000);
+      }
+
       var early = window.__pdEarly;
       Promise.all(early ? [early.hist, early.fc1, early.fc3] : [
         fetch('/api/historical?symbol=PEN=X&range=1y&interval=1mo').then(function (r) { return r.json(); }).catch(function () { return null; }),
@@ -843,6 +923,8 @@
           };
         }) : [];
 
+        startOpeningScene(histPoints, fcSeries);
+
         function renderHeroChart() {
           if (!window.PdChart || !chartContainer) return;
           var curDark = document.documentElement.classList.contains('dark');
@@ -888,6 +970,25 @@
           document.querySelectorAll('[data-stat="tradable-count"]').forEach(function(el) { el.textContent = s.tradable; });
         }
       }).catch(function() {});
+      Promise.all([
+        fetch('/api/status').then(function (r) { return r.ok ? r.json() : null; }),
+        fetch('/api/search?stats=1').then(function (r) { return r.ok ? r.json() : null; })
+      ]).then(function (results) {
+        var status = results[0], counts = results[1], target = document.getElementById('homeStatus');
+        if (!target) return;
+        if (!status || !counts) {
+          target.textContent = 'Estado del mercado no disponible · banda calibrada con backtest';
+          target.classList.add('is-stale');
+          return;
+        }
+        var sources = [status.forecasts, status.news, status.smv, status.bcrp, status.eia].filter(function (item) { return item && typeof item.ageHours === 'number'; });
+        var age = sources.length ? Math.max.apply(null, sources.map(function (item) { return item.ageHours; })) : null;
+        var stale = sources.some(function (item) { return item.ageHours > item.staleAfterHours; });
+        var ageLabel = age === null ? 'sin dato reciente' : age < 1 ? 'menos de 1 h' : age < 48 ? Math.round(age) + ' h' : Math.floor(age / 24) + ' d';
+        var active = Number(counts.tradable) || 0;
+        target.textContent = active + ' activos · ' + active + ' proyecciones · actualizado hace ' + ageLabel + ' · banda calibrada con backtest';
+        target.classList.toggle('is-stale', stale || age === null);
+      }).catch(function () {});
     })();
     });
   </script>
