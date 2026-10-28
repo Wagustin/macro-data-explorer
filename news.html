@@ -243,7 +243,7 @@
   </header>
 
   <!-- Main -->
-  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-8 w-full">
+  <main class="pd-data-main flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-8 w-full">
 
     <!-- Page Header -->
     <section class="space-y-2">
@@ -275,20 +275,18 @@
 
     <!-- News List -->
     <section id="newsList" class="border-t border-rule" data-stagger>
-      <!-- skeleton -->
-      <div class="animate-pulse divide-y divide-rule">
-        <div class="py-4 space-y-2">
-          <div class="h-4 bg-surface max-w-xl"></div>
-          <div class="h-3 bg-surface max-w-xs"></div>
-        </div>
-        <div class="py-4 space-y-2">
-          <div class="h-4 bg-surface max-w-lg"></div>
-          <div class="h-3 bg-surface max-w-xs"></div>
-        </div>
-        <div class="py-4 space-y-2">
-          <div class="h-4 bg-surface max-w-2xl"></div>
-          <div class="h-3 bg-surface max-w-xs"></div>
-        </div>
+      <!-- Ten rows reserve the space occupied by the first batch of headlines. -->
+      <div class="animate-pulse divide-y divide-rule" aria-hidden="true">
+        <div class="py-3.5 space-y-2"><div class="h-5 bg-surface max-w-xl"></div><div class="h-3 bg-surface max-w-xs"></div></div>
+        <div class="py-3.5 space-y-2"><div class="h-5 bg-surface max-w-lg"></div><div class="h-3 bg-surface max-w-xs"></div></div>
+        <div class="py-3.5 space-y-2"><div class="h-5 bg-surface max-w-2xl"></div><div class="h-3 bg-surface max-w-xs"></div></div>
+        <div class="py-3.5 space-y-2"><div class="h-5 bg-surface max-w-xl"></div><div class="h-3 bg-surface max-w-xs"></div></div>
+        <div class="py-3.5 space-y-2"><div class="h-5 bg-surface max-w-lg"></div><div class="h-3 bg-surface max-w-xs"></div></div>
+        <div class="py-3.5 space-y-2"><div class="h-5 bg-surface max-w-2xl"></div><div class="h-3 bg-surface max-w-xs"></div></div>
+        <div class="py-3.5 space-y-2"><div class="h-5 bg-surface max-w-xl"></div><div class="h-3 bg-surface max-w-xs"></div></div>
+        <div class="py-3.5 space-y-2"><div class="h-5 bg-surface max-w-lg"></div><div class="h-3 bg-surface max-w-xs"></div></div>
+        <div class="py-3.5 space-y-2"><div class="h-5 bg-surface max-w-2xl"></div><div class="h-3 bg-surface max-w-xs"></div></div>
+        <div class="py-3.5 space-y-2"><div class="h-5 bg-surface max-w-xl"></div><div class="h-3 bg-surface max-w-xs"></div></div>
       </div>
     </section>
 

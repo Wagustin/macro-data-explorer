@@ -453,7 +453,7 @@ html.dark .ui-switch {
   </header>
 
   <!-- Main Content -->
-  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 w-full">
+  <main class="pd-data-main flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 w-full">
     <div class="mb-8">
       <h1 class="pd-page-title mb-2">Directorio de Renta Variable <span class="italic text-ink-soft">BVL</span></h1>
       <p class="pd-lede max-w-2xl text-ink-soft">
