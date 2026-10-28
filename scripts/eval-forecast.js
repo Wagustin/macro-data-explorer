@@ -18,7 +18,7 @@ function linearityMetrics(points) {
 }
 
 (async () => {
-  for (const sym of ["BVN", "HG=F", "GC=F", "PEN=X", "^GSPC"]) {
+  for (const sym of ["PEN=X", "HG=F", "ALICORC1.LM", "EURUSD=X"]) {
     const res = { status: (c) => res, json: (d) => { out = d; }, setHeader: () => {}, end: () => {} };
     let out;
     await forecast({ query: { symbol: sym, horizon: 12 }, method: "GET" }, res);

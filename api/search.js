@@ -1,8 +1,5 @@
-// PerData search catalog — every symbol VERIFIED against live Yahoo Finance data
-// (scripts/build-catalog.js + scripts/verify-bvl.js, $(date)).
-// Tiers: bvl_pe (BVL Lima), global (verified tickers), macro_pe (World Bank),
-// unlisted (major Peruvian private companies — reference only, no market data).
-// Unknown companies are still resolved live via the Yahoo Finance fallback.
+// PerData search catalog: SMV-listed Peruvian companies, macro indicators, and
+// assets backed by the official datasets in data/official/.
 import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
 
 export const CATALOG = [
@@ -35,109 +32,6 @@ export const CATALOG = [
   { symbol: "PODERC1.LM", name: "Compañía Minera Poderosa S.A.A.", sector: "Minería", country: "Perú", category: "bvl_pe", tags: ["oro","mineria","poderosa"] },
   { symbol: "POMALCC1.LM", name: "Empresa Agroindustrial Pomalca S.A.A.", sector: "Agroindustria", country: "Perú", category: "bvl_pe", tags: ["azucar","agroindustria","pomalca"] },
   { symbol: "SPCCPI1.LM", name: "Southern Peru Copper Corporation - Sucursal del Perú", sector: "Minería", country: "Perú", category: "bvl_pe", tags: ["cobre","mineria","southern","peru"] },
-  { symbol: "^GSPC", name: "S&P 500 Index", sector: "Índice", country: "EE.UU.", category: "global", tags: ["sp500", "bolsa", "eeuu"] },
-  { symbol: "^DJI", name: "Dow Jones Industrial Average", sector: "Índice", country: "EE.UU.", category: "global", tags: ["dow", "jones", "bolsa"] },
-  { symbol: "^IXIC", name: "NASDAQ Composite", sector: "Índice", country: "EE.UU.", category: "global", tags: ["nasdaq", "tecnologia", "bolsa"] },
-  { symbol: "^STOXX50E", name: "Euro Stoxx 50", sector: "Índice", country: "Europa", category: "global", tags: ["europa", "stoxx", "bolsa"] },
-  { symbol: "000001.SS", name: "Shanghai Composite", sector: "Índice", country: "China", category: "global", tags: ["china", "shanghai", "bolsa"] },
-  { symbol: "^MXX", name: "IPC México (S&P/BMV)", sector: "Índice", country: "México", category: "global", tags: ["mexico", "ipc", "bolsa"] },
-  { symbol: "^BVSP", name: "Ibovespa Brasil", sector: "Índice", country: "Brasil", category: "global", tags: ["brasil", "ibovespa", "bolsa"] },
-  { symbol: "^N225", name: "Nikkei 225", sector: "Índice", country: "Japón", category: "global", tags: ["japon", "nikkei", "bolsa"] },
-  { symbol: "^FTSE", name: "FTSE 100", sector: "Índice", country: "Reino Unido", category: "global", tags: ["uk", "ftse", "bolsa"] },
-  { symbol: "^IBEX", name: "IBEX 35", sector: "Índice", country: "España", category: "global", tags: ["espana", "ibex", "bolsa"] },
-  { symbol: "AAPL", name: "Apple Inc.", sector: "Tecnología", country: "EE.UU.", category: "global", tags: ["iphone", "mac"] },
-  { symbol: "MSFT", name: "Microsoft Corporation", sector: "Tecnología", country: "EE.UU.", category: "global", tags: ["windows", "azure", "office"] },
-  { symbol: "GOOGL", name: "Alphabet Inc. (Google)", sector: "Tecnología", country: "EE.UU.", category: "global", tags: ["google", "busqueda", "android"] },
-  { symbol: "AMZN", name: "Amazon.com Inc.", sector: "Consumo / E-commerce", country: "EE.UU.", category: "global", tags: ["amazon", "aws", "retail"] },
-  { symbol: "NVDA", name: "NVIDIA Corporation", sector: "Semiconductores", country: "EE.UU.", category: "global", tags: ["nvidia", "gpu", "ia", "chips"] },
-  { symbol: "META", name: "Meta Platforms", sector: "Tecnología", country: "EE.UU.", category: "global", tags: ["facebook", "instagram", "whatsapp"] },
-  { symbol: "TSLA", name: "Tesla Inc.", sector: "Automotriz / Energía", country: "EE.UU.", category: "global", tags: ["tesla", "electricos"] },
-  { symbol: "JPM", name: "JPMorgan Chase", sector: "Banca", country: "EE.UU.", category: "global", tags: ["jpmorgan", "banco"] },
-  { symbol: "V", name: "Visa Inc.", sector: "Pagos", country: "EE.UU.", category: "global", tags: ["visa", "pagos"] },
-  { symbol: "KO", name: "Coca-Cola Company", sector: "Consumo Masivo", country: "EE.UU.", category: "global", tags: ["coca", "cola", "bebidas"] },
-  { symbol: "PEP", name: "PepsiCo Inc.", sector: "Consumo Masivo", country: "EE.UU.", category: "global", tags: ["pepsi", "snacks"] },
-  { symbol: "MCD", name: "McDonald's Corporation", sector: "Restaurantes", country: "EE.UU.", category: "global", tags: ["mcdonalds", "comida", "rapida"] },
-  { symbol: "XOM", name: "Exxon Mobil", sector: "Energía / Petróleo", country: "EE.UU.", category: "global", tags: ["exxon", "petroleo", "gas"] },
-  { symbol: "CVX", name: "Chevron Corporation", sector: "Energía / Petróleo", country: "EE.UU.", category: "global", tags: ["chevron", "petroleo"] },
-  { symbol: "WMT", name: "Walmart Inc.", sector: "Retail", country: "EE.UU.", category: "global", tags: ["walmart", "supermercados"] },
-  { symbol: "PG", name: "Procter & Gamble", sector: "Consumo Masivo", country: "EE.UU.", category: "global", tags: ["pg", "higiene", "hogar"] },
-  { symbol: "JNJ", name: "Johnson & Johnson", sector: "Salud", country: "EE.UU.", category: "global", tags: ["jnj", "farmaceutica"] },
-  { symbol: "LLY", name: "Eli Lilly", sector: "Salud", country: "EE.UU.", category: "global", tags: ["lilly", "farmaceutica"] },
-  { symbol: "MA", name: "Mastercard", sector: "Pagos", country: "EE.UU.", category: "global", tags: ["mastercard", "pagos"] },
-  { symbol: "COST", name: "Costco Wholesale", sector: "Retail", country: "EE.UU.", category: "global", tags: ["costco", "mayoreo"] },
-  { symbol: "HD", name: "Home Depot", sector: "Retail / Construcción", country: "EE.UU.", category: "global", tags: ["home", "depot", "ferreteria"] },
-  { symbol: "ORCL", name: "Oracle Corporation", sector: "Software", country: "EE.UU.", category: "global", tags: ["oracle", "base", "datos", "nube"] },
-  { symbol: "AMD", name: "AMD", sector: "Semiconductores", country: "EE.UU.", category: "global", tags: ["amd", "gpu", "procesadores"] },
-  { symbol: "QCOM", name: "Qualcomm", sector: "Semiconductores", country: "EE.UU.", category: "global", tags: ["qualcomm", "chips", "moviles"] },
-  { symbol: "AVGO", name: "Broadcom", sector: "Semiconductores", country: "EE.UU.", category: "global", tags: ["broadcom", "chips", "redes"] },
-  { symbol: "ASML", name: "ASML Holding", sector: "Semiconductores", country: "Holanda", category: "global", tags: ["asml", "litografia", "euvm"] },
-  { symbol: "TSM", name: "TSMC (Taiwan Semiconductor)", sector: "Semiconductores", country: "Taiwán", category: "global", tags: ["tsmc", "foundry", "chips"] },
-  { symbol: "BAC", name: "Bank of America", sector: "Banca", country: "EE.UU.", category: "global", tags: ["boa", "banco"] },
-  { symbol: "C", name: "Citigroup", sector: "Banca", country: "EE.UU.", category: "global", tags: ["citibank", "banco"] },
-  { symbol: "GS", name: "Goldman Sachs", sector: "Banca / Inversión", country: "EE.UU.", category: "global", tags: ["goldman", "sachs"] },
-  { symbol: "BLK", name: "BlackRock", sector: "Gestión de Activos", country: "EE.UU.", category: "global", tags: ["blackrock", "ishares"] },
-  { symbol: "ABEV", name: "Ambev", sector: "Consumo Masivo", country: "Brasil", category: "global", tags: ["ambev", "cerveza"] },
-  { symbol: "PBR", name: "Petrobras", sector: "Energía / Petróleo", country: "Brasil", category: "global", tags: ["petrobras", "petroleo"] },
-  { symbol: "ITUB", name: "Itaú Unibanco", sector: "Banca", country: "Brasil", category: "global", tags: ["itau", "banco"] },
-  { symbol: "BBDO", name: "Banco Bradesco", sector: "Banca", country: "Brasil", category: "global", tags: ["bradesco", "banco"] },
-  { symbol: "BBD", name: "Banco Bradesco ADR", sector: "Banca", country: "Brasil", category: "global", tags: ["bradesco", "adr"] },
-  { symbol: "MELI", name: "MercadoLibre", sector: "E-commerce", country: "LatAm", category: "global", tags: ["mercado", "libre"] },
-  { symbol: "ARCO", name: "Arcos Dorados (McDonald's LatAm)", sector: "Restaurantes", country: "LatAm", category: "global", tags: ["arcos", "dorados"] },
-  { symbol: "GGB", name: "Gerdau", sector: "Aceros", country: "Brasil", category: "global", tags: ["gerdau", "aceros"] },
-  { symbol: "SID", name: "Companhia Siderúrgica Nacional", sector: "Aceros", country: "Brasil", category: "global", tags: ["csn", "aceros"] },
-  { symbol: "EC", name: "Ecopetrol", sector: "Energía / Petróleo", country: "Colombia", category: "global", tags: ["ecopetrol", "petroleo"] },
-  { symbol: "CX", name: "Cemex", sector: "Construcción / Cemento", country: "México", category: "global", tags: ["cemex", "cemento"] },
-  { symbol: "FMX", name: "Fomento Económico Mexicano (FEMSA)", sector: "Consumo Masivo", country: "México", category: "global", tags: ["femsa", "oxxo"] },
-  { symbol: "AMX", name: "América Móvil", sector: "Telecomunicaciones", country: "México", category: "global", tags: ["telmex", "claro"] },
-  { symbol: "FCX", name: "Freeport-McMoRan (Cerro Verde)", sector: "Minería", country: "EE.UU. / Perú", category: "global", tags: ["cobre", "cerro", "verde", "grasberg"] },
-  { symbol: "BHP", name: "BHP Group (Antamina)", sector: "Minería", country: "Australia / Global", category: "global", tags: ["cobre", "hierro", "antamina", "escondida"] },
-  { symbol: "RIO", name: "Rio Tinto plc", sector: "Minería", country: "Reino Unido / Global", category: "global", tags: ["hierro", "aluminio", "cobre"] },
-  { symbol: "NEM", name: "Newmont Corporation (Yanacocha)", sector: "Minería", country: "EE.UU. / Perú", category: "global", tags: ["oro", "yanacocha"] },
-  { symbol: "GOLD", name: "Barrick Gold", sector: "Minería", country: "Canadá / Global", category: "global", tags: ["oro", "barrick", "lagunas", "norte"] },
-  { symbol: "AEM", name: "Agnico Eagle Mines", sector: "Minería", country: "Canadá", category: "global", tags: ["oro", "agnico"] },
-  { symbol: "TECK", name: "Teck Resources", sector: "Minería", country: "Canadá", category: "global", tags: ["cobre", "zinc", "quebrada", "blanca"] },
-  { symbol: "GFI", name: "Gold Fields", sector: "Minería", country: "Sudáfrica", category: "global", tags: ["oro", "gold", "fields"] },
-  { symbol: "AG", name: "First Majestic Silver", sector: "Minería", country: "Canadá / México", category: "global", tags: ["plata", "silver"] },
-  { symbol: "PAAS", name: "Pan American Silver", sector: "Minería", country: "Canadá", category: "global", tags: ["plata", "pan", "american"] },
-  { symbol: "BTG", name: "B2Gold Corp", sector: "Minería", country: "Canadá", category: "global", tags: ["oro", "b2gold"] },
-  { symbol: "MPWR", name: "Monolithic Power Systems", sector: "Semiconductores", country: "EE.UU.", category: "global", tags: ["mpwr", "energia", "chips"] },
-  { symbol: "HG=F", name: "Cobre Futuros (COMEX)", sector: "Commodity Metales", country: "Global", category: "global", tags: ["cobre", "copper", "lme"] },
-  { symbol: "GC=F", name: "Oro Futuros (COMEX)", sector: "Commodity Metales", country: "Global", category: "global", tags: ["oro", "gold"] },
-  { symbol: "SI=F", name: "Plata Futuros (COMEX)", sector: "Commodity Metales", country: "Global", category: "global", tags: ["plata", "silver"] },
-  { symbol: "PL=F", name: "Platino Futuros (NYMEX)", sector: "Commodity Metales", country: "Global", category: "global", tags: ["platino", "platinum"] },
-  { symbol: "PA=F", name: "Paladio Futuros (NYMEX)", sector: "Commodity Metales", country: "Global", category: "global", tags: ["paladio", "palladium"] },
-  { symbol: "CL=F", name: "Petróleo Crudo WTI", sector: "Commodity Energía", country: "Global", category: "global", tags: ["petroleo", "wti", "oil"] },
-  { symbol: "BZ=F", name: "Petróleo Brent", sector: "Commodity Energía", country: "Global", category: "global", tags: ["brent", "petroleo"] },
-  { symbol: "NG=F", name: "Gas Natural (Henry Hub)", sector: "Commodity Energía", country: "Global", category: "global", tags: ["gas", "natural"] },
-  { symbol: "ZW=F", name: "Trigo Futuros (CBOT)", sector: "Commodity Agrícola", country: "Global", category: "global", tags: ["trigo", "wheat"] },
-  { symbol: "ZC=F", name: "Maíz Futuros (CBOT)", sector: "Commodity Agrícola", country: "Global", category: "global", tags: ["maiz", "corn"] },
-  { symbol: "ZS=F", name: "Soja Futuros (CBOT)", sector: "Commodity Agrícola", country: "Global", category: "global", tags: ["soja", "soybean"] },
-  { symbol: "SB=F", name: "Azúcar Futuros (ICE)", sector: "Commodity Agrícola", country: "Global", category: "global", tags: ["azucar", "sugar"] },
-  { symbol: "CC=F", name: "Cacao Futuros (ICE)", sector: "Commodity Agrícola", country: "Global", category: "global", tags: ["cacao", "cocoa"] },
-  { symbol: "KC=F", name: "Café Futuros (ICE)", sector: "Commodity Agrícola", country: "Global", category: "global", tags: ["cafe", "coffee"] },
-  { symbol: "PEN=X", name: "Tipo de Cambio USD/PEN", sector: "Divisas (Forex)", country: "Perú", category: "global", tags: ["dolar", "sol", "tipo", "de", "cambio", "fx", "bcrp"] },
-  { symbol: "EURUSD=X", name: "Euro / Dólar (EUR/USD)", sector: "Divisas (Forex)", country: "Global", category: "global", tags: ["euro", "dolar", "fx"] },
-  { symbol: "USDJPY=X", name: "Dólar / Yen (USD/JPY)", sector: "Divisas (Forex)", country: "Global", category: "global", tags: ["yen", "japon", "fx"] },
-  { symbol: "USDMXN=X", name: "Dólar / Peso Mexicano", sector: "Divisas (Forex)", country: "México", category: "global", tags: ["peso", "mexicano", "fx"] },
-  { symbol: "USDBRL=X", name: "Dólar / Real Brasileño", sector: "Divisas (Forex)", country: "Brasil", category: "global", tags: ["real", "brasil", "fx"] },
-  { symbol: "USDCOP=X", name: "Dólar / Peso Colombiano", sector: "Divisas (Forex)", country: "Colombia", category: "global", tags: ["peso", "colombiano", "fx"] },
-  { symbol: "USDCNY=X", name: "Dólar / Yuan Chino", sector: "Divisas (Forex)", country: "China", category: "global", tags: ["yuan", "china", "fx"] },
-  { symbol: "DX-Y.NYB", name: "Índice Dólar (DXY)", sector: "Divisas (Forex)", country: "EE.UU.", category: "global", tags: ["dxy", "dolar", "index"] },
-  { symbol: "GBPUSD=X", name: "Libra / Dólar (GBP/USD)", sector: "Divisas (Forex)", country: "Reino Unido", category: "global", tags: ["libra", "fx"] },
-  { symbol: "AUDUSD=X", name: "Dólar Australiano / USD", sector: "Divisas (Forex)", country: "Australia", category: "global", tags: ["aud", "fx"] },
-  { symbol: "USDCAD=X", name: "Dólar / Dólar Canadiense", sector: "Divisas (Forex)", country: "Canadá", category: "global", tags: ["cad", "fx"] },
-  { symbol: "USDCHF=X", name: "Dólar / Franco Suizo", sector: "Divisas (Forex)", country: "Suiza", category: "global", tags: ["chf", "fx"] },
-  { symbol: "EURPEN=X", name: "Euro / Sol (EUR/PEN)", sector: "Divisas (Forex)", country: "Perú", category: "global", tags: ["euro", "sol", "fx"] },
-  { symbol: "^TNX", name: "Bonos Tesoro EE.UU. 10Y (Rendimiento)", sector: "Tasas de Interés", country: "EE.UU.", category: "global", tags: ["bonos", "treasury", "tasa", "fed"] },
-  { symbol: "^TYX", name: "Bonos Tesoro EE.UU. 30Y", sector: "Tasas de Interés", country: "EE.UU.", category: "global", tags: ["bonos", "30", "treasury"] },
-  { symbol: "^FVX", name: "Bonos Tesoro EE.UU. 5Y", sector: "Tasas de Interés", country: "EE.UU.", category: "global", tags: ["bonos", "5", "treasury"] },
-  { symbol: "BTC-USD", name: "Bitcoin (BTC/USD)", sector: "Criptoactivos", country: "Global", category: "global", tags: ["bitcoin", "btc", "cripto"] },
-  { symbol: "ETH-USD", name: "Ethereum (ETH/USD)", sector: "Criptoactivos", country: "Global", category: "global", tags: ["ethereum", "eth", "cripto"] },
-  { symbol: "GLD", name: "SPDR Gold Shares (ETF Oro)", sector: "ETF / Metales", country: "EE.UU.", category: "global", tags: ["oro", "etf", "gold"] },
-  { symbol: "SLV", name: "iShares Silver Trust (ETF Plata)", sector: "ETF / Metales", country: "EE.UU.", category: "global", tags: ["plata", "etf", "silver"] },
-  { symbol: "EEM", name: "iShares MSCI Emerging Markets", sector: "ETF Global", country: "Global", category: "global", tags: ["emerging", "etf"] },
-  { symbol: "ILF", name: "iShares Latin America 40", sector: "ETF LatAm", country: "LatAm", category: "global", tags: ["latam", "etf"] },
-  { symbol: "USO", name: "United States Oil Fund", sector: "ETF Energía", country: "EE.UU.", category: "global", tags: ["petroleo", "etf", "oil"] },
   { symbol: "PERU_CPI", name: "Inflación Anual Perú (%)", sector: "Macroeconomía", country: "Perú", category: "macro_pe", tags: ["inflacion", "cpi", "ipc", "bcrp", "banco", "mundial"] },
   { symbol: "PERU_GDP", name: "Crecimiento PBI Anual Perú (%)", sector: "Macroeconomía", country: "Perú", category: "macro_pe", tags: ["pbi", "gdp", "crecimiento", "banco", "mundial"] },
   { symbol: "COSAPI", name: "Cosapi S.A.", sector: "Conglomerado Industrial y Construcción", country: "Perú", category: "unlisted", tags: ["cosapi", "construccion", "ingenieria", "mineria", "aviacion", "real", "estate"] },
@@ -163,6 +57,39 @@ export const CATALOG = [
   { symbol: "DIREKTP-PRIV", name: "Distribuidora Dtcar (DTC)", sector: "Retail automotriz (privada)", country: "Perú", category: "unlisted", tags: ["dtcar", "dtc", "autos", "retail"] },
   { symbol: "PLUZENER-PRIV", name: "Pluz Energía Perú (ex Enso)", sector: "Utilities (privada)", country: "Perú", category: "unlisted", tags: ["pluz", "energia", "electricidad", "enoso"] },
   { symbol: "GILATPER-PRIV", name: "Gilat Perú (satelital)", sector: "Telecom (privada)", country: "Perú", category: "unlisted", tags: ["gilat", "satelital", "telecom"] },
+  { symbol: "ALUMINIO", name: "Aluminio", sector: "Metales", country: "Global", category: "macro_pe", tags: ['aluminio'] },
+  { symbol: "ESTANO", name: "Estaño", sector: "Metales", country: "Global", category: "macro_pe", tags: ['estano'] },
+  { symbol: "NIQUEL", name: "Níquel", sector: "Metales", country: "Global", category: "macro_pe", tags: ['niquel'] },
+  { symbol: "PLOMO", name: "Plomo", sector: "Metales", country: "Global", category: "macro_pe", tags: ['plomo'] },
+  { symbol: "ZINC", name: "Zinc", sector: "Metales", country: "Global", category: "macro_pe", tags: ['zinc'] },
+  { symbol: "MINERAL_HIERRO", name: "Mineral de hierro", sector: "Metales", country: "Global", category: "macro_pe", tags: ['hierro'] },
+  { symbol: "PEN=X", name: "Tipo de cambio USD/PEN", sector: "Divisas", country: "Global", category: "fx", tags: ['dolar', 'sol', 'cambio'] },
+  { symbol: "HG=F", name: "Cobre (serie oficial)", sector: "Metales", country: "Global", category: "commodity", tags: ['cobre'] },
+  { symbol: "GC=F", name: "Oro (serie oficial)", sector: "Metales", country: "Global", category: "commodity", tags: ['oro'] },
+  { symbol: "SI=F", name: "Plata (serie oficial)", sector: "Metales", country: "Global", category: "commodity", tags: ['plata'] },
+  { symbol: "CL=F", name: "Petróleo WTI", sector: "Energía", country: "Global", category: "commodity", tags: ['petroleo', 'wti'] },
+  { symbol: "BZ=F", name: "Petróleo Brent", sector: "Energía", country: "Global", category: "commodity", tags: ['petroleo', 'brent'] },
+  { symbol: "PL=F", name: "Platino", sector: "Metales", country: "Global", category: "commodity", tags: ['platino'] },
+  { symbol: "NG=F", name: "Gas natural de EE.UU.", sector: "Energía", country: "Global", category: "commodity", tags: ['gas', 'natural'] },
+  { symbol: "ZW=F", name: "Trigo", sector: "Agricultura", country: "Global", category: "commodity", tags: ['trigo'] },
+  { symbol: "ZC=F", name: "Maíz", sector: "Agricultura", country: "Global", category: "commodity", tags: ['maiz'] },
+  { symbol: "ZS=F", name: "Soja", sector: "Agricultura", country: "Global", category: "commodity", tags: ['soya', 'soja'] },
+  { symbol: "SB=F", name: "Azúcar", sector: "Agricultura", country: "Global", category: "commodity", tags: ['azucar'] },
+  { symbol: "CC=F", name: "Cacao", sector: "Agricultura", country: "Global", category: "commodity", tags: ['cacao'] },
+  { symbol: "KC=F", name: "Café arábica", sector: "Agricultura", country: "Global", category: "commodity", tags: ['cafe'] },
+  { symbol: "EURUSD=X", name: "Euro / Dólar (EUR/USD)", sector: "Divisas", country: "Global", category: "fx", tags: ['euro', 'dolar'] },
+  { symbol: "USDJPY=X", name: "Dólar / Yen (USD/JPY)", sector: "Divisas", country: "Global", category: "fx", tags: ['dolar', 'yen'] },
+  { symbol: "USDMXN=X", name: "Dólar / Peso mexicano", sector: "Divisas", country: "Global", category: "fx", tags: ['mexico', 'peso'] },
+  { symbol: "USDBRL=X", name: "Dólar / Real brasileño", sector: "Divisas", country: "Global", category: "fx", tags: ['brasil', 'real'] },
+  { symbol: "USDCNY=X", name: "Dólar / Yuan chino", sector: "Divisas", country: "Global", category: "fx", tags: ['china', 'yuan'] },
+  { symbol: "USDCAD=X", name: "Dólar canadiense por USD", sector: "Divisas", country: "Global", category: "fx", tags: ['canada'] },
+  { symbol: "USDCHF=X", name: "Franco suizo por USD", sector: "Divisas", country: "Global", category: "fx", tags: ['suiza', 'franco'] },
+  { symbol: "GBPUSD=X", name: "Libra / Dólar (GBP/USD)", sector: "Divisas", country: "Global", category: "fx", tags: ['libra'] },
+  { symbol: "AUDUSD=X", name: "Dólar australiano / USD", sector: "Divisas", country: "Global", category: "fx", tags: ['australia'] },
+  { symbol: "DX-Y.NYB", name: "Índice amplio del dólar (Reserva Federal)", sector: "Divisas", country: "Global", category: "fx", tags: ['dolar', 'indice'] },
+  { symbol: "^TNX", name: "Rendimiento del Tesoro de EE.UU. a 10 años", sector: "Tasas", country: "Global", category: "fx", tags: ['tesoro', 'bonos'] },
+  { symbol: "^TYX", name: "Rendimiento del Tesoro de EE.UU. a 30 años", sector: "Tasas", country: "Global", category: "fx", tags: ['tesoro', 'bonos'] },
+  { symbol: "^FVX", name: "Rendimiento del Tesoro de EE.UU. a 5 años", sector: "Tasas", country: "Global", category: "fx", tags: ['tesoro', 'bonos'] },
 ];
 
 export default async function handler(req, res) {
@@ -213,41 +140,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ results: localMatches.slice(0, 15), total, tradable });
   }
 
-  // Complement with live Yahoo lookup (any company in the world)
-  try {
-    const yfUrl = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(q)}&quotesCount=8&newsCount=0`;
-    const yfRes = await fetch(yfUrl, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "*/*"
-      },
-      signal: AbortSignal.timeout(5000)
-    });
-
-    if (yfRes.ok) {
-      const yfData = await yfRes.json();
-      const yfQuotes = (yfData.quotes || [])
-        .filter(it => it.symbol && (it.shortname || it.longname))
-        .map(it => ({
-          symbol: String(it.symbol).slice(0, 20),
-          name: String(it.shortname || it.longname).slice(0, 100),
-          sector: String(it.quoteType || "Global").slice(0, 50),
-          country: String(it.exchangeDispName || it.exchange || "Global").slice(0, 50),
-          category: "global_stock",
-          tags: [String(it.symbol).toLowerCase()]
-        }));
-
-      const seen = new Set(localMatches.map(m => m.symbol));
-      for (const item of yfQuotes) {
-        if (!seen.has(item.symbol)) {
-          seen.add(item.symbol);
-          localMatches.push(item);
-        }
-      }
-    }
-  } catch (err) {
-    // Non-blocking: fall back to local matches
-  }
 
   return res.status(200).json({ results: localMatches.slice(0, 15), total, tradable });
 }

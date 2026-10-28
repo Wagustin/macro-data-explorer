@@ -79,7 +79,7 @@ async function main() {
   const { emisores } = JSON.parse(fs.readFileSync(path.join(root, "data", "empresas.json"), "utf8"));
   const byKey = new Map();
   for (const e of emisores) {
-    const primary = (e.valores.find((v) => v.yahoo) || e.valores[0] || {}).nemonico;
+    const primary = (e.valores.find((v) => v.simbolo_proyeccion) || e.valores[0] || {}).nemonico;
     if (primary) byKey.set(key(e.razonSocial), primary);
   }
 

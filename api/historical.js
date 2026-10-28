@@ -3,41 +3,10 @@ import { PLANS, planForUser, canUseRange, upgradeRequired } from "./_lib/plans.j
 import { getAuthUserOrNull } from "./_lib/session.js";
 import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
 import { nemonicoOf, smvRows } from "./_lib/smv.js";
-import { REMOVED } from "./_lib/removed.js";
+import { SOURCES, sourcePoints, monthlyPoints } from "./_lib/sources.js";
 import EMPRESAS from "../data/empresas.json" with { type: "json" };
 
 const MONEDA = new Map(EMPRESAS.emisores.flatMap((e) => e.valores.map((v) => [v.nemonico, v.moneda === "US$" ? "USD" : "PEN"])));
-
-const OFFICIAL_BASE = "https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data/official/";
-const OFFICIAL_DAILY = {
-  "PEN=X": { file: "bcrp-daily.json", key: "PEN", label: "BCRP (tipo de cambio SBS, venta)" },
-  "HG=F": { file: "bcrp-daily.json", key: "COBRE", label: "BCRP (cobre, Londres)" },
-  "GC=F": { file: "bcrp-daily.json", key: "ORO", label: "BCRP (oro, Londres)" },
-  "SI=F": { file: "bcrp-daily.json", key: "PLATA", label: "BCRP (plata)" },
-  "CL=F": { file: "bcrp-daily.json", key: "WTI", label: "BCRP (petróleo WTI)" },
-  "BZ=F": { file: "eia-oil.json", key: "BRENT", label: "EIA (Brent spot)" },
-};
-const officialCache = new Map(); // file -> { at, data }
-
-async function officialSeries(file, key) {
-  const hit = officialCache.get(file);
-  let data = hit && Date.now() - hit.at < 30 * 60 * 1000 ? hit.data : null;
-  if (!data) {
-    try {
-      const r = await fetch(OFFICIAL_BASE + file, { signal: AbortSignal.timeout(4000) });
-      if (r.ok) {
-        data = await r.json();
-        officialCache.set(file, { at: Date.now(), data });
-      }
-    } catch (e) { /* sin datos oficiales: se usa Yahoo */ }
-    if (!data && hit) data = hit.data;
-  }
-  const s = data?.series?.[key];
-  const points = Array.isArray(s) ? s : s?.serie;
-  if (!points) return null;
-  const cutoff = new Date(Date.now() - 400 * 864e5).toISOString().slice(0, 10);
-  return points.filter(([d]) => d >= cutoff);
-}
 
 const SYMBOL_REGEX = /^[A-Za-z0-9=._\-\^]{1,20}$/;
 const ALLOWED_RANGES = new Set(["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y", "10y", "max"]);
@@ -78,6 +47,10 @@ function fallbackMacroRecords(symbol) {
 
 const RANGE_MONTHS = { "1mo": 1, "3mo": 3, "6mo": 6, "1y": 12, "2y": 24, "3y": 36, "5y": 60, "10y": 120, max: 400 };
 const isoMonthsAgo = (n) => { const d = new Date(); d.setUTCMonth(d.getUTCMonth() - n); return d.toISOString().slice(0, 10); };
+export function monthlyPointsInRange(points, method, cutoff) {
+  const cutoffMonth = cutoff.slice(0, 7);
+  return monthlyPoints(points, method).filter(([month]) => month >= cutoffMonth);
+}
 const point = (r, date) => ({ date, timestamp: Math.floor(Date.parse(r.fecha) / 1000), open: r.apertura ?? r.cierre, high: r.maximo ?? r.cierre,
   low: r.minimo ?? r.cierre, close: r.cierre, volume: Math.round(r.monto || 0) });
 
@@ -124,7 +97,6 @@ export default async function handler(req, res) {
   }
 
   const symbol = rawSymbol.toUpperCase();
-  if (REMOVED.has(symbol)) return res.status(404).json({ error: "Activo no disponible." });
   const range = ALLOWED_RANGES.has(rawRange) ? rawRange : "5y";
 
   const hasAuth = Boolean(req.headers?.authorization);
@@ -140,6 +112,30 @@ export default async function handler(req, res) {
     setCdnCache(res, hasAuth, 300);
   }
   const interval = ALLOWED_INTERVALS.has(rawInterval) ? rawInterval : "1mo";
+
+  const official = SOURCES[symbol];
+  if (official) {
+    const points = sourcePoints(symbol) || [];
+    const cutoff = isoMonthsAgo(RANGE_MONTHS[range] || 60);
+    const monthRows = monthlyPointsInRange(points, official.mensual, cutoff);
+    const catMeta = CATALOG.find((item) => item.symbol === symbol) || {};
+    const series = monthRows.map(([month, close]) => ({
+      date: `${month}-01`, year: month.slice(0, 4), open: close, high: close,
+      low: close, close, volume: 0,
+    }));
+    const last = points.at(-1);
+    const prev = points.at(-2);
+    const daily = official.fuente === "worldBank"
+      ? undefined
+      : points.filter(([date]) => date >= isoMonthsAgo(12)).map(([date, close]) => ({ date, close }));
+    return res.status(200).json({
+      symbol, name: catMeta.name || symbol, sector: catMeta.sector || "Materias primas",
+      country: catMeta.country || "Global", currency: official.unidad, exchange: official.etiqueta,
+      range, interval: "1mo", count: series.length, series,
+      live: last ? { price: last[1], changePct: prev ? Number(((last[1] / prev[1] - 1) * 100).toFixed(2)) : 0, time: `${last[0]}T00:00:00.000Z`, state: "CLOSED" } : null,
+      ...(daily ? { daily } : {}), dailySource: official.etiqueta,
+    });
+  }
 
   // Special handler for macroeconomic indicators (World Bank, with offline fallback)
   if (symbol === "PERU_CPI" || symbol === "PERU_GDP") {
@@ -196,128 +192,5 @@ export default async function handler(req, res) {
     } catch (e) { /* not loaded yet: market data below */ }
   }
 
-  // Standard Market Quotes (Yahoo Finance v8 API)
-  try {
-    const yfUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${range}&interval=${interval}`;
-    const yfRes = await fetch(yfUrl, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "*/*"
-      },
-      signal: AbortSignal.timeout(7000)
-    });
-
-    if (!yfRes.ok) {
-      return res.status(yfRes.status).json({ error: "Error de consulta en el proveedor financiero." });
-    }
-
-    const data = await yfRes.json();
-    const result = data?.chart?.result?.[0];
-
-    if (!result) {
-      return res.status(404).json({ error: "No se encontraron datos para el símbolo solicitado." });
-    }
-
-    const meta = result.meta || {};
-    const timestamps = result.timestamp || [];
-    const quote = result.indicators?.quote?.[0] || {};
-
-    const opens = quote.open || [];
-    const highs = quote.high || [];
-    const lows = quote.low || [];
-    const closes = quote.close || [];
-    const volumes = quote.volume || [];
-
-    const series = [];
-    for (let i = 0; i < timestamps.length; i++) {
-      const c = closes[i];
-      if (c !== null && c !== undefined && !isNaN(c)) {
-        const dateObj = new Date(timestamps[i] * 1000);
-        const y = dateObj.getUTCFullYear();
-        const m = String(dateObj.getUTCMonth() + 1).padStart(2, "0");
-        const d = String(dateObj.getUTCDate()).padStart(2, "0");
-        const dateStr = `${y}-${m}-${d}`;
-
-        series.push({
-          date: dateStr,
-          timestamp: timestamps[i],
-          open: opens[i] !== null && !isNaN(opens[i]) ? Number(opens[i].toFixed(4)) : Number(c.toFixed(4)),
-          high: highs[i] !== null && !isNaN(highs[i]) ? Number(highs[i].toFixed(4)) : Number(c.toFixed(4)),
-          low: lows[i] !== null && !isNaN(lows[i]) ? Number(lows[i].toFixed(4)) : Number(c.toFixed(4)),
-          close: Number(c.toFixed(4)),
-          volume: volumes[i] ? Math.round(volumes[i]) : 0
-        });
-      }
-    }
-
-    const catMeta = CATALOG.find(c => c.symbol === symbol) || {};
-
-    // Live market signal from meta (regular market quote, may be intraday)
-    const live = {
-      price: typeof meta.regularMarketPrice === "number" ? meta.regularMarketPrice : null,
-      changePct: typeof meta.regularMarketChangePercent === "number" ? meta.regularMarketChangePercent : null,
-      time: typeof meta.regularMarketTime === "number" ? new Date(meta.regularMarketTime * 1000).toISOString() : null,
-      state: meta.marketState || null
-    };
-
-    // 1-year DAILY sessions for high-resolution chart rendering (independent of selected interval)
-    let daily = [];
-    try {
-      const dUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1y&interval=1d`;
-      const dRes = await fetch(dUrl, {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-          "Accept": "*/*"
-        },
-        signal: AbortSignal.timeout(6000)
-      });
-      if (dRes.ok) {
-        const dData = await dRes.json();
-        const dRes0 = dData?.chart?.result?.[0];
-        const dTs = dRes0?.timestamp || [];
-        const dQ = dRes0?.indicators?.quote?.[0] || {};
-        const dC = dQ.close || [];
-        for (let i = 0; i < dTs.length; i++) {
-          if (dC[i] !== null && dC[i] !== undefined && !isNaN(dC[i])) {
-            const dt = new Date(dTs[i] * 1000);
-            daily.push({
-              date: `${dt.getUTCFullYear()}-${String(dt.getUTCMonth()+1).padStart(2,"0")}-${String(dt.getUTCDate()).padStart(2,"0")}`,
-              close: Number(dC[i].toFixed(4))
-            });
-          }
-        }
-      }
-    } catch (e) { /* daily context is best-effort */ }
-
-    // Serie diaria oficial (BCRP para el dólar y los metales, EIA para el Brent) cuando existe.
-    // La descarga un proceso diario de GitHub Actions (scripts/fetch_official.py), así la web no
-    // consulta al BCRP en cada visita. Si no está disponible, se queda la serie de Yahoo.
-    let dailySource = "Datos de mercado (cierre)";
-    const official = OFFICIAL_DAILY[symbol];
-    if (official) {
-      const series = await officialSeries(official.file, official.key);
-      if (series && series.length > 20) {
-        daily = series.map(([date, close]) => ({ date, close }));
-        dailySource = official.label;
-      }
-    }
-
-    return res.status(200).json({
-      symbol: meta.symbol || symbol,
-      name: catMeta.name || meta.longName || meta.shortName || symbol,
-      sector: catMeta.sector || "Renta Variable",
-      country: catMeta.country || "Global",
-      currency: meta.currency || (symbol.endsWith(".LM") ? "PEN" : "USD"),
-      exchange: meta.exchangeName || "Market",
-      range,
-      interval,
-      count: series.length,
-      series,
-      live,
-      daily,
-      dailySource
-    });
-  } catch (err) {
-    return res.status(500).json({ error: "Falla temporal al procesar la cotización histórica." });
-  }
+  return res.status(404).json({ error: "Activo no disponible." });
 }

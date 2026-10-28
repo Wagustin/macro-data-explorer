@@ -390,7 +390,7 @@ html.dark .ui-switch {
           </div>
           <p class="price-date" id="priceDate">Consultando cotización oficial…</p>
 
-          <!-- Secondary price row (if multiple shares like BVN & BUENAVI1) -->
+          <!-- Secondary price row when an issuer has multiple share classes -->
           <div id="price2ndBlock" class="hidden price-2nd">
             <span class="price-2nd-label" id="price2ndLabel">BVL</span>
             <span class="price-2nd-val" id="price2ndVal">—</span>
@@ -398,7 +398,7 @@ html.dark .ui-switch {
           </div>
 
           <!-- Notice box when no market symbol -->
-          <div id="noYahooNotice" class="hidden p-4 mb-4 border border-rule bg-card text-xs leading-relaxed">
+          <div id="noProyeccionNotice" class="hidden p-4 mb-4 border border-rule bg-card text-xs leading-relaxed">
             <p class="font-medium text-ink mb-1">Sin historial de precios disponible</p>
             <p class="text-ink-soft mb-2">Este valor se negocia directamente en la Bolsa de Valores de Lima. Su precio se consulta en la ficha oficial de la BVL.</p>
             <a href="https://www.bvl.com.pe" target="_blank" rel="noopener" class="text-ink underline underline-offset-2 font-medium">Ver ficha oficial en bvl.com.pe &rarr;</a>
@@ -468,7 +468,7 @@ html.dark .ui-switch {
             </div>
             <div class="dato-item">
               <p class="dato-label">Símbolo de mercado</p>
-              <p class="dato-val" id="datoYahoo">—</p>
+              <p class="dato-val" id="datoSimboloProyeccion">—</p>
             </div>
             <div class="dato-item">
               <p class="dato-label">Proyección</p>
@@ -594,7 +594,7 @@ html.dark .ui-switch {
         "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
       })[char]);
 
-      // Extract symbol from URL path (/empresa/BVN) or query param (?symbol=BVN)
+      // Extract symbol from URL path (/empresa/ALICORC1) or query param (?symbol=ALICORC1)
       const pathParts = window.location.pathname.split("/").filter(Boolean);
       let symbolParam = null;
       if (pathParts.length >= 2 && pathParts[0] === "empresa") {
@@ -616,7 +616,7 @@ html.dark .ui-switch {
         );
         if (!emitter) {
           emitter = json.emisores.find(e => 
-            e.valores.some(v => v.yahoo && v.yahoo.toUpperCase().startsWith(targetSymbol))
+            e.valores.some(v => v.simbolo_proyeccion && v.simbolo_proyeccion.toUpperCase().startsWith(targetSymbol))
           );
         }
 
@@ -629,11 +629,10 @@ html.dark .ui-switch {
         // Identify primary valor (matching target symbol, or with market data)
         let primaryValor = emitter.valores.find(v => v.nemonico.toUpperCase() === targetSymbol);
         if (!primaryValor) {
-          primaryValor = emitter.valores.find(v => v.yahoo) || emitter.valores[0];
+          primaryValor = emitter.valores.find(v => v.simbolo_proyeccion) || emitter.valores[0];
         }
         const secondaryValores = emitter.valores.filter(v => v !== primaryValor);
-        const removedYahoo = ["BVN", "BAP", "SCCO", "IFS", "CPAC", "AUNA"].includes(primaryValor.nemonico.toUpperCase());
-        const hasYahoo = Boolean(primaryValor.yahoo);
+        const hasProyeccion = Boolean(primaryValor.simbolo_proyeccion);
 
         // Populate header and breadcrumb
         const KEEP = new Set(["BBVA", "AFP", "BVL", "FTE", "IDE", "SEAL", "AIB", "XP", "OH!"]);
@@ -651,8 +650,8 @@ html.dark .ui-switch {
         document.getElementById("breadName").textContent = emitter.razonSocial;
         document.getElementById("companyTitle").textContent = emitter.razonSocial;
         
-        const marketLabel = hasYahoo && (primaryValor.yahoo === "BVN" || primaryValor.yahoo === "BAP" || primaryValor.yahoo === "SCCO") ? "NYSE" : "BVL";
-        document.getElementById("companyMeta").textContent = `${sectorName(emitter.sector)} · ${primaryValor.nemonico}${hasYahoo ? " · " + marketLabel : ""}`;
+        const marketLabel = "BVL";
+        document.getElementById("companyMeta").textContent = `${sectorName(emitter.sector)} · ${primaryValor.nemonico}${hasProyeccion ? " · " + marketLabel : ""}`;
 
         // Populate exchange label
         document.getElementById("exchangeLabel").textContent = `${marketLabel} · ${primaryValor.nemonico}`;
@@ -660,32 +659,32 @@ html.dark .ui-switch {
         // Precio solo de la fuente de mercado (se carga abajo). Los precios de la BVL no se copian hasta
         // revisar sus términos de uso: se enlaza a la ficha oficial.
         const pm = document.getElementById("priceMain");
-        const hasSmvHistory = !hasYahoo || /\.LM$/i.test(primaryValor.yahoo);
-        if (hasYahoo) {
+        const hasSmvHistory = !hasProyeccion || /\.LM$/i.test(primaryValor.simbolo_proyeccion);
+        if (hasProyeccion) {
           pm.textContent = "…";
         } else {
           pm.textContent = "…";
         }
-        document.getElementById("priceDate").textContent = hasYahoo
+        document.getElementById("priceDate").textContent = hasProyeccion
           ? ""
           : `Última negociación: ${emitter.fechaUltimaNegociacion || "sin registro"}`;
 
         // Handle market vs no-market states
-        if (hasYahoo) {
-          document.getElementById("btnProyeccion").setAttribute("href", `/explorer?symbol=${encodeURIComponent(primaryValor.yahoo)}`);
+        if (hasProyeccion) {
+          document.getElementById("btnProyeccion").setAttribute("href", `/explorer?symbol=${encodeURIComponent(primaryValor.simbolo_proyeccion)}`);
           document.getElementById("btnProyeccion").classList.remove("hidden");
           document.getElementById("proyeccionDisabled").classList.add("hidden");
-          document.getElementById("noYahooNotice").classList.add("hidden");
+          document.getElementById("noProyeccionNotice").classList.add("hidden");
 
           // Fetch live price & 90-day history from /api/historical
-          fetchHistorical(primaryValor.yahoo, primaryValor.moneda, hasSmvHistory);
+          fetchHistorical(primaryValor.simbolo_proyeccion, primaryValor.moneda, hasSmvHistory);
         } else {
           // Keep projections disabled while checking for SMV historical quotes.
           document.getElementById("btnProyeccion").classList.add("hidden");
           document.getElementById("proyeccionDisabled").classList.remove("hidden");
-          document.getElementById("noYahooNotice").classList.remove("hidden");
+          document.getElementById("noProyeccionNotice").classList.remove("hidden");
           document.getElementById("chartLabel").textContent = "Historial SMV · Cierre mensual";
-          if (!removedYahoo) fetchHistorical(`${primaryValor.nemonico}.LM`, primaryValor.moneda, true);
+          fetchHistorical(`${primaryValor.nemonico}.LM`, primaryValor.moneda, true);
         }
 
         loadHechos(primaryValor.nemonico);
@@ -695,8 +694,8 @@ html.dark .ui-switch {
         document.getElementById("datoSector").textContent = sectorName(emitter.sector);
         document.getElementById("datoNemonico").textContent = primaryValor.nemonico || "—";
         document.getElementById("datoMoneda").textContent = primaryValor.moneda || "S/";
-        document.getElementById("datoYahoo").textContent = primaryValor.yahoo || "No disponible";
-        document.getElementById("datoProyeccion").textContent = hasYahoo ? "Disponible en Terminal" : "No disponible";
+        document.getElementById("datoSimboloProyeccion").textContent = primaryValor.simbolo_proyeccion || "No disponible";
+        document.getElementById("datoProyeccion").textContent = hasProyeccion ? "Disponible en Terminal" : "No disponible";
         document.getElementById("datoFecha").textContent = primaryValor.fechaUltimaNegociacion || emitter.fechaUltimaNegociacion || "Sin registro";
         document.getElementById("datoActiva").textContent = emitter.negociadaUltimos12m ? "Sí (negociada < 12m)" : "No";
 
@@ -723,7 +722,7 @@ html.dark .ui-switch {
               const currency = defaultMoneda === "US$" ? "US$" : "S/";
               document.getElementById("priceMain").textContent = `${currency} ${close.toFixed(close < 1 ? 3 : 2)}`;
               document.getElementById("priceDate").textContent = `Fuente: SMV · Cierre ${lastPt.date || ""}`;
-              document.getElementById("noYahooNotice").classList.add("hidden");
+              document.getElementById("noProyeccionNotice").classList.add("hidden");
               const varEl = document.getElementById("priceVar");
               if (previousPt) {
                 const changePct = ((close - Number(previousPt.close)) / Number(previousPt.close)) * 100;
@@ -742,7 +741,7 @@ html.dark .ui-switch {
 
           // Update live price if present
           if (data.live && typeof data.live.price === "number") {
-            const isUsd = (data.currency === "USD" || symbol === "BVN" || symbol === "BAP" || symbol === "SCCO" || defaultMoneda === "US$");
+            const isUsd = (data.currency === "USD" || defaultMoneda === "US$");
             const cSign = isUsd ? "US$" : "S/";
             document.getElementById("priceMain").textContent = `${cSign} ${data.live.price.toFixed(data.live.price < 1 ? 3 : 2)}`;
             

@@ -38,19 +38,19 @@ function prettyName(raw) {
 // Process emitters
 const rows = data.emisores.map(e => {
   // Determine primary valor
-  let primary = e.valores.find(v => v.yahoo && (v.yahoo === v.nemonico || v.nemonico.endsWith("C1")));
-  if (!primary) primary = e.valores.find(v => v.yahoo);
+  let primary = e.valores.find(v => v.simbolo_proyeccion && (v.simbolo_proyeccion === v.nemonico || v.nemonico.endsWith("C1")));
+  if (!primary) primary = e.valores.find(v => v.simbolo_proyeccion);
   if (!primary) primary = e.valores.find(v => v.fechaUltimaNegociacion);
   if (!primary) primary = e.valores[0] || { nemonico: "S/N", moneda: "S/", fechaUltimaNegociacion: null };
 
-  const hasYahoo = Boolean(primary.yahoo);
+  const hasProyeccion = Boolean(primary.simbolo_proyeccion);
   const isActiva = Boolean(e.negociadaUltimos12m);
   
   let tier = 3;
   let tierLabel = "sin";
-  if (hasYahoo) {
+  if (hasProyeccion) {
     tier = 1;
-    tierLabel = "yahoo";
+    tierLabel = "proyeccion";
   } else if (isActiva) {
     tier = 2;
     tierLabel = "activo";
@@ -66,10 +66,10 @@ const rows = data.emisores.map(e => {
     nemonico: primary.nemonico,
     moneda: primary.moneda || "S/",
     fechaUltima: primary.fechaUltimaNegociacion || e.fechaUltimaNegociacion,
-    yahoo: primary.yahoo,
+    simbolo_proyeccion: primary.simbolo_proyeccion,
     tier,
     tierLabel,
-    hasYahoo,
+    hasProyeccion,
     isActiva
   };
 });
@@ -98,7 +98,7 @@ const rowsHtml = rows.map(r => {
     subHtml = `<div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>`;
   }
 
-  return `      <a href="/empresa/${encodeURIComponent(r.nemonico)}" class="row-link" data-nemo="${r.nemonico}" data-name="${r.razonSocial.toLowerCase()}" data-sector="${r.sectorRaw}" data-tier="${r.tierLabel}" ${r.yahoo ? `data-yahoo="${r.yahoo}"` : ""}>
+  return `      <a href="/empresa/${encodeURIComponent(r.nemonico)}" class="row-link" data-nemo="${r.nemonico}" data-name="${r.razonSocial.toLowerCase()}" data-sector="${r.sectorRaw}" data-tier="${r.tierLabel}" ${r.simbolo_proyeccion ? `data-simbolo-proyeccion="${r.simbolo_proyeccion}"` : ""}>
         <div class="row-inner ${isMuted ? "muted" : ""}">
           <div class="mono nemo">${r.nemonico}</div>
           <div class="name-col">
@@ -470,7 +470,7 @@ html.dark .ui-switch {
       <p class="finder-hint">Por ejemplo: <button type="button" data-try="alicorp">Alicorp</button>, <button type="button" data-try="ALICORC1.LM">ALICORC1.LM</button>, <button type="button" data-try="bancos">bancos</button>, <button type="button" data-try="mineras">mineras</button>.</p>
       <div class="finder-tabs" role="tablist" aria-label="Qué empresas mostrar" id="actTabs">
         <button type="button" role="tab" data-act="" aria-selected="true">Todas <span>${rows.length}</span></button>
-        <button type="button" role="tab" data-act="yahoo" aria-selected="false">Con proyección <span>${rows.filter(r => r.tier === 1).length}</span></button>
+        <button type="button" role="tab" data-act="proyeccion" aria-selected="false">Con proyección <span>${rows.filter(r => r.tier === 1).length}</span></button>
         <button type="button" role="tab" data-act="activo" aria-selected="false" title="Con negociación en los últimos 12 meses">Activas <span>${rows.filter(r => r.tier !== 3).length}</span></button>
       </div>
       <div class="finder-tabs finder-sectors" role="tablist" aria-label="Sector" id="secTabs">
@@ -612,7 +612,7 @@ ${rowsHtml}
           const tier = row.dataset.tier || "";
           const ok = words.every(w => row._hay.includes(w))
             && (!state.sec || row.dataset.sector === state.sec)
-            && (!state.act || (state.act === "yahoo" ? tier === "yahoo" : tier !== "sin"));
+            && (!state.act || (state.act === "proyeccion" ? tier === "proyeccion" : tier !== "sin"));
           row.style.display = ok ? "" : "none";
           if (ok) shown++;
         });
@@ -692,7 +692,7 @@ ${rowsHtml}
         const varCell = row.querySelector('[data-cell="var"]');
 
         if (priceCell) {
-          const isUsd = (row.dataset.yahoo === "BVN" || row.dataset.yahoo === "BAP" || row.dataset.yahoo === "SCCO" || row.dataset.yahoo === "IFS" || row.dataset.yahoo === "AUNA");
+          const isUsd = row.dataset.simboloProyeccion && row.dataset.simboloProyeccion !== "" && !/\.LM$/i.test(row.dataset.simboloProyeccion);
           const curr = isUsd ? "US$" : "S/";
           priceCell.textContent = \`\${curr} \${live.price.toFixed(live.price < 1 ? 3 : 2)}\`;
         }
@@ -718,7 +718,7 @@ ${rowsHtml}
           if (entry.isIntersecting) {
             const row = entry.target;
             observer.unobserve(row);
-            const symbol = row.getAttribute("data-yahoo");
+            const symbol = row.getAttribute("data-simbolo-proyeccion");
             if (symbol) {
               pendingQueue.push({ symbol, row });
               processQueue();
@@ -728,7 +728,7 @@ ${rowsHtml}
       }, { rootMargin: "150px" });
 
       rows.forEach(row => {
-        if (row.hasAttribute("data-yahoo")) {
+        if (row.hasAttribute("data-simbolo-proyeccion")) {
           observer.observe(row);
         }
       });

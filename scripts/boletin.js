@@ -288,9 +288,9 @@ async function companyCard(nemo, smvAll, laya, newsById) {
   const e = issuerOf(nemo);
   if (!e) return null;
   const nemos = e.valores.map((v) => v.nemonico);
-  const yahoo = (e.valores.find((v) => v.nemonico === nemo && v.yahoo) || e.valores.find((v) => v.yahoo))?.yahoo;
-  const lima = e.valores.some((v) => v.nemonico === nemo && /\.LM$/i.test(v.yahoo || ""));
-  const card = { nemo, name: prettyName(e.razonSocial), yahoo, price: null, change: null, currency: null, forecast: null, smv: [], news: [], sentiment: null };
+  const simbolo_proyeccion = (e.valores.find((v) => v.nemonico === nemo && v.simbolo_proyeccion) || e.valores.find((v) => v.simbolo_proyeccion))?.simbolo_proyeccion;
+  const lima = e.valores.some((v) => v.nemonico === nemo && /\.LM$/i.test(v.simbolo_proyeccion || ""));
+  const card = { nemo, name: prettyName(e.razonSocial), simbolo_proyeccion, price: null, change: null, currency: null, forecast: null, smv: [], news: [], sentiment: null };
   if (lima) {
     try {
       const rows = await smvRows(nemo, "2000-01-01", { limit: 2 });
@@ -303,12 +303,12 @@ async function companyCard(nemo, smvAll, laya, newsById) {
     } catch (e) {
       console.error(`SMV ${nemo}: ${e.message}`);
     }
-  } else if (yahoo) {
-    const h = await getJson(`${SITE}/api/historical?symbol=${encodeURIComponent(yahoo)}&range=1y`).catch(() => null);
+  } else if (simbolo_proyeccion) {
+    const h = await getJson(`${SITE}/api/historical?symbol=${encodeURIComponent(simbolo_proyeccion)}&range=1y`).catch(() => null);
     if (h?.live?.price) { card.price = h.live.price; card.change = h.live.changePct ?? null; }
     else if (h?.series?.length) card.price = h.series[h.series.length - 1].close;
     card.currency = h?.currency === "USD" ? "US$" : "S/";
-    const fc = await getJson(`${SITE}/api/forecast?symbol=${encodeURIComponent(yahoo)}&horizon=1`).catch(() => null);
+    const fc = await getJson(`${SITE}/api/forecast?symbol=${encodeURIComponent(simbolo_proyeccion)}&horizon=1`).catch(() => null);
     if (fc?.quantiles) card.forecast = { p50: fc.predictedPrice, p10: fc.quantiles.p10 ?? fc.quantiles.P10, p90: fc.quantiles.p90 ?? fc.quantiles.P90, date: fc.horizonDate, prob: fc.probabilityOfRise };
   }
   const since = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10);

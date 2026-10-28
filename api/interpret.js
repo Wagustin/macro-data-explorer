@@ -9,7 +9,7 @@
 
 import { applyCors, handleRateLimit } from "./_lib/ratelimit.js";
 import { d1Rows } from "./_lib/d1.js";
-import { REMOVED } from "./_lib/removed.js";
+import { CATALOG } from "./search.js";
 
 const NOTES_URL = "https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data/interpretaciones.json";
 let notesCache = null; // { at, data }
@@ -56,7 +56,7 @@ export default async function handler(req, res) {
   }
 
   const symbol = String(body.symbol || "PEN=X").slice(0, 20).toUpperCase();
-  if (REMOVED.has(symbol)) return res.status(404).json({ error: "Activo no disponible." });
+  if (!CATALOG.some((asset) => asset.symbol === symbol)) return res.status(404).json({ error: "Activo no disponible." });
   const assetName = String(body.name || body.historical?.name || symbol).slice(0, 100);
   const macroSymbol = String(body.macroSymbol || "none").slice(0, 20);
   const macroName = String(body.macroName || macroSymbol).slice(0, 100);

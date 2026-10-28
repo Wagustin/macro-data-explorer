@@ -16,7 +16,6 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { CATALOG } from "../api/search.js";
 import { buildForecast } from "../api/forecast.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -29,79 +28,12 @@ const HORIZONS = [1, 3, 6, 12, 24, 36];
 const TARGET_80 = 0.80;
 const TARGET_50 = 0.50;
 
-const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
-
-async function fetchAssetHistory(symbol) {
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=10y&interval=1mo`;
-  const res = await fetch(url, {
-    headers: { "User-Agent": UA, "Accept": "*/*" },
-    signal: AbortSignal.timeout(9000)
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  const res0 = data?.chart?.result?.[0];
-  const ts = res0?.timestamp || [];
-  const closes = res0?.indicators?.quote?.[0]?.close || [];
-  const series = [];
-  for (let i = 0; i < ts.length; i++) {
-    const c = closes[i];
-    if (c !== null && c !== undefined && !isNaN(c) && c > 0) {
-      const d = new Date(ts[i] * 1000);
-      const y = d.getUTCFullYear();
-      const m = String(d.getUTCMonth() + 1).padStart(2, "0");
-      series.push({
-        date: `${y}-${m}-01`,
-        close: Number(c.toFixed(4))
-      });
-    }
-  }
-  return series;
-}
-
-async function loadOrFetchData(symbols) {
-  let cache = {};
-  if (fs.existsSync(CACHE_FILE)) {
-    try {
-      cache = JSON.parse(fs.readFileSync(CACHE_FILE, "utf-8"));
-      const cachedSymbols = Object.keys(cache);
-      const missing = symbols.filter(s => !cache[s] || cache[s].length < 24);
-      if (missing.length === 0) {
-        console.log(`✓ Usando caché local: ${CACHE_FILE} (${cachedSymbols.length} series)`);
-        return cache;
-      }
-      console.log(`Caché encontrada con ${cachedSymbols.length} series. Faltan ${missing.length} símbolos por actualizar.`);
-    } catch (e) {
-      console.warn("Caché inválida, re-descargando.");
-      cache = {};
-    }
-  }
-
-  console.log(`Descargando datos históricos para ${symbols.length} activos...`);
-  const concurrency = 4;
-  for (let i = 0; i < symbols.length; i += concurrency) {
-    const chunk = symbols.slice(i, i + concurrency);
-    await Promise.all(chunk.map(async (sym) => {
-      if (cache[sym] && cache[sym].length >= 24) return;
-      try {
-        const series = await fetchAssetHistory(sym);
-        if (series.length >= 24) {
-          cache[sym] = series;
-          process.stdout.write(`.`);
-        }
-      } catch (err) {
-        // Tickers de macro o no cotizados en Yahoo
-      }
-    }));
-    await new Promise(r => setTimeout(r, 120));
-  }
-  console.log("");
-
-  if (!fs.existsSync(path.dirname(CACHE_FILE))) {
-    fs.mkdirSync(path.dirname(CACHE_FILE), { recursive: true });
-  }
-  fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2));
-  console.log(`✓ Guardada caché con ${Object.keys(cache).length} series válidas en ${CACHE_FILE}`);
-  return cache;
+function loadHistory(symbols) {
+  if (!fs.existsSync(CACHE_FILE)) throw new Error("Falta data/history-120.json; ejecuta scripts/refresh-history.js primero.");
+  const cache = JSON.parse(fs.readFileSync(CACHE_FILE, "utf-8"));
+  const available = symbols.filter((symbol) => cache[symbol]?.length >= 24);
+  console.log(`Series oficiales disponibles: ${available.length}/${symbols.length}`);
+  return Object.fromEntries(available.map((symbol) => [symbol, cache[symbol]]));
 }
 
 function evaluateCoverage(predictions, k, lowerKey, upperKey) {
@@ -158,12 +90,11 @@ async function main() {
   console.log("  PerData — Calibración Empírica de Bandas (Engine v3)");
   console.log("==================================================================\n");
 
-  const tradableSymbols = CATALOG
-    .filter(c => c.category !== "unlisted" && c.symbol !== "PERU_CPI" && c.symbol !== "PERU_GDP")
-    .map(c => c.symbol);
+  const history = JSON.parse(fs.readFileSync(CACHE_FILE, "utf-8"));
+  const tradableSymbols = Object.keys(history);
 
   console.log(`Activos en catálogo cotizado: ${tradableSymbols.length}`);
-  const dataset = await loadOrFetchData(tradableSymbols);
+  const dataset = loadHistory(tradableSymbols);
   const validSymbols = Object.keys(dataset).filter(s => dataset[s] && dataset[s].length >= 36);
   console.log(`Activos con suficiente historia (>= 36 meses): ${validSymbols.length}\n`);
 

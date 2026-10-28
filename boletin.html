@@ -247,7 +247,7 @@
       <p class="pdl-text">Elige hasta 15 empresas de la Bolsa de Valores de Lima. Cada mañana verás su precio, su proyección, sus hechos de importancia y las noticias que las mencionan. Esta sección es parte del <a href="/precios" class="pdl-link">plan Boletín</a> (US$&nbsp;1.99 al mes); con la suscripción gratuita recibes el boletín general. <span id="prefEmail" class="text-ink-soft"></span></p>
       <div id="prefChips" class="flex flex-wrap gap-x-5 gap-y-2" aria-live="polite"></div>
       <label for="prefSearch" class="block text-sm text-ink-soft pt-2">Añadir empresa</label>
-      <input id="prefSearch" type="search" autocomplete="off" placeholder="Busca por nombre o nemónico: Alicorp, BVN, banco…"
+      <input id="prefSearch" type="search" autocomplete="off" placeholder="Busca por nombre o nemónico: Alicorp, bancos…"
         class="w-full px-0 py-2 bg-transparent text-ink" style="border:0;border-bottom:2px solid var(--pd-ink);font-family:var(--pd-font-serif,'Source Serif 4',Georgia,serif);font-size:19px;outline:none" />
       <ul id="prefResults" class="border-t border-rule" style="list-style:none;margin:0;padding:0"></ul>
       <div class="flex items-center gap-4 pt-2">
@@ -429,7 +429,7 @@
         document.getElementById("prefEmail").textContent = "Suscripción: " + pref.email + ".";
         chosen = pref.empresas || [];
         catalog = data.emisores.map(function (e) {
-          var v = e.valores.find(function (x) { return x.yahoo; }) || e.valores[0];
+          var v = e.valores.find(function (x) { return x.simbolo_proyeccion; }) || e.valores[0];
           return { nemo: v.nemonico, nemos: e.valores.map(function (x) { return x.nemonico; }), name: pretty(e.razonSocial), hay: fold(e.razonSocial + " " + e.valores.map(function (x) { return x.nemonico; }).join(" ") + " " + e.sector) };
         });
         drawChips();

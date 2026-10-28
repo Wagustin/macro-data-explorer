@@ -193,16 +193,20 @@ async function testForecast() {
 }
 
 async function testRemovedAssets() {
-  for (const [label, url] of [
-    ["Forecast BVN", "/api/forecast?symbol=BVN"],
-    ["Historical BAP", "/api/historical?symbol=BAP"]
+  for (const [label, url, expectedStatus, sourceLabel] of [
+    ["Historical AAPL retirado", "/api/historical?symbol=AAPL", 404],
+    ["Forecast ^GSPC retirado", "/api/forecast?symbol=%5EGSPC", 404],
+    ["Historical NG=F", "/api/historical?symbol=NG%3DF", 200, "Banco Mundial"],
+    ["Historical EURUSD=X", "/api/historical?symbol=EURUSD%3DX", 200, "Reserva Federal"]
   ]) {
     try {
       const res = await fetchWithTimeout(`${base}${url}`);
       const data = await res.json();
-      record(`${label} retirado`, res.status === 404 && data.error === "Activo no disponible.", `HTTP ${res.status}`);
+      const statusMatches = res.status === expectedStatus;
+      const sourceMatches = !sourceLabel || (typeof data.dailySource === "string" && data.dailySource.includes(sourceLabel));
+      record(label, statusMatches && sourceMatches, `HTTP ${res.status}${sourceLabel ? ` · dailySource: ${data.dailySource || "ausente"}` : ""}`);
     } catch (err) {
-      record(`${label} retirado`, false, `Error: ${err.message}`);
+      record(label, false, `Error: ${err.message}`);
     }
   }
 }

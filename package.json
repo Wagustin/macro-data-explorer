@@ -11,7 +11,6 @@
     "health:prod": "node scripts/health-check.js --base https://perdata.site",
     "smoke": "node scripts/smoke.js",
     "smoke:prod": "node scripts/smoke.js --base https://perdata.site",
-    "catalog:verify": "node scripts/verify-bvl.js && node scripts/build-catalog.js",
     "deploy:check": "node scripts/health-check.js --base https://perdata.site"
   },
   "devDependencies": {
