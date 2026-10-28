@@ -27,6 +27,22 @@
     })();
   </script>
 
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Libre Franklin"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            serif: ['"Source Serif 4"', 'Georgia', 'serif'],
+            mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
 
   <!-- Google Fonts: Libre Franklin, Source Serif 4, IBM Plex Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,7 +53,6 @@
   <script defer src="/motion.js"></script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3342536112010915"
      crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="/tw.css">
 </head>
 <body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 

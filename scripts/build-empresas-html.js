@@ -146,7 +146,27 @@ const template = `<!DOCTYPE html>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Libre+Franklin:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/tw.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            paper: 'var(--pd-paper)',
+            card: 'var(--pd-card)',
+            surface: 'var(--pd-surface)',
+            ink: 'var(--pd-ink)',
+            'ink-soft': 'var(--pd-ink-soft)',
+            rule: 'var(--pd-rule)',
+            peru: 'var(--pd-peru)',
+            pos: 'var(--pd-pos)',
+            neg: 'var(--pd-neg)'
+          }
+        }
+      }
+    }
+  </script>
   <link rel="stylesheet" href="/pd.css" />
 
   <style>
