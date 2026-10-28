@@ -8,6 +8,11 @@ on:
         required: false
         default: /explorer,/noticias,/empresa/ALICORC1,/
         type: string
+      pasadas:
+        description: Number of trace passes per URL (1–6)
+        required: false
+        default: 2
+        type: number
 
 permissions:
   contents: read
@@ -28,6 +33,7 @@ jobs:
       - name: Trace layout shifts
         env:
           URLS: ${{ inputs.urls }}
+          PASADAS: ${{ inputs.pasadas }}
         run: node scripts/cls-trace.mjs
       - name: Add trace details to job summary
         if: always()

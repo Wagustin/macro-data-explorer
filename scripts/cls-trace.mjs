@@ -4,6 +4,10 @@ import { chromium } from "playwright";
 
 const baseUrl = process.env.BASE_URL || "https://perdata.site";
 const defaultUrls = "/explorer,/noticias,/empresa/ALICORC1,/";
+const passCount = Number(process.env.PASADAS || 2);
+if (!Number.isInteger(passCount) || passCount < 1 || passCount > 6) {
+  throw new Error("PASADAS must be an integer between 1 and 6");
+}
 const urls = (process.env.URLS || defaultUrls)
   .split(",")
   .map((url) => url.trim())
@@ -17,7 +21,7 @@ const results = [];
 
 try {
   for (const url of urls) {
-    for (let pass = 1; pass <= 2; pass += 1) {
+    for (let pass = 1; pass <= passCount; pass += 1) {
       const context = await browser.newContext({
         viewport: { width: 412, height: 823 },
         deviceScaleFactor: 2.625,

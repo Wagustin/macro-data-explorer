@@ -728,8 +728,8 @@
     <section id="quoteHeader" class="quote-header px-4 sm:px-6 pt-2.5 pb-2 sm:pt-4 sm:pb-3">
       <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
         <div class="min-w-0">
-          <div class="flex items-center flex-wrap gap-2.5">
-            <h2 id="assetTitle" class="text-lg sm:text-xl font-bold tracking-tight text-black dark:text-white">Compañía de Minas Buenaventura</h2>
+          <div class="quote-title-row flex items-center flex-wrap gap-2.5">
+            <h2 id="assetTitle" title="Compañía de Minas Buenaventura" class="text-lg sm:text-xl font-bold tracking-tight text-black dark:text-white">Compañía de Minas Buenaventura</h2>
             <span id="assetSymbolBadge" class="micro-label font-mono tnum px-1.5 py-0.5 rounded" style="border:1px solid var(--pd-rule);color:var(--pd-ink-soft);background:transparent;">BVN</span>
           </div>
           <p id="assetMeta" class="text-[11px] sm:text-xs text-ink-soft mt-1">Minería · Perú · Moneda: USD · 10 Años de Datos</p>
@@ -1856,7 +1856,9 @@ const state = {
       });
 
       // Update Asset Header
-      document.getElementById("assetTitle").textContent = p.name;
+      const assetTitle = document.getElementById("assetTitle");
+      assetTitle.textContent = p.name;
+      assetTitle.title = p.name;
       document.getElementById("assetSymbolBadge").textContent = p.symbol;
       document.getElementById("assetMeta").textContent = `${p.sector || 'Sector'} · ${p.country || 'Mercado'} · Moneda: ${p.currency} · 10 Años de Datos`;
       document.getElementById("latestPrice").textContent = `${p.currency === 'PEN' ? 'S/ ' : '$'}${lastClose.toFixed(2)}`;

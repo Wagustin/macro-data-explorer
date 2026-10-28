@@ -2088,6 +2088,17 @@ html.pd-motion.hero-ready [data-hero-seq="3"]  { opacity: 1; transform: translat
   }
 }
 
+@media (max-width: 639px) {
+  .quote-title-row { flex-wrap: nowrap; }
+  .quote-title-row #assetTitle {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .quote-title-row #assetSymbolBadge { flex: none; }
+}
+
 /* Precios: tres planes (Gratis · Boletín · Pro) */
 @media (min-width: 900px) {
   .pd-plans { grid-template-columns: 1fr 1fr 1fr; max-width: 1100px; }
