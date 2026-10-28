@@ -1,0 +1,78 @@
+name: "Competición Clasificadores: Laya vs LLM"
+
+on:
+  workflow_dispatch:
+    inputs:
+      criterios:
+        description: "Ruta del archivo de criterios para Laya v2"
+        required: false
+        default: "config/laya-criterios.json"
+      force_laya2:
+        description: "Forzar re-ejecución de Laya v2 aunque laya2.jsonl ya exista"
+        type: boolean
+        required: false
+        default: false
+      classify_missing_llm:
+        description: "Clasificar con LLM los titulares que falten en llm.jsonl"
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  evaluar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Configurar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache modelos Hugging Face
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-laya-typed-decisions
+
+      - name: Instalar dependencias de Laya CPU
+        run: |
+          pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+          pip install --no-cache-dir laya --extra-index-url https://download.pytorch.org/whl/cpu
+
+      - name: Ejecutar Laya v2 sobre dataset histórico
+        run: |
+          if [ "${{ inputs.force_laya2 }}" = "true" ] || [ ! -f "eval/clasificador/laya2.jsonl" ]; then
+            echo "Ejecutando clasificador Laya v2 con criterios ${{ inputs.criterios }}..."
+            python scripts/laya-v2.py --criterios "${{ inputs.criterios }}" --input "eval/clasificador/historico.jsonl" --output "eval/clasificador/laya2.jsonl"
+          else
+            echo "eval/clasificador/laya2.jsonl ya existe. Omitiendo re-ejecución (force_laya2=false)."
+          fi
+
+      - name: Evaluar discrepancias y calcular marcador
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          EXTRA_ARGS=""
+          if [ "${{ inputs.classify_missing_llm }}" = "true" ]; then
+            EXTRA_ARGS="--classify-missing"
+          fi
+          node scripts/eval-classifiers.mjs --criterios "${{ inputs.criterios }}" $EXTRA_ARGS
+
+      - name: Guardar reportes y resultados en el repositorio
+        run: |
+          git config user.name "perdata-bot"
+          git config user.email "perdata-bot@users.noreply.github.com"
+          git add eval/clasificador/
+          git diff --cached --quiet || (git commit -m "eval(clasificador): actualizados reportes y marcador de competición [skip ci]" && git pull --rebase -q && git push)

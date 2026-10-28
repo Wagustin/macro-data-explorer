@@ -1,0 +1,79 @@
+{
+  "version": "2.0.0",
+  "descripcion": "Criterios afinables para el clasificador Laya v2 (typed-decisions) en PerData",
+  "relevancia": {
+    "type": "choice",
+    "comentario": "Evalúa el impacto económico real alineado al prompt del modelo de lenguaje. NINGUNA descarta el titular.",
+    "instructions": "Evalúa la relevancia de esta noticia para la economía, las finanzas y la bolsa del Perú y mercados mundiales:",
+    "criteria": {
+      "ALTA": "Puede influir de forma directa en los mercados peruanos (dólar, tasas, bolsa de Lima, metales, petróleo, empresas, finanzas públicas) o mundiales (guerras, EE. UU., China, Fed, aranceles, OPEP, IA y grandes tecnológicas, elecciones). Datos macroeconómicos de países grandes (empleo, inflación, PBI).",
+      "MEDIA": "Presupuesto, subsidios, impuestos, resúmenes de mercados, salidas a bolsa, inversiones de empresas, comercio, consumo o finanzas con impacto moderado o sectorial.",
+      "BAJA": "Noticias económicas menores o con impacto indirecto. Ante la duda razonable frente a sucesos irrelevantes, clasificar como BAJA.",
+      "NINGUNA": "Sucesos sin efecto económico alguno: procesiones, deportes, espectáculos, farándula, crónica policial, crimen común, clima del día, curiosidades o trámites personales."
+    }
+  },
+  "tema": {
+    "type": "choice",
+    "comentario": "Categorías canónicas de PerData sin comodines vagos como 'Otros'.",
+    "instructions": "Clasifica el tema principal de la noticia en una de las categorías macrofinancieras oficiales:",
+    "criteria": {
+      "Dólar y BCRP": "Política monetaria, tasas de interés de referencia, tipo de cambio sol/dólar, reservas internacionales (RIN) o decisiones del BCRP.",
+      "Economía y fiscal": "PBI, recaudación tributaria (Sunat), presupuesto público, inflación/IPC, empleo formal o política fiscal.",
+      "Minería y metales": "Producción minera, exportaciones y cotización de cobre, oro, plata, zinc, proyectos mineros o canon.",
+      "Bolsa y empresas": "Bolsa de Valores de Lima (BVL), acciones, dividendos, utilidades trimestrales, emisiones de bonos, fusiones y adquisiciones corporativas.",
+      "Energía": "Hidrocarburos, petróleo, gas natural de Camisea, electricidad, tarifas energéticas o proyectos de generación.",
+      "Mundo": "Hechos internacionales que mueven activos peruanos: Wall Street, Reserva Federal (Fed), aranceles, China, OPEP, guerras o tecnológicas."
+    }
+  },
+  "sentimiento": {
+    "type": "choice",
+    "comentario": "Sentimiento explícito para la economía y los mercados peruanos, no para las personas o protagonistas.",
+    "instructions": "Determina el sentimiento o impacto de esta noticia para la economía y los mercados peruanos (no para las personas de la noticia):",
+    "criteria": {
+      "POSITIVO": "Favorable para la economía y los mercados peruanos (no para las personas de la noticia): aumento de exportaciones, mayor inversión, generación de empleo, superávit comercial, utilidades corporativas, subida del cobre o crecimiento del PBI.",
+      "NEGATIVO": "Desfavorable para la economía y los mercados peruanos (no para las personas de la noticia): subida de inflación, recorte de producción, caída de cotización de metales, pérdidas corporativas, déficit fiscal, incertidumbre o desaceleración.",
+      "NEUTRO": "Informativo, datos balanceados o sin efecto claro sobre los mercados peruanos: anuncios protocolares, variaciones esperadas o hechos sin impacto económico neto definido."
+    }
+  },
+  "empresas": {
+    "comentario": "Reglas y alias canónicos para vincular menciones en titulares a nemónicos oficiales de la BVL.",
+    "alias_map": {
+      "bcp": "CREDITC1",
+      "banco de credito": "CREDITC1",
+      "credicorp": "BAP",
+      "buenaventura": "BVN",
+      "minas buenaventura": "BVN",
+      "southern": "SCCO",
+      "southern copper": "SCCO",
+      "southern peru": "SCCO",
+      "alicorp": "ALICORC1",
+      "volcan": "VOLCABC1",
+      "ferreycorp": "FERREYC1",
+      "ferreyros": "FERREYC1",
+      "minsur": "MINSURI1",
+      "cerro verde": "CVERDEC1",
+      "backus": "BACKUSI1",
+      "unacem": "UNACEMC1",
+      "union andina de cementos": "UNACEMC1",
+      "inretail": "INRETC1",
+      "interbank": "INTERBC1",
+      "ifs": "IFS",
+      "intercorp": "IFS",
+      "petroperu": "PETROBC1",
+      "petro peru": "PETROBC1",
+      "petroleos del peru": "PETROBC1",
+      "bbva": "BBVAC1",
+      "banco continental": "BBVAC1",
+      "scotiabank": "SCOTIAC1",
+      "aenza": "AENZAC1",
+      "grana y montero": "AENZAC1",
+      "aceros arequipa": "CORAREI1",
+      "siderperu": "SIDERC1",
+      "sider peru": "SIDERC1",
+      "pacasmayo": "CPAC",
+      "cementos pacasmayo": "CPAC",
+      "luz del sur": "LUZSURC1",
+      "engie": "ENGPEC1"
+    }
+  }
+}
