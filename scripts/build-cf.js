@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { execFileSync } from "child_process";
 import { fileURLToPath } from "url";
 import { transform } from "esbuild";
 
@@ -7,6 +8,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, "..");
 const publicDir = path.join(rootDir, "public");
+const tailwindInput = path.join(rootDir, "src", "tailwind.css");
+const tailwindOutput = path.join(publicDir, "tw.css");
+
+fs.rmSync(publicDir, { recursive: true, force: true });
 
 function buildSitemap() {
   const sitemapPath = path.join(rootDir, "sitemap.xml");
@@ -86,6 +91,14 @@ const STATIC_HEADERS = `/*.js
 if (!fs.existsSync(publicDir)) {
   fs.mkdirSync(publicDir, { recursive: true });
 }
+
+execFileSync("npx", [
+  "tailwindcss",
+  "-c", path.join(rootDir, "tailwind.config.cjs"),
+  "-i", tailwindInput,
+  "-o", tailwindOutput,
+  "--minify"
+], { cwd: rootDir, stdio: "inherit" });
 
 for (const file of FILES_TO_COPY) {
   const src = path.join(rootDir, file);

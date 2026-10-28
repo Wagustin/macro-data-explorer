@@ -1,0 +1,24 @@
+name: CSS coverage
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: Base URL to inspect
+        required: true
+        type: string
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/css-coverage.mjs
+        env:
+          BASE_URL: ${{ inputs.base_url }}
