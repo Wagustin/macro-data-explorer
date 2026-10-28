@@ -22,6 +22,30 @@ await fs.mkdir(outputDir, { recursive: true });
 
 const browser = await chromium.launch({ headless: true });
 const failures = [];
+const jsErrors = new Map(pages.map(([, route]) => [route, []]));
+const failedRequests = new Map(pages.map(([, route]) => [route, []]));
+const graphRoutes = new Set(["/", "/explorer", "/empresa/ALICORC1"]);
+
+function isIgnoredThirdParty(url) {
+  if (!url) return false;
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase();
+    if (/(^|\.)(adsbygoogle|googlesyndication|googleadservices)\.com$/.test(host)
+      || /(^|\.)fonts\.(googleapis|gstatic)\.com$/.test(host)
+      || host === "static.cloudflareinsights.com"
+      || host === "cdn.jsdelivr.net") return true;
+    return host !== "perdata.site" && !host.endsWith(".perdata.site")
+      && host !== baseUrl.hostname && !host.endsWith(".workers.dev");
+  } catch {
+    return false;
+  }
+}
+
+function recordJsError(route, message) {
+  const routeErrors = jsErrors.get(route);
+  if (routeErrors) routeErrors.push(message);
+}
 
 async function prepareCapture(page) {
   await page.evaluate(async () => {
@@ -55,6 +79,20 @@ try {
         colorScheme: darkTheme ? "dark" : "light",
         reducedMotion: "reduce"
       });
+      page.on("pageerror", error => {
+        const message = error.stack || error.message;
+        const source = error.stack?.match(/https?:\/\/[^\s)]+/)?.[0];
+        if (!isIgnoredThirdParty(source)) recordJsError(route, message);
+      });
+      page.on("console", message => {
+        if (message.type() !== "error") return;
+        const source = message.location().url;
+        if (!isIgnoredThirdParty(source)) recordJsError(route, message.text());
+      });
+      page.on("requestfailed", request => {
+        if (isIgnoredThirdParty(request.url())) return;
+        failedRequests.get(route)?.push(`${request.url()}: ${request.failure()?.errorText || "request failed"}`);
+      });
       const response = await page.goto(new URL(route, baseUrl).href, { waitUntil: "networkidle", timeout: 60000 });
       if (!response?.ok()) {
         failures.push(`${route} (${viewport.name}) returned ${response?.status() ?? "no response"}`);
@@ -66,6 +104,31 @@ try {
       }));
       if (dimensions.scrollWidth > dimensions.innerWidth) {
         failures.push(`${route} (${viewport.name}) overflows: ${dimensions.scrollWidth}px > ${dimensions.innerWidth}px`);
+      }
+
+      if (graphRoutes.has(route) && viewport.name === "desktop") {
+        const hasVisibleChart = await page.evaluate(() => {
+          for (const canvas of document.querySelectorAll("canvas")) {
+            if (canvas.width <= 100 || canvas.height <= 100) continue;
+            try {
+              const context = canvas.getContext("2d", { willReadFrequently: true });
+              if (!context) continue;
+              let visible = 0;
+              for (let i = 0; i < 200; i += 1) {
+                const x = Math.floor((i * 97 % 199) / 198 * (canvas.width - 1));
+                const y = Math.floor((i * 151 % 197) / 196 * (canvas.height - 1));
+                const [red, green, blue, alpha] = context.getImageData(x, y, 1, 1).data;
+                if (alpha > 0 && !(red >= 245 && green >= 245 && blue >= 245)) visible += 1;
+              }
+              if (visible / 200 >= 0.02) return true;
+            } catch {
+              // Cross-origin or tainted canvases cannot be inspected.
+            }
+          }
+          return false;
+        });
+        console.log(`GRAFICO ${route}: ${hasVisibleChart ? "ok" : "vacío"}`);
+        if (!hasVisibleChart) failures.push(`${route} has no visible chart`);
       }
 
       const themeSuffix = darkTheme ? "-dark" : "";
@@ -105,6 +168,15 @@ try {
   }
 } finally {
   await browser.close();
+}
+
+for (const [route, errors] of jsErrors) {
+  console.log(`ERRORES JS ${route}: ${errors.length}`);
+  for (const error of errors.slice(0, 5)) console.error(`  ${error}`);
+  if (errors.length) failures.push(`${route} has ${errors.length} JavaScript error(s)`);
+}
+for (const [route, requests] of failedRequests) {
+  for (const request of requests) failures.push(`${route} failed request: ${request}`);
 }
 
 if (failures.length) {

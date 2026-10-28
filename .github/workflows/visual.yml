@@ -46,6 +46,8 @@ jobs:
           npm i --no-save --package-lock=false playwright pixelmatch@5 pngjs
           npx playwright install --with-deps chromium
       - name: Capture current pages
+        id: capture
+        continue-on-error: true
         run: node scripts/visual-capture.js
         env:
           BASE_URL: ${{ inputs.base_url || 'https://perdata.site' }}
@@ -63,7 +65,11 @@ jobs:
         if: inputs.comparar_con != ''
         run: node scripts/visual-diff.js visual-baseline visual-current
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: visual-${{ inputs.etiqueta }}
           path: visual-current
           if-no-files-found: error
+      - name: Fail after uploading captures
+        if: steps.capture.outcome == 'failure'
+        run: exit 1
