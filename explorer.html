@@ -49,8 +49,6 @@
   <!-- Chart.js & Componente de Gráfico Propio -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script src="pd-chart.js"></script>
-  <!-- SheetJS (xlsx) for instant client-side Excel downloads -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <style>
     html, body {
@@ -2275,15 +2273,56 @@ const state = {
       document.getElementById("tableSummary").textContent = `Mostrando ${series.length} observaciones históricas + ${forecastCount} pasos proyectados del modelo.`;
     }
 
+    let xlsxLoadPromise;
+
+    function loadXLSX() {
+      if (window.XLSX) return Promise.resolve(window.XLSX);
+      if (xlsxLoadPromise) return xlsxLoadPromise;
+
+      xlsxLoadPromise = new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
+        script.async = true;
+        script.onload = () => window.XLSX
+          ? resolve(window.XLSX)
+          : reject(new Error("SheetJS loaded without exposing XLSX"));
+        script.onerror = () => reject(new Error("Could not load SheetJS"));
+        document.head.appendChild(script);
+      }).catch((error) => {
+        xlsxLoadPromise = null;
+        throw error;
+      });
+
+      return xlsxLoadPromise;
+    }
+
+    function prefetchXLSX() {
+      if (window.XLSX || document.querySelector('link[rel="prefetch"][href="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"]')) return;
+      const link = document.createElement("link");
+      link.rel = "prefetch";
+      link.href = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
+      link.as = "script";
+      document.head.appendChild(link);
+    }
+
     // Excel Export Setup (With Historical + Forecast Sheets)
     function setupExportExcel() {
-      const handler = () => {
+      const handler = async () => {
         if (window.MDE_Auth && !window.MDE_Auth.gate("excel")) return;
         const p = state.primaryData;
         const m = state.macroData;
         const f = state.forecastData;
         const interp = state.interpretationData?.interpretation || state.interpretationData;
         if (!p || !p.series) return;
+
+        let XLSX;
+        try {
+          XLSX = await loadXLSX();
+        } catch (error) {
+          console.error("Excel export library failed to load:", error);
+          showLoadError("Excel", "No se pudo cargar la librería de exportación. Inténtalo nuevamente.");
+          return;
+        }
 
         const wb = XLSX.utils.book_new();
 
@@ -2382,6 +2421,8 @@ const state = {
 
       btnExportExcel.addEventListener("click", handler);
       btnExportExcelTop.addEventListener("click", handler);
+      btnExportExcel.addEventListener("mouseenter", prefetchXLSX, { once: true });
+      btnExportExcelTop.addEventListener("mouseenter", prefetchXLSX, { once: true });
     }
   </script>
   <!-- Mobile Menu Toggle -->
