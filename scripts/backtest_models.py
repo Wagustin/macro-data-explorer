@@ -103,7 +103,7 @@ def run_chronos2_epu(items):
         kept.append((sym, t, np.asarray([float(p["close"]) for p in series], dtype=np.float32)))
     frame = pd.DataFrame(frames)
     pipe = Chronos2Pipeline.from_pretrained("amazon/chronos-2", device_map="cpu")
-    predicted = pipe.predict_df(frame, prediction_length=MAX_H, quantile_levels=QUANTILES)
+    predicted = pipe.predict_df(frame, id_column="id", timestamp_column="timestamp", target="target", prediction_length=MAX_H, quantile_levels=QUANTILES)
     # predict_df returns one row per future timestamp; quantile columns are named by level.
     qcols = [str(q) for q in QUANTILES]
     if not all(c in predicted.columns for c in qcols):
