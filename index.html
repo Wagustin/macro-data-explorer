@@ -7,6 +7,7 @@
   <title>PerData Perú · Dólar, cobre y BVL con proyecciones</title>
   <meta name="description" content="Datos de mercado y macroeconomía de Perú con proyecciones probabilísticas. Series históricas de tipo de cambio, cobre y cotizaciones de acciones de la BVL." />
   <link rel="canonical" href="https://perdata.site/" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
   <!-- Favicon -->
   <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -26,6 +27,47 @@
         document.documentElement.classList.add("light");
       }
     })();
+  </script>
+
+  <script>
+    window.__pdEarly = {
+      hist: fetch('/api/historical?symbol=PEN=X&range=1y&interval=1mo').then(function (r) { return r.json(); }).catch(function () { return null; }),
+      fc1: fetch('/api/forecast?symbol=PEN=X&horizon=1').then(function (r) { return r.json(); }).catch(function () { return null; }),
+      fc3: fetch('/api/forecast?symbol=PEN=X&horizon=3').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+    };
+    function paintEarlyCard() {
+      window.__pdEarly.fc1.then(function (fc) {
+        var q = fc && fc.quantiles;
+        if (!q) return;
+        var fmt = function (v) { return typeof v === 'number' && !isNaN(v) ? v.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—'; };
+        var p10 = document.getElementById('pdCardP10'), p50 = document.getElementById('pdCardP50'), p90 = document.getElementById('pdCardP90');
+        if (p10) p10.textContent = fmt(q.p10);
+        if (p50) p50.textContent = fmt(q.p50);
+        if (p90) p90.textContent = fmt(q.p90);
+        window.__pdEarly.hist.then(function (hist) {
+          var series = hist && hist.series || [], byMonth = {}, months = [];
+          series.forEach(function (pt) {
+            if (!pt || typeof pt.close !== 'number') return;
+            var month = String(pt.date || '').slice(0, 7);
+            if (!(month in byMonth)) months.push(month);
+            byMonth[month] = pt;
+          });
+          var last = months.length ? byMonth[months[months.length - 1]] : null;
+          var change = document.getElementById('pdCardChange');
+          if (change && last && last.close && typeof q.p50 === 'number') {
+            var pct = (q.p50 - last.close) / last.close * 100;
+            change.textContent = (pct >= 0 ? '+' : '') + pct.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' % est.';
+          }
+        });
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('readystatechange', function () {
+        if (document.readyState === 'interactive') paintEarlyCard();
+      }, { once: true });
+    } else {
+      paintEarlyCard();
+    }
   </script>
 
 
@@ -735,10 +777,10 @@
         return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
       }
 
-      Promise.all([
-        fetch('/api/historical?symbol=PEN=X&range=1y&interval=1mo').then(function (r) { return r.json(); }),
-        fetch('/api/forecast?symbol=PEN=X&horizon=1').then(function (r) { return r.json(); }),
-        // 3-month path only for the chart line, so it follows real monthly points
+      var early = window.__pdEarly;
+      Promise.all(early ? [early.hist, early.fc1, early.fc3] : [
+        fetch('/api/historical?symbol=PEN=X&range=1y&interval=1mo').then(function (r) { return r.json(); }).catch(function () { return null; }),
+        fetch('/api/forecast?symbol=PEN=X&horizon=1').then(function (r) { return r.json(); }).catch(function () { return null; }),
         fetch('/api/forecast?symbol=PEN=X&horizon=3').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
       ]).then(function (res) {
         var hist = res[0];
