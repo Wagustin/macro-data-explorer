@@ -27,6 +27,7 @@ const CLEAN_PAGES = {
   "/cuenta": "cuenta.html",
   "/restablecer": "restablecer.html",
   "/privacidad": "privacidad.html",
+  "/nosotros": "nosotros.html",
   "/boletin": "boletin.html",
   "/empresas": "empresas.html",
   "/mercado": "mercado.html",

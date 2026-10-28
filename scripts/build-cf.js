@@ -45,6 +45,7 @@ const FILES_TO_COPY = [
   "cuenta.html",
   "restablecer.html",
   "privacidad.html",
+  "nosotros.html",
   "terms.html",
   "404.html",
   "empresas.html",

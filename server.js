@@ -51,6 +51,7 @@ const PAGES = {
   "/cuenta": "cuenta.html",
   "/restablecer": "restablecer.html",
   "/privacidad": "privacidad.html",
+  "/nosotros": "nosotros.html",
   "/empresas": "empresas.html",
   "/mercado": "mercado.html",
   "/estado": "estado.html",

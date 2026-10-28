@@ -34,6 +34,7 @@ const PAGES = [
   "/precios",
   "/terms",
   "/privacidad",
+  "/nosotros",
   "/cuenta",
   "/estado",
   "/mercado",

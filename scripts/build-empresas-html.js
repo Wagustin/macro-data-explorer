@@ -542,6 +542,7 @@ ${rowsHtml}
         </a>
         <nav class="flex flex-wrap items-center gap-6 text-xs text-ink-soft" aria-label="Navegación secundaria">
           <a href="/terms" class="hover:text-ink transition no-underline">Términos</a>
+          <a href="/nosotros" class="hover:text-ink transition no-underline">Quiénes somos</a>
           <a href="/privacidad" class="hover:text-ink transition no-underline">Privacidad</a>
           <a href="mailto:soporte@perdata.site" class="hover:text-ink transition no-underline">Contacto</a>
         </nav>
