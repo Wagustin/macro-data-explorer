@@ -49,7 +49,7 @@
     }
     .company-meta {
       font-family: var(--pd-font-ui);
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.05em;
       color: var(--pd-ink-soft);
@@ -82,7 +82,7 @@
     .price-var.neg { color: var(--pd-neg); }
     .price-var.none { color: var(--pd-ink-soft); }
     .price-date {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--pd-ink-muted);
       margin-bottom: 16px;
       min-height: 13px;
@@ -97,7 +97,7 @@
       margin-bottom: 16px;
     }
     .price-2nd-label {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--pd-ink-soft);
     }
     .price-2nd-val {
@@ -142,7 +142,7 @@
       height: 100%;
     }
     .chart-label {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--pd-ink-muted);
       margin-top: 6px;
       text-align: right;
@@ -175,7 +175,7 @@
       gap: 12px 16px;
     }
     .dato-label {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--pd-ink-muted);
       margin-bottom: 1px;
       font-family: var(--pd-font-ui);
@@ -287,11 +287,11 @@ html.dark .ui-switch {
     .hechos-list li { border-bottom: 1px solid var(--pd-rule); padding: 12px 0; }
     .hechos-list a { color: var(--pd-ink); text-decoration: none; display: grid; gap: 3px; }
     .hechos-list a:hover .hecho-titulo { text-decoration: underline; text-underline-offset: 3px; }
-    .hecho-meta { font-family: var(--pd-font-mono, monospace); font-size: 11px; color: var(--pd-ink-soft); font-variant-numeric: tabular-nums; }
+    .hecho-meta { font-family: var(--pd-font-mono, monospace); font-size: 12px; color: var(--pd-ink-soft); font-variant-numeric: tabular-nums; }
     .hecho-titulo { font-size: 14px; line-height: 1.45; }
     .hecho-tipo { font-size: 12px; color: var(--pd-ink-soft); }
     .hechos-empty { font-size: 13px; color: var(--pd-ink-soft); }
-    .hechos-source { font-size: 11px; color: var(--pd-ink-soft); margin: 8px 0 0; }
+    .hechos-source { font-size: 12px; color: var(--pd-ink-soft); margin: 8px 0 0; }
     #hechosList { min-height: 240px; }
     .pd-ad.is-armed[data-ad-kind="display"] { min-height: 280px; }
 </style>
@@ -383,7 +383,7 @@ html.dark .ui-switch {
         </div>
 
         <div class="price-block">
-          <div class="text-[11px] text-ink-soft mb-1 font-mono" id="exchangeLabel">BVL</div>
+          <div class="text-xs text-ink-soft mb-1 font-mono" id="exchangeLabel">BVL</div>
           <div class="price-row">
             <span class="price-main" id="priceMain">—</span>
             <span class="price-var none" id="priceVar">—</span>
@@ -426,8 +426,8 @@ html.dark .ui-switch {
               Historial gráfico no disponible para este emisor
             </div>
           </div>
-          <div class="flex justify-between items-center mt-2">
-            <span class="text-[10px] text-ink-soft font-mono" id="chartMinMax"></span>
+          <div class="flex flex-wrap justify-between items-center gap-x-3 gap-y-1 mt-2">
+            <span class="text-xs text-ink-soft font-mono" id="chartMinMax"></span>
             <p class="chart-label" id="chartLabel">Historial 90 días · Datos de mercado (cierre)</p>
           </div>
         </div>
@@ -544,7 +544,7 @@ html.dark .ui-switch {
           <a href="mailto:soporte@perdata.site" class="hover:text-ink transition no-underline">Contacto</a>
         </nav>
       </div>
-      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 text-[11px] text-ink-soft leading-relaxed">
+      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 text-xs text-ink-soft leading-relaxed">
         <span class="font-medium text-ink shrink-0">© 2026 PerData</span>
         <p class="max-w-2xl m-0 text-ink-soft">
           Información financiera y cuantitativa con fines estrictamente informativos y de investigación. No constituye asesoramiento de inversión ni oferta pública de valores.

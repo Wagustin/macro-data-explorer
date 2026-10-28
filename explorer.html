@@ -737,10 +737,10 @@
         <div class="text-left sm:text-right">
           <div class="flex items-baseline gap-2 justify-start sm:justify-end">
             <div id="latestPrice" class="text-xl sm:text-2xl font-bold font-mono tnum text-black dark:text-white">$34.71</div>
-            <span id="liveChangePct" class="hidden text-xs font-mono tnum font-semibold px-1.5 py-0.5 rounded text-rose-600 dark:text-rose-400 bg-rose-500/10">-3.69%</span>
+            <span id="liveChangePct" class="hidden text-xs font-mono tnum font-semibold px-1.5 py-0.5 rounded text-rose-700 dark:text-rose-300 bg-rose-500/10">-3.69%</span>
           </div>
           <div id="latestDate" class="text-[10px] text-ink-soft mt-0.5 font-mono tnum">Último cierre registrado</div>
-          <div id="liveQuoteNote" class="hidden text-[10px] text-emerald-600 dark:text-emerald-400 mt-0.5">
+          <div id="liveQuoteNote" class="hidden text-xs text-emerald-800 dark:text-emerald-300 mt-0.5">
             <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 align-middle"></span>
             <span id="liveQuoteText">En vivo</span>
           </div>
@@ -1872,7 +1872,7 @@ const state = {
       if (p.stale) {
         liveEl.classList.add("hidden");
         liveNote.classList.remove("hidden");
-        liveNote.className = "text-[10px] text-amber-600 dark:text-amber-400 mt-0.5 flex items-center gap-1";
+        liveNote.className = "text-xs text-amber-600 dark:text-amber-400 mt-0.5 flex items-center gap-1";
         liveNote.innerHTML = '<span class="inline-block w-1.5 h-1.5 rounded-full bg-amber-500"></span><span id="liveQuoteText">datos guardados</span>';
       } else if (p.live && p.live.price !== null && p.live.price !== undefined) {
         if (typeof p.live.changePct === "number") {

@@ -294,7 +294,7 @@ const template = `<!DOCTYPE html>
     }
     .row-inner.muted .company-name,
     .row-inner.muted .nemo {
-      opacity: 0.45;
+      color: var(--pd-ink-soft);
     }
     @media (max-width: 768px) {
       .table-head {
