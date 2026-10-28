@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: smv-precios
@@ -30,3 +30,11 @@ jobs:
           node-version: 22
       - name: Cierres de los últimos dos meses
         run: node scripts/fetch-smv-precios.js
+      - name: Calcular estado de los emisores
+        run: node scripts/build-empresas-estado.js
+      - name: Guardar el estado actualizado
+        run: |
+          git config user.name "perdata-bot"
+          git config user.email "perdata-bot@users.noreply.github.com"
+          git add data/empresas-estado.json
+          git diff --cached --quiet || (git commit -m "data(smv): estado de emisores $(date -u +%F)" && git push)
