@@ -63,7 +63,9 @@ try {
           }
           collectRules(style.sheet.cssRules);
           const classes = new Set(
-            [...document.querySelectorAll("*")].flatMap((element) => [...element.classList])
+            [...document.querySelectorAll("*")]
+              .flatMap((element) => [...element.classList])
+              .filter((name) => name !== "adsbygoogle" && name !== "light" && name !== "dark" && !name.startsWith("pd-"))
           );
           const escapedClasses = [...classes].map((name) => [name, CSS.escape(name)]);
           const missing = escapedClasses
