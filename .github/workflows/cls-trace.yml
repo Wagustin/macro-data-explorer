@@ -45,6 +45,12 @@ jobs:
           for (const result of results) {
             const page = new URL(result.url).pathname || '/';
             lines.push(`### ${page} — pass ${result.pass} (CLS ${result.cls.toFixed(4)})`, '');
+            if (result.finalHeights) {
+              lines.push('Final element heights (px):', '');
+              lines.push('| Asset title | Asset meta | Quote header | News status |');
+              lines.push('| ---: | ---: | ---: | ---: |');
+              lines.push(`| ${result.finalHeights.assetTitle ?? '—'} | ${result.finalHeights.assetMeta ?? '—'} | ${result.finalHeights.quoteHeader ?? '—'} | ${result.finalHeights.newsStatus ?? '—'} |`, '');
+            }
             if (result.navigationError) lines.push(`Navigation error: ${result.navigationError}`, '');
             lines.push('| Time (ms) | Value | Source | Previous rect → current rect |');
             lines.push('| ---: | ---: | --- | --- |');

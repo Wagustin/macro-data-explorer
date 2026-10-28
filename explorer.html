@@ -311,6 +311,11 @@
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
     }
+
+    .quote-header { min-height: 160px; }
+    @media (min-width: 640px) {
+      .quote-header { min-height: 96px; }
+    }
     html.dark .terminal-surface {
       box-shadow: 0 0 0 0.5px rgba(255,255,255,0.10), 0 8px 24px -16px rgba(0,0,0,0.55);
       backdrop-filter: blur(12px);
@@ -720,7 +725,7 @@
     </section>
 
     <!-- Quote Header: Asset Title & Price -->
-    <section class="px-4 sm:px-6 pt-2.5 pb-2 sm:pt-4 sm:pb-3">
+    <section id="quoteHeader" class="quote-header px-4 sm:px-6 pt-2.5 pb-2 sm:pt-4 sm:pb-3">
       <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
         <div class="min-w-0">
           <div class="flex items-center flex-wrap gap-2.5">
@@ -770,7 +775,7 @@
       </div>
 
       <!-- Panel Macro Aparte (Visible si hay macro activo, ~90px desktop / 70px mobile) -->
-      <div id="macroPanel" class="pd-terminal-panel mt-4 p-3.5 sm:p-4 flex flex-col gap-1.5">
+      <div id="macroPanel" class="pd-terminal-panel mt-4 p-3.5 sm:p-4 flex flex-col gap-1.5" style="min-height: 95px;">
         <div class="flex items-center justify-between text-[11px]">
           <div class="flex items-center gap-2">
             <span class="w-2 h-0.5" style="background: var(--pd-ink-soft);"></span>

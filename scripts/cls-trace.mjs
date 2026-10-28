@@ -105,13 +105,27 @@ try {
         navigationError = error.message;
       }
       await page.waitForTimeout(6000);
-      const trace = await page.evaluate(() => window.__clsTrace || { shifts: [], mutations: [] });
+      const trace = await page.evaluate(() => {
+        const state = window.__clsTrace || { shifts: [], mutations: [] };
+        const height = (selector) => {
+          const element = document.querySelector(selector);
+          return element ? element.getBoundingClientRect().height : null;
+        };
+        state.finalHeights = {
+          assetTitle: height("#assetTitle"),
+          assetMeta: height("#assetMeta"),
+          quoteHeader: height("#quoteHeader"),
+          newsStatus: height("#newsStatus"),
+        };
+        return state;
+      });
       results.push({
         url,
         pass,
         cls: trace.shifts.reduce((sum, shift) => sum + shift.value, 0),
         shifts: trace.shifts,
         mutations: trace.mutations,
+        finalHeights: trace.finalHeights,
         navigationError,
       });
       await context.close();
