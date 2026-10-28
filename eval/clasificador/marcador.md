@@ -1,6 +1,6 @@
 # Marcador Oficial: Competición de Clasificadores
 
-Evaluación ciega contra arbitraje humano oficial (80 titulares etiquetados por Agustín).
+Evaluación ciega contra arbitraje humano oficial (80 titulares etiquetados a ciegas por Claude, criterio experto de referencia (no etiquetas de usuarios); la muestra incluye 60 titulares con discrepancias, por lo que las cifras no son la precisión en producción).
 
 ## 1. Tabla Comparativa de Rendimiento
 
@@ -33,3 +33,15 @@ Evaluación ciega contra arbitraje humano oficial (80 titulares etiquetados por 
 - Modelo Laya: `convaiinnovations/laya` (subfolder: `typed-decisions`).
 - Modelo LLM: `nvidia/nemotron-3-ultra-550b-a55b` (fallback `models/gemini-2.5-flash`).
 - Fecha de reporte: 2026-10-28.
+
+## 3. Decisión (28-oct-2026)
+
+Prueba limpia sobre 40 titulares reservados (criterios de Laya v2.1.0 ajustados solo con los otros 40), exactitud:
+
+| Campo | Laya v1 | Laya v2.1 | Modelo de lenguaje |
+| :--- | :--- | :--- | :--- |
+| Relevancia | 30% | 30% | 50% |
+| Tema | 42% | 45% | 55% |
+| Sentimiento | 22% | 25% | 55% |
+
+El modelo de lenguaje clasifica relevancia, tema y sentimiento; Laya no mejora con instrucciones y se queda sin tarea de clasificación. La detección de empresas es por nombre y da el mismo resultado en todos. Con 40 titulares la diferencia entre tema (45% y 55%) es ruido; la de sentimiento y relevancia no.
