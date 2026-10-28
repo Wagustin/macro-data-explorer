@@ -43,6 +43,19 @@ async function readSupabase(desde) {
   }));
 }
 
+// D1 is a read replica fed by the daily sync; when it lags Supabase (failed sync), the source of truth wins
+async function latestSupabaseDate() {
+  const base = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
+  const key = process.env.SUPABASE_SERVICE_KEY || "";
+  if (!base || !key) return "";
+  const response = await fetch(`${base}/rest/v1/cotizaciones_smv?select=fecha&order=fecha.desc&limit=1`, {
+    headers: { apikey: key, Authorization: `Bearer ${key}` },
+    signal: AbortSignal.timeout(5000),
+  });
+  if (!response.ok) return "";
+  return (await response.json())[0]?.fecha || "";
+}
+
 function summarize(rows) {
   const bySymbol = new Map();
   for (const row of rows) {
@@ -101,7 +114,8 @@ export default async function handler(req, res) {
   try {
     const desde = twentyOneDaysAgo();
     let rows = await readD1(desde);
-    if (!rows?.length) rows = await readSupabase(desde);
+    const newest = rows?.length ? rows.reduce((max, row) => (row.fecha > max ? row.fecha : max), "") : "";
+    if (!rows?.length || newest < await latestSupabaseDate().catch(() => "")) rows = await readSupabase(desde);
     const data = summarize(rows);
     marketCache = { data, at: Date.now() };
     return res.status(200).json(data);
