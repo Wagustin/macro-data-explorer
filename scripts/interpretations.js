@@ -9,6 +9,7 @@ import { fileURLToPath } from "url";
 import { CATALOG } from "../api/search.js";
 import { askJSON, grounded } from "./llm.js";
 import { ENGINE } from "../api/_lib/engine.js";
+import { syncD1 } from "./d1-sync.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (f, d) => { try { return JSON.parse(fs.readFileSync(path.join(ROOT, "data", f), "utf8")); } catch (e) { return d; } };
@@ -69,10 +70,12 @@ Devuelve SOLO este JSON: {"notas":{"SIMBOLO":"nota", ...}} con un elemento por c
   }
 }
 
+const actualizado = new Date().toISOString();
 fs.writeFileSync(path.join(ROOT, "data", "interpretaciones.json"), JSON.stringify({
-  actualizado: new Date().toISOString(),
+  actualizado,
   modelo: model,
   nota: `Notas redactadas con IA a partir de la proyección de ${ENGINE.label}, la evolución reciente y titulares o hechos de la SMV que mencionan al activo.`,
   notas: notes,
 }) + "\n");
+await syncD1("interpretaciones", Object.entries(notes).map(([symbol, texto]) => ({ symbol, texto, actualizado })), 200);
 console.log(`Notas: ${Object.keys(notes).length}/${facts.length} (${model})`);

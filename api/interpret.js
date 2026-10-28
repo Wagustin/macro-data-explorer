@@ -8,11 +8,20 @@
  */
 
 import { applyCors, handleRateLimit } from "./_lib/ratelimit.js";
+import { d1Rows } from "./_lib/d1.js";
 
 const NOTES_URL = "https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data/interpretaciones.json";
 let notesCache = null; // { at, data }
 
 async function dailyNote(symbol) {
+  const rows = await d1Rows("select texto, actualizado from interpretaciones where symbol = ?", symbol);
+  const row = rows?.[0];
+  const updatedAt = Date.parse(row?.actualizado || "");
+  const age = Date.now() - updatedAt;
+  if (row?.texto && Number.isFinite(updatedAt) && age >= 0 && age < 48 * 36e5) {
+    return { text: row.texto, model: null, date: row.actualizado };
+  }
+
   if (!notesCache || Date.now() - notesCache.at > 30 * 60 * 1000) {
     try {
       const r = await fetch(NOTES_URL, { signal: AbortSignal.timeout(3000) });

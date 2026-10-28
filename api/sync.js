@@ -20,6 +20,10 @@ const TABLES = {
     key: ["nemonico", "fecha"],
     map: (r) => ({ ...r, fin_de_mes: r.fin_de_mes ? 1 : 0 }),
   },
+  interpretaciones: {
+    cols: ["symbol", "texto", "actualizado"],
+    key: ["symbol"],
+  },
 };
 
 function send(res, status, body) {

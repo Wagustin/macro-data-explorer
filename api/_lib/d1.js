@@ -12,6 +12,7 @@ export const SCHEMA = [
     last_close real, p10 real, p25 real, p50 real, p75 real, p90 real, path text, primary key (symbol, horizon, model))`,
   `create table if not exists cotizaciones_smv (nemonico text not null, fecha text not null, cierre real not null, apertura real,
     maximo real, minimo real, monto real, fin_de_mes integer not null default 0, primary key (nemonico, fecha))`,
+  `create table if not exists interpretaciones (symbol text primary key, texto text not null, actualizado text not null)`,
 ];
 
 let ready = null;
