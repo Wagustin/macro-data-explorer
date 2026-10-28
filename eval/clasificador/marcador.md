@@ -1,21 +1,35 @@
 # Marcador Oficial: Competición de Clasificadores
 
-**Estado:** Pendiente de arbitraje humano.
+Evaluación ciega contra arbitraje humano oficial (80 titulares etiquetados por Agustín).
 
-El dataset histórico y la muestra oficial de 80 titulares para arbitraje han sido generados exitosamente:
-- **Dataset histórico:** `eval/clasificador/historico.jsonl` (434 titulares clasificados originalmente por Laya v1).
-- **Predicciones LLM:** `eval/clasificador/llm.jsonl` (116 clasificaciones paritarias con NVIDIA Nemotron / Gemini).
-- **Reporte de discrepancias:** `eval/clasificador/discrepancias.md` (tasa de acuerdo y matriz de confusión).
-- **Muestra para arbitraje:** `eval/clasificador/etiquetar.md` (60 discrepancias marcadas + 20 de control).
-- **Clave ciega:** `eval/clasificador/clave.jsonl` (80 registros con las predicciones ocultas).
-- **Criterios Laya v2:** `config/laya-criterios.json` (Versión: 2.0.0).
+## 1. Tabla Comparativa de Rendimiento
 
-## Próximos pasos para completar la competición
+| Modelo | Campo | Accuracy | F1 Macro | Muestra | Latencia Estimada | Coste Estimado |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| Laya v1 (Original) | relevancia | 28.7% | 21.2% | 80 | 42 ms | $0.00 (Local CPU) |
+| Laya v1 (Original) | tema | 51.2% | 50.3% | 80 | 42 ms | $0.00 (Local CPU) |
+| Laya v1 (Original) | sentimiento | 35.0% | 28.0% | 80 | 42 ms | $0.00 (Local CPU) |
+| Laya v1 (Original) | empresas | 98.8% | 98.8% | 80 | 42 ms | $0.00 (Local CPU) |
+| LLM (Nemotron / Gemini) | relevancia | 46.3% | 44.5% | 80 | 450 ms | API Cloud ($0.002 / lote) |
+| LLM (Nemotron / Gemini) | tema | 51.2% | 60.4% | 80 | 450 ms | API Cloud ($0.002 / lote) |
+| LLM (Nemotron / Gemini) | sentimiento | 62.5% | 75.3% | 80 | 450 ms | API Cloud ($0.002 / lote) |
+| LLM (Nemotron / Gemini) | empresas | 96.3% | 96.3% | 80 | 450 ms | API Cloud ($0.002 / lote) |
+| Laya v2 (Criterios v2.0.0) | relevancia | 46.3% | 19.2% | 80 | 45 ms | $0.00 (Local CPU) |
+| Laya v2 (Criterios v2.0.0) | tema | 33.8% | 24.1% | 80 | 45 ms | $0.00 (Local CPU) |
+| Laya v2 (Criterios v2.0.0) | sentimiento | 52.5% | 48.7% | 80 | 45 ms | $0.00 (Local CPU) |
+| Laya v2 (Criterios v2.0.0) | empresas | 98.8% | 98.8% | 80 | 45 ms | $0.00 (Local CPU) |
 
-1. **Rellenar etiquetas:** Agustín puede abrir `eval/clasificador/etiquetar.md` y completar las columnas [Relevancia, Tema, Sentimiento, Empresas], o crear `eval/clasificador/etiquetas.jsonl`.
-2. **Calcular marcador:** Ejecutar localmente:
-   ```bash
-   node scripts/eval-classifiers.mjs --eval
-   ```
-   o lanzar el workflow de GitHub Actions **Competición Clasificadores: Laya vs LLM**.
-3. **Resultado:** Este archivo se actualizará automáticamente con la tabla oficial de Accuracy y F1 Macro por campo, el modelo ganador y la comparación de costes y latencias.
+## 2. Ganador por Campo de Decisión
+
+| Campo | Modelo Ganador (por F1 Macro) |
+| :--- | :--- |
+| **Relevancia** | LLM (Nemotron / Gemini) |
+| **Tema** | LLM (Nemotron / Gemini) |
+| **Sentimiento** | LLM (Nemotron / Gemini) |
+| **Empresas** | Laya v1 (Original) |
+
+## 3. Parámetros y Configuración
+- Criterios Laya v2 utilizados: `config/laya-criterios.json` (Versión: 2.0.0).
+- Modelo Laya: `convaiinnovations/laya` (subfolder: `typed-decisions`).
+- Modelo LLM: `nvidia/nemotron-3-ultra-550b-a55b` (fallback `models/gemini-2.5-flash`).
+- Fecha de reporte: 2026-10-28.

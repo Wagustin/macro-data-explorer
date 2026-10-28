@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "2.1.0",
   "descripcion": "Criterios afinables para el clasificador Laya v2 (typed-decisions) en PerData",
   "relevancia": {
     "type": "choice",
@@ -7,9 +7,9 @@
     "instructions": "Evalúa la relevancia de esta noticia para la economía, las finanzas y la bolsa del Perú y mercados mundiales:",
     "criteria": {
       "ALTA": "Puede influir de forma directa en los mercados peruanos (dólar, tasas, bolsa de Lima, metales, petróleo, empresas, finanzas públicas) o mundiales (guerras, EE. UU., China, Fed, aranceles, OPEP, IA y grandes tecnológicas, elecciones). Datos macroeconómicos de países grandes (empleo, inflación, PBI).",
-      "MEDIA": "Presupuesto, subsidios, impuestos, resúmenes de mercados, salidas a bolsa, inversiones de empresas, comercio, consumo o finanzas con impacto moderado o sectorial.",
-      "BAJA": "Noticias económicas menores o con impacto indirecto. Ante la duda razonable frente a sucesos irrelevantes, clasificar como BAJA.",
-      "NINGUNA": "Sucesos sin efecto económico alguno: procesiones, deportes, espectáculos, farándula, crónica policial, crimen común, clima del día, curiosidades o trámites personales."
+      "MEDIA": "Presupuesto, subsidios, impuestos, resúmenes de mercados, salidas a bolsa, inversiones y proyectos de empresas en el Perú, licitaciones y concesiones, comercio exterior, agroexportación, cronogramas fiscales del Estado, riesgos climáticos (El Niño) para la producción, o finanzas con impacto moderado o sectorial.",
+      "BAJA": "Noticias económicas menores o con impacto indirecto: aperturas de tiendas, tendencias de consumo, negocios locales, trámites administrativos, curiosidades empresariales. No uses BAJA como valor por defecto: si la noticia trata de inversión, presupuesto, comercio o producción del Perú, es MEDIA.",
+      "NINGUNA": "Sucesos sin efecto económico alguno: procesiones y visitas religiosas, deportes, espectáculos, farándula, crónica policial, crimen común, incendios, salud pública e intoxicaciones, clima del día, política extranjera sin efecto en mercados, curiosidades o trámites personales."
     }
   },
   "tema": {
@@ -18,11 +18,11 @@
     "instructions": "Clasifica el tema principal de la noticia en una de las categorías macrofinancieras oficiales:",
     "criteria": {
       "Dólar y BCRP": "Política monetaria, tasas de interés de referencia, tipo de cambio sol/dólar, reservas internacionales (RIN) o decisiones del BCRP.",
-      "Economía y fiscal": "PBI, recaudación tributaria (Sunat), presupuesto público, inflación/IPC, empleo formal o política fiscal.",
+      "Economía y fiscal": "Tema por defecto para noticias del Perú sin otro tema más específico: PBI, recaudación tributaria (Sunat), presupuesto público, inflación/IPC, empleo, subsidios, agro, comercio, trámites del Estado, política fiscal o económica.",
       "Minería y metales": "Producción minera, exportaciones y cotización de cobre, oro, plata, zinc, proyectos mineros o canon.",
-      "Bolsa y empresas": "Bolsa de Valores de Lima (BVL), acciones, dividendos, utilidades trimestrales, emisiones de bonos, fusiones y adquisiciones corporativas.",
+      "Bolsa y empresas": "Bolsa de Valores de Lima (BVL), acciones, dividendos, utilidades, emisiones de bonos, fusiones y adquisiciones, y también la expansión, inversión, aperturas o estrategia de una empresa concreta.",
       "Energía": "Hidrocarburos, petróleo, gas natural de Camisea, electricidad, tarifas energéticas o proyectos de generación.",
-      "Mundo": "Hechos internacionales que mueven activos peruanos: Wall Street, Reserva Federal (Fed), aranceles, China, OPEP, guerras o tecnológicas."
+      "Mundo": "Solo si la noticia trata principalmente de un hecho en otro país o de mercados globales (Wall Street, Reserva Federal, aranceles, China, OPEP, guerras, tecnológicas, elecciones extranjeras). Si el protagonista es el Perú, NO es Mundo."
     }
   },
   "sentimiento": {
@@ -30,9 +30,9 @@
     "comentario": "Sentimiento explícito para la economía y los mercados peruanos, no para las personas o protagonistas.",
     "instructions": "Determina el sentimiento o impacto de esta noticia para la economía y los mercados peruanos (no para las personas de la noticia):",
     "criteria": {
-      "POSITIVO": "Favorable para la economía y los mercados peruanos (no para las personas de la noticia): aumento de exportaciones, mayor inversión, generación de empleo, superávit comercial, utilidades corporativas, subida del cobre o crecimiento del PBI.",
-      "NEGATIVO": "Desfavorable para la economía y los mercados peruanos (no para las personas de la noticia): subida de inflación, recorte de producción, caída de cotización de metales, pérdidas corporativas, déficit fiscal, incertidumbre o desaceleración.",
-      "NEUTRO": "Informativo, datos balanceados o sin efecto claro sobre los mercados peruanos: anuncios protocolares, variaciones esperadas o hechos sin impacto económico neto definido."
+      "POSITIVO": "Mejora clara y explícita para la economía y los mercados peruanos (no para las personas de la noticia): aumento de exportaciones, nueva inversión con monto, generación de empleo, superávit, utilidades en alza, subida del cobre o crecimiento del PBI.",
+      "NEGATIVO": "Deterioro claro para la economía y los mercados peruanos: subida de inflación, recorte de producción o de presupuesto, riesgo climático para la producción, caída de metales, pérdidas, déficit fiscal, incertidumbre o desaceleración.",
+      "NEUTRO": "Valor por defecto. Informativo, datos balanceados, cronogramas, trámites, resúmenes de mercado o hechos sin efecto claro sobre los mercados peruanos. Úsalo salvo que la noticia señale con claridad una mejora o un deterioro."
     }
   },
   "empresas": {
