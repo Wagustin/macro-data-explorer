@@ -7,6 +7,10 @@ const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, "..");
 
 const data = JSON.parse(fs.readFileSync(path.join(projectRoot, "data", "empresas.json"), "utf8"));
+const statusPath = path.join(projectRoot, "data", "empresas-estado.json");
+const issuerStatuses = fs.existsSync(statusPath)
+  ? JSON.parse(fs.readFileSync(statusPath, "utf8")).emisores || {}
+  : {};
 
 function formatSector(sec) {
   if (!sec) return "Diversas";
@@ -43,8 +47,10 @@ const rows = data.emisores.map(e => {
   if (!primary) primary = e.valores.find(v => v.fechaUltimaNegociacion);
   if (!primary) primary = e.valores[0] || { nemonico: "S/N", moneda: "S/", fechaUltimaNegociacion: null };
 
-  const hasProyeccion = Boolean(primary.simbolo_proyeccion);
-  const isActiva = Boolean(e.negociadaUltimos12m);
+  const hasStatus = Object.hasOwn(issuerStatuses, e.codigoBVL);
+  const status = issuerStatuses[e.codigoBVL] || {};
+  const hasProyeccion = status.estado ? status.estado === "con_proyeccion" : Boolean(primary.simbolo_proyeccion);
+  const isActiva = status.estado ? ["con_proyeccion", "poca_liquidez"].includes(status.estado) : Boolean(e.negociadaUltimos12m);
   
   let tier = 3;
   let tierLabel = "sin";
@@ -70,9 +76,27 @@ const rows = data.emisores.map(e => {
     tier,
     tierLabel,
     hasProyeccion,
-    isActiva
+    isActiva,
+    estado: status.estado || (hasStatus ? (hasProyeccion ? "con_proyeccion" : isActiva ? "poca_liquidez" : "sin_negociacion") : "sin_datos"),
+    ultimaFechaEstado: status.ultima_fecha || primary.fechaUltimaNegociacion || e.fechaUltimaNegociacion,
+    ultimoCierreEstado: status.ultimo_cierre
   };
 });
+
+function statusText(r) {
+  const date = r.ultimaFechaEstado ? new Date(`${r.ultimaFechaEstado}T00:00:00Z`) : null;
+  const validDate = date && !Number.isNaN(date.getTime());
+  const dateParts = validDate ? new Intl.DateTimeFormat("es-PE", { day: "numeric", month: "long", timeZone: "UTC" }).format(date) : "fecha no disponible";
+  const monthYear = validDate ? new Intl.DateTimeFormat("es-PE", { month: "long", year: "numeric", timeZone: "UTC" }).format(date) : "fecha no disponible";
+  const close = Number(r.ultimoCierreEstado);
+  const price = Number.isFinite(close) ? `${r.moneda} ${close.toFixed(close < 1 ? 3 : 2)}` : "precio no disponible";
+  if (r.estado === "con_proyeccion") return "Con proyección PerData Engine";
+  if (r.estado === "poca_liquidez") return `Cotiza poco · último cierre ${price} (${dateParts})`;
+  if (r.estado === "parada") return `Sin operaciones desde ${monthYear} · último precio ${price}`;
+  if (r.estado === "dormida") return `Sin operaciones desde ${validDate ? date.getUTCFullYear() : "fecha no disponible"} · último precio ${price}`;
+  if (r.estado === "sin_datos") return "Estado de negociación no disponible";
+  return "Sus acciones no se negocian en bolsa";
+}
 
 // Sort: Tier 1, then Tier 2, then Tier 3. Within tier, alphabetical by nemonico
 rows.sort((a, b) => {
@@ -87,18 +111,18 @@ const rowsHtml = rows.map(r => {
   // pendientes de revisar sus términos de uso: la ficha enlaza a la BVL.
   const priceDisplay = r.tier === 1
     ? '<span class="price-none">…</span>'
-    : (r.tier === 3 ? '<span class="price-none">Sin negociación</span>' : '<span class="price-none">En la BVL</span>');
+    : '<span class="price-none">—</span>';
   
   let subHtml = "";
   if (r.tier === 1) {
     subHtml = `<div class="company-sub text-ink-soft"><span class="badge-dot"></span>Con proyección PerData Engine</div>`;
   } else if (r.tier === 2) {
-    subHtml = `<div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>`;
+    subHtml = `<div class="company-sub text-ink-soft">${statusText(r)}</div>`;
   } else {
-    subHtml = `<div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>`;
+    subHtml = `<div class="company-sub text-ink-soft">${statusText(r)}</div>`;
   }
 
-  return `      <a href="/empresa/${encodeURIComponent(r.nemonico)}" class="row-link" data-nemo="${r.nemonico}" data-name="${r.razonSocial.toLowerCase()}" data-sector="${r.sectorRaw}" data-tier="${r.tierLabel}" ${r.simbolo_proyeccion ? `data-simbolo-proyeccion="${r.simbolo_proyeccion}"` : ""}>
+  return `      <a href="/empresa/${encodeURIComponent(r.nemonico)}" class="row-link" data-nemo="${r.nemonico}" data-name="${r.razonSocial.toLowerCase()}" data-sector="${r.sectorRaw}" data-tier="${r.tierLabel}" data-status="${r.estado}" ${r.simbolo_proyeccion ? `data-simbolo-proyeccion="${r.simbolo_proyeccion}"` : ""}>
         <div class="row-inner ${isMuted ? "muted" : ""}">
           <div class="mono nemo">${r.nemonico}</div>
           <div class="name-col">
@@ -471,7 +495,8 @@ html.dark .ui-switch {
       <div class="finder-tabs" role="tablist" aria-label="Qué empresas mostrar" id="actTabs">
         <button type="button" role="tab" data-act="" aria-selected="true">Todas <span>${rows.length}</span></button>
         <button type="button" role="tab" data-act="proyeccion" aria-selected="false">Con proyección <span>${rows.filter(r => r.tier === 1).length}</span></button>
-        <button type="button" role="tab" data-act="activo" aria-selected="false" title="Con negociación en los últimos 12 meses">Activas <span>${rows.filter(r => r.tier !== 3).length}</span></button>
+        <button type="button" role="tab" data-act="activo" aria-selected="false" title="Con negociación en los últimos 12 meses">Activas <span>${rows.filter(r => ["con_proyeccion", "poca_liquidez"].includes(r.estado)).length}</span></button>
+        <button type="button" role="tab" data-act="inactiva" aria-selected="false">Sin operaciones recientes <span>${rows.filter(r => ["parada", "dormida", "sin_negociacion"].includes(r.estado)).length}</span></button>
       </div>
       <div class="finder-tabs finder-sectors" role="tablist" aria-label="Sector" id="secTabs">
         <button type="button" role="tab" data-sec="" aria-selected="true">Todos los sectores</button>
@@ -613,7 +638,7 @@ ${rowsHtml}
           const tier = row.dataset.tier || "";
           const ok = words.every(w => row._hay.includes(w))
             && (!state.sec || row.dataset.sector === state.sec)
-            && (!state.act || (state.act === "proyeccion" ? tier === "proyeccion" : tier !== "sin"));
+            && (!state.act || (state.act === "proyeccion" ? tier === "proyeccion" : state.act === "activo" ? ["con_proyeccion", "poca_liquidez"].includes(row.dataset.status) : state.act === "inactiva" ? ["parada", "dormida", "sin_negociacion"].includes(row.dataset.status) : row.dataset.status === state.act));
           row.style.display = ok ? "" : "none";
           if (ok) shown++;
         });

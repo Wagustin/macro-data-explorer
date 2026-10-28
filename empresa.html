@@ -87,6 +87,14 @@
       margin-bottom: 16px;
       min-height: 13px;
     }
+    .issuer-status { min-height: 56px; padding: 10px 12px; margin-top: 10px; border-left: 2px solid var(--pd-rule); color: var(--pd-ink-soft); font-size: 13px; line-height: 1.5; }
+    .issuer-status .mono { color: var(--pd-ink); font-variant-numeric: tabular-nums; }
+    .shareholders-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .shareholders-table th, .shareholders-table td { padding: 9px 6px; border-bottom: 1px solid var(--pd-rule); text-align: left; vertical-align: top; }
+    .shareholders-table th { color: var(--pd-ink-soft); font-size: 11px; font-weight: 600; }
+    .shareholders-table .numeric { text-align: right; font-family: var(--pd-font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .shareholders-source { margin-top: 12px; font-size: 12px; color: var(--pd-ink-soft); line-height: 1.5; }
+    @media (max-width: 390px) { .shareholders-table { font-size: 11px; } .shareholders-table th, .shareholders-table td { padding: 8px 3px; } }
     .price-2nd {
       display: flex;
       align-items: baseline;
@@ -400,7 +408,7 @@ html.dark .ui-switch {
           <!-- Notice box when no market symbol -->
           <div id="noProyeccionNotice" class="hidden p-4 mb-4 border border-rule bg-card text-xs leading-relaxed">
             <p class="font-medium text-ink mb-1">Sin historial de precios disponible</p>
-            <p class="text-ink-soft mb-2">Este valor se negocia directamente en la Bolsa de Valores de Lima. Su precio se consulta en la ficha oficial de la BVL.</p>
+            <p class="text-ink-soft mb-2" id="noMarketCopy">Este valor se negocia directamente en la Bolsa de Valores de Lima. Su precio se consulta en la ficha oficial de la BVL.</p>
             <a href="https://www.bvl.com.pe" target="_blank" rel="noopener" class="text-ink underline underline-offset-2 font-medium">Ver ficha oficial en bvl.com.pe &rarr;</a>
           </div>
 
@@ -412,6 +420,8 @@ html.dark .ui-switch {
             </p>
           </div>
         </div>
+
+        <div class="section" id="issuerStatusSection" aria-live="polite"><p class="issuer-status" id="issuerStatusText"></p></div>
 
         <!-- 90-Day Chart Section -->
         <div class="chart-section" id="chartSection">
@@ -430,6 +440,12 @@ html.dark .ui-switch {
             <span class="text-xs text-ink-soft font-mono" id="chartMinMax"></span>
             <p class="chart-label" id="chartLabel">Historial 90 días · Datos de mercado (cierre)</p>
           </div>
+        </div>
+
+        <div class="section hidden" id="shareholdersSection">
+          <h2 class="section-title">Accionistas principales (más del 4 %)</h2>
+          <div class="overflow-x-auto"><table class="shareholders-table"><thead><tr><th>Accionista</th><th>País</th><th>Desde</th><th class="numeric">Participación</th></tr></thead><tbody id="shareholdersRows"></tbody></table></div>
+          <p class="shareholders-source" id="shareholdersSource"></p>
         </div>
 
         <!-- Hechos de Importancia -->
@@ -634,6 +650,44 @@ html.dark .ui-switch {
         }
         const secondaryValores = emitter.valores.filter(v => v !== primaryValor);
         const hasProyeccion = Boolean(primaryValor.simbolo_proyeccion);
+        const [statusResponse, shareholdersResponse, rucResponse] = await Promise.all([
+          fetch("/data/empresas-estado.json").catch(() => null),
+          fetch("/data/smv-accionistas.json").catch(() => null),
+          fetch("/data/empresas-ruc.json").catch(() => null)
+        ]);
+        const statuses = statusResponse?.ok ? await statusResponse.json() : { emisores: {} };
+        const shareholders = shareholdersResponse?.ok ? await shareholdersResponse.json() : { emisores: {} };
+        const rucs = rucResponse?.ok ? await rucResponse.json() : {};
+        const issuerStatus = statuses.emisores?.[emitter.codigoBVL] || {};
+        const status = issuerStatus.estado || (hasProyeccion ? "con_proyeccion" : "sin_negociacion");
+        const lastStatusDate = issuerStatus.ultima_fecha || primaryValor.fechaUltimaNegociacion || emitter.fechaUltimaNegociacion;
+        const lastClose = Number(issuerStatus.ultimo_cierre);
+        const currency = issuerStatus.moneda || primaryValor.moneda || "S/";
+        const priceText = Number.isFinite(lastClose) ? `${currency} ${lastClose.toFixed(lastClose < 1 ? 3 : 2)}` : "precio no disponible";
+        const parsedStatusDate = lastStatusDate ? new Date(`${lastStatusDate}T00:00:00Z`) : null;
+        const validStatusDate = parsedStatusDate && !Number.isNaN(parsedStatusDate.getTime());
+        const statusMonthYear = validStatusDate ? new Intl.DateTimeFormat("es-PE", { month: "long", year: "numeric", timeZone: "UTC" }).format(parsedStatusDate) : "fecha no disponible";
+        const statusFullDate = validStatusDate ? new Intl.DateTimeFormat("es-PE", { dateStyle: "long", timeZone: "UTC" }).format(parsedStatusDate) : "fecha no disponible";
+        const safePriceText = escapeHTML(priceText);
+        const messages = {
+          con_proyeccion: "Con proyección PerData Engine",
+          poca_liquidez: `Cotiza poco · último cierre <span class="mono">${safePriceText}</span> (${escapeHTML(statusFullDate)})`,
+          parada: `Sin operaciones desde ${escapeHTML(statusMonthYear)} · último precio <span class="mono">${safePriceText}</span>`,
+          dormida: `Sin operaciones desde ${validStatusDate ? parsedStatusDate.getUTCFullYear() : "fecha no disponible"} · último precio <span class="mono">${safePriceText}</span>`,
+          sin_negociacion: "Sus acciones no se negocian en bolsa"
+        };
+        const statusEl = document.getElementById("issuerStatusText");
+        statusEl.innerHTML = messages[status] || messages.sin_negociacion;
+        if (!hasProyeccion && Number.isFinite(lastClose)) statusEl.innerHTML += `<br>Último precio negociado: <span class="mono">${safePriceText}</span> el ${escapeHTML(statusFullDate)} · Fuente: SMV`;
+        const ruc = rucs[emitter.codigoBVL];
+        const shareholderRows = shareholders.emisores?.[ruc]?.accionistas || [];
+        if (shareholderRows.length) {
+          document.getElementById("shareholdersRows").innerHTML = shareholderRows.map((holder) => `<tr><td>${escapeHTML(holder.nombre)}</td><td>${escapeHTML(holder.nacionalidad)}</td><td>${escapeHTML(holder.desde)}</td><td class="numeric">${escapeHTML(Number(holder.pct).toLocaleString("es-PE", { maximumFractionDigits: 2 }))} %</td></tr>`).join("");
+          const datasetUrl = escapeHTML(shareholders.url_conjunto || "https://www.datosabiertos.gob.pe/dataset/listado-de-accionistas-mayores-al-4-vigentes-comunicados-la-superintendencia-del-mercado-de");
+          const licenseUrl = escapeHTML(shareholders.url_licencia || "https://opendefinition.org/licenses/odc-by/");
+          document.getElementById("shareholdersSource").innerHTML = `Fuente: <a href="${datasetUrl}" target="_blank" rel="noopener">Superintendencia del Mercado de Valores (SMV), datos abiertos</a>, licencia <a href="${licenseUrl}" target="_blank" rel="noopener">ODC-BY</a>`;
+          document.getElementById("shareholdersSection").classList.remove("hidden");
+        }
 
         // Populate header and breadcrumb
         const KEEP = new Set(["BBVA", "AFP", "BVL", "FTE", "IDE", "SEAL", "AIB", "XP", "OH!"]);
@@ -684,8 +738,12 @@ html.dark .ui-switch {
           document.getElementById("btnProyeccion").classList.add("hidden");
           document.getElementById("proyeccionDisabled").classList.remove("hidden");
           document.getElementById("noProyeccionNotice").classList.remove("hidden");
+          if (status === "sin_negociacion") {
+            document.getElementById("noMarketCopy").textContent = "Esta empresa no tiene precio de mercado: sus acciones no se negocian en bolsa. Mostramos lo que sí es público: accionistas, hechos de importancia y noticias.";
+            document.getElementById("priceMain").textContent = "Sin precio de mercado";
+          }
           document.getElementById("chartLabel").textContent = "Historial SMV · Cierre mensual";
-          fetchHistorical(`${primaryValor.nemonico}.LM`, primaryValor.moneda, true);
+          if (status !== "sin_negociacion") fetchHistorical(`${primaryValor.nemonico}.LM`, primaryValor.moneda, true);
         }
 
         loadHechos(primaryValor.nemonico);

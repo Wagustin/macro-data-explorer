@@ -124,6 +124,31 @@ async function testPages() {
   }
 }
 
+async function testIssuerData() {
+  for (const [file, count] of [["empresas-estado.json", 150], ["smv-accionistas.json", 150]]) {
+    try {
+      const res = await fetchWithTimeout(`${base}/data/${file}`);
+      if (res.status !== 200) {
+        record(`Datos ${file}`, false, `HTTP ${res.status}`);
+        continue;
+      }
+      const data = await res.json();
+      const issuers = data.emisores && typeof data.emisores === "object" ? Object.keys(data.emisores).length : 0;
+      record(`Datos ${file}`, issuers >= count, `emisores: ${issuers} (mínimo ${count})`);
+    } catch (err) {
+      record(`Datos ${file}`, false, `Error: ${err.message}`);
+    }
+  }
+
+  try {
+    const res = await fetchWithTimeout(`${base}/empresa/INTEGRC1`);
+    const html = await res.text();
+    record("Ficha /empresa/INTEGRC1", res.status === 200, `HTTP ${res.status}`);
+  } catch (err) {
+    record("Ficha /empresa/INTEGRC1", false, `Error: ${err.message}`);
+  }
+}
+
 async function testHistorical() {
   for (const symbol of ASSETS) {
     try {
@@ -360,6 +385,7 @@ async function main() {
 
   await testCalibration();
   await testPages();
+  await testIssuerData();
   await testHistorical();
   await testForecast();
   await testRemovedAssets();

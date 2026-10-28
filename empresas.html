@@ -352,7 +352,8 @@ html.dark .ui-switch {
       <div class="finder-tabs" role="tablist" aria-label="Qué empresas mostrar" id="actTabs">
         <button type="button" role="tab" data-act="" aria-selected="true">Todas <span>182</span></button>
         <button type="button" role="tab" data-act="proyeccion" aria-selected="false">Con proyección <span>41</span></button>
-        <button type="button" role="tab" data-act="activo" aria-selected="false" title="Con negociación en los últimos 12 meses">Activas <span>89</span></button>
+        <button type="button" role="tab" data-act="activo" aria-selected="false" title="Con negociación en los últimos 12 meses">Activas <span>0</span></button>
+        <button type="button" role="tab" data-act="inactiva" aria-selected="false">Sin operaciones recientes <span>0</span></button>
       </div>
       <div class="finder-tabs finder-sectors" role="tablist" aria-label="Sector" id="secTabs">
         <button type="button" role="tab" data-sec="" aria-selected="true">Todos los sectores</button>
@@ -378,7 +379,7 @@ html.dark .ui-switch {
     </div>
 
     <div id="listado">
-      <a href="/empresa/AENZAC1" class="row-link" data-nemo="AENZAC1" data-name="aenza s.a.a." data-sector="DIVERSAS" data-tier="proyeccion" data-simbolo-proyeccion="AENZAC1.LM">
+      <a href="/empresa/AENZAC1" class="row-link" data-nemo="AENZAC1" data-name="aenza s.a.a." data-sector="DIVERSAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="AENZAC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">AENZAC1</div>
           <div class="name-col">
@@ -390,7 +391,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/AIHC1" class="row-link" data-nemo="AIHC1" data-name="andino investment holding s.a.a." data-sector="DIVERSAS" data-tier="proyeccion" data-simbolo-proyeccion="AIHC1.LM">
+      <a href="/empresa/AIHC1" class="row-link" data-nemo="AIHC1" data-name="andino investment holding s.a.a." data-sector="DIVERSAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="AIHC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">AIHC1</div>
           <div class="name-col">
@@ -402,7 +403,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ALICORC1" class="row-link" data-nemo="ALICORC1" data-name="alicorp s.a.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-simbolo-proyeccion="ALICORC1.LM">
+      <a href="/empresa/ALICORC1" class="row-link" data-nemo="ALICORC1" data-name="alicorp s.a.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="ALICORC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">ALICORC1</div>
           <div class="name-col">
@@ -414,7 +415,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ATACOAC1" class="row-link" data-nemo="ATACOAC1" data-name="nexa resources atacocha s.a.a." data-sector="MINERAS" data-tier="proyeccion" data-simbolo-proyeccion="ATACOAC1.LM">
+      <a href="/empresa/ATACOAC1" class="row-link" data-nemo="ATACOAC1" data-name="nexa resources atacocha s.a.a." data-sector="MINERAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="ATACOAC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">ATACOAC1</div>
           <div class="name-col">
@@ -426,7 +427,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/AUSTRAC1" class="row-link" data-nemo="AUSTRAC1" data-name="austral group s.a.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-simbolo-proyeccion="AUSTRAC1.LM">
+      <a href="/empresa/AUSTRAC1" class="row-link" data-nemo="AUSTRAC1" data-name="austral group s.a.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="AUSTRAC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">AUSTRAC1</div>
           <div class="name-col">
@@ -438,7 +439,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/BACKUSI1" class="row-link" data-nemo="BACKUSI1" data-name="union de cervecerias peruanas backus y johnston s.a.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-simbolo-proyeccion="BACKUSI1.LM">
+      <a href="/empresa/BACKUSI1" class="row-link" data-nemo="BACKUSI1" data-name="union de cervecerias peruanas backus y johnston s.a.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="BACKUSI1.LM">
         <div class="row-inner ">
           <div class="mono nemo">BACKUSI1</div>
           <div class="name-col">
@@ -450,7 +451,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/BBVAC1" class="row-link" data-nemo="BBVAC1" data-name="banco bbva peru" data-sector="BANCOS Y FINANCIERAS" data-tier="proyeccion" data-simbolo-proyeccion="BBVAC1.LM">
+      <a href="/empresa/BBVAC1" class="row-link" data-nemo="BBVAC1" data-name="banco bbva peru" data-sector="BANCOS Y FINANCIERAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="BBVAC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">BBVAC1</div>
           <div class="name-col">
@@ -462,7 +463,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/BPICHC1" class="row-link" data-nemo="BPICHC1" data-name="banco pichincha" data-sector="BANCOS Y FINANCIERAS" data-tier="proyeccion" data-simbolo-proyeccion="BPICHC1.LM">
+      <a href="/empresa/BPICHC1" class="row-link" data-nemo="BPICHC1" data-name="banco pichincha" data-sector="BANCOS Y FINANCIERAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="BPICHC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">BPICHC1</div>
           <div class="name-col">
@@ -474,7 +475,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/BROCALC1" class="row-link" data-nemo="BROCALC1" data-name="sociedad minera el brocal s.a.a." data-sector="MINERAS" data-tier="proyeccion" data-simbolo-proyeccion="BROCALC1.LM">
+      <a href="/empresa/BROCALC1" class="row-link" data-nemo="BROCALC1" data-name="sociedad minera el brocal s.a.a." data-sector="MINERAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="BROCALC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">BROCALC1</div>
           <div class="name-col">
@@ -486,7 +487,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/BUENAVI1" class="row-link" data-nemo="BUENAVI1" data-name="compañía de minas buenaventura s.a.a." data-sector="MINERAS" data-tier="proyeccion" data-simbolo-proyeccion="BUENAVI1.LM">
+      <a href="/empresa/BUENAVI1" class="row-link" data-nemo="BUENAVI1" data-name="compañía de minas buenaventura s.a.a." data-sector="MINERAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="BUENAVI1.LM">
         <div class="row-inner ">
           <div class="mono nemo">BUENAVI1</div>
           <div class="name-col">
@@ -498,7 +499,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CARTAVC1" class="row-link" data-nemo="CARTAVC1" data-name="cartavio sociedad anonima abierta (cartavio s.a.a.)" data-sector="AGRARIO" data-tier="proyeccion" data-simbolo-proyeccion="CARTAVC1.LM">
+      <a href="/empresa/CARTAVC1" class="row-link" data-nemo="CARTAVC1" data-name="cartavio sociedad anonima abierta (cartavio s.a.a.)" data-sector="AGRARIO" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="CARTAVC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">CARTAVC1</div>
           <div class="name-col">
@@ -510,7 +511,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CASAGRC1" class="row-link" data-nemo="CASAGRC1" data-name="casa grande sociedad anonima abierta (casa grande s.a.a.)" data-sector="AGRARIO" data-tier="proyeccion" data-simbolo-proyeccion="CASAGRC1.LM">
+      <a href="/empresa/CASAGRC1" class="row-link" data-nemo="CASAGRC1" data-name="casa grande sociedad anonima abierta (casa grande s.a.a.)" data-sector="AGRARIO" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="CASAGRC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">CASAGRC1</div>
           <div class="name-col">
@@ -522,7 +523,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CORAREI1" class="row-link" data-nemo="CORAREI1" data-name="corporacion aceros arequipa s.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-simbolo-proyeccion="CORAREI1.LM">
+      <a href="/empresa/CORAREI1" class="row-link" data-nemo="CORAREI1" data-name="corporacion aceros arequipa s.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="CORAREI1.LM">
         <div class="row-inner ">
           <div class="mono nemo">CORAREI1</div>
           <div class="name-col">
@@ -534,7 +535,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CPACASI1" class="row-link" data-nemo="CPACASI1" data-name="cementos pacasmayo s.a.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-simbolo-proyeccion="CPACASI1.LM">
+      <a href="/empresa/CPACASI1" class="row-link" data-nemo="CPACASI1" data-name="cementos pacasmayo s.a.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="CPACASI1.LM">
         <div class="row-inner ">
           <div class="mono nemo">CPACASI1</div>
           <div class="name-col">
@@ -546,7 +547,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CREDITC1" class="row-link" data-nemo="CREDITC1" data-name="banco de credito del peru" data-sector="BANCOS Y FINANCIERAS" data-tier="proyeccion" data-simbolo-proyeccion="CREDITC1.LM">
+      <a href="/empresa/CREDITC1" class="row-link" data-nemo="CREDITC1" data-name="banco de credito del peru" data-sector="BANCOS Y FINANCIERAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="CREDITC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">CREDITC1</div>
           <div class="name-col">
@@ -558,7 +559,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CRETEXI1" class="row-link" data-nemo="CRETEXI1" data-name="creditex s.a.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-simbolo-proyeccion="CRETEXI1.LM">
+      <a href="/empresa/CRETEXI1" class="row-link" data-nemo="CRETEXI1" data-name="creditex s.a.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="CRETEXI1.LM">
         <div class="row-inner ">
           <div class="mono nemo">CRETEXI1</div>
           <div class="name-col">
@@ -570,7 +571,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CVERDEC1" class="row-link" data-nemo="CVERDEC1" data-name="sociedad minera cerro verde s.a.a." data-sector="MINERAS" data-tier="proyeccion" data-simbolo-proyeccion="CVERDEC1.LM">
+      <a href="/empresa/CVERDEC1" class="row-link" data-nemo="CVERDEC1" data-name="sociedad minera cerro verde s.a.a." data-sector="MINERAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="CVERDEC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">CVERDEC1</div>
           <div class="name-col">
@@ -582,7 +583,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ELCOMEI1" class="row-link" data-nemo="ELCOMEI1" data-name="empresa editora el comercio s.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-simbolo-proyeccion="ELCOMEI1.LM">
+      <a href="/empresa/ELCOMEI1" class="row-link" data-nemo="ELCOMEI1" data-name="empresa editora el comercio s.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="ELCOMEI1.LM">
         <div class="row-inner ">
           <div class="mono nemo">ELCOMEI1</div>
           <div class="name-col">
@@ -594,7 +595,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ENGIEC1" class="row-link" data-nemo="ENGIEC1" data-name="engie energia peru s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="proyeccion" data-simbolo-proyeccion="ENGIEC1.LM">
+      <a href="/empresa/ENGIEC1" class="row-link" data-nemo="ENGIEC1" data-name="engie energia peru s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="ENGIEC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">ENGIEC1</div>
           <div class="name-col">
@@ -606,7 +607,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ETNAI1" class="row-link" data-nemo="ETNAI1" data-name="fabrica nacional de acumuladores etna s.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-simbolo-proyeccion="ETNAI1.LM">
+      <a href="/empresa/ETNAI1" class="row-link" data-nemo="ETNAI1" data-name="fabrica nacional de acumuladores etna s.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="ETNAI1.LM">
         <div class="row-inner ">
           <div class="mono nemo">ETNAI1</div>
           <div class="name-col">
@@ -618,7 +619,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/EXALMC1" class="row-link" data-nemo="EXALMC1" data-name="pesquera exalmar s.a.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-simbolo-proyeccion="EXALMC1.LM">
+      <a href="/empresa/EXALMC1" class="row-link" data-nemo="EXALMC1" data-name="pesquera exalmar s.a.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="EXALMC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">EXALMC1</div>
           <div class="name-col">
@@ -630,7 +631,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/FERREYC1" class="row-link" data-nemo="FERREYC1" data-name="ferreycorp s.a.a." data-sector="DIVERSAS" data-tier="proyeccion" data-simbolo-proyeccion="FERREYC1.LM">
+      <a href="/empresa/FERREYC1" class="row-link" data-nemo="FERREYC1" data-name="ferreycorp s.a.a." data-sector="DIVERSAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="FERREYC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">FERREYC1</div>
           <div class="name-col">
@@ -642,7 +643,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/FIBPRIME" class="row-link" data-nemo="FIBPRIME" data-name="grupo coril sociedad titulizadora s.a." data-sector="DIVERSAS" data-tier="proyeccion" data-simbolo-proyeccion="FIBPRIME.LM">
+      <a href="/empresa/FIBPRIME" class="row-link" data-nemo="FIBPRIME" data-name="grupo coril sociedad titulizadora s.a." data-sector="DIVERSAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="FIBPRIME.LM">
         <div class="row-inner ">
           <div class="mono nemo">FIBPRIME</div>
           <div class="name-col">
@@ -654,7 +655,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/GLORIAI1" class="row-link" data-nemo="GLORIAI1" data-name="leche gloria s.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-simbolo-proyeccion="GLORIAI1.LM">
+      <a href="/empresa/GLORIAI1" class="row-link" data-nemo="GLORIAI1" data-name="leche gloria s.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="GLORIAI1.LM">
         <div class="row-inner ">
           <div class="mono nemo">GLORIAI1</div>
           <div class="name-col">
@@ -666,7 +667,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/HIDRA2C1" class="row-link" data-nemo="HIDRA2C1" data-name="emp. reg. de servicio publico de electricidad electronorte medio s.a.- hidrandina" data-sector="SERVICIOS PÚBLICOS" data-tier="proyeccion" data-simbolo-proyeccion="HIDRA2C1.LM">
+      <a href="/empresa/HIDRA2C1" class="row-link" data-nemo="HIDRA2C1" data-name="emp. reg. de servicio publico de electricidad electronorte medio s.a.- hidrandina" data-sector="SERVICIOS PÚBLICOS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="HIDRA2C1.LM">
         <div class="row-inner ">
           <div class="mono nemo">HIDRA2C1</div>
           <div class="name-col">
@@ -678,7 +679,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/INRETC1" class="row-link" data-nemo="INRETC1" data-name="inretail perú corp." data-sector="DIVERSAS" data-tier="proyeccion" data-simbolo-proyeccion="INRETC1.LM">
+      <a href="/empresa/INRETC1" class="row-link" data-nemo="INRETC1" data-name="inretail perú corp." data-sector="DIVERSAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="INRETC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">INRETC1</div>
           <div class="name-col">
@@ -690,7 +691,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/INTERBC1" class="row-link" data-nemo="INTERBC1" data-name="banco internacional del peru s.a.a. - interbank" data-sector="BANCOS Y FINANCIERAS" data-tier="proyeccion" data-simbolo-proyeccion="INTERBC1.LM">
+      <a href="/empresa/INTERBC1" class="row-link" data-nemo="INTERBC1" data-name="banco internacional del peru s.a.a. - interbank" data-sector="BANCOS Y FINANCIERAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="INTERBC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">INTERBC1</div>
           <div class="name-col">
@@ -702,7 +703,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/IPCHBC1" class="row-link" data-nemo="IPCHBC1" data-name="inversiones portuarias chancay s.a.a." data-sector="DIVERSAS" data-tier="proyeccion" data-simbolo-proyeccion="IPCHBC1.LM">
+      <a href="/empresa/IPCHBC1" class="row-link" data-nemo="IPCHBC1" data-name="inversiones portuarias chancay s.a.a." data-sector="DIVERSAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="IPCHBC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">IPCHBC1</div>
           <div class="name-col">
@@ -714,7 +715,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/LUSURC1" class="row-link" data-nemo="LUSURC1" data-name="luz del sur s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="proyeccion" data-simbolo-proyeccion="LUSURC1.LM">
+      <a href="/empresa/LUSURC1" class="row-link" data-nemo="LUSURC1" data-name="luz del sur s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="LUSURC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">LUSURC1</div>
           <div class="name-col">
@@ -726,7 +727,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/MINSURI1" class="row-link" data-nemo="MINSURI1" data-name="minsur s.a." data-sector="MINERAS" data-tier="proyeccion" data-simbolo-proyeccion="MINSURI1.LM">
+      <a href="/empresa/MINSURI1" class="row-link" data-nemo="MINSURI1" data-name="minsur s.a." data-sector="MINERAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="MINSURI1.LM">
         <div class="row-inner ">
           <div class="mono nemo">MINSURI1</div>
           <div class="name-col">
@@ -738,7 +739,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/MOROCOI1" class="row-link" data-nemo="MOROCOI1" data-name="compañía minera san ignacio de morococha s.a.a." data-sector="MINERAS" data-tier="proyeccion" data-simbolo-proyeccion="MOROCOI1.LM">
+      <a href="/empresa/MOROCOI1" class="row-link" data-nemo="MOROCOI1" data-name="compañía minera san ignacio de morococha s.a.a." data-sector="MINERAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="MOROCOI1.LM">
         <div class="row-inner ">
           <div class="mono nemo">MOROCOI1</div>
           <div class="name-col">
@@ -750,7 +751,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/NEXAPEC1" class="row-link" data-nemo="NEXAPEC1" data-name="nexa resources peru s.a.a." data-sector="MINERAS" data-tier="proyeccion" data-simbolo-proyeccion="NEXAPEC1.LM">
+      <a href="/empresa/NEXAPEC1" class="row-link" data-nemo="NEXAPEC1" data-name="nexa resources peru s.a.a." data-sector="MINERAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="NEXAPEC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">NEXAPEC1</div>
           <div class="name-col">
@@ -762,7 +763,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/PODERC1" class="row-link" data-nemo="PODERC1" data-name="compañía minera poderosa s.a.a." data-sector="MINERAS" data-tier="proyeccion" data-simbolo-proyeccion="PODERC1.LM">
+      <a href="/empresa/PODERC1" class="row-link" data-nemo="PODERC1" data-name="compañía minera poderosa s.a.a." data-sector="MINERAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="PODERC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">PODERC1</div>
           <div class="name-col">
@@ -774,7 +775,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/POMALCC1" class="row-link" data-nemo="POMALCC1" data-name="empresa agroindustrial pomalca s.a.a." data-sector="AGRARIO" data-tier="proyeccion" data-simbolo-proyeccion="POMALCC1.LM">
+      <a href="/empresa/POMALCC1" class="row-link" data-nemo="POMALCC1" data-name="empresa agroindustrial pomalca s.a.a." data-sector="AGRARIO" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="POMALCC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">POMALCC1</div>
           <div class="name-col">
@@ -786,7 +787,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/RIMSEGC1" class="row-link" data-nemo="RIMSEGC1" data-name="rimac seguros y reaseguros" data-sector="SEGUROS" data-tier="proyeccion" data-simbolo-proyeccion="RIMSEGC1.LM">
+      <a href="/empresa/RIMSEGC1" class="row-link" data-nemo="RIMSEGC1" data-name="rimac seguros y reaseguros" data-sector="SEGUROS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="RIMSEGC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">RIMSEGC1</div>
           <div class="name-col">
@@ -798,7 +799,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SCOTIAC1" class="row-link" data-nemo="SCOTIAC1" data-name="scotiabank peru s.a.a." data-sector="BANCOS Y FINANCIERAS" data-tier="proyeccion" data-simbolo-proyeccion="SCOTIAC1.LM">
+      <a href="/empresa/SCOTIAC1" class="row-link" data-nemo="SCOTIAC1" data-name="scotiabank peru s.a.a." data-sector="BANCOS Y FINANCIERAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="SCOTIAC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">SCOTIAC1</div>
           <div class="name-col">
@@ -810,7 +811,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SIDERC1" class="row-link" data-nemo="SIDERC1" data-name="empresa siderurgica del peru s.a.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-simbolo-proyeccion="SIDERC1.LM">
+      <a href="/empresa/SIDERC1" class="row-link" data-nemo="SIDERC1" data-name="empresa siderurgica del peru s.a.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="SIDERC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">SIDERC1</div>
           <div class="name-col">
@@ -822,7 +823,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SNJUANI1" class="row-link" data-nemo="SNJUANI1" data-name="cerveceria san juan s.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-simbolo-proyeccion="SNJUANI1.LM">
+      <a href="/empresa/SNJUANI1" class="row-link" data-nemo="SNJUANI1" data-name="cerveceria san juan s.a." data-sector="INDUSTRIALES" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="SNJUANI1.LM">
         <div class="row-inner ">
           <div class="mono nemo">SNJUANI1</div>
           <div class="name-col">
@@ -834,7 +835,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SPCCPI1" class="row-link" data-nemo="SPCCPI1" data-name="southern peru copper corporation - sucursal del peru" data-sector="MINERAS" data-tier="proyeccion" data-simbolo-proyeccion="SPCCPI1.LM">
+      <a href="/empresa/SPCCPI1" class="row-link" data-nemo="SPCCPI1" data-name="southern peru copper corporation - sucursal del peru" data-sector="MINERAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="SPCCPI1.LM">
         <div class="row-inner ">
           <div class="mono nemo">SPCCPI1</div>
           <div class="name-col">
@@ -846,7 +847,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/UNACEMC1" class="row-link" data-nemo="UNACEMC1" data-name="unacem corp s.a.a." data-sector="DIVERSAS" data-tier="proyeccion" data-simbolo-proyeccion="UNACEMC1.LM">
+      <a href="/empresa/UNACEMC1" class="row-link" data-nemo="UNACEMC1" data-name="unacem corp s.a.a." data-sector="DIVERSAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="UNACEMC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">UNACEMC1</div>
           <div class="name-col">
@@ -858,7 +859,7 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/VOLCABC1" class="row-link" data-nemo="VOLCABC1" data-name="volcan compañia minera s.a.a." data-sector="MINERAS" data-tier="proyeccion" data-simbolo-proyeccion="VOLCABC1.LM">
+      <a href="/empresa/VOLCABC1" class="row-link" data-nemo="VOLCABC1" data-name="volcan compañia minera s.a.a." data-sector="MINERAS" data-tier="proyeccion" data-status="sin_datos" data-simbolo-proyeccion="VOLCABC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">VOLCABC1</div>
           <div class="name-col">
@@ -870,1695 +871,1695 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ANDAHUC1" class="row-link" data-nemo="ANDAHUC1" data-name="empresa agraria azucarera andahuasi s.a.a." data-sector="AGRARIO" data-tier="activo" >
+      <a href="/empresa/ANDAHUC1" class="row-link" data-nemo="ANDAHUC1" data-name="empresa agraria azucarera andahuasi s.a.a." data-sector="AGRARIO" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">ANDAHUC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Empresa Agraria Azucarera Andahuasi S.A.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Agrario</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ANDEXBC1" class="row-link" data-nemo="ANDEXBC1" data-name="minera andina de exploraciones s.a.a." data-sector="MINERAS" data-tier="activo" >
+      <a href="/empresa/ANDEXBC1" class="row-link" data-nemo="ANDEXBC1" data-name="minera andina de exploraciones s.a.a." data-sector="MINERAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">ANDEXBC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Minera Andina de Exploraciones S.A.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Mineras</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ASJUANC1" class="row-link" data-nemo="ASJUANC1" data-name="empresa agricola san juan s.a." data-sector="AGRARIO" data-tier="activo" >
+      <a href="/empresa/ASJUANC1" class="row-link" data-nemo="ASJUANC1" data-name="empresa agricola san juan s.a." data-sector="AGRARIO" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">ASJUANC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Empresa Agricola San Juan S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Agrario</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/AUNA" class="row-link" data-nemo="AUNA" data-name="auna s.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/AUNA" class="row-link" data-nemo="AUNA" data-name="auna s.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">AUNA</div>
           <div class="name-col">
             <div class="company-name font-medium">Auna S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/BAMC1" class="row-link" data-nemo="BAMC1" data-name="bosques amazónicos sociedad anónima" data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/BAMC1" class="row-link" data-nemo="BAMC1" data-name="bosques amazónicos sociedad anónima" data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">BAMC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Bosques Amazónicos Sociedad Anónima</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/BAP" class="row-link" data-nemo="BAP" data-name="credicorp ltd." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/BAP" class="row-link" data-nemo="BAP" data-name="credicorp ltd." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">BAP</div>
           <div class="name-col">
             <div class="company-name font-medium">Credicorp Ltd.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/COCESUC1" class="row-link" data-nemo="COCESUC1" data-name="corporacion cervesur s.a.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/COCESUC1" class="row-link" data-nemo="COCESUC1" data-name="corporacion cervesur s.a.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">COCESUC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Corporacion Cervesur S.A.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/COLCAC1" class="row-link" data-nemo="COLCAC1" data-name="colca capital fte s.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/COLCAC1" class="row-link" data-nemo="COLCAC1" data-name="colca capital fte s.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">COLCAC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Colca Capital FTE S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CONCESI1" class="row-link" data-nemo="CONCESI1" data-name="consorcio cementero del sur s.a. - concesur s.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/CONCESI1" class="row-link" data-nemo="CONCESI1" data-name="consorcio cementero del sur s.a. - concesur s.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">CONCESI1</div>
           <div class="name-col">
             <div class="company-name font-medium">Consorcio Cementero del Sur S.A. - Concesur S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CRECAPC1" class="row-link" data-nemo="CRECAPC1" data-name="credicorp capital perú s.a.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/CRECAPC1" class="row-link" data-nemo="CRECAPC1" data-name="credicorp capital perú s.a.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">CRECAPC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Credicorp Capital Perú S.A.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CUMBRAC1" class="row-link" data-nemo="CUMBRAC1" data-name="cumbra holding s.a.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/CUMBRAC1" class="row-link" data-nemo="CUMBRAC1" data-name="cumbra holding s.a.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">CUMBRAC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Cumbra Holding S.A.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/EGEPIBC1" class="row-link" data-nemo="EGEPIBC1" data-name="enel generación piura s.a." data-sector="SERVICIOS PÚBLICOS" data-tier="activo" >
+      <a href="/empresa/EGEPIBC1" class="row-link" data-nemo="EGEPIBC1" data-name="enel generación piura s.a." data-sector="SERVICIOS PÚBLICOS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">EGEPIBC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Enel Generación Piura S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Servicios Públicos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ENPACIC1" class="row-link" data-nemo="ENPACIC1" data-name="energía del pacífico s.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/ENPACIC1" class="row-link" data-nemo="ENPACIC1" data-name="energía del pacífico s.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">ENPACIC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Energía del Pacífico S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ETERNII1" class="row-link" data-nemo="ETERNII1" data-name="fabrica peruana eternit s.a." data-sector="INDUSTRIALES" data-tier="activo" >
+      <a href="/empresa/ETERNII1" class="row-link" data-nemo="ETERNII1" data-name="fabrica peruana eternit s.a." data-sector="INDUSTRIALES" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">ETERNII1</div>
           <div class="name-col">
             <div class="company-name font-medium">Fabrica Peruana Eternit S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Industriales</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/FIBCCAP" class="row-link" data-nemo="FIBCCAP" data-name="credicorp capital sociedad titulizadora s.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/FIBCCAP" class="row-link" data-nemo="FIBCCAP" data-name="credicorp capital sociedad titulizadora s.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">FIBCCAP</div>
           <div class="name-col">
             <div class="company-name font-medium">Credicorp Capital Sociedad Titulizadora S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/FOSSALC1" class="row-link" data-nemo="FOSSALC1" data-name="fossal s.a.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/FOSSALC1" class="row-link" data-nemo="FOSSALC1" data-name="fossal s.a.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">FOSSALC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Fossal S.A.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/FPROEMC1" class="row-link" data-nemo="FPROEMC1" data-name="financiera proempresa s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="activo" >
+      <a href="/empresa/FPROEMC1" class="row-link" data-nemo="FPROEMC1" data-name="financiera proempresa s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">FPROEMC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Financiera Proempresa S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/FUTURAC1" class="row-link" data-nemo="FUTURAC1" data-name="futura consorcio inmobiliario s.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/FUTURAC1" class="row-link" data-nemo="FUTURAC1" data-name="futura consorcio inmobiliario s.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">FUTURAC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Futura Consorcio Inmobiliario S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/GBVLAC1" class="row-link" data-nemo="GBVLAC1" data-name="grupo bvl s.a.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/GBVLAC1" class="row-link" data-nemo="GBVLAC1" data-name="grupo bvl s.a.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">GBVLAC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Grupo BVL S.A.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/GRHOLDC1" class="row-link" data-nemo="GRHOLDC1" data-name="gr holding s.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/GRHOLDC1" class="row-link" data-nemo="GRHOLDC1" data-name="gr holding s.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">GRHOLDC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Gr Holding S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/HERMESC1" class="row-link" data-nemo="HERMESC1" data-name="hermes transportes blindados s.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/HERMESC1" class="row-link" data-nemo="HERMESC1" data-name="hermes transportes blindados s.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">HERMESC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Hermes Transportes Blindados S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/HIDROSI1" class="row-link" data-nemo="HIDROSI1" data-name="hidrostal s.a." data-sector="INDUSTRIALES" data-tier="activo" >
+      <a href="/empresa/HIDROSI1" class="row-link" data-nemo="HIDROSI1" data-name="hidrostal s.a." data-sector="INDUSTRIALES" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">HIDROSI1</div>
           <div class="name-col">
             <div class="company-name font-medium">Hidrostal S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Industriales</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/IFS" class="row-link" data-nemo="IFS" data-name="intercorp financial services inc." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/IFS" class="row-link" data-nemo="IFS" data-name="intercorp financial services inc." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">IFS</div>
           <div class="name-col">
             <div class="company-name font-medium">Intercorp Financial Services Inc.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/IIDEI1" class="row-link" data-nemo="IIDEI1" data-name="inmobiliaria ide s.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/IIDEI1" class="row-link" data-nemo="IIDEI1" data-name="inmobiliaria ide s.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">IIDEI1</div>
           <div class="name-col">
             <div class="company-name font-medium">Inmobiliaria IDE S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/INDECOI1" class="row-link" data-nemo="INDECOI1" data-name="indeco s.a." data-sector="INDUSTRIALES" data-tier="activo" >
+      <a href="/empresa/INDECOI1" class="row-link" data-nemo="INDECOI1" data-name="indeco s.a." data-sector="INDUSTRIALES" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">INDECOI1</div>
           <div class="name-col">
             <div class="company-name font-medium">Indeco S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Industriales</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/INFIXPC1" class="row-link" data-nemo="INFIXPC1" data-name="infinance xp s.a. (antes financiera oh! s.a.)" data-sector="BANCOS Y FINANCIERAS" data-tier="activo" >
+      <a href="/empresa/INFIXPC1" class="row-link" data-nemo="INFIXPC1" data-name="infinance xp s.a. (antes financiera oh! s.a.)" data-sector="BANCOS Y FINANCIERAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">INFIXPC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Infinance XP S.A. (Antes Financiera OH! S.A.)</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/INTPEBC1" class="row-link" data-nemo="INTPEBC1" data-name="integratel perú s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="activo" >
+      <a href="/empresa/INTPEBC1" class="row-link" data-nemo="INTPEBC1" data-name="integratel perú s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">INTPEBC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Integratel Perú S.A.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Servicios Públicos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/INVCENC1" class="row-link" data-nemo="INVCENC1" data-name="inversiones centenario s.a.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/INVCENC1" class="row-link" data-nemo="INVCENC1" data-name="inversiones centenario s.a.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">INVCENC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Inversiones Centenario S.A.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/INVFALC1" class="row-link" data-nemo="INVFALC1" data-name="inverfal perú s.a.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/INVFALC1" class="row-link" data-nemo="INVFALC1" data-name="inverfal perú s.a.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">INVFALC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Inverfal Perú S.A.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/LAREDOC1" class="row-link" data-nemo="LAREDOC1" data-name="agroindustrial laredo s.a.a." data-sector="AGRARIO" data-tier="activo" >
+      <a href="/empresa/LAREDOC1" class="row-link" data-nemo="LAREDOC1" data-name="agroindustrial laredo s.a.a." data-sector="AGRARIO" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">LAREDOC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Agroindustrial Laredo S.A.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Agrario</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/LUISAI1" class="row-link" data-nemo="LUISAI1" data-name="compañía minera santa luisa s.a." data-sector="MINERAS" data-tier="activo" >
+      <a href="/empresa/LUISAI1" class="row-link" data-nemo="LUISAI1" data-name="compañía minera santa luisa s.a." data-sector="MINERAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">LUISAI1</div>
           <div class="name-col">
             <div class="company-name font-medium">Compañía Minera Santa Luisa S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Mineras</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/MAPFSGC1" class="row-link" data-nemo="MAPFSGC1" data-name="mapfre perú compañía de seguros y reaseguros" data-sector="SEGUROS" data-tier="activo" >
+      <a href="/empresa/MAPFSGC1" class="row-link" data-nemo="MAPFSGC1" data-name="mapfre perú compañía de seguros y reaseguros" data-sector="SEGUROS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">MAPFSGC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Mapfre Perú Compañía de Seguros y Reaseguros</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Seguros</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/MICHEI1" class="row-link" data-nemo="MICHEI1" data-name="michell y cia. s.a." data-sector="INDUSTRIALES" data-tier="activo" >
+      <a href="/empresa/MICHEI1" class="row-link" data-nemo="MICHEI1" data-name="michell y cia. s.a." data-sector="INDUSTRIALES" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">MICHEI1</div>
           <div class="name-col">
             <div class="company-name font-medium">Michell y Cia. S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Industriales</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/MINCORC1" class="row-link" data-nemo="MINCORC1" data-name="sociedad minera corona s.a." data-sector="MINERAS" data-tier="activo" >
+      <a href="/empresa/MINCORC1" class="row-link" data-nemo="MINCORC1" data-name="sociedad minera corona s.a." data-sector="MINERAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">MINCORC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Sociedad Minera Corona S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Mineras</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ORYGENC1" class="row-link" data-nemo="ORYGENC1" data-name="orygen perú s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="activo" >
+      <a href="/empresa/ORYGENC1" class="row-link" data-nemo="ORYGENC1" data-name="orygen perú s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">ORYGENC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Orygen Perú S.A.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Servicios Públicos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/PACIFIC1" class="row-link" data-nemo="PACIFIC1" data-name="pacífico compañía de seguros y reaseguros" data-sector="SEGUROS" data-tier="activo" >
+      <a href="/empresa/PACIFIC1" class="row-link" data-nemo="PACIFIC1" data-name="pacífico compañía de seguros y reaseguros" data-sector="SEGUROS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">PACIFIC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Pacífico Compañía de Seguros y Reaseguros</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Seguros</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/PERENBC1" class="row-link" data-nemo="PERENBC1" data-name="peruana de energia s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="activo" >
+      <a href="/empresa/PERENBC1" class="row-link" data-nemo="PERENBC1" data-name="peruana de energia s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">PERENBC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Peruana de Energia S.A.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Servicios Públicos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/PLUZENC1" class="row-link" data-nemo="PLUZENC1" data-name="pluz energía perú s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="activo" >
+      <a href="/empresa/PLUZENC1" class="row-link" data-nemo="PLUZENC1" data-name="pluz energía perú s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">PLUZENC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Pluz Energía Perú S.A.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Servicios Públicos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/POSITIC1" class="row-link" data-nemo="POSITIC1" data-name="la positiva seguros y reaseguros s.a." data-sector="SEGUROS" data-tier="activo" >
+      <a href="/empresa/POSITIC1" class="row-link" data-nemo="POSITIC1" data-name="la positiva seguros y reaseguros s.a." data-sector="SEGUROS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">POSITIC1</div>
           <div class="name-col">
             <div class="company-name font-medium">La Positiva Seguros y Reaseguros S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Seguros</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/PUCALAC1" class="row-link" data-nemo="PUCALAC1" data-name="agro pucala s.a.a." data-sector="AGRARIO" data-tier="activo" >
+      <a href="/empresa/PUCALAC1" class="row-link" data-nemo="PUCALAC1" data-name="agro pucala s.a.a." data-sector="AGRARIO" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">PUCALAC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Agro Pucala S.A.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Agrario</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/RECORDI1" class="row-link" data-nemo="RECORDI1" data-name="manufactura de metales y aluminio "record" s.a. - en liquidacion" data-sector="INDUSTRIALES" data-tier="activo" >
+      <a href="/empresa/RECORDI1" class="row-link" data-nemo="RECORDI1" data-name="manufactura de metales y aluminio "record" s.a. - en liquidacion" data-sector="INDUSTRIALES" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">RECORDI1</div>
           <div class="name-col">
             <div class="company-name font-medium">Manufactura de Metales y Aluminio "Record" S.A. - en Liquidacion</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Industriales</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SAGAC1" class="row-link" data-nemo="SAGAC1" data-name="saga falabella s.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/SAGAC1" class="row-link" data-nemo="SAGAC1" data-name="saga falabella s.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">SAGAC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Saga Falabella S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SCCO" class="row-link" data-nemo="SCCO" data-name="southern copper corporation" data-sector="MINERAS" data-tier="activo" >
+      <a href="/empresa/SCCO" class="row-link" data-nemo="SCCO" data-name="southern copper corporation" data-sector="MINERAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">SCCO</div>
           <div class="name-col">
             <div class="company-name font-medium">Southern Copper Corporation</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Mineras</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SEALDC1" class="row-link" data-nemo="SEALDC1" data-name="sociedad electrica del sur oeste s.a. - seal" data-sector="SERVICIOS PÚBLICOS" data-tier="activo" >
+      <a href="/empresa/SEALDC1" class="row-link" data-nemo="SEALDC1" data-name="sociedad electrica del sur oeste s.a. - seal" data-sector="SERVICIOS PÚBLICOS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">SEALDC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Sociedad Electrica del Sur Oeste S.A. - SEAL</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Servicios Públicos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SHPC1" class="row-link" data-nemo="SHPC1" data-name="shougang hierro peru s.a.a." data-sector="MINERAS" data-tier="activo" >
+      <a href="/empresa/SHPC1" class="row-link" data-nemo="SHPC1" data-name="shougang hierro peru s.a.a." data-sector="MINERAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">SHPC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Shougang Hierro Peru S.A.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Mineras</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SNJACIC1" class="row-link" data-nemo="SNJACIC1" data-name="agroindustrias san jacinto sociedad anonima abierta (agroindustrias san jacinto s.a.a.)" data-sector="AGRARIO" data-tier="activo" >
+      <a href="/empresa/SNJACIC1" class="row-link" data-nemo="SNJACIC1" data-name="agroindustrias san jacinto sociedad anonima abierta (agroindustrias san jacinto s.a.a.)" data-sector="AGRARIO" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">SNJACIC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Agroindustrias San Jacinto Sociedad Anonima Abierta (Agroindustrias San Jacinto S.A.A.)</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Agrario</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/TRADIC1" class="row-link" data-nemo="TRADIC1" data-name="tradi s.a." data-sector="DIVERSAS" data-tier="activo" >
+      <a href="/empresa/TRADIC1" class="row-link" data-nemo="TRADIC1" data-name="tradi s.a." data-sector="DIVERSAS" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">TRADIC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Tradi S.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/TUMANC1" class="row-link" data-nemo="TUMANC1" data-name="empresa agroindustrial tuman s.a.a." data-sector="AGRARIO" data-tier="activo" >
+      <a href="/empresa/TUMANC1" class="row-link" data-nemo="TUMANC1" data-name="empresa agroindustrial tuman s.a.a." data-sector="AGRARIO" data-tier="activo" data-status="sin_datos" >
         <div class="row-inner ">
           <div class="mono nemo">TUMANC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Empresa Agroindustrial Tuman S.A.A.</div>
-            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Agrario</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/AIBC1" class="row-link" data-nemo="AIBC1" data-name="agroindustrias aib s.a." data-sector="INDUSTRIALES" data-tier="sin" >
+      <a href="/empresa/AIBC1" class="row-link" data-nemo="AIBC1" data-name="agroindustrias aib s.a." data-sector="INDUSTRIALES" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">AIBC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Agroindustrias AIB S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Industriales</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/AIPC1" class="row-link" data-nemo="AIPC1" data-name="activo inmobiliario peruano s.a.a. (antes falabella perú s.a.a.)" data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/AIPC1" class="row-link" data-nemo="AIPC1" data-name="activo inmobiliario peruano s.a.a. (antes falabella perú s.a.a.)" data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">AIPC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Activo Inmobiliario Peruano S.A.A. (Antes Falabella Perú S.A.A.)</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ALFINAC1" class="row-link" data-nemo="ALFINAC1" data-name="alfin banco s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/ALFINAC1" class="row-link" data-nemo="ALFINAC1" data-name="alfin banco s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">ALFINAC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Alfin Banco S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ASSAINC1" class="row-link" data-nemo="ASSAINC1" data-name="assa inmobiliaria s.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/ASSAINC1" class="row-link" data-nemo="ASSAINC1" data-name="assa inmobiliaria s.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">ASSAINC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Assa Inmobiliaria S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/AUGUSC1" class="row-link" data-nemo="AUGUSC1" data-name="augustar seguros y reaseguros s.a. (antes ohio national seguros de vida y reaseguros s.a.)" data-sector="SEGUROS" data-tier="sin" >
+      <a href="/empresa/AUGUSC1" class="row-link" data-nemo="AUGUSC1" data-name="augustar seguros y reaseguros s.a. (antes ohio national seguros de vida y reaseguros s.a.)" data-sector="SEGUROS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">AUGUSC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Augustar Seguros y Reaseguros S.A. (Antes Ohio National Seguros de Vida y Reaseguros S.A.)</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Seguros</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/AUNIONC1" class="row-link" data-nemo="AUNIONC1" data-name="empresa agricola la union s.a." data-sector="AGRARIO" data-tier="sin" >
+      <a href="/empresa/AUNIONC1" class="row-link" data-nemo="AUNIONC1" data-name="empresa agricola la union s.a." data-sector="AGRARIO" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">AUNIONC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Empresa Agricola la Union S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Agrario</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/AVLASGC1" class="row-link" data-nemo="AVLASGC1" data-name="avla perú compañía de seguros s.a." data-sector="SEGUROS" data-tier="sin" >
+      <a href="/empresa/AVLASGC1" class="row-link" data-nemo="AVLASGC1" data-name="avla perú compañía de seguros s.a." data-sector="SEGUROS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">AVLASGC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Avla Perú Compañía de Seguros S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Seguros</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/AZZAROC1" class="row-link" data-nemo="AZZAROC1" data-name="azzaro trading s.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/AZZAROC1" class="row-link" data-nemo="AZZAROC1" data-name="azzaro trading s.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">AZZAROC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Azzaro Trading S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/BANCOMC1" class="row-link" data-nemo="BANCOMC1" data-name="banco de comercio" data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/BANCOMC1" class="row-link" data-nemo="BANCOMC1" data-name="banco de comercio" data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">BANCOMC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Banco de Comercio</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/BANFALC1" class="row-link" data-nemo="BANFALC1" data-name="banco falabella peru s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/BANFALC1" class="row-link" data-nemo="BANFALC1" data-name="banco falabella peru s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">BANFALC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Banco Falabella Peru S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/BCIPEC1" class="row-link" data-nemo="BCIPEC1" data-name="banco bci peru s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/BCIPEC1" class="row-link" data-nemo="BCIPEC1" data-name="banco bci peru s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">BCIPEC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Banco Bci Peru S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/BIFC1" class="row-link" data-nemo="BIFC1" data-name="banco interamericano de finanzas s.a. - banbif" data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/BIFC1" class="row-link" data-nemo="BIFC1" data-name="banco interamericano de finanzas s.a. - banbif" data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">BIFC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Banco Interamericano de Finanzas S.A. - Banbif</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/BOCPEC1" class="row-link" data-nemo="BOCPEC1" data-name="bank of china (peru) s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/BOCPEC1" class="row-link" data-nemo="BOCPEC1" data-name="bank of china (peru) s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">BOCPEC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Bank Of China (Peru) S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/BRIPLEC1" class="row-link" data-nemo="BRIPLEC1" data-name="banco ripley perú s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/BRIPLEC1" class="row-link" data-nemo="BRIPLEC1" data-name="banco ripley perú s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">BRIPLEC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Banco Ripley Perú S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/BVLC1" class="row-link" data-nemo="BVLC1" data-name="bolsa de valores de lima s.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/BVLC1" class="row-link" data-nemo="BVLC1" data-name="bolsa de valores de lima s.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">BVLC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Bolsa de Valores de Lima S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CARDIFC1" class="row-link" data-nemo="CARDIFC1" data-name="bnp paribas cardif s.a. compañia de seguros y reaseguros" data-sector="SEGUROS" data-tier="sin" >
+      <a href="/empresa/CARDIFC1" class="row-link" data-nemo="CARDIFC1" data-name="bnp paribas cardif s.a. compañia de seguros y reaseguros" data-sector="SEGUROS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">CARDIFC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Bnp Paribas Cardif S.A. Compañia de Seguros y Reaseguros</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Seguros</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CASTROC1" class="row-link" data-nemo="CASTROC1" data-name="castrovirreyna compañia minera s.a. - en liquidacion" data-sector="MINERAS" data-tier="sin" >
+      <a href="/empresa/CASTROC1" class="row-link" data-nemo="CASTROC1" data-name="castrovirreyna compañia minera s.a. - en liquidacion" data-sector="MINERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">CASTROC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Castrovirreyna Compañia Minera S.A. - en Liquidacion</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Mineras</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CAVALIC1" class="row-link" data-nemo="CAVALIC1" data-name="cavali s.a. i.c.l.v." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/CAVALIC1" class="row-link" data-nemo="CAVALIC1" data-name="cavali s.a. i.c.l.v." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">CAVALIC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Cavali S.A. I.C.L.V.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CAYALTC1" class="row-link" data-nemo="CAYALTC1" data-name="agrícola cayaltí s.a.a." data-sector="AGRARIO" data-tier="sin" >
+      <a href="/empresa/CAYALTC1" class="row-link" data-nemo="CAYALTC1" data-name="agrícola cayaltí s.a.a." data-sector="AGRARIO" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">CAYALTC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Agrícola Cayaltí S.A.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Agrario</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CESCEPC1" class="row-link" data-nemo="CESCEPC1" data-name="cesce perú s.a. compañía de seguros (antes secrex compañía de seguros de crédito y garantías s.a.)" data-sector="SEGUROS" data-tier="sin" >
+      <a href="/empresa/CESCEPC1" class="row-link" data-nemo="CESCEPC1" data-name="cesce perú s.a. compañía de seguros (antes secrex compañía de seguros de crédito y garantías s.a.)" data-sector="SEGUROS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">CESCEPC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Cesce Perú S.A. Compañía de Seguros (Antes Secrex Compañía de Seguros de Crédito y Garantías S.A.)</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Seguros</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CHIQUIC1" class="row-link" data-nemo="CHIQUIC1" data-name="empresa agraria chiquitoy s.a." data-sector="AGRARIO" data-tier="sin" >
+      <a href="/empresa/CHIQUIC1" class="row-link" data-nemo="CHIQUIC1" data-name="empresa agraria chiquitoy s.a." data-sector="AGRARIO" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">CHIQUIC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Empresa Agraria Chiquitoy S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Agrario</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CHUBSGC1" class="row-link" data-nemo="CHUBSGC1" data-name="chubb peru s.a. compañia de seguros y reaseguros" data-sector="SEGUROS" data-tier="sin" >
+      <a href="/empresa/CHUBSGC1" class="row-link" data-nemo="CHUBSGC1" data-name="chubb peru s.a. compañia de seguros y reaseguros" data-sector="SEGUROS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">CHUBSGC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Chubb Peru S.A. Compañia de Seguros y Reaseguros</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Seguros</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CHUCARC1" class="row-link" data-nemo="CHUCARC1" data-name="central azucarera chucarapi pampa blanca s.a." data-sector="AGRARIO" data-tier="sin" >
+      <a href="/empresa/CHUCARC1" class="row-link" data-nemo="CHUCARC1" data-name="central azucarera chucarapi pampa blanca s.a." data-sector="AGRARIO" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">CHUCARC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Central Azucarera Chucarapi Pampa Blanca S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Agrario</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CITIBKC1" class="row-link" data-nemo="CITIBKC1" data-name="citibank del peru s.a. - citibank peru" data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/CITIBKC1" class="row-link" data-nemo="CITIBKC1" data-name="citibank del peru s.a. - citibank peru" data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">CITIBKC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Citibank del Peru S.A. - Citibank Peru</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CMAQPC1" class="row-link" data-nemo="CMAQPC1" data-name="caja municipal de ahorro y credito de arequipa s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/CMAQPC1" class="row-link" data-nemo="CMAQPC1" data-name="caja municipal de ahorro y credito de arequipa s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">CMAQPC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Caja Municipal de Ahorro y Credito de Arequipa S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/COFIDCC1" class="row-link" data-nemo="COFIDCC1" data-name="corporacion financiera de desarrollo s.a. - cofide" data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/COFIDCC1" class="row-link" data-nemo="COFIDCC1" data-name="corporacion financiera de desarrollo s.a. - cofide" data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">COFIDCC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Corporacion Financiera de Desarrollo S.A. - Cofide</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/COMPARC1" class="row-link" data-nemo="COMPARC1" data-name="compartamos banco s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/COMPARC1" class="row-link" data-nemo="COMPARC1" data-name="compartamos banco s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">COMPARC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Compartamos Banco S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/COPENC1" class="row-link" data-nemo="COPENC1" data-name="copen inversiones s.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/COPENC1" class="row-link" data-nemo="COPENC1" data-name="copen inversiones s.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">COPENC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Copen Inversiones S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CRANDEC1" class="row-link" data-nemo="CRANDEC1" data-name="caja rural de ahorro y credito los andes s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/CRANDEC1" class="row-link" data-nemo="CRANDEC1" data-name="caja rural de ahorro y credito los andes s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">CRANDEC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Caja Rural de Ahorro y Credito los Andes S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CRECERC1" class="row-link" data-nemo="CRECERC1" data-name="crecer seguros s.a. compañia de seguros" data-sector="SEGUROS" data-tier="sin" >
+      <a href="/empresa/CRECERC1" class="row-link" data-nemo="CRECERC1" data-name="crecer seguros s.a. compañia de seguros" data-sector="SEGUROS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">CRECERC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Crecer Seguros S.A. Compañia de Seguros</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Seguros</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/DESXXIC1" class="row-link" data-nemo="DESXXIC1" data-name="desarrollos siglo xxi s.a.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/DESXXIC1" class="row-link" data-nemo="DESXXIC1" data-name="desarrollos siglo xxi s.a.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">DESXXIC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Desarrollos Siglo Xxi S.A.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/DUNENC1" class="row-link" data-nemo="DUNENC1" data-name="dunas energía s.a.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/DUNENC1" class="row-link" data-nemo="DUNENC1" data-name="dunas energía s.a.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">DUNENC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Dunas Energía S.A.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/EDUNASC1" class="row-link" data-nemo="EDUNASC1" data-name="electro dunas s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="sin" >
+      <a href="/empresa/EDUNASC1" class="row-link" data-nemo="EDUNASC1" data-name="electro dunas s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">EDUNASC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Electro Dunas S.A.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Servicios Públicos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/EFECTIC1" class="row-link" data-nemo="EFECTIC1" data-name="banco efectiva s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/EFECTIC1" class="row-link" data-nemo="EFECTIC1" data-name="banco efectiva s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">EFECTIC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Banco Efectiva S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/EGESUBC1" class="row-link" data-nemo="EGESUBC1" data-name="empresa de generación eléctrica del sur s.a. - egesur" data-sector="SERVICIOS PÚBLICOS" data-tier="sin" >
+      <a href="/empresa/EGESUBC1" class="row-link" data-nemo="EGESUBC1" data-name="empresa de generación eléctrica del sur s.a. - egesur" data-sector="SERVICIOS PÚBLICOS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">EGESUBC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Empresa de Generación Eléctrica del Sur S.A. - Egesur</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Servicios Públicos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ELECPBC1" class="row-link" data-nemo="ELECPBC1" data-name="empresa electricidad del peru - electroperu s.a." data-sector="SERVICIOS PÚBLICOS" data-tier="sin" >
+      <a href="/empresa/ELECPBC1" class="row-link" data-nemo="ELECPBC1" data-name="empresa electricidad del peru - electroperu s.a." data-sector="SERVICIOS PÚBLICOS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">ELECPBC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Empresa Electricidad del Peru - Electroperu S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Servicios Públicos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ELESUDC1" class="row-link" data-nemo="ELESUDC1" data-name="empresa regional de servicio publico de electricidad - electrosur s.a." data-sector="SERVICIOS PÚBLICOS" data-tier="sin" >
+      <a href="/empresa/ELESUDC1" class="row-link" data-nemo="ELESUDC1" data-name="empresa regional de servicio publico de electricidad - electrosur s.a." data-sector="SERVICIOS PÚBLICOS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">ELESUDC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Empresa Regional de Servicio Publico de Electricidad - Electrosur S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Servicios Públicos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/EPUNOBC1" class="row-link" data-nemo="EPUNOBC1" data-name="electro puno s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="sin" >
+      <a href="/empresa/EPUNOBC1" class="row-link" data-nemo="EPUNOBC1" data-name="electro puno s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">EPUNOBC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Electro Puno S.A.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Servicios Públicos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ESUREBC1" class="row-link" data-nemo="ESUREBC1" data-name="electro sur este s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="sin" >
+      <a href="/empresa/ESUREBC1" class="row-link" data-nemo="ESUREBC1" data-name="electro sur este s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">ESUREBC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Electro Sur Este S.A.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Servicios Públicos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/EXPERTC1" class="row-link" data-nemo="EXPERTC1" data-name="expertia travel s.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/EXPERTC1" class="row-link" data-nemo="EXPERTC1" data-name="expertia travel s.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">EXPERTC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Expertia Travel S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/FANUPEC1" class="row-link" data-nemo="FANUPEC1" data-name="sociedad agricola fanupe vichayal s.a." data-sector="AGRARIO" data-tier="sin" >
+      <a href="/empresa/FANUPEC1" class="row-link" data-nemo="FANUPEC1" data-name="sociedad agricola fanupe vichayal s.a." data-sector="AGRARIO" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">FANUPEC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Sociedad Agricola Fanupe Vichayal S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Agrario</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/FCONFIC1" class="row-link" data-nemo="FCONFIC1" data-name="financiera confianza s.a.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/FCONFIC1" class="row-link" data-nemo="FCONFIC1" data-name="financiera confianza s.a.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">FCONFIC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Financiera Confianza S.A.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/FCREDIC1" class="row-link" data-nemo="FCREDIC1" data-name="financiera credinka s.a. - en liquidacion" data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/FCREDIC1" class="row-link" data-nemo="FCREDIC1" data-name="financiera credinka s.a. - en liquidacion" data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">FCREDIC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Financiera Credinka S.A. - en Liquidacion</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/FILAMEI1" class="row-link" data-nemo="FILAMEI1" data-name="filamentos industriales s.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/FILAMEI1" class="row-link" data-nemo="FILAMEI1" data-name="filamentos industriales s.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">FILAMEI1</div>
           <div class="name-col">
             <div class="company-name font-medium">Filamentos Industriales S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/FINTFCC1" class="row-link" data-nemo="FINTFCC1" data-name="financiera tfc s.a. - en liquidación" data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/FINTFCC1" class="row-link" data-nemo="FINTFCC1" data-name="financiera tfc s.a. - en liquidación" data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">FINTFCC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Financiera Tfc S.A. - en Liquidación</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/FOSPACC1" class="row-link" data-nemo="FOSPACC1" data-name="fosfatos del pacífico s.a. - fospac s.a." data-sector="MINERAS" data-tier="sin" >
+      <a href="/empresa/FOSPACC1" class="row-link" data-nemo="FOSPACC1" data-name="fosfatos del pacífico s.a. - fospac s.a." data-sector="MINERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">FOSPACC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Fosfatos del Pacífico S.A. - Fospac S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Mineras</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/GANSALC1" class="row-link" data-nemo="GANSALC1" data-name="empresa agricola ganadera salamanca s.a." data-sector="AGRARIO" data-tier="sin" >
+      <a href="/empresa/GANSALC1" class="row-link" data-nemo="GANSALC1" data-name="empresa agricola ganadera salamanca s.a." data-sector="AGRARIO" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">GANSALC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Empresa Agricola Ganadera Salamanca S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Agrario</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/GNBC1" class="row-link" data-nemo="GNBC1" data-name="banco gnb perú s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/GNBC1" class="row-link" data-nemo="GNBC1" data-name="banco gnb perú s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">GNBC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Banco Gnb Perú S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/HABITAC1" class="row-link" data-nemo="HABITAC1" data-name="afp habitat s.a." data-sector="ADMINISTRADORAS DE FONDOS DE PENSIONES" data-tier="sin" >
+      <a href="/empresa/HABITAC1" class="row-link" data-nemo="HABITAC1" data-name="afp habitat s.a." data-sector="ADMINISTRADORAS DE FONDOS DE PENSIONES" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">HABITAC1</div>
           <div class="name-col">
             <div class="company-name font-medium">AFP Habitat S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">AFP</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ICBCC1" class="row-link" data-nemo="ICBCC1" data-name="icbc perú bank s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/ICBCC1" class="row-link" data-nemo="ICBCC1" data-name="icbc perú bank s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">ICBCC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Icbc Perú Bank S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/IEQSAI1" class="row-link" data-nemo="IEQSAI1" data-name="industrias electro quimicas s.a. - ieqsa" data-sector="INDUSTRIALES" data-tier="sin" >
+      <a href="/empresa/IEQSAI1" class="row-link" data-nemo="IEQSAI1" data-name="industrias electro quimicas s.a. - ieqsa" data-sector="INDUSTRIALES" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">IEQSAI1</div>
           <div class="name-col">
             <div class="company-name font-medium">Industrias Electro Quimicas S.A. - Ieqsa</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Industriales</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/INCRAIC1" class="row-link" data-nemo="INCRAIC1" data-name="inca rail s.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/INCRAIC1" class="row-link" data-nemo="INCRAIC1" data-name="inca rail s.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">INCRAIC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Inca Rail S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/INSURC1" class="row-link" data-nemo="INSURC1" data-name="insur s.a. compañía de seguros" data-sector="SEGUROS" data-tier="sin" >
+      <a href="/empresa/INSURC1" class="row-link" data-nemo="INSURC1" data-name="insur s.a. compañía de seguros" data-sector="SEGUROS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">INSURC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Insur S.A. Compañía de Seguros</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Seguros</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/INTEGRC1" class="row-link" data-nemo="INTEGRC1" data-name="a.f.p. integra s.a." data-sector="ADMINISTRADORAS DE FONDOS DE PENSIONES" data-tier="sin" >
+      <a href="/empresa/INTEGRC1" class="row-link" data-nemo="INTEGRC1" data-name="a.f.p. integra s.a." data-sector="ADMINISTRADORAS DE FONDOS DE PENSIONES" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">INTEGRC1</div>
           <div class="name-col">
             <div class="company-name font-medium">A.F.P. Integra S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">AFP</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/INTSEGC1" class="row-link" data-nemo="INTSEGC1" data-name="interseguro compañía de seguros s.a." data-sector="SEGUROS" data-tier="sin" >
+      <a href="/empresa/INTSEGC1" class="row-link" data-nemo="INTSEGC1" data-name="interseguro compañía de seguros s.a." data-sector="SEGUROS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">INTSEGC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Interseguro Compañía de Seguros S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Seguros</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/INVCO2C1" class="row-link" data-nemo="INVCO2C1" data-name="inversiones corporativas a1 s.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/INVCO2C1" class="row-link" data-nemo="INVCO2C1" data-name="inversiones corporativas a1 s.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">INVCO2C1</div>
           <div class="name-col">
             <div class="company-name font-medium">Inversiones Corporativas A1 S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/INVERPC1" class="row-link" data-nemo="INVERPC1" data-name="inverperú inmobiliaria s.a.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/INVERPC1" class="row-link" data-nemo="INVERPC1" data-name="inverperú inmobiliaria s.a.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">INVERPC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Inverperú Inmobiliaria S.A.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/INVERTC1" class="row-link" data-nemo="INVERTC1" data-name="inversiones en turismo s.a. - invertur" data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/INVERTC1" class="row-link" data-nemo="INVERTC1" data-name="inversiones en turismo s.a. - invertur" data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">INVERTC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Inversiones en Turismo S.A. - Invertur</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/ISICC1" class="row-link" data-nemo="ISICC1" data-name="inmobiliaria sic s.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/ISICC1" class="row-link" data-nemo="ISICC1" data-name="inmobiliaria sic s.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">ISICC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Inmobiliaria Sic S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/JPMORGC1" class="row-link" data-nemo="JPMORGC1" data-name="j.p. morgan banco de inversión" data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/JPMORGC1" class="row-link" data-nemo="JPMORGC1" data-name="j.p. morgan banco de inversión" data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">JPMORGC1</div>
           <div class="name-col">
             <div class="company-name font-medium">J.P. Morgan Banco de Inversión</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/LAIVEBC1" class="row-link" data-nemo="LAIVEBC1" data-name="laive s.a." data-sector="INDUSTRIALES" data-tier="sin" >
+      <a href="/empresa/LAIVEBC1" class="row-link" data-nemo="LAIVEBC1" data-name="laive s.a." data-sector="INDUSTRIALES" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">LAIVEBC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Laive S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Industriales</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/LIBSEGC1" class="row-link" data-nemo="LIBSEGC1" data-name="liberty seguros s.a." data-sector="SEGUROS" data-tier="sin" >
+      <a href="/empresa/LIBSEGC1" class="row-link" data-nemo="LIBSEGC1" data-name="liberty seguros s.a." data-sector="SEGUROS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">LIBSEGC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Liberty Seguros S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Seguros</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/MIBANC1" class="row-link" data-nemo="MIBANC1" data-name="mibanco banco de la micro empresa s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/MIBANC1" class="row-link" data-nemo="MIBANC1" data-name="mibanco banco de la micro empresa s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">MIBANC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Mibanco Banco de la Micro Empresa S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/MITSUFC1" class="row-link" data-nemo="MITSUFC1" data-name="mitsui auto finance perú s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/MITSUFC1" class="row-link" data-nemo="MITSUFC1" data-name="mitsui auto finance perú s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">MITSUFC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Mitsui Auto Finance Perú S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/NACSEGC1" class="row-link" data-nemo="NACSEGC1" data-name="nacional de seguros s.a." data-sector="SEGUROS" data-tier="sin" >
+      <a href="/empresa/NACSEGC1" class="row-link" data-nemo="NACSEGC1" data-name="nacional de seguros s.a." data-sector="SEGUROS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">NACSEGC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Nacional de Seguros S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Seguros</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/PALOALC1" class="row-link" data-nemo="PALOALC1" data-name="ai inversiones palo alto s.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/PALOALC1" class="row-link" data-nemo="PALOALC1" data-name="ai inversiones palo alto s.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">PALOALC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Ai Inversiones Palo Alto S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/PARAMOC1" class="row-link" data-nemo="PARAMOC1" data-name="agro industrial paramonga s.a." data-sector="AGRARIO" data-tier="sin" >
+      <a href="/empresa/PARAMOC1" class="row-link" data-nemo="PARAMOC1" data-name="agro industrial paramonga s.a." data-sector="AGRARIO" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">PARAMOC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Agro Industrial Paramonga S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Agrario</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/PETROBC1" class="row-link" data-nemo="PETROBC1" data-name="petroleos del perú - petroperu s.a." data-sector="INDUSTRIALES" data-tier="sin" >
+      <a href="/empresa/PETROBC1" class="row-link" data-nemo="PETROBC1" data-name="petroleos del perú - petroperu s.a." data-sector="INDUSTRIALES" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">PETROBC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Petroleos del Perú - Petroperu S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Industriales</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/PHTBC1" class="row-link" data-nemo="PHTBC1" data-name="peru holding de turismo s.a.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/PHTBC1" class="row-link" data-nemo="PHTBC1" data-name="peru holding de turismo s.a.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">PHTBC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Peru Holding de Turismo S.A.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/PIURAC1" class="row-link" data-nemo="PIURAC1" data-name="industria textil piura s.a." data-sector="INDUSTRIALES" data-tier="sin" >
+      <a href="/empresa/PIURAC1" class="row-link" data-nemo="PIURAC1" data-name="industria textil piura s.a." data-sector="INDUSTRIALES" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">PIURAC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Industria Textil Piura S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Industriales</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/PORTAC1" class="row-link" data-nemo="PORTAC1" data-name="los portales s.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/PORTAC1" class="row-link" data-nemo="PORTAC1" data-name="los portales s.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">PORTAC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Los Portales S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/POSITVC1" class="row-link" data-nemo="POSITVC1" data-name="la positiva vida seguros y reaseguros s.a." data-sector="SEGUROS" data-tier="sin" >
+      <a href="/empresa/POSITVC1" class="row-link" data-nemo="POSITVC1" data-name="la positiva vida seguros y reaseguros s.a." data-sector="SEGUROS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">POSITVC1</div>
           <div class="name-col">
             <div class="company-name font-medium">La Positiva Vida Seguros y Reaseguros S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Seguros</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/PRIMAC1" class="row-link" data-nemo="PRIMAC1" data-name="prima afp s.a." data-sector="ADMINISTRADORAS DE FONDOS DE PENSIONES" data-tier="sin" >
+      <a href="/empresa/PRIMAC1" class="row-link" data-nemo="PRIMAC1" data-name="prima afp s.a." data-sector="ADMINISTRADORAS DE FONDOS DE PENSIONES" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">PRIMAC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Prima AFP S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">AFP</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/PROFUTC1" class="row-link" data-nemo="PROFUTC1" data-name="profuturo a.f.p." data-sector="ADMINISTRADORAS DE FONDOS DE PENSIONES" data-tier="sin" >
+      <a href="/empresa/PROFUTC1" class="row-link" data-nemo="PROFUTC1" data-name="profuturo a.f.p." data-sector="ADMINISTRADORAS DE FONDOS DE PENSIONES" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">PROFUTC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Profuturo A.F.P.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">AFP</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/PROTECC1" class="row-link" data-nemo="PROTECC1" data-name="protecta s.a. compañia de seguros y reaseguros" data-sector="SEGUROS" data-tier="sin" >
+      <a href="/empresa/PROTECC1" class="row-link" data-nemo="PROTECC1" data-name="protecta s.a. compañia de seguros y reaseguros" data-sector="SEGUROS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">PROTECC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Protecta S.A. Compañia de Seguros y Reaseguros</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Seguros</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/PVTBC1" class="row-link" data-nemo="PVTBC1" data-name="pvt portafolio de valores s.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/PVTBC1" class="row-link" data-nemo="PVTBC1" data-name="pvt portafolio de valores s.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">PVTBC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Pvt Portafolio de Valores S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/QAPAQC1" class="row-link" data-nemo="QAPAQC1" data-name="financiera qapaq s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/QAPAQC1" class="row-link" data-nemo="QAPAQC1" data-name="financiera qapaq s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">QAPAQC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Financiera Qapaq S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/QUALSGC1" class="row-link" data-nemo="QUALSGC1" data-name="qualitas compañía de seguros s.a." data-sector="SEGUROS" data-tier="sin" >
+      <a href="/empresa/QUALSGC1" class="row-link" data-nemo="QUALSGC1" data-name="qualitas compañía de seguros s.a." data-sector="SEGUROS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">QUALSGC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Qualitas Compañía de Seguros S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Seguros</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/QUIMPAC1" class="row-link" data-nemo="QUIMPAC1" data-name="quimpac s.a." data-sector="INDUSTRIALES" data-tier="sin" >
+      <a href="/empresa/QUIMPAC1" class="row-link" data-nemo="QUIMPAC1" data-name="quimpac s.a." data-sector="INDUSTRIALES" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">QUIMPAC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Quimpac S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Industriales</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/RBCAC1" class="row-link" data-nemo="RBCAC1" data-name="red bicolor de comunicaciones s.a.a. - en reestructuración" data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/RBCAC1" class="row-link" data-nemo="RBCAC1" data-name="red bicolor de comunicaciones s.a.a. - en reestructuración" data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">RBCAC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Red Bicolor de Comunicaciones S.A.A. - en Reestructuración</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/RVIA5BC1" class="row-link" data-nemo="RVIA5BC1" data-name="red vial 5 s.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/RVIA5BC1" class="row-link" data-nemo="RVIA5BC1" data-name="red vial 5 s.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">RVIA5BC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Red Vial 5 S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SANC1" class="row-link" data-nemo="SANC1" data-name="banco santander perú s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/SANC1" class="row-link" data-nemo="SANC1" data-name="banco santander perú s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">SANC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Banco Santander Perú S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SANFINC1" class="row-link" data-nemo="SANFINC1" data-name="santander financiamientos s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/SANFINC1" class="row-link" data-nemo="SANFINC1" data-name="santander financiamientos s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">SANFINC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Santander Financiamientos S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SANGABC1" class="row-link" data-nemo="SANGABC1" data-name="empresa de generacion electrica san gaban s.a." data-sector="SERVICIOS PÚBLICOS" data-tier="sin" >
+      <a href="/empresa/SANGABC1" class="row-link" data-nemo="SANGABC1" data-name="empresa de generacion electrica san gaban s.a." data-sector="SERVICIOS PÚBLICOS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">SANGABC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Empresa de Generacion Electrica San Gaban S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Servicios Públicos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SANTCOC1" class="row-link" data-nemo="SANTCOC1" data-name="santander consumer bank s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/SANTCOC1" class="row-link" data-nemo="SANTCOC1" data-name="santander consumer bank s.a." data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">SANTCOC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Santander Consumer Bank S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SEDAPBC1" class="row-link" data-nemo="SEDAPBC1" data-name="servicio de agua potable y alcantarillado de lima - sedapal" data-sector="SERVICIOS PÚBLICOS" data-tier="sin" >
+      <a href="/empresa/SEDAPBC1" class="row-link" data-nemo="SEDAPBC1" data-name="servicio de agua potable y alcantarillado de lima - sedapal" data-sector="SERVICIOS PÚBLICOS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">SEDAPBC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Servicio de Agua Potable y Alcantarillado de Lima - Sedapal</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Servicios Públicos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SHOUGEC1" class="row-link" data-nemo="SHOUGEC1" data-name="shougang generacion electrica s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="sin" >
+      <a href="/empresa/SHOUGEC1" class="row-link" data-nemo="SHOUGEC1" data-name="shougang generacion electrica s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">SHOUGEC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Shougang Generacion Electrica S.A.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Servicios Públicos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SNCRISC1" class="row-link" data-nemo="SNCRISC1" data-name="textil san cristobal s.a. - en liquidación" data-sector="INDUSTRIALES" data-tier="sin" >
+      <a href="/empresa/SNCRISC1" class="row-link" data-nemo="SNCRISC1" data-name="textil san cristobal s.a. - en liquidación" data-sector="INDUSTRIALES" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">SNCRISC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Textil San Cristobal S.A. - en Liquidación</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Industriales</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SOLUCIC1" class="row-link" data-nemo="SOLUCIC1" data-name="solucion empresa administradora hipotecaria s.a." data-sector="DIVERSAS" data-tier="sin" >
+      <a href="/empresa/SOLUCIC1" class="row-link" data-nemo="SOLUCIC1" data-name="solucion empresa administradora hipotecaria s.a." data-sector="DIVERSAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">SOLUCIC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Solucion Empresa Administradora Hipotecaria S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/TELCAAC1" class="row-link" data-nemo="TELCAAC1" data-name="tc siglo 21 s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="sin" >
+      <a href="/empresa/TELCAAC1" class="row-link" data-nemo="TELCAAC1" data-name="tc siglo 21 s.a.a." data-sector="SERVICIOS PÚBLICOS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">TELCAAC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Tc Siglo 21 S.A.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Servicios Públicos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/TOTALSC1" class="row-link" data-nemo="TOTALSC1" data-name="total servicios financieros empresa de creditos" data-sector="BANCOS Y FINANCIERAS" data-tier="sin" >
+      <a href="/empresa/TOTALSC1" class="row-link" data-nemo="TOTALSC1" data-name="total servicios financieros empresa de creditos" data-sector="BANCOS Y FINANCIERAS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">TOTALSC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Total Servicios Financieros Empresa de Creditos</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Bancos</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/UNITEXC1" class="row-link" data-nemo="UNITEXC1" data-name="compañía universal textil s.a. - en liquidación" data-sector="INDUSTRIALES" data-tier="sin" >
+      <a href="/empresa/UNITEXC1" class="row-link" data-nemo="UNITEXC1" data-name="compañía universal textil s.a. - en liquidación" data-sector="INDUSTRIALES" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">UNITEXC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Compañía Universal Textil S.A. - en Liquidación</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Industriales</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/VIVSEGC1" class="row-link" data-nemo="VIVSEGC1" data-name="vivir seguros compañía de seguros de vida s.a." data-sector="SEGUROS" data-tier="sin" >
+      <a href="/empresa/VIVSEGC1" class="row-link" data-nemo="VIVSEGC1" data-name="vivir seguros compañía de seguros de vida s.a." data-sector="SEGUROS" data-tier="sin" data-status="sin_datos" >
         <div class="row-inner muted">
           <div class="mono nemo">VIVSEGC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Vivir Seguros Compañía de Seguros de Vida S.A.</div>
-            <div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>
+            <div class="company-sub text-ink-soft">Estado de negociación no disponible</div>
           </div>
           <div class="sector-col sector-label">Seguros</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">Sin negociación</span></div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">—</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
@@ -2684,7 +2685,7 @@ html.dark .ui-switch {
           const tier = row.dataset.tier || "";
           const ok = words.every(w => row._hay.includes(w))
             && (!state.sec || row.dataset.sector === state.sec)
-            && (!state.act || (state.act === "proyeccion" ? tier === "proyeccion" : tier !== "sin"));
+            && (!state.act || (state.act === "proyeccion" ? tier === "proyeccion" : state.act === "activo" ? ["con_proyeccion", "poca_liquidez"].includes(row.dataset.status) : state.act === "inactiva" ? ["parada", "dormida", "sin_negociacion"].includes(row.dataset.status) : row.dataset.status === state.act));
           row.style.display = ok ? "" : "none";
           if (ok) shown++;
         });
