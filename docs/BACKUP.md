@@ -2,6 +2,8 @@
 
 El Worker guarda cada día las tablas irrecuperables `users` y `boletin_suscriptores` en el bucket R2 `kathy-vault`, bajo `backups/AAAA-MM-DD.json.enc`. Las copias se cifran antes de subirlas y se conservan durante 14 días.
 
+El workflow `backup.yml` es un método alternativo manual y requiere `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT` y `BACKUP_KEY`.
+
 Para restaurar o inspeccionar una copia, descarga el archivo y ejecuta:
 
 ```sh
