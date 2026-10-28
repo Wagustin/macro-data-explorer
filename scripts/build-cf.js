@@ -11,6 +11,8 @@ const publicDir = path.join(rootDir, "public");
 const tailwindInput = path.join(rootDir, "src", "tailwind.css");
 const tailwindOutput = path.join(publicDir, "tw.css");
 
+fs.rmSync(publicDir, { recursive: true, force: true });
+
 function buildSitemap() {
   const sitemapPath = path.join(rootDir, "sitemap.xml");
   const sitemap = fs.readFileSync(sitemapPath, "utf8");

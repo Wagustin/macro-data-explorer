@@ -17,7 +17,16 @@ function database() {
   return {
     writes,
     prepare(sql) {
-      return { sql, bind(...values) { return { sql, values }; } };
+      return {
+        sql,
+        bind(...values) {
+          return {
+            sql,
+            values,
+            async run() { writes.push([{ sql, values }]); return {}; },
+          };
+        },
+      };
     },
     async batch(statements) { writes.push(statements); return []; },
   };
