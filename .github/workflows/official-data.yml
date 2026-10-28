@@ -1,4 +1,4 @@
-name: Datos oficiales (EIA, Banco Mundial, SUNAT)
+name: Datos oficiales (BCRP, EIA, Banco Mundial, SUNAT, Reserva Federal)
 
 on:
   schedule:
@@ -29,5 +29,5 @@ jobs:
         run: |
           git config user.name "perdata-bot"
           git config user.email "perdata-bot@users.noreply.github.com"
-          git add data/official
+          git add data/official/*.json
           git diff --cached --quiet || (git commit -m "data(official): $(date -u +%F)" && git pull --rebase -q && git push)
