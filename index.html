@@ -222,7 +222,16 @@
     @media (prefers-reduced-motion: reduce) { ::view-transition-group(*) { animation-duration: 0s; } }
     .pd-home-status { min-height: 36px; margin: 14px 0 20px; color: var(--pd-ink-soft); font-size: 10px; line-height: 18px; font-variant-numeric: tabular-nums; }
     .pd-home-status.is-stale { opacity: .58; }
-    @media (min-width: 1024px) { .pd-home-status { min-height: 18px; } }
+    .pdl-quote { min-height: 150px; }
+    .pd-home-actions { min-height: 104px; }
+    .pdl-stats { min-height: 136px; }
+    @media (min-width: 640px) { .pd-home-actions { min-height: 52px; } }
+    @media (min-width: 1024px) {
+      .pd-home-status { min-height: 36px; }
+      .pdl-quote { min-height: 120px; }
+      .pd-home-actions { min-height: 52px; }
+      .pdl-stats { min-height: 112px; }
+    }
   </style>
   <script defer src="/motion.js"></script>
   <!-- SEO & Social Open Graph -->
@@ -345,7 +354,7 @@
               </p>
               <p id="pd-forecast-fallback" class="pdl-answer hidden">Abre la terminal para ver la proyección de hoy.</p>
             </div>
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3" data-hero-seq="3">
+            <div class="pd-home-actions flex flex-col sm:flex-row items-stretch sm:items-center gap-3" data-hero-seq="3">
               <a href="/explorer?symbol=PEN%3DX" class="pdl-btn pdl-btn-primary">Abrir la terminal <span aria-hidden="true">&#8599;</span></a>
               <a href="#metodologia" class="pdl-btn pdl-btn-secondary">Cómo lo calculamos</a>
             </div>
@@ -981,13 +990,13 @@
           target.classList.add('is-stale');
           return;
         }
-        var sources = [status.forecasts, status.news, status.smv, status.bcrp, status.eia].filter(function (item) { return item && typeof item.ageHours === 'number'; });
-        var age = sources.length ? Math.max.apply(null, sources.map(function (item) { return item.ageHours; })) : null;
-        var stale = sources.some(function (item) { return item.ageHours > item.staleAfterHours; });
-        var ageLabel = age === null ? 'sin dato reciente' : age < 1 ? 'menos de 1 h' : age < 48 ? Math.round(age) + ' h' : Math.floor(age / 24) + ' d';
+        var forecast = status.forecasts;
+        var age = forecast && typeof forecast.ageHours === 'number' ? forecast.ageHours : null;
+        var stale = age === null || age > forecast.staleAfterHours;
+        var ageLabel = age === null ? 'sin dato reciente' : age < 1 ? 'hoy' : 'hace ' + Math.floor(age) + ' h';
         var active = Number(counts.tradable) || 0;
-        target.textContent = active + ' activos · ' + active + ' proyecciones · actualizado hace ' + ageLabel + ' · banda calibrada con backtest';
-        target.classList.toggle('is-stale', stale || age === null);
+        target.textContent = active + ' activos · ' + active + ' proyecciones · ' + ageLabel + ' · banda calibrada con backtest';
+        target.classList.toggle('is-stale', stale);
       }).catch(function () {});
     })();
     });
