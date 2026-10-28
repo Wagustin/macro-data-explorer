@@ -54,18 +54,18 @@ test("sync writes rows for every supported table and rejects unknown tables or o
   const cases = [
     {
       table: "forecasts",
-      row: { symbol: "BVN", horizon: 1, model: "test", path: [1, 2] },
-      expectedValues: ["BVN", 1, "test", null, null, null, null, null, null, null, "[1,2]"],
+      row: { symbol: "PEN=X", horizon: 1, model: "test", path: [1, 2] },
+      expectedValues: ["PEN=X", 1, "test", null, null, null, null, null, null, null, "[1,2]"],
     },
     {
       table: "cotizaciones_smv",
-      row: { nemonico: "BVN", fecha: "2025-01-31", cierre: 10, fin_de_mes: true },
-      expectedValues: ["BVN", "2025-01-31", 10, null, null, null, null, 1],
+      row: { nemonico: "PEN=X", fecha: "2025-01-31", cierre: 10, fin_de_mes: true },
+      expectedValues: ["PEN=X", "2025-01-31", 10, null, null, null, null, 1],
     },
     {
       table: "interpretaciones",
-      row: { symbol: "BVN", texto: "Nota", actualizado: "2025-01-31T00:00:00.000Z" },
-      expectedValues: ["BVN", "Nota", "2025-01-31T00:00:00.000Z"],
+      row: { symbol: "PEN=X", texto: "Nota", actualizado: "2025-01-31T00:00:00.000Z" },
+      expectedValues: ["PEN=X", "Nota", "2025-01-31T00:00:00.000Z"],
     },
   ];
 

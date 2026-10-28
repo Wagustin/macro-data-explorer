@@ -21,7 +21,7 @@ test("interpret reads a fresh daily note from D1", async () => {
       requestedSql = sql;
       return {
         bind(symbol) {
-          assert.equal(symbol, "BVN");
+          assert.equal(symbol, "PEN=X");
           return { async all() { return { results: [{ texto: note, actualizado: updated }] }; } };
         },
       };
@@ -32,7 +32,7 @@ test("interpret reads a fresh daily note from D1", async () => {
 
   try {
     const res = response();
-    await handler({ method: "GET", query: { symbol: "BVN" }, headers: { "x-forwarded-for": "192.0.2.42" } }, res);
+    await handler({ method: "GET", query: { symbol: "PEN=X" }, headers: { "x-forwarded-for": "192.0.2.42" } }, res);
     assert.match(requestedSql, /select texto, actualizado from interpretaciones where symbol = \?/);
     assert.equal(res.statusCode, 200);
     assert.equal(res.body.aiNote, note);

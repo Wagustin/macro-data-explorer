@@ -29,6 +29,7 @@ import { getAuthUserOrNull } from "./_lib/session.js";
 import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
 import { ENGINE } from "./_lib/engine.js";
 import { d1Rows } from "./_lib/d1.js";
+import { REMOVED } from "./_lib/removed.js";
 
 // ---------- calibration loader (empirically calibrated quantile bands) ----------
 let _calibration = defaultCalibration;
@@ -496,11 +497,12 @@ export default async function handler(req, res) {
     else if (req.body) body = req.body;
   }
   const query = req.query || {};
-  const rawSymbol = String(body.symbol || query.symbol || "BVN").trim();
+  const rawSymbol = String(body.symbol || query.symbol || "PEN=X").trim();
   if (!SYMBOL_REGEX.test(rawSymbol)) {
     return res.status(400).json({ error: "Símbolo de activo no válido." });
   }
-  const symbol = rawSymbol;
+  const symbol = rawSymbol.toUpperCase();
+  if (REMOVED.has(symbol)) return res.status(404).json({ error: "Activo no disponible." });
   const rawHorizon = parseInt(body.horizon || query.horizon || "1", 10);
   const H = Math.max(1, Math.min(48, isNaN(rawHorizon) ? 1 : rawHorizon));
 

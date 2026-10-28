@@ -18,9 +18,9 @@ const FEEDS = [
     url: "https://news.google.com/rss/search?q=" + encodeURIComponent("precio del cobre OR LME copper OR COMEX copper") + "&hl=es-419&gl=PE&ceid=PE:es-419"
   },
   {
-    name: "Minería Peruana BVN/SCCO",
+    name: "Alicorp y cobre (ALICORC1.LM/HG=F)",
     category: "Minería",
-    url: "https://news.google.com/rss/search?q=" + encodeURIComponent("Buenaventura OR Southern Copper OR Cerro Verde OR mineria Peru") + "&hl=es-419&gl=PE&ceid=PE:es-419"
+    url: "https://news.google.com/rss/search?q=" + encodeURIComponent("Alicorp OR precio del cobre OR Peru") + "&hl=es-419&gl=PE&ceid=PE:es-419"
   },
   {
     name: "Tipo de Cambio USD/PEN",

@@ -27,6 +27,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Libre+Franklin:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/tw.css">
   <link rel="stylesheet" href="/pd.css" />
 
   <style>
@@ -280,7 +281,6 @@ html.dark .ui-switch {
   </script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3342536112010915"
      crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="/tw.css">
 </head>
 <body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 
@@ -296,7 +296,6 @@ html.dark .ui-switch {
         <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
           <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a>
           <a href="/empresas" class="text-ink font-semibold transition no-underline">Empresas</a>
-          <a href="/mercado" class="hover:text-ink transition no-underline">Mercado</a>
           <a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a>
           <a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a>
           <a href="/guia" class="hover:text-ink transition no-underline">Guía</a>
@@ -326,7 +325,6 @@ html.dark .ui-switch {
       <nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft">
         <a href="/explorer" class="hover:text-ink py-1 transition no-underline">Terminal</a>
         <a href="/empresas" class="text-ink font-semibold py-1 transition no-underline">Empresas</a>
-        <a href="/mercado" class="hover:text-ink py-1 transition no-underline">Mercado</a>
         <a href="/noticias" class="hover:text-ink py-1 transition no-underline">Noticias</a>
         <a href="/metodologia" class="hover:text-ink py-1 transition no-underline">Metodología</a>
         <a href="/guia" class="hover:text-ink py-1 transition no-underline">Guía</a>
@@ -340,7 +338,7 @@ html.dark .ui-switch {
     <div class="mb-8">
       <h1 class="pd-page-title mb-2">Directorio de Renta Variable <span class="italic text-ink-soft">BVL</span></h1>
       <p class="pd-lede max-w-2xl text-ink-soft">
-        Las 182 empresas con acciones en la Bolsa de Valores de Lima. Listado de la BVL al 23 de octubre de 2026; precios de cierre de mercado; proyección de PerData Engine para las 36 que tienen historial suficiente.
+        Las 182 empresas con acciones en la Bolsa de Valores de Lima. Listado de la BVL al 23 de octubre de 2026; precios de cierre de mercado; proyección de PerData Engine para las 41 que tienen historial suficiente.
       </p>
     </div>
 
@@ -350,10 +348,10 @@ html.dark .ui-switch {
         <input type="search" id="searchInput" placeholder="Busca empresa, nemónico o sector" aria-label="Buscar empresa" autocomplete="off" spellcheck="false" />
         <kbd class="finder-kbd" aria-hidden="true">/</kbd>
       </label>
-      <p class="finder-hint">Por ejemplo: <button type="button" data-try="alicorp">Alicorp</button>, <button type="button" data-try="BVN">BVN</button>, <button type="button" data-try="bancos">bancos</button>, <button type="button" data-try="mineras">mineras</button>.</p>
+      <p class="finder-hint">Por ejemplo: <button type="button" data-try="alicorp">Alicorp</button>, <button type="button" data-try="ALICORC1.LM">ALICORC1.LM</button>, <button type="button" data-try="bancos">bancos</button>, <button type="button" data-try="mineras">mineras</button>.</p>
       <div class="finder-tabs" role="tablist" aria-label="Qué empresas mostrar" id="actTabs">
         <button type="button" role="tab" data-act="" aria-selected="true">Todas <span>182</span></button>
-        <button type="button" role="tab" data-act="yahoo" aria-selected="false">Con proyección <span>45</span></button>
+        <button type="button" role="tab" data-act="yahoo" aria-selected="false">Con proyección <span>41</span></button>
         <button type="button" role="tab" data-act="activo" aria-selected="false" title="Con negociación en los últimos 12 meses">Activas <span>89</span></button>
       </div>
       <div class="finder-tabs finder-sectors" role="tablist" aria-label="Sector" id="secTabs">
@@ -428,18 +426,6 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/AUNA" class="row-link" data-nemo="AUNA" data-name="auna s.a." data-sector="DIVERSAS" data-tier="yahoo" data-yahoo="AUNA">
-        <div class="row-inner ">
-          <div class="mono nemo">AUNA</div>
-          <div class="name-col">
-            <div class="company-name font-medium">Auna S.A.</div>
-            <div class="company-sub text-ink-soft"><span class="badge-dot"></span>Con proyección PerData Engine</div>
-          </div>
-          <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">…</span></div>
-          <div class="mono var-cell text-right" data-cell="var">—</div>
-        </div>
-      </a>
       <a href="/empresa/AUSTRAC1" class="row-link" data-nemo="AUSTRAC1" data-name="austral group s.a.a." data-sector="INDUSTRIALES" data-tier="yahoo" data-yahoo="AUSTRAC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">AUSTRAC1</div>
@@ -460,18 +446,6 @@ html.dark .ui-switch {
             <div class="company-sub text-ink-soft"><span class="badge-dot"></span>Con proyección PerData Engine</div>
           </div>
           <div class="sector-col sector-label">Industriales</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">…</span></div>
-          <div class="mono var-cell text-right" data-cell="var">—</div>
-        </div>
-      </a>
-      <a href="/empresa/BAP" class="row-link" data-nemo="BAP" data-name="credicorp ltd." data-sector="DIVERSAS" data-tier="yahoo" data-yahoo="BAP">
-        <div class="row-inner ">
-          <div class="mono nemo">BAP</div>
-          <div class="name-col">
-            <div class="company-name font-medium">Credicorp Ltd.</div>
-            <div class="company-sub text-ink-soft"><span class="badge-dot"></span>Con proyección PerData Engine</div>
-          </div>
-          <div class="sector-col sector-label">Diversas</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">…</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -512,9 +486,9 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/BVN" class="row-link" data-nemo="BVN" data-name="compañía de minas buenaventura s.a.a." data-sector="MINERAS" data-tier="yahoo" data-yahoo="BVN">
+      <a href="/empresa/BUENAVI1" class="row-link" data-nemo="BUENAVI1" data-name="compañía de minas buenaventura s.a.a." data-sector="MINERAS" data-tier="yahoo" data-yahoo="BUENAVI1.LM">
         <div class="row-inner ">
-          <div class="mono nemo">BVN</div>
+          <div class="mono nemo">BUENAVI1</div>
           <div class="name-col">
             <div class="company-name font-medium">Compañía de Minas Buenaventura S.A.A.</div>
             <div class="company-sub text-ink-soft"><span class="badge-dot"></span>Con proyección PerData Engine</div>
@@ -560,9 +534,9 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/CPAC" class="row-link" data-nemo="CPAC" data-name="cementos pacasmayo s.a.a." data-sector="INDUSTRIALES" data-tier="yahoo" data-yahoo="CPAC">
+      <a href="/empresa/CPACASI1" class="row-link" data-nemo="CPACASI1" data-name="cementos pacasmayo s.a.a." data-sector="INDUSTRIALES" data-tier="yahoo" data-yahoo="CPACASI1.LM">
         <div class="row-inner ">
-          <div class="mono nemo">CPAC</div>
+          <div class="mono nemo">CPACASI1</div>
           <div class="name-col">
             <div class="company-name font-medium">Cementos Pacasmayo S.A.A.</div>
             <div class="company-sub text-ink-soft"><span class="badge-dot"></span>Con proyección PerData Engine</div>
@@ -704,18 +678,6 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/IFS" class="row-link" data-nemo="IFS" data-name="intercorp financial services inc." data-sector="DIVERSAS" data-tier="yahoo" data-yahoo="IFS">
-        <div class="row-inner ">
-          <div class="mono nemo">IFS</div>
-          <div class="name-col">
-            <div class="company-name font-medium">Intercorp Financial Services Inc.</div>
-            <div class="company-sub text-ink-soft"><span class="badge-dot"></span>Con proyección PerData Engine</div>
-          </div>
-          <div class="sector-col sector-label">Diversas</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">…</span></div>
-          <div class="mono var-cell text-right" data-cell="var">—</div>
-        </div>
-      </a>
       <a href="/empresa/INRETC1" class="row-link" data-nemo="INRETC1" data-name="inretail perú corp." data-sector="DIVERSAS" data-tier="yahoo" data-yahoo="INRETC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">INRETC1</div>
@@ -836,18 +798,6 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
-      <a href="/empresa/SCCO" class="row-link" data-nemo="SCCO" data-name="southern copper corporation" data-sector="MINERAS" data-tier="yahoo" data-yahoo="SCCO">
-        <div class="row-inner ">
-          <div class="mono nemo">SCCO</div>
-          <div class="name-col">
-            <div class="company-name font-medium">Southern Copper Corporation</div>
-            <div class="company-sub text-ink-soft"><span class="badge-dot"></span>Con proyección PerData Engine</div>
-          </div>
-          <div class="sector-col sector-label">Mineras</div>
-          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">…</span></div>
-          <div class="mono var-cell text-right" data-cell="var">—</div>
-        </div>
-      </a>
       <a href="/empresa/SCOTIAC1" class="row-link" data-nemo="SCOTIAC1" data-name="scotiabank peru s.a.a." data-sector="BANCOS Y FINANCIERAS" data-tier="yahoo" data-yahoo="SCOTIAC1.LM">
         <div class="row-inner ">
           <div class="mono nemo">SCOTIAC1</div>
@@ -956,11 +906,35 @@ html.dark .ui-switch {
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
       </a>
+      <a href="/empresa/AUNA" class="row-link" data-nemo="AUNA" data-name="auna s.a." data-sector="DIVERSAS" data-tier="activo" >
+        <div class="row-inner ">
+          <div class="mono nemo">AUNA</div>
+          <div class="name-col">
+            <div class="company-name font-medium">Auna S.A.</div>
+            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+          </div>
+          <div class="sector-col sector-label">Diversas</div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono var-cell text-right" data-cell="var">—</div>
+        </div>
+      </a>
       <a href="/empresa/BAMC1" class="row-link" data-nemo="BAMC1" data-name="bosques amazónicos sociedad anónima" data-sector="DIVERSAS" data-tier="activo" >
         <div class="row-inner ">
           <div class="mono nemo">BAMC1</div>
           <div class="name-col">
             <div class="company-name font-medium">Bosques Amazónicos Sociedad Anónima</div>
+            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+          </div>
+          <div class="sector-col sector-label">Diversas</div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono var-cell text-right" data-cell="var">—</div>
+        </div>
+      </a>
+      <a href="/empresa/BAP" class="row-link" data-nemo="BAP" data-name="credicorp ltd." data-sector="DIVERSAS" data-tier="activo" >
+        <div class="row-inner ">
+          <div class="mono nemo">BAP</div>
+          <div class="name-col">
+            <div class="company-name font-medium">Credicorp Ltd.</div>
             <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
@@ -1156,6 +1130,18 @@ html.dark .ui-switch {
             <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
           </div>
           <div class="sector-col sector-label">Industriales</div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono var-cell text-right" data-cell="var">—</div>
+        </div>
+      </a>
+      <a href="/empresa/IFS" class="row-link" data-nemo="IFS" data-name="intercorp financial services inc." data-sector="DIVERSAS" data-tier="activo" >
+        <div class="row-inner ">
+          <div class="mono nemo">IFS</div>
+          <div class="name-col">
+            <div class="company-name font-medium">Intercorp Financial Services Inc.</div>
+            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+          </div>
+          <div class="sector-col sector-label">Diversas</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -1384,6 +1370,18 @@ html.dark .ui-switch {
             <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
           </div>
           <div class="sector-col sector-label">Diversas</div>
+          <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
+          <div class="mono var-cell text-right" data-cell="var">—</div>
+        </div>
+      </a>
+      <a href="/empresa/SCCO" class="row-link" data-nemo="SCCO" data-name="southern copper corporation" data-sector="MINERAS" data-tier="activo" >
+        <div class="row-inner ">
+          <div class="mono nemo">SCCO</div>
+          <div class="name-col">
+            <div class="company-name font-medium">Southern Copper Corporation</div>
+            <div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>
+          </div>
+          <div class="sector-col sector-label">Mineras</div>
           <div class="mono price-cell text-right" data-cell="price"><span class="price-none">En la BVL</span></div>
           <div class="mono var-cell text-right" data-cell="var">—</div>
         </div>
@@ -2614,9 +2612,7 @@ html.dark .ui-switch {
           <span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
         </a>
         <nav class="flex flex-wrap items-center gap-6 text-xs text-ink-soft" aria-label="Navegación secundaria">
-          <a href="/mercado" class="hover:text-ink transition no-underline">Mercado</a>
           <a href="/terms" class="hover:text-ink transition no-underline">Términos</a>
-          <a href="/estado" class="hover:text-ink transition no-underline">Estado</a>
           <a href="/privacidad" class="hover:text-ink transition no-underline">Privacidad</a>
           <a href="mailto:soporte@perdata.site" class="hover:text-ink transition no-underline">Contacto</a>
         </nav>
@@ -2811,7 +2807,7 @@ html.dark .ui-switch {
   </script>
 
   <!-- Auth -->
-  <script src="/auth.js" defer></script>
+  <script src="/auth.js"></script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "bc9abca1e97b4bcaa6261b23afc498e5"}'></script>
 </body>
 </html>

@@ -6,7 +6,6 @@
 import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
 
 export const CATALOG = [
-  { symbol: "BVN", name: "Compañía de Minas Buenaventura S.A.A.", sector: "Minería", country: "Perú", category: "bvl_pe", tags: ["oro", "plata", "zinc", "cobre", "bvl", "nyse", "yumpag", "uchucchacua"] },
   { symbol: "SCCO.LM", name: "Southern Copper Corporation", sector: "Minería", country: "Perú / México", category: "bvl_pe", tags: ["cobre", "toquepala", "cuajone", "bvl", "spcc"] },
   { symbol: "VOLCABC1.LM", name: "Volcan Compañía Minera S.A.A.", sector: "Minería", country: "Perú", category: "bvl_pe", tags: ["zinc", "plata", "plomo", "cerro", "de", "pasco", "chungar"] },
   { symbol: "MINSURI1.LM", name: "Minsur S.A.", sector: "Minería", country: "Perú", category: "bvl_pe", tags: ["estano", "oro", "san", "rafael", "pucamarca"] },
@@ -16,8 +15,6 @@ export const CATALOG = [
   { symbol: "SIDERC1.LM", name: "Empresa Siderúrgica del Perú S.A.A.", sector: "Industriales / Aceros", country: "Perú", category: "bvl_pe", tags: ["aceros", "siderurgia", "chimbote"] },
   { symbol: "ALICORC1.LM", name: "Alicorp S.A.A.", sector: "Consumo Masivo", country: "Perú", category: "bvl_pe", tags: ["alimentos", "primor", "don", "vittorio", "aceites", "fideos"] },
   { symbol: "BACKUSI1.LM", name: "Unión de Cervecerías Peruanas Backus y Johnston S.A.A.", sector: "Consumo Masivo", country: "Perú", category: "bvl_pe", tags: ["cerveza", "pilsen", "cristal", "backus", "abinbev"] },
-  { symbol: "BAP", name: "Credicorp Ltd.", sector: "Banca y Finanzas", country: "Perú", category: "bvl_pe", tags: ["banco", "de", "credito", "bcp", "pacifico", "prima", "afp", "mibanco"] },
-  { symbol: "IFS", name: "Intercorp Financial Services Inc.", sector: "Banca y Finanzas", country: "Perú", category: "bvl_pe", tags: ["interbank", "interseguro", "inteligo"] },
   { symbol: "FERREYC1.LM", name: "Ferreycorp S.A.A.", sector: "Bienes de Capital", country: "Perú", category: "bvl_pe", tags: ["caterpillar", "maquinaria", "minera", "ferreyros"] },
   { symbol: "AUSTRAC1.LM", name: "Austral Group S.A.A.", sector: "Pesca / Consumo", country: "Perú", category: "bvl_pe", tags: ["pesca", "anchoveta", "harina", "austral"] },
   { symbol: "AENZAC1.LM", name: "AENZA S.A.A.", sector: "Industriales / Infraestructura", country: "Perú", category: "bvl_pe", tags: ["construccion","infraestructura","energia"] },
@@ -103,7 +100,6 @@ export const CATALOG = [
   { symbol: "AG", name: "First Majestic Silver", sector: "Minería", country: "Canadá / México", category: "global", tags: ["plata", "silver"] },
   { symbol: "PAAS", name: "Pan American Silver", sector: "Minería", country: "Canadá", category: "global", tags: ["plata", "pan", "american"] },
   { symbol: "BTG", name: "B2Gold Corp", sector: "Minería", country: "Canadá", category: "global", tags: ["oro", "b2gold"] },
-  { symbol: "SCCO", name: "Southern Copper Corp (NYSE)", sector: "Minería", country: "EE.UU.", category: "global", tags: ["cobre", "southern"] },
   { symbol: "MPWR", name: "Monolithic Power Systems", sector: "Semiconductores", country: "EE.UU.", category: "global", tags: ["mpwr", "energia", "chips"] },
   { symbol: "HG=F", name: "Cobre Futuros (COMEX)", sector: "Commodity Metales", country: "Global", category: "global", tags: ["cobre", "copper", "lme"] },
   { symbol: "GC=F", name: "Oro Futuros (COMEX)", sector: "Commodity Metales", country: "Global", category: "global", tags: ["oro", "gold"] },

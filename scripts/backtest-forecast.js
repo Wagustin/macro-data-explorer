@@ -45,7 +45,7 @@ async function run(sym, horizon) {
   return { hit, dirOk };
 }
 
-const syms = ["BVN", "HG=F", "GC=F", "PEN=X", "^GSPC", "SCCO", "BAP"];
+const syms = ["ALICORC1.LM", "HG=F", "GC=F", "PEN=X", "^GSPC"];
 let hits = 0, dirs = 0, n = 0;
 for (const s of syms) {
   for (const h of [3, 6, 12]) {

@@ -359,7 +359,7 @@ const ai = await interpret(f);
 const lima = new Date(Date.now() - 5 * 36e5);
 const dateLabel = lima.toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 const html = render(f, ai, dateLabel);
-// Preview: PREVIEW_EMPRESAS="BVN,ALICORC1" adds a sample personal section
+// Preview: PREVIEW_EMPRESAS="ALICORC1.LM,ALICORC1" adds a sample personal section
 let previewPersonal = "";
 if (process.env.PREVIEW_EMPRESAS) {
   const smvAll = (await getJson(`${RAW}/smv-hechos.json`).catch(() => ({ hechos: {} }))).hechos || {};

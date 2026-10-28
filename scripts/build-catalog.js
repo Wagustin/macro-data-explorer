@@ -26,7 +26,7 @@ const GLOBAL = [
   "AAPL","MSFT","GOOGL","AMZN","NVDA","META","TSLA","JPM","V","KO","PEP","MCD","XOM","CVX",
   "WMT","PG","JNJ","LLY","MA","COST","HD","ORCL","AMD","QCOM","AVGO","ASML","TSM","BAC","C",
   "GS","BLK","ABEV","PBR","ITUB","BBDO","BBD","MELI","ARCO","GGB","SID","EC","CX","FMX","AMX",
-  "FCX","BHP","RIO","NEM","GOLD","AEM","TECK","GFI","AG","PAAS","BTG","SCCO","MPWR",
+  "FCX","BHP","RIO","NEM","GOLD","AEM","TECK","GFI","AG","PAAS","BTG","MPWR",
   "HG=F","GC=F","SI=F","PL=F","PA=F","CL=F","BZ=F","NG=F","ZW=F","ZC=F","ZS=F","SB=F","CC=F","KC=F","LBS=F",
   "PEN=X","EURUSD=X","USDJPY=X","USDMXN=X","USDBRL=X","USDCOP=X","USDCNY=X","DX-Y.NYB",
   "GBPUSD=X","AUDUSD=X","USDCAD=X","USDCHF=X","EURPEN=X",

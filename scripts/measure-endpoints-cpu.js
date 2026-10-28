@@ -66,21 +66,21 @@ async function main() {
 
   const endpoints = [
     { name: "GET /api/search?q=cobre", url: `${BASE}/api/search?q=cobre` },
-    { name: "GET /api/search?q=bvn", url: `${BASE}/api/search?q=bvn` },
-    { name: "GET /api/historical (BVN vs Cobre)", url: `${BASE}/api/historical?symbol=BVN&macro=HG=F` },
-    { name: "GET /api/forecast H=1 (BVN)", url: `${BASE}/api/forecast?symbol=BVN&horizon=1` },
-    { name: "GET /api/forecast H=1 (SCCO)", url: `${BASE}/api/forecast?symbol=SCCO&horizon=1` },
+    { name: "GET /api/search?q=alicorp", url: `${BASE}/api/search?q=alicorp` },
+    { name: "GET /api/historical (Dólar vs Cobre)", url: `${BASE}/api/historical?symbol=PEN=X&macro=HG=F` },
+    { name: "GET /api/forecast H=1 (USD/PEN)", url: `${BASE}/api/forecast?symbol=PEN=X&horizon=1` },
+    { name: "GET /api/forecast H=1 (Alicorp)", url: `${BASE}/api/forecast?symbol=ALICORC1.LM&horizon=1` },
     { name: "GET /api/forecast H=1 (GC=F)", url: `${BASE}/api/forecast?symbol=GC=F&horizon=1` },
     { name: "GET /api/forecast H=1 (HG=F)", url: `${BASE}/api/forecast?symbol=HG=F&horizon=1` },
     { name: "GET /api/forecast H=1 (PEN=X)", url: `${BASE}/api/forecast?symbol=PEN=X&horizon=1` },
     {
       name: "GET /api/forecast H=3 TimesFM (Pro)",
-      url: `${BASE}/api/forecast?symbol=BVN&horizon=3`,
+      url: `${BASE}/api/forecast?symbol=PEN=X&horizon=3`,
       options: { headers: { Authorization: `Bearer ${proToken}` } }
     },
     {
       name: "GET /api/forecast H=12 TimesFM (Pro)",
-      url: `${BASE}/api/forecast?symbol=BVN&horizon=12`,
+      url: `${BASE}/api/forecast?symbol=PEN=X&horizon=12`,
       options: { headers: { Authorization: `Bearer ${proToken}` } }
     },
     { name: "GET /api/news", url: `${BASE}/api/news` },

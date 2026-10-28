@@ -3,6 +3,7 @@ import { PLANS, planForUser, canUseRange, upgradeRequired } from "./_lib/plans.j
 import { getAuthUserOrNull } from "./_lib/session.js";
 import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
 import { nemonicoOf, smvRows } from "./_lib/smv.js";
+import { REMOVED } from "./_lib/removed.js";
 import EMPRESAS from "../data/empresas.json" with { type: "json" };
 
 const MONEDA = new Map(EMPRESAS.emisores.flatMap((e) => e.valores.map((v) => [v.nemonico, v.moneda === "US$" ? "USD" : "PEN"])));
@@ -113,7 +114,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const rawSymbol = (req.query.symbol || "BVN").trim();
+  const rawSymbol = (req.query.symbol || "PEN=X").trim();
   const rawRange = (req.query.range || "5y").toLowerCase().trim();
   const rawInterval = (req.query.interval || "1mo").toLowerCase().trim();
 
@@ -122,7 +123,8 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Símbolo de activo no válido." });
   }
 
-  const symbol = rawSymbol;
+  const symbol = rawSymbol.toUpperCase();
+  if (REMOVED.has(symbol)) return res.status(404).json({ error: "Activo no disponible." });
   const range = ALLOWED_RANGES.has(rawRange) ? rawRange : "5y";
 
   const hasAuth = Boolean(req.headers?.authorization);

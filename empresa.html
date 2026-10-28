@@ -601,7 +601,7 @@ html.dark .ui-switch {
         symbolParam = decodeURIComponent(pathParts[1]);
       }
       if (!symbolParam) {
-        symbolParam = new URLSearchParams(window.location.search).get("symbol") || "BVN";
+        symbolParam = new URLSearchParams(window.location.search).get("symbol") || "ALICORC1.LM";
       }
       const targetSymbol = symbolParam.trim().toUpperCase();
 
@@ -632,6 +632,7 @@ html.dark .ui-switch {
           primaryValor = emitter.valores.find(v => v.yahoo) || emitter.valores[0];
         }
         const secondaryValores = emitter.valores.filter(v => v !== primaryValor);
+        const removedYahoo = ["BVN", "BAP", "SCCO", "IFS", "CPAC", "AUNA"].includes(primaryValor.nemonico.toUpperCase());
         const hasYahoo = Boolean(primaryValor.yahoo);
 
         // Populate header and breadcrumb
@@ -684,7 +685,7 @@ html.dark .ui-switch {
           document.getElementById("proyeccionDisabled").classList.remove("hidden");
           document.getElementById("noYahooNotice").classList.remove("hidden");
           document.getElementById("chartLabel").textContent = "Historial SMV · Cierre mensual";
-          fetchHistorical(`${primaryValor.nemonico}.LM`, primaryValor.moneda, true);
+          if (!removedYahoo) fetchHistorical(`${primaryValor.nemonico}.LM`, primaryValor.moneda, true);
         }
 
         loadHechos(primaryValor.nemonico);

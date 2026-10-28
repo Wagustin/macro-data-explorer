@@ -50,7 +50,7 @@ const REQUIRED_PAGE_TITLES = new Map([
 
 const STATIC_FILES = ["/robots.txt", "/sitemap.xml"];
 
-const ASSETS = ["HG=F", "GC=F", "BVN", "SCCO", "PEN=X"];
+const ASSETS = ["HG=F", "GC=F", "ALICORC1.LM", "PEN=X"];
 
 const FORBIDDEN_PATTERNS = [
   { label: "Jev", regex: /\bJev\b/ },
@@ -188,6 +188,21 @@ async function testForecast() {
       );
     } catch (err) {
       record(`Forecast H=1 ${symbol}`, false, `Error: ${err.message}`);
+    }
+  }
+}
+
+async function testRemovedAssets() {
+  for (const [label, url] of [
+    ["Forecast BVN", "/api/forecast?symbol=BVN"],
+    ["Historical BAP", "/api/historical?symbol=BAP"]
+  ]) {
+    try {
+      const res = await fetchWithTimeout(`${base}${url}`);
+      const data = await res.json();
+      record(`${label} retirado`, res.status === 404 && data.error === "Activo no disponible.", `HTTP ${res.status}`);
+    } catch (err) {
+      record(`${label} retirado`, false, `Error: ${err.message}`);
     }
   }
 }
@@ -342,6 +357,7 @@ async function main() {
   await testPages();
   await testHistorical();
   await testForecast();
+  await testRemovedAssets();
   await testNews();
   await testMarketAndStatus();
   await testBilling();

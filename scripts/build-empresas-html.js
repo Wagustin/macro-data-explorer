@@ -38,7 +38,7 @@ function prettyName(raw) {
 // Process emitters
 const rows = data.emisores.map(e => {
   // Determine primary valor
-  let primary = e.valores.find(v => v.yahoo && (v.yahoo === v.nemonico || v.nemonico === "BVN" || v.nemonico.endsWith("C1")));
+  let primary = e.valores.find(v => v.yahoo && (v.yahoo === v.nemonico || v.nemonico.endsWith("C1")));
   if (!primary) primary = e.valores.find(v => v.yahoo);
   if (!primary) primary = e.valores.find(v => v.fechaUltimaNegociacion);
   if (!primary) primary = e.valores[0] || { nemonico: "S/N", moneda: "S/", fechaUltimaNegociacion: null };
@@ -457,7 +457,7 @@ html.dark .ui-switch {
     <div class="mb-8">
       <h1 class="pd-page-title mb-2">Directorio de Renta Variable <span class="italic text-ink-soft">BVL</span></h1>
       <p class="pd-lede max-w-2xl text-ink-soft">
-        Las 182 empresas con acciones en la Bolsa de Valores de Lima. Listado de la BVL al 23 de octubre de 2026; precios de cierre de mercado; proyección de PerData Engine para las 36 que tienen historial suficiente.
+        Las 182 empresas con acciones en la Bolsa de Valores de Lima. Listado de la BVL al 23 de octubre de 2026; precios de cierre de mercado; proyección de PerData Engine para las ${rows.filter(r => r.tier === 1).length} que tienen historial suficiente.
       </p>
     </div>
 
@@ -467,7 +467,7 @@ html.dark .ui-switch {
         <input type="search" id="searchInput" placeholder="Busca empresa, nemónico o sector" aria-label="Buscar empresa" autocomplete="off" spellcheck="false" />
         <kbd class="finder-kbd" aria-hidden="true">/</kbd>
       </label>
-      <p class="finder-hint">Por ejemplo: <button type="button" data-try="alicorp">Alicorp</button>, <button type="button" data-try="BVN">BVN</button>, <button type="button" data-try="bancos">bancos</button>, <button type="button" data-try="mineras">mineras</button>.</p>
+      <p class="finder-hint">Por ejemplo: <button type="button" data-try="alicorp">Alicorp</button>, <button type="button" data-try="ALICORC1.LM">ALICORC1.LM</button>, <button type="button" data-try="bancos">bancos</button>, <button type="button" data-try="mineras">mineras</button>.</p>
       <div class="finder-tabs" role="tablist" aria-label="Qué empresas mostrar" id="actTabs">
         <button type="button" role="tab" data-act="" aria-selected="true">Todas <span>${rows.length}</span></button>
         <button type="button" role="tab" data-act="yahoo" aria-selected="false">Con proyección <span>${rows.filter(r => r.tier === 1).length}</span></button>
