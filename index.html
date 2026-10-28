@@ -204,9 +204,20 @@
   <!-- Identidad PerData (DESIGN.md) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/pd.css">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap"></noscript>
+  <link rel="preload" as="style" href="/pd.css" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/pd.css"></noscript>
   <style>
+    /* Critical landing styles; pd.css and tw.css finish the full page without blocking its first paint. */
+    .pdl-hero { background: var(--pd-paper, #f5f1e8); }
+    .pdl-h1 { font-family: 'Source Serif 4', Georgia, serif; font-weight: 400; font-size: clamp(40px, 5.4vw, 62px); line-height: 1.05; letter-spacing: -.03em; margin: 0 0 28px; }
+    .pdl-quote { min-height: 150px; border-left: 2px solid var(--pd-peru, #c83c2d); padding-left: 20px; margin: 0 0 32px; }
+    .pdl-question { font-size: 20px; line-height: 1.4; margin: 0 0 6px; }
+    .pdl-answer { font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; line-height: 1.55; margin: 0; }
+    .pd-hero-answer { min-height: 6em; font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; line-height: 1.5; }
+    @media (min-width: 1024px) { .pdl-quote { min-height: 120px; } .pd-hero-answer { min-height: 3em; } }
+    @media (min-width: 1024px) { .pdl-hero .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); } .pdl-hero .lg\:col-span-7 { grid-column: span 7 / span 7; } .pdl-hero .lg\:col-span-5 { grid-column: span 5 / span 5; } }
     .pd-opening-scene { position: absolute; inset: 0; z-index: 2; background: var(--pd-paper, #F5F1E8); opacity: 1; transition: opacity 260ms ease; }
     .pd-opening-scene.is-finished { opacity: 0; pointer-events: none; }
     .pd-opening-scene svg { display: block; width: 100%; height: 100%; }
@@ -279,7 +290,8 @@
   </script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3342536112010915"
      crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="/tw.css">
+  <link rel="preload" as="style" href="/tw.css" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/tw.css"></noscript>
 </head>
 <body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 
@@ -350,7 +362,7 @@
             <div class="pdl-quote" data-hero-seq="2">
               <p class="pdl-question">¿A cuánto estará el dólar el próximo mes?</p>
               <p class="pd-hero-answer pdl-answer">
-                Entre <span class="pd-num">S/&nbsp;<span id="pd-p10">—</span></span> y <span class="pd-num">S/&nbsp;<span id="pd-p90">—</span></span>, con un <span class="pd-num">80&nbsp;%</span> de probabilidad. Valor central: <span class="pd-num">S/&nbsp;<span id="pd-p50">—</span></span>.
+                Calculando el rango probable del dólar para el próximo mes…
               </p>
               <p id="pd-forecast-fallback" class="pdl-answer hidden">Abre la terminal para ver la proyección de hoy.</p>
             </div>
@@ -749,9 +761,7 @@
     (function () {
       var ctx = document.getElementById('pdHeroChart');
       if (!ctx) return;
-      var p10El = document.getElementById('pd-p10');
-      var p50El = document.getElementById('pd-p50');
-      var p90El = document.getElementById('pd-p90');
+      var answerEl = document.querySelector('.pd-hero-answer');
       var dateEl = document.getElementById('pdChartDate');
       var tableDateEl = document.getElementById('pdTableDate');
       var fallbackEl = document.getElementById('pd-forecast-fallback');
@@ -895,11 +905,9 @@
         if (dateEl) dateEl.textContent = hDate;
         if (tableDateEl) tableDateEl.textContent = hDate;
 
-        if (p10El && p50El && p90El) {
+        if (answerEl) {
           if (p10 !== null && p50 !== null && p90 !== null) {
-            p10El.textContent = fmt(p10, 2);
-            p50El.textContent = fmt(p50, 2);
-            p90El.textContent = fmt(p90, 2);
+            answerEl.innerHTML = 'Entre <span class="pd-num">S/&nbsp;' + fmt(p10, 2) + '</span> y <span class="pd-num">S/&nbsp;' + fmt(p90, 2) + '</span>, con un <span class="pd-num">80&nbsp;%</span> de probabilidad. Valor central: <span class="pd-num">S/&nbsp;' + fmt(p50, 2) + '</span>.';
             var cP50 = document.getElementById('pdCardP50'), cP10 = document.getElementById('pdCardP10'), cP90 = document.getElementById('pdCardP90'), cChg = document.getElementById('pdCardChange');
             if (cP50) cP50.textContent = fmt(p50, 2);
             if (cP10) cP10.textContent = fmt(p10, 2);
@@ -910,9 +918,6 @@
             }
             if (fallbackEl) fallbackEl.classList.add('hidden');
           } else {
-            p10El.textContent = '—';
-            p50El.textContent = '—';
-            p90El.textContent = '—';
             if (fallbackEl) fallbackEl.classList.remove('hidden');
           }
         }
