@@ -640,7 +640,7 @@ function evaluateAndWriteScorecard(opts, humanMap) {
 
   let md = `# Marcador Oficial: Competición de Clasificadores
 
-Evaluación ciega contra arbitraje humano oficial (${humanMap.size} titulares etiquetados por Agustín).
+Evaluación ciega contra arbitraje humano oficial (${humanMap.size} titulares etiquetados a ciegas por Claude, criterio experto de referencia; la muestra incluye titulares con discrepancias, no es la precisión en producción).
 
 ## 1. Tabla Comparativa de Rendimiento
 
