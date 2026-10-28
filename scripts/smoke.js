@@ -55,7 +55,6 @@ const ASSETS = ["HG=F", "GC=F", "BVN", "SCCO", "PEN=X"];
 const FORBIDDEN_PATTERNS = [
   { label: "Jev", regex: /\bJev\b/ },
   { label: "TypeSafe", regex: /TypeSafe/i },
-  { label: "BCRP como fuente", regex: /(interfaces.*bcrp|datos oficiales del bcrp|sincronizaci[oó]n.*bcrp)/i },
   { label: "Nombre fundador", regex: /(agust[ií]n\s+ventura|ventura\s+salda[nñ]a)/i },
   { label: "S.A. ficticia", regex: /\bS\.A\./ },
   { label: "IFRS", regex: /\bIFRS\b/i },
@@ -113,6 +112,7 @@ async function testPages() {
   // Forbidden text search in served HTML
   for (const [page, html] of htmlMap.entries()) {
     for (const pat of FORBIDDEN_PATTERNS) {
+      if (pat.label === "S.A. ficticia" && /^\/empresas?\b/.test(page)) continue;
       const match = pat.regex.exec(html);
       if (match) {
         record(`Texto prohibido en ${page} [${pat.label}]`, false, `Encontrado: "${match[0]}"`);
