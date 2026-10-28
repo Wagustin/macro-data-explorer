@@ -95,7 +95,7 @@ const rowsHtml = rows.map(r => {
   } else if (r.tier === 2) {
     subHtml = `<div class="company-sub text-ink-soft">Cotiza poco · sin proyección</div>`;
   } else {
-    subHtml = `<div class="company-sub text-ink-soft opacity-75">Sin negociación reciente · solo ficha</div>`;
+    subHtml = `<div class="company-sub text-ink-soft">Sin negociación reciente · solo ficha</div>`;
   }
 
   return `      <a href="/empresa/${encodeURIComponent(r.nemonico)}" class="row-link" data-nemo="${r.nemonico}" data-name="${r.razonSocial.toLowerCase()}" data-sector="${r.sectorRaw}" data-tier="${r.tierLabel}" ${r.yahoo ? `data-yahoo="${r.yahoo}"` : ""}>

@@ -843,7 +843,7 @@
       <div class="ledger-table">
         <div class="ledger-row">
           <span class="ledger-label">P50 Objetivo (Horizonte)</span>
-          <span class="ledger-val tnum"><span id="mP50">$39.34</span> <span id="mReturn" class="text-xs ml-1 font-semibold text-emerald-600 dark:text-emerald-400">+13.3%</span></span>
+          <span class="ledger-val tnum"><span id="mP50">$39.34</span> <span id="mReturn" class="text-xs ml-1 font-semibold text-emerald-800 dark:text-emerald-300">+13.3%</span></span>
         </div>
         <div class="ledger-row">
           <span class="ledger-label">Rango 80% (P10–P90)</span>
@@ -954,7 +954,7 @@
             </div>
             <div class="stat">
               <div class="band-label">Retorno Proyectado <a href="/aprende#probabilidad" class="pd-help" title="Ganancia o pérdida porcentual esperada del P50 frente a hoy.">?</a></div>
-              <div id="tfmReturn" class="stat-value text-emerald-600 dark:text-emerald-400">+13.3%</div>
+              <div id="tfmReturn" class="stat-value text-emerald-800 dark:text-emerald-300">+13.3%</div>
               <div id="tfmTrend" class="stat-sub">Variación esperada frente a hoy</div>
             </div>
             <div class="stat">
@@ -991,7 +991,7 @@
         <div class="stat-strip stat-strip-5 -mx-4 sm:-mx-6">
           <div class="stat">
             <div class="band-label">Retorno <a href="/guia#glosario" class="pd-help" title="Variación acumulada entre el inicio y el final del periodo seleccionado.">?</a></div>
-            <div id="metricReturn" class="stat-value text-emerald-600 dark:text-emerald-400">+184.2%</div>
+            <div id="metricReturn" class="stat-value text-emerald-800 dark:text-emerald-300">+184.2%</div>
             <div class="stat-sub">Variación acumulada en el rango</div>
           </div>
           <div class="stat">
@@ -1880,9 +1880,9 @@ const state = {
           liveEl.classList.remove("hidden");
           liveEl.className = liveEl.className.replace(/text-(rose|emerald)-[0-9]+/g, "").trim();
           if (p.live.changePct >= 0) {
-            liveEl.classList.add("text-emerald-600", "dark:text-emerald-400", "bg-emerald-500/10");
+            liveEl.classList.add("text-emerald-800", "dark:text-emerald-300", "bg-emerald-500/10");
           } else {
-            liveEl.classList.add("text-rose-600", "dark:text-rose-400", "bg-rose-500/10");
+            liveEl.classList.add("text-rose-700", "dark:text-rose-300", "bg-rose-500/10");
           }
         }
         if (p.live.time) {
@@ -1911,7 +1911,7 @@ const state = {
       const mHistReturn = document.getElementById("mHistReturn");
       if (mHistReturn) {
         mHistReturn.textContent = `${returnPct >= 0 ? '+' : ''}${returnPct.toFixed(1)}%`;
-        mHistReturn.className = `ledger-val tnum ${returnPct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`;
+        mHistReturn.className = `ledger-val tnum ${returnPct >= 0 ? 'text-emerald-800 dark:text-emerald-300' : 'text-rose-700 dark:text-rose-300'}`;
       }
 
       const highStr = `${p.currency === 'PEN' ? 'S/' : '$'}${highVal.toFixed(2)}`;
@@ -1995,7 +1995,7 @@ const state = {
       if (probEl) {
         if (typeof f.probabilityOfRise === "number") {
           probEl.textContent = f.probabilityOfRise.toFixed(1) + "%";
-          probEl.className = "stat-value " + (f.probabilityOfRise >= 55 ? "text-emerald-600 dark:text-emerald-400" : f.probabilityOfRise <= 45 ? "text-rose-600 dark:text-rose-400" : "text-black dark:text-white");
+          probEl.className = "stat-value " + (f.probabilityOfRise >= 55 ? "text-emerald-800 dark:text-emerald-300" : f.probabilityOfRise <= 45 ? "text-rose-700 dark:text-rose-300" : "text-black dark:text-white");
         } else {
           probEl.textContent = "—";
         }
@@ -2032,7 +2032,7 @@ const state = {
       const mReturn = document.getElementById("mReturn");
       if (mReturn) {
         mReturn.textContent = `${f.expectedReturnPct >= 0 ? '+' : ''}${f.expectedReturnPct.toFixed(1)}%`;
-        mReturn.className = `text-xs ml-1 font-semibold ${f.expectedReturnPct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`;
+        mReturn.className = `text-xs ml-1 font-semibold ${f.expectedReturnPct >= 0 ? 'text-emerald-800 dark:text-emerald-300' : 'text-rose-700 dark:text-rose-300'}`;
       }
 
       const mRange = document.getElementById("mRange");
@@ -2042,7 +2042,7 @@ const state = {
       if (mProb) {
         if (typeof f.probabilityOfRise === "number") {
           mProb.textContent = f.probabilityOfRise.toFixed(1) + "%";
-          mProb.className = "ledger-val tnum " + (f.probabilityOfRise >= 55 ? "text-emerald-600 dark:text-emerald-400" : f.probabilityOfRise <= 45 ? "text-rose-600 dark:text-rose-400" : "");
+          mProb.className = "ledger-val tnum " + (f.probabilityOfRise >= 55 ? "text-emerald-800 dark:text-emerald-300" : f.probabilityOfRise <= 45 ? "text-rose-700 dark:text-rose-300" : "");
         } else {
           mProb.textContent = "—";
         }
@@ -2268,7 +2268,7 @@ const state = {
             <td class="py-2.5 px-4 text-ink-soft font-mono tnum whitespace-nowrap">${currencySymbol}${item.high.toFixed(2)}</td>
             <td class="py-2.5 px-4 text-ink-soft font-mono tnum whitespace-nowrap">${currencySymbol}${item.low.toFixed(2)}</td>
             <td class="py-2.5 px-4 font-medium font-mono tnum whitespace-nowrap text-black dark:text-white">${typeof macroVal === 'number' ? macroVal.toFixed(2) : escapeHTML(macroVal)}</td>
-            <td class="py-2.5 px-4 font-semibold font-mono tnum whitespace-nowrap ${changePct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400'}">
+            <td class="py-2.5 px-4 font-semibold font-mono tnum whitespace-nowrap ${changePct >= 0 ? 'text-emerald-800 dark:text-emerald-300' : 'text-rose-700 dark:text-rose-300'}">
               ${prevItem ? (changePct >= 0 ? '+' : '') + changePct.toFixed(2) + '%' : '-'}
             </td>
           </tr>
