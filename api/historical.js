@@ -62,7 +62,7 @@ async function smvPayload(symbol, nemo, range, interval) {
     monthly ? smvRows(nemo, isoMonthsAgo(12)) : null,
   ]);
   const dailyRows = (daily || main).slice().reverse();
-  if (main.length < 3 || dailyRows.length < 2) return null;
+  if (!main.length || dailyRows.length < 2) return null;
   const series = main.slice().reverse().map((r) => point(r, monthly ? r.fecha.slice(0, 8) + "01" : r.fecha));
   const last = dailyRows[dailyRows.length - 1], prev = dailyRows[dailyRows.length - 2];
   const catMeta = CATALOG.find((c) => c.symbol === symbol) || {};

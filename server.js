@@ -124,7 +124,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   // --- Clean URL mappings to HTML subpages ---
-  if (pathname === "/data/empresas.json" || pathname === "/data/smv-hechos.json") {
+  if (["/data/empresas.json", "/data/smv-hechos.json", "/data/empresas-estado.json", "/data/smv-accionistas.json"].includes(pathname)) {
     const jsonPath = path.join(process.cwd(), "data", path.basename(pathname));
     if (fs.existsSync(jsonPath)) {
       res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
