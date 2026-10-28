@@ -24,8 +24,9 @@ async function fetchRows(nemos) {
     url.searchParams.set("select", "nemonico,fecha,cierre,monto");
     url.searchParams.set("order", "nemonico.asc,fecha.asc");
     url.searchParams.set("limit", "1000");
+    url.searchParams.set("offset", String(offset));
     const response = await fetch(url, {
-      headers: { apikey: key, Authorization: `Bearer ${key}`, Range: `${offset}-${offset + 999}` },
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
       signal: AbortSignal.timeout(30000),
     });
     if (!response.ok) throw new Error(`Supabase cotizaciones_smv HTTP ${response.status}: ${(await response.text()).slice(0, 200)}`);
