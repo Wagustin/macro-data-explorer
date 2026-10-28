@@ -60,13 +60,18 @@ jobs:
           const rows = manifest
             .filter((entry) => entry.isRepresentativeRun)
             .map((entry) => {
-              const report = JSON.parse(fs.readFileSync(path.join(directory, entry.jsonPath), 'utf8'));
+              const reportPath = path.isAbsolute(entry.jsonPath)
+                ? entry.jsonPath
+                : path.resolve(directory, entry.jsonPath);
+              const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
               const page = new URL(report.finalUrl).pathname || '/';
               const scores = labels.map(([key]) => {
                 const score = report.categories[key]?.score;
                 return score == null ? 'N/D' : String(Math.round(score * 100));
               });
-              return `| ${page} | ${scores.join(' | ')} |`;
+              const metrics = ['largest-contentful-paint', 'total-blocking-time', 'cumulative-layout-shift']
+                .map((key) => report.audits[key]?.displayValue ?? 'N/D');
+              return { page, scores, metrics };
             });
 
           if (!rows.length) throw new Error('No Lighthouse reports were found in the manifest.');
@@ -75,11 +80,18 @@ jobs:
             '',
             '| Página | Rendimiento | Accesibilidad | Buenas prácticas | SEO |',
             '| --- | ---: | ---: | ---: | ---: |',
-            ...rows,
+            ...rows.map(({ page, scores }) => `| ${page} | ${scores.join(' | ')} |`),
+            '',
+            '### Métricas por página',
+            '',
+            '| Página | LCP | TBT | CLS |',
+            '| --- | ---: | ---: | ---: |',
+            ...rows.map(({ page, metrics }) => `| ${page} | ${metrics.join(' | ')} |`),
             '',
           ].join('\n'));
           EOF
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: lighthouse-reports
           path: lighthouse-reports/
