@@ -658,7 +658,7 @@
       // para que el dedo no la tape.
       let slot = null;
       // Also in compact charts (landing): the readout never covers the projection
-      if ((isMobile || options.compact) && container.parentNode) {
+      if (isMobile && container.parentNode) {
         slot = container.previousElementSibling && container.previousElementSibling.classList.contains("pd-chip-slot")
           ? container.previousElementSibling : null;
         if (!slot) {

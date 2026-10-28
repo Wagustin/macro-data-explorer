@@ -210,18 +210,22 @@
   <noscript><link rel="stylesheet" href="/pd.css"></noscript>
   <style>
     /* Critical landing styles; pd.css and tw.css finish the full page without blocking its first paint. */
+    @font-face { font-family: 'Libre Franklin Fallback'; src: local('Arial'); size-adjust: 98%; ascent-override: 91%; descent-override: 23%; line-gap-override: 0%; }
+    @font-face { font-family: 'Source Serif 4 Fallback'; src: local('Georgia'); size-adjust: 97%; ascent-override: 91%; descent-override: 24%; line-gap-override: 0%; }
     .pdl-hero { background: var(--pd-paper, #f5f1e8); }
-    .pdl-h1 { font-family: 'Source Serif 4', Georgia, serif; font-weight: 400; font-size: clamp(40px, 5.4vw, 62px); line-height: 1.05; letter-spacing: -.03em; min-height: 2.2em; margin: 0 0 28px; }
+    .pdl-h1 { font-family: 'Source Serif 4', 'Source Serif 4 Fallback', Georgia, serif; font-weight: 400; font-size: clamp(40px, 5.4vw, 62px); line-height: 1.05; letter-spacing: -.03em; min-height: 2.2em; margin: 0 0 28px; }
     .pdl-mask { display: block; overflow: hidden; padding-bottom: .08em; }
     .pdl-rise { display: block; }
-    .pdl-quote { min-height: 190px; border-left: 2px solid var(--pd-peru, #c83c2d); padding-left: 20px; margin: 0 0 32px; }
+    .pdl-quote { min-height: 270px; border-left: 2px solid var(--pd-peru, #c83c2d); padding-left: 20px; margin: 0 0 32px; }
     #pdHeroChartContainer { position: relative; height: 210px; }
     #pdHeroChart { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
-    .pdl-question { font-size: 20px; line-height: 1.4; margin: 0 0 6px; }
-    .pdl-answer { font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; line-height: 1.55; margin: 0; }
-    .pd-hero-answer { min-height: 6em; font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; line-height: 1.5; }
+    .pdl-question { height: 58px; font-family: 'Libre Franklin', 'Libre Franklin Fallback', Arial, sans-serif; font-size: 20px; line-height: 1.4; margin: 0 0 6px; }
+    .pdl-answer { font-family: 'Source Serif 4', 'Source Serif 4 Fallback', Georgia, serif; font-size: 18px; line-height: 1.55; margin: 0; }
+    .pd-hero-answer { height: 180px; font-family: 'Source Serif 4', 'Source Serif 4 Fallback', Georgia, serif; font-size: 20px; line-height: 1.5; }
+    #pd-forecast-fallback { position: absolute; right: 0; bottom: 0; left: 20px; }
+    .pdl-quote { position: relative; }
     .hidden { display: none !important; }
-    @media (min-width: 1024px) { .pdl-quote { min-height: 130px; } .pd-hero-answer { min-height: 3em; } }
+    @media (min-width: 1024px) { .pdl-quote { height: 160px; min-height: 0; } .pdl-question { height: 28px; } .pd-hero-answer { height: 90px; } }
     @media (min-width: 640px) { #pdHeroChartContainer { height: 230px; } }
     @media (min-width: 1024px) { .pdl-hero .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); } .pdl-hero .lg\:col-span-7 { grid-column: span 7 / span 7; } .pdl-hero .lg\:col-span-5 { grid-column: span 5 / span 5; } }
     header > div:first-child { box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; position: relative; width: 100%; max-width: 1152px; height: 56px; margin: 0 auto; padding: 0 16px; }
@@ -244,15 +248,21 @@
     @media (prefers-reduced-motion: reduce) { ::view-transition-group(*) { animation-duration: 0s; } }
     .pd-home-status { min-height: 36px; margin: 14px 0 20px; color: var(--pd-ink-soft); font-size: 10px; line-height: 18px; font-variant-numeric: tabular-nums; }
     .pd-home-status.is-stale { opacity: .58; }
-    .pdl-quote { min-height: 190px; }
-    .pd-home-actions { min-height: 104px; }
+    .pdl-quote { height: 270px; min-height: 0; }
+    main .pd-home-actions { display: flex !important; height: 112px; min-height: 0; flex-direction: column !important; align-items: stretch !important; }
     .pdl-stats { min-height: 136px; }
-    @media (min-width: 640px) { .pd-home-actions { min-height: 52px; } }
+    .pdl-card { padding: 24px 0; border-top: 1px solid var(--pd-rule); border-bottom: 1px solid var(--pd-rule); }
+    .pdl-card-head { box-sizing: border-box; height: 37px; padding-bottom: 16px; border-bottom: 1px solid var(--pd-rule); }
+    .pdl-card-body { box-sizing: border-box; height: 251px; padding: 20px 0; border-bottom: 1px solid var(--pd-rule); }
+    .pdl-card-chart { box-sizing: border-box; min-height: 360px; padding-top: 18px; }
+    .pd-chart-model-header { min-height: 16px; margin-bottom: 6px; }
+    @media (min-width: 640px) { main .pd-home-actions { height: 52px; min-height: 0; flex-direction: row !important; align-items: center !important; } }
     @media (min-width: 1024px) {
       .pd-home-status { min-height: 36px; }
-      .pdl-quote { min-height: 130px; }
-      .pd-home-actions { min-height: 52px; }
+      .pdl-quote { height: 160px; min-height: 0; }
+      main .pd-home-actions { height: 52px; min-height: 0; }
       .pdl-stats { min-height: 112px; }
+      .pdl-card-chart { min-height: 345px; }
     }
   </style>
   <script defer src="/motion.js"></script>
@@ -407,6 +417,7 @@
                 </div>
               </div>
               <div class="pdl-card-chart">
+                <div class="pd-chart-model-header" aria-hidden="true"><span id="chartModelBadge" class="pd-chart-model-badge"></span></div>
                 <div id="pdHeroChartContainer" class="relative w-full h-[210px] sm:h-[230px]">
                   <canvas id="pdHeroChart" role="img" aria-label="Historia de USD/PEN con abanico de proyección P10-P90"></canvas>
                   <div id="pdOpeningScene" class="pd-opening-scene" hidden aria-hidden="true"></div>
@@ -947,8 +958,6 @@
             p90: Number(it.p90)
           };
         }) : [];
-
-        startOpeningScene(histPoints, fcSeries);
 
         function renderHeroChart() {
           if (!window.PdChart || !chartContainer) return;

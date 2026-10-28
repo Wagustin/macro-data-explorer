@@ -43,8 +43,8 @@
   --pd-navy-dark: #0F0E0D;
 
   /* Tipografía */
-  --pd-font-ui: "Libre Franklin", -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Inter", sans-serif;
-  --pd-font-read: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --pd-font-ui: "Libre Franklin", "Libre Franklin Fallback", -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Inter", sans-serif;
+  --pd-font-read: "Source Serif 4", "Source Serif 4 Fallback", Georgia, "Times New Roman", serif;
   --pd-font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", "Menlo", Consolas, monospace;
 }
 
@@ -86,8 +86,8 @@ html.dark {
   --pd-navy-dark: #0F0E0D;
 
   /* Tipografía */
-  --pd-font-ui: "Libre Franklin", -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Inter", sans-serif;
-  --pd-font-read: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --pd-font-ui: "Libre Franklin", "Libre Franklin Fallback", -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Inter", sans-serif;
+  --pd-font-read: "Source Serif 4", "Source Serif 4 Fallback", Georgia, "Times New Roman", serif;
   --pd-font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", "Menlo", Consolas, monospace;
 }
 
@@ -1322,7 +1322,7 @@ header nav a.text-ink,
 .pdl-rise { display: block; }
 html.pd-motion .pdl-rise { animation: pdlRise 0.9s cubic-bezier(.16,1,.3,1) both; }
 html.pd-motion .pdl-rise-2 { animation-delay: .12s; }
-@keyframes pdlRise { from { opacity: 0; transform: translateY(105%); } to { opacity: 1; transform: none; } }
+@keyframes pdlRise { from { opacity: 0; } to { opacity: 1; } }
 
 .pdl-quote { border-left: 2px solid var(--pd-peru); padding-left: 20px; margin: 0 0 32px; }
 .pdl-question { font-family: var(--pd-font-ui) !important; font-size: 20px; line-height: 1.4; color: var(--pd-ink); margin: 0 0 6px; }
