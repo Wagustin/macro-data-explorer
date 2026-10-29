@@ -17,11 +17,22 @@ const MAX_FORECAST_AGE_H = 30; // daily model batch at 11:00 UTC
 const MAX_NEWS_AGE_H = 30; // daily news refresh at 05:00 UTC
 const MAX_FX_AGE_DAYS = 5; // BCRP daily series (weekends and holidays)
 
-async function get(path, { json = false, timeout = 20000 } = {}) {
+async function getOnce(path, { json = false, timeout = 20000 } = {}) {
   const t0 = Date.now();
   const r = await fetch(BASE + path, { headers: { "User-Agent": "PerDataWatchdog/1.0" }, signal: AbortSignal.timeout(timeout) });
   const body = json ? await r.json().catch(() => null) : await r.text();
   return { status: r.status, body, ms: Date.now() - t0 };
+}
+
+// A network error (no HTTP answer at all) is retried once after 10 s before it counts as a failure:
+// on 29-oct a single "fetch failed" from the GitHub runner raised an alert while the site was up
+async function get(path, opts) {
+  try {
+    return await getOnce(path, opts);
+  } catch (e) {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
+    return getOnce(path, opts);
+  }
 }
 
 const checks = [
