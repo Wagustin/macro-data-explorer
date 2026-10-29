@@ -191,10 +191,21 @@ function withScriptNonce(response) {
   const bytes = crypto.getRandomValues(new Uint8Array(16));
   const nonce = btoa(String.fromCharCode(...bytes));
   const headers = new Headers(response.headers);
-  const policy = headers.get("Content-Security-Policy-Report-Only");
-  if (!policy) return response;
-  headers.set("Content-Security-Policy-Report-Only",
-    policy.replace(/script-src [^;]*/, `script-src 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'`));
+  // Built here, not taken from _headers: two matching _headers rules arrived as one comma-joined
+  // value, and the browser enforced the stale second policy
+  headers.set("Content-Security-Policy-Report-Only", [
+    "default-src 'self'",
+    `script-src 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'`,
+    "style-src 'self' 'unsafe-inline' https:",
+    "img-src 'self' data: blob: https:",
+    "font-src 'self' data: https:",
+    "connect-src 'self' https: wss:",
+    "frame-src 'self' https:",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self' https:",
+    "frame-ancestors 'self'",
+  ].join("; "));
   const rewritten = new Response(response.body, { status: response.status, statusText: response.statusText, headers });
   return new HTMLRewriter().on("script", { element(e) { e.setAttribute("nonce", nonce); } }).transform(rewritten);
 }
