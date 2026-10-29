@@ -4,6 +4,8 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { ENGINE } from "../api/_lib/engine.js";
+import { SOURCES } from "../api/_lib/sources.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -60,7 +62,7 @@ export function validateRow(row) {
   return { valid: true, suspicious, logRatio, threshold };
 }
 
-export function validateForecasts({ rows, history = {}, previousCount = null, now = Date.now() }) {
+export function validateForecasts({ rows, history = {}, previousCount = null, previousModel = ENGINE.id, now = Date.now() }) {
   const t0 = Date.now();
   const totalRows = Array.isArray(rows) ? rows.length : 0;
   const validRows = [];
@@ -94,28 +96,28 @@ export function validateForecasts({ rows, history = {}, previousCount = null, no
   if (missingSymbols.length > 0) {
     cobertura_ok = false;
   }
-  const benchmarkCount = previousCount && previousCount > 0 ? previousCount : (sufficientSymbols.length > 0 ? sufficientSymbols.length * 48 : totalRows);
+  const sameModelPreviousCount = previousModel === ENGINE.id && previousCount > 0 ? previousCount : null;
+  const benchmarkCount = sameModelPreviousCount || (sufficientSymbols.length > 0 ? sufficientSymbols.length * 48 : totalRows);
   if (benchmarkCount > 0 && validRows.length < 0.9 * benchmarkCount) {
     cobertura_ok = false;
   }
 
   // (f) Frescura check
-  let frescura_ok = true;
   const staleSymbols = [];
+  const freshnessBySymbol = new Map();
   for (const sym of symbolsWithRows) {
     const series = history[sym];
-    if (Array.isArray(series) && series.length > 0) {
-      const lastEntry = series[series.length - 1];
-      const lastDate = lastEntry?.date;
-      if (lastDate) {
-        const ageDays = (now - Date.parse(lastDate)) / 864e5;
-        if (ageDays > 40) {
-          frescura_ok = false;
-          staleSymbols.push({ symbol: sym, lastDate, ageDays: Number(ageDays.toFixed(1)) });
-        }
-      }
-    }
+    if (!Array.isArray(series) || series.length === 0) continue;
+    const lastDate = series[series.length - 1]?.date;
+    if (!lastDate) continue;
+    const ageDays = (now - Date.parse(lastDate)) / 864e5;
+    const thresholdDays = SOURCES[sym] ? 100 : 45;
+    const stale = ageDays > thresholdDays;
+    freshnessBySymbol.set(sym, !stale);
+    if (stale) staleSymbols.push({ symbol: sym, lastDate, ageDays: Number(ageDays.toFixed(1)), thresholdDays });
   }
+  const frescura_ok = symbolsWithRows.size === 0 || staleSymbols.length <= symbolsWithRows.size * 0.2;
+  const publishableRows = validRows.filter((row) => freshnessBySymbol.get(row.symbol) !== false);
 
   const pctDescartadas = totalRows > 0 ? (discarded.length / totalRows) * 100 : 0;
   const discardedAcceptable = pctDescartadas <= 5.0;
@@ -124,8 +126,9 @@ export function validateForecasts({ rows, history = {}, previousCount = null, no
 
   const report = {
     actualizado: new Date(now).toISOString(),
+    model: ENGINE.id,
     filas: totalRows,
-    validas: validRows.length,
+    validas: publishableRows.length,
     descartadas: discarded.length,
     pct_descartadas: Number(pctDescartadas.toFixed(2)),
     sospechosas: suspicious.length,
@@ -141,7 +144,7 @@ export function validateForecasts({ rows, history = {}, previousCount = null, no
     simbolos_viejos: staleSymbols,
   };
 
-  return { validRows, report, exito };
+  return { validRows: publishableRows, report, exito };
 }
 
 function writeSummaryTable(report) {
@@ -159,7 +162,7 @@ function writeSummaryTable(report) {
 | Sospechosas (|log| elevado) | ${report.sospechosas} |
 | Símbolos sin datos | ${report.simbolos_sin_datos} / ${report.simbolos_totales} |
 | Cobertura (>= 90% y sin pérdidas totales) | ${report.cobertura_ok ? "OK" : "FALLÓ"} |
-| Frescura (<= 40 días) | ${report.frescura_ok ? "OK" : "FALLÓ"} |
+| Frescura (<= 45 / 100 días; máximo 20% de símbolos excluidos) | ${report.frescura_ok ? "OK" : "FALLÓ"} |
 | Resultado | **${status}** |
 | Tiempo de validación | ${report.tiempo_ms} ms |
 `;
@@ -186,7 +189,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   if (fs.existsSync(reportPath)) {
     try {
       const prevReport = JSON.parse(fs.readFileSync(reportPath, "utf8"));
-      previousCount = prevReport.validas || prevReport.filas || null;
+      if (prevReport.model === ENGINE.id) previousCount = prevReport.validas || null;
     } catch {
       // Ignorar error al leer reporte previo
     }

@@ -240,19 +240,51 @@ test("validateForecasts falla si un símbolo con historia suficiente pierde todo
   assert.ok(report.simbolos_faltantes.includes("BAP.LM"));
 });
 
-test("validateForecasts falla por frescura si el último cierre tiene más de 40 días", () => {
+test("validateForecasts falla por frescura si el último cierre supera los 45 días", () => {
   const oldDate = new Date(Date.now() - 50 * 864e5).toISOString().slice(0, 10);
   const history = {
-    "PEN=X": Array.from({ length: 30 }, () => ({ date: oldDate, close: 100 })),
+    "BAP.LM": Array.from({ length: 30 }, () => ({ date: oldDate, close: 100 })),
   };
 
   const rows = [];
   for (let h = 1; h <= 48; h++) {
-    rows.push(makeRow("PEN=X", h, 100));
+    rows.push(makeRow("BAP.LM", h, 100));
   }
 
   const { report, exito } = validateForecasts({ rows, history, previousCount: 48 });
   assert.equal(exito, false);
   assert.equal(report.frescura_ok, false);
   assert.equal(report.simbolos_viejos.length, 1);
+});
+
+test("validateForecasts ignora el conteo previo si pertenece a otro motor", () => {
+  const recentDate = new Date().toISOString().slice(0, 10);
+  const history = { "PEN=X": Array.from({ length: 30 }, () => ({ date: recentDate, close: 100 })) };
+  const rows = Array.from({ length: 48 }, (_, i) => makeRow("PEN=X", i + 1));
+
+  const { report, exito } = validateForecasts({ rows, history, previousCount: 2928, previousModel: "perdata-engine-v3" });
+  assert.equal(exito, true);
+  assert.equal(report.cobertura_ok, true);
+});
+
+test("validateForecasts acepta histórico mensual del Banco Mundial con 60 días", () => {
+  const date = new Date(Date.now() - 60 * 864e5).toISOString().slice(0, 10);
+  const history = { "NG=F": Array.from({ length: 30 }, () => ({ date, close: 100 })) };
+  const rows = Array.from({ length: 48 }, (_, i) => makeRow("NG=F", i + 1));
+
+  const { report, exito } = validateForecasts({ rows, history });
+  assert.equal(exito, true);
+  assert.equal(report.frescura_ok, true);
+  assert.deepEqual(report.simbolos_viejos, []);
+});
+
+test("validateForecasts falla si un símbolo con historia suficiente solo tiene filas inválidas", () => {
+  const recentDate = new Date().toISOString().slice(0, 10);
+  const history = { "BAP.LM": Array.from({ length: 30 }, () => ({ date: recentDate, close: 100 })) };
+  const rows = Array.from({ length: 48 }, (_, i) => makeRow("BAP.LM", i + 1, 100, { p50: NaN }));
+
+  const { report, exito } = validateForecasts({ rows, history });
+  assert.equal(exito, false);
+  assert.equal(report.cobertura_ok, false);
+  assert.ok(report.simbolos_faltantes.includes("BAP.LM"));
 });

@@ -27,7 +27,7 @@ import defaultCalibration from "./_lib/calibration.json" with { type: "json" };
 import { PLANS, planForUser, canUseHorizon, upgradeRequired } from "./_lib/plans.js";
 import { getAuthUserOrNull } from "./_lib/session.js";
 import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
-import { ENGINE } from "./_lib/engine.js";
+import { ENGINE, ENGINE_FALLBACKS } from "./_lib/engine.js";
 import { d1Rows } from "./_lib/d1.js";
 import { CATALOG } from "./search.js";
 
@@ -418,6 +418,34 @@ export async function fetchPrecomputedForecast(symbol, H) {
     }
   }
 
+  // 2b. Previous precomputed engines, newest to oldest. Never let an unrelated
+  // model in the table silently take precedence over the requested engine.
+  for (const model of ENGINE_FALLBACKS) {
+    if (model === ENGINE.id) continue;
+    const olderD1 = await d1Rows("select * from forecasts where symbol = ? and horizon = ? and model = ? limit 1", symbol, H, model);
+    if (olderD1?.[0] && (Date.now() - Date.parse(olderD1[0].run_at)) < 48 * 36e5) {
+      const payload = formatForecastPayload({ ...olderD1[0], path: olderD1[0].path ? JSON.parse(olderD1[0].path) : null }, symbol, H);
+      setCachedMemoryForecast(symbol, H, payload);
+      return payload;
+    }
+    if (sbUrl && sbKey) {
+      try {
+        const r = await fetch(`${sbUrl}/rest/v1/forecasts?symbol=eq.${encodeURIComponent(symbol)}&horizon=eq.${H}&model=eq.${encodeURIComponent(model)}&select=*&limit=1`, {
+          headers: { apikey: sbKey, Authorization: `Bearer ${sbKey}` },
+          signal: AbortSignal.timeout(2000)
+        });
+        const rows = r.ok ? await r.json() : [];
+        if (rows[0] && (Date.now() - Date.parse(rows[0].run_at)) < 48 * 36e5) {
+          const payload = formatForecastPayload(rows[0], symbol, H);
+          setCachedMemoryForecast(symbol, H, payload);
+          return payload;
+        }
+      } catch (e) {
+        // Continue to the next older engine.
+      }
+    }
+  }
+
   // 3. Cloudflare KV (PERDATA_KV)
   const kv = globalThis.PERDATA_KV || globalThis.__PERDATA_KV__;
   if (kv && typeof kv.get === "function") {
@@ -439,7 +467,7 @@ export async function fetchPrecomputedForecast(symbol, H) {
 
   if (supabaseUrl && serviceKey) {
     try {
-      const url = `${supabaseUrl}/rest/v1/forecasts?symbol=eq.${encodeURIComponent(symbol)}&horizon=eq.${H}&select=*&order=run_at.desc&limit=1`;
+      const url = `${supabaseUrl}/rest/v1/forecasts?symbol=eq.${encodeURIComponent(symbol)}&horizon=eq.${H}&model=eq.engine-v3&select=*&order=run_at.desc&limit=1`;
       const res = await fetch(url, {
         headers: {
           apikey: serviceKey,

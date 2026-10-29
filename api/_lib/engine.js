@@ -8,6 +8,8 @@
  * and then stretched by K80 so the P10-P90 band holds ~80 % of real closes at that horizon.
  */
 export const ENGINE = { id: "perdata-engine-v5", label: "PerData Engine v5" };
+// Ordered newest-to-oldest. The active engine is filtered out by readers.
+export const ENGINE_FALLBACKS = ["perdata-engine-v5", "perdata-engine-v4"];
 
 // [months, weight of Chronos-2], linearly interpolated, flat after the last point
 export const WEIGHTS = [[1, 0.75], [6, 0.8], [12, 0.9], [48, 0.95]];
