@@ -24,10 +24,13 @@ export async function askJSON(prompt, { budgetMs = 5 * 60 * 1000, maxTokens = 40
           headers: { Authorization: `Bearer ${nimKey}`, "Content-Type": "application/json" },
           body: JSON.stringify({
             model, temperature: 0.2, max_tokens: maxTokens, thinking: { type: "disabled" },
+            // Constrained decoding: without it the models sometimes broke the JSON with stray quotes
+            response_format: { type: "json_object" },
             chat_template_kwargs: { thinking: false, enable_thinking: false },
             messages: [{ role: "system", content: "Respondes solo con el JSON pedido, sin análisis previo ni texto adicional." }, { role: "user", content: prompt }],
           }),
-          signal: AbortSignal.timeout(Math.min(150000, left)),
+          // A minute per model, so a slow or overloaded one still leaves time for the next and for Gemini
+          signal: AbortSignal.timeout(Math.min(60000, left)),
         });
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const msg = (await r.json()).choices?.[0]?.message || {};
