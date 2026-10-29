@@ -185,7 +185,7 @@ const API_CACHE_TTLS = new Map([
 
 
 // Per-response CSP nonce: every <script> in our HTML gets it, and 'strict-dynamic' then trusts the
-// scripts they load (Google sign-in, AdSense, Stripe). Still report-only until no page reports violations.
+// scripts they load (Google sign-in, AdSense, Stripe). Enforced since 29-oct-2026, when no page reported violations.
 function withScriptNonce(response) {
   if (!(response.headers.get("Content-Type") || "").includes("text/html")) return response;
   const bytes = crypto.getRandomValues(new Uint8Array(16));
@@ -193,7 +193,8 @@ function withScriptNonce(response) {
   const headers = new Headers(response.headers);
   // Built here, not taken from _headers: two matching _headers rules arrived as one comma-joined
   // value, and the browser enforced the stale second policy
-  headers.set("Content-Security-Policy-Report-Only", [
+  headers.delete("Content-Security-Policy-Report-Only");
+  headers.set("Content-Security-Policy", [
     "default-src 'self'",
     `script-src 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'`,
     "style-src 'self' 'unsafe-inline' https:",
@@ -205,6 +206,7 @@ function withScriptNonce(response) {
     "base-uri 'self'",
     "form-action 'self' https:",
     "frame-ancestors 'self'",
+    "upgrade-insecure-requests",
   ].join("; "));
   const rewritten = new Response(response.body, { status: response.status, statusText: response.statusText, headers });
   return new HTMLRewriter().on("script", { element(e) { e.setAttribute("nonce", nonce); } }).transform(rewritten);
