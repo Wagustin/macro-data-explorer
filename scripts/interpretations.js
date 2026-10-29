@@ -70,8 +70,9 @@ for (const fact of facts.filter((item) => !item.titulares.length)) notes[fact.si
 let model = null;
 const factsWithNews = facts.filter((item) => item.titulares.length);
 const batches = [];
-for (let i = 0; i < factsWithNews.length; i += 15) batches.push(factsWithNews.slice(i, i + 15));
-// Batches run three at a time: one after another they overran the workflow step's time limit
+for (let i = 0; i < factsWithNews.length; i += 5) batches.push(factsWithNews.slice(i, i + 5));
+// Batches of five keep the model's JSON short (long answers came back cut off); two run at a time
+// so the step fits its time limit without tripping the provider's 503s
 async function writeBatch(batch, n) {
   const prompt = `Eres el analista de PerData. Para cada activo escribe 3 o 4 frases en español claro.
 Usa SOLO el contexto proporcionado: no inventes hechos ni cifras, no atribuyas cifras a las noticias y no recomiendes comprar o vender. Usa lenguaje prudente («podría», «sería»). No digas que el modelo usó noticias: la proyección sale de los modelos y los titulares solo explican riesgos actuales.
@@ -84,9 +85,9 @@ Devuelve SOLO JSON: {"notas":{"SIMBOLO":{"texto":"3-4 frases", "noticias":[{"id"
   const res = await askJSON(prompt, { budgetMs: 3 * 60 * 1000 });
   if (!res) {
     // A whole batch can time out: retry in groups of five before falling back to the plain note
-    if (batch.length > 5) {
-      console.error(`Lote ${n}: sin respuesta, reintento en grupos de 5`);
-      for (let k = 0; k < batch.length; k += 5) await writeBatch(batch.slice(k, k + 5), `${n}.${k / 5 + 1}`);
+    if (batch.length > 1) {
+      console.error(`Lote ${n}: sin respuesta, reintento de uno en uno`);
+      for (let k = 0; k < batch.length; k++) await writeBatch(batch.slice(k, k + 1), `${n}.${k + 1}`);
     } else {
       console.error(`Lote ${n}: sin respuesta, nota sin IA`);
       for (const f of batch) notes[f.simbolo] = plainNote(f);
@@ -101,8 +102,8 @@ Devuelve SOLO JSON: {"notas":{"SIMBOLO":{"texto":"3-4 frases", "noticias":[{"id"
     notes[f.simbolo] = clean ? { texto: clean, noticias: validCitations(result.noticias, f.titulares) } : plainNote(f);
   }
 }
-for (let i = 0; i < batches.length; i += 3) {
-  await Promise.all(batches.slice(i, i + 3).map((batch, j) => writeBatch(batch, i + j + 1)));
+for (let i = 0; i < batches.length; i += 2) {
+  await Promise.all(batches.slice(i, i + 2).map((batch, j) => writeBatch(batch, i + j + 1)));
 }
 
 const actualizado = new Date().toISOString();
