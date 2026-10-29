@@ -11,7 +11,7 @@ test("fetchPrecomputedForecast tries a previous engine when the active model has
         bind(symbol, horizon, model) {
           return {
             async all() {
-              return { results: model === "perdata-engine-v4" ? [{
+              return { results: model === "perdata-engine-v5" ? [{
                 symbol, horizon, model, run_at: new Date().toISOString(), last_close: 100,
                 p10: 90, p25: 95, p50: 100, p75: 105, p90: 110, path: JSON.stringify(path),
               }] : [] };
@@ -24,7 +24,7 @@ test("fetchPrecomputedForecast tries a previous engine when the active model has
 
   try {
     const result = await fetchPrecomputedForecast("^TNX", 47);
-    assert.equal(result.model, "perdata-engine-v4");
+    assert.equal(result.model, "perdata-engine-v5");
   } finally {
     if (originalDb === undefined) delete globalThis.PERDATA_DB;
     else globalThis.PERDATA_DB = originalDb;

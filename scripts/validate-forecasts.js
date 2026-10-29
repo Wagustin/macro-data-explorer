@@ -124,8 +124,11 @@ export function validateForecasts({ rows, history = {}, previousCount = null, pr
 
   const exito = totalRows > 0 && discardedAcceptable && cobertura_ok && frescura_ok;
 
+  let timesfmStatus;
+  try { timesfmStatus = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "engine-report.json"), "utf8")).timesfm; } catch {}
   const report = {
     actualizado: new Date(now).toISOString(),
+    ...(timesfmStatus ? { timesfm: timesfmStatus } : {}),
     model: ENGINE.id,
     filas: totalRows,
     validas: publishableRows.length,

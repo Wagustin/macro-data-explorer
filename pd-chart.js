@@ -858,7 +858,7 @@
         const modelName = forecast && forecast.model ? forecast.model : "engine-v3";
         const runAt = forecast && forecast.runAt ? new Date(forecast.runAt).toLocaleString("es-ES", { day: "2-digit", month: "short", year: "2-digit", hour: "2-digit", minute: "2-digit" }) : "";
         const txt = /^perdata-engine-v\d/.test(modelName || "")
-          ? `PerData Engine v5${runAt ? " · " + runAt : ""}`
+          ? `PerData Engine v6${runAt ? " · " + runAt : ""}`
           : `PerData Engine v3${runAt ? " · " + runAt : ""}`;
         modelBadge.textContent = forecastSeries.length ? txt : "";
         modelBadge.style.color = "var(--pd-ink-soft)";
