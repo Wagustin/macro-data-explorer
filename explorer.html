@@ -806,9 +806,12 @@
           </span>
         </div>
         
-        <p id="tsTakeaway" class="text-xs sm:text-sm text-ink leading-relaxed py-2 pl-3 bg-transparent border-l-2 border-rule" style="border-left-color: var(--pd-brand);">
-          Cargando análisis cuantitativo de la serie y envolvente estocástica...
-        </p>
+        <div class="min-h-[12rem]">
+          <p id="tsTakeaway" class="text-xs sm:text-sm text-ink leading-relaxed py-2 pl-3 bg-transparent border-l-2 border-rule" style="border-left-color: var(--pd-brand);">
+            Cargando análisis cuantitativo de la serie y envolvente estocástica...
+          </p>
+          <div id="tsNews" class="min-h-[4rem] text-[11px] text-ink-soft" aria-live="polite"></div>
+        </div>
 
         <!-- Sub-Indicators: Macro Beta, Volatilidad, Cobertura -->
         <div class="grid grid-cols-1 sm:grid-cols-3 border-y border-rule divide-y sm:divide-y-0 sm:divide-x divide-rule text-left">
@@ -1812,6 +1815,32 @@ const state = {
           const interp = data.interpretation || data;
           document.getElementById("tsConfidence").textContent = `Cobertura del rango: ${interp.confidencePercentage || "80 %"}`;
           document.getElementById("tsTakeaway").textContent = (interp.aiNote ? interp.aiNote + " " : "") + (interp.executiveTakeaway || "");
+          const newsBox = document.getElementById("tsNews");
+          newsBox.replaceChildren();
+          if (Array.isArray(interp.aiNews) && interp.aiNews.length) {
+            const heading = document.createElement("div");
+            heading.className = "font-semibold text-ink mb-1";
+            heading.textContent = "Noticias que lo explican";
+            newsBox.append(heading);
+            const list = document.createElement("ul");
+            list.className = "space-y-1";
+            for (const item of interp.aiNews.slice(0, 3)) {
+              if (!item || !/^https:\/\//i.test(item.url || "")) continue;
+              const row = document.createElement("li");
+              const link = document.createElement("a");
+              link.href = item.url;
+              link.target = "_blank";
+              link.rel = "noopener";
+              link.className = "underline underline-offset-2 hover:text-ink";
+              link.textContent = item.titulo || "Noticia";
+              const details = document.createElement("span");
+              const date = item.fecha ? new Date(item.fecha).toLocaleDateString("es-PE", { day: "numeric", month: "short" }) : "";
+              details.textContent = ` · ${item.fuente || "Fuente"}${date ? ` · ${date}` : ""}`;
+              row.append(link, details);
+              list.append(row);
+            }
+            newsBox.append(list);
+          }
           document.getElementById("tsBeta").textContent = interp.macroSensitivity || "Moderada";
           document.getElementById("tsRegime").textContent = interp.regime || interp.marketRegime || "Cíclico";
           document.getElementById("tsEngine").textContent = data.source || "PerData Engine v5";

@@ -20,7 +20,11 @@ async function dailyNote(symbol) {
   const updatedAt = Date.parse(row?.actualizado || "");
   const age = Date.now() - updatedAt;
   if (row?.texto && Number.isFinite(updatedAt) && age >= 0 && age < 48 * 36e5) {
-    return { text: row.texto, model: null, date: row.actualizado };
+    try {
+      const parsed = JSON.parse(row.texto);
+      if (parsed && typeof parsed.texto === "string") return { text: parsed.texto, news: cleanNews(parsed.noticias), model: null, date: row.actualizado };
+    } catch (e) { /* Old D1 rows contain plain text. */ }
+    return { text: row.texto, news: [], model: null, date: row.actualizado };
   }
 
   if (!notesCache || Date.now() - notesCache.at > 30 * 60 * 1000) {
@@ -33,7 +37,15 @@ async function dailyNote(symbol) {
   }
   const d = notesCache.data;
   if (!d || Date.now() - Date.parse(d.actualizado) > 48 * 36e5) return null;
-  return d.notas?.[symbol] ? { text: d.notas[symbol], model: d.modelo, date: d.actualizado } : null;
+  const saved = d.notas?.[symbol];
+  return typeof saved === "string" ? { text: saved, news: [], model: d.modelo, date: d.actualizado }
+    : saved?.texto ? { text: saved.texto, news: cleanNews(saved.noticias), model: d.modelo, date: d.actualizado } : null;
+}
+
+function cleanNews(items) {
+  if (!Array.isArray(items)) return [];
+  return items.filter((item) => item && typeof item.titulo === "string" && /^https:\/\//i.test(item.url || "")).slice(0, 3)
+    .map(({ titulo, fuente, fecha, url }) => ({ titulo, fuente: String(fuente || ""), fecha: String(fecha || ""), url }));
 }
 
 const fmt = (v) => (v >= 100 ? v.toFixed(0) : v >= 10 ? v.toFixed(2) : v.toFixed(3));
@@ -109,6 +121,7 @@ export default async function handler(req, res) {
     macroSensitivity,
     executiveTakeaway: parts.join(" "),
     aiNote: note ? note.text : null,
+    aiNews: note ? note.news : [],
     riskFactors: [
       "El modelo aprende del pasado: no anticipa noticias, elecciones ni cambios regulatorios.",
       `A ${plazo} la incertidumbre es la del rango P10–P90; a más plazo, rango más ancho.`,
