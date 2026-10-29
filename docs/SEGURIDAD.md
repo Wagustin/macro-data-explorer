@@ -22,7 +22,9 @@ Rotarlo de inmediato, revocar el valor anterior y revisar los logs y ejecuciones
 
 ## Controles verificados
 
-- Las páginas estáticas generan `Content-Security-Policy-Report-Only` por ruta. `script-src` contiene hashes SHA-256 de cada script en línea y `'strict-dynamic'`, con `https:` como respaldo para navegadores que no aplican `'strict-dynamic'`.
-- **Pendiente antes de aplicar enforcement:** la prueba local con enforcement de `'strict-dynamic'` impidió que se montara el control de inicio de sesión (el botón de Google dejó de aparecer). Se conserva Report-Only hasta adaptar la carga de scripts externos insertados por el parser y repetir el flujo completo.
+- La CSP se aplica (no solo se informa) desde el 29-oct-2026. El Worker (`withScriptNonce` en worker.js) genera un nonce aleatorio por respuesta HTML, lo añade a cada `<script>` con HTMLRewriter y envía `script-src 'nonce-…' 'strict-dynamic' https: 'unsafe-inline'` (los dos últimos solo los usan navegadores antiguos). Así Google, AdSense, Stripe y Cloudflare Insights quedan autorizados por el script que los carga, sin listar dominios.
+- No se usan manejadores en línea (`onload=`, `onclick=`): con la CSP aplicada quedarían bloqueados. Si hace falta, se usa un `<script>` normal, que recibe el nonce.
+- No hay bloques de CSP en `public/_headers`: dos reglas que coincidían con /noticias llegaban como un solo valor separado por comas y el navegador aplicaba también la política antigua.
+- Verificación antes de aplicarla: 0 violaciones en 22 páginas en Report-Only y 0 bloqueos en 12 con la política aplicada (anuncios, gráficos, botón de Google y sin errores de JavaScript).
 - `/api/internal/sync` requiere el bearer `SYNC_SECRET` antes de acceder a D1 y aplica límite por IP después de autenticar. El webhook de Stripe valida su firma antes de analizar el evento y no aplica límite por IP.
 - Las acciones de billing aplican límite por IP y requieren sesión; la lectura pública de configuración no requiere sesión.
