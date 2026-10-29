@@ -30,7 +30,7 @@ function makeRow(symbol = "PEN=X", horizon = 12, price = 100, overrides = {}) {
   return {
     symbol,
     horizon,
-    model: "perdata-engine-v5",
+    model: "perdata-engine-v6",
     run_at: "2026-10-28T10:00:00.000Z",
     last_close: overrides.last_close ?? price,
     p10,

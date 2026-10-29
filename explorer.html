@@ -1814,7 +1814,7 @@ const state = {
           document.getElementById("tsTakeaway").textContent = (interp.aiNote ? interp.aiNote + " " : "") + (interp.executiveTakeaway || "");
           document.getElementById("tsBeta").textContent = interp.macroSensitivity || "Moderada";
           document.getElementById("tsRegime").textContent = interp.regime || interp.marketRegime || "Cíclico";
-          document.getElementById("tsEngine").textContent = data.source || "PerData Engine v5";
+          document.getElementById("tsEngine").textContent = data.source || "PerData Engine v6";
         }
       } catch (err) {
         console.error("Error fetching interpretation:", err);
@@ -2017,7 +2017,7 @@ const state = {
               timeStr = `hoy ${hh}:${mm} UTC`;
             } catch (e) {}
           }
-          modelBadge.textContent = `PerData Engine v5 · calculado ${timeStr}`;
+          modelBadge.textContent = `PerData Engine v6 · calculado ${timeStr}`;
         } else {
           modelBadge.textContent = "Modelo: PerData Engine v3";
         }

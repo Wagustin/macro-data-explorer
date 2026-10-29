@@ -36,7 +36,7 @@ test("interpret reads a fresh daily note from D1", async () => {
     assert.match(requestedSql, /select texto, actualizado from interpretaciones where symbol = \?/);
     assert.equal(res.statusCode, 200);
     assert.equal(res.body.aiNote, note);
-    assert.equal(res.body.model, "perdata-v5+ai-note");
+    assert.equal(res.body.model, "perdata-v6+ai-note");
   } finally {
     globalThis.fetch = originalFetch;
     delete globalThis.PERDATA_DB;
