@@ -66,8 +66,10 @@ for (const fact of facts.filter((item) => !item.titulares.length)) {
 }
 let model = null;
 const factsWithNews = facts.filter((item) => item.titulares.length);
-for (let i = 0; i < factsWithNews.length; i += 15) {
-  const batch = factsWithNews.slice(i, i + 15);
+const batches = [];
+for (let i = 0; i < factsWithNews.length; i += 15) batches.push(factsWithNews.slice(i, i + 15));
+// Batches run three at a time: one after another they overran the workflow step's time limit
+async function writeBatch(batch, n) {
   const prompt = `Eres el analista de PerData. Para cada activo escribe 3 o 4 frases en español claro.
 Usa SOLO el contexto proporcionado: no inventes hechos ni cifras, no atribuyas cifras a las noticias y no recomiendes comprar o vender. Usa lenguaje prudente («podría», «sería»). No digas que el modelo usó noticias: la proyección sale de los modelos y los titulares solo explican riesgos actuales.
 ${JSON.stringify(batch)}
@@ -76,8 +78,8 @@ Frase 1: qué proyectamos a 1 y 3 meses, con los rangos P10-P90 y el valor centr
 Frases 2 y 3: hechos actuales de los titulares que podrían empujar al alza o a la baja y el mecanismo económico breve. Cita solo lo que dicen los titulares.
 Frase 4: qué vigilar. Si no hay titulares, escribe solo la proyección y «Sin noticias recientes relevantes».
 Devuelve SOLO JSON: {"notas":{"SIMBOLO":{"texto":"3-4 frases", "noticias":[{"id":"id del titular"}]}}}. Incluye de 1 a 3 titulares citados, solo si hay titulares; sus ids deben estar en el contexto.`;
-  const res = await askJSON(prompt, { budgetMs: 4 * 60 * 1000 });
-  if (!res) { console.error(`Lote ${i / 15 + 1}: sin respuesta`); continue; }
+  const res = await askJSON(prompt, { budgetMs: 3 * 60 * 1000 });
+  if (!res) { console.error(`Lote ${n}: sin respuesta`); return; }
   model = model || res.model;
   for (const f of batch) {
     const result = res.out.notas?.[f.simbolo];
@@ -85,6 +87,9 @@ Devuelve SOLO JSON: {"notas":{"SIMBOLO":{"texto":"3-4 frases", "noticias":[{"id"
     const clean = grounded(result.texto, JSON.stringify(f));
     if (clean) notes[f.simbolo] = { texto: clean, noticias: validCitations(result.noticias, f.titulares) };
   }
+}
+for (let i = 0; i < batches.length; i += 3) {
+  await Promise.all(batches.slice(i, i + 3).map((batch, j) => writeBatch(batch, i + j + 1)));
 }
 
 const actualizado = new Date().toISOString();

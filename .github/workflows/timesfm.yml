@@ -105,7 +105,7 @@ jobs:
         run: node scripts/publish-forecasts.js
 
       - name: Nota del día por activo (IA)
-        timeout-minutes: 10
+        timeout-minutes: 20
         continue-on-error: true
         env:
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
