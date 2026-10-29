@@ -1,18 +1,118 @@
 {
-  "actualizado": "2026-10-28T12:00:00.000Z",
-  "filas": 4176,
-  "validas": 4176,
-  "descartadas": 0,
-  "pct_descartadas": 0,
-  "sospechosas": 0,
+  "actualizado": "2026-10-29T08:31:33.708Z",
+  "model": "perdata-engine-v5",
+  "filas": 2928,
+  "validas": 2921,
+  "descartadas": 7,
+  "pct_descartadas": 0.24,
+  "sospechosas": 8,
   "simbolos_sin_datos": 0,
-  "simbolos_totales": 87,
-  "tiempo_ms": 150,
+  "simbolos_totales": 61,
+  "tiempo_ms": 40,
   "cobertura_ok": true,
   "frescura_ok": true,
   "exito": true,
-  "detalles_descartadas": [],
-  "detalles_sospechosas": [],
+  "detalles_descartadas": [
+    {
+      "index": 527,
+      "symbol": "AENZAC1.LM",
+      "horizon": 48,
+      "reason": "absurd_width",
+      "width": 46.799492385786806
+    },
+    {
+      "index": 572,
+      "symbol": "ATACOBC1.LM",
+      "horizon": 45,
+      "reason": "absurd_width",
+      "width": 41.23691460055096
+    },
+    {
+      "index": 573,
+      "symbol": "ATACOBC1.LM",
+      "horizon": 46,
+      "reason": "absurd_width",
+      "width": 48.416666666666664
+    },
+    {
+      "index": 574,
+      "symbol": "ATACOBC1.LM",
+      "horizon": 47,
+      "reason": "absurd_width",
+      "width": 48.19018404907976
+    },
+    {
+      "index": 575,
+      "symbol": "ATACOBC1.LM",
+      "horizon": 48,
+      "reason": "absurd_width",
+      "width": 50.97394136807817
+    },
+    {
+      "index": 1112,
+      "symbol": "IPCHBC1.LM",
+      "horizon": 9,
+      "reason": "absurd_width",
+      "width": 43.61363636363636
+    },
+    {
+      "index": 1113,
+      "symbol": "IPCHBC1.LM",
+      "horizon": 10,
+      "reason": "absurd_width",
+      "width": 2078
+    }
+  ],
+  "detalles_sospechosas": [
+    {
+      "symbol": "^FVX",
+      "horizon": 17,
+      "logRatio": 0.9502,
+      "threshold": 0.8436
+    },
+    {
+      "symbol": "^FVX",
+      "horizon": 18,
+      "logRatio": 1.0091,
+      "threshold": 0.8745
+    },
+    {
+      "symbol": "^FVX",
+      "horizon": 19,
+      "logRatio": 1.0489,
+      "threshold": 0.9053
+    },
+    {
+      "symbol": "^FVX",
+      "horizon": 20,
+      "logRatio": 1.0885,
+      "threshold": 0.9362
+    },
+    {
+      "symbol": "^FVX",
+      "horizon": 21,
+      "logRatio": 1.1011,
+      "threshold": 0.967
+    },
+    {
+      "symbol": "^FVX",
+      "horizon": 22,
+      "logRatio": 1.1074,
+      "threshold": 0.9979
+    },
+    {
+      "symbol": "^FVX",
+      "horizon": 23,
+      "logRatio": 1.096,
+      "threshold": 1.0287
+    },
+    {
+      "symbol": "^FVX",
+      "horizon": 24,
+      "logRatio": 1.0973,
+      "threshold": 1.0596
+    }
+  ],
   "simbolos_faltantes": [],
   "simbolos_viejos": []
 }
