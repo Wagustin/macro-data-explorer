@@ -128,7 +128,8 @@ for (const h of HS) {
   if (models.chronos2) {
     const toPts = (rows) => rows.map(([p10, p25, p50, p75, p90]) => ({ p10, p25, p50, p75, p90 }));
     const eng = (calibrate) => list.filter((e) => models.chronos2[e.key] && v3[e.key]).map((e) => {
-      const b = blendEngine(toPts(models.chronos2[e.key]), toPts(v3[e.key]), h, { calibrate });
+      const timesfmPath = models.timesfm?.[e.key] ? toPts(models.timesfm[e.key]) : undefined;
+      const b = blendEngine(toPts(models.chronos2[e.key]), toPts(v3[e.key]), h, { calibrate, timesfmPath });
       return b ? { ...e, ...b[h - 1] } : null;
     }).filter(Boolean);
     const raw = eng(false), cal = eng(true);

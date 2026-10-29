@@ -72,9 +72,12 @@ export function blendEngine(modelPath, v3Points, H, { calibrate = true, timesfmP
       const ratio = (i + 1 - 24) / 12;
       const left = pointFor(modelPath, timesfmPath, v3Points, 24, calibrate);
       const right = pointFor(modelPath, timesfmPath, v3Points, 36, calibrate);
-      for (const key of ["p10", "p25", "p50", "p75", "p90"]) q[key] = positive(left[key] + (right[key] - left[key]) * ratio);
-      q.p25 = Math.min(q.p50, Math.max(q.p10, q.p25)); q.p75 = Math.max(q.p50, q.p75);
-      q.p10 = Math.min(q.p10, q.p25); q.p90 = Math.max(q.p75, q.p90);
+      // Shorter paths (backtest cuts near the end of the history) have no 36-month point to blend toward
+      if (left && right) {
+        for (const key of ["p10", "p25", "p50", "p75", "p90"]) q[key] = positive(left[key] + (right[key] - left[key]) * ratio);
+        q.p25 = Math.min(q.p50, Math.max(q.p10, q.p25)); q.p75 = Math.max(q.p50, q.p75);
+        q.p10 = Math.min(q.p10, q.p25); q.p90 = Math.max(q.p75, q.p90);
+      }
     }
     const vals = [q.p10, q.p25, q.p50, q.p75, q.p90].map(roundPositive);
     out.push({ step: i + 1, date: v3Points[i].date, p10: vals[0], p25: vals[1], p50: vals[2], p75: vals[3], p90: vals[4],
