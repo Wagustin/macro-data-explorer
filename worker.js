@@ -183,6 +183,22 @@ const API_CACHE_TTLS = new Map([
   ["/api/mercado", 600]
 ]);
 
+
+// Per-response CSP nonce: every <script> in our HTML gets it, and 'strict-dynamic' then trusts the
+// scripts they load (Google sign-in, AdSense, Stripe). Still report-only until no page reports violations.
+function withScriptNonce(response) {
+  if (!(response.headers.get("Content-Type") || "").includes("text/html")) return response;
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  const nonce = btoa(String.fromCharCode(...bytes));
+  const headers = new Headers(response.headers);
+  const policy = headers.get("Content-Security-Policy-Report-Only");
+  if (!policy) return response;
+  headers.set("Content-Security-Policy-Report-Only",
+    policy.replace(/script-src [^;]*/, `script-src 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'`));
+  const rewritten = new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+  return new HTMLRewriter().on("script", { element(e) { e.setAttribute("nonce", nonce); } }).transform(rewritten);
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -209,7 +225,7 @@ export default {
       for (const [k, v] of Object.entries(SECURITY_HEADERS)) if (!r.headers.has(k)) r.headers.set(k, v);
       return r;
     }
-    const response = await this.route(request, env, ctx);
+    const response = withScriptNonce(await this.route(request, env, ctx));
     const r = new Response(response.body, response);
     for (const [k, v] of Object.entries(SECURITY_HEADERS)) if (!r.headers.has(k)) r.headers.set(k, v);
     return r;
