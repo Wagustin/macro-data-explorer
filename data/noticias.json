@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-29T04:01:29.269Z",
+  "actualizado": "2026-10-29T07:01:34.112Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 81
+      "items": 78
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -34,7 +34,7 @@
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 11
+      "items": 13
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 21
+      "items": 22
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,51 @@
     }
   },
   "noticias": [
+    {
+      "id": "rpp-4cce60a745",
+      "titulo": "Partido Comunista de China cerrará su plenaria sobre disciplina tras purgas de altos cargos",
+      "url": "https://rpp.pe/mundo/china/partido-comunista-de-china-cerrara-su-plenaria-sobre-disciplina-tras-purgas-de-altos-cargos-noticia-1714953",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-29T05:12:39.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-87867a9c8e",
+      "titulo": "Choque de final de campaña: Trump y Obama aparecen en mítines simultáneos a pocos días de elecciones de medio mandato",
+      "url": "https://rpp.pe/mundo/estados-unidos/obama-vs-trump-2026-duelo-en-mitines-de-las-elecciones-de-medio-mandato-noticia-1714956",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-29T04:56:12.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-52e1870a13",
+      "titulo": "Congreso aprueba crédito suplementario por S/ 8 mil millones para financiar acciones ante 'El Niño', servicios e infraestructura",
+      "url": "https://rpp.pe/politica/congreso/congreso-aprueba-credito-suplementario-por-s-8-mil-millones-para-financiar-acciones-ante-el-nino-servicios-e-infraestructura-noticia-1714952",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-29T04:49:32.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-5059262330",
+      "titulo": "Empresas y sostenibilidad: el reto de pasar del discurso a los indicadores ante El Niño",
+      "url": "https://gestion.pe/economia/empresas/empresas-resilientes-la-sostenibilidad-deja-de-ser-gasto-y-se-mide-en-ahorro-y-reputacion-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-29T04:32:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-0ed94fd497",
+      "titulo": "Haití aplaza sus elecciones presidenciales y legislativas para julio de 2027",
+      "url": "https://www.bloomberglinea.com/mundo/haiti-aplaza-sus-elecciones-presidenciales-y-legislativas-para-julio-de-2027/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-10-29T04:16:00.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "andina-0d7dc3c2f6",
       "titulo": "Ministro Shinno anuncia relanzamiento de proyectos hidroeléctricos",
@@ -169,6 +214,15 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-10-29T01:08:00.000Z",
       "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-b2cc218086",
+      "titulo": "Semana laboral de cuatro días: así sería el régimen con más horas por jornada, pero tres días de descanso",
+      "url": "https://www.infobae.com/peru/2026/10/29/semana-laboral-de-cuatro-dias-asi-seria-el-regimen-con-mas-horas-por-jornada-pero-tres-dias-de-descanso/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-10-29T00:53:17.000Z",
+      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -496,15 +550,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-5059262330",
-      "titulo": "Empresas y sostenibilidad: el reto de pasar del discurso a los indicadores ante El Niño",
-      "url": "https://gestion.pe/economia/empresas/empresas-resilientes-la-sostenibilidad-deja-de-ser-gasto-y-se-mide-en-ahorro-y-reputacion-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-28T21:31:31.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "rpp-f940f1053b",
       "titulo": "Flávio Bolsonaro rompe su silencio tras ir a EE.UU.: \"Mi país no merece volver a pasar por esta vergüenza internacional\"",
       "url": "https://rpp.pe/mundo/actualidad/flavio-bolsonaro-rompe-su-silencio-tras-salir-de-brasil-con-destino-a-estados-unidos-noticia-1714913",
@@ -548,15 +593,6 @@
       "fecha_iso": "2026-10-28T21:00:00.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "rpp-2b3e886b0d",
-      "titulo": "Casas de apuestas con bono de bienvenida en Perú: 7 bonos comparados",
-      "url": "https://rpp.pe/apuestas-deportivas/publirreportaje/codigos-de-apuestas-deportivas-cuales-son-los-mejores-del-mercado-noticia-1505320",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-10-28T20:45:20.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "infobae-54c753bc32",
@@ -925,33 +961,6 @@
       "fuente": "La República Economía",
       "fecha_iso": "2026-10-28T15:03:26.000Z",
       "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-76ed0fa3fb",
-      "titulo": "Ganadería de Perú preocupada por fuertes lluvias y sequías por El Niño: así la impactaría",
-      "url": "https://gestion.pe/economia/el-nino-ganaderia-de-peru-preocupada-por-fuertes-lluvias-y-sequias-asi-la-impactaria-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-28T15:00:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-f49158a47d",
-      "titulo": "Fenómeno El Niño: solo se intervino en menos de un tercio de los 1.900 puntos críticos de inundación",
-      "url": "https://larepublica.pe/economia/2026/10/26/fenomeno-el-nino-solo-se-intervino-en-menos-de-un-tercio-de-los-1900-puntos-criticos-de-inundacion-hnews-1414322",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-10-28T14:44:54.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-0663c8c07c",
-      "titulo": "Wall Street abre en verde pendiente de la Fed y de los resultados de las tecnológicas",
-      "url": "https://elcomercio.pe/economia/mercados/wall-street-abre-en-verde-pendiente-de-la-fed-y-de-los-resultados-de-las-tecnologicas-l-mercados-l-wall-street-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-10-28T14:37:14.000Z",
-      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     }
   ]
