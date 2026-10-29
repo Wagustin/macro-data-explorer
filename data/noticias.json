@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-10-29T13:01:31.410Z",
+  "actualizado": "2026-10-29T16:01:33.143Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
-      "ok": true,
-      "items": 20
+      "ok": false,
+      "items": 0
     },
     "mef": {
       "nombre": "Ministerio de Economía y Finanzas",
@@ -24,17 +24,17 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 84
+      "items": 85
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 51
+      "items": 53
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 9
+      "items": 11
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -44,7 +44,7 @@
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 19
+      "items": 23
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 24
+      "items": 20
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -64,21 +64,210 @@
   },
   "noticias": [
     {
-      "id": "andina-1ce28f3190",
-      "titulo": "Sunat aprobó nueva versión de planilla electrónica para adecuarla al alza de sueldo mínimo",
-      "url": "https://andina.pe/agencia/noticia-sunat-aprobo-nueva-version-planilla-electronica-para-adecuarla-al-alza-sueldo-minimo-1097756.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-10-29T12:51:12.000Z",
+      "id": "gestion-5d9eb71b30",
+      "titulo": "Ciberataques: 1,700 softwares maliciosos rondan en 2026, ¿mypes son víctimas “preferidas”?",
+      "url": "https://gestion.pe/economia/ciberataques-en-peru-1700-softwares-maliciosos-rondan-en-2026-mypes-son-victimas-preferidas-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-29T15:57:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-ea67302105",
+      "titulo": "Cronograma ONP con fechas de pago para jubilados en noviembre: ¿Cuándo llegan las pensiones?",
+      "url": "https://www.infobae.com/peru/2026/10/29/cronograma-onp-con-fechas-de-pago-para-jubilados-en-noviembre-cuando-llegan-las-pensiones/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-10-29T15:55:01.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-addd7710f9",
+      "titulo": "El Secretario de Guerra de Donald Trump despide al principal estratega militar del Pentágono",
+      "url": "https://rpp.pe/mundo/estados-unidos/el-secretario-de-guerra-de-donald-trump-despide-al-principal-estratega-militar-del-pentagono-noticia-1715009",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-29T15:50:01.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-ad134707e7",
+      "titulo": "Wall Street empieza a ahogarse en la ola de deuda de la IA",
+      "url": "https://gestion.pe/mundo/internacional/wall-street-empieza-a-atragantarse-con-la-ola-de-deuda-de-la-ia-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-29T15:43:51.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-457c5dbfda",
+      "titulo": "Sunat cambia sistema para reportar planillas tras aumento del sueldo mínimo",
+      "url": "https://gestion.pe/economia/sunat-cambia-sistema-para-reportar-planillas-tras-aumento-del-sueldo-minimo-en-peru-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-29T15:39:08.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-eb68998669",
+      "titulo": "El TC ya tomó una decisión sobre la ley de amnistía a policías y militares",
+      "url": "https://www.infobae.com/peru/2026/10/29/el-tc-ya-tomo-una-decision-sobre-la-ley-de-amnistia-a-policias-y-militares/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-10-29T15:36:37.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-cee7a6e77a",
+      "titulo": "Congreso aprueba dictamen de crédito suplementario por más de S/8.288 millones, ¿a qué se destinará?",
+      "url": "https://elcomercio.pe/economia/congreso-aprueba-dictamen-de-credito-suplementario-por-mas-de-s8288-millones-a-que-se-destinara-apuesplan-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-10-29T15:21:10.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-40f9570371",
+      "titulo": "Precios de alimentos al alza: así ha variado el costo de la papa, el choclo, el limón y el pollo en los mercados de Lima hasta ahora",
+      "url": "https://elcomercio.pe/economia/precios-de-alimentos-cuanto-ha-evolucionado-el-costo-de-la-papa-el-choclo-el-limon-y-el-pollo-en-los-mercados-de-lima-apuesplan-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-10-29T15:20:59.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-0477017299",
+      "titulo": "Petroperú: ProInversión alista un modelo de concesión para la Refinería de Talara",
+      "url": "https://gestion.pe/economia/petroperu-proinversion-alista-un-modelo-de-concesion-para-la-refineria-de-talara-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-29T15:14:43.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-472d760abc",
+      "titulo": "Cronograma de pagos de noviembre 2026: Banco de la Nación detalla fechas de sueldos y pensiones",
+      "url": "https://www.infobae.com/peru/2026/10/27/cronograma-de-pagos-de-noviembre-2026-del-banco-de-la-nacion-las-fechas-para-remuneraciones-y-pensiones/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-10-29T15:11:58.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-4619b4cac6",
+      "titulo": "Precio del dólar sigue subiendo hoy en Perú: Así abrió el tipo de cambio este 29 de octubre",
+      "url": "https://www.infobae.com/peru/2026/10/28/dolar-hoy-en-peru-cotizacion-de-apertura-del-28-de-octubre/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-10-29T15:08:46.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
     },
     {
       "id": "la_republica-5601b7198b",
       "titulo": "Precio del dólar hoy en Perú, jueves 29 de octubre: consulta el tipo de cambio para compra y venta",
       "url": "https://larepublica.pe/economia/precio-del-dolar/2026/10/29/precio-del-dolar-hoy-en-peru-jueves-29-de-octubre-consulta-el-tipo-de-cambio-para-compra-y-venta-2377060",
       "fuente": "La República Economía",
-      "fecha_iso": "2026-10-29T12:49:20.000Z",
+      "fecha_iso": "2026-10-29T15:05:34.000Z",
       "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-fea14a3630",
+      "titulo": "Wall Street abre en rojo y acciones de Alphabet caen tras la publicación de sus resultados",
+      "url": "https://elcomercio.pe/economia/mercados/wall-street-abre-en-rojo-y-acciones-de-alphabet-caen-tras-la-publicacion-de-sus-resultados-l-mercados-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-10-29T15:03:15.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-2705ab96a1",
+      "titulo": "Brecha salarial: quizá el problema esté en los bonos y ascensos que reciben las ejecutivas en Perú, ¿por qué?",
+      "url": "https://www.infobae.com/peru/2026/10/29/brecha-salarial-quiza-el-problema-este-en-los-bonos-y-ascensos-que-reciben-las-ejecutivas-en-peru-por-que/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-10-29T14:22:38.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-69ccdb4b28",
+      "titulo": "Alphabet se desploma y Microsoft avanza: 5 claves del impacto desigual de la IA en Wall Street",
+      "url": "https://www.bloomberglinea.com/mercados/alphabet-se-desploma-y-microsoft-avanza-5-claves-del-impacto-desigual-de-la-ia-en-wall-street/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-10-29T14:00:59.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-9802c13da9",
+      "titulo": "Petro-Perú prevé vender una participación minoritaria en la estatal a principios del 2027",
+      "url": "https://elcomercio.pe/economia/peru/petro-peru-preve-vender-una-participacion-minoritaria-en-la-estatal-a-principios-del-2027-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-10-29T14:00:23.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-d970154cde",
+      "titulo": "Dispositivo peruano que detecta 18 virus respiratorios en una prueba ganó medalla de oro en Corea del Sur",
+      "url": "https://www.infobae.com/peru/2026/10/29/dispositivo-peruano-que-detecta-18-virus-respiratorios-en-una-prueba-gano-medalla-de-oro-en-corea-del-sur/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-10-29T13:57:18.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-54f2d04b72",
+      "titulo": "La lucha de Robotín en EE.UU: revela cuánto puede ganar en un día y el pedido de su hija para que vuelva a Perú",
+      "url": "https://www.infobae.com/peru/2026/10/29/la-lucha-de-robotin-en-eeuu-revela-cuanto-puede-ganar-en-un-dia-y-el-pedido-de-su-hija-para-que-vuelva-a-peru/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-10-29T13:43:53.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-f18ae46b0e",
+      "titulo": "Los secuestraron y los mataron como advertencia: el doble crimen que revela el poder de la minería ilegal en Huánuco",
+      "url": "https://www.infobae.com/peru/2026/10/29/los-secuestraron-y-los-mataron-como-advertencia-el-doble-crimen-que-revela-el-poder-de-la-mineria-ilegal-en-huanuco/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-10-29T13:42:56.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-daa392b749",
+      "titulo": "Medalla de oro en Corea del Sur para la Universidad Nacional de Trujillo por tecnología que transforma desechos agrícolas en remedio ambiental",
+      "url": "https://www.infobae.com/peru/2026/10/29/medalla-de-oro-en-corea-del-sur-para-la-universidad-nacional-de-trujillo-por-tecnologia-que-transforma-desechos-agricolas-en-remedio-ambiental/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-10-29T13:41:37.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-6cfcf9b6d2",
+      "titulo": "Dos astronautas inician una caminata espacial para instalar un panel solar en la EEI",
+      "url": "https://rpp.pe/mundo/estados-unidos/dos-astronautas-inician-una-caminata-espacial-para-instalar-un-panel-solar-en-la-eei-noticia-1714987",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-29T13:27:27.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-00556b6659",
+      "titulo": "Euro hoy en Perú: cotización de apertura del 29 de octubre",
+      "url": "https://www.infobae.com/peru/2026/10/29/euro-hoy-en-peru-cotizacion-de-apertura-del-29-de-octubre/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-10-29T13:16:49.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-b364b1bc37",
+      "titulo": "Una caja acaba de batir un nuevo récord en el sistema microfinanciero peruano: superó los S/11.000 millones en colocaciones",
+      "url": "https://www.infobae.com/peru/2026/10/29/una-caja-acaba-de-batir-un-nuevo-record-en-el-sistema-microfinanciero-peruano-supero-los-s11000-millones-en-colocaciones/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-10-29T13:01:17.000Z",
+      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -88,15 +277,6 @@
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-10-29T12:35:34.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-4619b4cac6",
-      "titulo": "Precio del dólar subió en Perú: Así se cotiza el tipo de cambio hoy 29 de octubre",
-      "url": "https://www.infobae.com/peru/2026/10/28/dolar-hoy-en-peru-cotizacion-de-apertura-del-28-de-octubre/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-29T12:07:47.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -163,15 +343,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-cee7a6e77a",
-      "titulo": "Congreso aprueba dictamen de crédito suplementario por más de S/8.288 millones, ¿a qué se destinará?",
-      "url": "https://elcomercio.pe/economia/congreso-aprueba-dictamen-de-credito-suplementario-por-mas-de-s8288-millones-a-que-se-destinara-apuesplan-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-10-29T11:39:52.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "infobae-1a571f0f6d",
       "titulo": "Precio del GNV, GLP, diésel y gasolina en Perú para hoy, jueves 29 de octubre de 2026",
       "url": "https://www.infobae.com/peru/2026/10/29/precio-del-gnv-glp-diesel-y-gasolina-en-peru-para-hoy-jueves-29-de-octubre-de-2026/",
@@ -187,15 +358,6 @@
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-10-29T11:24:37.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-40f9570371",
-      "titulo": "Precios de alimentos al alza: así ha variado el costo de la papa, el choclo, el limón y el pollo en los mercados de Lima hasta ahora",
-      "url": "https://elcomercio.pe/economia/precios-de-alimentos-cuanto-ha-evolucionado-el-costo-de-la-papa-el-choclo-el-limon-y-el-pollo-en-los-mercados-de-lima-apuesplan-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-10-29T11:20:00.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -253,30 +415,12 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-5d9eb71b30",
-      "titulo": "Ciberataques: 1,700 softwares maliciosos rondan en 2026, ¿mypes son víctimas “preferidas”?",
-      "url": "https://gestion.pe/economia/ciberataques-en-peru-1700-softwares-maliciosos-rondan-en-2026-mypes-son-victimas-preferidas-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-29T10:37:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-9d310d1c0a",
       "titulo": "Perú y China: optimización del TLC potenciaría al menos a estos 3 sectores",
       "url": "https://gestion.pe/economia/peru-y-china-optimizacion-del-acuerdo-comercial-potenciaria-al-menos-a-estos-3-sectores-lo-que-dice-el-tlc-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-10-29T10:34:00.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-89fe644007",
-      "titulo": "Corporación UN más allá del gimnasio: los nuevos suplementos y la incursión en EE.UU.",
-      "url": "https://gestion.pe/economia/empresas/los-nuevos-suplementos-corporacion-un-se-expande-mas-alla-del-gimnasio-y-prepara-incursion-en-eeuu-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-29T10:30:00.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -289,20 +433,20 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "gestion-89fe644007",
+      "titulo": "Corporación UN más allá del gimnasio: los nuevos suplementos y la incursión en EE.UU.",
+      "url": "https://gestion.pe/economia/empresas/los-nuevos-suplementos-corporacion-un-se-expande-mas-alla-del-gimnasio-y-prepara-incursion-en-eeuu-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-29T10:30:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "gestion-69c64b0b4d",
       "titulo": "El Niño: los productos podrían subir de precio en los mercados ante menor oferta",
       "url": "https://gestion.pe/economia/el-nino-en-peru-los-productos-podrian-subir-de-precio-en-los-mercados-ante-escasez-por-menor-oferta-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-10-29T10:30:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-bbbb53f5f6",
-      "titulo": "El salto del posgrado en la Universidad del Pacífico: ¿cuál es el siguiente paso?",
-      "url": "https://gestion.pe/economia/empresas/universidad-del-pacifico-posgrado-ya-aporta-el-38-de-sus-ingresos-y-crece-a-doble-digito-cuales-son-sus-nuevas-apuestas-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-29T10:15:00.000Z",
       "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
@@ -316,12 +460,30 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "gestion-bbbb53f5f6",
+      "titulo": "El salto del posgrado en la Universidad del Pacífico: ¿cuál es el siguiente paso?",
+      "url": "https://gestion.pe/economia/empresas/universidad-del-pacifico-posgrado-ya-aporta-el-38-de-sus-ingresos-y-crece-a-doble-digito-cuales-son-sus-nuevas-apuestas-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-29T10:15:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "rpp-b413785c3d",
       "titulo": "Corea del Norte lanzó más de diez misiles balísticos al mar de Japón en plena tensión regional",
       "url": "https://rpp.pe/mundo/asia/corea-del-norte-lanzo-mas-de-diez-misiles-balisticos-al-mar-de-japon-en-plena-tension-regional-noticia-1714963",
       "fuente": "RPP Noticias",
       "fecha_iso": "2026-10-29T10:15:00.000Z",
       "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-c33b4b4567",
+      "titulo": "Ganancias de AFP repuntan: ¿la suya es la más rentable?",
+      "url": "https://gestion.pe/economia/empresas/ganancias-de-afp-repuntan-la-suya-es-la-mas-rentable-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-29T10:10:00.000Z",
+      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -332,15 +494,6 @@
       "fecha_iso": "2026-10-29T09:00:00.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-1fc52d336f",
-      "titulo": "MTPE impulsa formación técnica para reducir informalidad y elevar productividad",
-      "url": "https://andina.pe/agencia/noticia-mtpe-impulsa-formacion-tecnica-para-reducir-informalidad-y-elevar-productividad-1097740.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-10-29T08:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
     },
     {
       "id": "bloomberg_linea-e2f519003d",
@@ -397,56 +550,11 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-0d7dc3c2f6",
-      "titulo": "Ministro Shinno anuncia relanzamiento de proyectos hidroeléctricos",
-      "url": "https://andina.pe/agencia/noticia-ministro-shinno-anuncia-relanzamiento-proyectos-hidroelectricos-1097735.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-10-29T04:00:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "gestion-c8f725988c",
       "titulo": "Puerto del Callao ante El Niño: APM Terminals alista ruta por mar y busca extender concesión",
       "url": "https://gestion.pe/economia/empresas/el-nino-y-mas-concesion-el-plan-de-apm-terminals-para-el-puerto-del-callao-hacia-2027-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-10-29T03:45:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-1befb9970b",
-      "titulo": "MEF saluda crédito suplementario de S/ 8,228 millones para obras y servicios",
-      "url": "https://andina.pe/agencia/noticia-mef-saluda-credito-suplementario-s-8228-millones-para-obras-y-servicios-1097734.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-10-29T03:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "andina-84c77b97cd",
-      "titulo": "El Protocolo de Optimización del TLC Perú-China entrará en vigencia el 1 de noviembre",
-      "url": "https://andina.pe/agencia/noticia-el-protocolo-optimizacion-del-tlc-peruchina-entrara-vigencia-1-noviembre-1097731.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-10-29T02:23:17.000Z",
-      "categoria": "Mundo",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "infobae-e55d3d77b9",
-      "titulo": "Aprobado el crédito suplementario: más de S/ 8.200 millones para enfrentar el fenómeno El Niño e impulsar la infraestructura",
-      "url": "https://www.infobae.com/peru/2026/10/29/aprobado-el-credito-suplementario-mas-de-s-8200-millones-para-enfrentar-el-fenomeno-el-nino-e-impulsar-la-infraestructura/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-29T02:17:16.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-836694b133",
-      "titulo": "Arequipa vende fibra de vicuña por más de S/ 2.3 millones y abre una nueva vía para las asociaciones de Castilla",
-      "url": "https://www.infobae.com/peru/2026/10/29/arequipa-vende-fibra-de-vicuna-por-mas-de-s-23-millones-y-abre-una-nueva-via-para-las-asociaciones-de-castilla/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-29T02:13:38.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
@@ -460,30 +568,12 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "rpp-2fa281d892",
-      "titulo": "Elecciones de centros poblados: 139 municipalidades provinciales solicitaron asistencia técnica a la ONPE para organizar sus comicios",
-      "url": "https://rpp.pe/politica/elecciones/elecciones-de-centros-poblados-139-municipalidades-provinciales-solicitaron-asistencia-tecnica-a-la-onpe-para-organizar-sus-comicios-noticia-1714878",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-10-29T01:28:49.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-296af91012",
       "titulo": "Selección de personal: los puestos donde el inglés ahora es un requisito clave",
       "url": "https://gestion.pe/economia/management-empleo/seleccion-de-personal-los-puestos-donde-el-ingles-ahora-es-un-requisito-clave-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-10-29T01:08:00.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-b2cc218086",
-      "titulo": "Semana laboral de cuatro días: así sería el régimen con más horas por jornada, pero tres días de descanso",
-      "url": "https://www.infobae.com/peru/2026/10/29/semana-laboral-de-cuatro-dias-asi-seria-el-regimen-con-mas-horas-por-jornada-pero-tres-dias-de-descanso/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-29T00:53:17.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -523,15 +613,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-4408b7ec43",
-      "titulo": "Mincetur impulsa zonas económicas especiales para atraer inversiones",
-      "url": "https://andina.pe/agencia/noticia-mincetur-impulsa-zonas-economicas-especiales-para-atraer-inversiones-1097719.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-10-29T00:12:13.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "gestion-e132aa2ad6",
       "titulo": "Proyectos hidroeléctricos vía concesión se retomarán en Perú: este es el plan del Minem",
       "url": "https://gestion.pe/economia/proyectos-hidroelectricos-via-concesion-se-retomaran-en-peru-el-plan-del-minem-para-avanzar-en-su-promocion-noticia/",
@@ -556,15 +637,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-10-28T23:50:00.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-f253a44fb0",
-      "titulo": "EE.UU. ofrece becas con todos los gastos pagados a emprendedores peruanos: postula hasta el 8 de noviembre",
-      "url": "https://www.infobae.com/peru/2026/10/28/eeuu-ofrece-becas-con-todos-los-gastos-pagados-a-emprendedores-peruanos-postula-hasta-el-8-de-noviembre/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-28T23:41:35.000Z",
-      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     },
     {
@@ -613,15 +685,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "infobae-7acfca87fa",
-      "titulo": "Minedu descontará el sueldo a docentes que acaten el paro del Sutep y no dicten clases este 29 de octubre",
-      "url": "https://www.infobae.com/peru/2026/10/28/minedu-descontara-el-sueldo-a-docentes-que-acaten-el-paro-del-sutep-y-no-dicten-clases-este-29-de-octubre/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-28T23:13:16.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-09316f77e6",
       "titulo": "MEF destaca aprobación del Congreso que busca “rendir cuentas” del Estado tras 13 años",
       "url": "https://gestion.pe/economia/mef-destaca-aprobacion-del-congreso-que-busca-rendir-cuentas-del-estado-tras-13-anos-noticia/",
@@ -638,15 +701,6 @@
       "fecha_iso": "2026-10-28T23:00:00.000Z",
       "categoria": "Energía",
       "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-6f4791801f",
-      "titulo": "MEF destaca aprobación de Cuenta General de la República 2025 tras 13 años",
-      "url": "https://andina.pe/agencia/noticia-mef-destaca-aprobacion-cuenta-general-de-republica-2025-tras-13-anos-1097713.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-10-28T22:56:17.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
     },
     {
       "id": "gestion-afe4be66ce",
@@ -703,24 +757,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "infobae-4d8297a043",
-      "titulo": "Obra con presunto uso de IA fue observada en el concurso de la Candelaria en Puno: jurado detectó una impresión retocada con pintura",
-      "url": "https://www.infobae.com/peru/2026/10/28/obra-con-presunto-uso-de-ia-fue-observada-en-el-concurso-de-la-candelaria-en-puno-jurado-detecto-una-impresion-retocada-con-pintura/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-28T22:27:48.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-7ca5e40659",
-      "titulo": "INEI: producción de arroz cáscara aumentó en ocho departamentos del país",
-      "url": "https://andina.pe/agencia/noticia-inei-produccion-arroz-cascara-aumento-ocho-departamentos-del-pais-1097693.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-10-28T22:24:15.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "bloomberg_linea-fddb30ef8e",
       "titulo": "Marimaca Copper avanza en financiación de hasta US$400 millones para una mina de cobre en Chile",
       "url": "https://www.bloomberglinea.com/latinoamerica/chile/marimaca-copper-avanza-en-financiacion-de-hasta-us400-millones-para-una-mina-de-cobre-en-chile/",
@@ -753,15 +789,6 @@
       "url": "https://gestion.pe/economia/mujeres-dedican-mas-horas-a-trabajo-remunerado-pero-tambien-a-cuidados-este-es-el-duro-impacto-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-10-28T22:07:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-a2f44bca08",
-      "titulo": "De una vivienda en Tacna a Madre de Dios: rescatan a coatí que fue comprado por S/ 200 para tenerlo como mascota",
-      "url": "https://www.infobae.com/peru/2026/10/28/de-una-vivienda-en-tacna-a-madre-de-dios-rescatan-a-coati-que-fue-comprado-por-s-200-para-tenerlo-como-mascota/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-28T21:46:57.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
@@ -820,15 +847,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-54c21930bf",
-      "titulo": "Perú tiene potencial para atraer inversiones en exploración de minerales críticos",
-      "url": "https://andina.pe/agencia/noticia-peru-tiene-potencial-para-atraer-inversiones-exploracion-minerales-criticos-1097692.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-10-28T21:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "gestion-6be04f99fe",
       "titulo": "Constructores preocupados por Techo Propio: Capeco advierte que podría “casi desaparecer”",
       "url": "https://gestion.pe/economia/techo-propio-constructores-preocupados-por-bono-de-vivienda-y-capeco-advierte-que-podria-casi-desaparecer-noticia/",
@@ -863,15 +881,6 @@
       "fecha_iso": "2026-10-28T19:57:34.000Z",
       "categoria": "Energía",
       "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-8c80378443",
-      "titulo": "ONP se alista para reforma previsional: busca mejorar atención a afiliados y pensionistas",
-      "url": "https://andina.pe/agencia/noticia-onp-se-alista-para-reforma-previsional-busca-mejorar-atencion-a-afiliados-y-pensionistas-1097689.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-10-28T19:54:19.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
     },
     {
       "id": "el_comercio-abd834562c",
@@ -910,15 +919,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-2ac350fdf9",
-      "titulo": "Perú Compras impulsa consulta pública por lentes intraoculares para cirugías de catarata",
-      "url": "https://andina.pe/agencia/noticia-peru-compras-impulsa-consulta-publica-lentes-intraoculares-para-cirugias-catarata-1097680.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-10-28T19:04:48.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "el_comercio-299a26cd18",
       "titulo": "Reserva Federal mantiene sin cambios las tasas de interés a menos de una semana de las elecciones de Estados Unidos",
       "url": "https://elcomercio.pe/economia/mundo/la-reserva-federal-mantiene-sin-cambios-las-tasas-de-interes-en-el-375-y-el-4-l-fed-l-ultimas-noticia/",
@@ -944,6 +944,24 @@
       "fecha_iso": "2026-10-28T18:46:37.000Z",
       "categoria": "Otros",
       "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-7fb341d377",
+      "titulo": "Las reservas comerciales de petróleo vuelven a bajar en Estados Unidos",
+      "url": "https://elcomercio.pe/economia/las-reservas-comerciales-de-petroleo-vuelven-a-bajar-en-estados-unidos-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-10-28T18:11:53.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "mef-476e8448d5",
+      "titulo": "Contrataciones para atender la inminencia o la ocurrencia de situaciones de emergencia o desastre",
+      "url": "https://www.gob.pe/institucion/mef/noticias/1465089-contrataciones-para-atender-la-inminencia-o-la-ocurrencia-de-situaciones-de-emergencia-o-desastre",
+      "fuente": "Ministerio de Economía y Finanzas",
+      "fecha_iso": "2026-10-28T17:37:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
     }
   ]
 }
