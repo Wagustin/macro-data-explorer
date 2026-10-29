@@ -100,8 +100,8 @@ export default async function handler(req, res) {
   const note = await dailyNote(symbol);
 
   return res.status(200).json({
-    source: "Interpretado por PerData Engine v6",
-    model: note ? "perdata-v6+ai-note" : "perdata-plain-1",
+    source: "Interpretado por PerData Engine v5",
+    model: note ? "perdata-v5+ai-note" : "perdata-plain-1",
     // The one confidence figure we can stand behind: measured P10-P90 coverage in the backtest
     calibratedConfidence: 0.8,
     confidencePercentage: "80 % (cobertura medida del rango P10–P90)",
@@ -114,7 +114,7 @@ export default async function handler(req, res) {
       `A ${plazo} la incertidumbre es la del rango P10–P90; a más plazo, rango más ancho.`,
       "Las acciones con poca negociación pueden tener saltos que el modelo no recoge bien."
     ],
-    calibrationMethod: "Backtest de PerData Engine v6 (27-oct-2026): de 763 a 1617 evaluaciones por plazo, cobertura P10–P90 ≈ 80 % medida fuera de muestra",
+    calibrationMethod: "Backtest de PerData Engine v5 (27-oct-2026): de 763 a 1617 evaluaciones por plazo, cobertura P10–P90 ≈ 80 % medida fuera de muestra",
     timestamp: new Date().toISOString()
   });
 }

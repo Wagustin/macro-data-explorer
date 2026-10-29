@@ -1,17 +1,17 @@
-# PerData Engine v6 híbrido: informe de calibración
+# PerData Engine v6 with TimesFM: calibration report
 
-T54 evaluó 61 activos con cortes rodantes y seleccionó los pesos en una mitad de los activos, puntuándolos en la otra, y luego invirtió las mitades. P50 MAPE es mejor cuanto menor. La decisión de T54b adopta la mezcla T54 hasta 24 meses y conserva exactamente los pesos y factores K80 del motor v5 a 36 y 48 meses. Entre 24 y 36 meses se interpolan linealmente las distribuciones de ambos métodos.
+The saved backtest covers 61 assets and rolling cuts six months apart. P50 MAPE is lower-is-better. We selected the P50 weights on one half of the assets and scored the other half, then reversed the halves. K80 was fitted on each training half and checked on the opposite half. The prediction band blends the relative Chronos-2 and TimesFM quantile spreads using their relative P50 weights, centered on the new P50. If both model weights are zero, it uses the Chronos-2 spread.
 
-| Meses | Fuente | a Chronos-2 | b v3 | c TimesFM | MAPE v5 | MAPE v6 híbrido | MAPE sin cambio | K80 | Cobertura fuera de muestra |
-|---:|:---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 1 | v6 | 0.05 | 0.10 | 0.00 | 5.50 | 5.41 | 5.37 | 0.94 | 79.1% |
-| 3 | v6 | 0.00 | 0.00 | 0.10 | 11.40 | 10.92 | 10.77 | 1.17 | 81.7% |
-| 6 | v6 | 0.00 | 0.00 | 0.25 | 17.10 | 15.73 | 15.81 | 1.21 | 79.6% |
-| 12 | v6 | 0.10 | 0.05 | 0.40 | 21.75 | 20.81 | 20.92 | 1.40 | 79.7% |
-| 24 | v6 | 0.10 | 0.00 | 0.60 | 28.88 | 28.22 | 28.30 | 1.41 | 80.4% |
-| 36 | v5 | 0.9333 | 0.0667 | 0.00 | 31.45 | 31.45 | 31.56 | 1.50 | 79.2% |
-| 48 | v5 | 0.95 | 0.05 | 0.00 | 34.55 | 34.55 | 32.86 | 1.72 | 78.8% |
+| Horizon (months) | Chronos-2 a | v3 b | TimesFM c | v5 MAPE | v6 MAPE OOS | No-change MAPE | K80 | Coverage OOS |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 0.05 | 0.10 | 0.00 | 5.50 | 5.41 | 5.37 | 0.94 | 79.1% |
+| 3 | 0.00 | 0.00 | 0.10 | 11.40 | 10.92 | 10.77 | 1.17 | 81.7% |
+| 6 | 0.00 | 0.00 | 0.25 | 17.10 | 15.73 | 15.81 | 1.39 | 79.6% |
+| 12 | 0.10 | 0.05 | 0.40 | 21.75 | 20.81 | 20.92 | 1.50 | 79.7% |
+| 24 | 0.10 | 0.00 | 0.60 | 28.88 | 28.22 | 28.30 | 1.74 | 80.4% |
+| 36 | 0.35 | 0.00 | 0.45 | 31.45 | 31.72 | 31.56 | 1.58 | 79.2% |
+| 48 | 0.00 | 0.05 | 0.60 | 34.55 | 34.83 | 32.86 | 2.48 | 78.8% |
 
-La regla de adopción se cumple: el híbrido no supera el MAPE de v5 en ninguno de los siete plazos, mejora la referencia sin cambio en cuatro (6, 12, 24 y 36 meses), y la cobertura P10–P90 queda entre 78% y 82% en los siete. Por ello `adoptar` es `true` y `fuente` identifica la calibración usada en cada plazo.
+The selection rule is **not met**, so `adoptar` is `false` and production remains on v5. Although the cross-validated coverage is within 78–82% for all horizons and v6 beats naive in four horizons, its MAPE is worse than v5 at 36 and 48 months. Therefore this change does not alter `engine.js` or the forecasting pipeline.
 
-La predicción central mezcla Chronos-2, TimesFM, v3 y el último cierre con los pesos indicados; si falta la ruta TimesFM de un símbolo en el lote diario, `c` pasa a cero y su peso queda en la parte asignada al último cierre. La banda se calcula con la dispersión relativa de Chronos-2 y TimesFM, ponderada por sus pesos, centrada en el nuevo P50 y ajustada con K80. Para plazos mayores de 24 meses se conserva la mezcla v5. El lote diario registra el estado de TimesFM en `data/engine-report.json`.
+Reproduce with `node scripts/calibrate-engine.js [artifact-directory]`. The default directory is `/home/wagustin/kathy_workspace/handoff/bt_data`; the backtest artifacts are kept outside the repository.

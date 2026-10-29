@@ -1,6 +1,6 @@
 name: Proyecciones diarias (PerData Engine)
 
-# Replaces the cron on the home server: refreshes monthly history, runs Chronos-2 and TimesFM on CPU,
+# Replaces the cron on the home server: refreshes the monthly history, runs Chronos-2 on CPU,
 # precomputes PerData Engine, validates quality criteria, and publishes only validated forecasts to Supabase and D1.
 # Needs repository secrets SUPABASE_URL and SUPABASE_SERVICE_KEY.
 on:
@@ -49,18 +49,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/huggingface
-          key: hf-chronos2-timesfm25
+          key: hf-chronos-2
 
       - name: Instalar Chronos-2 (CPU)
         timeout-minutes: 10
         run: |
           pip install --index-url https://download.pytorch.org/whl/cpu torch==2.14.1
           pip install "chronos-forecasting>=2.0" numpy
-
-      - name: Instalar TimesFM 2.5
-        timeout-minutes: 10
-        continue-on-error: true
-        run: pip install "timesfm==3.0.2"
 
       - name: Actualizar el historial mensual
         timeout-minutes: 10
@@ -74,12 +69,19 @@ jobs:
             }
           done
 
-      - name: Descargar Chronos-2 de Hugging Face
+      - name: Descargar modelo Chronos-2 de Hugging Face
         timeout-minutes: 15
         run: |
-          python -c "from chronos import BaseChronosPipeline; BaseChronosPipeline.from_pretrained('amazon/chronos-2', device_map='cpu')"
+          for i in 1 2 3; do
+            echo "Descarga modelo Hugging Face (intento $i)..."
+            python -c "from chronos import BaseChronosPipeline; BaseChronosPipeline.from_pretrained('amazon/chronos-2', device_map='cpu')" && break || {
+              if [ "$i" -eq 3 ]; then echo "Error descargando modelo tras 3 intentos"; exit 1; fi
+              echo "Fallo en intento $i, reintentando en 20s..."
+              sleep 20
+            }
+          done
 
-      - name: Chronos-2 y TimesFM a 48 meses para todos los activos
+      - name: Chronos-2 a 48 meses para todos los activos
         timeout-minutes: 20
         run: python scripts/chronos_batch.py
 
