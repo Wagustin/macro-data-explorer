@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-29T00:55:47.755Z",
+  "actualizado": "2026-10-29T04:01:29.269Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,17 +24,17 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 83
+      "items": 81
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 64
+      "items": 47
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 10
+      "items": 11
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -44,7 +44,7 @@
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 18
+      "items": 16
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 22
+      "items": 21
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -64,12 +64,111 @@
   },
   "noticias": [
     {
+      "id": "andina-0d7dc3c2f6",
+      "titulo": "Ministro Shinno anuncia relanzamiento de proyectos hidroeléctricos",
+      "url": "https://andina.pe/agencia/noticia-ministro-shinno-anuncia-relanzamiento-proyectos-hidroelectricos-1097735.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-10-29T04:00:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-c8f725988c",
+      "titulo": "Puerto del Callao ante El Niño: APM Terminals alista ruta por mar y busca extender concesión",
+      "url": "https://gestion.pe/economia/empresas/el-nino-y-mas-concesion-el-plan-de-apm-terminals-para-el-puerto-del-callao-hacia-2027-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-29T03:45:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-1befb9970b",
+      "titulo": "MEF saluda crédito suplementario de S/ 8,228 millones para obras y servicios",
+      "url": "https://andina.pe/agencia/noticia-mef-saluda-credito-suplementario-s-8228-millones-para-obras-y-servicios-1097734.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-10-29T03:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "andina-84c77b97cd",
+      "titulo": "El Protocolo de Optimización del TLC Perú-China entrará en vigencia el 1 de noviembre",
+      "url": "https://andina.pe/agencia/noticia-el-protocolo-optimizacion-del-tlc-peruchina-entrara-vigencia-1-noviembre-1097731.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-10-29T02:23:17.000Z",
+      "categoria": "Mundo",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "infobae-e55d3d77b9",
+      "titulo": "Aprobado el crédito suplementario: más de S/ 8.200 millones para enfrentar el fenómeno El Niño e impulsar la infraestructura",
+      "url": "https://www.infobae.com/peru/2026/10/29/aprobado-el-credito-suplementario-mas-de-s-8200-millones-para-enfrentar-el-fenomeno-el-nino-e-impulsar-la-infraestructura/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-10-29T02:17:16.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-836694b133",
+      "titulo": "Arequipa vende fibra de vicuña por más de S/ 2.3 millones y abre una nueva vía para las asociaciones de Castilla",
+      "url": "https://www.infobae.com/peru/2026/10/29/arequipa-vende-fibra-de-vicuna-por-mas-de-s-23-millones-y-abre-una-nueva-via-para-las-asociaciones-de-castilla/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-10-29T02:13:38.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "mef-e86a384f2a",
+      "titulo": "MEF saluda aprobación del crédito suplementario por S/8228 millones para garantizar la continuidad de obras y servicios esenciales",
+      "url": "https://www.gob.pe/institucion/mef/noticias/1465332-mef-saluda-aprobacion-del-credito-suplementario-por-s-8228-millones-para-garantizar-la-continuidad-de-obras-y-servicios-esenciales",
+      "fuente": "Ministerio de Economía y Finanzas",
+      "fecha_iso": "2026-10-29T02:05:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "el_comercio-df4ae81696",
+      "titulo": "Precio del dólar en Perú: consulta la cotización en compra y venta del jueves 29 de octubre",
+      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-2026-a-cuanto-esta-el-dolar-este-jueves-29-de-octubre-tipo-de-cambio-segun-el-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-10-29T01:50:22.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-2fa281d892",
+      "titulo": "Elecciones de centros poblados: 139 municipalidades provinciales solicitaron asistencia técnica a la ONPE para organizar sus comicios",
+      "url": "https://rpp.pe/politica/elecciones/elecciones-de-centros-poblados-139-municipalidades-provinciales-solicitaron-asistencia-tecnica-a-la-onpe-para-organizar-sus-comicios-noticia-1714878",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-29T01:28:49.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "gestion-8aac6b953d",
       "titulo": "Congreso aprobó crédito suplementario por más de S/ 8,200 millones, ¿en qué se usarán?",
       "url": "https://gestion.pe/economia/congreso-aprobo-credito-suplementario-por-mas-de-s-8200-millones-en-que-se-usaran-noticia/",
       "fuente": "Gestión",
-      "fecha_iso": "2026-10-29T00:53:49.000Z",
+      "fecha_iso": "2026-10-29T01:28:27.000Z",
       "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-cee7a6e77a",
+      "titulo": "Congreso aprueba dictamen de crédito suplementario por más de S/8.288 millones, ¿a qué se destinará?",
+      "url": "https://elcomercio.pe/economia/congreso-aprueba-dictamen-de-credito-suplementario-por-mas-de-s8288-millones-a-que-se-destinara-apuesplan-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-10-29T01:21:26.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-296af91012",
+      "titulo": "Selección de personal: los puestos donde el inglés ahora es un requisito clave",
+      "url": "https://gestion.pe/economia/management-empleo/seleccion-de-personal-los-puestos-donde-el-ingles-ahora-es-un-requisito-clave-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-29T01:08:00.000Z",
+      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -379,15 +478,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-c8f725988c",
-      "titulo": "Puerto del Callao ante El Niño: APM Terminals alista ruta por mar y busca extender concesión",
-      "url": "https://gestion.pe/economia/empresas/el-nino-y-mas-concesion-el-plan-de-apm-terminals-para-el-puerto-del-callao-hacia-2027-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-28T21:35:56.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-800769fbf4",
       "titulo": "ISA Energía alista ocho proyectos en Perú y busca ‘segundo ciclo’ para sus concesiones",
       "url": "https://gestion.pe/economia/empresas/isa-energia-alista-ocho-proyectos-en-peru-y-apunta-a-cartera-con-pontencial-de-us-1700-millones-noticia/",
@@ -550,15 +640,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "gestion-296af91012",
-      "titulo": "Selección de personal: los puestos donde el inglés ahora es un requisito clave",
-      "url": "https://gestion.pe/economia/management-empleo/seleccion-de-personal-los-puestos-donde-el-ingles-ahora-es-un-requisito-clave-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-28T19:26:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-30b43c8dc4",
       "titulo": "El desempleo en Lima bajó a su mínimo histórico pero otro indicador preocupa, ¿cuál?",
       "url": "https://gestion.pe/economia/el-desempleo-en-lima-bajo-a-su-minimo-historico-pero-otro-indicador-preocupa-cual-noticia/",
@@ -640,24 +721,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "infobae-c9127a14dc",
-      "titulo": "Últimos feriados de 2026 en Perú: estos son los días festivos que quedan en noviembre y diciembre para los trabajadores",
-      "url": "https://www.infobae.com/peru/2026/10/27/ultimos-feriados-de-2026-en-peru-estos-son-los-dias-festivos-que-quedan-en-noviembre-y-diciembre-para-los-trabajadores/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-28T18:09:22.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-1a7850e70d",
-      "titulo": "Perú se prepara para el Fenómeno El Niño: los mapas digitales hechos por inteligencia artificial que facilitarían su trabajo",
-      "url": "https://www.infobae.com/peru/2026/10/28/peru-se-prepara-para-el-fenomeno-el-nino-con-mapas-digitales-hechos-por-inteligencia-artificial/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-28T18:06:50.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "mef-476e8448d5",
       "titulo": "Contrataciones para atender la inminencia o la ocurrencia de situaciones de emergencia o desastre",
       "url": "https://www.gob.pe/institucion/mef/noticias/1465089-contrataciones-para-atender-la-inminencia-o-la-ocurrencia-de-situaciones-de-emergencia-o-desastre",
@@ -673,15 +736,6 @@
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-10-28T17:32:55.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-b97c4271e2",
-      "titulo": "Bolsa de Lima: la BVL cambia de rostro y se alinea con Chile y Colombia en su integración a nuam",
-      "url": "https://www.infobae.com/peru/2026/10/28/bolsa-de-lima-la-bvl-cambia-de-rostro-y-se-alinea-con-chile-y-colombia-en-su-integracion-a-nuam/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-28T17:31:39.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -712,30 +766,12 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "infobae-167ccc91fb",
-      "titulo": "El envejecimiento laboral presiona a las empresas peruanas: más de siete millones de personas +50 están en edad de trabajar",
-      "url": "https://www.infobae.com/peru/2026/10/28/el-envejecimiento-laboral-presiona-a-las-empresas-peruanas-mas-de-siete-millones-de-personas-50-estan-en-edad-de-trabajar/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-28T17:09:35.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-d95add1d31",
       "titulo": "Mercados e indicadores – Hoy miércoles 28 de octubre",
       "url": "https://gestion.pe/economia/mercados/mercados-e-indicadores-miercoles-28-de-octubre-2026-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-10-28T17:04:07.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-4c75efff5c",
-      "titulo": "Ciudadanos vulnerables podrían quedarse sin bono FEN 2026: Falta empadronar a más de 8 millones de peruanos",
-      "url": "https://www.infobae.com/peru/2026/10/28/ciudadanos-vulnerables-podrian-quedarse-sin-bono-fen-2026-falta-empadronar-a-mas-de-8-millones-de-peruanos/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-28T17:02:58.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -763,15 +799,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-10-28T16:54:55.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-5bc821425f",
-      "titulo": "TAPP, la nueva red del BCRP que pondrá a prueba la infraestructura de bancos y fintech: ¿están preparados?",
-      "url": "https://www.infobae.com/peru/2026/10/28/tapp-la-nueva-red-del-bcrp-que-pondra-a-prueba-la-infraestructura-de-bancos-y-fintech-estan-preparados/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-28T16:50:41.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -924,69 +951,6 @@
       "url": "https://elcomercio.pe/economia/mercados/wall-street-abre-en-verde-pendiente-de-la-fed-y-de-los-resultados-de-las-tecnologicas-l-mercados-l-wall-street-l-ultimas-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-10-28T14:37:14.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-d5adfa5779",
-      "titulo": "Esta fue la ruta de huida de Flávio Bolsonaro a Estados Unidos tras perder las elecciones en Brasil",
-      "url": "https://www.bloomberglinea.com/latinoamerica/esta-fue-la-ruta-de-huida-de-flavio-bolsonaro-a-estados-unidos-tras-perder-las-elecciones-en-brasil/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-10-28T14:31:35.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-28a627515d",
-      "titulo": "¿Paradoja del oro se “fortalece”? Producción sigue en picada, pero exportación está fuerte",
-      "url": "https://gestion.pe/economia/oro-en-peru-produccion-en-picada-pero-su-exportacion-se-dispara-solo-la-mineria-ilegal-es-la-explicacion-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-28T14:15:00.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-e26f359f66",
-      "titulo": "Dificultades de Unilever en EE.UU. eclipsan el crecimiento de sus ventas en mercados emergentes",
-      "url": "https://www.bloomberglinea.com/negocios/dificultades-de-unilever-en-eeuu-eclipsan-el-crecimiento-de-sus-ventas-en-mercados-emergentes/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-10-28T14:09:03.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-d65523d07d",
-      "titulo": "Osiptel ofrece 60 becas: ¿Hasta cuándo y a quiénes va dirigida la convocatoria?",
-      "url": "https://andina.pe/agencia/noticia-osiptel-ofrece-60-becas-hasta-cuando-y-a-quienes-va-dirigida-convocatoria-1097613.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-10-28T14:00:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-4133ba5d1b",
-      "titulo": "Chile producirá menos cobre, ¿podría ser una oportunidad para el Perú?",
-      "url": "https://gestion.pe/economia/chile-producira-menos-cobre-este-ano-podria-ser-una-oportunidad-para-la-mineria-en-peru-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-28T14:00:00.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-4bff3df007",
-      "titulo": "Agro en Perú “temblaría” más allá del verano 2027 por El Niño: esto alerta el Midagri",
-      "url": "https://gestion.pe/economia/agro-en-peru-temblaria-mas-alla-del-verano-2027-por-el-nino-esto-alerta-el-midagri-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-28T14:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-a489b26025",
-      "titulo": "Déficit comercial de EE.UU. sube 2,1% en septiembre, su mayor nivel desde marzo de 2025",
-      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/deficit-comercial-de-eeuu-sube-21-en-septiembre-su-mayor-nivel-desde-marzo-de-2025/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-10-28T13:30:27.000Z",
       "categoria": "Mundo",
       "semaforo": "AMARILLO"
     }
