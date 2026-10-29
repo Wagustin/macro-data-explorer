@@ -54,16 +54,19 @@ const facts = rows.filter((row) => Number(row.horizon) === 1).map((row) => {
 
 const notes = {};
 const fmt = (value) => Number(value).toLocaleString("es-PE", { maximumFractionDigits: 8 });
-for (const fact of facts.filter((item) => !item.titulares.length)) {
+// Note without the language model: the projection, plus the most relevant headlines when there are any
+function plainNote(fact) {
   const one = fact.proyeccion_1m;
   const three = fact.proyeccion_3m;
   const direction = fact.direccion === "estable" ? "se mantenga estable" : fact.direccion === "sube" ? "suba" : "baje";
   const monthThree = three ? ` A 3 meses, el rango proyectado es P10 ${fmt(three.p10)}, P50 ${fmt(three.p50)} y P90 ${fmt(three.p90)}.` : " No hay una proyección disponible a 3 meses.";
-  notes[fact.simbolo] = {
-    texto: `Proyectamos que ${fact.nombre} ${direction} en 1 mes, con P10 ${fmt(one.p10)}, P50 ${fmt(one.p50)} y P90 ${fmt(one.p90)}.${monthThree} Sin noticias recientes relevantes.`,
-    noticias: [],
+  const tail = fact.titulares.length ? " Titulares recientes que conviene vigilar:" : " Sin noticias recientes relevantes.";
+  return {
+    texto: `Proyectamos que ${fact.nombre} ${direction} en 1 mes, con P10 ${fmt(one.p10)}, P50 ${fmt(one.p50)} y P90 ${fmt(one.p90)}.${monthThree}${tail}`,
+    noticias: validCitations(fact.titulares.slice(0, 2).map((t) => ({ id: t.id })), fact.titulares),
   };
 }
+for (const fact of facts.filter((item) => !item.titulares.length)) notes[fact.simbolo] = plainNote(fact);
 let model = null;
 const factsWithNews = facts.filter((item) => item.titulares.length);
 const batches = [];
@@ -79,13 +82,23 @@ Frases 2 y 3: hechos actuales de los titulares que podrían empujar al alza o a 
 Frase 4: qué vigilar. Si no hay titulares, escribe solo la proyección y «Sin noticias recientes relevantes».
 Devuelve SOLO JSON: {"notas":{"SIMBOLO":{"texto":"3-4 frases", "noticias":[{"id":"id del titular"}]}}}. Incluye de 1 a 3 titulares citados, solo si hay titulares; sus ids deben estar en el contexto.`;
   const res = await askJSON(prompt, { budgetMs: 3 * 60 * 1000 });
-  if (!res) { console.error(`Lote ${n}: sin respuesta`); return; }
+  if (!res) {
+    // A whole batch can time out: retry in groups of five before falling back to the plain note
+    if (batch.length > 5) {
+      console.error(`Lote ${n}: sin respuesta, reintento en grupos de 5`);
+      for (let k = 0; k < batch.length; k += 5) await writeBatch(batch.slice(k, k + 5), `${n}.${k / 5 + 1}`);
+    } else {
+      console.error(`Lote ${n}: sin respuesta, nota sin IA`);
+      for (const f of batch) notes[f.simbolo] = plainNote(f);
+    }
+    return;
+  }
   model = model || res.model;
   for (const f of batch) {
     const result = res.out.notas?.[f.simbolo];
-    if (!result || typeof result.texto !== "string") continue;
+    if (!result || typeof result.texto !== "string") { notes[f.simbolo] = plainNote(f); continue; }
     const clean = grounded(result.texto, JSON.stringify(f));
-    if (clean) notes[f.simbolo] = { texto: clean, noticias: validCitations(result.noticias, f.titulares) };
+    notes[f.simbolo] = clean ? { texto: clean, noticias: validCitations(result.noticias, f.titulares) } : plainNote(f);
   }
 }
 for (let i = 0; i < batches.length; i += 3) {
