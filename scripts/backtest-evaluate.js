@@ -19,7 +19,7 @@ const HS = [1, 3, 6, 12, 24, 36, 48];
 const history = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "history-120.json"), "utf8"));
 
 const models = {};
-for (const name of ["timesfm", "chronos2", "chronos2_epu", "tirex"]) {
+for (const name of ["timesfm", "chronos2", "chronos2_epu", "chronos2_news", "tirex"]) {
   const f = path.join(DIR, `${name}.json`);
   if (fs.existsSync(f)) models[name] = JSON.parse(fs.readFileSync(f, "utf8")).forecasts;
   else console.log(`Sin resultados de ${name}`);
@@ -151,8 +151,22 @@ for (const h of [1, 3, 6, 12]) {
 }
 const epuAdopted = Object.keys(epuComparison).length === 4 && qualifyingHorizons >= 3;
 
+// Same rule for the GDELT news covariates
+const newsComparison = {};
+let newsQualifying = 0;
+for (const h of [1, 3, 6, 12]) {
+  const r = results[h];
+  if (!r?.chronos2 || !r?.chronos2_news) continue;
+  const relativeMapePct = Number(((r.chronos2_news.medianMape / r.chronos2.medianMape - 1) * 100).toFixed(2));
+  const coverageDeltaPp = Number((r.chronos2_news.coverageOut - r.chronos2.coverageOut).toFixed(1));
+  newsComparison[h] = { relativeMapePct, coverageDeltaPp };
+  if (relativeMapePct <= -1 && coverageDeltaPp >= 0) newsQualifying++;
+}
+const newsAdopted = Object.keys(newsComparison).length === 4 && newsQualifying >= 3;
+
 fs.writeFileSync(path.join(DIR, "results.json"), JSON.stringify({ generated: new Date().toISOString(), results,
-  epuComparison, epuDecision: epuAdopted ? "adopt" : "keep-current-engine" }, null, 1));
+  epuComparison, epuDecision: epuAdopted ? "adopt" : "keep-current-engine",
+  newsComparison, newsDecision: newsAdopted ? "adopt" : "keep-current-engine" }, null, 1));
 const names = ["naive", "v3", ...Object.keys(models), "engine"];
 let md = `# Backtest de modelos (${new Date().toISOString().slice(0, 10)})\n\n` +
   `Cortes cada 6 meses con al menos 36 meses de historia, ${Object.keys(history).length} activos. ` +
@@ -166,5 +180,8 @@ for (const [h, r] of Object.entries(results)) md += `| ${h} | ${Object.keys(mode
 md += `\n## Comparación Chronos-2 con EPU\n\nCambio relativo de MAPE mediano frente a Chronos-2 y cambio de cobertura fuera de muestra calibrada P10-P90 (puntos porcentuales).\n\n| Meses | Δ MAPE mediano | Δ cobertura |\n|---|---:|---:|\n`;
 for (const [h, row] of Object.entries(epuComparison)) md += `| ${h} | ${row.relativeMapePct}% | ${row.coverageDeltaPp} pp |\n`;
 md += `\nRegla de decisión: EPU se adopta solo si el MAPE mediano baja al menos un 1 % relativo en 3 de los plazos 1, 3, 6 y 12 meses, sin empeorar la cobertura fuera de muestra del rango P10-P90 tras calibrar. Si no, el motor se queda como está. Resultado: **${epuAdopted ? "se cumple el criterio" : "no se cumple el criterio; el motor se queda como está"}**.\n`;
+md += `\n## Comparación Chronos-2 con noticias (GDELT)\n\nTono, volumen e intensidad mensual de las noticias de Perú, el mundo, EE. UU. y China, con un mes de desfase.\n\n| Meses | Δ MAPE mediano | Δ cobertura |\n|---|---:|---:|\n`;
+for (const [h, row] of Object.entries(newsComparison)) md += `| ${h} | ${row.relativeMapePct}% | ${row.coverageDeltaPp} pp |\n`;
+md += `\nMisma regla que EPU. Resultado: **${newsAdopted ? "se cumple el criterio" : "no se cumple el criterio; el motor se queda como está"}**.\n`;
 fs.writeFileSync(path.join(DIR, "INFORME.md"), md);
 console.log(md);

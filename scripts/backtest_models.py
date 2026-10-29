@@ -62,8 +62,6 @@ def run_chronos2(ctx):
 
 def run_chronos2_epu(items):
     """Chronos-2 with publication-lagged monthly EPU values known at each origin."""
-    import pandas as pd
-    from chronos import Chronos2Pipeline
 
     path = os.path.join(ROOT, "data", "official", "epu.json")
     with open(path, encoding="utf-8") as f:
@@ -80,6 +78,13 @@ def run_chronos2_epu(items):
         }
     if not covariates:
         raise RuntimeError("No hay series EPU disponibles")
+
+    return _chronos2_with_covariates(items, covariates)
+
+def _chronos2_with_covariates(items, covariates):
+    """Chronos-2 with monthly past covariates; at month M only the value for M-1 is known."""
+    import pandas as pd
+    from chronos import Chronos2Pipeline
 
     history = json.load(open(os.path.join(ROOT, "data", "history-120.json"), encoding="utf-8"))
     frames, owners, kept = [], [], []
@@ -119,6 +124,28 @@ def run_chronos2_epu(items):
     return kept, results
 
 
+
+def run_chronos2_news(items):
+    """Chronos-2 with GDELT monthly news tone and volume (Peru, world, US, China) as past covariates."""
+    path = os.path.join(ROOT, "data", "official", "gdelt-news.json")
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    partial = data.get("mes_parcial")
+    covariates = {}
+    for name in ("pe_tono", "pe_articulos", "pe_goldstein", "mu_tono", "mu_articulos", "us_tono", "ch_tono"):
+        raw = data["series"].get(name)
+        if not raw:
+            continue
+        log_scale = name.endswith("_articulos")
+        covariates[f"news_{name}"] = {
+            (int(month[:4]), int(month[5:7])): float(np.log1p(value)) if log_scale else float(value)
+            for month, value in raw if month != partial
+        }
+    if not covariates:
+        raise RuntimeError("No hay series GDELT disponibles")
+    return _chronos2_with_covariates(items, covariates)
+
+
 def run_tirex(ctx):
     import torch
     from tirex import load_model
@@ -137,8 +164,8 @@ def main():
     items = origins()
     print(f"{name}: {len(items)} cortes")
     t0 = time.perf_counter()
-    if name == "chronos2_epu":
-        items, q = run_chronos2_epu(items)
+    if name in ("chronos2_epu", "chronos2_news"):
+        items, q = {"chronos2_epu": run_chronos2_epu, "chronos2_news": run_chronos2_news}[name](items)
     else:
         runner = {"timesfm": run_timesfm, "chronos2": run_chronos2, "tirex": run_tirex}[name]
         q = runner([c for _, _, c in items])
