@@ -1,17 +1,17 @@
-# PerData Engine v6: calibration report
+# PerData Engine v6 with TimesFM: calibration report
 
-The saved backtest covers 61 assets and rolling cuts six months apart. P50 MAPE is lower-is-better. v5 values come from the same backtest report; v6 is scored out of sample by selecting the grid weights on one half of assets and evaluating the other half, then reversing the halves. K80 is fitted to those out-of-sample predictions. `—` means the selected blend has zero-width bands for enough predictions that no finite K80 can reach 80% coverage.
+The saved backtest covers 61 assets and rolling cuts six months apart. P50 MAPE is lower-is-better. We selected the P50 weights on one half of the assets and scored the other half, then reversed the halves. K80 was fitted on each training half and checked on the opposite half. The prediction band blends the relative Chronos-2 and TimesFM quantile spreads using their relative P50 weights, centered on the new P50. If both model weights are zero, it uses the Chronos-2 spread.
 
-| Horizon (months) | v5 MAPE | v6 MAPE OOS | No-change MAPE | v6 K80 | v6 coverage OOS |
-|---:|---:|---:|---:|---:|---:|
-| 1 | 5.50 | 5.40 | 5.37 | — | — |
-| 3 | 11.40 | 10.86 | 10.77 | — | — |
-| 6 | 17.10 | 15.81 | 15.81 | — | — |
-| 12 | 21.75 | 21.03 | 20.92 | 8.75 | 80.1% |
-| 24 | 28.88 | 29.41 | 28.27 | — | — |
-| 36 | 31.45 | 33.23 | 31.75 | — | — |
-| 48 | 34.55 | 36.24 | 33.09 | — | — |
+| Horizon (months) | Chronos-2 a | v3 b | TimesFM c | v5 MAPE | v6 MAPE OOS | No-change MAPE | K80 | Coverage OOS |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 0.05 | 0.10 | 0.00 | 5.50 | 5.41 | 5.37 | 0.94 | 79.1% |
+| 3 | 0.00 | 0.00 | 0.10 | 11.40 | 10.92 | 10.77 | 1.17 | 81.7% |
+| 6 | 0.00 | 0.00 | 0.25 | 17.10 | 15.73 | 15.81 | 1.39 | 79.6% |
+| 12 | 0.10 | 0.05 | 0.40 | 21.75 | 20.81 | 20.92 | 1.50 | 79.7% |
+| 24 | 0.10 | 0.00 | 0.60 | 28.88 | 28.22 | 28.30 | 1.74 | 80.4% |
+| 36 | 0.35 | 0.00 | 0.45 | 31.45 | 31.72 | 31.56 | 1.58 | 79.2% |
+| 48 | 0.00 | 0.05 | 0.60 | 34.55 | 34.83 | 32.86 | 2.48 | 78.8% |
 
-The grid step is 0.05. The central estimate is `a × Chronos-2 + b × v3 + (1 − a − b) × last close`. At short horizons the best weights put almost all mass on the last close, whose zero-width band cannot be widened to the target coverage with a finite multiplier. At 24–48 months v6 also fails to beat v5 and the no-change baseline consistently. Therefore `adoptar` is `false`; production remains on v5 and `api/_lib/engine.js` is unchanged.
+The selection rule is **not met**, so `adoptar` is `false` and production remains on v5. Although the cross-validated coverage is within 78–82% for all horizons and v6 beats naive in four horizons, its MAPE is worse than v5 at 36 and 48 months. Therefore this change does not alter `engine.js` or the forecasting pipeline.
 
-Reproduce with `node scripts/calibrate-engine.js [artifact-directory]`. The default directory is the local handoff at `/home/wagustin/kathy_workspace/handoff/bt_data`; it contains the backtest outputs and is intentionally not copied into the repository.
+Reproduce with `node scripts/calibrate-engine.js [artifact-directory]`. The default directory is `/home/wagustin/kathy_workspace/handoff/bt_data`; the backtest artifacts are kept outside the repository.
