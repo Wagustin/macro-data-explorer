@@ -2,7 +2,8 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { syncD1 } from "./d1-sync.js";
+import { pruneD1, syncD1 } from "./d1-sync.js";
+import { ENGINE, ENGINE_FALLBACKS } from "../api/_lib/engine.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const HISTORY_HORIZONS = new Set([1, 3, 6, 12]);
@@ -62,6 +63,16 @@ for (let i = 0; i < rows.length; i += 200) {
   }
 }
 console.log(`Guardadas ${rows.length} filas en Supabase`);
+
+// Rows from earlier runs that this run did not rewrite would keep serving old numbers
+const runAt = rows[0].run_at;
+const models = [ENGINE.id, ...ENGINE_FALLBACKS];
+const stale = await fetch(`${base}/rest/v1/forecasts?model=in.(${models.join(",")})&run_at=lt.${encodeURIComponent(runAt)}`, {
+  method: "DELETE",
+  headers: { apikey: key, Authorization: `Bearer ${key}`, Prefer: "return=minimal" },
+});
+if (!stale.ok) console.warn(`Aviso: no se limpiaron filas antiguas en Supabase: HTTP ${stale.status}`);
+await pruneD1("forecasts", { models, before: runAt });
 
 const historyRows = rows
   .filter((row) => HISTORY_HORIZONS.has(row.horizon))

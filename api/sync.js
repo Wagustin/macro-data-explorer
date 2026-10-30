@@ -49,6 +49,15 @@ export default async function handler(req, res) {
   const body = await readJsonBody(req);
   const spec = TABLES[body?.table];
   const rows = Array.isArray(body?.rows) ? body.rows : [];
+  // After a publish: forecasts the new run did not write (a horizon the validator dropped) must not
+  // keep serving yesterday's numbers
+  if (body?.table === "forecasts" && Array.isArray(body?.prune?.models) && body.prune.before) {
+    await ensureSchema(db);
+    const marks = body.prune.models.map(() => "?").join(", ");
+    const done = await db.prepare(`delete from forecasts where model in (${marks}) and run_at < ?`)
+      .bind(...body.prune.models, String(body.prune.before)).run();
+    return send(res, 200, { ok: true, deleted: done.meta?.changes ?? 0 });
+  }
   if (!spec || !rows.length || rows.length > 500) return send(res, 400, { error: "Tabla o filas no válidas." });
 
   await ensureSchema(db);

@@ -24,3 +24,20 @@ export async function syncD1(table, rows, chunk = 200) {
   }
   return sent;
 }
+
+export async function pruneD1(table, prune) {
+  const secret = process.env.SYNC_SECRET || "";
+  if (!secret) return;
+  try {
+    const r = await fetch(`${APP}/api/internal/sync`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${secret}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ table, prune }),
+      signal: AbortSignal.timeout(30000),
+    });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    console.log(`D1 ${table}: limpieza hecha`, await r.json());
+  } catch (e) {
+    console.error(`D1 ${table}: limpieza falló (${e.message})`);
+  }
+}

@@ -1,7 +1,7 @@
 """Daily Chronos-2 and TimesFM batch for PerData Engine v6 (timesfm.yml, GitHub CPUs).
 One 48-month forecast per asset from data/history-120.json; every horizon from 1 to 48 is a prefix
-of it. Writes the raw P10/P25/P50/P75/P90 paths to data/model-forecasts-cache.json; the blend with
-Engine v3 and the band calibration are done by scripts/precompute-engine.js.
+of it. Writes the raw P10/P25/P50/P75/P90 paths to data/model-forecasts-cache.json. TimesFM feeds the
+engine (api/_lib/engine.js); Chronos-2 is only its backup for a day TimesFM fails.
 """
 import json
 import os
