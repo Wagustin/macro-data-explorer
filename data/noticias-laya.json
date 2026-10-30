@@ -1,6 +1,6 @@
 {
- "actualizado": "2026-10-30T00:59:17.990Z",
- "modelo": "minimaxai/minimax-m3.1-flash",
+ "actualizado": "2026-10-30T04:01:34.861Z",
+ "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "items": {
   "gestion-093ed7008b": {
    "relevancia": "ALTA",
@@ -30,12 +30,6 @@
    "relevancia": "BAJA",
    "tema": "Economía y fiscal",
    "sentimiento": "NEGATIVO",
-   "empresas": []
-  },
-  "infobae-4619b4cac6": {
-   "relevancia": "ALTA",
-   "tema": "Dólar y BCRP",
-   "sentimiento": "NEUTRO",
    "empresas": []
   },
   "el_comercio-cee7a6e77a": {
@@ -164,12 +158,6 @@
    "sentimiento": "NEGATIVO",
    "empresas": []
   },
-  "infobae-0374e615f9": {
-   "relevancia": "MEDIA",
-   "tema": "Economía y fiscal",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
   "gestion-f98aac52b0": {
    "relevancia": "MEDIA",
    "tema": "Mundo",
@@ -210,12 +198,6 @@
    "relevancia": "MEDIA",
    "tema": "Economía y fiscal",
    "sentimiento": "NEUTRO",
-   "empresas": []
-  },
-  "infobae-a87a4ae829": {
-   "relevancia": "MEDIA",
-   "tema": "Economía y fiscal",
-   "sentimiento": "NEGATIVO",
    "empresas": []
   },
   "bloomberg_linea-b20ea7fdbe": {
@@ -296,24 +278,6 @@
    "sentimiento": "NEUTRO",
    "empresas": []
   },
-  "andina-abdf0dc61a": {
-   "relevancia": "BAJA",
-   "tema": "Economía y fiscal",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
-  "andina-3ad9f5163e": {
-   "relevancia": "MEDIA",
-   "tema": "Economía y fiscal",
-   "sentimiento": "POSITIVO",
-   "empresas": []
-  },
-  "andina-91eaf0256b": {
-   "relevancia": "MEDIA",
-   "tema": "Economía y fiscal",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
   "el_comercio-beb3651a9e": {
    "relevancia": "ALTA",
    "tema": "Mundo",
@@ -345,12 +309,6 @@
    "empresas": []
   },
   "bloomberg_linea-1a0d392be8": {
-   "relevancia": "BAJA",
-   "tema": "Dólar y BCRP",
-   "sentimiento": "POSITIVO",
-   "empresas": []
-  },
-  "el_comercio-cf7306647a": {
    "relevancia": "BAJA",
    "tema": "Dólar y BCRP",
    "sentimiento": "POSITIVO",
@@ -406,18 +364,6 @@
    "sentimiento": "NEGATIVO",
    "empresas": []
   },
-  "rpp-a1a68e18c3": {
-   "relevancia": "NINGUNA",
-   "tema": "Mundo",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
-  "infobae-c09e72504e": {
-   "relevancia": "MEDIA",
-   "tema": "Economía y fiscal",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
   "el_comercio-a68925afee": {
    "relevancia": "ALTA",
    "tema": "Energía",
@@ -428,12 +374,6 @@
    "relevancia": "BAJA",
    "tema": "Dólar y BCRP",
    "sentimiento": "POSITIVO",
-   "empresas": []
-  },
-  "infobae-4b78f0f5ff": {
-   "relevancia": "BAJA",
-   "tema": "Economía y fiscal",
-   "sentimiento": "NEGATIVO",
    "empresas": []
   },
   "andina-736d42039b": {
@@ -623,6 +563,66 @@
    "tema": "Economía y fiscal",
    "sentimiento": "NEGATIVO",
    "empresas": []
+  },
+  "andina-904a76eac0": {
+   "relevancia": "BAJA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "infobae-4c6cb932a5": {
+   "relevancia": "BAJA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "POSITIVO",
+   "empresas": []
+  },
+  "andina-5bf62b1270": {
+   "relevancia": "ALTA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "POSITIVO",
+   "empresas": []
+  },
+  "infobae-ba714c7f26": {
+   "relevancia": "ALTA",
+   "tema": "Energía",
+   "sentimiento": "POSITIVO",
+   "empresas": []
+  },
+  "gestion-98d1c6aa2f": {
+   "relevancia": "MEDIA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "andina-de10915b7f": {
+   "relevancia": "ALTA",
+   "tema": "Energía",
+   "sentimiento": "POSITIVO",
+   "empresas": []
+  },
+  "bloomberg_linea-4e08ed26fd": {
+   "relevancia": "NINGUNA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "infobae-ae8ca94e46": {
+   "relevancia": "ALTA",
+   "tema": "Energía",
+   "sentimiento": "POSITIVO",
+   "empresas": []
+  },
+  "andina-981c010435": {
+   "relevancia": "ALTA",
+   "tema": "Dólar y BCRP",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "infobae-00556b6659": {
+   "relevancia": "ALTA",
+   "tema": "Dólar y BCRP",
+   "sentimiento": "NEUTRO",
+   "empresas": []
   }
  },
  "descartados": [
@@ -700,6 +700,8 @@
   "infobae-38d6837ead",
   "infobae-6c0235a2c2",
   "infobae-75b5643040",
-  "infobae-31a840e51d"
+  "infobae-31a840e51d",
+  "infobae-3f00d335e5",
+  "infobae-0065160110"
  ]
 }
