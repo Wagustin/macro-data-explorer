@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-30T04:01:28.838Z",
+  "actualizado": "2026-10-30T07:01:30.360Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 83
+      "items": 82
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -34,7 +34,7 @@
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 14
+      "items": 16
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -64,6 +64,33 @@
   },
   "noticias": [
     {
+      "id": "bloomberg_linea-e83e6ffe68",
+      "titulo": "Starbucks explora el uso de inteligencia artificial para tomar pedidos en sus servicios de drive-thru",
+      "url": "https://www.bloomberglinea.com/negocios/starbucks-explora-el-uso-de-inteligencia-artificial-para-tomar-pedidos-en-sus-servicios-de-drive-thru/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-10-30T06:09:03.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-227941a36f",
+      "titulo": "Xi Jinping se afianza hacia un cuarto mandato en China en medio de una masiva purga en el Partido Comunista",
+      "url": "https://rpp.pe/mundo/china/purga-en-el-partido-comunista-de-china-xi-jinping-afianza-su-poder-hacia-un-cuarto-mandato-en-2027-noticia-1715116",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-30T05:48:21.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-8748e3f4df",
+      "titulo": "Destituyen a un alto general del Pentágono por presunta filtración de información a la prensa sobre guerras en Irán y Ucrania",
+      "url": "https://rpp.pe/mundo/estados-unidos/ee-uu-destituye-al-general-brett-sylvia-por-filtraciones-sobre-las-guerras-en-iran-y-ucrania-noticia-1715115",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-30T05:13:03.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "andina-904a76eac0",
       "titulo": "PromPerú recibe premio de la OMC por impulsar participación femenina en comercio exterior",
       "url": "https://andina.pe/agencia/noticia-promperu-recibe-premio-de-omc-impulsar-participacion-femenina-comercio-exterior-1097873.aspx",
@@ -73,11 +100,29 @@
       "semaforo": "VERDE"
     },
     {
+      "id": "gestion-83dbb77439",
+      "titulo": "El Niño podría recortar el crecimiento de la economía peruana a 2% en 2027",
+      "url": "https://gestion.pe/economia/el-nino-podria-recortar-el-crecimiento-de-la-economia-peruana-a-2-en-2027-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-10-30T04:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "gestion-4ddb9ba6b1",
       "titulo": "Noveno retiro de AFP podría enfrentar un obstáculo: ¿qué rol tiene el TC?",
       "url": "https://gestion.pe/economia/empresas/noveno-retiro-de-afp-podria-enfrentar-un-obstaculo-que-rol-tiene-el-tc-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-10-30T03:45:00.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-e3f5886398",
+      "titulo": "Alarma en el mundo cripto: Binance investiga un ciberataque masivo de hasta 6 mil 300 millones de dólares",
+      "url": "https://rpp.pe/mundo/actualidad/hackeo-a-binance-investigan-robo-masivo-de-6300-millones-de-dolares-en-criptomonedas-noticia-1715109",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-10-30T03:33:58.000Z",
       "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
@@ -312,15 +357,6 @@
       "url": "https://www.infobae.com/peru/2026/10/30/gobierno-destina-mas-de-s-6-millones-para-generar-1500-empleos-temporales-en-lambayeque/",
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-10-30T00:50:04.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-83dbb77439",
-      "titulo": "El Niño podría recortar el crecimiento de la economía peruana a 2% en 2027",
-      "url": "https://gestion.pe/economia/el-nino-podria-recortar-el-crecimiento-de-la-economia-peruana-a-2-en-2027-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-30T00:42:10.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
@@ -676,15 +712,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "rpp-7801de5123",
-      "titulo": "Julio Velarde obtiene por segunda vez la máxima calificación en ranking mundial de banqueros centrales: “disciplina, independencia y buen criterio”",
-      "url": "https://rpp.pe/economia/economia/julio-velarde-obtiene-por-segunda-vez-la-maxima-calificacion-en-ranking-mundial-de-banqueros-centrales-2026-destacan-disciplina-independencia-y-buen-criterio-noticia-1715042",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-10-29T18:45:46.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-736d42039b",
       "titulo": "Produce: segunda pesca exploratoria de pota busca reforzar la sostenibilidad del recurso",
       "url": "https://andina.pe/agencia/noticia-produce-segunda-pesca-exploratoria-pota-busca-reforzar-sostenibilidad-del-recurso-1097812.aspx",
@@ -961,24 +988,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-10-29T14:00:23.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-c51b161fba",
-      "titulo": "Bessent resta importancia a las preocupaciones por la financiación de la IA y las tasas de la Fed",
-      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/bessent-resta-importancia-a-las-preocupaciones-por-la-financiacion-de-la-ia-y-las-tasas-de-la-fed/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-10-29T11:09:39.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-62787fd8e4",
-      "titulo": "Petróleo, oro y café: Banco Mundial anticipa un giro en los precios de materias primas en 2027",
-      "url": "https://www.bloomberglinea.com/mercados/petroleo-oro-y-cafe-banco-mundial-anticipa-un-giro-en-los-precios-de-materias-primas-en-2027/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-10-29T11:06:20.000Z",
-      "categoria": "Minería y metales",
       "semaforo": "AMARILLO"
     }
   ]
