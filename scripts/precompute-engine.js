@@ -27,7 +27,7 @@ for (const [symbol, series] of Object.entries(history)) {
   // v3 is run once at 48 months: its first H points are the H-month path
   const F = buildForecast(series.slice(-600), 48);
   for (const H of HORIZONS) {
-    const blended = blendEngine(modelPath, F.forecastPoints, H, { timesfmPath: cached.timesfm });
+    const blended = blendEngine(modelPath, F.forecastPoints, H, { timesfmPath: cached.timesfm, symbol });
     if (!blended) { skipped++; continue; }
     const fin = blended[blended.length - 1];
     rows.push({ symbol, horizon: H, model: ENGINE.id, run_at: runAt, last_close: Number(F.lastClose.toFixed(4)),

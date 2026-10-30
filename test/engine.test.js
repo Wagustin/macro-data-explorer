@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { bandFactor, blendEngine, engineWeight } from "../api/_lib/engine.js";
+import { K, blendEngine, interpK, w } from "../api/_lib/engine.js";
 import params from "../api/_lib/engine-params.json" with { type: "json" };
 
 function points(price, mode = "normal") {
@@ -18,66 +18,93 @@ function points(price, mode = "normal") {
   return out;
 }
 
-for (const price of [0.11, 5000]) {
-  for (const mode of ["normal", "odd"]) {
-    test(`blendEngine keeps ${price} ${mode} inputs positive, finite and monotone`, () => {
-      const result = blendEngine(points(price), points(price * 1.1, mode), 48);
-      assert.equal(result.length, 48);
-      for (const row of result) {
-        const values = [row.p10, row.p25, row.p50, row.p75, row.p90];
-        assert.ok(values.every((value) => Number.isFinite(value) && value > 0));
-        assert.deepEqual(values, [...values].sort((a, b) => a - b));
-      }
-    });
+test("w por plazo y grupo", () => {
+  // Lima (.LM): always 0
+  for (const h of [1, 3, 6, 12, 24, 36, 48, 60]) {
+    assert.equal(w(h, "BVN.LM"), 0);
+    assert.equal(w(h, "CREDICORP.LM"), 0);
   }
-}
-
-test("engineWeight and bandFactor interpolate and stay flat after month 48", () => {
-  assert.equal(engineWeight(1), 0.75);
-  assert.equal(engineWeight(3.5), 0.775);
-  assert.equal(engineWeight(48), 0.95);
-  assert.equal(engineWeight(60), engineWeight(48));
-  assert.equal(bandFactor(1), 0.94);
-  assert.ok(Math.abs(bandFactor(2) - 1.055) < 1e-12);
-  assert.equal(bandFactor(48), 1.72);
-  assert.equal(bandFactor(60), bandFactor(48));
+  // Resto: min(1, h / 36)
+  assert.equal(w(1, "SPY"), 1 / 36);
+  assert.equal(w(18, "GLD"), 0.5);
+  assert.equal(w(36, "USDPEN"), 1);
+  assert.equal(w(48, "COPPER"), 1);
+  assert.equal(w(60, "COPPER"), 1);
 });
 
-test("hybrid parameters have valid weights and monotone K80 within each source", () => {
-  const entries = Object.entries(params.horizons);
-  assert.equal(params.adoptar, true);
-  assert.match(params.explicacion, /híbrido por plazo/);
-  for (const [h, p] of entries) {
-    assert.equal(p.fuente, Number(h) <= 24 ? "v6" : "v5");
-    assert.ok(p.a >= 0 && p.b >= 0 && p.c >= 0 && p.a + p.b + p.c <= 1);
-  }
-  for (const source of ["v6", "v5"]) {
-    const values = entries.filter(([, p]) => p.fuente === source).map(([, p]) => p.K80);
-    assert.deepEqual(values, [...values].sort((a, b) => a - b));
+test("P50 = último cierre para .LM", () => {
+  const price = 100;
+  const lastClose = 95;
+  const chronos = points(price);
+  chronos.last_close = lastClose;
+  const tfm = points(price * 1.2);
+  const result = blendEngine(chronos, points(price), 48, { timesfmPath: tfm, symbol: "BAP.LM" });
+  assert.ok(result);
+  for (const row of result) {
+    assert.equal(row.p50, lastClose);
   }
 });
 
-test("hybrid forecasts are positive and ordered for five symbols and fall back when TimesFM is absent", () => {
-  for (const price of [0.11, 1.25, 27.4, 5000, 180000]) {
-    const chronos = points(price), tfm = points(price * 1.08), own = points(price * 1.02);
-    const withTfm = blendEngine(chronos, own, 48, { timesfmPath: tfm });
-    const withoutTfm = blendEngine(chronos, own, 48, { timesfmPath: null });
-    for (const rows of [withTfm, withoutTfm]) for (const row of rows) {
-      const q = [row.p10, row.p25, row.p50, row.p75, row.p90];
-      assert.ok(q.every((n) => Number.isFinite(n) && n > 0));
-      assert.deepEqual(q, [...q].sort((a, b) => a - b));
+test("K no decreciente en ambas tablas y en interpolacion", () => {
+  for (const group of ["lima", "resto"]) {
+    const entries = Object.entries(params.K[group]).map(([h, val]) => [Number(h), val]);
+    for (let i = 1; i < entries.length; i++) {
+      assert.ok(entries[i][1] >= entries[i - 1][1], `${group} K at h=${entries[i][0]} should be >= h=${entries[i - 1][0]}`);
     }
-    assert.notEqual(withTfm[5].p50, withoutTfm[5].p50);
-    // Missing TimesFM means its 25% share is absorbed by the last-close component.
-    const expected = params.horizons["6"].a * chronos[5].p50 + params.horizons["6"].b * own[5].p50
-      + (1 - params.horizons["6"].a - params.horizons["6"].b) * chronos.last_close;
-    assert.equal(withoutTfm[5].p50, Number(expected.toFixed(expected < 10 ? 4 : 2)));
+  }
+  // Check continuous interpolation from h=1 to h=48
+  for (const sym of ["BAP.LM", "SPY"]) {
+    let prev = K(1, sym);
+    for (let h = 2; h <= 48; h++) {
+      const cur = K(h, sym);
+      assert.ok(cur >= prev, `K(${h}, ${sym}) should be >= K(${h - 1}, ${sym})`);
+      prev = cur;
+    }
+    assert.equal(K(60, sym), K(48, sym));
   }
 });
 
-test("v6 to v5 transition reaches the exact calibrated endpoints at months 24 and 36", () => {
-  const result = blendEngine(points(100), points(105), 48, { timesfmPath: points(110) });
-  assert.equal(result[23].p50, Number((0.1 * 100 + 0.6 * 110 + 0.3 * 95).toFixed(2)));
-  assert.equal(result[35].p50, Number((engineWeight(36) * 100 + (1 - engineWeight(36)) * 105).toFixed(2)));
-  assert.ok(Math.abs((result[34].p50 - result[33].p50) - (result[35].p50 - result[34].p50)) < 1e-8);
+test("cuantiles ordenados, finitos y positivos con distintos precios y modos", () => {
+  for (const price of [0.11, 1.25, 27.4, 5000, 180000]) {
+    for (const mode of ["normal", "odd"]) {
+      for (const symbol of ["BAP.LM", "SPY"]) {
+        const chronos = points(price);
+        const tfm = points(price * 1.1, mode);
+        const result = blendEngine(chronos, points(price), 48, { timesfmPath: tfm, symbol });
+        assert.ok(result && result.length === 48);
+        for (const row of result) {
+          const values = [row.p10, row.p25, row.p50, row.p75, row.p90];
+          assert.ok(values.every((v) => Number.isFinite(v) && v > 0));
+          for (let i = 1; i < values.length; i++) {
+            assert.ok(values[i] >= values[i - 1], `Quantiles must be non-decreasing: ${values}`);
+          }
+        }
+      }
+    }
+  }
+});
+
+test("caida a Chronos sin TimesFM", () => {
+  const price = 50;
+  const lastClose = 48;
+  const chronos = points(price);
+  chronos.last_close = lastClose;
+  const withFallback = blendEngine(chronos, points(price), 48, { timesfmPath: null, symbol: "SPY" });
+  assert.ok(withFallback && withFallback.length === 48);
+  for (const row of withFallback) {
+    // P50 adopts last close
+    assert.equal(row.p50, lastClose);
+    const q = [row.p10, row.p25, row.p50, row.p75, row.p90];
+    assert.ok(q.every((n) => Number.isFinite(n) && n > 0));
+    for (let i = 1; i < q.length; i++) {
+      assert.ok(q[i] >= q[i - 1]);
+    }
+  }
+});
+
+test("sin ambos devuelve null", () => {
+  assert.equal(blendEngine(null, points(100), 48, { timesfmPath: null, symbol: "SPY" }), null);
+  assert.equal(blendEngine([], points(100), 48, { timesfmPath: [], symbol: "SPY" }), null);
+  const badPoints = [{ p50: 0 }];
+  assert.equal(blendEngine(badPoints, points(100), 1, { timesfmPath: badPoints, symbol: "SPY" }), null);
 });

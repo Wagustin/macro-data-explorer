@@ -11,10 +11,10 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { buildForecast } from "../api/forecast.js";
-import { blendEngine, engineWeight } from "../api/_lib/engine.js";
+import { blendEngine, w as engineWeight } from "../api/_lib/engine.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const DIR = path.join(ROOT, "data", "backtest");
+const DIR = process.argv[2] ? path.resolve(process.argv[2]) : path.join(ROOT, "data", "backtest");
 const HS = [1, 3, 6, 12, 24, 36, 48];
 const history = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "history-120.json"), "utf8"));
 
@@ -131,7 +131,7 @@ for (const h of HS) {
       const timesfmPath = models.timesfm?.[e.key] ? toPts(models.timesfm[e.key]) : undefined;
       // v6 mixes in the last close at short horizons; the backtest paths do not carry it
       const modelPath = Object.assign(toPts(models.chronos2[e.key]), { last_close: e.last });
-      const b = blendEngine(modelPath, toPts(v3[e.key]), h, { calibrate, timesfmPath });
+      const b = blendEngine(modelPath, toPts(v3[e.key]), h, { calibrate, timesfmPath, symbol: e.sym });
       return b ? { ...e, ...b[h - 1] } : null;
     }).filter(Boolean);
     const raw = eng(false), cal = eng(true);
@@ -167,6 +167,7 @@ for (const h of [1, 3, 6, 12]) {
 }
 const newsAdopted = Object.keys(newsComparison).length === 4 && newsQualifying >= 3;
 
+fs.mkdirSync(DIR, { recursive: true });
 fs.writeFileSync(path.join(DIR, "results.json"), JSON.stringify({ generated: new Date().toISOString(), results,
   epuComparison, epuDecision: epuAdopted ? "adopt" : "keep-current-engine",
   newsComparison, newsDecision: newsAdopted ? "adopt" : "keep-current-engine" }, null, 1));

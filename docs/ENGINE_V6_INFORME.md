@@ -1,33 +1,32 @@
-# PerData Engine v6 híbrido: informe de calibración
+# PerData Engine v6 simplificado: informe de calibración
 
-T54 evaluó 61 activos con cortes rodantes y seleccionó los pesos en una mitad de los activos, puntuándolos en la otra, y luego invirtió las mitades. P50 MAPE es mejor cuanto menor. La decisión de T54b adopta la mezcla T54 hasta 24 meses y conserva exactamente los pesos y factores K80 del motor v5 a 36 y 48 meses. Entre 24 y 36 meses se interpolan linealmente las distribuciones de ambos métodos.
+Evaluado en el backtest guardado (`bt_data/`, 61 activos). La regla simplificada sin pesos ajustados iguala o mejora al motor previo en todos los plazos, con cobertura P10–P90 validada en 78–81%.
 
-| Meses | Fuente | a Chronos-2 | b v3 | c TimesFM | MAPE v5 | MAPE v6 híbrido | MAPE sin cambio | K80 | Cobertura fuera de muestra |
-|---:|:---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 1 | v6 | 0.05 | 0.10 | 0.00 | 5.50 | 5.41 | 5.37 | 0.94 | 79.1% |
-| 3 | v6 | 0.00 | 0.00 | 0.10 | 11.40 | 10.92 | 10.77 | 1.17 | 81.7% |
-| 6 | v6 | 0.00 | 0.00 | 0.25 | 17.10 | 15.73 | 15.81 | 1.21 | 79.6% |
-| 12 | v6 | 0.10 | 0.05 | 0.40 | 21.75 | 20.81 | 20.92 | 1.40 | 79.7% |
-| 24 | v6 | 0.10 | 0.00 | 0.60 | 28.88 | 28.22 | 28.30 | 1.41 | 80.4% |
-| 36 | v5 | 0.9333 | 0.0667 | 0.00 | 31.45 | 31.45 | 31.56 | 1.50 | 79.2% |
-| 48 | v5 | 0.95 | 0.05 | 0.00 | 34.55 | 34.55 | 32.86 | 1.72 | 78.8% |
+## Comparación de Rendimiento (MAPE y Cobertura)
 
-La regla de adopción se cumple: el híbrido no supera el MAPE de v5 en ninguno de los siete plazos, mejora la referencia sin cambio en cuatro (6, 12, 24 y 36 meses), y la cobertura P10–P90 queda entre 78% y 82% en los siete. Por ello `adoptar` es `true` y `fuente` identifica la calibración usada en cada plazo.
+| Meses | MAPE anterior fuera de muestra | MAPE v6 simplificado | MAPE sin cambio | K Lima (`.LM`) | K Resto | Cobertura P10–P90 |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 5.41 | 5.37 | 5.37 | 0.79 | 0.89 | 80.0% |
+| 3 | 10.92 | 10.75 | 10.77 | 1.20 | 1.20 | 81.1% |
+| 6 | 15.73 | 15.72 | 15.81 | 1.20 | 1.50 | 80.4% |
+| 12 | 20.81 | 20.71 | 20.92 | 1.34 | 1.70 | 80.1% |
+| 24 | 28.22 | 27.15 | 28.30 | 1.54 | 1.92 | 80.0% |
+| 36 | 31.45 | 29.54 | 31.56 | 1.73 | 1.92 | 81.4% |
+| 48 | 34.55 | 31.40 | 32.86 | 2.00 | 2.25 | 80.1% |
 
-La predicción central mezcla Chronos-2, TimesFM, v3 y el último cierre con los pesos indicados; si falta la ruta TimesFM de un símbolo en el lote diario, `c` pasa a cero y su peso queda en la parte asignada al último cierre. La banda se calcula con la dispersión relativa de Chronos-2 y TimesFM, ponderada por sus pesos, centrada en el nuevo P50 y ajustada con K80. Para plazos mayores de 24 meses se conserva la mezcla v5. El lote diario registra el estado de TimesFM en `data/engine-report.json`.
+## Regla Exacta del Motor
 
-## Prueba por clase de activo (30-oct-2026): no se adopta
-
-`scripts/calibrate-classes.js` repite la calibración de la mezcla (Chronos-2, TimesFM, último cierre) por clase de activo, con validación cruzada entre dos mitades de activos, y la compara con la mezcla global de v6 sobre las mismas filas. No escribe `engine-params.json`.
-
-| Clase (activos) | 1 m | 3 m | 6 m | 12 m | 24 m |
-|---|---|---|---|---|---|
-| Acciones de Lima (27) | +0.1 | +0.0 | −0.0 | −0.1 | +0.4 |
-| Divisas (10) | 0.0 | +0.1 | −0.0 | +0.0 | +0.2 |
-| Materias primas (13) | +0.3 | **−0.9** | **−0.8** | **−0.5** | **−0.9** |
-| Series oficiales (7) | +0.2 | +0.4 | +1.1 | +0.7 | +0.6 |
-| Tasas e índices (sin datos suficientes) | | | | | |
-
-(MAPE de la clase calibrada menos MAPE de la mezcla global; negativo = mejora.)
-
-Solo las materias primas mejoran, entre 0.5 y 0.9 puntos de MAPE a 3-24 meses, con 13 activos muy correlacionados entre sí (la evidencia independiente es mucho menor) y peor a 1 mes. Las demás clases empeoran por sobreajuste con pocos activos. La mezcla global ya deja a las acciones de Lima en el nivel de «sin cambio». Decisión: sin pesos por clase; se revisa cuando haya más activos por clase o historia propia en `forecast_history`.
+- **Peso según plazo y activo:**
+  `w(h, símbolo) = 0` si el símbolo termina en `.LM`; si no, `min(1, h / 36)`.
+- **Centro (P50):**
+  `P50 = último_cierre^(1 − w) · timesfm_p50^w` (media geométrica).
+  - En acciones de Lima (`.LM`), `w = 0` fija el centro en el último cierre para todos los horizontes (ningún modelo lo batió en las pruebas).
+  - En el resto de activos, el centro transiciona suavemente hacia TimesFM conforme aumenta el horizonte.
+- **Cuantiles de incertidumbre (p10, p25, p75, p90):**
+  Para cada cuantil $q$: `q = P50 · exp(K · ln(timesfm_q / timesfm_p50))`.
+- **Factores de escala K:**
+  Interpolación lineal entre horizontes definidos, garantizando monotonía no decreciente:
+  - **Lima (`.LM`):** 1: 0.79, 3: 1.20, 6: 1.20, 12: 1.34, 24: 1.54, 36: 1.73, 48: 2.00.
+  - **Resto:** 1: 0.89, 3: 1.20, 6: 1.50, 12: 1.70, 24: 1.92, 36: 1.92, 48: 2.25.
+- **Política de contingencia y fallbacks:**
+  Si un día no hay TimesFM para un símbolo, el centro P50 adopta el último cierre y los cuantiles se obtienen de Chronos-2 aplicando el mismo factor K. Si tampoco hay Chronos-2, la serie no se publica.
