@@ -1,26 +1,42 @@
 {
- "actualizado": "2026-10-30T00:32:29.339Z",
+ "actualizado": "2026-10-30T00:59:47.731Z",
  "modelo": "minimaxai/minimax-m3.1-flash",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "Dólar peruano cierra en S/3,46 tras decisión de la Fed",
-   "nota": "El dólar en Perú cerró en S/3,46, pese al retroceso de la divisa a nivel internacional. La moneda local alcanzó su nivel más alto en casi cinco meses, en una jornada marcada por la decisión de la Reserva Federal y nuevos datos de inflación de EE. UU.",
+   "titulo": "El Niño pondría en riesgo el crecimiento peruano en 2027",
+   "nota": "El fenómeno El Niño podría reducir el crecimiento de la economía peruana a 2% en 2027, mientras la construcción ya recortó su proyección de crecimiento para este año. En el sector financiero, más de 200 mil hogares y pymes necesitarían auxilio bancario, según Interbank.",
+   "tema": "Economía y fiscal",
+   "empresas": [
+    "INTERBC1"
+   ],
+   "fuentes": [
+    {
+     "titulo": "El Niño podría recortar el crecimiento de la economía peruana a 2% en 2027",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/el-nino-podria-recortar-el-crecimiento-de-la-economia-peruana-a-2-en-2027-noticia/",
+     "fecha": "2026-10-30T00:42:10.000Z"
+    },
+    {
+     "titulo": "Capeco recortó a 9,2% su proyección de crecimiento de la construcción para este año",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/economia/capeco-recorto-a-92-su-proyeccion-de-crecimiento-de-la-construccion-para-2026-noticia/",
+     "fecha": "2026-10-30T00:35:30.000Z"
+    },
+    {
+     "titulo": "El Niño acorrala las finanzas del 50% de hogares y pymes: más de 200 mil necesitarán auxilio bancario, prevé Interbank",
+     "fuente": "RPP Noticias",
+     "url": "https://rpp.pe/economia/economia/el-nino-acorrala-las-finanzas-del-50-de-hogares-y-pymes-mas-de-200-mil-necesitaran-auxilio-bancario-preve-interbank-noticia-1715054",
+     "fecha": "2026-10-29T22:00:57.000Z"
+    }
+   ]
+  },
+  {
+   "titulo": "El dólar peruano cerró en S/3,46 tras decisión de la Fed",
+   "nota": "El dólar en Perú subió a S/3,46 y alcanzó su nivel más alto en casi cinco meses, pese al retroceso de la divisa en los mercados internacionales. La moneda local inició la jornada cerca de S/3,45 después de la decisión de la Reserva Federal y nuevos datos de inflación de EE. UU.",
    "tema": "Dólar y BCRP",
    "empresas": [],
    "fuentes": [
-    {
-     "titulo": "Precio del dólar en Perú: cierre del tipo de cambio hoy, jueves 29 octubre",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-hoy-jueves-29-de-octubre-a-cuanto-esta-el-dolar-y-tipo-de-cambio-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
-     "fecha": "2026-10-29T22:44:00.000Z"
-    },
-    {
-     "titulo": "Precio del dólar hoy en Perú, jueves 29 de octubre: consulta el tipo de cambio para compra y venta",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/precio-del-dolar/2026/10/29/precio-del-dolar-hoy-en-peru-jueves-29-de-octubre-consulta-el-tipo-de-cambio-para-compra-y-venta-2377060",
-     "fecha": "2026-10-29T22:19:43.000Z"
-    },
     {
      "titulo": "Dólar en Perú sube a S/3,46 y alcanza su nivel más alto en casi cinco meses: ¿a qué se debe?",
      "fuente": "RPP Noticias",
@@ -34,18 +50,6 @@
      "fecha": "2026-10-29T21:36:56.000Z"
     },
     {
-     "titulo": "Precio del dólar ya superó los S/3,46 en Perú: Así cerró el tipo de cambio hoy 29 de octubre",
-     "fuente": "Infobae Perú",
-     "url": "https://www.infobae.com/peru/2026/10/28/dolar-hoy-en-peru-cotizacion-de-apertura-del-28-de-octubre/",
-     "fecha": "2026-10-29T19:07:54.000Z"
-    },
-    {
-     "titulo": "Tipo de cambio hoy en Perú: ¿En cuánto cerró el dólar este jueves 29 de octubre?",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/mercados/tipo-de-cambio-dolar-hoy-en-peru-cuanto-esta-el-precio-del-dolar-este-jueves-29-de-octubre-dolares-a-soles-compra-y-venta-bcrp-noticia/",
-     "fecha": "2026-10-29T18:59:36.000Z"
-    },
-    {
      "titulo": "El dólar inicia la jornada cerca de S/3,45 tras decisión de la Fed y nuevos datos de inflación en EE. UU.",
      "fuente": "El Comercio Economía",
      "url": "https://elcomercio.pe/economia/peru/el-dolar-inicia-la-jornada-cerca-de-s345-tras-decision-de-la-fed-y-nuevos-datos-de-inflacion-en-ee-uu-l-ultimas-noticia/",
@@ -54,28 +58,34 @@
    ]
   },
   {
-   "titulo": "MEF proyecta exportaciones por encima de Chile en 2026",
-   "nota": "El MEF anticipa que las exportaciones peruanas superarían a las chilenas al cierre de 2026. La proyección se presenta en el contexto de un país que prevé envíos por US$140,000 millones hasta 2040 con su Política Multisectorial de Comercio.",
-   "tema": "Economía y fiscal",
+   "titulo": "Perupetrolicensed Lote 206 en Talara por 30 años",
+   "nota": "Perupetro suscribió un contrato de licencia por 30 años para explotar el yacimiento del Lote 206 en Talara.",
+   "tema": "Minería y metales",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Exportaciones peruanas superarían a las de Chile al cierre del 2026, señala el MEF",
+     "titulo": "Lote 206: Perupetro suscribe contrato de licencia por 30 años para yacimiento en Talara",
      "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/exportaciones-peruanas-superarian-a-las-de-chile-al-cierre-del-2026-senala-el-mef-noticia/",
-     "fecha": "2026-10-30T00:00:18.000Z"
+     "url": "https://gestion.pe/economia/lote-206-perupetro-suscribe-contrato-de-licencia-por-30-anos-para-yacimiento-en-talara-noticia/",
+     "fecha": "2026-10-30T00:03:27.000Z"
     },
     {
-     "titulo": "Perú prevé envíos de US $140,000 millones a 2040 con Política Multisectorial de Comercio",
+     "titulo": "Perupetro suscribe contrato para explotar el Lote 206 en Talara por 30 años",
      "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-peru-preve-envios-us-140000-millones-a-2040-politica-multisectorial-comercio-1097807.aspx",
-     "fecha": "2026-10-29T18:00:21.000Z"
+     "url": "https://andina.pe/agencia/noticia-perupetro-suscribe-contrato-para-explotar-lote-206-talara-30-anos-1097841.aspx",
+     "fecha": "2026-10-29T22:30:00.000Z"
+    },
+    {
+     "titulo": "Perupetro firma contrato con Colombian Green Energy para que explote el Lote 206 en Talara por 30 años",
+     "fuente": "RPP Noticias",
+     "url": "https://rpp.pe/economia/economia/perupetro-firma-contrato-con-colombian-green-energy-para-que-explote-el-lote-206-en-talara-por-30-anos-noticia-1715081",
+     "fecha": "2026-10-29T22:15:23.000Z"
     }
    ]
   },
   {
-   "titulo": "Gobierno amplía opciones para destrabar obras públicas paralizadas",
-   "nota": "El Gobierno evalúa ampliar el mecanismo de Obras por Impuestos para culminar proyectos públicos detenidos y recurrir al sector privado. El Congreso propone inventariar 2.416 obras paralizadas, que suman más de S/67.000 millones.",
+   "titulo": "Gobierno impulsará obras paralizadas con capital privado",
+   "nota": "El Gobierno evalúa ampliar el mecanismo de Obras por Impuestos para culminar proyectos públicos paralizados y lanzar un “Saldo de Obras por Impuestos”. El Congreso propuso inventariar 2.416 proyectos, que suman más de S/67.000 millones.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
@@ -106,54 +116,8 @@
    ]
   },
   {
-   "titulo": "Perupetro firma contrato de 30 años para el Lote 206",
-   "nota": "Perupetro suscribió un contrato de licencia por 30 años para explotar el yacimiento del Lote 206 en Talara. La operación se develope con Colombian Green Energy.",
-   "tema": "Minería y metales",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Lote 206: Perupetro suscribe contrato de licencia por 30 años para yacimiento en Talara",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/lote-206-perupetro-suscribe-contrato-de-licencia-por-30-anos-para-yacimiento-en-talara-noticia/",
-     "fecha": "2026-10-30T00:03:27.000Z"
-    },
-    {
-     "titulo": "Perupetro suscribe contrato para explotar el Lote 206 en Talara por 30 años",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-perupetro-suscribe-contrato-para-explotar-lote-206-talara-30-anos-1097841.aspx",
-     "fecha": "2026-10-29T22:30:00.000Z"
-    },
-    {
-     "titulo": "Perupetro firma contrato con Colombian Green Energy para que explote el Lote 206 en Talara por 30 años",
-     "fuente": "RPP Noticias",
-     "url": "https://rpp.pe/economia/economia/perupetro-firma-contrato-con-colombian-green-energy-para-que-explote-el-lote-206-en-talara-por-30-anos-noticia-1715081",
-     "fecha": "2026-10-29T22:15:23.000Z"
-    }
-   ]
-  },
-  {
-   "titulo": "Capeco recorta proyección de crecimiento de la construcción",
-   "nota": "La Cámara Peruana de la Construcción redujo en 9,2% su proyección de crecimiento de la construcción para este año. En septiembre, la construcción habría crecido 7,4%, mientras el avance de obras públicas cayó 3,9%.",
-   "tema": "Economía y fiscal",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Construcción habría crecido 7,4% en septiembre, pero el avance de obras públicas habría caído 3,9%",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/2026/10/29/construccion-habria-crecido-74-en-septiembre-pero-el-avance-de-obras-publicas-habria-caido-39-hnews-1641836",
-     "fecha": "2026-10-29T18:04:01.000Z"
-    },
-    {
-     "titulo": "Capeco recortó a 9,2% su proyección de crecimiento de la construcción para este año",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/capeco-recorto-a-92-su-proyeccion-de-crecimiento-de-la-construccion-para-2026-noticia/",
-     "fecha": "2026-10-29T16:05:39.000Z"
-    }
-   ]
-  },
-  {
-   "titulo": "Wall Street cierra en rojo por el desplome de Alphabet",
-   "nota": "Wall Street terminó a la baja con Alphabet, matriz de Google, cayendo 12,2% tras resultados decepcionantes y un flujo de caja libre negativo de US$9.065 millones. Intel también se desplomó al proyectar ventas inferiores a las estimadas, mientras Amazon elevó su inversión en infraestructura para IA.",
+   "titulo": "Wall Street cerró en rojo por el desplome de Alphabet",
+   "nota": "Wall Street terminó a la baja con una caída de 12,2% en Alphabet tras resultados decepcionantes y un flujo de caja libre negativo de US$9.065 millones. Intel también se desplomó al proyectar ventas inferiores a las estimaciones, mientras Amazon aumentó su inversión en infraestructura para inteligencia artificial.",
    "tema": "Mundo",
    "empresas": [],
    "fuentes": [
@@ -192,6 +156,26 @@
      "fuente": "Bloomberg Línea",
      "url": "https://www.bloomberglinea.com/mercados/el-sp-500-y-el-nasdaq-caen-con-el-desplome-de-alphabet-tras-nuevas-dudas-sobre-la-ia/",
      "fecha": "2026-10-29T20:41:32.000Z"
+    }
+   ]
+  },
+  {
+   "titulo": "Perú-China optimizarán su tratado comercial desde noviembre",
+   "nota": "El Protocolo de Optimización del TLC Perú-China entrará en vigencia el 1 de noviembre, según Mincetur. El acuerdo busca dinamizar sectores vinculados al comercio bilateral.",
+   "tema": "Economía y fiscal",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "TLC Perú - China pasará a fase de “optimizado” desde noviembre: ¿qué sectores se dinamizarán?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/peru-y-china-optimizacion-del-acuerdo-comercial-potenciaria-al-menos-a-estos-3-sectores-lo-que-dice-el-tlc-noticia/",
+     "fecha": "2026-10-30T00:16:00.000Z"
+    },
+    {
+     "titulo": "Mincetur: Protocolo de Optimización del TLC Perú - China entrará en vigencia el 1 de noviembre",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/economia/peru/mincetur-protocolo-de-optimizacion-del-tlc-peru-china-entrara-en-vigencia-el-1-de-noviembre-l-ultimas-noticia/",
+     "fecha": "2026-10-29T16:58:54.000Z"
     }
    ]
   }
