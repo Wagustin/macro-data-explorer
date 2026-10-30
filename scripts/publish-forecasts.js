@@ -66,7 +66,7 @@ console.log(`Guardadas ${rows.length} filas en Supabase`);
 
 // Rows from earlier runs that this run did not rewrite would keep serving old numbers
 const runAt = rows[0].run_at;
-const models = [ENGINE.id, ...ENGINE_FALLBACKS];
+const models = [ENGINE.id, ...ENGINE_FALLBACKS, "perdata-engine-v4", "timesfm-2.5", "engine-v3"]; // retired ids included
 const stale = await fetch(`${base}/rest/v1/forecasts?model=in.(${models.join(",")})&run_at=lt.${encodeURIComponent(runAt)}`, {
   method: "DELETE",
   headers: { apikey: key, Authorization: `Bearer ${key}`, Prefer: "return=minimal" },
