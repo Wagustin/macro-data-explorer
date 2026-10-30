@@ -72,7 +72,6 @@ const stale = await fetch(`${base}/rest/v1/forecasts?model=in.(${models.join(","
   headers: { apikey: key, Authorization: `Bearer ${key}`, Prefer: "return=minimal" },
 });
 if (!stale.ok) console.warn(`Aviso: no se limpiaron filas antiguas en Supabase: HTTP ${stale.status}`);
-await pruneD1("forecasts", { models, before: runAt });
 
 const historyRows = rows
   .filter((row) => HISTORY_HORIZONS.has(row.horizon))
@@ -113,4 +112,5 @@ if (historyRows.length && historySaved) {
 }
 
 await syncD1("forecasts", rows, 100);
+await pruneD1("forecasts", { models, before: runAt });
 console.log("Sincronización con Cloudflare D1 completada");
