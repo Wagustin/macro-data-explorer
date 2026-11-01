@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-01T16:31:32.270Z",
+  "actualizado": "2026-11-01T19:31:28.875Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,12 +24,12 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 44
+      "items": 38
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 23
+      "items": 18
     },
     "rpp": {
       "nombre": "RPP Noticias",
@@ -39,12 +39,12 @@
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 5
+      "items": 7
     },
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 8
+      "items": 12
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 14
+      "items": 15
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,132 @@
     }
   },
   "noticias": [
+    {
+      "id": "el_comercio-bac7de0eb2",
+      "titulo": "Inflación en Lima Metropolitana alcanza el 5,25% anual en octubre, su nivel más alto en más de tres años",
+      "url": "https://elcomercio.pe/economia/inflacion-en-lima-metropolitana-alcanza-el-525-anual-en-octubre-su-nivel-mas-alto-en-mas-de-tres-anos-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-01T19:22:37.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-9ec43608d5",
+      "titulo": "Falta de oportunidades para los jóvenes cuesta al menos 1,1% del PBI",
+      "url": "https://elcomercio.pe/economia/falta-de-oportunidades-para-los-jovenes-cuesta-al-menos-11-del-pbi-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-01T19:15:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-07c318f5a5",
+      "titulo": "Inflación en Lima supera el 5% y se aleja de la proyección del BCRP: alimentos y transporte presionan los precios",
+      "url": "https://larepublica.pe/economia/2026/11/01/inflacion-en-lima-supera-el-5-y-se-aleja-de-la-proyeccion-del-bcrp-alimentos-y-transporte-presionan-los-precios-57201",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-01T19:08:24.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-23d00c7c03",
+      "titulo": "Precio del dólar hoy en Perú, domingo 1 noviembre: consulta el tipo de cambio para compra y venta",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/01/precio-del-dolar-hoy-en-peru-domingo-1-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-781169",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-01T19:04:44.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-9352a51258",
+      "titulo": "Protocolo de seguridad y salud en el trabajo ante El Niño: ¿qué debe considerar la empresa?",
+      "url": "https://gestion.pe/economia/el-nino-aprueban-protocolo-de-seguridad-y-salud-en-el-trabajo-para-enfrentar-el-fenomeno-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-01T18:39:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-732e43605a",
+      "titulo": "Elecciones en centros poblados: ¿qué se elige y cuál es el rol de los organismos electorales? Especialista lo explica",
+      "url": "https://rpp.pe/politica/elecciones/elecciones-en-centros-poblados-que-se-elige-y-cual-es-el-rol-de-los-organismos-electorales-especialista-lo-explica-noticia-1715462",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-01T18:19:35.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-9e9a018384",
+      "titulo": "Un ataque armado contra una combi en Surquillo deja muerto al conductor y grave a una pasajera",
+      "url": "https://www.infobae.com/peru/2026/11/01/un-ataque-armado-contra-una-combi-en-surquillo-deja-muerto-al-conductor-y-grave-a-una-pasajera/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-01T18:15:50.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-60a18c492d",
+      "titulo": "Un pequeño huésped pudo frenar el envío de 19,5 toneladas de arroz peruano a EEUU: así logró pasar los controles sanitarios",
+      "url": "https://www.infobae.com/peru/2026/11/01/un-pequeno-huesped-pudo-frenar-el-envio-de-195-toneladas-de-arroz-peruano-a-eeuu-asi-logro-pasar-los-controles-sanitarios/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-01T18:14:31.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-6d76428d08",
+      "titulo": "Vivienda social: subsidios del Estado caen desde 2025 y pone en riesgo miles de entregas",
+      "url": "https://larepublica.pe/economia/2026/11/01/vivienda-social-subsidios-del-estado-caen-desde-2025-y-pone-en-riesgo-miles-de-entregas-402930",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-01T18:05:21.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-fc37ba9d0f",
+      "titulo": "El Niño podría golpear a la minería: relaves en 14 regiones bajo la lupa",
+      "url": "https://gestion.pe/economia/el-nino-pone-en-riesgo-relaves-mineros-en-14-regiones-donde-podrian-causar-contaminacion-cuales-son-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-01T17:32:00.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-703cf0ee92",
+      "titulo": "El “arancel” de la selva: los ajustes tributarios que impactaron en la Amazonía",
+      "url": "https://gestion.pe/economia/el-arancel-de-la-selva-la-exoneracion-tributaria-que-termino-encareciendo-la-amazonia-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-01T17:21:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-b85d3f3bb9",
+      "titulo": "Mbappé y el costo de perder el mercado chino: ¿qué está en juego y cómo se puede revertir la crisis? Esto dicen los expertos",
+      "url": "https://elcomercio.pe/economia/mbappe-y-el-costo-de-perder-el-mercado-chino-que-esta-en-juego-y-como-se-puede-revertir-la-crisis-esto-dicen-los-expertos-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-01T17:19:00.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-accfd2fba2",
+      "titulo": "Espá viajará a Rusia por casos de peruanos involucrados en guerra con Ucrania: “Han sido reclutados con mentiras”",
+      "url": "https://rpp.pe/politica/gobierno/espa-viajara-a-rusia-por-casos-de-peruanos-captados-para-guerra-con-ucrania-han-sido-reclutados-con-mentiras-noticia-1715457",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-01T17:06:26.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-8fa16828de",
+      "titulo": "Lotes VI y 207 apuntan a elevar producción de petróleo y gas con nuevas inversiones",
+      "url": "https://andina.pe/agencia/noticia-lotes-vi-y-207-apuntan-a-elevar-produccion-petroleo-y-gas-nuevas-inversiones-1098150.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-01T17:00:00.000Z",
+      "categoria": "Energía",
+      "semaforo": "VERDE"
+    },
     {
       "id": "gestion-076c0fbeac",
       "titulo": "Textil y confecciones: Produce aprueba plan para impulsar recuperación del sector en Perú",
@@ -79,24 +205,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-01T16:15:22.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-9ec43608d5",
-      "titulo": "Falta de oportunidades para los jóvenes cuesta al menos 1,1% del PBI",
-      "url": "https://elcomercio.pe/economia/falta-de-oportunidades-para-los-jovenes-cuesta-al-menos-11-del-pbi-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-01T16:14:49.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-23d00c7c03",
-      "titulo": "Precio del dólar hoy en Perú, domingo 1 noviembre: consulta el tipo de cambio para compra y venta",
-      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/01/precio-del-dolar-hoy-en-peru-domingo-1-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-781169",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-01T16:13:22.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -127,15 +235,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-fc37ba9d0f",
-      "titulo": "El Niño podría golpear a la minería: relaves en 14 regiones bajo la lupa",
-      "url": "https://gestion.pe/economia/el-nino-pone-en-riesgo-relaves-mineros-en-14-regiones-donde-podrian-causar-contaminacion-cuales-son-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-01T15:32:15.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-d81b19d831",
       "titulo": "INEI: consumo interno de cemento subió 12.22% en setiembre 2026",
       "url": "https://andina.pe/agencia/noticia-inei-consumo-interno-cemento-subio-1222-setiembre-2026-1098149.aspx",
@@ -143,33 +242,6 @@
       "fecha_iso": "2026-11-01T15:30:00.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-703cf0ee92",
-      "titulo": "El “arancel” de la selva: los ajustes tributarios que impactaron en la Amazonía",
-      "url": "https://gestion.pe/economia/el-arancel-de-la-selva-la-exoneracion-tributaria-que-termino-encareciendo-la-amazonia-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-01T15:21:15.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-b85d3f3bb9",
-      "titulo": "Mbappé y el costo de perder el mercado chino: ¿qué está en juego y cómo se puede revertir la crisis? Esto dicen los expertos",
-      "url": "https://elcomercio.pe/economia/mbappe-y-el-costo-de-perder-el-mercado-chino-que-esta-en-juego-y-como-se-puede-revertir-la-crisis-esto-dicen-los-expertos-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-01T15:19:45.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-9352a51258",
-      "titulo": "El Niño: Aprueban protocolo de seguridad y salud en el trabajo para enfrentar el fenómeno",
-      "url": "https://gestion.pe/economia/el-nino-aprueban-protocolo-de-seguridad-y-salud-en-el-trabajo-para-enfrentar-el-fenomeno-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-01T15:03:10.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "andina-de5e888a7a",
@@ -222,15 +294,6 @@
       "url": "https://www.infobae.com/peru/2026/11/01/elecciones-de-autoridades-de-municipalidades-de-centros-poblados-2026-se-realizan-hoy/",
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-01T13:57:55.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-9e9a018384",
-      "titulo": "Un ataque armado contra una combi en Surquillo deja muerto al conductor y grave a una pasajera",
-      "url": "https://www.infobae.com/peru/2026/11/01/un-ataque-armado-contra-una-combi-en-surquillo-deja-muerto-al-conductor-y-grave-a-una-pasajera/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-01T13:34:56.000Z",
       "categoria": "Mundo",
       "semaforo": "AMARILLO"
     },
@@ -361,15 +424,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "rpp-ef66b1beee",
-      "titulo": "Al menos tres gazatíes murieron por ataques del Ejército israelí",
-      "url": "https://rpp.pe/mundo/medio-oriente/genocidio-en-palestina-al-menos-tres-gazaties-murieron-por-ataques-del-ejercito-israeli-noticia-1715422",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-01T04:20:43.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-830ed8f793",
       "titulo": "Robo de credenciales: la amenaza que permite intrusiones difíciles de detectar en empresas",
       "url": "https://andina.pe/agencia/noticia-robo-credenciales-amenaza-permite-intrusiones-dificiles-detectar-empresas-1098102.aspx",
@@ -397,15 +451,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "rpp-71bb4763d2",
-      "titulo": "El precio de la vulnerabilidad: cuando el futuro del gas natural amenaza el bolsillo de los peruanos [INFORME]",
-      "url": "https://rpp.pe/economia/economia/el-precio-de-la-vulnerabilidad-cuando-el-futuro-del-gas-natural-amenaza-el-bolsillo-de-los-peruanos-noticia-1715374",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-01T02:00:23.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-fe8b420c9a",
       "titulo": "Vacancia de oficinas prime en Lima cae a 7.4% entre julio y setiembre",
       "url": "https://andina.pe/agencia/noticia-vacancia-oficinas-prime-lima-cae-a-74-entre-julio-y-setiembre-1098101.aspx",
@@ -413,15 +458,6 @@
       "fecha_iso": "2026-11-01T02:00:00.000Z",
       "categoria": "Otros",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "rpp-df0c220d00",
-      "titulo": "Donald Trump \"no ha tomado una decisión\" sobre reanudar ataques a Irán, afirmó Marco Rubio",
-      "url": "https://rpp.pe/mundo/estados-unidos/donald-trump-no-ha-tomado-una-decision-sobre-reanudar-ataques-a-iran-afirmo-marco-rubio-noticia-1715384",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-01T01:57:32.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "andina-d1c5a4cb5f",
@@ -883,102 +919,12 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-350d49bdf8",
-      "titulo": "Pensión de la ONP: conoce el cronograma de pagos de noviembre",
-      "url": "https://elcomercio.pe/economia/peru/pension-de-la-onp-conoce-el-cronograma-de-pagos-de-noviembre-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-10-30T19:23:14.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-7c528a23c7",
-      "titulo": "Parque Arauco mantiene fuerte crecimiento con un alza de 18,6% en ingresos en el tercer trimestre del 2026",
-      "url": "https://elcomercio.pe/economia/peru/parque-arauco-mantiene-fuerte-crecimiento-con-un-alza-de-186-en-ingresos-en-el-tercer-trimestre-del-2026-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-10-30T18:45:19.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-2f63db8d4a",
-      "titulo": "Gobierno aprueba nueva remuneración para docentes universitarios, ¿cuáles son los montos?",
-      "url": "https://gestion.pe/economia/mef-gobierno-aprueba-nueva-remuneracion-para-docentes-universitarios-cuales-son-los-montos-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-30T18:02:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-bd071e00d0",
-      "titulo": "Hackeo millonario a Binance: ciberataque afecta US$ 6,300 millones en activos digitales",
-      "url": "https://gestion.pe/economia/mercados/binance-cifra-en-us-6300-millones-el-impacto-de-un-ciberataque-de-criptomonedas-y-bloquea-sus-activos-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-30T18:02:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-4e8133cbd1",
-      "titulo": "Pensión 65 se incrementa a S/700 en noviembre: conoce cuándo se podrá cobrar el nuevo monto",
-      "url": "https://elcomercio.pe/economia/peru/pension-65-se-incrementa-a-s700-en-noviembre-conoce-cuando-se-podra-cobrar-el-nuevo-monto-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-10-30T17:47:56.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-17f104454a",
-      "titulo": "El Niño: avances contrarreloj y los riesgos a enfrentar, esto es lo que dice el Midagri",
-      "url": "https://gestion.pe/economia/el-nino-avances-contrarreloj-y-los-riesgos-a-enfrentar-en-peru-esto-es-lo-que-dice-marco-vinelli-ministro-del-midagri-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-30T17:36:53.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-3f797029c8",
-      "titulo": "Fonafe designa nuevos directores de cuatro empresas del Estado",
-      "url": "https://gestion.pe/economia/empresas/fonafe-designa-nuevos-directores-de-cuatro-empresas-del-estado-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-30T17:29:33.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "bloomberg_linea-6ac2e4a7ff",
       "titulo": "Producción de cobre de Chile se desploma 12% y marca su peor trimestre en dos décadas",
       "url": "https://www.bloomberglinea.com/latinoamerica/chile/produccion-de-cobre-de-chile-se-desploma-12-y-marca-su-peor-trimestre-en-dos-decadas/",
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-10-30T17:27:38.000Z",
       "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-fa73bac881",
-      "titulo": "¿Cuánto destinarán las empresas por trabajador en aguinaldos esta Navidad?",
-      "url": "https://gestion.pe/economia/empresas/onura-cuanto-destinaran-las-empresas-por-trabajador-en-aguinaldos-esta-navidad-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-10-30T17:22:43.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-76bf292489",
-      "titulo": "El dólar inicia la jornada en S/3,46 ante expectativas de nuevas alzas de tasas en EE. UU.",
-      "url": "https://elcomercio.pe/economia/peru/el-dolar-inicia-la-jornada-en-s346-ante-expectativas-de-nuevas-alzas-de-tasas-en-ee-uu-l-tipo-de-cambio-l-cotizacion-del-dolar-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-10-30T17:04:06.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-6d846feac0",
-      "titulo": "Intel se hunde casi un 30% en bolsa tras presentar cuentas por debajo de las expectativas",
-      "url": "https://elcomercio.pe/economia/mercados/intel-se-hunde-casi-un-30-en-bolsa-tras-presentar-cuentas-por-debajo-de-las-expectativas-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-10-30T16:28:19.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -1025,6 +971,33 @@
       "fecha_iso": "2026-10-30T10:15:00.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-dbcbb16e95",
+      "titulo": "En qué invertir en Argentina tras las elecciones de Brasil",
+      "url": "https://www.bloomberglinea.com/latinoamerica/argentina/en-que-invertir-en-argentina-tras-las-elecciones-de-brasil/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-10-30T08:25:00.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-e83e6ffe68",
+      "titulo": "Starbucks explora el uso de inteligencia artificial para tomar pedidos en sus servicios de drive-thru",
+      "url": "https://www.bloomberglinea.com/negocios/starbucks-explora-el-uso-de-inteligencia-artificial-para-tomar-pedidos-en-sus-servicios-de-drive-thru/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-10-30T06:09:03.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "mef-d2ce501338",
+      "titulo": "Gobierno evalúa ampliar mecanismo de Obras por Impuestos para culminar proyectos públicos paralizados",
+      "url": "https://www.gob.pe/institucion/mef/noticias/1465794-gobierno-evalua-ampliar-mecanismo-de-obras-por-impuestos-para-culminar-proyectos-publicos-paralizados",
+      "fuente": "Ministerio de Economía y Finanzas",
+      "fecha_iso": "2026-10-29T22:50:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
     }
   ]
 }
