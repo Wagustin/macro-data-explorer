@@ -43,7 +43,8 @@ const facts = rows.filter((row) => Number(row.horizon) === 1).map((row) => {
   const p50 = Number(row.p50);
   return {
     simbolo: sym, nombre: asset.name, ultimo: last,
-    direccion: p50 > last ? "sube" : p50 < last ? "baja" : "estable",
+    // Under 0.5 % the model is saying "no change", not a direction
+    direccion: p50 > last * 1.005 ? "sube" : p50 < last * 0.995 ? "baja" : "estable",
     proyeccion_1m: { p10: Number(row.p10), p50, p90: Number(row.p90) },
     proyeccion_3m: threeMonth ? { p10: Number(threeMonth.p10), p50: Number(threeMonth.p50), p90: Number(threeMonth.p90) } : null,
     titulares: headlines,

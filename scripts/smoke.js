@@ -378,6 +378,20 @@ async function testCalibration() {
   }
 }
 
+// A refresh must never get a 304 for HTML: the cached page keeps its old CSP nonce, the new policy
+// blocks every script and the site looks broken (happened on 31-oct-2026). Only the Worker adds nonces.
+async function testRefresh() {
+  if (/localhost|127\.0\.0\.1/.test(base)) return;
+  for (const page of ["/", "/noticias", "/explorer"]) {
+    const res = await fetchWithTimeout(`${base}${page}`, { headers: { "If-None-Match": '"x"', "If-Modified-Since": new Date().toUTCString() } });
+    const html = await res.text();
+    const csp = res.headers.get("content-security-policy") || "";
+    const nonce = /'nonce-([^']+)'/.exec(csp)?.[1];
+    const pass = res.status === 200 && !res.headers.get("etag") && Boolean(nonce) && html.includes(`nonce="${nonce}"`);
+    record(`Refresco ${page}`, pass, `HTTP ${res.status}, nonce ${nonce ? "coincide" : "ausente"}`);
+  }
+}
+
 async function main() {
   console.log(`\n======================================================`);
   console.log(`  PERDATA SANITY SMOKE TEST — Target: ${base}`);
@@ -385,6 +399,7 @@ async function main() {
 
   await testCalibration();
   await testPages();
+  await testRefresh();
   await testIssuerData();
   await testHistorical();
   await testForecast();

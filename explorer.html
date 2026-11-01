@@ -940,7 +940,7 @@
             <span class="text-xs font-bold text-black dark:text-white">Proyección probabilística</span>
             <span class="hidden sm:inline micro-label text-ink-soft">Banda P10–P90</span>
           </div>
-          <span id="forecastModelBadge" class="text-[11px] text-ink-soft font-mono">Modelo: PerData Engine v3</span>
+          <span id="forecastModelBadge" class="text-[11px] text-ink-soft font-mono">Modelo: PerData Engine v6</span>
         </div>
 
         <!-- Skeleton Loading State -->
@@ -2137,7 +2137,7 @@ const state = {
         if (!f || !f.forecastSeries || !f.forecastSeries.length) {
           glanceEl.innerHTML = `<span style="color:var(--pd-ink-soft);">Elige un activo para ver su proyección</span>`;
         } else {
-          const sym = p.currency === "PEN" ? "S/ " : "$";
+          const sym = /^PEN/.test(p.currency || "") ? "S/ " : "$";
           const lastReal = Number(p.series[p.series.length - 1].close);
           const targetItem = f.forecastSeries[f.forecastSeries.length - 1];
           const p10 = Number(targetItem.p10);
@@ -2146,6 +2146,10 @@ const state = {
           const pct = ((p50 - lastReal) / lastReal) * 100;
           const pctStr = (pct >= 0 ? "+" : "") + pct.toFixed(1).replace(".", ",") + " %";
           const pctColor = pct >= 0 ? "var(--pd-pos)" : "var(--pd-neg)";
+          // Under 0,05 % there is nothing to report: "-0,0 %" in red reads like a fall
+          const change = Math.abs(pct) < 0.05
+            ? "sin cambio frente a hoy"
+            : `un <strong style="color:${pctColor}; font-variant-numeric:tabular-nums;">${pctStr}</strong> frente a hoy`;
 
           let hText = "1 mes";
           const h = Number(state.horizon || 1);
@@ -2156,7 +2160,7 @@ const state = {
           else hText = `${h} meses`;
 
           const assetName = p.shortName || p.name || state.symbol || "el activo";
-          glanceEl.innerHTML = `Dentro de <strong class="text-ink">${escapeHTML(hText)}</strong>, <strong class="text-ink">${escapeHTML(assetName)}</strong> estaría entre <strong class="text-ink">${sym}${p10.toFixed(2)}</strong> y <strong class="text-ink">${sym}${p90.toFixed(2)}</strong> (8 de cada 10 veces). Lo más probable: <strong class="text-ink">${sym}${p50.toFixed(2)}</strong>, un <strong style="color:${pctColor}; font-variant-numeric:tabular-nums;">${pctStr}</strong> frente a hoy.`;
+          glanceEl.innerHTML = `Dentro de <strong class="text-ink">${escapeHTML(hText)}</strong>, <strong class="text-ink">${escapeHTML(assetName)}</strong> estaría entre <strong class="text-ink">${sym}${p10.toFixed(2)}</strong> y <strong class="text-ink">${sym}${p90.toFixed(2)}</strong> (8 de cada 10 veces). Lo más probable: <strong class="text-ink">${sym}${p50.toFixed(2)}</strong>, ${change}.`;
         }
       }
 
@@ -2253,7 +2257,7 @@ const state = {
       if (!p || !p.series) return;
 
       const series = p.series;
-      const currencySymbol = p.currency === "PEN" ? "S/ " : "$";
+      const currencySymbol = /^PEN/.test(p.currency || "") ? "S/ " : "$";
       const tbody = document.getElementById("tableBody");
       let html = "";
 

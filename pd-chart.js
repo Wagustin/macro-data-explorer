@@ -48,7 +48,7 @@
   }
 
   function currencySymbol(code) {
-    return code === "PEN" ? "S/ " : "$";
+    return /^PEN/.test(code || "") ? "S/ " : "$";
   }
 
   function getComputedTokens(el) {
@@ -98,7 +98,8 @@
       const range = options.range || "1y";
       const rangeYears = range === "1y" ? 1 : range === "2y" ? 2 : range === "3y" ? 3 : range === "5y" ? 5 : 10;
       const H = Number(options.horizonMonths || 1);
-      const isShortRange = rangeYears <= 1 || H <= 12;
+      // The terminal obeys its range buttons; the compact landing chart has none and follows the horizon
+      const isShortRange = options.compact ? H <= 12 : rangeYears <= 1;
 
       const dailySource = props.daily || [];
       const useDaily = isShortRange && dailySource && dailySource.length > 2;
@@ -120,8 +121,8 @@
       // Rango automático según horizonte (6 meses para H=1, 1 año para H=3-6 y 3 años para H=12)
       if (useDaily) {
         const H = Number(options.horizonMonths || 1);
-        // Móvil: ~3 meses de historia para que la proyección se vea; ordenador: 1 año
-        const dayLimit = isMobile ? 63 : 252;
+        // Portada en móvil: ~3 meses para que se vea la proyección; en lo demás, 1 año
+        const dayLimit = isMobile && options.compact ? 63 : 252;
         let sliced = seriesPoints.slice(-dayLimit);
         // Gráfico compacto (landing): cierres semanales, contando desde el último cierre para conservarlo
         if (options.compact && sliced.length > 120) {
@@ -132,8 +133,7 @@
           seriesData = sliced.map(h => h.v);
         }
       } else if (history && history.length > 0 && options.horizonMonths) {
-        const H = Number(options.horizonMonths);
-        const months = isMobile ? (H <= 6 ? 3 : 12) : (H <= 6 ? 12 : 36);
+        const months = options.compact ? (isMobile ? 12 : 36) : rangeYears * 12;
         const lastItem = seriesPoints[seriesPoints.length - 1];
         const lastDate = lastItem ? new Date(lastItem.d + "-01T00:00:00") : new Date();
         const cutoff = new Date(lastDate);
