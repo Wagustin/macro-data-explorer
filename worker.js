@@ -187,10 +187,15 @@ const API_CACHE_TTLS = new Map([
 // Per-response CSP nonce: every <script> in our HTML gets it, and 'strict-dynamic' then trusts the
 // scripts they load (Google sign-in, AdSense, Stripe). Enforced since 29-oct-2026, when no page reported violations.
 function withScriptNonce(response) {
-  if (!(response.headers.get("Content-Type") || "").includes("text/html")) return response;
+  if (response.status === 304 || !(response.headers.get("Content-Type") || "").includes("text/html")) return response;
   const bytes = crypto.getRandomValues(new Uint8Array(16));
   const nonce = btoa(String.fromCharCode(...bytes));
   const headers = new Headers(response.headers);
+  // A page is valid only with its own nonce: a 304 would pair the cached HTML with a new policy and
+  // block every script, so HTML is never revalidated
+  headers.delete("ETag");
+  headers.delete("Last-Modified");
+  headers.set("Cache-Control", "private, no-cache");
   // Built here, not taken from _headers: two matching _headers rules arrived as one comma-joined
   // value, and the browser enforced the stale second policy
   headers.delete("Content-Security-Policy-Report-Only");
@@ -238,7 +243,10 @@ export default {
       for (const [k, v] of Object.entries(SECURITY_HEADERS)) if (!r.headers.has(k)) r.headers.set(k, v);
       return r;
     }
-    const response = withScriptNonce(await this.route(request, env, ctx));
+    const fresh = new Headers(request.headers);
+    fresh.delete("If-None-Match");
+    fresh.delete("If-Modified-Since");
+    const response = withScriptNonce(await this.route(new Request(request, { headers: fresh }), env, ctx));
     const r = new Response(response.body, response);
     for (const [k, v] of Object.entries(SECURITY_HEADERS)) if (!r.headers.has(k)) r.headers.set(k, v);
     return r;
