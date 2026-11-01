@@ -7,7 +7,7 @@ export const CATALOG = [
   { symbol: "VOLCABC1.LM", name: "Volcan Compañía Minera S.A.A.", sector: "Minería", country: "Perú", category: "bvl_pe", tags: ["zinc", "plata", "plomo", "cerro", "de", "pasco", "chungar"] },
   { symbol: "MINSURI1.LM", name: "Minsur S.A.", sector: "Minería", country: "Perú", category: "bvl_pe", tags: ["estano", "oro", "san", "rafael", "pucamarca"] },
   { symbol: "NEXAPEC1.LM", name: "Nexa Resources Perú S.A.A.", sector: "Minería", country: "Perú", category: "bvl_pe", tags: ["zinc", "plomo", "cerro", "lindo", "nexa"] },
-  { symbol: "CPACASC1.LM", name: "Cementos Pacasmayo S.A.A.", sector: "Construcción / Cemento", country: "Perú", category: "bvl_pe", tags: ["cemento", "concreto", "norte"] },
+  { symbol: "CPACASI1.LM", name: "Cementos Pacasmayo S.A.A.", sector: "Construcción / Cemento", country: "Perú", category: "bvl_pe", tags: ["cemento", "concreto", "norte"] },
   { symbol: "UNACEMC1.LM", name: "UNACEM Corp S.A.A.", sector: "Construcción / Cemento", country: "Perú", category: "bvl_pe", tags: ["cemento", "lima", "unacem"] },
   { symbol: "SIDERC1.LM", name: "Empresa Siderúrgica del Perú S.A.A.", sector: "Industriales / Aceros", country: "Perú", category: "bvl_pe", tags: ["aceros", "siderurgia", "chimbote"] },
   { symbol: "ALICORC1.LM", name: "Alicorp S.A.A.", sector: "Consumo Masivo", country: "Perú", category: "bvl_pe", tags: ["alimentos", "primor", "don", "vittorio", "aceites", "fideos"] },

@@ -356,7 +356,7 @@ export function formatForecastPayload(row, symbol, H) {
   return {
     symbol,
     model: row.model || (isTfm ? "timesfm-2.5" : "engine-v3"),
-    architecture: label || "PerData Engine v3 (tendencia amortiguada + reversión al ancla + abanico OU)",
+    architecture: label || "PerData Engine (cálculo estadístico de respaldo)",
     runAt: row.run_at,
     calibration: calibrationPayload,
     horizonMonths: H,
@@ -379,7 +379,7 @@ export function formatForecastPayload(row, symbol, H) {
     metrics: {
       confidenceLevel: "80% (P10 - P90)",
       driftDirection: expectedReturnPct >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
-      modelArchitecture: label || "PerData Engine v3",
+      modelArchitecture: label || "PerData Engine",
       batchRunAt: row.run_at
     },
     forecastSeries: row.path
