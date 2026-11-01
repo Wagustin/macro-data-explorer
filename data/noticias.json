@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-01T00:07:37.005Z",
+  "actualizado": "2026-11-01T03:01:31.194Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,27 +24,27 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 58
+      "items": 49
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 49
+      "items": 47
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 7
+      "items": 8
     },
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 5
+      "items": 4
     },
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 12
+      "items": 11
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 15
+      "items": 14
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,78 @@
     }
   },
   "noticias": [
+    {
+      "id": "infobae-ef1e60b66e",
+      "titulo": "Lima: este es el precio de la gasolina este sábado 31 de octubre",
+      "url": "https://www.infobae.com/peru/2026/10/31/lima-este-es-el-precio-de-la-gasolina-este-sabado-31-de-octubre/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-01T02:50:12.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-22f7948137",
+      "titulo": "ONPE podría implementar conteo rápido oficial en elecciones generales para emitir resultados en horas y no en semanas",
+      "url": "https://www.infobae.com/peru/2026/11/01/onpe-podria-implementar-conteo-rapido-oficial-en-elecciones-generales-para-emitir-resultados-en-horas-y-no-en-semanas/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-01T02:18:48.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-71bb4763d2",
+      "titulo": "El precio de la vulnerabilidad: cuando el futuro del gas natural amenaza el bolsillo de los peruanos [INFORME]",
+      "url": "https://rpp.pe/economia/economia/el-precio-de-la-vulnerabilidad-cuando-el-futuro-del-gas-natural-amenaza-el-bolsillo-de-los-peruanos-noticia-1715374",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-01T02:00:23.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-fe8b420c9a",
+      "titulo": "Vacancia de oficinas prime en Lima cae a 7.4% entre julio y setiembre",
+      "url": "https://andina.pe/agencia/noticia-vacancia-oficinas-prime-lima-cae-a-74-entre-julio-y-setiembre-1098101.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-01T02:00:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "rpp-df0c220d00",
+      "titulo": "Donald Trump \"no ha tomado una decisión\" sobre reanudar ataques a Irán, afirmó Marco Rubio",
+      "url": "https://rpp.pe/mundo/estados-unidos/donald-trump-no-ha-tomado-una-decision-sobre-reanudar-ataques-a-iran-afirmo-marco-rubio-noticia-1715384",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-01T01:57:32.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-99e729c1ae",
+      "titulo": "Precio del dólar en Perú del domingo 1 de noviembre: cuál es el tipo de cambio",
+      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-2026-hoy-domingo-1-de-noviembre-tipo-de-cambio-segun-el-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-01T00:37:34.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-d1c5a4cb5f",
+      "titulo": "Gobierno aprueba plan para la reactivación del sector textil y confecciones",
+      "url": "https://andina.pe/agencia/noticia-gobierno-aprueba-plan-para-reactivacion-del-sector-textil-y-confecciones-1098115.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-01T00:10:31.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "rpp-b9a58de0ea",
+      "titulo": "FBI atribuye a Corea del Norte robo de US$ 6 300 millones en criptomonedas de Binance",
+      "url": "https://rpp.pe/mundo/estados-unidos/el-fbi-acusa-a-corea-del-norte-del-ciberataque-a-binance-por-6300-millones-de-dolares-noticia-1715414",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-01T00:08:44.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "andina-6fbe16516a",
       "titulo": "Cyber Wow 2026: conoce los detalles de la última edición del evento de este año",
@@ -191,7 +263,7 @@
     },
     {
       "id": "el_comercio-01e82afced",
-      "titulo": "Precio del dólar hoy, 31 de octubre de 2026: ¿A cuánto cotiza el tipo de cambio?",
+      "titulo": "Precio del dólar en Perú del sábado 31 de octubre",
       "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-2026-hoy-sabado-31-de-octubre-tipo-de-cambio-segun-el-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-10-31T19:10:53.000Z",
@@ -206,15 +278,6 @@
       "fecha_iso": "2026-10-31T19:00:00.000Z",
       "categoria": "Dólar y BCRP",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "rpp-71bb4763d2",
-      "titulo": "El precio de la vulnerabilidad: cuando el futuro del gas natural amenaza el bolsillo de los peruanos [INFORME]",
-      "url": "https://rpp.pe/economia/economia/el-precio-de-la-vulnerabilidad-cuando-el-futuro-del-gas-natural-amenaza-el-bolsillo-de-los-peruanos-noticia-1715374",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-10-31T18:56:23.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "andina-dd8f6e5395",
@@ -232,15 +295,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-10-31T17:46:44.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-2f817c76e8",
-      "titulo": "Marco Rubio niega que EE.UU. facilitara la salida de Brasil de Flávio Bolsonaro",
-      "url": "https://rpp.pe/mundo/estados-unidos/marco-rubio-niega-que-eeuu-facilitara-la-salida-de-brasil-de-flavio-bolsonaro-noticia-1715354",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-10-31T17:30:57.000Z",
-      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     },
     {
@@ -442,15 +496,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "infobae-ef1e60b66e",
-      "titulo": "Lima: este es el precio de la gasolina este sábado 31 de octubre",
-      "url": "https://www.infobae.com/peru/2026/10/31/lima-este-es-el-precio-de-la-gasolina-este-sabado-31-de-octubre/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-31T12:16:26.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-2ce803c3c5",
       "titulo": "Fernando Vivanco, VP de Nuevos Negocios del Grupo Coril: “Alfin Banco pasará a ser la unidad más importante de Grupo Coril”",
       "url": "https://elcomercio.pe/economia/dia-1/fernando-vivanco-alfin-banco-pasara-a-ser-la-unidad-mas-importante-de-grupo-coril-noticia/",
@@ -484,15 +529,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-10-31T10:15:00.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-b7cac0ea83",
-      "titulo": "Cómo ahorrar en combustible en Lima: estos son los grifos con los precios más bajos de gasolina y diésel",
-      "url": "https://www.infobae.com/peru/2026/10/30/como-ahorrar-en-combustible-en-lima-estos-son-los-grifos-con-los-precios-mas-bajos-de-gasolina-y-diesel/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-10-31T02:48:24.000Z",
-      "categoria": "Energía",
       "semaforo": "AMARILLO"
     },
     {
@@ -757,18 +793,18 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-2f63db8d4a",
-      "titulo": "Gobierno aprueba nueva remuneración para docentes universitarios, ¿cuáles son los montos?",
-      "url": "https://gestion.pe/economia/mef-gobierno-aprueba-nueva-remuneracion-para-docentes-universitarios-cuales-son-los-montos-noticia/",
+      "id": "gestion-bd071e00d0",
+      "titulo": "Hackeo millonario a Binance: ciberataque afecta US$ 6,300 millones en activos digitales",
+      "url": "https://gestion.pe/economia/mercados/binance-cifra-en-us-6300-millones-el-impacto-de-un-ciberataque-de-criptomonedas-y-bloquea-sus-activos-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-10-30T18:02:00.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-bd071e00d0",
-      "titulo": "Hackeo millonario a Binance: ciberataque afecta US$ 6,300 millones en activos digitales",
-      "url": "https://gestion.pe/economia/mercados/binance-cifra-en-us-6300-millones-el-impacto-de-un-ciberataque-de-criptomonedas-y-bloquea-sus-activos-noticia/",
+      "id": "gestion-2f63db8d4a",
+      "titulo": "Gobierno aprueba nueva remuneración para docentes universitarios, ¿cuáles son los montos?",
+      "url": "https://gestion.pe/economia/mef-gobierno-aprueba-nueva-remuneracion-para-docentes-universitarios-cuales-son-los-montos-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-10-30T18:02:00.000Z",
       "categoria": "Economía y fiscal",
@@ -952,15 +988,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-10-30T13:34:23.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-0d0fca8019",
-      "titulo": "El oro cae por debajo de los US$4.000 la onza y se encamina a su segundo mes de pérdidas",
-      "url": "https://www.bloomberglinea.com/mercados/el-oro-cae-por-debajo-de-los-us4000-la-onza-y-se-encamina-a-su-segundo-mes-de-perdidas/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-10-30T13:04:17.000Z",
-      "categoria": "Minería y metales",
       "semaforo": "AMARILLO"
     }
   ]
