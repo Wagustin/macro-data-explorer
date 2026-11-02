@@ -92,6 +92,10 @@ html.dark {
 }
 
 /* ---------- Global Typography & Reset ---------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 html, body {
   font-family: var(--pd-font-ui);
   -webkit-font-smoothing: antialiased;
@@ -99,6 +103,7 @@ html, body {
 }
 
 body {
+  margin: 0;
   background-color: var(--pd-paper);
   color: var(--pd-ink);
 }
@@ -497,6 +502,7 @@ html.dark .pd-mark {
 
 /* ---------- Buttons & Interactive Elements ---------- */
 .pd-btn {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -518,7 +524,7 @@ html.dark .pd-mark {
 }
 
 .pd-btn[disabled] { opacity: 0.55; cursor: not-allowed; }
-.pd-btn-block { width: 100%; }
+.pd-btn-block { width: 100%; box-sizing: border-box; }
 
 .pd-btn-primary {
   background-color: var(--pd-accent);
@@ -904,6 +910,330 @@ html.dark .pd-acct-menu { box-shadow: none; }
 }
 
 .pd-dialog-close:hover { color: var(--pd-ink); background: var(--pd-surface); }
+.pd-dialog-close:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--pd-focus); }
+
+/* ---------- Auth Modal Specific (Editorial 2-Col + Motion) ---------- */
+#pdAuthModal .pd-dialog-box {
+  max-width: 760px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+#pdAuthModal .pd-dialog-close {
+  top: 12px;
+  right: 12px;
+  z-index: 5;
+}
+
+#pdAuthModal .pd-dialog-title {
+  font-family: var(--pd-font-read);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--pd-ink);
+  margin: 0 0 4px;
+}
+
+#pdAuthModal .pd-dialog-brand {
+  margin-bottom: 14px;
+}
+
+#pdAuthModal .pd-dialog-brand .pd-wordmark {
+  color: var(--pd-ink);
+  font-size: 22px;
+}
+
+#pdAuthModal .pd-auth-art {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--pd-surface);
+  border-right: 1px solid var(--pd-rule);
+  padding: 24px 22px;
+  position: relative;
+  user-select: none;
+}
+
+#pdAuthModal .pd-auth-art-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+#pdAuthModal .pd-auth-art-kicker {
+  font: 700 10px/1 var(--pd-font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pd-ink-soft);
+}
+
+#pdAuthModal .pd-auth-art-tag {
+  font: 600 9px/1 var(--pd-font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 6px;
+  border-radius: 2px;
+  border: 1px solid var(--pd-rule);
+  color: var(--pd-ink);
+  background: var(--pd-card);
+}
+
+#pdAuthModal .pd-auth-art-scene {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+}
+
+#pdAuthModal .pd-auth-chart-svg {
+  width: 100%;
+  height: auto;
+  max-height: 160px;
+  display: block;
+}
+
+#pdAuthModal .pd-chart-grid {
+  stroke: var(--pd-rule);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+  opacity: 0.8;
+}
+
+#pdAuthModal .pd-chart-label {
+  font: 500 8.5px var(--pd-font-mono);
+  fill: var(--pd-ink-soft);
+}
+
+#pdAuthModal .pd-chart-t0 {
+  stroke: var(--pd-ink-soft);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+  opacity: 0.6;
+}
+
+#pdAuthModal .pd-chart-t0-text {
+  font: 700 8px var(--pd-font-mono);
+  fill: var(--pd-ink-soft);
+  letter-spacing: 0.06em;
+}
+
+#pdAuthModal .pd-chart-bound-text {
+  font: 700 7.5px var(--pd-font-mono);
+  fill: var(--pd-ink-soft);
+  opacity: 0.8;
+}
+
+/* Fan area - abanico probabilistico P10-P90 */
+#pdAuthModal {
+  --pd-fan-op-base: 0.04;
+  --pd-fan-op-full: 0.08;
+}
+
+html.dark #pdAuthModal {
+  --pd-fan-op-base: 0.08;
+  --pd-fan-op-full: 0.14;
+}
+
+#pdAuthModal .pd-chart-fan {
+  fill: var(--pd-ink);
+  opacity: var(--pd-fan-op-full);
+  transform-origin: 145px 88px;
+  animation: pdFanSpread 12s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+#pdAuthModal .pd-chart-p90,
+#pdAuthModal .pd-chart-p10 {
+  fill: none;
+  stroke: var(--pd-ink-soft);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  transform-origin: 145px 88px;
+  animation: pdFanLine 12s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+#pdAuthModal .pd-chart-p50 {
+  fill: none;
+  stroke: var(--pd-ink);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 2;
+  stroke-dashoffset: 0;
+  animation: pdLineDrawForecast 12s ease-in-out infinite;
+}
+
+/* Historical line */
+#pdAuthModal .pd-chart-hist {
+  fill: none;
+  stroke: var(--pd-ink);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 140;
+  stroke-dashoffset: 0;
+  animation: pdLineDrawHist 12s ease-in-out infinite;
+}
+
+/* Anchor dot - Peru Red */
+#pdAuthModal .pd-chart-dot {
+  fill: var(--pd-peru);
+  transform-origin: 145px 88px;
+  animation: pdDotPulse 12s ease-in-out infinite;
+}
+
+#pdAuthModal .pd-auth-art-footer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--pd-rule);
+  margin-top: 8px;
+}
+
+#pdAuthModal .pd-auth-art-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+#pdAuthModal .pd-auth-art-num {
+  font: 700 11px/1 var(--pd-font-mono);
+  color: var(--pd-ink);
+}
+
+#pdAuthModal .pd-auth-art-sub {
+  font: 500 8.5px/1 var(--pd-font-ui);
+  color: var(--pd-ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+#pdAuthModal,
+#pdAuthModal *,
+#pdAuthModal *::before,
+#pdAuthModal *::after {
+  box-sizing: border-box;
+}
+
+#pdAuthModal .pd-auth-body {
+  padding: 30px 28px 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+#pdAuthModal .pd-form,
+#pdAuthModal .pd-field,
+#pdAuthModal .pd-field-pw,
+#pdAuthModal .pd-field input,
+#pdAuthModal .pd-btn,
+#pdAuthModal .pd-btn-block,
+#pdAuthModal #pdAuthSubmit,
+#pdAuthModal #pdGoogleBtn {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+#pdAuthModal .pd-tabs button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--pd-focus);
+}
+
+#pdAuthModal .pd-field input:focus-visible {
+  outline: none;
+  border-color: var(--pd-brand) !important;
+  box-shadow: 0 0 0 3px var(--pd-focus);
+}
+
+/* Keyframes for subtle editorial motion (1.5s draw + quiet hold in 12s loop) */
+@keyframes pdLineDrawHist {
+  0% { stroke-dashoffset: 140; }
+  6.7%, 87.5% { stroke-dashoffset: 0; }
+  96%, 100% { stroke-dashoffset: 140; }
+}
+
+@keyframes pdDotPulse {
+  0%, 5% { opacity: 1; transform: scale(1); }
+  6.7% { opacity: 1; transform: scale(1.3); }
+  8.5%, 87.5% { opacity: 1; transform: scale(1); }
+  96%, 100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pdFanSpread {
+  0% { opacity: var(--pd-fan-op-base, 0.04); transform: scaleY(0.5); }
+  12.5%, 87.5% { opacity: var(--pd-fan-op-full, 0.08); transform: scaleY(1); }
+  96%, 100% { opacity: var(--pd-fan-op-base, 0.04); transform: scaleY(0.5); }
+}
+
+@keyframes pdFanLine {
+  0% { opacity: 0.6; transform: scaleY(0.5); }
+  12.5%, 87.5% { opacity: 1; transform: scaleY(1); }
+  96%, 100% { opacity: 0.6; transform: scaleY(0.5); }
+}
+
+@keyframes pdLineDrawForecast {
+  0%, 4% { stroke-dashoffset: 140; opacity: 0.8; }
+  12.5%, 87.5% { stroke-dashoffset: 0; opacity: 1; }
+  96%, 100% { stroke-dashoffset: 140; opacity: 0.8; }
+}
+
+/* Responsive collapse for tablet and mobile (390px safe) */
+@media (max-width: 680px) {
+  #pdAuthModal .pd-dialog-box {
+    max-width: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
+  }
+  #pdAuthModal .pd-auth-art {
+    border-right: none;
+    border-bottom: 1px solid var(--pd-rule);
+    padding: 14px 16px 12px;
+  }
+  #pdAuthModal .pd-auth-art-scene {
+    min-height: 85px;
+  }
+  #pdAuthModal .pd-auth-chart-svg {
+    max-height: 90px;
+  }
+  #pdAuthModal .pd-auth-art-footer {
+    display: none;
+  }
+  #pdAuthModal .pd-auth-body {
+    padding: 20px 18px 20px;
+  }
+  #pdAuthModal .pd-dialog-title {
+    font-size: 20px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  #pdAuthModal .pd-chart-hist,
+  #pdAuthModal .pd-chart-p50,
+  #pdAuthModal .pd-chart-p90,
+  #pdAuthModal .pd-chart-p10,
+  #pdAuthModal .pd-chart-fan,
+  #pdAuthModal .pd-chart-dot {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  #pdAuthModal .pd-chart-fan {
+    opacity: var(--pd-fan-op-full, 0.08) !important;
+  }
+}
 
 .pd-dialog-brand { display: flex; align-items: center; gap: 8px; font: 700 14px/1 var(--pd-font-ui); color: var(--pd-ink); margin-bottom: 20px; }
 .pd-dialog-title { font: 700 22px/1.15 var(--pd-font-ui); letter-spacing: -0.025em; margin: 0 0 6px; }
@@ -923,20 +1253,21 @@ html.dark .pd-acct-menu { box-shadow: none; }
 html.dark .pd-tabs button[aria-selected="true"] { background: var(--pd-surface); color: #FFFFFF; }
 
 /* ---------- Forms ---------- */
-.pd-form { display: flex; flex-direction: column; gap: 14px; }
-.pd-field { display: flex; flex-direction: column; gap: 6px; }
+.pd-form { display: flex; flex-direction: column; gap: 14px; box-sizing: border-box; width: 100%; }
+.pd-field { display: flex; flex-direction: column; gap: 6px; box-sizing: border-box; width: 100%; }
 .pd-field[hidden] { display: none; }
 .pd-field > span:first-child { font: 600 12px/1 var(--pd-font-ui); color: var(--pd-ink); }
 
 .pd-field input {
+  box-sizing: border-box;
   width: 100%; height: 44px; padding: 0 14px; border-radius: 4px; border: 1px solid var(--pd-border);
   background: var(--pd-card); color: var(--pd-ink); font: 500 14px/1 var(--pd-font-ui);
 }
 
 .pd-field input:focus { outline: none; border-color: var(--pd-brand) !important; box-shadow: 0 0 0 3px var(--pd-focus); }
 
-.pd-field-pw { position: relative; display: block; }
-.pd-field-pw input { padding-right: 44px; }
+.pd-field-pw { position: relative; display: block; box-sizing: border-box; width: 100%; }
+.pd-field-pw input { box-sizing: border-box; width: 100%; padding-right: 44px; }
 .pd-field-pw button {
   position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border: 0; border-radius: 4px;
   background: transparent; color: var(--pd-ink-soft); display: inline-flex; align-items: center; justify-content: center; cursor: pointer;

@@ -497,30 +497,66 @@
       '<div id="pdAuthModal" class="pd-dialog" hidden>' +
         '<div class="pd-dialog-box" role="dialog" aria-modal="true" aria-labelledby="pdAuthTitle">' +
           '<button type="button" class="pd-dialog-close" data-close aria-label="Cerrar">' + ICON_CLOSE + "</button>" +
-          '<div class="pd-dialog-brand"><span class="pd-mark" aria-hidden="true">P</span><span>PerData</span></div>' +
-          '<h2 id="pdAuthTitle" class="pd-dialog-title">Inicia sesión en PerData</h2>' +
-          '<p id="pdAuthPrompt" class="pd-dialog-prompt" hidden></p>' +
-          '<div class="pd-tabs" role="tablist">' +
-            '<button id="pdTabSignIn" type="button" role="tab" aria-selected="true">Iniciar sesión</button>' +
-            '<button id="pdTabSignUp" type="button" role="tab" aria-selected="false">Crear cuenta</button>' +
+          '<div class="pd-auth-art" aria-hidden="true">' +
+            '<div class="pd-auth-art-header">' +
+              '<span class="pd-auth-art-kicker">Terminal PerData</span>' +
+              '<span class="pd-auth-art-tag">Calibración P10–P90</span>' +
+            '</div>' +
+            '<div class="pd-auth-art-scene">' +
+              '<svg class="pd-auth-chart-svg" viewBox="0 0 280 160" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">' +
+                '<line class="pd-chart-grid" x1="36" y1="35" x2="265" y2="35"/>' +
+                '<line class="pd-chart-grid" x1="36" y1="70" x2="265" y2="70"/>' +
+                '<line class="pd-chart-grid" x1="36" y1="105" x2="265" y2="105"/>' +
+                '<line class="pd-chart-grid" x1="36" y1="140" x2="265" y2="140"/>' +
+                '<text class="pd-chart-label" x="30" y="38" text-anchor="end">148</text>' +
+                '<text class="pd-chart-label" x="30" y="73" text-anchor="end">140</text>' +
+                '<text class="pd-chart-label" x="30" y="108" text-anchor="end">132</text>' +
+                '<text class="pd-chart-label" x="30" y="143" text-anchor="end">124</text>' +
+                '<line class="pd-chart-t0" x1="145" y1="25" x2="145" y2="145"/>' +
+                '<text class="pd-chart-t0-text" x="145" y="20" text-anchor="middle">HOY</text>' +
+                '<path class="pd-chart-fan" d="M 145,88 L 180,68 L 220,50 L 260,38 L 260,138 L 220,122 L 180,104 Z"/>' +
+                '<path class="pd-chart-p90" d="M 145,88 L 180,68 L 220,50 L 260,38"/>' +
+                '<text class="pd-chart-bound-text" x="264" y="34" text-anchor="end">P90</text>' +
+                '<path class="pd-chart-p10" d="M 145,88 L 180,104 L 220,122 L 260,138"/>' +
+                '<text class="pd-chart-bound-text" x="264" y="148" text-anchor="end">P10</text>' +
+                '<path class="pd-chart-p50" d="M 145,88 L 180,84 L 220,78 L 260,82"/>' +
+                '<text class="pd-chart-bound-text" x="264" y="78" text-anchor="end">P50</text>' +
+                '<path class="pd-chart-hist" d="M 38,118 L 62,112 L 85,96 L 108,102 L 126,82 L 145,88"/>' +
+                '<circle class="pd-chart-dot" cx="145" cy="88" r="3.5"/>' +
+              '</svg>' +
+            '</div>' +
+            '<div class="pd-auth-art-footer">' +
+              '<div class="pd-auth-art-stat"><span class="pd-auth-art-num">80%</span><span class="pd-auth-art-sub">Banda P10–P90</span></div>' +
+              '<div class="pd-auth-art-stat"><span class="pd-auth-art-num">12M</span><span class="pd-auth-art-sub">Horizonte</span></div>' +
+              '<div class="pd-auth-art-stat"><span class="pd-auth-art-num">TimesFM</span><span class="pd-auth-art-sub">Motor</span></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="pd-auth-body">' +
+            '<div class="pd-dialog-brand"><span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span></div>' +
+            '<h2 id="pdAuthTitle" class="pd-dialog-title">Inicia sesión en PerData</h2>' +
+            '<p id="pdAuthPrompt" class="pd-dialog-prompt" hidden></p>' +
+            '<div class="pd-tabs" role="tablist">' +
+              '<button id="pdTabSignIn" type="button" role="tab" aria-selected="true">Iniciar sesión</button>' +
+              '<button id="pdTabSignUp" type="button" role="tab" aria-selected="false">Crear cuenta</button>' +
+            "</div>" +
+            '<div id="pdGoogleWrap" hidden>' +
+              '<a id="pdGoogleBtn" class="pd-btn pd-btn-ghost pd-btn-block" href="/api/auth?action=google">' + ICON_GOOGLE + '<span>Continuar con Google</span></a>' +
+              '<p class="pd-auth-or"><span>o con tu correo</span></p>' +
+            "</div>" +
+            '<form id="pdAuthForm" class="pd-form" novalidate>' +
+              '<label id="pdGroupName" class="pd-field" hidden><span>Nombre</span>' +
+                '<input id="pdAuthName" type="text" autocomplete="name" maxlength="80" placeholder="Cómo te llamamos"></label>' +
+              '<label class="pd-field"><span>Correo electrónico</span>' +
+                '<input id="pdAuthEmail" type="email" autocomplete="email" required placeholder="tu@empresa.com"></label>' +
+              '<label class="pd-field"><span>Contraseña</span><span class="pd-field-pw">' +
+                '<input id="pdAuthPassword" type="password" autocomplete="current-password" required placeholder="Tu contraseña">' +
+                '<button type="button" id="pdTogglePw" aria-label="Mostrar contraseña">' + ICON_EYE + "</button></span></label>" +
+              '<div id="pdForgot" class="pd-form-aside"><button type="button" id="pdForgotBtn">¿Olvidaste tu contraseña?</button></div>' +
+              '<p id="pdAuthStatus" class="pd-form-status" role="status" aria-live="polite"></p>' +
+              '<button id="pdAuthSubmit" type="submit" class="pd-btn pd-btn-primary pd-btn-block">Iniciar sesión</button>' +
+              '<p id="pdAuthLegal" class="pd-form-legal" hidden>Al crear tu cuenta aceptas los <a href="/terms">Términos y Condiciones</a>.</p>' +
+            "</form>" +
           "</div>" +
-          '<div id="pdGoogleWrap" hidden>' +
-            '<a id="pdGoogleBtn" class="pd-btn pd-btn-ghost pd-btn-block" href="/api/auth?action=google">' + ICON_GOOGLE + '<span>Continuar con Google</span></a>' +
-            '<p class="pd-auth-or"><span>o con tu correo</span></p>' +
-          "</div>" +
-          '<form id="pdAuthForm" class="pd-form" novalidate>' +
-            '<label id="pdGroupName" class="pd-field" hidden><span>Nombre</span>' +
-              '<input id="pdAuthName" type="text" autocomplete="name" maxlength="80" placeholder="Cómo te llamamos"></label>' +
-            '<label class="pd-field"><span>Correo electrónico</span>' +
-              '<input id="pdAuthEmail" type="email" autocomplete="email" required placeholder="tu@empresa.com"></label>' +
-            '<label class="pd-field"><span>Contraseña</span><span class="pd-field-pw">' +
-              '<input id="pdAuthPassword" type="password" autocomplete="current-password" required placeholder="Tu contraseña">' +
-              '<button type="button" id="pdTogglePw" aria-label="Mostrar contraseña">' + ICON_EYE + "</button></span></label>" +
-            '<div id="pdForgot" class="pd-form-aside"><button type="button" id="pdForgotBtn">¿Olvidaste tu contraseña?</button></div>' +
-            '<p id="pdAuthStatus" class="pd-form-status" role="status" aria-live="polite"></p>' +
-            '<button id="pdAuthSubmit" type="submit" class="pd-btn pd-btn-primary pd-btn-block">Iniciar sesión</button>' +
-            '<p id="pdAuthLegal" class="pd-form-legal" hidden>Al crear tu cuenta aceptas los <a href="/terms">Términos y Condiciones</a>.</p>' +
-          "</form>" +
         "</div>" +
       "</div>");
 
