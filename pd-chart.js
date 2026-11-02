@@ -234,6 +234,25 @@
 
           labels.push(alpha > 0.5 ? m1.date : m0.date);
         }
+
+        // Escenario del modelo: misma rejilla que el P50, interpolado entre hitos mensuales
+        if (scenarioSeries.length) {
+          const scenMilestones = [{ prog: 0, v: lastRealVal }];
+          scenarioSeries.forEach((item, mIdx) => {
+            scenMilestones.push({ prog: (mIdx + 1) / scenarioSeries.length, v: Number(item.value) });
+          });
+          scenario[nHist - 1] = lastRealVal;
+          for (let k = 1; k <= nFutureSlots; k++) {
+            const prog = k / nFutureSlots;
+            let seg = 0;
+            while (seg < scenMilestones.length - 1 && scenMilestones[seg + 1].prog < prog) seg++;
+            const s0 = scenMilestones[seg];
+            const s1 = scenMilestones[seg + 1] || s0;
+            const span = (s1.prog - s0.prog) || 1;
+            const a = Math.min(1, Math.max(0, (prog - s0.prog) / span));
+            scenario[nHist - 1 + k] = Number((s0.v + a * (s1.v - s0.v)).toFixed(4));
+          }
+        }
       }
 
       const ctx = container.querySelector("canvas");
@@ -346,6 +365,20 @@
           tension: 0.15,
           order: 1,
         });
+        if (scenario.some((v) => v != null)) {
+          datasets.push({
+            label: "Escenario",
+            data: scenario,
+            borderColor: tokens.inkSoft,
+            backgroundColor: "transparent",
+            borderWidth: 1,
+            borderDash: [2, 3],
+            pointRadius: 0,
+            fill: false,
+            tension: 0.15,
+            order: 1,
+          });
+        }
         // Punto del último cierre real
         const lastReal = new Array(labels.length).fill(null);
         lastReal[nHist - 1] = seriesData[seriesData.length - 1];
@@ -732,6 +765,7 @@
           html += row("Lo más probable (P50)", fmt(p), true);
           if (p10[idx] != null && p90[idx] != null) html += row("Rango 80 % (P10–P90)", fmt(p10[idx]) + " – " + fmt(p90[idx]));
           if (p25[idx] != null && p75[idx] != null) html += row("Rango 50 % (P25–P75)", fmt(p25[idx]) + " – " + fmt(p75[idx]));
+          if (scenario[idx] != null && !isNaN(scenario[idx])) html += row("Escenario (menos fiable)", fmt(scenario[idx]));
           const base = seriesData[nHist - 1];
           if (base) {
             const ch = (p - base) / base * 100;
