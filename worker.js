@@ -10,6 +10,7 @@ import statusHandler from "./api/status.js";
 import boletinHandler from "./api/boletin.js";
 import syncHandler from "./api/sync.js";
 import mercadoHandler from "./api/mercado.js";
+import seguimientoHandler from "./api/seguimiento.js";
 import { runBackup } from "./api/_lib/backup.js";
 import { ensureSchema } from "./api/_lib/d1.js";
 
@@ -161,6 +162,7 @@ const routes = {
   "/api/status": adaptNodeHandler(statusHandler),
   "/api/boletin": adaptNodeHandler(boletinHandler),
   "/api/mercado": adaptNodeHandler(mercadoHandler),
+  "/api/seguimiento": adaptNodeHandler(seguimientoHandler),
   "/api/internal/sync": adaptNodeHandler(syncHandler)
 };
 
