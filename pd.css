@@ -1081,7 +1081,7 @@ html.dark #pdAuthModal {
 
 /* Anchor dot - Peru Red */
 #pdAuthModal .pd-chart-dot {
-  fill: var(--pd-peru);
+  fill: var(--pd-ink);
   transform-origin: 145px 88px;
   animation: pdDotPulse 12s ease-in-out infinite;
 }
@@ -1186,6 +1186,8 @@ html.dark #pdAuthModal {
 
 /* Responsive collapse for tablet and mobile (390px safe) */
 @media (max-width: 680px) {
+  /* Room for the close button, which sits over the scene on phones */
+  #pdAuthModal .pd-auth-art-header { padding-right: 36px; }
   #pdAuthModal .pd-dialog-box {
     max-width: 100%;
     margin: 0;
