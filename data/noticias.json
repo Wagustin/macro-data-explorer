@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-02T07:01:30.474Z",
+  "actualizado": "2026-11-02T10:01:32.496Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -39,12 +39,12 @@
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 5
+      "items": 6
     },
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 16
+      "items": 14
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 16
+      "items": 17
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,51 @@
     }
   },
   "noticias": [
+    {
+      "id": "la_republica-7d06f89681",
+      "titulo": "Precio del dólar hoy en Perú, lunes 2 noviembre: consulta el tipo de cambio para compra y venta",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/02/precio-del-dolar-hoy-en-peru-lunes-2-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-49296",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-02T09:30:00.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-fdb7caef76",
+      "titulo": "BCR: sector Construcción creció 10.3% en agosto",
+      "url": "https://andina.pe/agencia/noticia-bcr-sector-construccion-crecio-103-agosto-1098185.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-02T09:00:01.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-87602b9f3a",
+      "titulo": "Precios se disparan: inflación supera el 5% por primera vez en más de 3 años, ¿qué presionó?",
+      "url": "https://gestion.pe/economia/precios-en-peru-se-disparan-inflacion-anual-supera-el-5-por-primera-vez-en-mas-de-3-anos-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-02T09:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-cc0dfb8159",
+      "titulo": "¿Qué se juega Wall Street en las elecciones de medio término de Estados Unidos?",
+      "url": "https://www.bloomberglinea.com/mercados/que-se-juega-wall-street-en-las-elecciones-de-medio-termino-de-estados-unidos/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-02T08:00:03.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-9d87ff7032",
+      "titulo": "Divine Flavor iniciará cosecha comercial de uva orgánica en Nasca junto con Agrolatina",
+      "url": "https://gestion.pe/economia/empresas/estadounidense-divine-flavor-iniciara-cosecha-comercial-de-uva-organica-en-nasca-junto-con-peruana-agrolatina-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-02T08:00:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "rpp-4c63a5b7bc",
       "titulo": "Zelenski dice que Ucrania recuperó en octubre más territorio del que Rusia pudo conquistar",
@@ -136,6 +181,15 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "el_comercio-cf5a05d03b",
+      "titulo": "Precio del dólar en Perú hoy, lunes 2 de noviembre: cuál es el tipo de cambio",
+      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-2026-hoy-lunes-2-de-noviembre-tipo-de-cambio-segun-el-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-02T04:18:12.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "rpp-d575bb7554",
       "titulo": "Trump califica de \"pequeño precio a pagar\" la subida de la gasolina por la guerra en Irán",
       "url": "https://rpp.pe/mundo/estados-unidos/donald-trump-califica-de-pequeno-precio-a-pagar-la-subida-de-la-gasolina-por-la-guerra-en-iran-noticia-1715501",
@@ -150,15 +204,6 @@
       "url": "https://www.infobae.com/peru/2026/11/02/chats-de-la-diputada-catherine-palomino-revelan-presuntas-exigencias-de-pedro-castillo-para-colocar-trabajadores-en-su-despacho/",
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-02T03:15:48.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-87602b9f3a",
-      "titulo": "Precios se disparan: inflación anual supera el 5% por primera vez en más de 3 años",
-      "url": "https://gestion.pe/economia/precios-en-peru-se-disparan-inflacion-anual-supera-el-5-por-primera-vez-en-mas-de-3-anos-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-02T02:46:00.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
@@ -442,15 +487,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-9d87ff7032",
-      "titulo": "Divine Flavor iniciará cosecha comercial de uva orgánica en Nasca junto con Agrolatina",
-      "url": "https://gestion.pe/economia/empresas/estadounidense-divine-flavor-iniciara-cosecha-comercial-de-uva-organica-en-nasca-junto-con-peruana-agrolatina-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-01T20:30:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-59b595a960",
       "titulo": "Las previsiones a tomar por las empresas para no ver sus operaciones afectadas por El Niño",
       "url": "https://gestion.pe/peru/las-previsiones-a-tomar-por-las-empresas-para-no-ver-sus-operaciones-afectadas-por-el-nino-noticia/",
@@ -658,15 +694,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "infobae-5644c79519",
-      "titulo": "Precio del GNV, GLP, diésel y gasolina en Perú para el domingo 1 de noviembre de 2026",
-      "url": "https://www.infobae.com/peru/2026/11/01/precio-del-gnv-glp-diesel-y-gasolina-en-peru-para-el-domingo-1-de-noviembre-de-2026/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-01T12:27:59.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-3d817d8cd4",
       "titulo": "Día de Todos los Santos: seguro de sepelio cubre gastos funerarios por hasta S/ 45,000",
       "url": "https://andina.pe/agencia/noticia-dia-todos-los-santos-seguro-sepelio-cubre-gastos-funerarios-hasta-s-45000-1098046.aspx",
@@ -700,15 +727,6 @@
       "fuente": "Agencia Andina",
       "fecha_iso": "2026-11-01T04:00:00.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "andina-fe8b420c9a",
-      "titulo": "Vacancia de oficinas prime en Lima cae a 7.4% entre julio y setiembre",
-      "url": "https://andina.pe/agencia/noticia-vacancia-oficinas-prime-lima-cae-a-74-entre-julio-y-setiembre-1098101.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-01T02:00:00.000Z",
-      "categoria": "Otros",
       "semaforo": "VERDE"
     },
     {
