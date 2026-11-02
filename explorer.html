@@ -2151,6 +2151,10 @@ const state = {
             ? "sin cambio frente a hoy"
             : `un <strong style="color:${pctColor}; font-variant-numeric:tabular-nums;">${pctStr}</strong> frente a hoy`;
 
+          // A near-flat center is a finding, not a bug: say why, and where time does show
+          const flatNote = Math.abs(pct) < 1
+            ? `<span class="block mt-1" style="color:var(--pd-ink-soft); font-size:12px;">El valor central cambia poco porque, en diez años de pruebas, ninguna predicción superó de forma fiable al precio actual. Lo que sí crece con el plazo es el rango: más tiempo, más incertidumbre.</span>`
+            : "";
           let hText = "1 mes";
           const h = Number(state.horizon || 1);
           if (h === 1) hText = "1 mes";
@@ -2160,7 +2164,7 @@ const state = {
           else hText = `${h} meses`;
 
           const assetName = p.shortName || p.name || state.symbol || "el activo";
-          glanceEl.innerHTML = `Dentro de <strong class="text-ink">${escapeHTML(hText)}</strong>, <strong class="text-ink">${escapeHTML(assetName)}</strong> estaría entre <strong class="text-ink">${sym}${p10.toFixed(2)}</strong> y <strong class="text-ink">${sym}${p90.toFixed(2)}</strong> (8 de cada 10 veces). Lo más probable: <strong class="text-ink">${sym}${p50.toFixed(2)}</strong>, ${change}.`;
+          glanceEl.innerHTML = `Dentro de <strong class="text-ink">${escapeHTML(hText)}</strong>, <strong class="text-ink">${escapeHTML(assetName)}</strong> estaría entre <strong class="text-ink">${sym}${p10.toFixed(2)}</strong> y <strong class="text-ink">${sym}${p90.toFixed(2)}</strong> (8 de cada 10 veces). Lo más probable: <strong class="text-ink">${sym}${p50.toFixed(2)}</strong>, ${change}.${flatNote}`;
         }
       }
 
