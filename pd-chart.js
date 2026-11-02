@@ -115,6 +115,7 @@
       let seriesData = seriesPoints.map(h => h.v);
 
       const forecastSeries = forecast && forecast.forecastSeries ? forecast.forecastSeries : [];
+      const scenarioSeries = forecast && Array.isArray(forecast.scenarioSeries) ? forecast.scenarioSeries : [];
       const macroEnabled = macro && macro.enabled && macro.series && macro.series.length;
       const macroSeries = macroEnabled ? macro.series.map(m => ({ d: m.date.substring(0, 7), v: Number(m.close) })) : [];
 
@@ -165,6 +166,7 @@
       const p25 = new Array(totalLen).fill(null);
       const p75 = new Array(totalLen).fill(null);
       const p90 = new Array(totalLen).fill(null);
+      const scenario = new Array(totalLen).fill(null);
 
       if (forecastSeries.length) {
         const lastRealVal = seriesData[nHist - 1];

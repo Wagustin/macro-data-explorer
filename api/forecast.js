@@ -331,14 +331,71 @@ function probRise(last, p) {
   return Number(((z >= 0 ? 1 - tail : tail) * 100).toFixed(1));
 }
 
+// ---------- escenario del modelo: una trayectoria plausible, no el pronóstico central ----------
+function fnv1a(str) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return h >>> 0;
+}
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+export function buildScenarioPath(path, lastClose, symbol) {
+  if (!Array.isArray(path) || path.length < 2 || !(lastClose > 0)) return null;
+  const H = path.length;
+  const start = Math.log(lastClose);
+  const end = Math.log(Number(path[H - 1].p50));
+  if (!isFinite(start) || !isFinite(end) || end <= 0 || start <= 0) return null;
+  const last = path[H - 1];
+  const bandLog = Math.log(Math.max(Number(last.p90), 1e-9) / Math.max(Number(last.p10), 1e-9));
+  const sigma = Math.min(0.12, Math.max(0.004, bandLog / (2 * 1.2816) / Math.sqrt(H)));
+  const rand = mulberry32(fnv1a(symbol + "|" + path[0].date + "|" + last.p50));
+  const steps = [];
+  let acc = 0;
+  for (let i = 0; i < H; i++) {
+    const u1 = Math.max(rand(), 1e-9), u2 = rand();
+    const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    steps.push(sigma * z);
+    acc += steps[i];
+  }
+  const drift = (end - start - acc) / H;
+  const out = [];
+  let level = start;
+  for (let i = 0; i < H; i++) {
+    const p = path[i];
+    level += steps[i] + drift;
+    const mid = Math.log(Math.max(Number(p.p50), 1e-9));
+    const lo = Math.log(Math.max(Number(p.p10), 1e-9));
+    const hi = Math.log(Math.max(Number(p.p90), 1e-9));
+    const maxDev = 0.95 * Math.max(0, Math.min(mid - lo, hi - mid));
+    level = mid + Math.min(maxDev, Math.max(-maxDev, level - mid));
+    out.push({ date: p.date, value: Number(Math.exp(level).toFixed(2)) });
+  }
+  out[H - 1].value = Number(Number(path[H - 1].p50).toFixed(2));
+  return out;
+}
+
 export function formatForecastPayload(row, symbol, H) {
   if (!row) return null;
   // If row is already formatted (e.g. from KV)
-  if (row.forecastSeries && row.quantiles) return row;
+  if (row.forecastSeries && row.quantiles) {
+    if (!row.scenarioSeries) {
+      const lc = Number(row.lastObservedPrice || row.last_close || 0);
+      row.scenarioSeries = buildScenarioPath(row.forecastSeries, lc, symbol) || [];
+      row.scenarioNote = "Escenario: una trayectoria plausible del modelo; menos fiable que el P50.";
+    }
+    return row;
+  }
 
-  const finalPoint = Array.isArray(row.path) && row.path.length > 0 ? row.path[row.path.length - 1] : null;
-  const lastClose = Number(row.last_close);
-  const predictedPrice = Number(row.p50);
+  const path = Array.isArray(row.path) ? row.path : (Array.isArray(row.forecastPoints) ? row.forecastPoints : null);
+  const finalPoint = path && path.length > 0 ? path[path.length - 1] : null;
+  const lastClose = Number(row.last_close || row.lastClose || 0);
+  const predictedPrice = Number(row.p50 || (finalPoint ? finalPoint.p50 : 0));
   const expectedReturnPct = Number((((predictedPrice - lastClose) / lastClose) * 100).toFixed(2));
   const calib = getCalibration();
   const factors = calib ? getFactorsForHorizon(H, calib) : null;
@@ -363,18 +420,18 @@ export function formatForecastPayload(row, symbol, H) {
     horizonLabel: `${H} Meses`,
     horizonDate: finalPoint ? finalPoint.date : null,
     lastObservedPrice: lastClose,
-    lastObservedDate: row.path?.[0]?.date || null,
+    lastObservedDate: path?.[0]?.date || null,
     predictedPrice,
     expectedReturnPct,
     trend: expectedReturnPct >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
     volatilityAnnualized: Number(((Math.abs(expectedReturnPct) / Math.sqrt(H / 12))).toFixed(1)),
-    probabilityOfRise: probRise(lastClose, { p10: Number(row.p10), p50: predictedPrice, p90: Number(row.p90) }),
+    probabilityOfRise: probRise(lastClose, { p10: Number(row.p10 || (finalPoint ? finalPoint.p10 : 0)), p50: predictedPrice, p90: Number(row.p90 || (finalPoint ? finalPoint.p90 : 0)) }),
     quantiles: {
-      p10: Number(row.p10),
-      p25: Number(row.p25),
-      p50: Number(row.p50),
-      p75: Number(row.p75),
-      p90: Number(row.p90)
+      p10: Number(row.p10 || (finalPoint ? finalPoint.p10 : 0)),
+      p25: Number(row.p25 || (finalPoint ? finalPoint.p25 : 0)),
+      p50: Number(row.p50 || (finalPoint ? finalPoint.p50 : 0)),
+      p75: Number(row.p75 || (finalPoint ? finalPoint.p75 : 0)),
+      p90: Number(row.p90 || (finalPoint ? finalPoint.p90 : 0))
     },
     metrics: {
       confidenceLevel: "80% (P10 - P90)",
@@ -382,7 +439,9 @@ export function formatForecastPayload(row, symbol, H) {
       modelArchitecture: label || "PerData Engine",
       batchRunAt: row.run_at
     },
-    forecastSeries: row.path
+    forecastSeries: path,
+    scenarioSeries: buildScenarioPath(path, lastClose, symbol) || [],
+    scenarioNote: "Escenario: una trayectoria plausible del modelo; menos fiable que el P50."
   };
 }
 
@@ -453,8 +512,9 @@ export async function fetchPrecomputedForecast(symbol, H) {
       const kvKey = `forecast:${symbol}:${H}`;
       const kvData = await kv.get(kvKey, "json");
       if (kvData) {
-        setCachedMemoryForecast(symbol, H, kvData);
-        return kvData;
+        const payload = formatForecastPayload(kvData, symbol, H);
+        setCachedMemoryForecast(symbol, H, payload);
+        return payload;
       }
     } catch (e) {
       // Continuar con Supabase
