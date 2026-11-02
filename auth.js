@@ -528,7 +528,7 @@
             '<div class="pd-auth-art-footer">' +
               '<div class="pd-auth-art-stat"><span class="pd-auth-art-num">80%</span><span class="pd-auth-art-sub">Banda P10–P90</span></div>' +
               '<div class="pd-auth-art-stat"><span class="pd-auth-art-num">12M</span><span class="pd-auth-art-sub">Horizonte</span></div>' +
-              '<div class="pd-auth-art-stat"><span class="pd-auth-art-num">TimesFM</span><span class="pd-auth-art-sub">Motor</span></div>' +
+              '<div class="pd-auth-art-stat"><span class="pd-auth-art-num">v6</span><span class="pd-auth-art-sub">PerData Engine</span></div>' +
             '</div>' +
           '</div>' +
           '<div class="pd-auth-body">' +
