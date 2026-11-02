@@ -61,15 +61,16 @@ async function smvPayload(symbol, nemo, range, interval) {
     smvRows(nemo, isoMonthsAgo(RANGE_MONTHS[range] || 60), { monthly }),
     monthly ? smvRows(nemo, isoMonthsAgo(12)) : null,
   ]);
-  const dailyRows = (daily || main).slice().reverse();
-  if (!main.length || dailyRows.length < 2) return null;
+  // Issuers that stopped trading have no recent closes: their monthly history still answers
+  const dailyRows = (daily && daily.length >= 2 ? daily : main).slice().reverse();
+  if (!main.length) return null;
   const series = main.slice().reverse().map((r) => point(r, monthly ? r.fecha.slice(0, 8) + "01" : r.fecha));
   const last = dailyRows[dailyRows.length - 1], prev = dailyRows[dailyRows.length - 2];
   const catMeta = CATALOG.find((c) => c.symbol === symbol) || {};
   return {
     symbol, name: catMeta.name || nemo, sector: catMeta.sector || "Renta Variable", country: catMeta.country || "Perú",
     currency: MONEDA.get(nemo) || "PEN", exchange: "Bolsa de Valores de Lima", range, interval, count: series.length, series,
-    live: { price: last.cierre, changePct: Number(((last.cierre / prev.cierre - 1) * 100).toFixed(2)), time: `${last.fecha}T21:00:00.000Z`, state: "CLOSED" },
+    live: { price: last.cierre, changePct: prev ? Number(((last.cierre / prev.cierre - 1) * 100).toFixed(2)) : null, time: `${last.fecha}T21:00:00.000Z`, state: "CLOSED" },
     daily: dailyRows.map((r) => ({ date: r.fecha, close: r.cierre })),
     dailySource: "SMV (cierres de la Bolsa de Valores de Lima)",
   };

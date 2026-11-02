@@ -149,6 +149,9 @@
       width: 100%;
       height: 100%;
     }
+    .chart-ranges { display: flex; gap: 6px; margin-bottom: 8px; }
+    .chart-ranges button { font-family: var(--pd-font-mono, "IBM Plex Mono", monospace); font-size: 11px; padding: 4px 10px; border: 1px solid var(--pd-rule); background: transparent; color: var(--pd-ink-soft); cursor: pointer; }
+    .chart-ranges button[aria-pressed="true"] { color: var(--pd-ink); border-color: var(--pd-ink); font-weight: 600; }
     .chart-label {
       font-size: 12px;
       color: var(--pd-ink-muted);
@@ -427,6 +430,11 @@ html.dark .ui-switch {
 
         <!-- 90-Day Chart Section -->
         <div class="chart-section" id="chartSection">
+          <div class="chart-ranges" id="chartRanges" role="group" aria-label="Rango del gráfico">
+            <button type="button" data-range="1y">1 año</button>
+            <button type="button" data-range="3y">3 años</button>
+            <button type="button" data-range="5y">5 años</button>
+          </div>
           <div class="chart-wrap" id="chartWrap">
             <svg class="chart-svg" id="chartSvg" viewBox="0 0 600 180" preserveAspectRatio="none">
               <!-- Grid line -->
@@ -664,6 +672,11 @@ html.dark .ui-switch {
         const status = issuerStatus.estado || (hasProyeccion ? "con_proyeccion" : "sin_negociacion");
         const lastStatusDate = issuerStatus.ultima_fecha || primaryValor.fechaUltimaNegociacion || emitter.fechaUltimaNegociacion;
         const lastClose = Number(issuerStatus.ultimo_cierre);
+        // Issuers without a trade in the last year open on five years, so their last trades are visible
+        // The status is per issuer (its most traded share); the chart shows primaryValor, which may differ
+        const chartDate = issuerStatus.nemonico === primaryValor.nemonico ? lastStatusDate : primaryValor.fechaUltimaNegociacion;
+        const tradedThisYear = chartDate && (Date.now() - Date.parse(chartDate)) < 365 * 864e5;
+        const defaultRange = tradedThisYear ? "1y" : "5y";
         const currency = issuerStatus.moneda || primaryValor.moneda || "S/";
         const priceText = Number.isFinite(lastClose) ? `${currency} ${lastClose.toFixed(lastClose < 1 ? 3 : 2)}` : "precio no disponible";
         const parsedStatusDate = lastStatusDate ? new Date(`${lastStatusDate}T00:00:00Z`) : null;
@@ -734,7 +747,7 @@ html.dark .ui-switch {
           document.getElementById("noProyeccionNotice").classList.add("hidden");
 
           // Fetch live price & 90-day history from /api/historical
-          fetchHistorical(primaryValor.simbolo_proyeccion, primaryValor.moneda, hasSmvHistory);
+          setupChartRanges(primaryValor.simbolo_proyeccion, primaryValor.moneda, hasSmvHistory, defaultRange);
         } else {
           // Keep projections disabled while checking for SMV historical quotes.
           document.getElementById("btnProyeccion").classList.add("hidden");
@@ -745,7 +758,8 @@ html.dark .ui-switch {
             document.getElementById("priceMain").textContent = "Sin precio de mercado";
           }
           document.getElementById("chartLabel").textContent = "Historial SMV · Cierre mensual";
-          if (status !== "sin_negociacion") fetchHistorical(`${primaryValor.nemonico}.LM`, primaryValor.moneda, true);
+          if (status !== "sin_negociacion") setupChartRanges(`${primaryValor.nemonico}.LM`, primaryValor.moneda, true, defaultRange);
+          else document.getElementById("chartRanges").classList.add("hidden");
         }
 
         loadHechos(primaryValor.nemonico);
@@ -766,12 +780,30 @@ html.dark .ui-switch {
         loadingState.innerHTML = `<p class="text-sm text-neg">Error al cargar la ficha: ${escapeHTML(err.message)}</p>`;
       }
 
-      async function fetchHistorical(symbol, defaultMoneda, smvFallback = false) {
+      function setupChartRanges(symbol, moneda, smvFallback, initial) {
+        const buttons = [...document.querySelectorAll("#chartRanges button")];
+        const select = (range) => {
+          buttons.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.range === range)));
+          fetchHistorical(symbol, moneda, smvFallback, range);
+        };
+        buttons.forEach((b) => b.addEventListener("click", () => select(b.dataset.range)));
+        select(initial);
+      }
+
+      async function fetchHistorical(symbol, defaultMoneda, smvFallback = false, chosenRange = "1y") {
         try {
-          const range = smvFallback ? "1y" : "3mo";
+          const range = smvFallback ? chosenRange : "3mo";
           const interval = smvFallback ? "1mo" : "1d";
           const res = await fetch(`/api/historical?symbol=${encodeURIComponent(symbol)}&range=${range}&interval=${interval}`);
-          if (!res.ok) return;
+          if (!res.ok) {
+            if (smvFallback) {
+              const empty = document.getElementById("chartEmptyText");
+              document.getElementById("chartPolyline").setAttribute("points", "");
+              empty.textContent = "Sin cotizaciones en este rango. Prueba un rango mayor.";
+              empty.classList.remove("hidden");
+            }
+            return;
+          }
           const data = await res.json();
 
           if (smvFallback) {
@@ -801,9 +833,15 @@ html.dark .ui-switch {
               } else {
                 varEl.classList.add("hidden");
               }
-              if (points.length >= 2) renderChart(points);
-              else document.getElementById("chartEmptyText").classList.remove("hidden");
-              document.getElementById("chartLabel").textContent = "Fuente: SMV · Cierres mensuales (12 meses)";
+              const empty = document.getElementById("chartEmptyText");
+              const years = { "1y": "1 año", "3y": "3 años", "5y": "5 años" }[range] || range;
+              if (points.length >= 2) { empty.classList.add("hidden"); renderChart(points); }
+              else {
+                document.getElementById("chartPolyline").setAttribute("points", "");
+                empty.textContent = `Sin cotizaciones mensuales en ${years}. Prueba un rango mayor.`;
+                empty.classList.remove("hidden");
+              }
+              document.getElementById("chartLabel").textContent = `Fuente: SMV · Cierres mensuales (${years})`;
             }
             return;
           }
