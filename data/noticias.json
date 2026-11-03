@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-03T01:01:31.034Z",
+  "actualizado": "2026-11-03T04:01:32.334Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 45
+      "items": 46
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -34,7 +34,7 @@
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 10
+      "items": 8
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -64,12 +64,75 @@
   },
   "noticias": [
     {
-      "id": "bloomberg_linea-a91701b37c",
-      "titulo": "La actividad manufacturera de EE.UU. acelera su crecimiento ante el repunte de la producción",
-      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/la-actividad-manufacturera-de-eeuu-acelera-su-crecimiento-ante-el-repunte-de-la-produccion/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-03T00:47:57.000Z",
+      "id": "andina-eb9db8d061",
+      "titulo": "Ministerio de Vivienda despliega maquinaria ante intensas lluvias en Tumbes",
+      "url": "https://andina.pe/agencia/noticia-ministerio-vivienda-despliega-maquinaria-ante-intensas-lluvias-tumbes-1098340.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-03T04:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-69c64b0b4d",
+      "titulo": "El Niño: los productos podrían subir de precio en los mercados ante menor oferta",
+      "url": "https://gestion.pe/economia/el-nino-en-peru-los-productos-podrian-subir-de-precio-en-los-mercados-ante-escasez-por-menor-oferta-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-03T03:46:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-cf5a05d03b",
+      "titulo": "Precio del dólar en Perú: cuál fue el tipo de cambio del lunes 2 de noviembre",
+      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-2026-hoy-lunes-2-de-noviembre-tipo-de-cambio-segun-el-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-03T03:39:55.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-36d04a8b44",
+      "titulo": "Gobierno perseguirá a nuevos millonarios del oro ilegal: ¿qué pasará con sus propiedades?",
+      "url": "https://gestion.pe/economia/mercados/gobierno-perseguira-a-nuevos-millonarios-del-oro-ilegal-que-hara-con-sus-propiedades-y-cuentas-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-03T03:30:00.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-4fab2d5e6e",
+      "titulo": "DP World Callao registra el mayor movimiento mensual de su historia: 200 mil TEU en octubre",
+      "url": "https://gestion.pe/peru/dp-world-callao-registra-el-mayor-movimiento-mensual-de-su-historia-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-03T03:22:37.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-9f3e3bfcc8",
+      "titulo": "Perú y Japón dialogan sobre oportunidades de inversión en el sector minero-energético",
+      "url": "https://andina.pe/agencia/noticia-peru-y-japon-dialogan-sobre-oportunidades-inversion-el-sector-mineroenergetico-1098339.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-03T03:00:00.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "rpp-811a2c27dd",
+      "titulo": "EE. UU. lanzó ataque contra isla iraní a unas horas de elecciones, según WSJ",
+      "url": "https://rpp.pe/mundo/medio-oriente/ee-uu-lanzo-ataque-contra-isla-irani-a-unas-horas-de-elecciones-segun-wsj-noticia-1715672",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-03T02:37:38.000Z",
       "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-7af9fc7468",
+      "titulo": "“Los ‘buffers’ fiscales del Perú se han reducido”, ¿a qué se refiere del Consejo Fiscal?",
+      "url": "https://gestion.pe/economia/consejo-fiscal-los-buffers-fiscales-del-peru-se-han-reducido-a-que-se-refiere-la-entidad-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-03T02:30:00.000Z",
+      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -77,7 +140,7 @@
       "titulo": "Verano 2027: El Niño condiciona reservas y planes de negocio en los balnearios del norte del país, ¿cómo van las expectativas?",
       "url": "https://elcomercio.pe/economia/dia-1/el-verano-2027-pone-a-prueba-las-expectativas-de-negocio-en-los-balnearios-del-norte-noticia/",
       "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-03T00:45:43.000Z",
+      "fecha_iso": "2026-11-03T02:27:55.000Z",
       "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
@@ -86,8 +149,62 @@
       "titulo": "Fernando Vivanco, VP de Nuevos Negocios del Grupo Coril: “Alfin Banco pasará a ser la unidad más importante de Grupo Coril”",
       "url": "https://elcomercio.pe/economia/dia-1/fernando-vivanco-alfin-banco-pasara-a-ser-la-unidad-mas-importante-de-grupo-coril-noticia/",
       "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-03T00:33:46.000Z",
+      "fecha_iso": "2026-11-03T02:12:22.000Z",
       "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-ee231d086f",
+      "titulo": "Perú Compras aprueba listado de 268 bienes y servicios para homologación en 2027",
+      "url": "https://andina.pe/agencia/noticia-peru-compras-aprueba-listado-268-bienes-y-servicios-para-homologacion-2027-1098337.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-03T02:06:42.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "bloomberg_linea-cd9731fe09",
+      "titulo": "Fallo judicial abre una nueva posibilidad para que venezolanos recuperen el TPS en EE.UU.",
+      "url": "https://www.bloomberglinea.com/latinoamerica/venezuela/fallo-judicial-abre-una-nueva-posibilidad-para-que-venezolanos-recuperen-el-tps-en-eeuu/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-03T01:58:09.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-343b3290ad",
+      "titulo": "Renovación Popular plantea que Gobierno dé garantía o aval a endeudamiento de la MML",
+      "url": "https://gestion.pe/economia/renovacion-popular-plantea-que-gobierno-del-peru-de-garantia-o-aval-a-endeudamiento-de-la-municipalidad-de-lima-mml-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-03T01:30:37.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-596f6160d6",
+      "titulo": "EE. UU. mediará negociaciones entre Ucrania y Rusia la próxima semana en Abu Dabi",
+      "url": "https://rpp.pe/mundo/europa/ee-uu-mediara-negociaciones-entre-ucrania-y-rusia-la-proxima-semana-en-abu-dabi-noticia-1715666",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-03T01:14:07.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-537df11744",
+      "titulo": "Transportistas de carga pesada se alistan para un paro nacional de tres días por precio de combustibles",
+      "url": "https://rpp.pe/peru/actualidad/paro-nacional-de-transportistas-de-carga-pesada-en-peru-fechas-y-reclamos-noticia-1715667",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-03T01:11:00.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-a91701b37c",
+      "titulo": "La actividad manufacturera de EE.UU. acelera su crecimiento ante el repunte de la producción",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/la-actividad-manufacturera-de-eeuu-acelera-su-crecimiento-ante-el-repunte-de-la-produccion/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-03T00:47:57.000Z",
+      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     },
     {
@@ -136,15 +253,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-cf5a05d03b",
-      "titulo": "Precio del dólar en Perú: cuál fue el tipo de cambio del lunes 2 de noviembre",
-      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-2026-hoy-lunes-2-de-noviembre-tipo-de-cambio-segun-el-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-03T00:00:42.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "bloomberg_linea-4a7afa60d0",
       "titulo": "La expectativa de diálogo entre EE.UU. e Irán impulsa las monedas de mercados emergentes",
       "url": "https://www.bloomberglinea.com/mercados/la-expectativa-de-dialogo-entre-eeuu-e-iran-impulsa-las-monedas-de-mercados-emergentes/",
@@ -169,24 +277,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-02T23:42:58.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-69c64b0b4d",
-      "titulo": "El Niño: los productos podrían subir de precio en los mercados ante menor oferta",
-      "url": "https://gestion.pe/economia/el-nino-en-peru-los-productos-podrian-subir-de-precio-en-los-mercados-ante-escasez-por-menor-oferta-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-02T23:33:32.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-36d04a8b44",
-      "titulo": "Gobierno perseguirá a nuevos millonarios del oro ilegal: ¿qué pasará con sus propiedades?",
-      "url": "https://gestion.pe/economia/mercados/gobierno-perseguira-a-nuevos-millonarios-del-oro-ilegal-que-hara-con-sus-propiedades-y-cuentas-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-02T23:32:00.000Z",
-      "categoria": "Minería y metales",
       "semaforo": "AMARILLO"
     },
     {
@@ -250,15 +340,6 @@
       "fuente": "RPP Noticias",
       "fecha_iso": "2026-11-02T22:13:19.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-343b3290ad",
-      "titulo": "Renovación Popular plantea que Gobierno dé garantía o aval a endeudamiento de la MML",
-      "url": "https://gestion.pe/economia/renovacion-popular-plantea-que-gobierno-del-peru-de-garantia-o-aval-a-endeudamiento-de-la-municipalidad-de-lima-mml-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-02T22:10:11.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -379,6 +460,15 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "andina-52f01a7737",
+      "titulo": "Mesa de Conectividad Aérea: Mincetur destaca retorno de Air Canada al mercado peruano",
+      "url": "https://andina.pe/agencia/noticia-mesa-conectividad-aerea-mincetur-destaca-retorno-air-canada-al-mercado-peruano-1098294.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-02T20:26:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
+    {
       "id": "andina-8670e28d34",
       "titulo": "Minería aportó ingresos fiscales por S/ 29,106 millones en primeros ocho meses del año",
       "url": "https://andina.pe/agencia/noticia-mineria-aporto-ingresos-fiscales-s-29106-millones-primeros-ocho-meses-del-ano-1098292.aspx",
@@ -412,15 +502,6 @@
       "fuente": "RPP Noticias",
       "fecha_iso": "2026-11-02T20:18:52.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-7af9fc7468",
-      "titulo": "“Los ‘buffers’ fiscales del Perú se han reducido”, ¿a qué se refiere del Consejo Fiscal?",
-      "url": "https://gestion.pe/economia/consejo-fiscal-los-buffers-fiscales-del-peru-se-han-reducido-a-que-se-refiere-la-entidad-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-02T20:07:09.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -460,15 +541,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "rpp-858f9fd4c5",
-      "titulo": "Keiko Fujimori reitera que su Gobierno no se detendrá en acciones para recuperar el orden: “No vamos a parar”",
-      "url": "https://rpp.pe/videos/la-rotativa-del-aire/keiko-fujimori-reitera-que-su-gobierno-no-se-detendra-en-acciones-para-recuperar-el-orden-no-vamos-a-parar-noticia-1715618",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-02T19:01:42.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "infobae-d781bdd4ca",
       "titulo": "El Niño ya empieza a afectar la canasta básica familiar: estos son los alimentos que empezaron a subir de precio",
       "url": "https://www.infobae.com/peru/2026/11/02/el-nino-ya-empieza-a-afectar-la-canasta-basica-familiar-estos-son-los-alimentos-que-empezaron-a-subir-de-precio/",
@@ -503,24 +575,6 @@
       "fecha_iso": "2026-11-02T18:50:54.000Z",
       "categoria": "Dólar y BCRP",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "rpp-e35f40d227",
-      "titulo": "Canon minero, freno a más universidades y candados al gasto: Los desacuerdos entre el MEF y Congreso que tensionan el Presupuesto 2027",
-      "url": "https://rpp.pe/economia/economia/presupuesto-2027-canon-minero-freno-a-mas-universidades-y-candados-al-gasto-los-desacuerdos-entre-el-mef-y-congreso-noticia-1715599",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-02T18:45:03.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-1ebcd9043f",
-      "titulo": "Al menos 18 muertos en un ataque ruso contra una escuela en Zaporiyia, según Zelenski",
-      "url": "https://rpp.pe/mundo/actualidad/al-menos-18-muertos-en-un-ataque-ruso-contra-una-escuela-en-zaporiyia-segun-zelenski-noticia-1715615",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-02T18:44:44.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "infobae-b1b0550165",
@@ -811,15 +865,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-9f91550ed4",
-      "titulo": "Papa León XIV: sector hotelero asume reto por histórica visita",
-      "url": "https://andina.pe/agencia/noticia-papa-leon-xiv-sector-hotelero-asume-reto-historica-visita-1098198.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-02T13:30:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "infobae-9852f92e9d",
       "titulo": "Euro hoy en Perú: cotización de apertura del 2 de noviembre",
       "url": "https://www.infobae.com/peru/2026/11/02/euro-hoy-en-peru-cotizacion-de-apertura-del-2-de-noviembre/",
@@ -838,30 +883,12 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-f0c9ecb9a9",
-      "titulo": "Mancomunidad Regional de Los Andes es espacio estratégico y decisivo para minería peruana",
-      "url": "https://andina.pe/agencia/noticia-mancomunidad-regional-los-andes-es-espacio-estrategico-y-decisivo-para-mineria-peruana-1098221.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-02T12:52:00.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "gestion-9352a51258",
       "titulo": "Protocolo de seguridad y salud en el trabajo ante El Niño: ¿qué debe considerar la empresa?",
       "url": "https://gestion.pe/economia/el-nino-aprueban-protocolo-de-seguridad-y-salud-en-el-trabajo-para-enfrentar-el-fenomeno-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-02T12:20:00.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-ad215c2429",
-      "titulo": "Cómo ahorrar en combustible en Lima: estos son los grifos con los precios más bajos de gasolina y diésel",
-      "url": "https://www.infobae.com/peru/2026/11/02/como-ahorrar-en-combustible-en-lima-estos-son-los-grifos-con-los-precios-mas-bajos-de-gasolina-y-diesel/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-02T12:16:10.000Z",
-      "categoria": "Energía",
       "semaforo": "AMARILLO"
     },
     {
@@ -880,15 +907,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-02T11:50:00.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-e31539469e",
-      "titulo": "Precio del dólar Perú y tipo de cambio hoy 02 de noviembre del 2026",
-      "url": "https://rpp.pe/economia/economia/precio-del-dolar-peru-y-tipo-de-cambio-hoy-02-de-noviembre-del-2026-noticia-1715523",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-02T11:05:39.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
