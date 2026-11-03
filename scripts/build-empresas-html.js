@@ -165,11 +165,11 @@ const template = `<!DOCTYPE html>
   <meta property="og:description" content="Directorio de renta variable de la BVL con 182 emisores peruanos. Precios en tiempo real, historial y proyecciones cuantitativas." />
   <meta property="og:image" content="https://perdata.site/og-image.png" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="pd-geo" content="otro">
 
-  <!-- Fonts & Styles -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Libre+Franklin:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
+  <!-- Fuentes auto-alojadas (T74) -->
+  <link rel="preload" href="/fonts/source-serif-4-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/libre-franklin-600.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/tw.css">
   <link rel="stylesheet" href="/pd.css" />
 
@@ -422,8 +422,7 @@ html.dark .ui-switch {
       }
     })();
   </script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3342536112010915"
-     crossorigin="anonymous"></script>
+  <script src="/consent.js" defer></script>
 </head>
 <body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 
@@ -571,6 +570,7 @@ ${rowsHtml}
           <a href="/terms" class="hover:text-ink transition no-underline">Términos</a>
           <a href="/nosotros" class="hover:text-ink transition no-underline">Quiénes somos</a>
           <a href="/privacidad" class="hover:text-ink transition no-underline">Privacidad</a>
+          <a href="#cookies" class="pd-cookies-link hover:text-ink transition no-underline" data-open-cookies>Cookies</a>
           <a href="mailto:soporte@perdata.site" class="hover:text-ink transition no-underline">Contacto</a>
         </nav>
       </div>

@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="es" class="light">
-<head>
+<head>\n  <meta name="pd-geo" content="otro">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Hoy en la Bolsa de Lima · PerData</title>
   <meta name="description" content="Mayores subidas, bajadas y acciones más negociadas en la Bolsa de Valores de Lima." />
   <link rel="canonical" href="https://perdata.site/mercado" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Libre+Franklin:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/pd.css" />
+    <!-- Fuentes auto-alojadas (T74) -->
+  <link rel="preload" href="/fonts/source-serif-4-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/libre-franklin-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/pd.css" />
   <script defer src="/motion.js"></script>
   <style>
     .market-table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -48,7 +48,8 @@
     <p class="text-xs text-ink-soft">Fuente: SMV (cierres de la Bolsa de Valores de Lima)</p>
   </main>
   <footer class="border-t border-rule bg-card py-10 px-4 sm:px-6"><div class="max-w-6xl mx-auto flex flex-col gap-6"><div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-rule"><a href="/" class="text-inherit no-underline"><span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span></a><nav class="flex flex-wrap items-center gap-6 text-xs text-ink-soft" aria-label="Navegación secundaria"><a href="/mercado" class="hover:text-ink no-underline">Mercado</a><a href="/boletin" class="hover:text-ink no-underline">Boletín</a><a href="/terms" class="hover:text-ink no-underline">Términos</a><a href="/estado" class="hover:text-ink no-underline">Estado</a><a href="/nosotros" class="hover:text-ink transition no-underline">Quiénes somos</a>
-          <a href="/privacidad" class="hover:text-ink no-underline">Privacidad</a><a href="mailto:soporte@perdata.site" class="hover:text-ink no-underline">Contacto</a></nav></div><div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 text-[11px] text-ink-soft leading-relaxed"><span class="font-medium text-ink">© 2026 PerData</span><p class="max-w-2xl m-0">Información financiera y cuantitativa con fines estrictamente informativos y de investigación. No constituye asesoramiento de inversión ni oferta pública de valores.</p></div></div></footer>
+          <a href="/privacidad" class="hover:text-ink no-underline">Privacidad</a>
+          <a href="#cookies" class="pd-cookies-link hover:text-ink transition no-underline" data-open-cookies>Cookies</a><a href="mailto:soporte@perdata.site" class="hover:text-ink no-underline">Contacto</a></nav></div><div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 text-[11px] text-ink-soft leading-relaxed"><span class="font-medium text-ink">© 2026 PerData</span><p class="max-w-2xl m-0">Información financiera y cuantitativa con fines estrictamente informativos y de investigación. No constituye asesoramiento de inversión ni oferta pública de valores.</p></div></div></footer>
   <script>
     const money = new Intl.NumberFormat('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const amount = new Intl.NumberFormat('es-PE', { maximumFractionDigits: 0 });
@@ -85,6 +86,7 @@
     const menuButton = document.getElementById('mobileMenuBtn');
     menuButton.addEventListener('click', () => { const open = document.getElementById('mobileMenu').classList.toggle('hidden') === false; menuButton.setAttribute('aria-expanded', String(open)); });
   </script>
+  <script src="/consent.js" defer></script>
   <script src="/auth.js" defer></script>
 </body>
 </html>

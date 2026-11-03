@@ -64,6 +64,9 @@ const FILES_TO_COPY = [
   "motion.js",
   "ads.js",
   "auth.js",
+  "consent.js",
+  "entrar.html",
+  "entrar.js",
   "pd-login-field.js",
   "favicon.ico",
   "icon.svg",
@@ -74,7 +77,7 @@ const FILES_TO_COPY = [
   "tailwind.theme.json"
 ];
 
-const FILES_TO_MINIFY = ["pd.css", "auth.js", "pd-login-field.js", "pd-chart.js", "ads.js", "motion.js"];
+const FILES_TO_MINIFY = ["pd.css", "auth.js", "pd-login-field.js", "pd-chart.js", "ads.js", "motion.js", "consent.js", "entrar.js"];
 const STATIC_HEADERS = `/*.js
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 /*.css
@@ -150,6 +153,13 @@ const assetsSrc = path.join(rootDir, "assets");
 const assetsDest = path.join(publicDir, "assets");
 if (fs.existsSync(assetsSrc)) {
   fs.cpSync(assetsSrc, assetsDest, { recursive: true });
+}
+
+// Copy fonts directory if present
+const fontsSrc = path.join(rootDir, "fonts");
+const fontsDest = path.join(publicDir, "fonts");
+if (fs.existsSync(fontsSrc)) {
+  fs.cpSync(fontsSrc, fontsDest, { recursive: true });
 }
 
 console.log("✓ Cloudflare public/ directory built successfully.");

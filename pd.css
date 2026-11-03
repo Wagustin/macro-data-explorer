@@ -6,6 +6,64 @@
    Sin gradientes, sombras en reposo, bordes hairline ni tarjetas flotantes.
    ============================================================ */
 
+/* Fuentes auto-alojadas (subconjunto latino, T74) */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/source-serif-4-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/source-serif-4-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/source-serif-4-italic-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Libre Franklin';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/libre-franklin-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Libre Franklin';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/libre-franklin-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Libre Franklin';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/libre-franklin-700.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-600.woff2') format('woff2');
+}
+
 :root {
   /* Papel y superficies (neutros hueso) */
   --pd-paper: #F5F1E8;
@@ -2399,3 +2457,332 @@ html.pd-motion.hero-ready [data-hero-seq="3"]  { opacity: 1; transform: translat
   font-family: var(--pd-font-ui, "Libre Franklin", sans-serif);
   font-size: 13px; color: var(--pd-ink-soft);
 }
+
+/* ============================================================
+   BANNER DE CONSENTIMIENTO Y COOKIES (T74)
+   ============================================================ */
+.pd-consent-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  background: var(--pd-card);
+  border-top: 1px solid var(--pd-rule);
+  color: var(--pd-ink);
+  font-family: var(--pd-font-ui, "Libre Franklin", sans-serif);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+html.dark .pd-consent-bar {
+  background: #141311;
+  border-top: 1px solid #332F2A;
+  color: #EDE8DC;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.4);
+}
+
+.pd-consent-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.pd-consent-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--pd-ink);
+  margin: 0;
+  flex: 1 1 380px;
+}
+
+html.dark .pd-consent-text {
+  color: #EDE8DC;
+}
+
+.pd-consent-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pd-consent-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 16px;
+  font-family: var(--pd-font-ui, "Libre Franklin", sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  background: var(--pd-surface);
+  color: var(--pd-ink);
+  border: 1px solid var(--pd-rule);
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+html.dark .pd-consent-btn {
+  background: #1F1D1A;
+  color: #EDE8DC;
+  border: 1px solid #3A352F;
+}
+
+.pd-consent-btn:hover {
+  background: var(--pd-hover);
+  border-color: var(--pd-ink-soft);
+}
+
+html.dark .pd-consent-btn:hover {
+  background: #2B2823;
+  border-color: #5E584E;
+}
+
+.pd-consent-link {
+  background: none;
+  border: none;
+  padding: 0 4px;
+  font-family: var(--pd-font-ui, "Libre Franklin", sans-serif);
+  font-size: 13px;
+  color: var(--pd-ink-soft);
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+html.dark .pd-consent-link {
+  color: #A8A193;
+}
+
+.pd-consent-link:hover {
+  color: var(--pd-ink);
+}
+
+html.dark .pd-consent-link:hover {
+  color: #EDE8DC;
+}
+
+/* Modal de configuración de cookies */
+.pd-consent-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(15, 14, 12, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.pd-consent-modal-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.pd-consent-modal {
+  background: var(--pd-card);
+  border: 1px solid var(--pd-rule);
+  color: var(--pd-ink);
+  border-radius: 6px;
+  max-width: 480px;
+  width: 100%;
+  padding: 24px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  font-family: var(--pd-font-ui, "Libre Franklin", sans-serif);
+}
+
+html.dark .pd-consent-modal {
+  background: #141311;
+  border: 1px solid #332F2A;
+  color: #EDE8DC;
+}
+
+.pd-consent-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--pd-rule);
+  padding-bottom: 12px;
+}
+
+html.dark .pd-consent-modal-header {
+  border-bottom: 1px solid #332F2A;
+}
+
+.pd-consent-modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--pd-ink);
+}
+
+html.dark .pd-consent-modal-title {
+  color: #EDE8DC;
+}
+
+.pd-consent-modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--pd-ink-soft);
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.pd-consent-modal-close:hover {
+  color: var(--pd-ink);
+}
+
+html.dark .pd-consent-modal-close:hover {
+  color: #EDE8DC;
+}
+
+.pd-consent-category {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--pd-rule);
+}
+
+html.dark .pd-consent-category {
+  border-bottom: 1px solid #332F2A;
+}
+
+.pd-consent-cat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.pd-consent-cat-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pd-ink);
+}
+
+html.dark .pd-consent-cat-title {
+  color: #EDE8DC;
+}
+
+.pd-consent-cat-desc {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--pd-ink-soft);
+  margin: 0;
+}
+
+html.dark .pd-consent-cat-desc {
+  color: #A8A193;
+}
+
+.pd-consent-badge-fixed {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--pd-surface);
+  color: var(--pd-ink-soft);
+  border: 1px solid var(--pd-rule);
+}
+
+html.dark .pd-consent-badge-fixed {
+  background: #1F1D1A;
+  color: #A8A193;
+  border: 1px solid #332F2A;
+}
+
+/* Switch toggle */
+.pd-consent-toggle {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+}
+
+.pd-consent-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.pd-consent-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: var(--pd-rule);
+  transition: 0.2s;
+  border-radius: 22px;
+}
+
+html.dark .pd-consent-toggle-slider {
+  background-color: #3A352F;
+}
+
+.pd-consent-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--pd-card);
+  transition: 0.2s;
+  border-radius: 50%;
+}
+
+html.dark .pd-consent-toggle-slider:before {
+  background-color: #EDE8DC;
+}
+
+.pd-consent-toggle input:checked + .pd-consent-toggle-slider {
+  background-color: var(--pd-peru);
+}
+
+.pd-consent-toggle input:checked + .pd-consent-toggle-slider:before {
+  transform: translateX(18px);
+  background-color: #FFFFFF;
+}
+
+.pd-consent-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  body.has-mobile-nav .pd-consent-bar,
+  body:has(.mobile-nav) .pd-consent-bar {
+    bottom: calc(56px + env(safe-area-inset-bottom, 8px));
+  }
+  .pd-consent-inner {
+    padding: 12px 16px;
+  }
+  .pd-consent-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .pd-consent-btn {
+    flex: 1 1 calc(50% - 6px);
+    height: 44px;
+    font-size: 13px;
+  }
+  .pd-consent-link {
+    width: 100%;
+    text-align: center;
+    margin-top: 4px;
+    padding: 6px 0;
+  }
+}
+

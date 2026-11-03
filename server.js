@@ -19,6 +19,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PORT = process.env.PORT || 3456;
 
+const EEA_COUNTRIES = new Set([
+  // EU 27
+  "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE",
+  "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE",
+  // EEA-EFTA
+  "IS", "LI", "NO",
+  // UK & Switzerland
+  "GB", "CH"
+]);
+
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
@@ -30,13 +40,15 @@ const MIME_TYPES = {
   ".jpeg": "image/jpeg",
   ".ico": "image/x-icon",
   ".txt": "text/plain; charset=utf-8",
-  ".webmanifest": "application/manifest+json"
+  ".webmanifest": "application/manifest+json",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2"
 };
 
 // Only these root files and extensions are public; everything else (api/, data/,
 // scripts/, supabase/, docs) stays private, matching .vercelignore in production.
-const PUBLIC_EXTENSIONS = new Set([".html", ".js", ".css", ".svg", ".png", ".jpg", ".jpeg", ".ico", ".txt", ".xml", ".webmanifest"]);
-const PUBLIC_DIRS = new Set(["", "assets"]);
+const PUBLIC_EXTENSIONS = new Set([".html", ".js", ".css", ".svg", ".png", ".jpg", ".jpeg", ".ico", ".txt", ".xml", ".webmanifest", ".woff", ".woff2"]);
+const PUBLIC_DIRS = new Set(["", "assets", "fonts"]);
 const PRIVATE_FILES = new Set(["server.js"]);
 const PAGES = {
   "/": "index.html",
@@ -56,7 +68,8 @@ const PAGES = {
   "/empresas": "empresas.html",
   "/mercado": "mercado.html",
   "/estado": "estado.html",
-  "/resumenes": "resumen.html"
+  "/resumenes": "resumen.html",
+  "/entrar": "entrar.html"
 };
 
 const server = http.createServer(async (req, res) => {
@@ -191,6 +204,20 @@ const server = http.createServer(async (req, res) => {
       }
       const ext = path.extname(filePath).toLowerCase();
       const contentType = MIME_TYPES[ext] || "text/plain";
+      if (ext === ".html") {
+        const country = req.headers["cf-ipcountry"] || "";
+        const geoQuery = parsedUrl.searchParams.get("geo");
+        const isEea = geoQuery ? geoQuery.toLowerCase() === "eea" : EEA_COUNTRIES.has(String(country).toUpperCase());
+        const geo = isEea ? "eea" : "otro";
+        let html = content.toString("utf8");
+        if (/<meta\s+name=["']pd-geo["']/i.test(html)) {
+          html = html.replace(/<meta\s+name=["']pd-geo["']\s+content=["'][^"']*["']/i, `<meta name="pd-geo" content="${geo}"`);
+        } else if (/<head[^>]*>/i.test(html)) {
+          html = html.replace(/<head[^>]*>/i, `$&<meta name="pd-geo" content="${geo}">`);
+        }
+        res.writeHead(200, { "Content-Type": contentType });
+        return res.end(html);
+      }
       res.writeHead(200, { "Content-Type": contentType });
       res.end(content);
     });

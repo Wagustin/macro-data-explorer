@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es-PE" class="light pd-marketing">
-<head>
+<head>\n  <meta name="pd-geo" content="otro">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -202,12 +202,12 @@
     html.dark .eyebrow { color: var(--pd-ink-soft); }
   </style>
   <!-- Identidad PerData (DESIGN.md) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" data-async-css>
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap"></noscript>
+  <noscript></noscript>
   <link rel="preload" as="style" href="/pd.css" data-async-css>
-  <noscript><link rel="stylesheet" href="/pd.css"></noscript>
+  <noscript>  <!-- Fuentes auto-alojadas (T74) -->
+  <link rel="preload" href="/fonts/source-serif-4-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/libre-franklin-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/pd.css"></noscript>
   <style>
     /* Critical landing styles; pd.css and tw.css finish the full page without blocking its first paint. */
     @font-face { font-family: 'Libre Franklin Fallback'; src: local('Arial'); size-adjust: 95.05%; ascent-override: 102.06%; descent-override: 18.94%; line-gap-override: 0%; }
@@ -317,9 +317,7 @@
     ]
   }
   </script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3342536112010915"
-     crossorigin="anonymous"></script>
-  <link rel="preload" as="style" href="/tw.css" data-async-css>
+<link rel="preload" as="style" href="/tw.css" data-async-css>
   <noscript><link rel="stylesheet" href="/tw.css"></noscript>
   <script>document.querySelectorAll("link[data-async-css]").forEach(function (l) { l.rel = "stylesheet"; });</script>
 </head>
@@ -634,6 +632,7 @@
           <a href="/estado" class="hover:text-ink transition no-underline">Estado</a>
           <a href="/nosotros" class="hover:text-ink transition no-underline">Quiénes somos</a>
           <a href="/privacidad" class="hover:text-ink transition no-underline">Privacidad</a>
+          <a href="#cookies" class="pd-cookies-link hover:text-ink transition no-underline" data-open-cookies>Cookies</a>
           <a href="mailto:soporte@perdata.site" class="hover:text-ink transition no-underline">Contacto</a>
         </nav>
       </div>
@@ -682,6 +681,7 @@
   </script>
 
   <!-- Auth Modal & Feature Gating Script -->
+  <script src="/consent.js" defer></script>
   <script src="/auth.js" defer></script>
 
   <!-- Live Watchlist & Forecast Quotes -->

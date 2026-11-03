@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es-PE" class="light pd-marketing">
-<head>
+<head>\n  <meta name="pd-geo" content="otro">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -163,14 +163,12 @@
     html.dark .eyebrow { color: #86868b; }
   </style>
   <!-- Identidad PerData (DESIGN.md) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Libre+Franklin:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/pd.css">
+    <!-- Fuentes auto-alojadas (T74) -->
+  <link rel="preload" href="/fonts/source-serif-4-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/libre-franklin-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/pd.css">
   <script defer src="/motion.js"></script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3342536112010915"
-     crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="/tw.css">
+<link rel="stylesheet" href="/tw.css">
 </head>
 <body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 
@@ -250,9 +248,29 @@
       </section>
       <section class="pd-legal-sec">
         <h2>5. Almacenamiento en tu navegador y cookies</h2>
-        <p>PerData guarda en el almacenamiento local de tu navegador (localStorage) solo tres datos: <b>theme</b> (tema claro u oscuro), <b>mde_terms_accepted_v2</b> (que ya aceptaste el aviso de la terminal) y, si inicias sesión, <b>mde_auth_session</b> (tu sesión, que se borra al cerrarla). No usamos cookies propias. Nuestras estadísticas de visitas (Cloudflare Web Analytics) funcionan sin cookies.</p>
-        <p>Los anuncios de Google AdSense pueden usar cookies de Google, como <b>IDE</b> en doubleclick.net, para mostrar anuncios, limitar su frecuencia y medirlos. Si estás en el Espacio Económico Europeo, el Reino Unido o Suiza, Google debe pedir tu consentimiento antes. Puedes gestionar la publicidad personalizada en adssettings.google.com y leer más en policies.google.com/technologies/ads.</p>
-        <p>Si contratas un plan, el pago ocurre en la página de Stripe, que puede usar sus propias cookies para seguridad y prevención de fraude. PerData nunca ve ni guarda los datos de tu tarjeta.</p>
+        <p>En PerData aplicamos un principio estricto de minimización de datos. A continuación detallamos los elementos que se almacenan en tu dispositivo:</p>
+
+        <p><b>Cookies propias:</b></p>
+        <ul>
+          <li><b>pd_consent:</b> almacena tu elección de consentimiento de cookies y preferencias de publicidad (valores <code>ads=1|0</code>, versión de política y fecha). Su duración es de 180 días y se emite con atributos <code>SameSite=Lax</code> y <code>Secure</code>. Es necesaria para recordar tu elección sin solicitarla en cada visita.</li>
+        </ul>
+
+        <p><b>Almacenamiento local (localStorage):</b></p>
+        <ul>
+          <li><b>theme:</b> preferencia de visualización (tema claro u oscuro).</li>
+          <li><b>mde_terms_accepted_v2:</b> registro de aceptación del aviso inicial de la terminal.</li>
+          <li><b>mde_auth_session:</b> token de sesión cifrado al iniciar sesión (se elimina automáticamente al cerrar sesión).</li>
+        </ul>
+
+        <p><b>Tipografías auto-alojadas (sin Google Fonts):</b> No utilizamos Google Fonts ni servidores externos de fuentes. Todas las familias tipográficas del sitio (Source Serif 4, Libre Franklin e IBM Plex Mono) están auto-alojadas directamente en nuestros servidores y se sirven desde nuestro propio dominio, impidiendo cualquier transferencia de tu dirección IP a terceros.</p>
+
+        <p><b>Publicidad y cookies de terceros (Google AdSense):</b> PerData no muestra anuncios a los usuarios con planes de pago (Boletín o Pro). Para visitantes de la versión gratuita:</p>
+        <ul>
+          <li><b>En el Espacio Económico Europeo (EEE), Reino Unido y Suiza:</b> Google AdSense está desactivado en su totalidad; no se cargan scripts ni cookies publicitarias de Google.</li>
+          <li><b>Fuera del EEE, Reino Unido y Suiza:</b> solo si otorgas tu consentimiento explícito (<code>ads=1</code>) se activan anuncios personalizados. Si no otorgas consentimiento o seleccionas «Solo necesarias» (<code>ads=0</code>), el sistema solicita exclusivamente anuncios no personalizados (<code>requestNonPersonalizedAds = 1</code>).</li>
+        </ul>
+
+        <p><b>Cómo cambiar tu elección:</b> Puedes modificar o revocar tu consentimiento en cualquier momento haciendo clic en el enlace permanente <a href="#cookies" class="pd-cookies-link" data-open-cookies>Cookies</a> presente en el pie de página de todas las secciones de PerData.</p>
       </section>
       <section class="pd-legal-sec">
         <h2>6. Cuánto tiempo los guardamos</h2>
@@ -333,6 +351,7 @@
   </script>
 
   <!-- Auth -->
+  <script src="/consent.js" defer></script>
   <script src="/auth.js" defer></script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "bc9abca1e97b4bcaa6261b23afc498e5"}'></script>
 </body>

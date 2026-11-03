@@ -33,7 +33,8 @@ const CLEAN_PAGES = {
   "/empresas": "empresas.html",
   "/mercado": "mercado.html",
   "/estado": "estado.html",
-  "/resumenes": "resumen.html"
+  "/resumenes": "resumen.html",
+  "/entrar": "entrar.html"
 };
 
 function adaptNodeHandler(handler) {
@@ -186,9 +187,19 @@ const API_CACHE_TTLS = new Map([
 ]);
 
 
+const EEA_COUNTRIES = new Set([
+  // EU 27
+  "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE",
+  "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE",
+  // EEA-EFTA
+  "IS", "LI", "NO",
+  // UK & Switzerland
+  "GB", "CH"
+]);
+
 // Per-response CSP nonce: every <script> in our HTML gets it, and 'strict-dynamic' then trusts the
 // scripts they load (Google sign-in, AdSense, Stripe). Enforced since 29-oct-2026, when no page reported violations.
-function withScriptNonce(response) {
+function withScriptNonce(response, geo = "otro") {
   if (response.status === 304 || !(response.headers.get("Content-Type") || "").includes("text/html")) return response;
   const bytes = crypto.getRandomValues(new Uint8Array(16));
   const nonce = btoa(String.fromCharCode(...bytes));
@@ -206,7 +217,7 @@ function withScriptNonce(response) {
     `script-src 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'`,
     "style-src 'self' 'unsafe-inline' https:",
     "img-src 'self' data: blob: https:",
-    "font-src 'self' data: https:",
+    "font-src 'self' data:",
     "connect-src 'self' https: wss:",
     "frame-src 'self' https:",
     "object-src 'none'",
@@ -216,12 +227,33 @@ function withScriptNonce(response) {
     "upgrade-insecure-requests",
   ].join("; "));
   const rewritten = new Response(response.body, { status: response.status, statusText: response.statusText, headers });
-  return new HTMLRewriter().on("script", { element(e) { e.setAttribute("nonce", nonce); } }).transform(rewritten);
+  let hasGeo = false;
+  return new HTMLRewriter()
+    .on("script", { element(e) { e.setAttribute("nonce", nonce); } })
+    .on('meta[name="pd-geo"]', {
+      element(e) {
+        e.setAttribute("content", geo);
+        hasGeo = true;
+      }
+    })
+    .on("head", {
+      element(e) {
+        if (!hasGeo) {
+          e.append(`<meta name="pd-geo" content="${geo}">`, { html: true });
+        }
+      }
+    })
+    .transform(rewritten);
 }
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    const country = request.cf?.country || request.headers.get("cf-ipcountry") || "";
+    const geoQuery = url.searchParams.get("geo");
+    const isEea = geoQuery ? geoQuery.toLowerCase() === "eea" : EEA_COUNTRIES.has(country.toUpperCase());
+    const geo = isEea ? "eea" : "otro";
+
     const ttl = API_CACHE_TTLS.get(url.pathname);
     const canCache = ttl && request.method === "GET" && !request.headers.has("Authorization") && globalThis.caches?.default;
     if (canCache) {
@@ -248,7 +280,7 @@ export default {
     const fresh = new Headers(request.headers);
     fresh.delete("If-None-Match");
     fresh.delete("If-Modified-Since");
-    const response = withScriptNonce(await this.route(new Request(request, { headers: fresh }), env, ctx));
+    const response = withScriptNonce(await this.route(new Request(request, { headers: fresh }), env, ctx), geo);
     const r = new Response(response.body, response);
     for (const [k, v] of Object.entries(SECURITY_HEADERS)) if (!r.headers.has(k)) r.headers.set(k, v);
     return r;

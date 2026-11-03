@@ -245,7 +245,6 @@ function render(f, ai, dateLabel) {
 
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light only">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Libre+Franklin:wght@400;600&family=Source+Serif+4:ital,wght@0,400;0,600;1,600&display=swap" rel="stylesheet">
 <title>Boletín PerData</title></head>
 <body style="margin:0;padding:0;background:${C.paper}">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0">${preheader}</div>
