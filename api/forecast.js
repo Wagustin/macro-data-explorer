@@ -321,6 +321,19 @@ function setCachedMemoryForecast(symbol, H, data) {
 }
 
 // Normal approximation in log space from P10-P90 (same as the Vercel API)
+function prevMonth(iso) {
+  if (!iso) return null;
+  const [y, m] = iso.split("-").map(Number);
+  return m === 1 ? `${y - 1}-12-01` : `${y}-${String(m - 1).padStart(2, "0")}-01`;
+}
+
+// Volatilidad anual implícita en la banda P10-P90 (supone reparto lognormal)
+function bandVolatility(p10, p90, H) {
+  if (!(p10 > 0) || !(p90 > 0)) return null;
+  const v = (Math.log(p90) - Math.log(p10)) / (2 * 1.2816) / Math.sqrt(H / 12) * 100;
+  return Number.isFinite(v) ? Number(v.toFixed(1)) : null;
+}
+
 function probRise(last, p) {
   const sigma = (Math.log(p.p90) - Math.log(p.p10)) / (2 * 1.2816);
   if (!(sigma > 0)) return p.p50 >= last ? 100 : 0;
@@ -417,14 +430,14 @@ export function formatForecastPayload(row, symbol, H) {
     runAt: row.run_at,
     calibration: calibrationPayload,
     horizonMonths: H,
-    horizonLabel: `${H} Meses`,
+    horizonLabel: H === 1 ? "1 mes" : `${H} meses`,
     horizonDate: finalPoint ? finalPoint.date : null,
     lastObservedPrice: lastClose,
-    lastObservedDate: path?.[0]?.date || null,
+    lastObservedDate: row.last_date || prevMonth(path?.[0]?.date),
     predictedPrice,
     expectedReturnPct,
     trend: expectedReturnPct >= 0 ? "Alcista (Bullish)" : "Bajista / Lateral (Bearish)",
-    volatilityAnnualized: Number(((Math.abs(expectedReturnPct) / Math.sqrt(H / 12))).toFixed(1)),
+    volatilityAnnualized: bandVolatility(Number(row.p10 || finalPoint?.p10), Number(row.p90 || finalPoint?.p90), H),
     probabilityOfRise: probRise(lastClose, { p10: Number(row.p10 || (finalPoint ? finalPoint.p10 : 0)), p50: predictedPrice, p90: Number(row.p90 || (finalPoint ? finalPoint.p90 : 0)) }),
     quantiles: {
       p10: Number(row.p10 || (finalPoint ? finalPoint.p10 : 0)),

@@ -973,9 +973,9 @@
               <div class="stat-sub">8 de cada 10 veces el precio queda aquí <span id="tfmRangeInner" class="hidden"></span></div>
             </div>
             <div class="stat">
-              <div class="band-label">Volatilidad Anualizada <a href="/aprende#volatilidad" class="pd-help" title="Dispersión o vaivén típico del precio proyectado a doce meses.">?</a></div>
-              <div id="tfmVol" class="stat-value text-black dark:text-white">48.7%</div>
-              <div class="stat-sub" id="tfmModelInfo">Vaivén esperado a 1 año (400 trayectorias)</div>
+              <div class="band-label">Volatilidad implícita (anual) <a href="/aprende#volatilidad" class="pd-help" title="Vaivén anual que corresponde al ancho de la banda P10-P90 de esta proyección.">?</a></div>
+              <div id="tfmVol" class="stat-value text-black dark:text-white">—</div>
+              <div class="stat-sub" id="tfmModelInfo">Según el ancho de la banda P10–P90</div>
             </div>
           </div>
 
@@ -2032,9 +2032,7 @@ const state = {
         }
       }
       const modelInfoEl = document.getElementById("tfmModelInfo");
-      if (modelInfoEl && f.metrics) {
-        modelInfoEl.textContent = `Vaivén anualizado · ${f.metrics.simulatedPaths || 400} trayectorias`;
-      }
+      if (modelInfoEl) modelInfoEl.textContent = "Según el ancho de la banda P10–P90";
       const modelBadge = document.getElementById("forecastModelBadge");
       if (modelBadge) {
         if (/^perdata-engine-v\d/.test(f.model || "")) {
@@ -2052,8 +2050,8 @@ const state = {
           modelBadge.textContent = "Modelo: PerData Engine";
         }
       }
-      const volValue = f.volatilityAnnualized ?? f.metrics?.annualizedVolatilityPct ?? '32.4';
-      document.getElementById("tfmVol").textContent = `${volValue}%`;
+      const volValue = f.volatilityAnnualized ?? f.metrics?.annualizedVolatilityPct;
+      document.getElementById("tfmVol").textContent = volValue == null ? "—" : `${volValue}%`;
       document.getElementById("tfmExplainText").textContent = `Proyección calculada a ${f.horizonLabel}. La gráfica inferior amplía el horizonte temporal incorporando el intervalo probabilístico P10-P90.`;
 
       // Update Mobile Ledger Table (Variante C)
@@ -2393,12 +2391,12 @@ const state = {
           ["Símbolo Macro:", m ? m.symbol : "N/A"],
           ["Correlación Pearson (r):", document.getElementById("metricCorrelation").textContent],
           [],
-          ["PROYECCIÓN (MODELO PERDATA ENGINE V3)"],
+          ["PROYECCIÓN (PERDATA ENGINE)"],
           ["Horizonte:", f ? f.horizonLabel : "6 Meses"],
           ["Precio Esperado (P50):", f ? f.predictedPrice : "N/A"],
           ["Retorno Proyectado (%):", f ? f.expectedReturnPct + "%" : "N/A"],
           ["Rango P10 - P90:", f ? `${f.quantiles.p10} - ${f.quantiles.p90}` : "N/A"],
-          ["Volatilidad Anualizada:", f ? f.volatilityAnnualized + "%" : "N/A"],
+          ["Volatilidad implícita en la banda (anual):", f && f.volatilityAnnualized != null ? f.volatilityAnnualized + "%" : "N/A"],
           [],
           ["LECTURA AUTOMÁTICA (REGLAS PERDATA)"],
           ["Cobertura del rango P10–P90:", interp ? (interp.confidencePercentage || "80 %") : "N/A"],
