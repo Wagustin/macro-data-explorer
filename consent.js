@@ -143,6 +143,7 @@
       const adsAllowed = toggle.checked;
       saveConsent(adsAllowed);
       closeModal();
+      document.documentElement.style.removeProperty("--pd-consent-h");
       const banner = document.getElementById("pdConsentBanner");
       if (banner) banner.remove();
     });
@@ -182,6 +183,10 @@
 
     document.body.appendChild(bar);
 
+    const setH = () => document.documentElement.style.setProperty("--pd-consent-h", bar.offsetHeight + "px");
+    setH();
+    window.addEventListener("resize", setH);
+
     // Ajustar si existe barra móvil
     const updatePosition = () => {
       const mobileNav = document.querySelector(".mobile-nav");
@@ -195,14 +200,21 @@
     updatePosition();
     window.addEventListener("resize", updatePosition);
 
+    const hideBanner = () => {
+      document.documentElement.style.removeProperty("--pd-consent-h");
+      window.removeEventListener("resize", setH);
+      window.removeEventListener("resize", updatePosition);
+      bar.remove();
+    };
+
     bar.querySelector("#pdConsentAccept").addEventListener("click", () => {
       saveConsent(1);
-      bar.remove();
+      hideBanner();
     });
 
     bar.querySelector("#pdConsentNecessary").addEventListener("click", () => {
       saveConsent(0);
-      bar.remove();
+      hideBanner();
     });
 
     bar.querySelector("#pdConsentConfig").addEventListener("click", () => {

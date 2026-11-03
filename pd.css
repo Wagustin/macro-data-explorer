@@ -2874,3 +2874,14 @@ html.dark .pd-skeleton {
   }
 }
 
+@media (max-width: 640px) {
+  .pd-consent-inner { flex-direction: column; align-items: stretch; gap: 8px; padding: 10px 16px; }
+  .pd-consent-text { font-size: 12.5px; line-height: 1.35; margin: 0; }
+  .pd-consent-actions { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: center; }
+  .pd-consent-btn { height: 40px; padding: 0 10px; font-size: 13px; }
+  .pd-consent-link { padding: 0 4px; font-size: 12.5px; }
+}
+.pd-entrar-form-wrap,
+.pd-entrar-form-col { padding-bottom: var(--pd-consent-h, 0px); }
+
+
