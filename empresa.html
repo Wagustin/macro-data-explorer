@@ -392,6 +392,11 @@ html.dark .ui-switch {
             <a href="/empresas">Empresas</a> / <span id="breadName">Emisor</span>
           </p>
           <h1 class="company-title" id="companyTitle">Cargando…</h1>
+          <div class="flex items-center gap-3 mt-1">
+            <button type="button" id="pdFollowBtn" class="pd-btn pd-btn-ghost text-xs" aria-pressed="false" hidden>Seguir</button>
+            <a href="/cuenta" id="pdFollowLink" class="text-xs text-ink-soft hover:text-ink no-underline" hidden>Umbrales de aviso</a>
+            <span id="pdFollowMsg" class="text-xs text-ink-soft" role="status"></span>
+          </div>
           <p class="company-meta" id="companyMeta">SECTOR · BVL</p>
         </div>
 
@@ -959,6 +964,94 @@ html.dark .ui-switch {
 
   <!-- Auth -->
   <script src="/auth.js" defer></script>
+  <script>
+  (function () {
+    var btn = document.getElementById("pdFollowBtn");
+    var link = document.getElementById("pdFollowLink");
+    var msg = document.getElementById("pdFollowMsg");
+    if (!btn) return;
+
+    var raw = "";
+    var parts = location.pathname.split("/").filter(Boolean);
+    if (parts.length >= 2 && parts[0] === "empresa") raw = decodeURIComponent(parts[1]);
+    if (!raw) raw = new URLSearchParams(location.search).get("symbol") || "";
+    raw = raw.trim().toUpperCase();
+    if (!raw) return;
+
+    var simbolo = null;
+    var siguiendo = false;
+
+    function auth() { return window.MDE_Auth; }
+    function token() { var a = auth(); return a && a.getToken ? a.getToken() : null; }
+
+    function pinta() {
+      if (!simbolo) return;
+      btn.hidden = false;
+      btn.textContent = siguiendo ? "Siguiendo" : "Seguir";
+      btn.setAttribute("aria-pressed", siguiendo ? "true" : "false");
+      btn.className = siguiendo ? "pd-btn pd-btn-accent text-xs" : "pd-btn pd-btn-ghost text-xs";
+      link.hidden = !siguiendo;
+    }
+
+    function texto(t) { if (msg) msg.textContent = t || ""; }
+
+    async function resolver() {
+      try {
+        var r = await fetch("/api/search?q=" + encodeURIComponent(raw), { cache: "no-store" });
+        if (!r.ok) return;
+        var d = await r.json();
+        var hit = (d.results || []).find(function (x) { return x.symbol.toUpperCase() === raw; }) ||
+                  (d.results || []).find(function (x) { return x.symbol.toUpperCase().indexOf(raw + ".") === 0; }) ||
+                  (d.results || [])[0];
+        simbolo = hit ? hit.symbol : null;
+        pinta();
+      } catch (e) {}
+    }
+
+    async function estado() {
+      var t = token();
+      if (!t || !simbolo) { siguiendo = false; pinta(); return; }
+      try {
+        var r = await fetch("/api/seguimiento", { headers: { Authorization: "Bearer " + t }, cache: "no-store" });
+        if (!r.ok) { pinta(); return; }
+        var d = await r.json();
+        siguiendo = (d.simbolos || []).some(function (x) { return x.simbolo === simbolo; });
+        pinta();
+      } catch (e) { pinta(); }
+    }
+
+    btn.addEventListener("click", async function () {
+      var a = auth();
+      var t = token();
+      if (!t) { if (a && a.openModal) a.openModal("Entra para seguir esta empresa y recibir avisos de precio.", "signin"); return; }
+      btn.disabled = true;
+      texto(siguiendo ? "Quitando…" : "Guardando…");
+      try {
+        var r = siguiendo
+          ? await fetch("/api/seguimiento?simbolo=" + encodeURIComponent(simbolo), { method: "DELETE", headers: { Authorization: "Bearer " + t } })
+          : await fetch("/api/seguimiento", { method: "POST", headers: { Authorization: "Bearer " + t, "Content-Type": "application/json" }, body: JSON.stringify({ simbolo: simbolo }) });
+        var d = await r.json();
+        if (!r.ok) { texto(d.error || "No se pudo guardar."); }
+        else { siguiendo = !siguiendo; texto(siguiendo ? "La sigues. Pon umbrales en tu cuenta." : "Ya no la sigues."); pinta(); }
+      } catch (e) { texto("No se pudo guardar."); }
+      btn.disabled = false;
+    });
+
+    function arranca() {
+      resolver().then(estado);
+    }
+    if (window.MDE_Auth) arranca();
+    else {
+      var n = 0;
+      var t = setInterval(function () {
+        n++;
+        if (window.MDE_Auth) { clearInterval(t); arranca(); }
+        else if (n > 40) clearInterval(t);
+      }, 100);
+    }
+    window.addEventListener("mde:auth-change", estado);
+  })();
+  </script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "bc9abca1e97b4bcaa6261b23afc498e5"}'></script>
 <script defer src="/ads.js"></script>
 </body>
