@@ -153,6 +153,22 @@ async function fetchUserEmails(url, key, userIds) {
       console.warn(`No se pudieron consultar emails de usuarios (HTTP ${res.status})`);
     }
   }
+  // Fallback: public.users puede no tener el correo (o no tener fila).
+  // Se resuelve desde Auth para los que falten, con un tope por corrida.
+  const missing = userIds.filter((id) => !map.has(id)).slice(0, 50);
+  for (const id of missing) {
+    try {
+      const r = await fetch(`${url}/auth/v1/admin/users/${encodeURIComponent(id)}`, {
+        headers: { apikey: key, Authorization: `Bearer ${key}` },
+        signal: AbortSignal.timeout(10000)
+      });
+      if (!r.ok) continue;
+      const u = await r.json();
+      if (u && u.email) map.set(id, u.email);
+    } catch (e) {
+      // se ignora: el aviso se saltará, como antes
+    }
+  }
   return map;
 }
 
