@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-03T23:01:41.790Z",
+ "actualizado": "2026-11-03T23:23:04.940Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "items": {
   "gestion-5c27b499c0": {
@@ -521,24 +521,6 @@
    "sentimiento": "POSITIVO",
    "empresas": []
   },
-  "infobae-89bac22f06": {
-   "relevancia": "ALTA",
-   "tema": "Economía y fiscal",
-   "sentimiento": "POSITIVO",
-   "empresas": []
-  },
-  "infobae-24df72f8e0": {
-   "relevancia": "ALTA",
-   "tema": "Bolsa y empresas",
-   "sentimiento": "POSITIVO",
-   "empresas": []
-  },
-  "infobae-8015909352": {
-   "relevancia": "BAJA",
-   "tema": "Economía y fiscal",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
   "andina-da4d9495ad": {
    "relevancia": "BAJA",
    "tema": "Dólar y BCRP",
@@ -682,6 +664,26 @@
   "andina-65a883d5d1": {
    "relevancia": "BAJA",
    "tema": "Economía y fiscal",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "gestion-3601e916fe": {
+   "relevancia": "ALTA",
+   "tema": "Energía",
+   "sentimiento": "POSITIVO",
+   "empresas": [
+    "PETROBC1"
+   ]
+  },
+  "andina-97468bfb89": {
+   "relevancia": "BAJA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "el_comercio-cf5a05d03b": {
+   "relevancia": "ALTA",
+   "tema": "Dólar y BCRP",
    "sentimiento": "NEUTRO",
    "empresas": []
   }
@@ -840,6 +842,7 @@
   "infobae-016dbf4438",
   "infobae-9f7c5cbedd",
   "rpp-1947674803",
-  "bloomberg_linea-7fdf455243"
+  "bloomberg_linea-7fdf455243",
+  "rpp-7e63889eaf"
  ]
 }
