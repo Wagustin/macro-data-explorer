@@ -6,6 +6,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { fetchT } from "./http.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (f, d) => { try { return JSON.parse(fs.readFileSync(path.join(ROOT, "data", f), "utf8")); } catch (e) { return d; } };
@@ -34,7 +35,7 @@ for (const n of news) {
 const days = [...new Set([...counts.values()].map((x) => x.fecha))].sort();
 const rows = [...counts.values()].filter((x) => days.length < 2 || x.fecha > days[0]);
 if (!rows.length) { console.log("Sin noticias clasificadas"); process.exit(0); }
-const r = await fetch(`${base}/rest/v1/sentimiento_diario?on_conflict=fecha,clave`, {
+const r = await fetchT(`${base}/rest/v1/sentimiento_diario?on_conflict=fecha,clave`, {
   method: "POST",
   headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" },
   body: JSON.stringify(rows),

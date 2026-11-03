@@ -690,7 +690,7 @@ ${rowsHtml}
             continue;
           }
           activeRequests++;
-          fetch(\`/api/historical?symbol=\${encodeURIComponent(symbol)}\`)
+          fetch(\`/api/historical?symbol=\${encodeURIComponent(symbol)}\`, { signal: AbortSignal.timeout(20000) })
             .then(res => res.ok ? res.json() : null)
             .then(data => {
               if (!data) return;

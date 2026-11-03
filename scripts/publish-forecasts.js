@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { pruneD1, syncD1 } from "./d1-sync.js";
 import { ENGINE, ENGINE_FALLBACKS } from "../api/_lib/engine.js";
+import { fetchT } from "./http.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const HISTORY_HORIZONS = new Set([1, 3, 6, 12]);
@@ -48,7 +49,7 @@ if (!base || !key) {
 }
 
 for (let i = 0; i < rows.length; i += 200) {
-  const r = await fetch(`${base}/rest/v1/forecasts?on_conflict=symbol,horizon,model`, {
+  const r = await fetchT(`${base}/rest/v1/forecasts?on_conflict=symbol,horizon,model`, {
     method: "POST",
     headers: {
       apikey: key,
@@ -67,7 +68,7 @@ console.log(`Guardadas ${rows.length} filas en Supabase`);
 // Rows from earlier runs that this run did not rewrite would keep serving old numbers
 const runAt = rows[0].run_at;
 const models = [ENGINE.id, ...ENGINE_FALLBACKS, "perdata-engine-v4", "timesfm-2.5", "engine-v3"]; // retired ids included
-const stale = await fetch(`${base}/rest/v1/forecasts?model=in.(${models.join(",")})&run_at=lt.${encodeURIComponent(runAt)}`, {
+const stale = await fetchT(`${base}/rest/v1/forecasts?model=in.(${models.join(",")})&run_at=lt.${encodeURIComponent(runAt)}`, {
   method: "DELETE",
   headers: { apikey: key, Authorization: `Bearer ${key}`, Prefer: "return=minimal" },
 });
@@ -87,7 +88,7 @@ const historyRows = rows
 
 let historySaved = true;
 for (let i = 0; i < historyRows.length; i += 200) {
-  const r = await fetch(`${base}/rest/v1/forecast_history?on_conflict=symbol,horizon,run_date`, {
+  const r = await fetchT(`${base}/rest/v1/forecast_history?on_conflict=symbol,horizon,run_date`, {
     method: "POST",
     headers: {
       apikey: key,

@@ -215,10 +215,14 @@ const server = http.createServer(async (req, res) => {
         } else if (/<head[^>]*>/i.test(html)) {
           html = html.replace(/<head[^>]*>/i, `$&<meta name="pd-geo" content="${geo}">`);
         }
-        res.writeHead(200, { "Content-Type": contentType });
+        res.writeHead(200, { "Content-Type": contentType, "Cache-Control": "no-cache" });
         return res.end(html);
       }
-      res.writeHead(200, { "Content-Type": contentType });
+      const headers = { "Content-Type": contentType };
+      if (parsedUrl.searchParams.has("v") && /\.(?:css|js|woff2?|ttf|otf)$/i.test(ext)) {
+        headers["Cache-Control"] = "public, max-age=31536000, immutable";
+      }
+      res.writeHead(200, headers);
       res.end(content);
     });
     return;

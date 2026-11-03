@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import crypto from "crypto";
 import { execFileSync } from "child_process";
 import { fileURLToPath } from "url";
 import { transform } from "esbuild";
@@ -161,5 +162,68 @@ const fontsDest = path.join(publicDir, "fonts");
 if (fs.existsSync(fontsSrc)) {
   fs.cpSync(fontsSrc, fontsDest, { recursive: true });
 }
+
+// Hash and cache-bust static assets (.css, .js, .woff2) in HTML files
+const assetHashes = new Map();
+
+function hashFile(absPath, relKey) {
+  if (fs.existsSync(absPath)) {
+    const content = fs.readFileSync(absPath);
+    const hash = crypto.createHash("sha256").update(content).digest("hex").slice(0, 8);
+    assetHashes.set(relKey, hash);
+    if (!relKey.startsWith("/")) {
+      assetHashes.set(`/${relKey}`, hash);
+    }
+  }
+}
+
+// 1. Hash fonts
+const fontsDir = path.join(publicDir, "fonts");
+if (fs.existsSync(fontsDir)) {
+  for (const f of fs.readdirSync(fontsDir)) {
+    if (f.endsWith(".woff2")) {
+      hashFile(path.join(fontsDir, f), `fonts/${f}`);
+    }
+  }
+}
+
+// 2. Hash CSS & JS files
+for (const f of fs.readdirSync(publicDir)) {
+  const full = path.join(publicDir, f);
+  if (fs.statSync(full).isFile() && /\.(css|js|woff2)$/i.test(f)) {
+    hashFile(full, f);
+  }
+}
+
+// 3. Update HTML files in publicDir with ?v=<hash>
+function cacheBustHtml(content) {
+  return content.replace(/\b(href|src)=(["'])([^"']+?)\2/gi, (match, attr, quote, url) => {
+    if (/^(?:https?:|\/\/|data:|#|mailto:)/i.test(url)) {
+      return match;
+    }
+    const cleanUrl = url.split("?")[0].split("#")[0];
+    const hash = assetHashes.get(cleanUrl) || assetHashes.get(cleanUrl.startsWith("/") ? cleanUrl.slice(1) : `/${cleanUrl}`);
+    if (hash && /\.(?:css|js|woff2)$/i.test(cleanUrl)) {
+      return `${attr}=${quote}${cleanUrl}?v=${hash}${quote}`;
+    }
+    return match;
+  });
+}
+
+function processHtmlFiles(dir) {
+  for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, ent.name);
+    if (ent.isDirectory()) {
+      processHtmlFiles(full);
+    } else if (ent.isFile() && ent.name.endsWith(".html")) {
+      const original = fs.readFileSync(full, "utf8");
+      const updated = cacheBustHtml(original);
+      if (updated !== original) {
+        fs.writeFileSync(full, updated);
+      }
+    }
+  }
+}
+processHtmlFiles(publicDir);
 
 console.log("✓ Cloudflare public/ directory built successfully.");

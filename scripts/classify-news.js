@@ -10,6 +10,7 @@ import { fileURLToPath } from "url";
 import { askJSON } from "./llm.js";
 import { classifyBatch } from "./news-classification.js";
 import { mencionaEmpresa } from "./empresa-mencion.js";
+import { fetchT } from "./http.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FEED = path.join(ROOT, "data", "noticias.json");
@@ -41,7 +42,7 @@ async function saveLabels(rows) {
   try {
     if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) throw new Error("faltan SUPABASE_URL o SUPABASE_SERVICE_KEY");
     const base = SUPABASE_URL.replace(/\/$/, "");
-    const response = await fetch(`${base}/rest/v1/etiquetas_noticias?on_conflict=id`, {
+    const response = await fetchT(`${base}/rest/v1/etiquetas_noticias?on_conflict=id`, {
       method: "POST",
       headers: {
         apikey: SUPABASE_SERVICE_KEY,

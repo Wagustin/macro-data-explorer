@@ -20,6 +20,7 @@ export const IS_PRODUCTION = process.env.VERCEL_ENV === "production" || process.
 // Columns every deployment has (migration 0001). Billing columns come from 0002
 // and are only written by billing code paths.
 const BASE_COLUMNS = ["id", "email", "name", "role", "salt", "hash", "iterations", "provider", "created_at"];
+const USER_SELECT_COLUMNS = "id,email,name,role,salt,hash,iterations,provider,created_at,plan,stripe_customer_id,stripe_subscription_id,subscription_status,cancel_at_period_end,current_period_end,updated_at,reset_token_hash,reset_expires_at,password_changed_at";
 
 async function supabase(method, query, body) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}${query}`, {
@@ -78,7 +79,7 @@ async function findOne(field, value) {
   if (!value) return null;
   assertStoreAvailable();
   if (USE_SUPABASE) {
-    const rows = await supabase("GET", `?${field}=eq.${encodeURIComponent(value)}&select=*&limit=1`);
+    const rows = await supabase("GET", `?${field}=eq.${encodeURIComponent(value)}&select=${USER_SELECT_COLUMNS}&limit=1`);
     return Array.isArray(rows) && rows.length ? rows[0] : null;
   }
   return readLocal().find(u => u[field] === value) || null;

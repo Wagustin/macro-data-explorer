@@ -465,7 +465,7 @@ export async function fetchPrecomputedForecast(symbol, H) {
 
   // 2. Today's PerData Engine: D1 first (same network as the Worker), then Supabase; both are
   // written by precompute-engine.js after the daily batch
-  const d1 = await d1Rows("select * from forecasts where symbol = ? and horizon = ? and model = ? limit 1", symbol, H, ENGINE.id);
+  const d1 = await d1Rows("select symbol, horizon, model, run_at, last_close, p10, p25, p50, p75, p90, path from forecasts where symbol = ? and horizon = ? and model = ? limit 1", symbol, H, ENGINE.id);
   if (d1 && d1[0] && (Date.now() - Date.parse(d1[0].run_at)) < 48 * 36e5) {
     const payload = formatForecastPayload({ ...d1[0], path: d1[0].path ? JSON.parse(d1[0].path) : null }, symbol, H);
     setCachedMemoryForecast(symbol, H, payload);
@@ -475,7 +475,7 @@ export async function fetchPrecomputedForecast(symbol, H) {
   const sbKey = process.env.SUPABASE_SERVICE_KEY || "";
   if (sbUrl && sbKey) {
     try {
-      const r = await fetch(`${sbUrl}/rest/v1/forecasts?symbol=eq.${encodeURIComponent(symbol)}&horizon=eq.${H}&model=eq.${ENGINE.id}&select=*&limit=1`, {
+      const r = await fetch(`${sbUrl}/rest/v1/forecasts?symbol=eq.${encodeURIComponent(symbol)}&horizon=eq.${H}&model=eq.${ENGINE.id}&select=symbol,horizon,model,run_at,last_close,p10,p25,p50,p75,p90,path&limit=1`, {
         headers: { apikey: sbKey, Authorization: `Bearer ${sbKey}` },
         signal: AbortSignal.timeout(2000)
       });
@@ -494,7 +494,7 @@ export async function fetchPrecomputedForecast(symbol, H) {
   // model in the table silently take precedence over the requested engine.
   for (const model of ENGINE_FALLBACKS) {
     if (model === ENGINE.id) continue;
-    const olderD1 = await d1Rows("select * from forecasts where symbol = ? and horizon = ? and model = ? limit 1", symbol, H, model);
+    const olderD1 = await d1Rows("select symbol, horizon, model, run_at, last_close, p10, p25, p50, p75, p90, path from forecasts where symbol = ? and horizon = ? and model = ? limit 1", symbol, H, model);
     if (olderD1?.[0] && (Date.now() - Date.parse(olderD1[0].run_at)) < 48 * 36e5) {
       const payload = formatForecastPayload({ ...olderD1[0], path: olderD1[0].path ? JSON.parse(olderD1[0].path) : null }, symbol, H);
       setCachedMemoryForecast(symbol, H, payload);
@@ -502,7 +502,7 @@ export async function fetchPrecomputedForecast(symbol, H) {
     }
     if (sbUrl && sbKey) {
       try {
-        const r = await fetch(`${sbUrl}/rest/v1/forecasts?symbol=eq.${encodeURIComponent(symbol)}&horizon=eq.${H}&model=eq.${encodeURIComponent(model)}&select=*&limit=1`, {
+        const r = await fetch(`${sbUrl}/rest/v1/forecasts?symbol=eq.${encodeURIComponent(symbol)}&horizon=eq.${H}&model=eq.${encodeURIComponent(model)}&select=symbol,horizon,model,run_at,last_close,p10,p25,p50,p75,p90,path&limit=1`, {
           headers: { apikey: sbKey, Authorization: `Bearer ${sbKey}` },
           signal: AbortSignal.timeout(2000)
         });
@@ -540,7 +540,7 @@ export async function fetchPrecomputedForecast(symbol, H) {
 
   if (supabaseUrl && serviceKey) {
     try {
-      const url = `${supabaseUrl}/rest/v1/forecasts?symbol=eq.${encodeURIComponent(symbol)}&horizon=eq.${H}&model=eq.engine-v3&select=*&order=run_at.desc&limit=1`;
+      const url = `${supabaseUrl}/rest/v1/forecasts?symbol=eq.${encodeURIComponent(symbol)}&horizon=eq.${H}&model=eq.engine-v3&select=symbol,horizon,model,run_at,last_close,p10,p25,p50,p75,p90,path&order=run_at.desc&limit=1`;
       const res = await fetch(url, {
         headers: {
           apikey: serviceKey,

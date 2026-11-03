@@ -2,6 +2,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { fetchT } from "./http.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const horizons = [1, 3, 6, 12];
@@ -22,7 +23,7 @@ const snapshots = [];
 if (base && key) {
   for (let offset = 0; ; offset += 1000) {
     const url = `${base}/rest/v1/forecast_history?select=symbol,horizon,run_date,last_close,p10,p50,p90&order=run_date.asc&limit=1000&offset=${offset}`;
-    const response = await fetch(url, { headers: { apikey: key, Authorization: `Bearer ${key}` } });
+    const response = await fetchT(url, { headers: { apikey: key, Authorization: `Bearer ${key}` } });
     if (!response.ok) throw new Error(`Supabase forecast_history HTTP ${response.status}: ${(await response.text()).slice(0, 200)}`);
     const page = await response.json();
     snapshots.push(...page);
@@ -66,7 +67,7 @@ if (base && key && needed.size) {
       url.searchParams.set("order", "fecha.asc");
       url.searchParams.set("limit", "1000");
       url.searchParams.set("offset", String(offset));
-      const response = await fetch(url, { headers: { apikey: key, Authorization: `Bearer ${key}` } });
+      const response = await fetchT(url, { headers: { apikey: key, Authorization: `Bearer ${key}` } });
       if (!response.ok) throw new Error(`Supabase cotizaciones_smv HTTP ${response.status}: ${(await response.text()).slice(0, 200)}`);
       const page = await response.json();
       for (const quote of page) {

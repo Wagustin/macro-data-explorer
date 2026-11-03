@@ -353,7 +353,7 @@ export default {
           ]
         }
       ].map((data) => `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, "\\u003c")}</script>`).join("");
-      return new HTMLRewriter()
+      const transformed = new HTMLRewriter()
         .on("title", { element(e) { e.setInnerContent(title); } })
         .on('meta[name="description"]', { element(e) { e.setAttribute("content", desc); } })
         .on("head", { element(e) {
@@ -364,6 +364,9 @@ export default {
             `<meta property="og:image" content="https://perdata.site/og-image.png" />` + structuredData, { html: true });
         } })
         .transform(page);
+      const headers = new Headers(transformed.headers);
+      headers.set("Cache-Control", "no-cache");
+      return new Response(transformed.body, { status: transformed.status, statusText: transformed.statusText, headers });
     }
 
     const digestMatch = /^\/resumen\/(\d{4}-\d{2}-\d{2})\/?$/.exec(pathname);
@@ -390,12 +393,15 @@ export default {
         publisher: { "@type": "Organization", name: "PerData", url: "https://perdata.site/" }
       };
       const structuredData = `<script type="application/ld+json">${JSON.stringify(article).replace(/</g, "\\u003c")}</script>`;
-      return new HTMLRewriter()
+      const transformed = new HTMLRewriter()
         .on("title", { element(e) { e.setInnerContent(`${title} · PerData`); } })
         .on("#pageTitle", { element(e) { e.setInnerContent(title); } })
         .on('meta[name="description"]', { element(e) { e.setAttribute("content", title); } })
         .on("head", { element(e) { e.append(`<link rel="canonical" href="https://perdata.site/resumen/${date}" />${structuredData}`, { html: true }); } })
         .transform(page);
+      const headers = new Headers(transformed.headers);
+      headers.set("Cache-Control", "no-cache");
+      return new Response(transformed.body, { status: transformed.status, statusText: transformed.statusText, headers });
     }
 
     // 2. Delegate to Static Assets (handles clean URLs, trailing slashes, etc.)
@@ -405,9 +411,35 @@ export default {
       const notFoundReq = new Request(notFoundUrl.toString(), request);
       const notFoundRes = await env.ASSETS.fetch(notFoundReq);
       if (notFoundRes.status === 200) {
+        const headers = new Headers(notFoundRes.headers);
+        headers.set("Cache-Control", "no-cache");
         return new Response(notFoundRes.body, {
           status: 404,
-          headers: notFoundRes.headers
+          headers
+        });
+      }
+    }
+
+    if (assetResponse.ok) {
+      const hasVersion = url.searchParams.has("v");
+      const isStaticAsset = /\.(?:css|js|woff2?|ttf|otf)$/i.test(pathname);
+      if (hasVersion && isStaticAsset) {
+        const headers = new Headers(assetResponse.headers);
+        headers.set("Cache-Control", "public, max-age=31536000, immutable");
+        return new Response(assetResponse.body, {
+          status: assetResponse.status,
+          statusText: assetResponse.statusText,
+          headers
+        });
+      }
+      const ct = assetResponse.headers.get("content-type") || "";
+      if (ct.includes("text/html") || pathname.endsWith(".html") || CLEAN_PAGES[pathname] || pathname === "/") {
+        const headers = new Headers(assetResponse.headers);
+        headers.set("Cache-Control", "no-cache");
+        return new Response(assetResponse.body, {
+          status: assetResponse.status,
+          statusText: assetResponse.statusText,
+          headers
         });
       }
     }

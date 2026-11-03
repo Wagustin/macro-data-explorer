@@ -11,6 +11,7 @@ import { askJSON, grounded } from "./llm.js";
 import { ENGINE } from "../api/_lib/engine.js";
 import { syncD1 } from "./d1-sync.js";
 import { selectHeadlines, sentimentAverage, validCitations, topicsForAsset } from "./interpretation-utils.js";
+import { fetchT } from "./http.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (f, d) => { try { return JSON.parse(fs.readFileSync(path.join(ROOT, "data", f), "utf8")); } catch (e) { return d; } };
@@ -19,7 +20,7 @@ const base = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
 const key = process.env.SUPABASE_SERVICE_KEY || "";
 if (!base || !key) { console.log("Sin Supabase: no hay proyecciones que leer"); process.exit(0); }
 
-const r = await fetch(`${base}/rest/v1/forecasts?model=eq.${ENGINE.id}&horizon=in.(1,3)&select=symbol,horizon,last_close,p10,p50,p90,run_at`, {
+const r = await fetchT(`${base}/rest/v1/forecasts?model=eq.${ENGINE.id}&horizon=in.(1,3)&select=symbol,horizon,last_close,p10,p50,p90,run_at`, {
   headers: { apikey: key, Authorization: `Bearer ${key}` },
 });
 if (!r.ok) throw new Error(`Supabase HTTP ${r.status}`);
