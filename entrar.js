@@ -7,14 +7,48 @@
 
   function validateVolver(raw) {
     if (!raw || typeof raw !== 'string') return '/';
-    const trimmed = raw.trim();
-    if (!trimmed.startsWith('/') || trimmed.startsWith('//') || trimmed.includes('\\') || trimmed.includes(':')) {
+
+    function isInvalid(str) {
+      if (!str || typeof str !== 'string') return true;
+      // Rechazar cualquier carácter de control o espacio antes de las otras comprobaciones
+      // (el navegador quita tabuladores y saltos: «/\t/evil.com» se volvería «//evil.com»)
+      if (/[\u0000- \u007f]/.test(str)) return true;
+      if (!str.startsWith('/') || str.startsWith('//') || str.includes('\\') || str.includes(':')) {
+        return true;
+      }
+      return false;
+    }
+
+    // 1. Comprobaciones sobre raw antes de decodificar
+    if (isInvalid(raw)) return '/';
+
+    // Rechazar cadenas con secuencias codificadas peligrosas
+    const lower = raw.toLowerCase();
+    if (lower.includes('/%2f') || lower.includes('/%5c')) return '/';
+
+    // 2. Descodificar una vez con decodeURIComponent en try/catch y repetir las comprobaciones
+    let decoded;
+    try {
+      decoded = decodeURIComponent(raw);
+    } catch {
       return '/';
     }
-    return trimmed;
+
+    if (isInvalid(decoded)) return '/';
+    const decodedLower = decoded.toLowerCase();
+    if (decodedLower.includes('/%2f') || decodedLower.includes('/%5c')) return '/';
+
+    return raw;
   }
 
-  const params = new URLSearchParams(window.location.search);
+  if (typeof window !== 'undefined') {
+    window.validateVolver = validateVolver;
+  }
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { validateVolver };
+  }
+
+  const params = new URLSearchParams(window.location ? window.location.search : '');
   const volver = validateVolver(params.get('volver'));
   let currentMode = 'signin';
   const rawModo = (params.get('modo') || '').toLowerCase();
@@ -195,7 +229,7 @@
   }
 
   function init() {
-    const volverLink = document.getElementById('pdVolverLink');
+    const volverLink = document.getElementById('pdVolverLink') || document.getElementById('pdEntrarBack') || document.querySelector('.pd-entrar-back');
     if (volverLink) {
       volverLink.href = volver;
     }
@@ -376,9 +410,11 @@
     }, 60);
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
+  if (typeof document !== 'undefined' && typeof document.getElementById === 'function') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
   }
 })(typeof window !== 'undefined' ? window : globalThis, typeof document !== 'undefined' ? document : {});
