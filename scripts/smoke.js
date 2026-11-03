@@ -349,6 +349,16 @@ async function testBilling() {
   }
 }
 
+async function testSeguimiento() {
+  try {
+    const res = await fetchWithTimeout(`${base}/api/seguimiento`);
+    const pass = res.status === 401;
+    record("API Seguimiento (sin auth)", pass, `HTTP ${res.status}`);
+  } catch (err) {
+    record("API Seguimiento (sin auth)", false, `Error: ${err.message}`);
+  }
+}
+
 async function testCalibration() {
   const calibPath = path.join(__dirname, "..", "api", "_lib", "calibration.json");
   if (!fs.existsSync(calibPath)) {
@@ -407,6 +417,7 @@ async function main() {
   await testNews();
   await testMarketAndStatus();
   await testBilling();
+  await testSeguimiento();
 
   let passCount = 0;
   let failCount = 0;

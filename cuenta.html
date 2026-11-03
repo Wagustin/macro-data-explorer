@@ -250,6 +250,31 @@
           <p id="pdAcctStatus" class="pd-form-status" role="status"></p>
         </div>
 
+        <div class="pd-panel" id="pdSegPanel">
+          <div class="pd-panel-row">
+            <div>
+              <p class="pd-kicker">Personalizar</p>
+              <h2 class="pd-panel-title">Empresas que sigo</h2>
+              <p class="pd-panel-copy">Elige las empresas y activos que quieres seguir. Si defines un precio, te avisaremos por correo cuando lo cruce.</p>
+            </div>
+          </div>
+          <form id="pdSegForm" class="mt-3 flex flex-col sm:flex-row sm:items-end gap-2">
+            <label class="flex-1 text-xs text-ink-soft">Empresa o activo
+              <input id="pdSegBuscar" list="pdSegOpciones" class="w-full border border-rule bg-card px-2 py-1.5 text-sm text-ink" placeholder="Buscar por nombre o símbolo" autocomplete="off" required>
+              <datalist id="pdSegOpciones"></datalist>
+            </label>
+            <label class="text-xs text-ink-soft">Avisar si sube de
+              <input id="pdSegArriba" type="number" inputmode="decimal" step="0.0001" min="0" class="w-full sm:w-32 border border-rule bg-card px-2 py-1.5 text-sm text-ink tnum" placeholder="—">
+            </label>
+            <label class="text-xs text-ink-soft">Avisar si baja de
+              <input id="pdSegAbajo" type="number" inputmode="decimal" step="0.0001" min="0" class="w-full sm:w-32 border border-rule bg-card px-2 py-1.5 text-sm text-ink tnum" placeholder="—">
+            </label>
+            <button type="submit" class="pd-btn pd-btn-accent">Añadir</button>
+          </form>
+          <p id="pdSegEstado" class="pd-form-status" role="status"></p>
+          <ul id="pdSegLista" class="mt-3"></ul>
+        </div>
+
         <div class="pd-panel pd-panel-quiet">
           <div class="pd-panel-row">
             <div>
@@ -430,6 +455,156 @@
       document.addEventListener("DOMContentLoaded", function () { render(); waitForUpgrade(); });
     })();
   </script>
+
+  <script>
+  (function () {
+    var form = document.getElementById("pdSegForm");
+    if (!form) return;
+    var input = document.getElementById("pdSegBuscar");
+    var opciones = document.getElementById("pdSegOpciones");
+    var arriba = document.getElementById("pdSegArriba");
+    var abajo = document.getElementById("pdSegAbajo");
+    var estado = document.getElementById("pdSegEstado");
+    var lista = document.getElementById("pdSegLista");
+    var nombres = {};
+
+    function token() { return window.MDE_Auth && window.MDE_Auth.getToken ? window.MDE_Auth.getToken() : null; }
+
+    function msg(text, error) {
+      estado.textContent = text || "";
+      estado.className = "pd-form-status" + (error ? " is-error" : "");
+    }
+
+    function fmt(n) {
+      if (n === null || n === undefined || n === "") return "—";
+      return Number(n).toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+    }
+
+    function render(rows) {
+      lista.innerHTML = "";
+      if (!rows || !rows.length) {
+        var vacio = document.createElement("li");
+        vacio.className = "py-3 text-sm text-ink-soft";
+        vacio.textContent = "Todavía no sigues ninguna empresa.";
+        lista.appendChild(vacio);
+        return;
+      }
+      rows.forEach(function (r) {
+        var li = document.createElement("li");
+        li.className = "py-3 flex flex-wrap items-center justify-between gap-2 border-t border-rule first:border-t-0";
+        var left = document.createElement("span");
+        left.className = "text-sm text-ink";
+        var nom = document.createElement("span");
+        nom.textContent = nombres[r.simbolo] || r.simbolo;
+        var sym = document.createElement("span");
+        sym.className = "ml-2 text-xs text-ink-soft tnum";
+        sym.textContent = r.simbolo;
+        left.appendChild(nom);
+        left.appendChild(sym);
+        var right = document.createElement("span");
+        right.className = "flex items-center gap-3";
+        var umbrales = document.createElement("span");
+        umbrales.className = "text-xs text-ink-soft tnum";
+        umbrales.textContent = "arriba " + fmt(r.alerta_arriba) + " · abajo " + fmt(r.alerta_abajo);
+        var quitar = document.createElement("button");
+        quitar.type = "button";
+        quitar.className = "pd-btn pd-btn-ghost text-xs";
+        quitar.textContent = "Quitar";
+        quitar.setAttribute("aria-label", "Dejar de seguir " + (nombres[r.simbolo] || r.simbolo));
+        quitar.addEventListener("click", function () { borrar(r.simbolo); });
+        right.appendChild(umbrales);
+        right.appendChild(quitar);
+        li.appendChild(left);
+        li.appendChild(right);
+        lista.appendChild(li);
+      });
+    }
+
+    async function cargar() {
+      var t = token();
+      if (!t) return;
+      try {
+        var res = await fetch("/api/seguimiento", { headers: { Authorization: "Bearer " + t }, cache: "no-store" });
+        if (!res.ok) { msg("No pudimos cargar tus empresas. Inténtalo en un momento.", true); return; }
+        var data = await res.json();
+        render(data.simbolos || []);
+      } catch (e) { msg("No pudimos cargar tus empresas.", true); }
+    }
+
+    async function guardar(body) {
+      var t = token();
+      if (!t) return;
+      msg("Guardando…");
+      try {
+        var res = await fetch("/api/seguimiento", {
+          method: "POST",
+          headers: { Authorization: "Bearer " + t, "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+        var data = await res.json();
+        if (!res.ok) { msg(data.error || "No se pudo guardar.", true); return; }
+        render(data.simbolos || []);
+        msg("Guardado.");
+      } catch (e) { msg("No se pudo guardar.", true); }
+    }
+
+    async function borrar(simbolo) {
+      var t = token();
+      if (!t) return;
+      try {
+        var res = await fetch("/api/seguimiento?simbolo=" + encodeURIComponent(simbolo), {
+          method: "DELETE",
+          headers: { Authorization: "Bearer " + t }
+        });
+        var data = await res.json();
+        if (!res.ok) { msg(data.error || "No se pudo quitar.", true); return; }
+        render(data.simbolos || []);
+        msg("Quitado.");
+      } catch (e) { msg("No se pudo quitar.", true); }
+    }
+
+    var t0 = null;
+    input.addEventListener("input", function () {
+      var q = input.value.trim();
+      if (q.length < 2) return;
+      clearTimeout(t0);
+      t0 = setTimeout(async function () {
+        try {
+          var res = await fetch("/api/search?q=" + encodeURIComponent(q), { cache: "no-store" });
+          if (!res.ok) return;
+          var data = await res.json();
+          opciones.innerHTML = "";
+          (data.results || []).slice(0, 12).forEach(function (r) {
+            nombres[r.symbol] = r.name;
+            var o = document.createElement("option");
+            o.value = r.symbol;
+            o.label = r.name;
+            opciones.appendChild(o);
+          });
+        } catch (e) {}
+      }, 220);
+    });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var simbolo = input.value.trim();
+      if (!simbolo) return;
+      guardar({
+        simbolo: simbolo,
+        alerta_arriba: arriba.value ? Number(arriba.value) : null,
+        alerta_abajo: abajo.value ? Number(abajo.value) : null
+      });
+      input.value = "";
+      arriba.value = "";
+      abajo.value = "";
+    });
+
+    window.addEventListener("mde:auth-change", function () { cargar(); });
+    document.addEventListener("DOMContentLoaded", cargar);
+    cargar();
+  })();
+  </script>
+
   <nav class="mobile-nav" aria-label="Navegación móvil">
     <a href="/explorer" class="nav-item">
       <div class="nav-icon-wrap">
