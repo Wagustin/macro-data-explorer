@@ -262,41 +262,13 @@
     },
 
     // ---------- UI ----------
-    openModal(prompt, mode, afterAuth) {
-      ensureModal();
-      pendingAfterAuth = afterAuth || null;
-      const banner = document.getElementById("pdAuthPrompt");
-      banner.textContent = prompt || "";
-      banner.hidden = !prompt;
-      setAuthMode(mode === "signup" ? "signup" : "signin");
-      showDialog("pdAuthModal");
-      showGoogle();
-      const startField = () => {
-        const canvas = document.querySelector("#pdAuthModal .pd-auth-canvas");
-        if (canvas && window.PDLoginField) {
-          window.PDLoginField.start(canvas);
-        }
-      };
-      if (window.PDLoginField) {
-        startField();
-      } else {
-        const s = document.createElement("script");
-        s.src = "/pd-login-field.js";
-        s.onload = startField;
-        document.head.appendChild(s);
-      }
-      setTimeout(() => {
-        const first = document.getElementById(mode === "signup" ? "pdAuthName" : "pdAuthEmail");
-        if (first) first.focus();
-      }, 60);
+    openModal(prompt, mode) {
+      const volver = encodeURIComponent(location.pathname + location.search);
+      const m = mode === "signup" ? "&modo=registro" : (mode === "recover" ? "&modo=recuperar" : "");
+      location.href = `/entrar?volver=${volver}${m}`;
     },
 
-    closeModal() {
-      if (window.PDLoginField) {
-        window.PDLoginField.stop();
-      }
-      hideDialog("pdAuthModal");
-    },
+    closeModal() {},
 
     openUpgrade(feature) {
       ensureUpgrade();
@@ -320,8 +292,8 @@
       if (!container) return;
       const u = this.getUser();
       if (!u) {
-        container.innerHTML = '<button id="btnOpenAuthModal" type="button" class="pd-nav-btn" aria-label="Iniciar sesión">' + ICON_USER + "<span>Iniciar sesión</span></button>";
-        document.getElementById("btnOpenAuthModal").addEventListener("click", () => Auth.openModal());
+        const volver = encodeURIComponent(location.pathname + location.search);
+        container.innerHTML = '<a id="btnOpenAuthModal" class="pd-nav-btn" href="/entrar?volver=' + volver + '" aria-label="Iniciar sesión">' + ICON_USER + '<span>Iniciar sesión</span></a>';
         return;
       }
       const name = u.name || u.email.split("@")[0];
@@ -372,7 +344,6 @@
     },
 
     init() {
-      consumeOAuthReturn();
       this.render();
       this.loadBilling();
       this.refresh();
@@ -382,7 +353,10 @@
         const opener = e.target.closest("[data-auth-open]");
         if (opener) {
           e.preventDefault();
-          Auth.openModal(opener.getAttribute("data-auth-prompt") || "", opener.getAttribute("data-auth-open"));
+          const mode = opener.getAttribute("data-auth-open");
+          const m = mode === "signup" ? "&modo=registro" : (mode === "recover" ? "&modo=recuperar" : "");
+          const volver = encodeURIComponent(location.pathname + location.search);
+          location.href = `/entrar?volver=${volver}${m}`;
         }
         const upgrader = e.target.closest("[data-upgrade]");
         if (upgrader) {
@@ -404,8 +378,6 @@
   };
 
   // ---------- Internals ----------
-  let authMode = "signin";
-  let pendingAfterAuth = null;
   let lastFocus = null;
 
   function closeMenu() {
@@ -427,9 +399,6 @@
   function hideDialog(id) {
     const el = document.getElementById(id);
     if (!el || el.hidden) return;
-    if (id === "pdAuthModal" && window.PDLoginField) {
-      window.PDLoginField.stop();
-    }
     el.classList.remove("is-open");
     el.hidden = true;
     if (!document.querySelector(".pd-dialog.is-open")) document.body.style.overflow = "";
@@ -452,177 +421,6 @@
     } catch (err) {
       return { success: false, error: "No hay conexión con el servidor. Revisa tu internet e intenta de nuevo." };
     }
-  }
-
-  function setAuthMode(mode) {
-    authMode = mode;
-    const signup = mode === "signup";
-    document.getElementById("pdTabSignIn").setAttribute("aria-selected", String(!signup));
-    document.getElementById("pdTabSignUp").setAttribute("aria-selected", String(signup));
-    document.getElementById("pdAuthTitle").textContent = signup ? "Crea tu cuenta gratuita" : "Inicia sesión en PerData";
-    document.getElementById("pdGroupName").hidden = !signup;
-    document.getElementById("pdForgot").hidden = signup;
-    document.getElementById("pdAuthLegal").hidden = !signup;
-    const pw = document.getElementById("pdAuthPassword");
-    pw.autocomplete = signup ? "new-password" : "current-password";
-    pw.placeholder = signup ? "Mínimo 8 caracteres" : "Tu contraseña";
-    document.getElementById("pdAuthSubmit").textContent = signup ? "Crear cuenta" : "Iniciar sesión";
-    setStatus("");
-  }
-
-  function setStatus(msg, kind) {
-    const el = document.getElementById("pdAuthStatus");
-    el.textContent = msg || "";
-    el.className = "pd-form-status" + (kind ? " is-" + kind : "");
-  }
-
-  // Google sign-in shows only when it's switched on in Supabase Auth (checked once per page)
-  let googleChecked = null;
-  function showGoogle() {
-    const wrap = document.getElementById("pdGoogleWrap");
-    const btn = document.getElementById("pdGoogleBtn");
-    if (!wrap || !btn) return;
-    btn.href = "/api/auth?action=google&next=" + encodeURIComponent(location.pathname + location.search);
-    if (!googleChecked) {
-      googleChecked = fetch("/api/auth?action=providers").then(r => r.json()).then(d => !!d.google).catch(() => false);
-    }
-    googleChecked.then(on => { wrap.hidden = !on; });
-  }
-
-  // Back from Google: Supabase puts the session (or an error) in the URL hash
-  function consumeOAuthReturn() {
-    const h = new URLSearchParams(location.hash.slice(1));
-    const token = h.get("access_token");
-    const error = h.get("error");
-    if (!token && !error) return;
-    history.replaceState(null, "", location.pathname + location.search);
-    if (error) {
-      setTimeout(() => {
-        Auth.openModal("No se pudo entrar con Google. Prueba otra vez o usa tu correo.");
-      }, 300);
-      return;
-    }
-    fetch("/api/auth", { headers: { Authorization: "Bearer " + token }, cache: "no-store" })
-      .then(r => r.json())
-      .then(data => {
-        if (data.success && data.user) Auth.setSession({ user: data.user, access_token: token });
-        else Auth.openModal("No se pudo entrar con Google. Prueba otra vez o usa tu correo.");
-      })
-      .catch(() => {});
-  }
-
-  function ensureModal() {
-    if (document.getElementById("pdAuthModal")) return;
-    document.body.insertAdjacentHTML("beforeend",
-      '<div id="pdAuthModal" class="pd-dialog" hidden>' +
-        '<div class="pd-dialog-box" role="dialog" aria-modal="true" aria-labelledby="pdAuthTitle">' +
-          '<button type="button" class="pd-dialog-close" data-close aria-label="Cerrar">' + ICON_CLOSE + "</button>" +
-          '<div class="pd-auth-art" aria-hidden="true">' +
-            '<canvas class="pd-auth-canvas" aria-hidden="true"></canvas>' +
-            '<div class="pd-auth-art-header">' +
-              '<span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>' +
-            '</div>' +
-            '<div class="pd-auth-art-footer">' +
-              '<div class="pd-auth-art-quote">El rango probable, no una promesa.</div>' +
-              '<div class="pd-auth-art-sub">CALIBRACIÓN P10–P90 · PERDATA ENGINE v6</div>' +
-            '</div>' +
-          '</div>' +
-          '<div class="pd-auth-body">' +
-            '<div class="pd-dialog-brand"><span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span></div>' +
-            '<h2 id="pdAuthTitle" class="pd-dialog-title">Inicia sesión en PerData</h2>' +
-            '<p id="pdAuthPrompt" class="pd-dialog-prompt" hidden></p>' +
-            '<div class="pd-tabs" role="tablist">' +
-              '<button id="pdTabSignIn" type="button" role="tab" aria-selected="true">Iniciar sesión</button>' +
-              '<button id="pdTabSignUp" type="button" role="tab" aria-selected="false">Crear cuenta</button>' +
-            "</div>" +
-            '<div id="pdGoogleWrap" hidden>' +
-              '<a id="pdGoogleBtn" class="pd-btn pd-btn-ghost pd-btn-block" href="/api/auth?action=google">' + ICON_GOOGLE + '<span>Continuar con Google</span></a>' +
-              '<p class="pd-auth-or"><span>o con tu correo</span></p>' +
-            "</div>" +
-            '<form id="pdAuthForm" class="pd-form" novalidate>' +
-              '<label id="pdGroupName" class="pd-field" hidden><span>Nombre</span>' +
-                '<input id="pdAuthName" type="text" autocomplete="name" maxlength="80" placeholder="Cómo te llamamos"></label>' +
-              '<label class="pd-field"><span>Correo electrónico</span>' +
-                '<input id="pdAuthEmail" type="email" autocomplete="email" required placeholder="tu@empresa.com"></label>' +
-              '<label class="pd-field"><span>Contraseña</span><span class="pd-field-pw">' +
-                '<input id="pdAuthPassword" type="password" autocomplete="current-password" required placeholder="Tu contraseña">' +
-                '<button type="button" id="pdTogglePw" aria-label="Mostrar contraseña">' + ICON_EYE + "</button></span></label>" +
-              '<div id="pdForgot" class="pd-form-aside"><button type="button" id="pdForgotBtn">¿Olvidaste tu contraseña?</button></div>' +
-              '<p id="pdAuthStatus" class="pd-form-status" role="status" aria-live="polite"></p>' +
-              '<button id="pdAuthSubmit" type="submit" class="pd-btn pd-btn-primary pd-btn-block">Iniciar sesión</button>' +
-              '<p id="pdAuthLegal" class="pd-form-legal" hidden>Al crear tu cuenta aceptas los <a href="/terms">Términos y Condiciones</a>.</p>' +
-            "</form>" +
-          "</div>" +
-        "</div>" +
-      "</div>");
-
-    const modal = document.getElementById("pdAuthModal");
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal || e.target.closest("[data-close]")) Auth.closeModal();
-    });
-    trapFocus(modal);
-    document.getElementById("pdTabSignIn").addEventListener("click", () => setAuthMode("signin"));
-    document.getElementById("pdTabSignUp").addEventListener("click", () => setAuthMode("signup"));
-
-    const pw = document.getElementById("pdAuthPassword");
-    const toggle = document.getElementById("pdTogglePw");
-    toggle.addEventListener("click", () => {
-      const show = pw.type === "password";
-      pw.type = show ? "text" : "password";
-      toggle.setAttribute("aria-label", show ? "Ocultar contraseña" : "Mostrar contraseña");
-      toggle.classList.toggle("is-on", show);
-    });
-
-    document.getElementById("pdForgotBtn").addEventListener("click", async (e) => {
-      const email = document.getElementById("pdAuthEmail").value.trim();
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-        setStatus("Escribe tu correo arriba y vuelve a pulsar aquí para recibir el enlace.", "error");
-        document.getElementById("pdAuthEmail").focus();
-        return;
-      }
-      const btn = e.currentTarget;
-      btn.disabled = true;
-      setStatus("Enviando enlace…");
-      try {
-        const res = await fetch("/api/auth", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "forgot", email })
-        });
-        const data = await res.json().catch(() => ({}));
-        setStatus(data.message || data.error || "No se pudo enviar el enlace.", data.success ? "ok" : "error");
-      } catch (err) {
-        setStatus("No hay conexión con el servidor. Intenta de nuevo.", "error");
-      }
-      btn.disabled = false;
-    });
-
-    document.getElementById("pdAuthForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("pdAuthEmail").value.trim();
-      const password = pw.value;
-      const name = document.getElementById("pdAuthName").value;
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return setStatus("Ingresa un correo electrónico válido.", "error");
-      if (authMode === "signup" && password.length < 8) return setStatus("La contraseña debe tener al menos 8 caracteres.", "error");
-      if (!password) return setStatus("Ingresa tu contraseña.", "error");
-
-      const submit = document.getElementById("pdAuthSubmit");
-      submit.disabled = true;
-      setStatus(authMode === "signup" ? "Creando tu cuenta…" : "Verificando…");
-      const res = authMode === "signup" ? await Auth.signUpWithEmail(email, password, name) : await Auth.signInWithEmail(email, password);
-      submit.disabled = false;
-
-      if (!res.success) return setStatus(res.error, "error");
-      setStatus(authMode === "signup" ? "Cuenta creada. ¡Bienvenido!" : "Sesión iniciada.", "ok");
-      pw.value = "";
-      const next = pendingAfterAuth;
-      pendingAfterAuth = null;
-      setTimeout(() => {
-        Auth.closeModal();
-        if (next === "checkout") Auth.startCheckout();
-        else if (next && !Auth.can(next, next === "range" ? "10y" : 48)) Auth.openUpgrade(next);
-      }, 450);
-    });
   }
 
   function ensureUpgrade() {

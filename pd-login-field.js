@@ -12,6 +12,8 @@
   let isRunning = false;
   let startTime = 0;
   let lastFrameTime = 0;
+  let lastInteractionTime = 0;
+  let frameCount = 0;
   let mouseX = -1000;
   let mouseY = -1000;
   let boundMouseMove = null;
@@ -217,7 +219,16 @@
     if (!isRunning || !activeCanvas) return;
 
     if (document.hidden) {
-      animId = requestAnimationFrame(loop);
+      animId = null;
+      return;
+    }
+
+    const timeSinceInteraction = now - lastInteractionTime;
+    if (timeSinceInteraction >= 2500) {
+      // Resting repose: draw final frame and stop rAF loop
+      frameCount++;
+      drawFrame(now, true);
+      animId = null;
       return;
     }
 
@@ -228,10 +239,12 @@
       // Throttle to <= 12 fps during resting state
       if (now - lastFrameTime >= REST_INTERVAL) {
         lastFrameTime = now;
+        frameCount++;
         drawFrame(now, false);
       }
     } else {
       lastFrameTime = now;
+      frameCount++;
       drawFrame(now, false);
     }
 
@@ -243,11 +256,16 @@
     const rect = activeCanvas.getBoundingClientRect();
     mouseX = e.clientX - rect.left;
     mouseY = e.clientY - rect.top;
+    lastInteractionTime = performance.now();
+    if (isRunning && !animId) {
+      animId = requestAnimationFrame(loop);
+    }
   }
 
   function handleVisibilityChange() {
     if (!isRunning || !activeCanvas) return;
     if (!document.hidden && !animId) {
+      lastInteractionTime = performance.now();
       lastFrameTime = performance.now();
       animId = requestAnimationFrame(loop);
     }
@@ -263,6 +281,8 @@
       isRunning = true;
       startTime = performance.now();
       lastFrameTime = startTime;
+      lastInteractionTime = startTime;
+      frameCount = 0;
       mouseX = -1000;
       mouseY = -1000;
 
@@ -316,6 +336,14 @@
       }
       activeCanvas = null;
       strokes = [];
+    },
+
+    getAnimId() {
+      return animId;
+    },
+
+    getFrameCount() {
+      return frameCount;
     }
   };
 

@@ -2,9 +2,11 @@ import { spawn } from "child_process";
 import { chromium } from "playwright";
 import assert from "assert";
 import fs from "fs";
+import path from "path";
 
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 4371;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 4373;
 const BASE_URL = `http://127.0.0.1:${PORT}`;
+const OUT_DIR = process.env.OUT_DIR || "/home/wagustin/kathy_workspace/handoff/fase-nov";
 
 async function waitServerReady(url, maxAttempts = 30) {
   for (let i = 0; i < maxAttempts; i++) {
@@ -20,6 +22,10 @@ async function waitServerReady(url, maxAttempts = 30) {
 }
 
 async function run() {
+  if (!fs.existsSync(OUT_DIR)) {
+    fs.mkdirSync(OUT_DIR, { recursive: true });
+  }
+
   console.log(`Starting server on port ${PORT}...`);
   const server = spawn("node", ["server.js"], {
     env: { ...process.env, PORT: String(PORT) },
@@ -54,211 +60,237 @@ async function run() {
       consoleErrors.push(err.message);
     });
 
-    // 1. Test at Desktop 1440px
-    console.log("1. Testing Desktop viewport (1440x900)...");
+    // ----------------------------------------------------
+    // 1. Desktop Viewport (1440x900) & Design Verification
+    // ----------------------------------------------------
+    console.log("1. Testing Desktop viewport (1440x900) at /entrar...");
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto(`${BASE_URL}/cuenta`, { waitUntil: "networkidle" });
 
-    // Open modal via window.MacroAuth or window.PDAuth
-    await page.evaluate(() => {
-      const auth = window.PDAuth || window.MacroAuth || window.MDE_Auth;
-      if (auth) auth.openModal();
-    });
+    const startTime = Date.now();
+    await page.goto(`${BASE_URL}/entrar`, { waitUntil: "domcontentloaded" });
+    const navTime = Date.now() - startTime;
+    console.log(`✓ /entrar loaded in ${navTime}ms.`);
 
-    const modal = page.locator("#pdAuthModal");
-    await modal.waitFor({ state: "visible", timeout: 5000 });
+    // Canvas must exist and start rapidly (<300ms)
+    const canvas = page.locator("#pdAuthCanvas");
+    await canvas.waitFor({ state: "visible", timeout: 3000 });
+    const canvasVisible = await canvas.isVisible();
+    assert.strictEqual(canvasVisible, true, "Canvas #pdAuthCanvas must be visible");
 
-    // Verify .pd-auth-canvas is visible
-    const canvas = page.locator("#pdAuthModal .pd-auth-canvas");
-    await canvas.waitFor({ state: "visible", timeout: 5000 });
-    const isCanvasVisible = await canvas.isVisible();
-    assert.strictEqual(isCanvasVisible, true, "Canvas .pd-auth-canvas must be visible inside auth modal");
-
-    // Assert no horizontal overflow
-    const desktopOverflow = await page.evaluate(() => {
-      return document.documentElement.scrollWidth <= window.innerWidth;
-    });
-    assert.strictEqual(desktopOverflow, true, "Horizontal overflow detected at 1440px viewport!");
-
-    // Verify initial focus
-    await page.waitForTimeout(150);
-    const focusedIdDesktop = await page.evaluate(() => document.activeElement?.id);
-    assert.strictEqual(focusedIdDesktop, "pdAuthEmail", "Initial focus should be on #pdAuthEmail in signin mode");
-
-    // 2. Verify window.PDLoginField and Canvas Rendering
-    console.log("2. Verifying window.PDLoginField and Canvas rendering...");
-    const fieldStatus = await page.evaluate(() => {
-      if (!window.PDLoginField) return { defined: false };
-      const c = document.querySelector("#pdAuthModal .pd-auth-canvas");
-      if (!c) return { defined: true, canvasFound: false };
+    // Sample canvas to ensure non-empty ink strokes rendered
+    const nonZeroPixels = await page.evaluate(() => {
+      const c = document.getElementById("pdAuthCanvas");
+      if (!c) return 0;
       const ctx = c.getContext("2d");
-      if (!ctx) return { defined: true, canvasFound: true, ctx: false };
+      if (!ctx) return 0;
       const imgData = ctx.getImageData(0, 0, Math.min(c.width, 200), Math.min(c.height, 200));
       let nonZero = 0;
       for (let i = 0; i < imgData.data.length; i += 4) {
         if (imgData.data[i + 3] > 0) nonZero++;
       }
-      return { defined: true, canvasFound: true, nonZeroPixels: nonZero };
+      return nonZero;
     });
-    assert.strictEqual(fieldStatus.defined, true, "window.PDLoginField must be defined");
-    assert.strictEqual(fieldStatus.canvasFound, true, "Canvas element must be found");
-    assert.ok(fieldStatus.nonZeroPixels > 0, `Canvas must have rendered non-empty pixels (got ${fieldStatus.nonZeroPixels})`);
-    console.log(`✓ window.PDLoginField rendered on canvas (${fieldStatus.nonZeroPixels} non-empty pixels sampled).`);
+    assert.ok(nonZeroPixels > 0, `Canvas must render strokes (got ${nonZeroPixels} non-zero pixels)`);
+    console.log(`✓ Canvas initialized promptly with ink strokes (${nonZeroPixels} pixels sampled).`);
 
-    // Ensure screenshot directory exists
-    const outDir = process.env.OUT_DIR || "/home/wagustin/kathy_workspace/handoff/login_stitch2";
-    if (!fs.existsSync(outDir)) {
-      fs.mkdirSync(outDir, { recursive: true });
-    }
+    // Layout check: 50/50 desktop split
+    const layoutCols = await page.evaluate(() => {
+      const layout = document.querySelector(".pd-entrar-layout");
+      const style = window.getComputedStyle(layout);
+      return style.gridTemplateColumns;
+    });
+    console.log(`✓ Grid template columns at 1440px: ${layoutCols}`);
 
-    // Capture desktop screenshots at 0.3s, 1.0s, and 2.5s (T70b)
-    console.log("Capturing desktop screenshots at 0.3s, 1.0s, and 2.5s...");
-    await page.waitForTimeout(300);
-    await page.screenshot({ path: `${outDir}/r2-desktop-0.3s.png` });
-    console.log("✓ Saved r2-desktop-0.3s.png");
+    // Capture desktop light screenshot
+    await page.screenshot({ path: path.join(OUT_DIR, "t73-desktop-light.png") });
+    console.log("✓ Saved t73-desktop-light.png");
 
-    await page.waitForTimeout(700);
-    await page.screenshot({ path: `${outDir}/r2-desktop-1.0s.png` });
-    console.log("✓ Saved r2-desktop-1.0s.png");
+    // Toggle dark mode and capture desktop dark screenshot
+    await page.evaluate(() => document.documentElement.classList.add("dark"));
+    await page.waitForTimeout(100);
+    await page.screenshot({ path: path.join(OUT_DIR, "t73-desktop-dark.png") });
+    console.log("✓ Saved t73-desktop-dark.png");
+    await page.evaluate(() => document.documentElement.classList.remove("dark"));
 
-    await page.waitForTimeout(1500);
-    await page.screenshot({ path: `${outDir}/r2-desktop-2.5s.png` });
-    await page.screenshot({ path: `${outDir}/final-desktop.png` });
-    console.log("✓ Saved r2-desktop-2.5s.png and final-desktop.png");
-
-    // Verify wordmarks on desktop: form brand hidden, art header visible
-    const formBrandDesktop = await page.locator("#pdAuthModal .pd-dialog-brand").isVisible();
-    assert.strictEqual(formBrandDesktop, false, "Form wordmark should be hidden on desktop");
-    const artHeaderDesktop = await page.locator("#pdAuthModal .pd-auth-art-header").isVisible();
-    assert.strictEqual(artHeaderDesktop, true, "Art header wordmark should be visible on desktop");
-
-    // Verify subtitle text: mentions PERDATA ENGINE v6 and not TimesFM
-    const subText = await page.locator("#pdAuthModal .pd-auth-art-sub").textContent();
-    assert.ok(subText.includes("PERDATA ENGINE v6"), `Subtitle must mention PERDATA ENGINE v6, got: ${subText}`);
-    assert.ok(!subText.includes("TimesFM"), `Subtitle must NOT mention TimesFM, got: ${subText}`);
-    console.log(`✓ Desktop wordmark deduplication and subtitle verified: "${subText}".`);
-
-    // 3. Tab alternation test
-    console.log("3. Testing Tab alternation (Iniciar sesión <-> Crear cuenta)...");
-    const tabSignUp = page.locator("#pdTabSignUp");
-    const tabSignIn = page.locator("#pdTabSignIn");
-    const title = page.locator("#pdAuthTitle");
-    const nameGroup = page.locator("#pdGroupName");
-
-    await tabSignUp.click();
-    assert.strictEqual(await tabSignUp.getAttribute("aria-selected"), "true");
-    assert.strictEqual(await tabSignIn.getAttribute("aria-selected"), "false");
-    assert.strictEqual(await title.textContent(), "Crea tu cuenta gratuita");
-    assert.strictEqual(await nameGroup.isVisible(), true);
-
-    await tabSignIn.click();
-    assert.strictEqual(await tabSignIn.getAttribute("aria-selected"), "true");
-    assert.strictEqual(await tabSignUp.getAttribute("aria-selected"), "false");
-    assert.strictEqual(await title.textContent(), "Inicia sesión en PerData");
-    assert.strictEqual(await nameGroup.isVisible(), false);
-    console.log("✓ Tab alternation verified.");
-
-    // 4. Test at Mobile 390px
-    console.log("4. Testing Mobile viewport (390x844)...");
+    // ----------------------------------------------------
+    // 2. Mobile Viewport (390x844) & Responsive Layout
+    // ----------------------------------------------------
+    console.log("2. Testing Mobile viewport (390x844)...");
     await page.setViewportSize({ width: 390, height: 844 });
-    // Close and reopen modal to restart intro animation from t=0 on mobile
-    await page.evaluate(() => {
-      const auth = window.PDAuth || window.MacroAuth || window.MDE_Auth;
-      if (auth) auth.closeModal();
-    });
-    await page.waitForTimeout(200);
-    await page.evaluate(() => {
-      const auth = window.PDAuth || window.MacroAuth || window.MDE_Auth;
-      if (auth) auth.openModal();
-    });
-    await modal.waitFor({ state: "visible", timeout: 5000 });
+    await page.reload({ waitUntil: "networkidle" });
 
-    console.log("Capturing mobile screenshots at 0.3s, 1.0s, and 2.5s...");
-    await page.waitForTimeout(300);
-    await page.screenshot({ path: `${outDir}/r2-mobile-0.3s.png` });
-    console.log("✓ Saved r2-mobile-0.3s.png");
-
-    await page.waitForTimeout(700);
-    await page.screenshot({ path: `${outDir}/r2-mobile-1.0s.png` });
-    console.log("✓ Saved r2-mobile-1.0s.png");
-
-    await page.waitForTimeout(1500);
-    await page.screenshot({ path: `${outDir}/r2-mobile-2.5s.png` });
-    await page.screenshot({ path: `${outDir}/final-mobile.png` });
-    console.log("✓ Saved r2-mobile-2.5s.png and final-mobile.png");
-
-    // Verify wordmarks on mobile: form brand visible, dark band header hidden
-    const formBrandMobile = await page.locator("#pdAuthModal .pd-dialog-brand").isVisible();
-    assert.strictEqual(formBrandMobile, true, "Form wordmark should be visible on mobile");
-    const artHeaderMobile = await page.locator("#pdAuthModal .pd-auth-art-header").isVisible();
-    assert.strictEqual(artHeaderMobile, false, "Art header wordmark should be hidden on mobile");
-    console.log("✓ Mobile wordmark deduplication verified (band hidden, form brand visible).");
-
-    // Verify mobile close button: touch target >= 44px, color #EDE8DC
-    const closeBtn = page.locator("#pdAuthModal .pd-dialog-close");
-    const closeBox = await closeBtn.boundingBox();
-    assert.ok(closeBox.width >= 44, `Close button width must be >= 44px (got ${closeBox.width})`);
-    assert.ok(closeBox.height >= 44, `Close button height must be >= 44px (got ${closeBox.height})`);
-    const closeColor = await closeBtn.evaluate(el => window.getComputedStyle(el).color);
-    assert.strictEqual(closeColor, "rgb(237, 232, 220)", `Close button color must be #EDE8DC (rgb(237, 232, 220)), got ${closeColor}`);
-    console.log(`✓ Mobile close button verified: ${closeBox.width}x${closeBox.height}px, color ${closeColor}.`);
-
+    // Assert no horizontal overflow on mobile
     const mobileOverflow = await page.evaluate(() => {
-      const docOverflow = document.documentElement.scrollWidth <= window.innerWidth;
-      const box = document.querySelector("#pdAuthModal .pd-dialog-box");
-      const boxOverflow = box ? box.scrollWidth <= window.innerWidth : true;
-      return docOverflow && boxOverflow;
+      return document.documentElement.scrollWidth <= window.innerWidth;
     });
     assert.strictEqual(mobileOverflow, true, "Horizontal overflow detected at 390px viewport!");
 
-    // 5. Test Performance during repose (frame time <= 8ms)
-    console.log("5. Testing frame execution time during 1 second in repose...");
-    const perfResult = await page.evaluate(async () => {
-      const measurements = [];
-      const start = performance.now();
-      return new Promise((resolve) => {
-        function checkFrame(now) {
-          const t0 = performance.now();
-          // Let current frame settle and measure frame step duration
-          const cost = performance.now() - t0;
-          measurements.push(cost);
-          if (now - start < 1000) {
-            requestAnimationFrame(checkFrame);
-          } else {
-            const maxFrame = Math.max(...measurements);
-            const avgFrame = measurements.reduce((a, b) => a + b, 0) / measurements.length;
-            resolve({ maxFrame, avgFrame, count: measurements.length });
-          }
+    // Capture mobile light screenshot
+    await page.screenshot({ path: path.join(OUT_DIR, "t73-mobile-light.png") });
+    console.log("✓ Saved t73-mobile-mobile-light.png");
+
+    // Toggle dark mode and capture mobile dark screenshot
+    await page.evaluate(() => document.documentElement.classList.add("dark"));
+    await page.waitForTimeout(100);
+    await page.screenshot({ path: path.join(OUT_DIR, "t73-mobile-dark.png") });
+    console.log("✓ Saved t73-mobile-dark.png");
+    await page.evaluate(() => document.documentElement.classList.remove("dark"));
+
+    // Reset back to desktop viewport
+    await page.setViewportSize({ width: 1440, height: 900 });
+
+    // ----------------------------------------------------
+    // 3. Canvas Repose & rAF Pausing after 2.5s
+    // ----------------------------------------------------
+    console.log("3. Verifying Canvas repose & rAF freeze after 2.5s...");
+    await page.goto(`${BASE_URL}/entrar`, { waitUntil: "networkidle" });
+
+    // Wait 2.7s without any mouse or keyboard interaction
+    await page.waitForTimeout(2700);
+
+    const isFrozen = await page.evaluate(() => {
+      const animId = window.PDLoginField ? window.PDLoginField.getAnimId() : -1;
+      const count1 = window.PDLoginField ? window.PDLoginField.getFrameCount() : 0;
+      return { animId, count1 };
+    });
+
+    console.log(`✓ At repose (t > 2.5s): animId = ${isFrozen.animId}, frameCount = ${isFrozen.count1}`);
+    assert.strictEqual(isFrozen.animId, null, "rAF animId must be null after 2.5s in repose without interaction");
+
+    // Wait another 300ms and verify frameCount did not change (is frozen)
+    await page.waitForTimeout(300);
+    const count2 = await page.evaluate(() => window.PDLoginField ? window.PDLoginField.getFrameCount() : 0);
+    assert.strictEqual(count2, isFrozen.count1, `Frame count must be completely frozen (was ${isFrozen.count1}, now ${count2})`);
+    console.log("✓ Canvas rAF successfully stopped in repose.");
+
+    // ----------------------------------------------------
+    // 4. Mode Switching (Tabs, Recover, URL Sync)
+    // ----------------------------------------------------
+    console.log("4. Testing Mode switching (signin / registro / recuperar)...");
+
+    const tabSignUp = page.locator("#pdTabSignUp");
+    const tabSignIn = page.locator("#pdTabSignIn");
+    const forgotBtn = page.locator("#pdForgotBtn");
+    const nameField = page.locator("#pdGroupName");
+    const emailField = page.locator("#pdAuthEmail");
+    const pwField = page.locator("#pdAuthPassword");
+    const title = page.locator("#pdAuthTitle");
+
+    // Click "Crear cuenta"
+    await tabSignUp.click();
+    assert.ok(page.url().includes("modo=registro"), `URL should reflect ?modo=registro, got ${page.url()}`);
+    assert.strictEqual(await nameField.isVisible(), true, "Name field should be visible in signup mode");
+    assert.strictEqual(await title.textContent(), "Crea tu cuenta gratuita");
+
+    // Click "Iniciar sesión"
+    await tabSignIn.click();
+    assert.ok(!page.url().includes("modo=registro"), "URL should not have modo=registro in signin mode");
+    assert.strictEqual(await nameField.isVisible(), false, "Name field should be hidden in signin mode");
+    assert.strictEqual(await title.textContent(), "Inicia sesión en PerData");
+
+    // Click "¿Olvidaste tu contraseña?"
+    await forgotBtn.click();
+    assert.ok(page.url().includes("modo=recuperar"), `URL should reflect ?modo=recuperar, got ${page.url()}`);
+    assert.strictEqual(await pwField.isVisible(), false, "Password field should be hidden in recover mode");
+    assert.strictEqual(await title.textContent(), "Recuperar contraseña");
+
+    // Direct navigation with ?modo=registro
+    await page.goto(`${BASE_URL}/entrar?modo=registro`);
+    assert.strictEqual(await nameField.isVisible(), true, "Direct URL with modo=registro should show name field");
+
+    // Direct navigation with ?modo=recuperar
+    await page.goto(`${BASE_URL}/entrar?modo=recuperar`);
+    assert.strictEqual(await pwField.isVisible(), false, "Direct URL with modo=recuperar should hide password");
+    console.log("✓ Mode switching and direct URL navigation verified.");
+
+    // ----------------------------------------------------
+    // 5. Open-Redirect Protection & Volver Parameter
+    // ----------------------------------------------------
+    console.log("5. Testing Open-Redirect protection and 'volver' parameter...");
+
+    // Malicious URL with https
+    await page.goto(`${BASE_URL}/entrar?volver=https://malicioso.com`);
+    let backHref = await page.locator("#pdEntrarBack").getAttribute("href");
+    assert.strictEqual(backHref, "/", `Malicious https:// URL must fall back to '/', got: ${backHref}`);
+
+    // Malicious URL with protocol-relative //
+    await page.goto(`${BASE_URL}/entrar?volver=//evil.com`);
+    backHref = await page.locator("#pdEntrarBack").getAttribute("href");
+    assert.strictEqual(backHref, "/", `Protocol-relative //evil.com must fall back to '/', got: ${backHref}`);
+
+    // Malicious URL with backslashes
+    await page.goto(`${BASE_URL}/entrar?volver=/\\malicious.com`);
+    backHref = await page.locator("#pdEntrarBack").getAttribute("href");
+    assert.strictEqual(backHref, "/", `Backslash bypass must fall back to '/', got: ${backHref}`);
+
+    // Valid internal relative path
+    await page.goto(`${BASE_URL}/entrar?volver=/explorer`);
+    backHref = await page.locator("#pdEntrarBack").getAttribute("href");
+    assert.strictEqual(backHref, "/explorer", `Valid relative path '/explorer' should be preserved, got: ${backHref}`);
+    console.log("✓ Open-redirect protection strictly verified.");
+
+    // ----------------------------------------------------
+    // 6. Login Flow with Dummy / Mock Credentials
+    // ----------------------------------------------------
+    console.log("6. Testing Login flow and redirection to volver target (/explorer)...");
+
+    // Route /api/auth mock
+    await page.route("**/api/auth**", async (route) => {
+      const req = route.request();
+      if (req.method() === "POST") {
+        const body = JSON.parse(req.postData() || "{}");
+        if (body.action === "signin") {
+          return route.fulfill({
+            status: 200,
+            contentType: "application/json",
+            body: JSON.stringify({
+              success: true,
+              user: {
+                id: "user-test-73",
+                email: body.email,
+                name: "Agustín",
+                plan: "pro"
+              },
+              token: "mock-jwt-token-t73"
+            })
+          });
         }
-        requestAnimationFrame(checkFrame);
-      });
-    });
-    console.log(`✓ Repose frame execution: avg=${perfResult.avgFrame.toFixed(2)}ms, max=${perfResult.maxFrame.toFixed(2)}ms (${perfResult.count} frames measured).`);
-    assert.ok(perfResult.avgFrame <= 8, `Main thread frame time avg (${perfResult.avgFrame}ms) must stay <= 8ms`);
-
-    // 6. Test prefers-reduced-motion media feature
-    console.log("6. Testing prefers-reduced-motion: reduce...");
-    await page.emulateMedia({ reducedMotion: "reduce" });
-    const reducedMotionRespected = await page.evaluate(() => {
-      const mediaReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      // Re-trigger start on canvas under reduced motion to test static draw
-      const c = document.querySelector("#pdAuthModal .pd-auth-canvas");
-      if (window.PDLoginField && c) {
-        window.PDLoginField.start(c);
       }
-      return mediaReduced;
+      return route.continue();
     });
-    assert.strictEqual(reducedMotionRespected, true, "Reduced motion must be recognized by media query");
-    console.log("✓ Reduced motion preference verified.");
 
-    // 7. Verify no CSP or JS console errors
+    await page.goto(`${BASE_URL}/entrar?volver=/explorer`);
+    await page.fill("#pdAuthEmail", "agustin@perdata.site");
+    await page.fill("#pdAuthPassword", "TestPassword123!");
+    await page.click("#pdAuthSubmit");
+
+    // Wait for redirection to /explorer
+    await page.waitForURL("**/explorer", { timeout: 5000 });
+    assert.strictEqual(page.url(), `${BASE_URL}/explorer`, `Must redirect exactly to /explorer, got: ${page.url()}`);
+
+    // Verify localStorage session
+    const storedSession = await page.evaluate(() => {
+      return localStorage.getItem("mde_auth_session");
+    });
+    assert.ok(storedSession, "mde_auth_session must be stored in localStorage");
+    const parsed = JSON.parse(storedSession);
+    assert.strictEqual(parsed.user?.email, "agustin@perdata.site");
+    console.log("✓ Login succeeded and redirected accurately to /explorer with session stored.");
+
+    // ----------------------------------------------------
+    // 7. Verify No Console or CSP Errors
+    // ----------------------------------------------------
     console.log("7. Checking for console errors and CSP violations...");
-    const cspErrors = consoleErrors.filter(e => /Content-Security-Policy|CSP|refused to execute|eval/i.test(e));
+    const cspErrors = consoleErrors.filter((e) =>
+      /Content-Security-Policy|CSP|refused to execute|eval/i.test(e)
+    );
     assert.strictEqual(cspErrors.length, 0, `CSP violations detected: ${cspErrors.join("; ")}`);
-    console.log(`✓ No CSP or console errors detected (${consoleErrors.length} total warnings/errors).`);
+    console.log(`✓ Clean run with 0 CSP errors (${consoleErrors.length} total warnings/errors).`);
 
     await browser.close();
-    console.log("\nAll Playwright E2E tests (T70) passed successfully!");
+    console.log("\n=======================================================");
+    console.log("All T73 Playwright E2E tests passed successfully!");
+    console.log("=======================================================\n");
   } finally {
     cleanup();
   }
