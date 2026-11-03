@@ -2765,3 +2765,53 @@ html.dark .pd-consent-toggle-slider:before {
   }
 }
 
+/* Skeletons — structural loading state without layout shift */
+.pd-skeleton {
+  display: inline-block;
+  background-color: var(--pd-surface, #ECE6D9);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+  color: transparent !important;
+  user-select: none;
+  pointer-events: none;
+  vertical-align: middle;
+}
+html.dark .pd-skeleton {
+  background-color: var(--pd-chip, #2B2823);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pd-skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    animation: pdSkeletonShimmer 1.4s ease-in-out infinite;
+  }
+  html.dark .pd-skeleton::after {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.08),
+      transparent
+    );
+  }
+}
+@keyframes pdSkeletonShimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pd-skeleton::after {
+    display: none !important;
+    animation: none !important;
+  }
+}
+

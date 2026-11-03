@@ -480,7 +480,10 @@
       return Number(n).toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 4 });
     }
 
+    var ultimasRows = [];
+
     function render(rows) {
+      ultimasRows = (rows || []).slice();
       lista.innerHTML = "";
       if (!rows || !rows.length) {
         var vacio = document.createElement("li");
@@ -511,7 +514,7 @@
         quitar.className = "pd-btn pd-btn-ghost text-xs";
         quitar.textContent = "Quitar";
         quitar.setAttribute("aria-label", "Dejar de seguir " + (nombres[r.simbolo] || r.simbolo));
-        quitar.addEventListener("click", function () { borrar(r.simbolo); });
+        quitar.addEventListener("click", function () { borrar(r.simbolo, li); });
         right.appendChild(umbrales);
         right.appendChild(quitar);
         li.appendChild(left);
@@ -548,19 +551,37 @@
       } catch (e) { msg("No se pudo guardar.", true); }
     }
 
-    async function borrar(simbolo) {
+    async function borrar(simbolo, li) {
       var t = token();
       if (!t) return;
+      var anteriorRows = ultimasRows.slice();
+      if (li && li.parentNode) {
+        li.remove();
+        if (lista.children.length === 0) {
+          var vacio = document.createElement("li");
+          vacio.className = "py-3 text-sm text-ink-soft";
+          vacio.textContent = "Todavía no sigues ninguna empresa.";
+          lista.appendChild(vacio);
+        }
+      }
+      msg("Quitando…");
       try {
         var res = await fetch("/api/seguimiento?simbolo=" + encodeURIComponent(simbolo), {
           method: "DELETE",
           headers: { Authorization: "Bearer " + t }
         });
-        var data = await res.json();
-        if (!res.ok) { msg(data.error || "No se pudo quitar.", true); return; }
+        var data = await res.json().catch(function () { return {}; });
+        if (!res.ok) {
+          render(anteriorRows);
+          msg(data.error || "No se pudo quitar.", true);
+          return;
+        }
         render(data.simbolos || []);
         msg("Quitado.");
-      } catch (e) { msg("No se pudo quitar.", true); }
+      } catch (e) {
+        render(anteriorRows);
+        msg("No se pudo quitar.", true);
+      }
     }
 
     var t0 = null;

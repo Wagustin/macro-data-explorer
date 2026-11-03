@@ -390,7 +390,7 @@
             <div class="pdl-quote" data-hero-seq="2">
               <p class="pdl-question">¿A cuánto estará el dólar el próximo mes?</p>
               <p class="pd-hero-answer pdl-answer">
-                Calculando el rango probable del dólar para el próximo mes…
+                <span class="pd-skeleton" style="width: 85%; height: 20px; display: block; margin-bottom: 8px;"></span><span class="pd-skeleton" style="width: 55%; height: 20px; display: block;"></span>
               </p>
               <p id="pd-forecast-fallback" class="pdl-answer hidden">Abre la terminal para ver la proyección de hoy.</p>
             </div>
@@ -414,13 +414,13 @@
               <div class="pdl-card-body">
                 <span class="pdl-label">Valor central estimado (P50)</span>
                 <div class="flex items-baseline gap-3 flex-wrap">
-                  <span class="pdl-big tnum">S/&nbsp;<span id="pdCardP50">—</span></span>
-                  <span id="pdCardChange" class="pdl-chip font-mono">—</span>
+                  <span class="pdl-big tnum">S/&nbsp;<span id="pdCardP50"><span class="pd-skeleton" style="width: 80px; height: 1em; display: inline-block;"></span></span></span>
+                  <span id="pdCardChange" class="pdl-chip font-mono"><span class="pd-skeleton" style="width: 48px; height: 12px; display: inline-block;"></span></span>
                 </div>
                 <div class="pdl-band">
-                  <div><span class="pdl-label">P10 · piso</span><span class="font-mono text-sm font-semibold text-ink tnum">S/&nbsp;<span id="pdCardP10">—</span></span></div>
+                  <div><span class="pdl-label">P10 · piso</span><span class="font-mono text-sm font-semibold text-ink tnum">S/&nbsp;<span id="pdCardP10"><span class="pd-skeleton" style="width: 50px; height: 1em; display: inline-block;"></span></span></span></div>
                   <div class="text-center"><span class="pdl-label">Probabilidad</span><span class="font-mono text-sm font-semibold text-ink">80&nbsp;%</span></div>
-                  <div class="text-right"><span class="pdl-label">P90 · techo</span><span class="font-mono text-sm font-semibold text-ink tnum">S/&nbsp;<span id="pdCardP90">—</span></span></div>
+                  <div class="text-right"><span class="pdl-label">P90 · techo</span><span class="font-mono text-sm font-semibold text-ink tnum">S/&nbsp;<span id="pdCardP90"><span class="pd-skeleton" style="width: 50px; height: 1em; display: inline-block;"></span></span></span></div>
                 </div>
               </div>
               <div class="pdl-card-chart">
@@ -430,7 +430,7 @@
                   <div id="pdOpeningScene" class="pd-opening-scene" hidden aria-hidden="true"></div>
                 </div>
                 <p class="mt-2 text-xs text-ink-soft leading-normal font-sans" id="pdChartCaption">Línea: precio real · Zona sombreada: dónde estaría el dólar en los próximos 3 meses (8 de cada 10 veces)</p>
-                <p class="mt-1 text-[11px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);"><span id="heroModelBadge" class="font-mono">Modelo: PerData Engine v6</span> · Fuente: <span id="pdChartSource">BCRP</span> · Datos al <span id="pdChartDate">—</span></p>
+                <p class="mt-1 text-[11px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);"><span id="heroModelBadge" class="font-mono">Modelo: PerData Engine v6</span> · Fuente: <span id="pdChartSource">BCRP</span> · Datos al <span id="pdChartDate"><span class="pd-skeleton" style="width: 70px; height: 11px; display: inline-block;"></span></span></p>
                 <a href="/explorer?symbol=PEN%3DX" class="pdl-link mt-2 inline-block">Abrir en la terminal &rarr;</a>
               </div>
             </div>
@@ -443,10 +443,10 @@
     <section class="pdl-strip full-bleed" data-section-rule aria-label="Indicadores de mercado">
       <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="pdl-strip-grid">
-          <a class="pdl-ind" href="/explorer?symbol=PEN%3DX" data-ind="PEN=X" data-dec="4" data-prefix="S/ "><span class="pdl-label">Dólar · USD/PEN</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val>—</span><span class="pdl-ind-chg font-mono" data-ind-chg>—</span></span><span class="pdl-ind-unit">S/ por dólar · hoy</span></a>
-          <a class="pdl-ind" href="/explorer?symbol=HG%3DF" data-ind="HG=F" data-dec="2" data-prefix="US$ "><span class="pdl-label">Cobre · COMEX</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val>—</span><span class="pdl-ind-chg font-mono" data-ind-chg>—</span></span><span class="pdl-ind-unit">US$ por libra · hoy</span></a>
-          <a class="pdl-ind" href="/explorer?symbol=GC%3DF" data-ind="GC=F" data-dec="2" data-prefix="US$ "><span class="pdl-label">Oro · COMEX</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val>—</span><span class="pdl-ind-chg font-mono" data-ind-chg>—</span></span><span class="pdl-ind-unit">US$ por onza · hoy</span></a>
-          <a class="pdl-ind" href="/explorer?symbol=ALICORC1.LM" data-ind="ALICORC1.LM" data-dec="2" data-prefix="S/ "><span class="pdl-label">Alicorp · BVL</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val>—</span><span class="pdl-ind-chg font-mono" data-ind-chg>—</span></span><span class="pdl-ind-unit">S/ por acción · hoy</span></a>
+          <a class="pdl-ind" href="/explorer?symbol=PEN%3DX" data-ind="PEN=X" data-dec="4" data-prefix="S/ "><span class="pdl-label">Dólar · USD/PEN</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val><span class="pd-skeleton" style="width: 60px; height: 18px; display: inline-block;"></span></span><span class="pdl-ind-chg font-mono" data-ind-chg><span class="pd-skeleton" style="width: 45px; height: 14px; display: inline-block;"></span></span></span><span class="pdl-ind-unit">S/ por dólar · hoy</span></a>
+          <a class="pdl-ind" href="/explorer?symbol=HG%3DF" data-ind="HG=F" data-dec="2" data-prefix="US$ "><span class="pdl-label">Cobre · COMEX</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val><span class="pd-skeleton" style="width: 60px; height: 18px; display: inline-block;"></span></span><span class="pdl-ind-chg font-mono" data-ind-chg><span class="pd-skeleton" style="width: 45px; height: 14px; display: inline-block;"></span></span></span><span class="pdl-ind-unit">US$ por libra · hoy</span></a>
+          <a class="pdl-ind" href="/explorer?symbol=GC%3DF" data-ind="GC=F" data-dec="2" data-prefix="US$ "><span class="pdl-label">Oro · COMEX</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val><span class="pd-skeleton" style="width: 60px; height: 18px; display: inline-block;"></span></span><span class="pdl-ind-chg font-mono" data-ind-chg><span class="pd-skeleton" style="width: 45px; height: 14px; display: inline-block;"></span></span></span><span class="pdl-ind-unit">US$ por onza · hoy</span></a>
+          <a class="pdl-ind" href="/explorer?symbol=ALICORC1.LM" data-ind="ALICORC1.LM" data-dec="2" data-prefix="S/ "><span class="pdl-label">Alicorp · BVL</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val><span class="pd-skeleton" style="width: 60px; height: 18px; display: inline-block;"></span></span><span class="pdl-ind-chg font-mono" data-ind-chg><span class="pd-skeleton" style="width: 45px; height: 14px; display: inline-block;"></span></span></span><span class="pdl-ind-unit">S/ por acción · hoy</span></a>
         </div>
       </div>
     </section>
@@ -488,39 +488,39 @@
             <tr class="border-t border-rule">
               <td class="py-3.5 px-4 font-mono tnum font-semibold"><a href="/explorer?symbol=HG%3DF" class="text-ink hover:text-brand underline">HG=F</a></td>
               <td class="py-3.5 px-4 text-ink">Cobre (COMEX)<span class="pdl-sub">Materia prima · COMEX</span></td>
-              <td class="py-3.5 px-4 text-center hidden sm:table-cell" data-cell-spark="HG=F">—</td>
-              <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="HG=F">—</td>
-              <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="HG=F">—</td>
-              <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="HG=F">—</td>
+              <td class="py-3.5 px-4 text-center hidden sm:table-cell" data-cell-spark="HG=F"><span class="pd-skeleton" style="width:64px;height:18px;display:inline-block"></span></td>
+              <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="HG=F"><span class="pd-skeleton" style="width:55px;height:16px;display:inline-block"></span></td>
+              <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="HG=F"><span class="pd-skeleton" style="width:45px;height:16px;display:inline-block"></span></td>
+              <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="HG=F"><span class="pd-skeleton" style="width:55px;height:16px;display:inline-block"></span></td>
             </tr>
             <tr class="border-t border-rule">
               <td class="py-3.5 px-4 font-mono tnum font-semibold"><a href="/explorer?symbol=ALICORC1.LM" class="text-ink hover:text-brand underline">ALICORC1.LM</a></td>
               <td class="py-3.5 px-4 text-ink">Alicorp<span class="pdl-sub">Consumo · BVL</span></td>
-              <td class="py-3.5 px-4 text-center hidden sm:table-cell" data-cell-spark="ALICORC1.LM">—</td>
-              <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="ALICORC1.LM">—</td>
-              <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="ALICORC1.LM">—</td>
-              <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="ALICORC1.LM">—</td>
+              <td class="py-3.5 px-4 text-center hidden sm:table-cell" data-cell-spark="ALICORC1.LM"><span class="pd-skeleton" style="width:64px;height:18px;display:inline-block"></span></td>
+              <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="ALICORC1.LM"><span class="pd-skeleton" style="width:55px;height:16px;display:inline-block"></span></td>
+              <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="ALICORC1.LM"><span class="pd-skeleton" style="width:45px;height:16px;display:inline-block"></span></td>
+              <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="ALICORC1.LM"><span class="pd-skeleton" style="width:55px;height:16px;display:inline-block"></span></td>
             </tr>
             <tr class="border-t border-rule">
               <td class="py-3.5 px-4 font-mono tnum font-semibold"><a href="/explorer?symbol=CREDITC1.LM" class="text-ink hover:text-brand underline">CREDITC1.LM</a></td>
               <td class="py-3.5 px-4 text-ink">BCP<span class="pdl-sub">Banca · BVL</span></td>
-              <td class="py-3.5 px-4 text-center hidden sm:table-cell" data-cell-spark="CREDITC1.LM">—</td>
-              <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="CREDITC1.LM">—</td>
-              <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="CREDITC1.LM">—</td>
-              <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="CREDITC1.LM">—</td>
+              <td class="py-3.5 px-4 text-center hidden sm:table-cell" data-cell-spark="CREDITC1.LM"><span class="pd-skeleton" style="width:64px;height:18px;display:inline-block"></span></td>
+              <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="CREDITC1.LM"><span class="pd-skeleton" style="width:55px;height:16px;display:inline-block"></span></td>
+              <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="CREDITC1.LM"><span class="pd-skeleton" style="width:45px;height:16px;display:inline-block"></span></td>
+              <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="CREDITC1.LM"><span class="pd-skeleton" style="width:55px;height:16px;display:inline-block"></span></td>
             </tr>
             <tr class="border-t border-rule">
               <td class="py-3.5 px-4 font-mono tnum font-semibold"><a href="/explorer?symbol=PEN%3DX" class="text-ink hover:text-brand underline">PEN=X</a></td>
               <td class="py-3.5 px-4 text-ink">USD/PEN<span class="pdl-sub">Tipo de cambio</span></td>
-              <td class="py-3.5 px-4 text-center hidden sm:table-cell" data-cell-spark="PEN=X">—</td>
-              <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="PEN=X">—</td>
-              <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="PEN=X">—</td>
-              <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="PEN=X">—</td>
+              <td class="py-3.5 px-4 text-center hidden sm:table-cell" data-cell-spark="PEN=X"><span class="pd-skeleton" style="width:64px;height:18px;display:inline-block"></span></td>
+              <td class="py-3.5 px-4 font-mono tnum text-right text-ink" data-cell-price="PEN=X"><span class="pd-skeleton" style="width:55px;height:16px;display:inline-block"></span></td>
+              <td class="py-3.5 px-4 font-mono tnum text-right" data-cell-pct="PEN=X"><span class="pd-skeleton" style="width:45px;height:16px;display:inline-block"></span></td>
+              <td class="py-3.5 px-4 font-mono tnum text-right font-semibold text-ink" data-cell-p50="PEN=X"><span class="pd-skeleton" style="width:55px;height:16px;display:inline-block"></span></td>
             </tr>
           </tbody>
         </table>
       </div>
-      <p id="pdTableFooter" class="pie-ft text-[12px] text-ink-soft leading-normal border-t border-rule pt-2" style="font-family: var(--pd-font-ui);">Fuente: BCRP, EIA y datos de mercado. Proyección: PerData Engine v6. Datos al <span id="pdTableDate">—</span>.</p>
+      <p id="pdTableFooter" class="pie-ft text-[12px] text-ink-soft leading-normal border-t border-rule pt-2" style="font-family: var(--pd-font-ui);">Fuente: BCRP, EIA y datos de mercado. Proyección: PerData Engine v6. Datos al <span id="pdTableDate"><span class="pd-skeleton" style="width: 70px; height: 11px; display: inline-block;"></span></span>.</p>
       <p class="text-sm sm:text-base text-ink-soft leading-relaxed mt-4">
         Escribe <span class="mono text-ink">"cobre"</span> en <a href="/explorer" class="text-ink hover:text-brand underline font-medium">la terminal</a>, elige un horizonte y descarga la serie en Excel.
       </p>

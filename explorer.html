@@ -943,8 +943,34 @@
         </div>
 
         <!-- Skeleton Loading State -->
-        <div id="forecastSkeleton" class="hidden mt-3 p-4 bg-[#FAFAFC] dark:bg-[#161618] border border-rule rounded text-center animate-pulse">
-          <div class="text-xs font-medium text-ink-soft">Calculando proyección probabilística...</div>
+        <div id="forecastSkeleton" class="hidden mt-3" aria-hidden="true">
+          <div class="stat-strip stat-strip-5">
+            <div class="stat">
+              <div class="band-label"><span class="pd-skeleton" style="width: 80px; height: 12px; display: inline-block;"></span></div>
+              <div class="stat-value"><span class="pd-skeleton" style="width: 70px; height: 24px; display: inline-block;"></span></div>
+              <div class="stat-sub"><span class="pd-skeleton" style="width: 100px; height: 11px; display: inline-block;"></span></div>
+            </div>
+            <div class="stat">
+              <div class="band-label"><span class="pd-skeleton" style="width: 90px; height: 12px; display: inline-block;"></span></div>
+              <div class="stat-value"><span class="pd-skeleton" style="width: 60px; height: 24px; display: inline-block;"></span></div>
+              <div class="stat-sub"><span class="pd-skeleton" style="width: 110px; height: 11px; display: inline-block;"></span></div>
+            </div>
+            <div class="stat">
+              <div class="band-label"><span class="pd-skeleton" style="width: 75px; height: 12px; display: inline-block;"></span></div>
+              <div class="stat-value"><span class="pd-skeleton" style="width: 50px; height: 24px; display: inline-block;"></span></div>
+              <div class="stat-sub"><span class="pd-skeleton" style="width: 120px; height: 11px; display: inline-block;"></span></div>
+            </div>
+            <div class="stat">
+              <div class="band-label"><span class="pd-skeleton" style="width: 110px; height: 12px; display: inline-block;"></span></div>
+              <div class="stat-value"><span class="pd-skeleton" style="width: 110px; height: 24px; display: inline-block;"></span></div>
+              <div class="stat-sub"><span class="pd-skeleton" style="width: 130px; height: 11px; display: inline-block;"></span></div>
+            </div>
+            <div class="stat">
+              <div class="band-label"><span class="pd-skeleton" style="width: 120px; height: 12px; display: inline-block;"></span></div>
+              <div class="stat-value"><span class="pd-skeleton" style="width: 60px; height: 24px; display: inline-block;"></span></div>
+              <div class="stat-sub"><span class="pd-skeleton" style="width: 100px; height: 11px; display: inline-block;"></span></div>
+            </div>
+          </div>
         </div>
 
         <!-- Active Forecast Results -->
@@ -952,27 +978,27 @@
           <div class="stat-strip stat-strip-5">
             <div class="stat">
               <div class="band-label">P50 al Horizonte <a href="/aprende#p10-p50-p90" class="pd-help" title="Percentil 50: el valor central que proyecta el modelo al final del horizonte.">?</a></div>
-              <div id="tfmP50" class="stat-value text-black dark:text-white">$39.34</div>
+              <div id="tfmP50" class="stat-value text-black dark:text-white"><span class="pd-skeleton" style="width: 60px; height: 1em; display: inline-block;"></span></div>
               <div id="tfmHorizonDate" class="stat-sub">Precio central esperado en el horizonte</div>
             </div>
             <div class="stat">
               <div class="band-label">Retorno Proyectado <a href="/aprende#probabilidad" class="pd-help" title="Ganancia o pérdida porcentual esperada del P50 frente a hoy.">?</a></div>
-              <div id="tfmReturn" class="stat-value text-emerald-800 dark:text-emerald-300">+13.3%</div>
+              <div id="tfmReturn" class="stat-value text-emerald-800 dark:text-emerald-300"><span class="pd-skeleton" style="width: 50px; height: 1em; display: inline-block;"></span></div>
               <div id="tfmTrend" class="stat-sub">Variación esperada frente a hoy</div>
             </div>
             <div class="stat">
               <div class="band-label">Prob. de Alza <a href="/aprende#probabilidad" class="pd-help" title="Proporción de trayectorias simuladas que terminan por encima del precio actual.">?</a></div>
-              <div id="tfmProbRise" class="stat-value text-black dark:text-white">—</div>
+              <div id="tfmProbRise" class="stat-value text-black dark:text-white"><span class="pd-skeleton" style="width: 40px; height: 1em; display: inline-block;"></span></div>
               <div class="stat-sub">De 10 escenarios, cuántos terminan por encima de hoy</div>
             </div>
             <div class="stat">
               <div class="band-label">Rango 80% (P10–P90) <a href="/aprende#p10-p50-p90" class="pd-help" title="Intervalo donde caen 8 de cada 10 escenarios simulados por el modelo.">?</a></div>
-              <div id="tfmRange" class="stat-value text-black dark:text-white" style="font-size:13px">$21.97 — $56.71</div>
+              <div id="tfmRange" class="stat-value text-black dark:text-white" style="font-size:13px"><span class="pd-skeleton" style="width: 100px; height: 1em; display: inline-block;"></span></div>
               <div class="stat-sub">8 de cada 10 veces el precio queda aquí <span id="tfmRangeInner" class="hidden"></span></div>
             </div>
             <div class="stat">
               <div class="band-label">Volatilidad implícita (anual) <a href="/aprende#volatilidad" class="pd-help" title="Vaivén anual que corresponde al ancho de la banda P10-P90 de esta proyección.">?</a></div>
-              <div id="tfmVol" class="stat-value text-black dark:text-white">—</div>
+              <div id="tfmVol" class="stat-value text-black dark:text-white"><span class="pd-skeleton" style="width: 50px; height: 1em; display: inline-block;"></span></div>
               <div class="stat-sub" id="tfmModelInfo">Según el ancho de la banda P10–P90</div>
             </div>
           </div>
