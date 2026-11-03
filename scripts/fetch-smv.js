@@ -24,10 +24,49 @@ const key = (t) => fold(t)
   .trim();
 const text = (h) => h.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim();
 
+function handleSmvFailure(err) {
+  let actualizado = null;
+  try {
+    if (fs.existsSync(OUT)) {
+      const store = JSON.parse(fs.readFileSync(OUT, "utf8"));
+      actualizado = store.actualizado;
+    }
+  } catch (e) {
+    console.error(`Error leyendo ${OUT}: ${e.message}`);
+  }
+
+  const ageMs = actualizado ? Date.now() - new Date(actualizado).getTime() : Infinity;
+  const maxAgeMs = 72 * 60 * 60 * 1000;
+
+  if (actualizado && !Number.isNaN(ageMs) && ageMs < maxAgeMs) {
+    console.log(`::warning::SMV no respondió; se mantienen los datos de ${actualizado}`);
+    process.exit(0);
+  }
+
+  console.error(`SMV no respondió tras 3 intentos (${err?.message || "sin respuesta"}); datos tienen ${actualizado ? Math.round(ageMs / 3600000) + "h" : "antigüedad desconocida"}`);
+  process.exit(1);
+}
+
 async function get(url) {
-  const r = await fetch(url, { headers: { "User-Agent": UA }, signal: AbortSignal.timeout(30000) });
-  if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
-  return r.text();
+  const delays = [10000, 30000];
+  let lastErr;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    console.log(`[SMV] Intento ${attempt}/3 para ${url}`);
+    try {
+      const r = await fetch(url, { headers: { "User-Agent": UA }, signal: AbortSignal.timeout(45000) });
+      if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
+      return await r.text();
+    } catch (err) {
+      lastErr = err;
+      console.warn(`[SMV] Intento ${attempt}/3 falló: ${err.message}`);
+      if (attempt < 3) {
+        const delay = delays[attempt - 1];
+        console.log(`[SMV] Esperando ${delay / 1000}s antes del siguiente intento...`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+  }
+  handleSmvFailure(lastErr);
 }
 
 export function parseDay(html) {
