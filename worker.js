@@ -412,6 +412,7 @@ const JOBS = [
   { file: "smv-precios.yml", minGapMin: 600, due: (d) => d.getUTCHours() >= 1 && d.getUTCHours() < 10 && d.getUTCDay() >= 2 && d.getUTCDay() <= 6 },
   { file: "timesfm.yml", minGapMin: 1200, due: (d) => d.getUTCHours() >= 11 },
   { file: "official-data.yml", minGapMin: 600, due: (d) => d.getUTCHours() >= 22 && d.getUTCDay() >= 1 && d.getUTCDay() <= 5 },
+  { file: "alertas.yml", minGapMin: 25, due: () => true },
   // Newsletter: weekdays from 05:50 Lima until noon, only if today's send isn't recorded yet
   { file: "boletin.yml", minGapMin: 25, due: (d) => {
       const lima = new Date(d.getTime() - 5 * 36e5);
