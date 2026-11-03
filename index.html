@@ -431,7 +431,7 @@
                   <canvas id="pdHeroChart" role="img" aria-label="Historia de USD/PEN con abanico de proyección P10-P90"></canvas>
                   <div id="pdOpeningScene" class="pd-opening-scene" hidden aria-hidden="true"></div>
                 </div>
-                <p class="mt-2 text-xs text-ink-soft leading-normal font-sans">Línea: precio real · Zona sombreada: dónde estaría el dólar el próximo mes (8 de cada 10 veces)</p>
+                <p class="mt-2 text-xs text-ink-soft leading-normal font-sans" id="pdChartCaption">Línea: precio real · Zona sombreada: dónde estaría el dólar en los próximos 3 meses (8 de cada 10 veces)</p>
                 <p class="mt-1 text-[11px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);"><span id="heroModelBadge" class="font-mono">Modelo: PerData Engine v6</span> · Fuente: <span id="pdChartSource">BCRP</span> · Datos al <span id="pdChartDate">—</span></p>
                 <a href="/explorer?symbol=PEN%3DX" class="pdl-link mt-2 inline-block">Abrir en la terminal &rarr;</a>
               </div>
@@ -943,7 +943,14 @@
 
         var fcLabel = fc && fc.horizonDate ? shortDate(fc.horizonDate) : 'próx.';
 
-        var hDate = formatHumanDate(last ? last.date : '');
+        // Fecha del último cierre diario, no la del mes agregado
+        var daily = hist && hist.daily ? hist.daily : [];
+        var lastDaily = daily.length ? daily[daily.length - 1] : null;
+        var obsDate = (lastDaily && (lastDaily.date || lastDaily.time)) || (hist && hist.live && hist.live.time) || (last ? last.date : '');
+        var hDate = formatHumanDate(String(obsDate).slice(0, 10));
+        var capEl = document.getElementById('pdChartCaption');
+        var nFc = fcPath && fcPath.forecastSeries ? fcPath.forecastSeries.length : 1;
+        if (capEl) capEl.textContent = 'Línea: precio real · Zona sombreada: dónde estaría el dólar ' + (nFc > 1 ? 'en los próximos ' + nFc + ' meses' : 'el próximo mes') + ' (8 de cada 10 veces)';
         if (dateEl) dateEl.textContent = hDate;
         if (tableDateEl) tableDateEl.textContent = hDate;
 

@@ -453,10 +453,11 @@
             x: {
               type: "category",
               ticks: {
-                maxTicksLimit: isMobile ? 4 : 6,
+                maxTicksLimit: isMobile || options.compact ? 4 : 6,
                 maxRotation: 0,
                 minRotation: 0,
                 autoSkip: true,
+                autoSkipPadding: 14,
                 callback: (v) => (labels[v] ? monthLabel(labels[v]) : ""),
                 font: { family: "IBM Plex Mono, ui-monospace, monospace", size: 10 },
                 color: tokens.inkSoft,
@@ -647,8 +648,11 @@
 
               if (valP90 != null && !isNaN(valP90)) {
                 c.fillStyle = tokens.inkSoft;
-                const txt90 = isPlain ? (mob ? "Esc. alto " : "Escenario alto ") : "P90 ";
+                const txt90 = isPlain ? "Alto " : "P90 ";
                 c.fillText(txt90 + sym + Number(valP90).toFixed(2), xText, pos90);
+                // El rótulo dice a qué horizonte corresponden las tres cifras
+                const HP = Number(options.horizonMonths || 1);
+                if (isPlain) c.fillText(HP === 1 ? "En 1 mes" : `En ${HP} meses`, xText, pos90 - (mob ? 12 : 14));
               }
               if (valP50 != null && !isNaN(valP50)) {
                 c.fillStyle = isPlain ? tokens.accent : tokens.ink;
@@ -667,7 +671,7 @@
                     ? "700 8px 'IBM Plex Mono', ui-monospace, monospace"
                     : "600 10px 'IBM Plex Mono', ui-monospace, monospace";
                 }
-                const txt10 = isPlain ? (mob ? "Esc. bajo " : "Escenario bajo ") : "P10 ";
+                const txt10 = isPlain ? "Bajo " : "P10 ";
                 c.fillText(txt10 + sym + Number(valP10).toFixed(2), xText, pos10);
               }
               c.restore();
