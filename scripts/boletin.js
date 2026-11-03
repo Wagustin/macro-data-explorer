@@ -10,6 +10,7 @@
 import fs from "fs";
 import path from "path";
 import { smvRows } from "../api/_lib/smv.js";
+import { mencionaEmpresa } from "./empresa-mencion.js";
 
 const DRY = process.argv.includes("--dry-run");
 const PREVIEW = Boolean(process.env.PREVIEW_EMPRESAS);
@@ -91,6 +92,11 @@ async function facts() {
     for (const h of list) if (h.fecha >= since) smvFacts.push({ nemo, empresa: prettyName(nameOf[nemo] || nemo), ...h, titulo: sentence(h.titulo), tipo: sentence(h.tipo) });
   }
   smvFacts.sort((a, b) => b.fecha.localeCompare(a.fecha));
+  const seenFacts = new Set();
+  const uniqueFacts = smvFacts.filter((h) => {
+    const k = `${h.empresa} ${String(h.fecha).slice(0, 10)} ${String(h.titulo).toLowerCase()}`;
+    return seenFacts.has(k) ? false : seenFacts.add(k);
+  });
 
   const headlines = (news.news || [])
     .filter((n) => SOURCES.some((src) => (n.source || "").toLowerCase().includes(src.toLowerCase())))
@@ -106,7 +112,7 @@ async function facts() {
   const fresh = digest && Date.now() - Date.parse(digest.actualizado) < 30 * 36e5;
   const stories = fresh ? (digest.historias || []).slice(0, 5) : [];
   const used = new Set(stories.flatMap((h) => h.fuentes.map((x) => x.url)));
-  return { markets, smvFacts: smvFacts.slice(0, 8), headlines: headlines.filter((h) => !used.has(h.url)).slice(0, 6), forecast, stories };
+  return { markets, smvFacts: uniqueFacts.slice(0, 8), headlines: headlines.filter((h) => !used.has(h.url)).slice(0, 6), forecast, stories };
 }
 
 // Numbers in the model's text must exist in the facts; otherwise the sentence is dropped.
@@ -305,31 +311,38 @@ async function companyCard(nemo, smvAll, laya, newsById) {
     }
   } else if (simbolo_proyeccion) {
     const h = await getJson(`${SITE}/api/historical?symbol=${encodeURIComponent(simbolo_proyeccion)}&range=1y`).catch(() => null);
-    if (h?.live?.price) { card.price = h.live.price; card.change = h.live.changePct ?? null; }
-    else if (h?.series?.length) card.price = h.series[h.series.length - 1].close;
+    if (h?.live?.price) { card.price = h.live.price; card.change = h.live.changePct ?? null; card.priceDate = h.live.time; }
+    else if (h?.series?.length) { card.price = h.series[h.series.length - 1].close; card.priceDate = h.series[h.series.length - 1].date; }
     card.currency = h?.currency === "USD" ? "US$" : "S/";
     const fc = await getJson(`${SITE}/api/forecast?symbol=${encodeURIComponent(simbolo_proyeccion)}&horizon=1`).catch(() => null);
     if (fc?.quantiles) card.forecast = { p50: fc.predictedPrice, p10: fc.quantiles.p10 ?? fc.quantiles.P10, p90: fc.quantiles.p90 ?? fc.quantiles.P90, date: fc.horizonDate, prob: fc.probabilityOfRise };
   }
   const since = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10);
   for (const n of nemos) for (const h of smvAll[n] || []) if (h.fecha >= since) card.smv.push({ ...h, titulo: sentence(h.titulo) || sentence(h.tipo) });
-  card.smv = card.smv.slice(0, 3);
+  // The same fact is filed under each of the issuer's securities
+  const seen = new Set();
+  card.smv = card.smv.filter((h) => {
+    const k = `${String(h.fecha).slice(0, 10)} ${String(h.titulo).toLowerCase().replace(/\s+/g, " ").trim()}`;
+    return seen.has(k) ? false : seen.add(k);
+  }).slice(0, 3);
   for (const [id, c] of Object.entries(laya)) {
     const story = newsById[id];
     const recent = story?.fecha_iso && Date.parse(story.fecha_iso) >= Date.now() - 7 * 864e5;
-    if (recent && (c.empresas || []).some((x) => nemos.includes(x))) card.news.push({ ...story, sentimiento: c.sentimiento });
+    if (recent && (c.empresas || []).some((x) => nemos.includes(x)) && mencionaEmpresa(`${story.titulo} ${story.resumen || ""}`, e)) card.news.push({ ...story, sentimiento: c.sentimiento });
   }
   card.news.sort((a, b) => String(b.fecha_iso).localeCompare(String(a.fecha_iso)));
   card.news = card.news.slice(0, 3);
   if (card.news.length) {
     const counts = { POSITIVO: 0, NEGATIVO: 0, NEUTRO: 0 };
     for (const n of card.news) if (counts[n.sentimiento] != null) counts[n.sentimiento]++;
-    const parts = [["POSITIVO", "positivas"], ["NEGATIVO", "negativas"], ["NEUTRO", "neutras"]]
-      .filter(([key]) => counts[key]).map(([key, label]) => `${counts[key]} ${label}`);
-    card.sentiment = `Sentimiento de las últimas noticias: ${parts.join(", ")}.`;
+    const parts = [["POSITIVO", "positiva"], ["NEGATIVO", "negativa"], ["NEUTRO", "neutra"]]
+      .filter(([key]) => counts[key]).map(([key, label]) => `${counts[key]} ${label}${counts[key] === 1 ? "" : "s"}`);
+    card.sentiment = `Tono de las noticias: ${parts.join(", ")}.`;
   }
   return card;
 }
+
+const shortDay = (iso) => new Date(`${String(iso).slice(0, 10)}T12:00:00Z`).toLocaleDateString("es-PE", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).replace(/\./g, "");
 
 function renderPersonal(cards) {
   const C = { ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", card: "#FBF9F4" };
@@ -342,11 +355,11 @@ function renderPersonal(cards) {
     const smv = c.smv.map((h) => `<div style="margin-top:6px;font-family:${ui};font-size:13px"><span style="color:${C.soft}">SMV ${esc(h.fecha.slice(0, 10))}:</span> <a href="${esc(h.url_oficial)}" style="color:${C.ink}">${esc(h.titulo)}</a></div>`).join("");
     const news = c.news.map((n) => `<div style="margin-top:6px;font-family:${ui};font-size:13px"><a href="${esc(n.url)}" style="color:${C.ink}">${esc(n.titulo)}</a> <span style="color:${C.soft}">· ${esc(n.fuente)}</span></div>`).join("");
     const quiet = !c.smv.length && !c.news.length ? `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">Sin hechos de importancia ni noticias en los últimos días.</div>` : "";
-    const sentiment = c.sentiment ? `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">${esc(c.sentiment)}</div>` : `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">Sin noticias recientes clasificadas por empresa.</div>`;
+    const sentiment = c.sentiment ? `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">${esc(c.sentiment)}</div>` : (quiet ? "" : `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">Sin noticias recientes de esta empresa.</div>`);
     return `<tr><td style="padding:14px 0;border-bottom:1px solid ${C.rule}">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
         <td style="font-family:${ui};font-size:15px;font-weight:600;color:${C.ink}">${esc(c.name)} <span style="font-family:${mono};font-size:11px;font-weight:400;color:${C.soft}">${esc(c.nemo)}</span></td>
-        <td align="right" style="font-family:${mono};font-size:15px;color:${C.ink};white-space:nowrap">${c.price != null ? `${c.currency} ${fmt(c.price)}` : `<a href="${SITE}/empresa/${encodeURIComponent(c.nemo)}" style="color:${C.soft};font-family:${ui};font-size:12px">Ver ficha</a>`}<br><span style="font-size:13px">${ch}</span>${c.priceDate ? `<br><span style="font-size:10px;color:${C.soft}">${esc(c.priceDate)}</span>` : ""}</td>
+        <td align="right" style="font-family:${mono};font-size:15px;color:${C.ink};white-space:nowrap">${c.price != null ? `${c.currency} ${fmt(c.price)}` : `<a href="${SITE}/empresa/${encodeURIComponent(c.nemo)}" style="color:${C.soft};font-family:${ui};font-size:12px">Ver ficha</a>`}<br><span style="font-size:13px">${ch}</span>${c.price != null ? `<br><span style="font-size:10px;color:${C.soft}">${c.priceDate ? `cierre del ${esc(shortDay(c.priceDate))}` : "último cierre disponible"}</span>` : ""}</td>
       </tr></table>${sentiment}${fc}${smv}${news}${quiet}</td></tr>`;
   }).join("");
   return `<tr><td style="padding:30px 0 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:2px solid ${C.ink};padding-top:10px;font-family:${serif};font-size:22px;font-weight:600;color:${C.ink}">Tus empresas</td></tr></table></td></tr>

@@ -9,6 +9,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { askJSON } from "./llm.js";
 import { classifyBatch } from "./news-classification.js";
+import { mencionaEmpresa } from "./empresa-mencion.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FEED = path.join(ROOT, "data", "noticias.json");
@@ -33,6 +34,7 @@ const mainNemo = (vals) => (vals.find((v) => ["BAP", "BVN", "SCCO", "IFS", "CPAC
   || vals.find((v) => v.nemonico.endsWith("C1")) || vals.find((v) => v.nemonico.endsWith("I1")) || vals[0])?.nemonico;
 const companies = emisores.map((e) => [mainNemo(e.valores || []), e.razonSocial]).filter(([n]) => n);
 const known = new Set(companies.map(([n]) => n));
+const emisorOf = new Map(emisores.map((e) => [mainNemo(e.valores || []), e]));
 
 async function saveLabels(rows) {
   if (!rows.length) return;
@@ -66,7 +68,7 @@ function labelRow(n, x, modelName) {
     relevancia,
     tema: TEMAS.includes(x?.tema) ? x.tema : (n.categoria || null),
     sentimiento: SENT.includes(x?.sentimiento) ? x.sentimiento : null,
-    empresas: (Array.isArray(x?.empresas) ? x.empresas : []).filter((e) => known.has(e)),
+    empresas: (Array.isArray(x?.empresas) ? x.empresas : []).filter((e) => known.has(e) && mencionaEmpresa(`${n.titulo} ${n.resumen || ""}`, emisorOf.get(e))),
     modelo: modelName || null,
   };
 }
