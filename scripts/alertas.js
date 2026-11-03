@@ -235,8 +235,9 @@ async function main() {
   try {
     seguimientoRows = await fetchSeguimiento(SUPABASE_URL, SUPABASE_SERVICE_KEY);
   } catch (e) {
-    if (DRY) {
-      console.log("0 avisos.");
+    // La tabla puede no existir todavía (migración 0010 pendiente): no es un fallo del trabajo.
+    if (DRY || /HTTP 404|PGRST205/.test(e.message)) {
+      console.log(DRY ? "0 avisos." : "La tabla seguimiento aún no existe; no hay avisos que enviar.");
       process.exit(0);
     }
     console.error("Error leyendo seguimiento:", e.message);
