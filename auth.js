@@ -271,6 +271,20 @@
       setAuthMode(mode === "signup" ? "signup" : "signin");
       showDialog("pdAuthModal");
       showGoogle();
+      const startField = () => {
+        const canvas = document.querySelector("#pdAuthModal .pd-auth-canvas");
+        if (canvas && window.PDLoginField) {
+          window.PDLoginField.start(canvas);
+        }
+      };
+      if (window.PDLoginField) {
+        startField();
+      } else {
+        const s = document.createElement("script");
+        s.src = "/pd-login-field.js";
+        s.onload = startField;
+        document.head.appendChild(s);
+      }
       setTimeout(() => {
         const first = document.getElementById(mode === "signup" ? "pdAuthName" : "pdAuthEmail");
         if (first) first.focus();
@@ -278,6 +292,9 @@
     },
 
     closeModal() {
+      if (window.PDLoginField) {
+        window.PDLoginField.stop();
+      }
       hideDialog("pdAuthModal");
     },
 
@@ -410,6 +427,9 @@
   function hideDialog(id) {
     const el = document.getElementById(id);
     if (!el || el.hidden) return;
+    if (id === "pdAuthModal" && window.PDLoginField) {
+      window.PDLoginField.stop();
+    }
     el.classList.remove("is-open");
     el.hidden = true;
     if (!document.querySelector(".pd-dialog.is-open")) document.body.style.overflow = "";
@@ -498,37 +518,13 @@
         '<div class="pd-dialog-box" role="dialog" aria-modal="true" aria-labelledby="pdAuthTitle">' +
           '<button type="button" class="pd-dialog-close" data-close aria-label="Cerrar">' + ICON_CLOSE + "</button>" +
           '<div class="pd-auth-art" aria-hidden="true">' +
+            '<canvas class="pd-auth-canvas" aria-hidden="true"></canvas>' +
             '<div class="pd-auth-art-header">' +
-              '<span class="pd-auth-art-kicker">Terminal PerData</span>' +
-              '<span class="pd-auth-art-tag">Calibración P10–P90</span>' +
-            '</div>' +
-            '<div class="pd-auth-art-scene">' +
-              '<svg class="pd-auth-chart-svg" viewBox="0 0 280 160" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">' +
-                '<line class="pd-chart-grid" x1="36" y1="35" x2="265" y2="35"/>' +
-                '<line class="pd-chart-grid" x1="36" y1="70" x2="265" y2="70"/>' +
-                '<line class="pd-chart-grid" x1="36" y1="105" x2="265" y2="105"/>' +
-                '<line class="pd-chart-grid" x1="36" y1="140" x2="265" y2="140"/>' +
-                '<text class="pd-chart-label" x="30" y="38" text-anchor="end">148</text>' +
-                '<text class="pd-chart-label" x="30" y="73" text-anchor="end">140</text>' +
-                '<text class="pd-chart-label" x="30" y="108" text-anchor="end">132</text>' +
-                '<text class="pd-chart-label" x="30" y="143" text-anchor="end">124</text>' +
-                '<line class="pd-chart-t0" x1="145" y1="25" x2="145" y2="145"/>' +
-                '<text class="pd-chart-t0-text" x="145" y="20" text-anchor="middle">HOY</text>' +
-                '<path class="pd-chart-fan" d="M 145,88 L 180,68 L 220,50 L 260,38 L 260,138 L 220,122 L 180,104 Z"/>' +
-                '<path class="pd-chart-p90" d="M 145,88 L 180,68 L 220,50 L 260,38"/>' +
-                '<text class="pd-chart-bound-text" x="264" y="34" text-anchor="end">P90</text>' +
-                '<path class="pd-chart-p10" d="M 145,88 L 180,104 L 220,122 L 260,138"/>' +
-                '<text class="pd-chart-bound-text" x="264" y="148" text-anchor="end">P10</text>' +
-                '<path class="pd-chart-p50" d="M 145,88 L 180,84 L 220,78 L 260,82"/>' +
-                '<text class="pd-chart-bound-text" x="264" y="78" text-anchor="end">P50</text>' +
-                '<path class="pd-chart-hist" d="M 38,118 L 62,112 L 85,96 L 108,102 L 126,82 L 145,88"/>' +
-                '<circle class="pd-chart-dot" cx="145" cy="88" r="3.5"/>' +
-              '</svg>' +
+              '<span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>' +
             '</div>' +
             '<div class="pd-auth-art-footer">' +
-              '<div class="pd-auth-art-stat"><span class="pd-auth-art-num">80%</span><span class="pd-auth-art-sub">Banda P10–P90</span></div>' +
-              '<div class="pd-auth-art-stat"><span class="pd-auth-art-num">12M</span><span class="pd-auth-art-sub">Horizonte</span></div>' +
-              '<div class="pd-auth-art-stat"><span class="pd-auth-art-num">v6</span><span class="pd-auth-art-sub">PerData Engine</span></div>' +
+              '<div class="pd-auth-art-quote">El rango probable, no una promesa.</div>' +
+              '<div class="pd-auth-art-sub">Calibración P10–P90 · TimesFM</div>' +
             '</div>' +
           '</div>' +
           '<div class="pd-auth-body">' +
