@@ -453,6 +453,17 @@
       </div>
     </section>
 
+    <!-- TUS EMPRESAS (solo con sesión y seguimiento) -->
+    <section id="pdMisEmpresas" class="full-bleed border-b border-rule" data-section-rule aria-label="Tus empresas" hidden>
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-5">
+        <div class="flex items-baseline justify-between gap-3 mb-3">
+          <h2 class="text-sm font-bold text-ink">Tus empresas</h2>
+          <a href="/cuenta" class="text-xs text-ink-soft hover:text-ink no-underline">Gestionar seguimiento</a>
+        </div>
+        <div id="pdMisEmpresasLista" class="flex flex-wrap gap-2"></div>
+      </div>
+    </section>
+
     <!-- SECCIÓN TABLA: sobre --pd-paper -->
     <section class="pdl-data-sec full-bleed" data-section-rule>
       <div class="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
@@ -1099,6 +1110,76 @@
         .catch(function () { msg.textContent = "No pudimos conectar. Inténtalo más tarde."; })
         .finally(function () { btn.disabled = false; });
     });
+  })();
+</script>
+<script>
+  (function () {
+    var sec = document.getElementById("pdMisEmpresas");
+    var lista = document.getElementById("pdMisEmpresasLista");
+    if (!sec || !lista) return;
+
+    function token() {
+      var a = window.MDE_Auth;
+      return a && a.getToken ? a.getToken() : null;
+    }
+    function fmt(n, sym) {
+      var v = Number(n).toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+      return sym && sym.indexOf(".LM") > -1 ? "S/ " + v : v;
+    }
+
+    function chip(simbolo, precio, cambio) {
+      var a = document.createElement("a");
+      a.className = "inline-flex items-center gap-2 border border-rule px-3 py-1.5 text-xs no-underline hover:border-ink transition";
+      a.href = "/explorer?symbol=" + encodeURIComponent(simbolo);
+      var s = document.createElement("span");
+      s.className = "text-ink font-semibold tnum";
+      s.textContent = simbolo;
+      a.appendChild(s);
+      if (precio != null && !isNaN(precio)) {
+        var p = document.createElement("span");
+        p.className = "text-ink-soft tnum";
+        p.textContent = fmt(precio, simbolo);
+        a.appendChild(p);
+      }
+      if (cambio != null && !isNaN(cambio)) {
+        var c = document.createElement("span");
+        c.className = "tnum font-mono";
+        c.style.color = cambio >= 0 ? "var(--pd-pos)" : "var(--pd-neg)";
+        c.textContent = (cambio >= 0 ? "+" : "") + Number(cambio).toFixed(1) + " %";
+        a.appendChild(c);
+      }
+      return a;
+    }
+
+    async function carga() {
+      var t = token();
+      if (!t) { sec.hidden = true; return; }
+      try {
+        var r = await fetch("/api/seguimiento", { headers: { Authorization: "Bearer " + t }, cache: "no-store" });
+        if (!r.ok) { sec.hidden = true; return; }
+        var d = await r.json();
+        var filas = (d.simbolos || []).slice(0, 6);
+        if (!filas.length) { sec.hidden = true; return; }
+        lista.innerHTML = "";
+        var res = await Promise.allSettled(filas.map(function (f) {
+          return fetch("/api/forecast?symbol=" + encodeURIComponent(f.simbolo) + "&horizon=1", { cache: "no-store" })
+            .then(function (x) { return x.ok ? x.json() : null; });
+        }));
+        filas.forEach(function (f, i) {
+          var fc = res[i].status === "fulfilled" ? res[i].value : null;
+          lista.appendChild(chip(
+            f.simbolo,
+            fc ? fc.lastObservedPrice : null,
+            fc ? fc.expectedReturnPct : null
+          ));
+        });
+        sec.hidden = false;
+      } catch (e) { sec.hidden = true; }
+    }
+
+    window.addEventListener("mde:auth-change", carga);
+    document.addEventListener("DOMContentLoaded", carga);
+    carga();
   })();
 </script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "bc9abca1e97b4bcaa6261b23afc498e5"}'></script>
