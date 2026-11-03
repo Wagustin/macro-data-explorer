@@ -168,8 +168,8 @@ const template = `<!DOCTYPE html>
   <meta name="pd-geo" content="otro">
 
   <!-- Fuentes auto-alojadas (T74) -->
-  <link rel="preload" href="/fonts/source-serif-4-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/fonts/libre-franklin-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/libre-franklin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/tw.css">
   <link rel="stylesheet" href="/pd.css" />
 
