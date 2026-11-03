@@ -983,6 +983,8 @@ html.dark .pd-acct-menu { box-shadow: none; }
   overflow: hidden;
   user-select: none;
   box-sizing: border-box;
+  height: 100svh;
+  max-height: 100svh;
 }
 
 html.dark .pd-entrar-field-col {
@@ -1024,19 +1026,20 @@ html.dark .pd-entrar-field-col {
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0;
   padding-top: 20px;
   border-top: 1px solid rgba(237, 232, 220, 0.12);
 }
 
 .pd-entrar-art-quote {
   font-family: var(--pd-font-read, 'Source Serif 4', Georgia, serif);
-  font-size: clamp(40px, 4.5vw, 64px);
-  line-height: 1.05;
+  font-size: clamp(36px, 4vw, 56px);
+  line-height: 1.1;
   font-weight: 600;
   color: #EDE8DC;
   letter-spacing: -0.025em;
   max-width: 620px;
+  margin-bottom: 40px;
 }
 
 .pd-entrar-art-sub {
@@ -1045,7 +1048,7 @@ html.dark .pd-entrar-field-col {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #8E887E;
-  margin-top: 4px;
+  margin-top: 0;
 }
 
 /* Derecha: papel #F5F1E8, formulario centrado de 400 px máx. */
@@ -1158,6 +1161,62 @@ html.dark .pd-entrar-page .pd-tabs button {
 html.dark .pd-entrar-page .pd-tabs button[aria-selected="true"] {
   background: #2A2723;
   color: #EDE8DC;
+}
+
+/* Formulario /entrar: enlaces con color de tinta del tema y subrayado fino (T73c) */
+.pd-entrar-page .pd-entrar-form-col a,
+.pd-entrar-page .pd-form-aside a,
+.pd-entrar-page .pd-form-aside button,
+.pd-entrar-page .pd-form-legal a,
+.pd-entrar-page #pdForgotBtn,
+.pd-entrar-page #pdBackToLoginBtn {
+  color: var(--pd-ink, #1B1916);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  transition: opacity 0.15s ease;
+}
+
+.pd-entrar-page .pd-entrar-form-col a.pd-entrar-back,
+.pd-entrar-page .pd-entrar-form-col a.pd-wordmark {
+  text-decoration: none;
+}
+
+.pd-entrar-page .pd-entrar-form-col a:hover,
+.pd-entrar-page .pd-form-aside a:hover,
+.pd-entrar-page .pd-form-aside button:hover,
+.pd-entrar-page .pd-form-legal a:hover,
+.pd-entrar-page #pdForgotBtn:hover,
+.pd-entrar-page #pdBackToLoginBtn:hover {
+  opacity: 0.75;
+}
+
+html.dark .pd-entrar-page .pd-entrar-form-col a,
+html.dark .pd-entrar-page .pd-form-aside a,
+html.dark .pd-entrar-page .pd-form-aside button,
+html.dark .pd-entrar-page .pd-form-legal a,
+html.dark .pd-entrar-page #pdForgotBtn,
+html.dark .pd-entrar-page #pdBackToLoginBtn {
+  color: #EDE8DC;
+}
+
+.pd-entrar-page .pd-form-aside {
+  display: flex;
+  justify-content: flex-end;
+  margin: 6px 0 16px;
+  font-size: 13px;
+}
+
+.pd-entrar-page .pd-form-legal {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--pd-sub, #6E685E);
+  margin: 16px 0 0;
+  text-align: center;
+}
+
+html.dark .pd-entrar-page .pd-form-legal {
+  color: #8E887E;
 }
 
 /* Tablet y móvil (< 1024 px) */
