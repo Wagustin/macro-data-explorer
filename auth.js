@@ -524,7 +524,7 @@
             '</div>' +
             '<div class="pd-auth-art-footer">' +
               '<div class="pd-auth-art-quote">El rango probable, no una promesa.</div>' +
-              '<div class="pd-auth-art-sub">Calibración P10–P90 · TimesFM</div>' +
+              '<div class="pd-auth-art-sub">CALIBRACIÓN P10–P90 · PERDATA ENGINE v6</div>' +
             '</div>' +
           '</div>' +
           '<div class="pd-auth-body">' +

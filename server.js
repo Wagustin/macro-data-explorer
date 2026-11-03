@@ -170,8 +170,11 @@ const server = http.createServer(async (req, res) => {
         PUBLIC_DIRS.has(path.posix.dirname(relativePath).replace(/^\.$/, "")) &&
         PUBLIC_EXTENSIONS.has(path.extname(relativePath).toLowerCase())) {
       const candidatePath = path.join(__dirname, relativePath);
+      const publicPath = path.join(__dirname, "public", relativePath);
       if (fs.existsSync(candidatePath) && fs.statSync(candidatePath).isFile()) {
         targetFile = relativePath;
+      } else if (fs.existsSync(publicPath) && fs.statSync(publicPath).isFile()) {
+        targetFile = path.join("public", relativePath);
       }
     }
   }

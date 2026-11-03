@@ -939,6 +939,7 @@ html.dark .pd-acct-menu { box-shadow: none; }
 }
 
 #pdAuthModal .pd-dialog-brand {
+  display: none;
   margin-bottom: 14px;
 }
 
@@ -1093,8 +1094,28 @@ html.dark .pd-acct-menu { box-shadow: none; }
 
 /* Responsive collapse for tablet and mobile (390px safe) */
 @media (max-width: 680px) {
-  /* Room for the close button, which sits over the scene on phones */
-  #pdAuthModal .pd-auth-art-header { padding-right: 36px; }
+  #pdAuthModal .pd-dialog-close {
+    color: #EDE8DC;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    top: 8px;
+    right: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #pdAuthModal .pd-dialog-close:hover {
+    color: #EDE8DC;
+    background: rgba(237, 232, 220, 0.12);
+  }
+  #pdAuthModal .pd-auth-art-header {
+    display: none;
+  }
+  #pdAuthModal .pd-dialog-brand {
+    display: flex;
+  }
   #pdAuthModal .pd-dialog-box {
     max-width: 100%;
     margin: 0;

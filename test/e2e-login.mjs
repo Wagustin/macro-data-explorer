@@ -3,7 +3,7 @@ import { chromium } from "playwright";
 import assert from "assert";
 import fs from "fs";
 
-const PORT = 4370;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 4371;
 const BASE_URL = `http://127.0.0.1:${PORT}`;
 
 async function waitServerReady(url, maxAttempts = 30) {
@@ -106,16 +106,37 @@ async function run() {
     console.log(`✓ window.PDLoginField rendered on canvas (${fieldStatus.nonZeroPixels} non-empty pixels sampled).`);
 
     // Ensure screenshot directory exists
-    const outDir = "/home/wagustin/kathy_workspace/handoff/login_stitch2";
+    const outDir = process.env.OUT_DIR || "/home/wagustin/kathy_workspace/handoff/login_stitch2";
     if (!fs.existsSync(outDir)) {
       fs.mkdirSync(outDir, { recursive: true });
     }
 
-    // Capture desktop screenshot
-    await page.screenshot({
-      path: `${outDir}/final-desktop.png`
-    });
-    console.log("✓ Desktop (1440px) screenshot saved to final-desktop.png");
+    // Capture desktop screenshots at 0.3s, 1.0s, and 2.5s (T70b)
+    console.log("Capturing desktop screenshots at 0.3s, 1.0s, and 2.5s...");
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: `${outDir}/r2-desktop-0.3s.png` });
+    console.log("✓ Saved r2-desktop-0.3s.png");
+
+    await page.waitForTimeout(700);
+    await page.screenshot({ path: `${outDir}/r2-desktop-1.0s.png` });
+    console.log("✓ Saved r2-desktop-1.0s.png");
+
+    await page.waitForTimeout(1500);
+    await page.screenshot({ path: `${outDir}/r2-desktop-2.5s.png` });
+    await page.screenshot({ path: `${outDir}/final-desktop.png` });
+    console.log("✓ Saved r2-desktop-2.5s.png and final-desktop.png");
+
+    // Verify wordmarks on desktop: form brand hidden, art header visible
+    const formBrandDesktop = await page.locator("#pdAuthModal .pd-dialog-brand").isVisible();
+    assert.strictEqual(formBrandDesktop, false, "Form wordmark should be hidden on desktop");
+    const artHeaderDesktop = await page.locator("#pdAuthModal .pd-auth-art-header").isVisible();
+    assert.strictEqual(artHeaderDesktop, true, "Art header wordmark should be visible on desktop");
+
+    // Verify subtitle text: mentions PERDATA ENGINE v6 and not TimesFM
+    const subText = await page.locator("#pdAuthModal .pd-auth-art-sub").textContent();
+    assert.ok(subText.includes("PERDATA ENGINE v6"), `Subtitle must mention PERDATA ENGINE v6, got: ${subText}`);
+    assert.ok(!subText.includes("TimesFM"), `Subtitle must NOT mention TimesFM, got: ${subText}`);
+    console.log(`✓ Desktop wordmark deduplication and subtitle verified: "${subText}".`);
 
     // 3. Tab alternation test
     console.log("3. Testing Tab alternation (Iniciar sesión <-> Crear cuenta)...");
@@ -140,7 +161,47 @@ async function run() {
     // 4. Test at Mobile 390px
     console.log("4. Testing Mobile viewport (390x844)...");
     await page.setViewportSize({ width: 390, height: 844 });
+    // Close and reopen modal to restart intro animation from t=0 on mobile
+    await page.evaluate(() => {
+      const auth = window.PDAuth || window.MacroAuth || window.MDE_Auth;
+      if (auth) auth.closeModal();
+    });
     await page.waitForTimeout(200);
+    await page.evaluate(() => {
+      const auth = window.PDAuth || window.MacroAuth || window.MDE_Auth;
+      if (auth) auth.openModal();
+    });
+    await modal.waitFor({ state: "visible", timeout: 5000 });
+
+    console.log("Capturing mobile screenshots at 0.3s, 1.0s, and 2.5s...");
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: `${outDir}/r2-mobile-0.3s.png` });
+    console.log("✓ Saved r2-mobile-0.3s.png");
+
+    await page.waitForTimeout(700);
+    await page.screenshot({ path: `${outDir}/r2-mobile-1.0s.png` });
+    console.log("✓ Saved r2-mobile-1.0s.png");
+
+    await page.waitForTimeout(1500);
+    await page.screenshot({ path: `${outDir}/r2-mobile-2.5s.png` });
+    await page.screenshot({ path: `${outDir}/final-mobile.png` });
+    console.log("✓ Saved r2-mobile-2.5s.png and final-mobile.png");
+
+    // Verify wordmarks on mobile: form brand visible, dark band header hidden
+    const formBrandMobile = await page.locator("#pdAuthModal .pd-dialog-brand").isVisible();
+    assert.strictEqual(formBrandMobile, true, "Form wordmark should be visible on mobile");
+    const artHeaderMobile = await page.locator("#pdAuthModal .pd-auth-art-header").isVisible();
+    assert.strictEqual(artHeaderMobile, false, "Art header wordmark should be hidden on mobile");
+    console.log("✓ Mobile wordmark deduplication verified (band hidden, form brand visible).");
+
+    // Verify mobile close button: touch target >= 44px, color #EDE8DC
+    const closeBtn = page.locator("#pdAuthModal .pd-dialog-close");
+    const closeBox = await closeBtn.boundingBox();
+    assert.ok(closeBox.width >= 44, `Close button width must be >= 44px (got ${closeBox.width})`);
+    assert.ok(closeBox.height >= 44, `Close button height must be >= 44px (got ${closeBox.height})`);
+    const closeColor = await closeBtn.evaluate(el => window.getComputedStyle(el).color);
+    assert.strictEqual(closeColor, "rgb(237, 232, 220)", `Close button color must be #EDE8DC (rgb(237, 232, 220)), got ${closeColor}`);
+    console.log(`✓ Mobile close button verified: ${closeBox.width}x${closeBox.height}px, color ${closeColor}.`);
 
     const mobileOverflow = await page.evaluate(() => {
       const docOverflow = document.documentElement.scrollWidth <= window.innerWidth;
@@ -149,11 +210,6 @@ async function run() {
       return docOverflow && boxOverflow;
     });
     assert.strictEqual(mobileOverflow, true, "Horizontal overflow detected at 390px viewport!");
-
-    await page.screenshot({
-      path: `${outDir}/final-mobile.png`
-    });
-    console.log("✓ Mobile (390px) screenshot saved to final-mobile.png");
 
     // 5. Test Performance during repose (frame time <= 8ms)
     console.log("5. Testing frame execution time during 1 second in repose...");

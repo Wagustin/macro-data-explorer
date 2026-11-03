@@ -26,6 +26,8 @@
   let width = 0;
   let height = 0;
   let dpr = 1;
+  let t0X = 0;
+  let midY = 0;
 
   function prefersReducedMotion() {
     try {
@@ -38,13 +40,18 @@
   function initStrokes() {
     if (!width || !height) return;
     strokes = [];
-    const spacing = width < 420 ? 12 : 14;
+    const isMobile = (typeof window !== 'undefined' && window.innerWidth < 680) || height < 250;
+    const spacing = isMobile ? 12 : 14;
+    const baseLen = isMobile ? 8 : 9;
     const cols = Math.floor(width / spacing) + 1;
     const rows = Math.floor(height / spacing) + 1;
     const count = Math.min(cols * rows, MAX_STROKES);
 
-    const t0X = width * (width < 420 ? 0.36 : 0.42);
-    const midY = height * 0.50;
+    const p50Row = Math.round((height * 0.50 - spacing / 2) / spacing);
+    midY = p50Row * spacing + (spacing / 2);
+
+    const t0Col = Math.round((width * (isMobile ? 0.36 : 0.40) - spacing / 2) / spacing);
+    t0X = t0Col * spacing + (spacing / 2);
 
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
@@ -54,49 +61,52 @@
         const initialAngle = Math.random() * Math.PI * 2;
 
         let targetAngle = 0;
-        let targetOpacity = 0.15;
-        let targetThickness = 1.0;
-        let baseLen = 7 + Math.random() * 3;
+        let targetOpacity = 0.08;
+        let targetThickness = 0.8;
+        let isMainLine = false;
 
-        if (x < t0X) {
-          // Historical price line to the left of T0
-          const waveY = midY + Math.sin(x * 0.05) * (height * 0.16) + (t0X - x) * 0.06;
-          const distToLine = Math.abs(y - waveY);
-          if (distToLine < 10) {
-            targetAngle = Math.atan2(Math.cos(x * 0.05) * (height * 0.16) * 0.05 - 0.06, 1);
-            targetOpacity = 0.88;
-            targetThickness = 1.9;
-            baseLen = 9.5;
+        if (x <= t0X) {
+          // Historical price line to the left of «hoy» (T0)
+          const dx = t0X - x;
+          const waveY = midY - Math.sin(dx * 0.045) * (height * 0.16) + Math.sin(dx * 0.09) * (height * 0.06);
+          const slope = 0.045 * Math.cos(dx * 0.045) * (height * 0.16) - 0.09 * Math.cos(dx * 0.09) * (height * 0.06);
+          const priceRow = Math.round((waveY - spacing / 2) / spacing);
+
+          if (r === priceRow) {
+            // Price line matches P50: thickness 1.8px and opacity 1.0
+            targetAngle = Math.atan2(slope, 1);
+            targetOpacity = 1.0;
+            targetThickness = 1.8;
+            isMainLine = true;
           } else {
-            targetAngle = (Math.random() - 0.5) * 0.35;
-            targetOpacity = 0.14;
-            targetThickness = 0.9;
+            // Outside of price line
+            targetAngle = (Math.random() - 0.5) * 0.25;
+            targetOpacity = 0.06 + Math.random() * 0.06;
+            targetThickness = 0.8;
           }
         } else {
-          // Forecast Fan P10-P90 to the right of T0
+          // Forecast Fan P10-P90 to the right of «hoy»
           const dx = x - t0X;
-          const halfSpread = dx * 0.38 + 10;
+          const halfSpread = dx * (isMobile ? 0.30 : 0.38) + (spacing * 0.6);
           const topY = midY - halfSpread;
           const botY = midY + halfSpread;
 
-          if (y >= topY && y <= botY) {
+          if (r === p50Row) {
+            // P50 line: thickness 1.8px and opacity 1.0
+            targetAngle = 0;
+            targetOpacity = 1.0;
+            targetThickness = 1.8;
+            isMainLine = true;
+          } else if (y >= topY && y <= botY) {
+            // Inside P10-P90 band: opacity 0.45-0.8 aligned with fan direction
             const relY = halfSpread > 0 ? (y - midY) / halfSpread : 0;
-            targetAngle = relY * 0.46;
-            if (Math.abs(y - midY) < 8) {
-              // P50 line: thicker and highly aligned
-              targetAngle = 0.02;
-              targetOpacity = 0.95;
-              targetThickness = 2.2;
-              baseLen = 10;
-            } else {
-              // P10-P90 band
-              targetOpacity = 0.40 + (1 - Math.abs(relY)) * 0.42;
-              targetThickness = 1.3;
-            }
+            targetAngle = Math.atan2(y - midY, dx);
+            targetOpacity = 0.45 + (1 - Math.abs(relY)) * 0.35;
+            targetThickness = 1.1 + (1 - Math.abs(relY)) * 0.3;
           } else {
-            // Outside of fan
-            targetAngle = y < midY ? -0.65 : 0.65;
-            targetOpacity = 0.10;
+            // Outside of fan: opacity 0.06-0.12
+            targetAngle = y < midY ? -0.55 : 0.55;
+            targetOpacity = 0.06 + Math.random() * 0.06;
             targetThickness = 0.8;
           }
         }
@@ -108,6 +118,7 @@
           targetOpacity,
           targetThickness,
           baseLen,
+          isMainLine,
           driftPhase: Math.random() * Math.PI * 2,
           driftSpeed: 0.25 + Math.random() * 0.5
         });
@@ -143,6 +154,20 @@
 
     ctx.clearRect(0, 0, width, height);
 
+    // Fine vertical dotted line at «hoy» (T0)
+    if (t0X > 0) {
+      ctx.save();
+      ctx.strokeStyle = '#EDE8DC';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 3]);
+      ctx.globalAlpha = 0.32 * (isFinalOnly ? 1 : Math.max(0.15, ease));
+      ctx.beginPath();
+      ctx.moveTo(t0X, 0);
+      ctx.lineTo(t0X, height);
+      ctx.stroke();
+      ctx.restore();
+    }
+
     const isDesktop = width >= 640;
     const timeSec = now * 0.001;
 
@@ -153,19 +178,24 @@
       let thickness = 0.8 + (s.targetThickness - 0.8) * ease;
 
       if (progress >= 1 && !isFinalOnly) {
-        // Slow natural drift in resting mode
-        angle += Math.sin(timeSec * s.driftSpeed + s.driftPhase) * 0.04;
+        if (!s.isMainLine) {
+          // Slow natural drift in resting mode for background and fan strokes
+          angle += Math.sin(timeSec * s.driftSpeed + s.driftPhase) * 0.04;
 
-        // Desktop mouse deflection
-        if (isDesktop && mouseX >= 0 && mouseY >= 0) {
-          const ddx = mouseX - s.x;
-          const ddy = mouseY - s.y;
-          const dist = Math.hypot(ddx, ddy);
-          if (dist < 80) {
-            const toMouse = Math.atan2(ddy, ddx);
-            const weight = (1 - dist / 80) * 0.32;
-            angle += (toMouse - angle) * weight;
+          // Desktop mouse deflection
+          if (isDesktop && mouseX >= 0 && mouseY >= 0) {
+            const ddx = mouseX - s.x;
+            const ddy = mouseY - s.y;
+            const dist = Math.hypot(ddx, ddy);
+            if (dist < 80) {
+              const toMouse = Math.atan2(ddy, ddx);
+              const weight = (1 - dist / 80) * 0.32;
+              angle += (toMouse - angle) * weight;
+            }
           }
+        } else {
+          // Subtle stable breathing for main price/P50 trajectory
+          angle += Math.sin(timeSec * 0.4 + s.driftPhase) * 0.008;
         }
       }
 
