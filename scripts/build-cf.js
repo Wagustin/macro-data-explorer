@@ -158,6 +158,13 @@ if (fs.existsSync(assetsSrc)) {
   fs.cpSync(assetsSrc, assetsDest, { recursive: true });
 }
 
+// Copy empresa directory if present
+const empresaSrc = path.join(rootDir, "empresa");
+const empresaDest = path.join(publicDir, "empresa");
+if (fs.existsSync(empresaSrc)) {
+  fs.cpSync(empresaSrc, empresaDest, { recursive: true });
+}
+
 // Copy fonts directory if present
 const fontsSrc = path.join(rootDir, "fonts");
 const fontsDest = path.join(publicDir, "fonts");

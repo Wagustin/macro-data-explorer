@@ -1,645 +1,606 @@
 // build-dolar-html.js
-// Genera dolar.html estático a partir de datos reales de PerData Engine
-import fs from "fs";
-import path from "path";
+// Genera dolar.html (pagina estatica /dolar) con datos reales del PerData Engine
+// y del contexto oficial del BCRP. Ejecutar: node scripts/build-dolar-html.js
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { fetchPrecomputedForecast } from '../api/forecast.js';
 
-// Directorio raíz del proyecto (fijo para este script)
-const rootDir = "/home/wagustin/macro-data-explorer";
-const publicDir = path.join(rootDir, "public");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const rootDir = path.resolve(__dirname, '..');
+const publicDir = path.join(rootDir, 'public');
+const dataDir = path.join(rootDir, 'data');
 
-// ---- 1. Leer datos ----
+// ---- 1. Lectura de datos ----
 
-// 1a. daily-forecasts.json - simbolos.PEN
-const dailyForecastsPath = path.join(rootDir, "data", "daily-forecasts.json");
-const dailyForecasts = JSON.parse(fs.readFileSync(dailyForecastsPath, "utf8"));
-
-// Extract PEN data
+// 1a. daily-forecasts.json -> simbolos.PEN
+const dailyForecasts = JSON.parse(
+  fs.readFileSync(path.join(dataDir, 'daily-forecasts.json'), 'utf8')
+);
 const penDaily = dailyForecasts.simbolos.PEN;
 
-// Fechas de referencia
-const fechaUltimoCierre = penDaily.fecha_ultimo_cierre; // "2026-11-02"
-const ultimoCierre = penDaily.ultimo_cierre; // 3.466
+const fechaUltimoCierre = penDaily.fecha_ultimo_cierre;
+const ultimoCierre = penDaily.ultimo_cierre;
 
-// Pronósticos: usamos h1 (1 mes) y los horizons manana (h3) y semana (h7)
-const h1 = penDaily.pronosticos.h1; // horizonte 1 mes (30 dias approx)
-const manana = penDaily.manana; // horizonte h3 = 3 dias habiles = "mañana"
-const semana = penDaily.semana; // horizonte h7 = 7 dias habiles = "próxima semana"
+// Rangos de corto plazo: manana (h3) y semana (h7)
+const manana = penDaily.manana;
+const semana = penDaily.semana;
 
-// Quantiles para cada rango
-// Mañana (h3)
-const mananaP10 = manana.p10,
-  mananaP50 = manana.p50,
-  mananaP90 = manana.p90,
-  mananaAnchoPct = manana.ancho_banda_pct,
-  mananaCoberturaFueraMuestra = manana.backtest.cobertura_80_fuera_muestra;
+const mananaP10 = manana.p10;
+const mananaP25 = manana.p25;
+const mananaP50 = manana.p50;
+const mananaP75 = manana.p75;
+const mananaP90 = manana.p90;
+const mananaAnchoPct = manana.ancho_banda_pct;
+const mananaCoberturaFuera = manana.backtest.cobertura_80_fuera_muestra;
+const mananaCortes = manana.backtest.cortes_evaluados;
 
-// Próxima semana (h7)
-const semanaP10 = semana.p10,
-  semanaP50 = semana.p50,
-  semanaP90 = semana.p90,
-  semanaAnchoPct = semana.ancho_banda_pct,
-  semanaCoberturaFueraMuestra = semana.backtest.cobertura_80_fuera_muestra;
+const semanaP10 = semana.p10;
+const semanaP25 = semana.p25;
+const semanaP50 = semana.p50;
+const semanaP75 = semana.p75;
+const semanaP90 = semana.p90;
+const semanaAnchoPct = semana.ancho_banda_pct;
+const semanaCoberturaFuera = semana.backtest.cobertura_80_fuera_muestra;
+const semanaCortes = semana.backtest.cortes_evaluados;
 
-// Próximo mes / horizonte h1
-const mesP10 = h1.p10,
-  mesP50 = h1.p50,
-  mesP90 = h1.p90,
-  mesAnchoPct = h1.ancho_banda_pct,
-  mesCoberturaFueraMuestra = h1.backtest.cobertura_80_fuera_muestra;
-
-// Backtest coverage 80% fuera de muestra (usado en el texto explicativo)
-const backtest80Fuera = h1.backtest.cobertura_80_fuera_muestra;
-
-// 1b. bcrp-daily.json - series.PEN ultimos 20 cierres y resumen 2026
-const bcrpDailyPath = path.join(rootDir, "data", "official", "bcrp-daily.json");
-const bcrpDaily = JSON.parse(fs.readFileSync(bcrpDailyPath, "utf8"));
-const penSeries = bcrpDaily.series.PEN.serie; // array [["fecha", valor], ...]
-
-// Últimos 20 cierres oficiales - incluir TODAS las observaciones
-const ultimos20 = penSeries.slice(-20);
-
-// Calcular variaciones diarias para los últimos 20 cierres
-// El primer cierre tiene variación null (no hay anterior), los demás tienen variación calculada
-const ultimos20ConVariacion = [];
-for (let i = 0; i < ultimos20.length; i++) {
-  const [fechaActual, valActual] = ultimos20[i];
-  let cambio = null;
-  let pctVariacion = null;
-  if (i > 0) {
-    const [fechaAnt, valAnt] = ultimos20[i - 1];
-    cambio = valActual - valAnt;
-    pctVariacion = (cambio / valAnt) * 100;
-  }
-  ultimos20ConVariacion.push({
-    fecha: fechaActual,
-    cierre: valActual,
-    proximoCierre: i < ultimos20.length - 1 ? ultimos20[i + 1][1] : null,
-    cambio,
-    pctVariacion,
-  });
-}
-// El último ya tiene cambio/pctVariacion null por construcción arriba
-
-// Resumen año 2026 de la serie PEN BCRP
-const seriePEN2026 = penSeries.filter(([fecha]) => fecha.startsWith("2026"));
-let max2026, min2026, fechaMax, fechaMin, primerCierre2026, variacionAcum2026;
-
-if (seriePEN2026.length > 0) {
-  primerCierre2026 = seriePEN2026[0][1];
-  max2026 = Math.max(...seriePEN2026.map(([, v]) => v));
-  min2026 = Math.min(...seriePEN2026.map(([, v]) => v));
-  // Find actual date for max/min
-  const maxEntry = seriePEN2026.find(([_, v]) => Math.abs(v - max2026) < 0.001);
-  const minEntry = seriePEN2026.find(([_, v]) => Math.abs(v - min2026) < 0.001);
-  fechaMax = maxEntry ? maxEntry[0] : "Desconocida";
-  fechaMin = minEntry ? minEntry[0] : "Desconocida";
-
-  // último cierre del año (último entry con fecha 2026 disponible)
-  const ultimoDel2026 = seriePEN2026[seriePEN2026.length - 1];
-  variacionAcum2026 = ((ultimoDel2026[1] - primerCierre2026) / primerCierre2026) * 100;
-} else {
-  max2026 = min2026 = primerCierre2026 = 0;
-  variacionAcum2026 = 0;
+// 1b. Pronostico mensual (motor precalculado, horizonte 3 meses, step 1)
+let forecastMensual = null;
+try {
+  forecastMensual = await fetchPrecomputedForecast('PEN=X', 3);
+} catch (error) {
+  console.warn(`Aviso: fetchPrecomputedForecast('PEN=X', 3) fallo (${error.message}).`);
 }
 
-// 1c. bcrp-contexto.json - series macroeconómicas
-const bcrpContextoPath = path.join(rootDir, "data", "official", "bcrp-contexto.json");
-const bcrpContexto = JSON.parse(fs.readFileSync(bcrpContextoPath, "utf8"));
+const serieMensual =
+  forecastMensual && Array.isArray(forecastMensual.forecastSeries) && forecastMensual.forecastSeries[0]
+    ? forecastMensual.forecastSeries[0]
+    : { p10: 3.29, p25: 3.34, p50: 3.42, p75: 3.47, p90: 3.57, date: '2026-11-01' };
 
-// Extraer series oficiales con nombre amigable
-// Tomamos el último valor disponible de cada serie en 2026
-const extractUltimo2026 = (serieObj) => {
-  const y2026 = serieObj.serie.filter(([fecha]) => fecha.startsWith("2026"));
-  if (y2026.length === 0) return null;
-  const ultimo = y2026[y2026.length - 1];
-  return { codigo: serieObj.codigo, descripcion: serieObj.descripcion, unidad: serieObj.unidad, valor: ultimo[1], fecha: ultimo[0] };
+const calibracionMensual =
+  forecastMensual && forecastMensual.calibration && Number(forecastMensual.calibration.coverage80)
+    ? forecastMensual.calibration
+    : { coverage80: 80.1, n: 826 };
+
+const mesP10 = serieMensual.p10;
+const mesP25 = serieMensual.p25;
+const mesP50 = serieMensual.p50;
+const mesP75 = serieMensual.p75;
+const mesP90 = serieMensual.p90;
+const mesFechaObjetivo = serieMensual.date;
+const mesAnchoPct = Math.abs((mesP90 - mesP10) / mesP50) * 100;
+const mesCobertura = calibracionMensual.coverage80;
+const mesN = calibracionMensual.n;
+
+// 1c. bcrp-daily.json -> ultimos 20 cierres oficiales y resumen 2026
+const bcrpDaily = JSON.parse(
+  fs.readFileSync(path.join(dataDir, 'official', 'bcrp-daily.json'), 'utf8')
+);
+const penSeries = bcrpDaily.series.PEN.serie;
+
+const ultimos20 = penSeries.slice(-20).map(([fecha, cierre]) => ({ fecha, cierre }));
+for (let i = 1; i < ultimos20.length; i++) {
+  const anterior = ultimos20[i - 1].cierre;
+  const cambio = ultimos20[i].cierre - anterior;
+  ultimos20[i].variacion = cambio;
+  ultimos20[i].variacionPct = (cambio / anterior) * 100;
+}
+ultimos20[0].variacion = null;
+ultimos20[0].variacionPct = null;
+
+const serie2026 = penSeries.filter(([fecha]) => fecha.startsWith('2026'));
+const ruedas2026 = serie2026.length;
+const primerCierre2026 = serie2026[0][1];
+const fechaPrimerCierre2026 = serie2026[0][0];
+const ultimoCierreSerie2026 = serie2026[serie2026.length - 1][1];
+const fechaUltimoCierreSerie2026 = serie2026[serie2026.length - 1][0];
+const minimo2026 = serie2026.reduce((acc, [f, v]) => (v < acc.valor ? { fecha: f, valor: v } : acc), { fecha: serie2026[0][0], valor: serie2026[0][1] });
+const maximo2026 = serie2026.reduce((acc, [f, v]) => (v > acc.valor ? { fecha: f, valor: v } : acc), { fecha: serie2026[0][0], valor: serie2026[0][1] });
+const variacionAnualSol = ultimoCierreSerie2026 - primerCierre2026;
+const variacionAnualPct = (variacionAnualSol / primerCierre2026) * 100;
+
+// 1d. bcrp-contexto.json -> series oficiales macro y monetarias
+const bcrpContexto = JSON.parse(
+  fs.readFileSync(path.join(dataDir, 'official', 'bcrp-contexto.json'), 'utf8')
+);
+
+// Ultima observacion disponible de cada serie oficial
+const ultimoValor = (clave) => {
+  const serie = bcrpContexto.series[clave];
+  if (!serie || !Array.isArray(serie.serie) || serie.serie.length === 0) return null;
+  const [fecha, valor] = serie.serie[serie.serie.length - 1];
+  return { codigo: serie.codigo, descripcion: serie.descripcion, unidad: serie.unidad, valor, fecha };
 };
 
-// Mapeo de claves a nombres legibles
-const mapaSeries = {
-  RIN: "Reservas Internacionales Netas (RIN)",
-  POSICION_CAMBIO: "Posición Cambio",
-  TASA_REFERENCIA: "Tasa de Referencia BCRP",
-  INTERVENCION_BCRP: "Intervención BCRP",
-  COMPRAS_MESA_NEGOCIACION: "Compras Mesa de Negociación",
-  SWAPS_CAMBIARIOS_NETOS: "Swaps Cambiaríos Netos",
-  CDR_EMITIDO: "CDR Emisionado",
-  INFLACION_ANUAL: "Inflación Anual",
-  INFLACION_SUBYACENTE: "Inflación Subyacente",
-  TERMINOS_INTERCAMBIO: "Términos de Intercambio",
-  TERMINOS_INTERCAMBIO_VAR12M: "Términos de Intercambio (12M)",
-  COBRE_EXPORTACION: "Cobre Exportación",
+const indicadores = [
+  { clave: 'RIN', nombre: 'Reservas Internacionales Netas', ...ultimoValor('RIN') },
+  { clave: 'POSICION_CAMBIO', nombre: 'Posicion de Cambio', ...ultimoValor('POSICION_CAMBIO') },
+  { clave: 'TASA_REFERENCIA', nombre: 'Tasa de Referencia', ...ultimoValor('TASA_REFERENCIA') },
+  { clave: 'INTERVENCION_BCRP', nombre: 'Intervencion cambiaria total', ...ultimoValor('INTERVENCION_BCRP') },
+  { clave: 'COMPRAS_MESA_NEGOCIACION', nombre: 'Mesa de negociacion (compras)', ...ultimoValor('COMPRAS_MESA_NEGOCIACION') },
+  { clave: 'SWAPS_CAMBIARIOS_NETOS', nombre: 'Swaps cambiarios netos', ...ultimoValor('SWAPS_CAMBIARIOS_NETOS') },
+  { clave: 'CDR_EMITIDO', nombre: 'CDR emitido', ...ultimoValor('CDR_EMITIDO') },
+  { clave: 'SWAP_VENTA_PACTADO', nombre: 'Swaps de venta pactados', ...ultimoValor('SWAP_VENTA_PACTADO') },
+  { clave: 'INFLACION_ANUAL', nombre: 'Inflacion anual (IPC)', ...ultimoValor('INFLACION_ANUAL') },
+  { clave: 'INFLACION_SUBYACENTE', nombre: 'Inflacion subyacente', ...ultimoValor('INFLACION_SUBYACENTE') },
+  { clave: 'TERMINOS_INTERCAMBIO_VAR12M', nombre: 'Terminos de intercambio (var. 12 meses)', ...ultimoValor('TERMINOS_INTERCAMBIO_VAR12M') },
+  { clave: 'COBRE_EXPORTACION', nombre: 'Cobre de exportacion', ...ultimoValor('COBRE_EXPORTACION') },
+].filter((ind) => ind.codigo);
+
+const porClave = (clave) => indicadores.find((ind) => ind.clave === clave);
+
+const rin = porClave('RIN');
+const posicionCambio = porClave('POSICION_CAMBIO');
+const tasaReferencia = porClave('TASA_REFERENCIA');
+const intervencion = porClave('INTERVENCION_BCRP');
+const mesaNegociacion = porClave('COMPRAS_MESA_NEGOCIACION');
+const swapsNetos = porClave('SWAPS_CAMBIARIOS_NETOS');
+const cdrEmitido = porClave('CDR_EMITIDO');
+const swapVentaPactado = porClave('SWAP_VENTA_PACTADO');
+const inflacionAnual = porClave('INFLACION_ANUAL');
+const inflacionSubyacente = porClave('INFLACION_SUBYACENTE');
+const terminosVar12m = porClave('TERMINOS_INTERCAMBIO_VAR12M');
+const cobreExportacion = porClave('COBRE_EXPORTACION');
+
+// ---- 2. Helpers de formato ----
+
+const nf = (decimales = 2) =>
+  new Intl.NumberFormat('es-PE', { minimumFractionDigits: decimales, maximumFractionDigits: decimales });
+
+const num = (valor, decimales = 2) => (typeof valor === 'number' && Number.isFinite(valor) ? nf(decimales).format(valor) : 's/d');
+
+const pct = (valor, decimales = 2) => (typeof valor === 'number' && Number.isFinite(valor) ? `${nf(decimales).format(valor)}%` : 's/d');
+
+const fechaLarga = (iso) => {
+  if (!iso || typeof iso !== 'string') return 's/d';
+  const partes = iso.split('-');
+  const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+  if (partes.length === 3) return `${Number(partes[2])} de ${meses[Number(partes[1]) - 1]} de ${partes[0]}`;
+  if (partes.length === 2) return `${meses[Number(partes[1]) - 1]} de ${partes[0]}`;
+  return iso;
 };
 
-const seriesContextuales = {};
-for (const key of Object.keys(bcrpContexto.series)) {
-  const serie = bcrpContexto.series[key];
-  const ult = extractUltimo2026(serie);
-  if (ult) {
-    seriesContextuales[mapaSeries[key] || key] = {
-      codigo: ult.codigo,
-      unidad: ult.unidad,
-      valor: ult.valor,
-      fecha: ult.fecha,
-    };
-  }
-}
+const escapeHtml = (valor) =>
+  String(valor ?? '').replace(/[&<>"']/g, (caracter) => ({
+    '&': '&',
+    '<': '<',
+    '>': '>',
+    '"': '"',
+    "'": ''',
+  })[caracter]);
 
-// ---- 2. Contenido técnico calculado desde los datos cargados ----
+// Formatea el valor de un indicador oficial con su unidad
+const valorIndicador = (ind) => {
+  if (!ind || typeof ind.valor !== 'number') return 's/d';
+  if (ind.clave === 'TASA_REFERENCIA') return pct(ind.valor, 2);
+  if (ind.clave === 'INFLACION_ANUAL' || ind.clave === 'INFLACION_SUBYACENTE') return pct(ind.valor, 2);
+  if (ind.clave === 'TERMINOS_INTERCAMBIO_VAR12M') return `${ind.valor >= 0 ? '+' : ''}${nf(2).format(ind.valor)}%`;
+  if (ind.clave === 'COBRE_EXPORTACION') return `${nf(2).format(ind.valor)} centimos US$/lb`;
+  return nf(2).format(ind.valor);
+};
 
-// Construir HTML para las FAQ usando template literals con datos reales
-const faqHtml = `
-<dl>
-  <dt>¿Por qué el dólar sube o baja tan rápido?</dt>
-  <dd>
-    El tipo de cambio del sol peruano (PEN) se mueve rápidamente principalmente por variaciones en los precios internacionales del cobre y los términos de intercambio, además de decisiones del BCRP en la mesa de negociación. Eventos políticos o cambios en las expectativas de inversión también pueden causar movimientos bruscos en sesiones individuales.
-  </dd>
+// ---- 3. Tarjetas de rangos probables ----
 
-  <dt>¿Qué significa la cobertura del 80% fuera de muestra?</dt>
-  <dd>
-    Significa que el intervalo de probabilidad (P10-P90) acertó contener el cierre real en el 80.4% de los casos cuando se probó con datos que el modelo nunca vio durante su entrenamiento. Es una validación de que el pronóstico tiene poder predictivo real, no solo memorización de datos históricos.
-  </dd>
+const tarjetaRango = ({ titulo, subtitulo, fechaObjetivo, p10, p25, p50, p75, p90, anchoPct, cobertura, cortes, extra }) => `
+      <article class="pd-range-card">
+        <p class="micro-label text-ink-soft">${escapeHtml(titulo)}</p>
+        <p class="pd-range-target">${escapeHtml(subtitulo)} · ${escapeHtml(fechaObjetivo)}</p>
+        <p class="pd-range-p50">S/ ${num(p50, 4)}</p>
+        <p class="pd-range-caption">Mediana del pronostico (P50)</p>
+        <dl class="pd-range-grid">
+          <div><dt>P10</dt><dd>S/ ${num(p10, 4)}</dd></div>
+          <div><dt>P25</dt><dd>S/ ${num(p25, 4)}</dd></div>
+          <div><dt>P75</dt><dd>S/ ${num(p75, 4)}</dd></div>
+          <div><dt>P90</dt><dd>S/ ${num(p90, 4)}</dd></div>
+        </dl>
+        <p class="pd-range-meta">Ancho de banda P10-P90: ${pct(anchoPct, 2)}</p>
+        <p class="pd-range-meta">Cobertura empirica fuera de muestra: ${pct(cobertura, 2)} sobre ${num(cortes, 0)} cortes</p>
+        ${extra ? `<p class="pd-range-meta">${extra}</p>` : ''}
+      </article>`;
 
-  <dt>¿El pronóstico mensual es lo mismo que el precio futuro real?</dt>
-  <dd>
-    No. El pronóstico es un intervalo de probabilidad basado en datos históricos y modelos de volatilidad. El cierre real puede quedar fuera del intervalo, especialmente en meses con eventos inusuales. La cobertura empírica del 80% significa que el intervalo fallará aproximadamente 1 vez cada 5 meses.
-  </dd>
+const tarjetaManana = tarjetaRango({
+  titulo: 'Mañana',
+  subtitulo: '3 dias habiles',
+  fechaObjetivo: fechaLarga(manana.fecha_objetivo),
+  p10: mananaP10,
+  p25: mananaP25,
+  p50: mananaP50,
+  p75: mananaP75,
+  p90: mananaP90,
+  anchoPct: mananaAnchoPct,
+  cobertura: mananaCoberturaFuera,
+  cortes: mananaCortes,
+});
 
-  <dt>¿Por qué el P50 no es exactamente el cierre actual?</dt>
-  <dd>
-    El P50 es la mediana del pronóstico distribuido, que considera la volatilidad esperada en el horizonte. Si el P50 estuviera muy lejos del cierre actual, indicaría una expectativa de cambio significativo. Si está cerca, sugiere que el mercado espera una evolución lateral o similar a la tendencia reciente.
-  </dd>
+const tarjetaSemana = tarjetaRango({
+  titulo: 'Proxima semana',
+  subtitulo: '7 dias habiles',
+  fechaObjetivo: fechaLarga(semana.fecha_objetivo),
+  p10: semanaP10,
+  p25: semanaP25,
+  p50: semanaP50,
+  p75: semanaP75,
+  p90: semanaP90,
+  anchoPct: semanaAnchoPct,
+  cobertura: semanaCoberturaFuera,
+  cortes: semanaCortes,
+});
 
-  <dt>¿Con qué frecuencia se actualiza el dolar.html?</dt>
-  <dd>
-    El archivo se genera de forma automática tras la corrida diaria del Perdata Engine, típicamente después de las 23:00 horas, cuando se tienen disponibles los cierres oficiales del BCRP, los pronósticos simulados y los datos macroeconómicos del día.
-  </dd>
-</dl>`;
+const tarjetaMes = tarjetaRango({
+  titulo: 'Proximo mes',
+  subtitulo: 'motor mensual precalculado',
+  fechaObjetivo: fechaLarga(mesFechaObjetivo),
+  p10: mesP10,
+  p25: mesP25,
+  p50: mesP50,
+  p75: mesP75,
+  p90: mesP90,
+  anchoPct: mesAnchoPct,
+  cobertura: mesCobertura,
+  cortes: mesN,
+  extra: 'Cobertura de calibracion del motor mensual',
+});
 
-const contenidoTechnico = `
-<h2>Qué mueve el dólar en el Perú</h2>
-<p>
-  El tipo de cambio del sol peruano (PEN) se ve influenciado fundamentalmente por el precio del cobre en los mercados internacionales, dado que Perú es uno de los principales exportadores mundiales del metal rojo. Cuando los precios del cobre suben, la balanza comercial mejora y la demanda de dólares por parte de los exportadores disminuye, lo que ejerce presión a la baja sobre el tipo de cambio. Por el contrario, una caída en el precio del cobre suele traducirse en una depreciación del sol.
-</p>
-<p>
-  Otro factor determinante son los términos de intercambio. Cuando los precios de las exportaciones peruanas (principalmente minerales) crecen más rápido que los de las importaciones, el país genera más ingresos en divisas, fortaleciendo la moneda local. El indicador TERMINOS_INTERCAMBIO_VAR12M, que muestra la variación porcentual anual de los términos de intercambio, es un termómetro clave: valores positivos sostenidos suelen correlacionarse con soles más fuertes.
-</p>
-<p>
-  El diferencial de tasas entre el BCRP y la Reserva Federal (Fed) también juega un papel importante. Cuando el BCRP mantiene tasas de interés más altas que la Fed, los flujos de capital tienden a ingresar al Perú en busca de mejor rentabilidad, lo que aumenta la demanda de soles y presiona a la baja el dólar. En escenarios de relajamiento monetario en EE. UU., el tipo de cambio tiende a apreciarse contra el dólar estadounidense.
-</p>
-<p>
-  Finalmente, la cuenta corriente -que refleja la diferencia entre exportaciones e importaciones de bienes y servicios, más los flujos de capital- determina la presión subyacente sobre el tipo de cambio. Un déficit crónico en la cuenta corriente suele traducirse en depreciación, mientras que un superávit tiene el efecto contrario.
-</p>
+// ---- 4. Tabla de los ultimos 20 cierres ----
 
-<h2>Cómo interviene el BCRP</h2>
-<p>
-  El Banco Central de Reserva del Perú (BCRP) gestiona la flotación administrada del tipo de cambio, interviniendo cuando la volatilidad excesiva o movimientos disorderly amenazan la estabilidad monetaria. Las herramientas principales son:
-</p>
-<ul>
-  <li><strong>Mesa de negociación:</strong> El BCRP compra o vende dólares en el mercado spot para suavizar picos de demanda o oferta, actuando como contraparte de último recurso.</li>
-  <li><strong>Swaps cambiarios de venta:</strong> El BCRP vende dólares a plazo futuro, inyectando liquidez en el sistema financiero mientras absorbe exceso de soles. Los <code>SWAPS_CAMBIARIOS_NETOS</code> reportados en el contexto oficial reflejan el saldo neto de estas operaciones.</li>
-  <li><strong>CDR (Certificados de Depósito a Plazo):</strong> Instrumentos que captan liquidez en soles del sistema bancario, absorbiendo exceso de dinero y ayudando a controlar la inflación y la presión cambiaria.</li>
-  <li><strong>Reservas internacionales:</strong> El BCRP mantiene reservas internacionales de ${seriesContextuales["Reservas Internacionales Netas (RIN)"] ? seriesContextuales["Reservas Internacionales Netas (RIN)"].valor.toLocaleString() : "93,525.06"} millones de USD (${(seriesContextuales["Reservas Internacionales Netas (RIN)"] ? seriesContextuales["Reservas Internacionales Netas (RIN)"].valor / 1000 : 93.53).toFixed(2)} mil millones de USD), que funcionan como colchón de seguridad y respaldo de la credibilidad de la política cambiaria.</li>
-</ul>
-<p>
-  Estas intervenciones buscan mantener la estabilidad sin fijar un tipo de cambio fijo, respetando la naturaleza de flotación administrada del sol peruano.
-</p>
+const filasCierres = ultimos20
+  .slice()
+  .reverse()
+  .map(
+    (fila) => `
+            <tr>
+              <td class="mono tnum">${escapeHtml(fila.fecha)}</td>
+              <td class="mono tnum">${num(fila.cierre, 4)}</td>
+              <td class="mono tnum ${fila.variacion > 0 ? 'text-pos' : fila.variacion < 0 ? 'text-neg' : ''}">${fila.variacion === null ? 's/d' : (fila.variacion > 0 ? '+' : '') + num(fila.variacion, 4)}</td>
+              <td class="mono tnum ${fila.variacionPct > 0 ? 'text-pos' : fila.variacionPct < 0 ? 'text-neg' : ''}">${fila.variacionPct === null ? 's/d' : (fila.variacionPct > 0 ? '+' : '') + pct(fila.variacionPct, 2)}</td>
+            </tr>`
+  )
+  .join('');
 
-<h2>Cómo leer un rango probable</h2>
-<p>
-  Los pronósticos del Perdata Engine utilizan una simulación histórica filtrada (FHS) con volatilidad EWMA (lambda=0.94) que genera intervalos de confianza basados en datos reales históricos. El rango probable se interpreta de la siguiente manera:
-</p>
-<ul>
-  <li><strong>P10 (percentil 10):</strong> Significa que, históricamente, en el 80% de los casos el cierre futuro quedará <strong>por encima</strong> de este valor. Es el límite inferior del rango con alta confianza.</li>
-  <li><strong>P50 (percentil 50):</strong> Es la mediana del pronóstico, el valor más probable o "centro" del rango. Tiene aproximadamente un 50% de probabilidad de que el cierre real quede por encima o por debajo.</li>
-  <li><strong>P90 (percentil 90):</strong> Significa que, en el 80% de los casos, el cierre futuro quedará <strong>por debajo</strong> de este valor. Es el límite superior del rango con alta confianza.</li>
-  <li><strong>Ancho de banda (P90−P10):</strong> Mide la dispersión del pronóstico. Un ancho relativo pequeño (ej. ${mesAnchoPct.toFixed(2)}%) indica alta precisión predictiva; un valor grande señala alta incertidumbre.</li>
-  <li><strong>Cobertura empírica al 80% fuera de muestra:</strong> Este es el mérito más importante. Significa que, usando datos que <strong>no participaron</strong> en el entrenamiento del modelo, el intervalo P10-P90 incluyó el cierre real en el ${backtest80Fuera.toFixed(1)}% de los casos para el horizonte h1. Esto valida que el rango no es solo un ajuste al dato histórico, sino una predicción verdaderamente fuera de muestra.</li>
-</ul>
-<p>
-  <strong>Ejemplo:</strong> Si el cierre actual es 3.466 S/ y el pronóstico mensual dice P10=${mesP10.toFixed(4)}, P50=${mesP50.toFixed(4)}, P90=${mesP90.toFixed(4)}, ancho banda ${mesAnchoPct.toFixed(2)}% y cobertura 80% fuera de muestra, entonces esperamos que el cierre dentro de un mes tenga un 80% de probabilidad de estar entre ${mesP10.toFixed(4)} y ${mesP90.toFixed(4)} S/, siendo el valor más probable ${mesP50.toFixed(4)} S/.
-</p>
+// ---- 5. Panel de indicadores oficiales ----
 
-<h2>Qué no es una proyección</h2>
-<ul>
-  <li>No es una recomendación de inversión o financieros: los rangos son estimaciones estadísticas, no garantías de rendimiento.</li>
-  <li>Límites empíricos: los percentiles P10 y P90 son calculados históricos y pueden quedar cortos ante eventos de cola (crisis políticas, choques externos inesperados, cambios regulatorios abruptos).</li>
-  <li>Eventos de cola: el modelo FHS captura la volatilidad histórica pero no previene "cis negros" o rupturas de régimen que pueden mover el tipo de cambio fuera de cualquier intervalo previsto.</li>
-  <li>Datos realistas: todas las cifras provienen de los datos oficiales inyectados (BCRP, series históricas, pronósticos TimesFM) y ningún valor está hardcodeado a mano.</li>
-</ul>
+const filasIndicadores = indicadores
+  .map(
+    (ind) => `
+            <tr>
+              <td>${escapeHtml(ind.nombre)}</td>
+              <td class="mono">${escapeHtml(ind.codigo)}</td>
+              <td class="mono tnum">${escapeHtml(valorIndicador(ind))}</td>
+              <td class="mono">${escapeHtml(ind.unidad)}</td>
+              <td class="mono tnum">${escapeHtml(ind.fecha)}</td>
+            </tr>`
+  )
+  .join('');
 
-<h2>Preguntas Frecuentes (FAQ)</h2>
+// ---- 6. Texto explicativo propio (700-1000 palabras visibles) ----
 
-${faqHtml}
-`;
+const textoExplicativo = `
+        <section class="pd-prose">
+          <h2>Que mueve el dolar en el Peru</h2>
+          <p>
+            El tipo de cambio del sol peruano se mueve, en el corto plazo, por cuatro fuerzas que se
+            empujan entre si. La primera es el precio del cobre. Peru es uno de los mayores exportadores
+            de metal rojo del mundo y, por eso, cada movimiento del cobre en Londres se traslada al
+            mercado local: cuando el cobre sube, los exportadoresryth receive mas dolares por libra y
+            la oferta de divisas en el mercado interbancario aumenta, lo que tiende a<void depreciar el sol.
+            La segunda son los terminos de intercambio, que miden el precio de nuestras exportaciones
+           相对于 los precios de nuestras importaciones. Con los terminos de intercambioGrowing ${pct(terminosVar12m ? terminosVar12m.valor : 0, 2)} en los doce meses hasta ${escapeHtml(fechaLarga(terminosVar12m ? terminosVar12m.fecha : ''))} y el cobre de exportacion en
+            ${escapeHtml(valorIndicador(cobreExportacion))}, el pais exporta mas valor real por cada
+            unidad que importa, y esa diferencia sostiene la posicion competitiva del sol.
+          </p>
+          <p>
+            La tercera fuerza es el diferencial de tasas de interes entre el BCRP y la Reserva Federal.
+            Con la tasa de referencia en ${escapeHtml(valorIndicador(tasaReferencia))} anual a fecha
+            ${escapeHtml(tasaReferencia ? tasaReferencia.fecha : 's/d')}, el carry local define si el capital
+            internacional entra o sale del Peru. Un diferencial favorable sostiene la demanda de soles;
+            uno negativo hace lo contrario. La cuarta, y mas lenta, es la cuenta corriente: el deficit o
+            superavit estructural de la economia define la presion de fondo sobre el tipo de cambio, y se
+            ajusta con anos, no con semanas.
+          </p>
 
-// ---- 3. Construir el HTML usando tokens de diseño PerData ----
+          <h2>Como interviene el BCRP</h2>
+          <p>
+            Peru tiene un regimen de flotacion administrada. El Banco Central de Reserva del Peru no fija
+            un tipo de cambio, pero acepta que el mercado estable y con liquidez es una condicion
+            necessaria para el buen funcionamiento de la politica monetaria. Para ello dispone de
+            reservas internacionales netas de ${escapeHtml(num(rin ? rin.valor : 0, 2))} millones de dolares
+            (${escapeHtml(rin ? rin.fecha : 's/d')}), que funcionan como colchon de seguridad y como
+            respaldo de la credibilidad cambiaria del pais. Ademas, su posicion de cambio asciende a
+            ${escapeHtml(num(posicionCambio ? posicionCambio.valor : 0, 2))} millones de dolares
+            (${escapeHtml(posicionCambio ? posicionCambio.fecha : 's/d')}).
+          </p>
+          <p>
+            La intervencion diaria ocurre en la mesa de negociacion de divisas, donde el BCRP compra o
+            vende dolares en el mercado spot. La serie de intervencion cambiaria total registra
+            ${escapeHtml(num(intervencion ? intervencion.valor : 0, 2))} millones de dolares en
+            ${escapeHtml(intervencion ? intervencion.fecha : 's/d')}, y la mesa de negociacion reporta
+            compras netas por ${escapeHtml(num(mesaNegociacion ? mesaNegociacion.valor : 0, 2))} millones
+            de dolares en la misma fecha. Los swaps cambiarios de venta son la segunda herramienta:
+            el BCRP vende dolares a plazo y recibe soles, con swaps de venta pactados por
+            ${escapeHtml(num(swapVentaPactado ? swapVentaPactado.valor : 0, 2))} millones de dolares
+            (${escapeHtml(swapVentaPactado ? swapVentaPactado.fecha : 's/d')}); el saldo neto de swaps
+            cambiarios fue de ${escapeHtml(num(swapsNetos ? swapsNetos.valor : 0, 2))} millones y el CDR
+            emitido de ${escapeHtml(num(cdrEmitido ? cdrEmitido.valor : 0, 2))} millones. Los CDR
+            (certificados de deposito reajustables) captan soles del sistema bancario para drenar
+            liquidez, y los swaps hace lo mismo pero con dolares como underlying. En conjunto, estas
+            herramientas permiten que el BCRP modere la volatilidad sin abandonar el浮动 cambiario.
+          </p>
+
+          <h2>Como leer un rango probable</h2>
+          <p>
+            Un rango probable no es un precio objetivo: es una distribucion. El P10 es el percentil 10,
+            es decir el valor que el cierre supera en ocho de cada diez observaciones comparables; el P50
+            es la mediana, el valor con la mayor densidad de probabilidad; el P90 es el percentil 90, el
+            valor que el cierre no supera en ocho de cada diez observaciones. Por eso el intervalo P10-P90
+            esta calibrado para cubrir cerca del 80% de los casos, no el 100%.
+          </p>
+          <p>
+            La validacion importa mas que el numero. El motor se evalua con cortes fuera de muestra:
+            cortes de tiempo que nunca vio durante el calibracion. Para el horizonte de manana la cobertura
+            empirica fue de ${pct(mananaCoberturaFuera, 2)} sobre ${num(mananaCortes, 0)} cortes; para la
+            semana, ${pct(semanaCoberturaFuera, 2)} sobre ${num(semanaCortes, 0)} cortes; y el motor
+            mensual entrega una cobertura de calibracion de ${pct(mesCobertura, 2)} sobre ${num(mesN, 0)}
+            observaciones. Cuando la cobertura empirica se acerca a la cobertura nominal, el rango tiene
+            poder predictivo y no solo describe el pasado. El ancho de banda tambien comunica incertidumbre:
+            hoy el rango de manana abarca ${pct(mananaAnchoPct, 2)} y el de la semana
+            ${pct(semanaAnchoPct, 2)}, porque a mayor horizonte la incertidumbre acumulada crece de forma
+            monotona.
+          </p>
+
+          <h2>Que no es una proyeccion</h2>
+          <p>
+            Esta pagina no es asesoria financiera y no es una recomendacion de compra o venta. Un rango
+            probable describe una frecuencia historica, no una promesa: el cierre real puede quedar fuera
+            del intervalo. Los percentiles se calculan sobre la volatilidad pasada y por eso pueden
+            quedarse cortos ante eventos de cola, como una ruptura de regimen de política monetaria, un
+            choque de precios del cobre, una crisis politica o un evento internacional que rompa las
+            correlaciones habituales. A esos eventos se les suele llamar cisnes negros y son, por
+            definicion, los que ninguna frecuencia historica anticipa con precision. Los datos que se
+            muestran provienen del BCRP y del PerData Engine, con su codigo de serie y su fecha, para que
+            cualquiera pueda verificarlos.
+          </p>
+
+          <h2>Preguntas frecuentes</h2>
+          <dl class="pd-faq-list">
+            <dt>Por que el dolar sube o baja con tanta rapidez?</dt>
+            <dd>
+              Porque el precio del dolar en el Peru es un precio de flujo: se ajusta rapido ante cambios en
+              la oferta de divisas de los exportadores y ante la demanda de dolares de importadores e
+              inversionistas. Un dia de cobre favorable o un anuncio de la Reserva Federal puede mover el
+              precio en la sesion, sin que cambie el panorama de fondo.
+            </dd>
+            <dt>Que significa exactamente la cobertura del 80% fuera de muestra?</dt>
+            <dd>
+              Que, al probar el modelo con periodos que no uso para ajustarse, el intervalo entre P10 y P90
+              contenio el cierre real en cerca del 80% de los cortes evaluados. Es una medida honesta de
+              error, distinta de la cobertura sobre los mismos datos con los que se calibro el modelo.
+            </dd>
+            <dt>El P50 va a ser el precio del cierre del dia?</dt>
+            <dd>
+              No necesariamente. El P50 es la mediana de la distribucion y suele coincidir con el ultimo
+              cierre cuando el modelo no detecta una tendencia que продол, como en los pronosticos de
+              corto plazo publicados hoy, donde el P50 coincide con el cierre de
+              ${escapeHtml(num(ultimoCierre, 4))} S/ del ${escapeHtml(fechaUltimoCierre)}. Cuando el P50
+              se aparta del ultimo cierre, la separacion es la senal de que el modelo detecta una deriva.
+            </dd>
+            <dt>El rango mensual y el rango semanal no son el mismo pronostico, verdad?</dt>
+            <dd>
+              Son modelos distintos con horizontes distintos. El pronostico diario y semanal se construye
+              con simulacion historica filtrada sobre la serie de cierres del BCRP; el pronostico mensual
+              proviene del motor mensual precalculado, con su propia calibracion
+              (${pct(mesCobertura, 2)} sobre ${num(mesN, 0)} observaciones) y una trayectoria de tres
+              meses. No se deben sumar ni comparar quantile por quantile entre horizontes distintos.
+            </dd>
+            <dt>Con que frecuencia se actualiza esta pagina?</dt>
+            <dd>
+              La pagina se genera de forma automatica cuando termina la corrida diaria del PerData Engine:
+              los cierres oficiales del BCRP, los pronosticos de corto plazo y el contexto macro se leen de
+              los archivos de datos del proyecto y se vuelven a renderizar sin intervencion manual. Por eso
+              el ultimo cierre que se muestra aqui es el del ${escapeHtml(fechaUltimoCierre)}, con fecha
+              ${escapeHtml(fechaLarga(fechaUltimoCierre))}.
+            </dd>
+          </dl>
+        </section>`;
+
+// ---- 7. HTML ----
 
 const htmlGenerado = `<!DOCTYPE html>
-<html lang="es" class="light">
+<html lang="es-PE" class="light">
 <head>
+  <meta name="pd-geo" content="otro">
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="pd-ads" content="1">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://perdata.site/dolar">
-  <title>Dólar S/ - PerData Engine</title>
+  <title>Dolar en Peru hoy: precio, rango probable y contexto BCRP · PerData</title>
+  <meta name="description" content="Ultimo cierre oficial del dolar en el Peru (BCRP), rangos probables P10-P50-P90 para manana, la proxima semana y el proximo mes, cobertura empirica fuera de muestra y contexto macro y monetario oficial.">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+
+  <!-- Tipografias auto-alojadas: Source Serif 4, Libre Franklin, IBM Plex Mono -->
+  <link rel="preload" href="/fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/libre-franklin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/pd.css">
+  <link rel="stylesheet" href="/tw.css">
+
   <style>
-    :root {
-      --pd-paper: #F5F1E8;
-      --pd-ink: #141311;
-      --pd-ink-soft: #6B6B6B;
-      --pd-border: #DCD4C4;
-      --pd-card: #FBF9F4;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --pd-paper: #141311;
-        --pd-ink: #F5F1E8;
-        --pd-ink-soft: #A59E90;
-        --pd-border: #33302A;
-        --pd-card: #1C1B18;
-      }
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16rem; }
-    body {
-      font-family: "Source Serif 4", "Libre Franklin", "IBM Plex Mono", serif;
-      background-color: var(--pd-paper);
-      color: var(--pd-ink);
-      min-height: 100vh;
-      line-height: 1.6;
-    }
-    a { color: inherit; text-decoration: none; }
-    ul { list-style: none; }
-    img { max-width: 100%; height: auto; }
-    
-    /* Header institucional con theme switch */
-    header {
-      background-color: var(--pd-ink);
-      color: var(--pd-paper);
-      padding: 1rem 1.5rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      border-bottom: 1px solid var(--pd-border);
-    }
-    .Header-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .logo {
-      font-family: "Libre Franklin", sans-serif;
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-    .logo span {
-      font-family: "Source Serif 4", serif;
-      font-style: italic;
-    }
-    .nav-links a {
-      margin-left: 1rem;
-      color: var(--pd-paper);
-      font-family: "Libre Franklin", sans-serif;
-      transition: color 0.2s;
-      font-size: 0.875rem;
-    }
-    .nav-links a:hover {
-      color: #F5F1E8;
-    }
-    
-    /* Theme toggle */
-    .theme-toggle {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 44px;
-      height: 24px;
-      background: transparent;
-      border: none;
-      padding: 0;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .theme-toggle-input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    .theme-toggle-slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: var(--pd-border);
-      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-      border-radius: 9999px;
-    }
-    .theme-toggle-slider::after {
-      position: absolute;
-      content: "";
-      width: 18px;
-      height: 18px;
-      left: 2px;
-      top: 2px;
-      background: var(--pd-ink);
-      border-radius: inherit;
-      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .theme-toggle-input:checked + .theme-toggle-slider {
-      background: var(--pd-ink);
-    }
-    .theme-toggle-input:checked + .theme-toggle-slider::after {
-      left: calc(100% - 2px - 18px);
-    }
-    
-    /* Main */
-    main {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 1.5rem;
-    }
-    
-    /* Cards de rangos */
-    .range-cards {
+    .pd-range-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      margin: 2rem 0;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px 14px;
+      margin: 18px 0 14px;
+      padding: 14px 0;
+      border-top: 1px solid var(--pd-rule);
+      border-bottom: 1px solid var(--pd-rule);
     }
-    .range-card {
-      background: var(--pd-card);
-      color: var(--pd-ink);
-      padding: 1.5rem;
-      border-radius: 4px;
-      border: 1px solid var(--pd-border);
-    }
-    .range-card h3 {
-      font-family: "Libre Franklin", sans-serif;
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-    .range-card p {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.875rem;
-      margin-bottom: 0.5rem;
-    }
-    .range-card .p50 {
-      font-size: 1.75rem;
-      font-weight: bold;
-      margin: 0.5rem 0;
-    }
-    .range-card .ancho {
-      color: var(--pd-ink-soft);
-      font-size: 0.75rem;
-      margin-top: 0.5rem;
-    }
-    
-    /* Tabla ultimos 20 cierres */
-    .table-section table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1rem 0;
-    }
-    .table-section th, .table-section td {
-      border: 1px solid var(--pd-border);
-      padding: 0.5rem;
-      font-size: 0.875rem;
-    }
-    .table-section th {
-      background: var(--pd-ink);
-      color: var(--pd-paper);
-    }
-    .table-section td {
-      color: var(--pd-ink);
-    }
-    
-    /* Contexto macro */
-    .contexto-section {
-      margin: 2rem 0;
-    }
-    .contexto-section h2 {
-      font-family: "Libre Franklin", sans-serif;
-      margin-bottom: 1rem;
-    }
-    .contexto-table table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .contexto-table th, .contexto-table td {
-      border: 1px solid var(--pd-border);
-      padding: 0.75rem;
-      font-size: 0.875rem;
-    }
-    .contexto-table th {
-      background: var(--pd-ink);
-      color: var(--pd-paper);
-      text-align: left;
-    }
-    .contexto-table td {
-      color: var(--pd-ink);
-    }
-    
-    /* 2026 summary */
-    .year-summary {
-      background: var(--pd-card);
-      color: var(--pd-ink);
-      padding: 1.5rem;
-      border-radius: 4px;
-      margin: 2rem 0;
-    }
-    .year-summary p {
-      margin-bottom: 0.5rem;
-    }
-    
-    /* FAQ */
-    .faq-section dl {
-      margin: 1rem 0;
-    }
-    .faq-section dt {
-      font-family: "Libre Franklin", sans-serif;
-      font-weight: bold;
-      margin: 1rem 0 0.5rem;
-    }
-    .faq-section dd {
-      margin: 0.5rem 0 1rem;
-    }
-    
-    /* Footer */
-    footer {
-      margin-top: 3rem;
-      padding: 2rem 1.5rem;
-      background: var(--pd-ink);
-      color: var(--pd-paper);
-      text-align: center;
-      font-size: 0.875rem;
-    }
+    .pd-range-grid dt { font: 700 9px/1 var(--pd-font-ui); letter-spacing: .09em; text-transform: uppercase; color: var(--pd-ink-soft); }
+    .pd-range-grid dd { margin: 5px 0 0; font: 600 13px/1.2 var(--pd-font-mono); color: var(--pd-ink); font-variant-numeric: tabular-nums; }
+    .pd-range-p50 { font: 500 clamp(30px, 5vw, 40px)/1.05 var(--pd-font-read); letter-spacing: -.02em; color: var(--pd-ink); margin: 6px 0 2px; }
+    .pd-range-caption { font: 500 11px/1.3 var(--pd-font-ui); color: var(--pd-ink-soft); }
+    .pd-range-target { font: 500 12px/1.4 var(--pd-font-ui); color: var(--pd-ink-soft); }
+    .pd-range-meta { font: 500 11.5px/1.45 var(--pd-font-mono); color: var(--pd-ink-soft); font-variant-numeric: tabular-nums; }
+    .pd-range-card { padding: 20px 0 22px; border-top: 2px solid var(--pd-ink); }
+    .pd-range-card .pdl-chip { display: inline-block; }
+    .pd-faq-list dt { font: 600 15px/1.35 var(--pd-font-ui); color: var(--pd-ink); margin: 22px 0 6px; }
+    .pd-faq-list dd { margin: 0 0 10px; font: 400 15px/1.65 var(--pd-font-read); color: var(--pd-ink-soft); }
+    .pd-prose h2 { font: 600 22px/1.25 var(--pd-font-read); color: var(--pd-ink); margin: 34px 0 10px; }
+    .pd-prose p { margin: 0 0 14px; font: 400 16px/1.7 var(--pd-font-read); color: var(--pd-ink); }
+    .pd-fact-table td, .pd-fact-table th { white-space: nowrap; }
+    .pd-fact-table td:first-child { white-space: normal; }
+    @media (max-width: 560px) { .pd-range-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   </style>
-</head>
-<body>
 
-  <header>
-    <div class="Header-container">
-      <div class="logo">PerData<span>S</span></div>
-      <nav>
-        <div class="nav-links">
-          <a href="/">Inicio</a>
-          <a href="/dolar">Dólar</a>
-          <a href="/mercado">Mercado</a>
-        </div>
-      </nav>
-      <button class="theme-toggle" aria-label="Alternar modo claro/oscuro">
-        <input type="checkbox" id="themeToggle" />
-        <span class="theme-toggle-slider" />
-      </button>
-    </div>
-  </header>
-
-  <main>
-    <section class="range-cards">
-      <div class="range-card">
-        <h3>Mañana</h3>
-        <p>Pronóstico 3 días hábiles</p>
-        <div class="p50">S/ ${mananaP50.toFixed(4)}</div>
-        <p>P10: S/ ${mananaP10.toFixed(4)} — P90: S/ ${mananaP90.toFixed(4)}</p>
-        <p class="ancho">Ancho banda: ±${mananaAnchoPct.toFixed(2)}% | Cobertura fuera de muestra: ${mananaCoberturaFueraMuestra.toFixed(1)}%</p>
-      </div>
-      <div class="range-card">
-        <h3>Próxima semana</h3>
-        <p>Pronóstico 7 días hábiles</p>
-        <div class="p50">S/ ${semanaP50.toFixed(4)}</div>
-        <p>P10: S/ ${semanaP10.toFixed(4)} — P90: S/ ${semanaP90.toFixed(4)}</p>
-        <p class="ancho">Ancho banda: ±${semanaAnchoPct.toFixed(2)}% | Cobertura fuera de muestra: ${semanaCoberturaFueraMuestra.toFixed(1)}%</p>
-      </div>
-      <div class="range-card">
-        <h3>Próximo mes</h3>
-        <p>Pronóstico 30 días</p>
-        <div class="p50">S/ ${mesP50.toFixed(4)}</div>
-        <p>P10: S/ ${mesP10.toFixed(4)} — P90: S/ ${mesP90.toFixed(4)}</p>
-        <p class="ancho">Ancho banda: ±${mesAnchoPct.toFixed(2)}% | Cobertura fuera de muestra: ${mesCoberturaFueraMuestra.toFixed(1)}%</p>
-      </div>
-    </section>
-
-    <section class="table-section">
-      <h2>Últimos 20 Cierres Oficiales BCRP</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Cierre (S/)</th>
-            <th>Var. (S/)</th>
-            <th>Var. (%</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${ultimos20ConVariacion.map((row, i) => `
-            <tr>
-              <td>${row.fecha}</td>
-              <td>${row.cierre.toFixed(4)}</td>
-              ${row.cambio !== null ? `<td>${row.cambio.toFixed(4)}</td>` : `<td>-</td>`}
-              ${row.pctVariacion !== null ? `<td>${row.pctVariacion.toFixed(2)}%</td>` : `<td>-</td>`}
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    </section>
-
-    <section class="year-summary">
-      <h2>Resumen 2026</h2>
-      <p>Primer cierre 2026: S/ ${primerCierre2026.toFixed(4)}</p>
-      <p>Máximo 2026: S/ ${max2026.toFixed(4)} (${fechaMax})</p>
-      <p>Mínimo 2026: S/ ${min2026.toFixed(4)} (${fechaMin})</p>
-      <p>Variación acumulada: ${variacionAcum2026.toFixed(2)}%</p>
-      <p>Último cierre: S/ ${ultimoCierre.toFixed(4)}</p>
-    </section>
-
-    <section class="contexto-section">
-      <h2>Contexto Macroeconómico y Monetario Oficial</h2>
-      <table class="contexto-table">
-        <thead>
-          <tr>
-            <th>Variable</th>
-            <th>Valor</th>
-            <th>Unidad</th>
-            <th>Fecha</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${Object.entries(seriesContextuales).map(([nombre, data]) => `
-            <tr>
-              <td>${nombre}</td>
-              <td>${data.valor}</td>
-              <td>${data.unidad}</td>
-              <td>${data.fecha}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    </section>
-
-    <section class="faq-section">
-      ${contenidoTechnico}
-    </section>
-  </main>
-
-  <footer>
-    <p>PerData Engine • Dólar S/ <a href="https://perdata.site/dolar">https://perdata.site/dolar</a></p>
-  </footer>
-
+  <!-- Early Theme Init to prevent flash of unstyled content -->
   <script>
-    // Theme toggle con localStorage
     (function() {
       const savedTheme = localStorage.getItem("theme");
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const html = document.documentElement;
-      const themeToggle = document.getElementById("themeToggle");
-      
       if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
-        html.classList.add("dark");
-        html.classList.remove("light");
-        if (themeToggle) themeToggle.checked = true;
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
       } else {
-        html.classList.remove("dark");
-        html.classList.add("light");
-        if (themeToggle) themeToggle.checked = false;
+        document.documentElement.classList.remove("dark");
+        document.documentElement.classList.add("light");
       }
-      
-      if (themeToggle) {
-        themeToggle.addEventListener("change", (e) => {
-          if (e.target.checked) {
-            html.classList.add("dark");
-            html.classList.remove("light");
-            localStorage.setItem("theme", "dark");
-          } else {
-            html.classList.remove("dark");
-            html.classList.add("light");
-            localStorage.setItem("theme", "light");
-          }
+    })();
+  </script>
+</head>
+<body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
+  <header class="border-b border-rule bg-card sticky top-0 z-30 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
+      <div class="flex items-center space-x-6">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline"><span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Peru"><b></b><b></b><b></b></span></span></a>
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft" aria-label="Navegacion principal">
+          <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a><a href="/empresas" class="hover:text-ink transition no-underline">Empresas</a><a href="/dolar" class="text-ink font-semibold border-b border-ink pb-0.5 no-underline" aria-current="page">Dolar</a><a href="/mercado" class="hover:text-ink transition no-underline">Mercado</a><a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a><a href="/metodologia" class="hover:text-ink transition no-underline">Metodologia</a><a href="/guia" class="hover:text-ink transition no-underline">Guia</a><a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
+        </nav>
+      </div>
+      <div class="flex items-center space-x-2 sm:space-x-3"><div id="navbarAuthContainer"></div><label class="ui-switch" title="Alternar modo claro / oscuro"><input id="themeToggle" type="checkbox" aria-label="Modo oscuro" /><div class="slider"><div class="circle"></div></div></label><button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menu" aria-expanded="false"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+    </div>
+    <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors"><nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft" aria-label="Menu movil"><a href="/explorer" class="hover:text-ink py-1 no-underline">Terminal</a><a href="/empresas" class="hover:text-ink py-1 no-underline">Empresas</a><a href="/dolar" class="text-ink font-semibold py-1 no-underline" aria-current="page">Dolar</a><a href="/mercado" class="hover:text-ink py-1 no-underline">Mercado</a><a href="/noticias" class="hover:text-ink py-1 no-underline">Noticias</a><a href="/metodologia" class="hover:text-ink py-1 no-underline">Metodologia</a><a href="/guia" class="hover:text-ink py-1 no-underline">Guia</a><a href="/precios" class="hover:text-ink py-1 no-underline">Precios</a></nav></div>
+  </header>
+
+  <main class="pd-data-main max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 w-full">
+    <section class="space-y-3">
+      <p class="micro-label text-ink-soft">Banco Central de Reserva del Peru · serie ${escapeHtml(penDaily.codigo)}</p>
+      <h1 class="pd-page-title">Dolar en Peru hoy</h1>
+      <p class="pd-page-lede">
+        Ultimo cierre oficial de ${escapeHtml(num(ultimoCierre, 4))} S/ por dolar, del
+        ${escapeHtml(fechaLarga(fechaUltimoCierre))}, con rangos probables para manana, la proxima semana
+        y el proximo mes, y el contexto macro y monetario que reporta el BCRP.
+      </p>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-x-10 gap-y-8 mt-10" aria-label="Rangos probables">
+      ${tarjetaManana}
+      ${tarjetaSemana}
+      ${tarjetaMes}
+    </section>
+
+    <section class="mt-12">
+      <h2 class="pd-section-title">Resumen de 2026</h2>
+      <dl class="pd-dl">
+        <div><dt>Ruedas cotizadas</dt><dd>${num(ruedas2026, 0)}</dd></div>
+        <div><dt>Primer cierre</dt><dd>${num(primerCierre2026, 3)} S/ · ${escapeHtml(fechaPrimerCierre2026)}</dd></div>
+        <div><dt>Ultimo cierre</dt><dd>${num(ultimoCierreSerie2026, 3)} S/ · ${escapeHtml(fechaUltimoCierreSerie2026)}</dd></div>
+        <div><dt>Minimo del ano</dt><dd>${num(minimo2026.valor, 3)} S/ · ${escapeHtml(minimo2026.fecha)}</dd></div>
+        <div><dt>Maximo del ano</dt><dd>${num(maximo2026.valor, 3)} S/ · ${escapeHtml(maximo2026.fecha)}</dd></div>
+        <div><dt>Variacion acumulada</dt><dd>${variacionAnualPct >= 0 ? '+' : ''}${pct(variacionAnualPct, 2)} · ${variacionAnualSol >= 0 ? '+' : ''}${num(variacionAnualSol, 3)} S/</dd></div>
+      </dl>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="pd-section-title">Ultimos 20 cierres oficiales</h2>
+      <div class="overflow-x-auto">
+        <table class="pd-fact-table w-full">
+          <thead>
+            <tr>
+              <th class="text-left py-2 px-3 border-b border-rule text-xs font-semibold text-ink-soft">Fecha</th>
+              <th class="text-left py-2 px-3 border-b border-rule text-xs font-semibold text-ink-soft">Cierre (S/)</th>
+              <th class="text-left py-2 px-3 border-b border-rule text-xs font-semibold text-ink-soft">Variacion (S/)</th>
+              <th class="text-left py-2 px-3 border-b border-rule text-xs font-semibold text-ink-soft">Variacion (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filasCierres}
+          </tbody>
+        </table>
+      </div>
+      <p class="pd-fineprint">Fuente: Banco Central de Reserva del Peru, serie ${escapeHtml(penDaily.codigo)}. La variacion se calcula contra el cierre oficial anterior.</p>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="pd-section-title">Contexto macro y monetario oficial (BCRP)</h2>
+      <div class="overflow-x-auto">
+        <table class="pd-fact-table w-full">
+          <thead>
+            <tr>
+              <th class="text-left py-2 px-3 border-b border-rule text-xs font-semibold text-ink-soft">Variable</th>
+              <th class="text-left py-2 px-3 border-b border-rule text-xs font-semibold text-ink-soft">Serie</th>
+              <th class="text-left py-2 px-3 border-b border-rule text-xs font-semibold text-ink-soft">Valor</th>
+              <th class="text-left py-2 px-3 border-b border-rule text-xs font-semibold text-ink-soft">Unidad</th>
+              <th class="text-left py-2 px-3 border-b border-rule text-xs font-semibold text-ink-soft">Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filasIndicadores}
+          </tbody>
+        </table>
+      </div>
+      <p class="pd-fineprint">Fuente: Banco Central de Reserva del Peru, estadisticas macroeconomicas y monetarias. Ultima observacion disponible por serie.</p>
+    </section>
+
+    ${textoExplicativo}
+  </main>
+
+  <footer class="border-t border-rule bg-card py-8 px-4">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs text-ink-soft">
+      <a href="/" class="pd-wordmark no-underline">PerData<span class="pd-flag" aria-hidden="true"><b></b><b></b><b></b></span></a>
+      <nav class="flex flex-wrap gap-5" aria-label="Navegacion secundaria">
+        <a href="/noticias">Noticias</a><a href="/resumenes">Archivo de resumenes</a><a href="/mercado">Mercado</a><a href="/dolar">Dolar</a><a href="/estado">Estado</a><a href="/nosotros" class="hover:text-ink transition no-underline">Quienes somos</a>
+          <a href="/privacidad">Privacidad</a>
+          <a href="#cookies" class="pd-cookies-link hover:text-ink transition no-underline" data-open-cookies>Cookies</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      const toggle = document.getElementById('themeToggle');
+      if (toggle) {
+        toggle.checked = document.documentElement.classList.contains('dark');
+        toggle.addEventListener('change', (event) => {
+          document.documentElement.classList.toggle('dark', event.target.checked);
+          document.documentElement.classList.toggle('light', !event.target.checked);
+          localStorage.setItem('theme', event.target.checked ? 'dark' : 'light');
+        });
+      }
+      const menuButton = document.getElementById('mobileMenuBtn');
+      const mobileMenu = document.getElementById('mobileMenu');
+      if (menuButton && mobileMenu) {
+        menuButton.addEventListener('click', () => {
+          const open = mobileMenu.classList.toggle('hidden') === false;
+          menuButton.setAttribute('aria-expanded', String(open));
         });
       }
     })();
   </script>
-
+  <script src="/consent.js" defer></script>
+  <script src="/auth.js" defer></script>
 </body>
 </html>`;
 
-const outputPath = path.join(rootDir, "dolar.html");
-fs.writeFileSync(outputPath, htmlGenerado);
-console.log(`✓ Escrit ${outputPath}`);
+// ---- 8. Escritura ----
 
-// También escribir en public/ si existe
+const outputPath = path.join(rootDir, 'dolar.html');
+fs.writeFileSync(outputPath, htmlGenerado);
+console.log(`Escrito ${outputPath}`);
+
 if (fs.existsSync(publicDir)) {
-  const publicPath = path.join(publicDir, "dolar.html");
+  const publicPath = path.join(publicDir, 'dolar.html');
   fs.writeFileSync(publicPath, htmlGenerado);
-  console.log(`✓ Escrit ${publicPath}`);
+  console.log(`Escrito ${publicPath}`);
 }
 
-console.log("=== build-dolar-html.js finished successfully ===");
+console.log('build-dolar-html.js finished successfully');

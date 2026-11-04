@@ -12,6 +12,18 @@ const issuerStatuses = fs.existsSync(statusPath)
   ? JSON.parse(fs.readFileSync(statusPath, "utf8")).emisores || {}
   : {};
 
+const rucsPath = path.join(projectRoot, "data", "empresas-ruc.json");
+const rucs = fs.existsSync(rucsPath) ? JSON.parse(fs.readFileSync(rucsPath, "utf8")) : {};
+
+const shPath = path.join(projectRoot, "data", "smv-accionistas.json");
+const shareholdersData = fs.existsSync(shPath) ? (JSON.parse(fs.readFileSync(shPath, "utf8")).emisores || {}) : {};
+
+const hechosPath = path.join(projectRoot, "data", "smv-hechos.json");
+const hechosData = fs.existsSync(hechosPath) ? (JSON.parse(fs.readFileSync(hechosPath, "utf8")).hechos || {}) : {};
+
+const h120Path = path.join(projectRoot, "data", "history-120.json");
+const h120 = fs.existsSync(h120Path) ? JSON.parse(fs.readFileSync(h120Path, "utf8")) : {};
+
 function formatSector(sec) {
   if (!sec) return "Diversas";
   const s = sec.toUpperCase();
@@ -772,3 +784,303 @@ ${rowsHtml}
 
 fs.writeFileSync(path.join(projectRoot, "empresas.html"), template, "utf8");
 console.log("Successfully generated empresas.html with", rows.length, "companies.");
+
+// =============================================================================
+// K3: Fichas de empresa con valor propio (HTML estático pre-renderizado)
+// =============================================================================
+
+const SECTOR_ACTIVIDAD = {
+  "MINERAS": "la industria minera y extractiva, enfocada en la prospección, desarrollo y explotación de recursos minerales en yacimientos del territorio nacional.",
+  "BANCOS Y FINANCIERAS": "el sector financiero y bancario, desarrollando actividades de intermediación crediticia, captación de ahorros y servicios de banca corporativa y minorista.",
+  "INDUSTRIALES": "el sector industrial y productivo manufacturero, dedicada a la transformación y procesamiento de bienes de consumo o insumos para el mercado peruano y exterior.",
+  "SERVICIOS PÚBLICOS": "la prestación de servicios públicos esenciales, incluyendo la infraestructura, generación, transmisión y provisión regulada de energía, agua o telecomunicaciones.",
+  "SEGUROS": "el mercado asegurador, especializada en la cobertura de riesgos patrimoniales, personales, de salud y pensiones bajo supervisión prudencial.",
+  "AGRARIO": "la actividad agrícola y agroindustrial, orientada a la producción, cultivo y comercialización de productos del campo tanto para abastecimiento local como de exportación.",
+  "ADMINISTRADORAS DE FONDOS DE PENSIONES": "la administración previsional privada, encargada de la inversión de fondos de jubilación de los afiliados al Sistema Privado de Pensiones.",
+  "DIVERSAS": "actividades empresariales multisectoriales o holding de inversiones corporativas en diversos rubros comerciales y de servicios en el Perú."
+};
+
+function escapeHtml(str) {
+  return String(str ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[c]));
+}
+
+function generateCompanyTextBlock(e, primaryValor) {
+  const status = issuerStatuses[e.codigoBVL] || {};
+  const ruc = rucs[e.codigoBVL] || null;
+  const rawSector = String(e.sector || "DIVERSAS").toUpperCase();
+  const actividad = SECTOR_ACTIVIDAD[rawSector] || SECTOR_ACTIVIDAD["DIVERSAS"];
+  const name = prettyName(e.razonSocial);
+  const paragraphs = [];
+
+  // 1. Sector y actividad
+  let p1 = `${name} es una entidad registrada en la Bolsa de Valores de Lima bajo el código BVL ${e.codigoBVL}`;
+  if (ruc) p1 += ` y número de RUC ${ruc}`;
+  p1 += `. Su actividad económica principal se enmarca en ${actividad} La compañía participa formalmente en el mercado bursátil peruano cumpliendo con los estándares de información corporativa y transparencia que supervisa la Superintendencia del Mercado de Valores (SMV).`;
+  paragraphs.push(p1);
+
+  // 2. Valores que cotiza
+  const valoresList = (e.valores || []).map(v => {
+    const isPrimary = v.nemonico === primaryValor.nemonico;
+    const desc = `${v.nemonico} (${v.moneda || "S/"}${v.segmento ? `, segmento ${v.segmento}` : ""}${isPrimary ? ", valor principal de seguimiento" : ""})`;
+    return desc;
+  });
+  let p2 = `En el ámbito de renta variable, el emisor tiene inscritos en la BVL los siguientes instrumentos: ${valoresList.join("; ")}. `;
+  if (e.valores.length > 1) {
+    p2 += `La existencia de diferentes clases de acciones permite diferenciar derechos políticos y económicos en el capital social, concentrándose la liquidez del mercado principalmente en el nemónico ${primaryValor.nemonico}.`;
+  } else {
+    p2 += `El capital social negociable en rueda de bolsa está centralizado en el nemónico ${primaryValor.nemonico}, a través del cual los inversionistas institucionales y particulares ejecutan sus posturas de compra y venta en moneda ${primaryValor.moneda || "nacional"}.`;
+  }
+  paragraphs.push(p2);
+
+  // 3. Accionistas >4%
+  const shInfo = ruc ? shareholdersData[ruc] : null;
+  const holders = shInfo?.accionistas || [];
+  let p3 = "";
+  if (holders.length > 0) {
+    const totalPct = holders.reduce((sum, h) => sum + (Number(h.pct) || 0), 0);
+    const holdersDesc = holders.map(h => `${h.nombre} (de ${h.nacionalidad}, con ${Number(h.pct).toFixed(2)}% de participación, declarada desde ${h.desde})`).join(", ");
+    p3 = `En cuanto a su estructura de control societario, el registro de la SMV identifica a los siguientes accionistas con participaciones superiores al 4% del capital social: ${holdersDesc}. En conjunto, estos accionistas representativos acumulan el ${totalPct.toFixed(2)}% del capital con derecho a voto reportado en la plataforma de datos abiertos de la Superintendencia del Mercado de Valores (SMV), bajo licencia ODC-BY.`;
+  } else {
+    p3 = `En lo que respecta a la estructura societaria, la Superintendencia del Mercado de Valores (SMV) no reporta accionistas titulares de participaciones individuales superiores al 4% del capital social para este emisor en su base oficial de datos abiertos, lo que denota una dispersión patrimonial en el flotante accionario o ausencia de declaraciones obligatorias por dicho umbral.`;
+  }
+  paragraphs.push(p3);
+
+  // 4. Hechos de importancia recientes con fecha
+  const issuerHechos = [];
+  for (const v of e.valores) {
+    const list = hechosData[v.nemonico] || [];
+    for (const item of list) {
+      if (!issuerHechos.some(x => x.expediente === item.expediente)) {
+        issuerHechos.push(item);
+      }
+    }
+  }
+  let p4 = "";
+  if (issuerHechos.length > 0) {
+    const hechosListDesc = issuerHechos.slice(0, 3).map(h => {
+      const cleanFecha = h.fecha ? h.fecha.split(" ")[0] : "fecha registrada";
+      return `con fecha ${cleanFecha}, comunicó mediante expediente ${h.expediente} (${h.tipo}) el evento relativo a: «${h.titulo}»`;
+    }).join("; ");
+    p4 = `En el flujo de revelación de hechos de importancia notificados a la SMV, destacan las comunicaciones más recientes: ${hechosListDesc}. Dichos comunicados constituyen la documentación oficial remitida por la administración de la empresa al mercado para conocimiento de inversionistas y analistas.`;
+  } else {
+    p4 = `Durante el ciclo de seguimiento reciente no se han registrado nuevos hechos de importancia específicos para los nemónicos de esta firma en el registro automatizado de la SMV, manteniéndose vigentes las comunicaciones institucionales ordinarias y estados financieros depositados formalmente ante el regulador bursátil.`;
+  }
+  paragraphs.push(p4);
+
+  // 5. Evolución del precio en 12 meses en una frase con cifras
+  let p5 = "";
+  const series = h120[primaryValor.simbolo_proyeccion] || [];
+  if (series.length >= 13) {
+    const pEnd = series[series.length - 1];
+    const pStart = series[series.length - 13];
+    const v12m = ((pEnd.close - pStart.close) / pStart.close) * 100;
+    const sign = v12m >= 0 ? "+" : "";
+    const curr = primaryValor.moneda || "S/";
+    p5 = `En el transcurso de los últimos doce meses de negociación, el precio mensual de cierre de ${primaryValor.nemonico} evolucionó desde ${curr} ${pStart.close.toFixed(2)} (${pStart.date}) hasta situarse en ${curr} ${pEnd.close.toFixed(2)} (${pEnd.date}), registrando una variación neta de ${sign}${v12m.toFixed(2)}% en el mercado.`;
+  } else if (status.ultimo_cierre != null) {
+    const curr = status.moneda || primaryValor.moneda || "S/";
+    const close = Number(status.ultimo_cierre);
+    const dateFormatted = status.ultima_fecha || "última fecha registrada";
+    const ops = status.operaciones_12m != null ? status.operaciones_12m : "registro formal";
+    p5 = `En los últimos 12 meses, la acción ${primaryValor.nemonico} computó un total de ${ops} operaciones en rueda de bolsa, marcando su último cierre oficial de negociación en ${curr} ${close.toFixed(close < 1 ? 3 : 2)} con fecha ${dateFormatted}.`;
+  } else {
+    p5 = `En el balance de los últimos doce meses, el valor no registró operaciones continuas en la rueda bursátil limeña, por lo que no presenta una curva de variación efectiva reciente en sus cotizaciones oficiales.`;
+  }
+  paragraphs.push(p5);
+
+  // 6. Si tiene proyección en PerData
+  const hasProyeccion = status.estado ? status.estado === "con_proyeccion" : Boolean(primaryValor.simbolo_proyeccion);
+  let p6 = "";
+  if (hasProyeccion && primaryValor.simbolo_proyeccion) {
+    p6 = `Esta compañía cuenta con cobertura estadística y proyección cuantitativa en el motor analítico de PerData Engine bajo el identificador de serie ${primaryValor.simbolo_proyeccion}, lo que permite modelar rangos probables de precio a diferentes horizontes mediante distribución empírica y calibración probabilística sin supuestos arbitrarios.`;
+  } else {
+    p6 = `Actualmente esta empresa no dispone de estimación de proyección algorítmica en PerData Engine debido a que no cumple con el umbral mínimo de liquidez continua e historial diario ininterrumpido requerido para calibrar los modelos predictivos del sistema.`;
+  }
+  paragraphs.push(p6);
+
+  const fullText = paragraphs.join(" ");
+  return {
+    paragraphs,
+    fullText,
+    wordCount: fullText.trim().split(/\s+/).filter(Boolean).length
+  };
+}
+
+function buildFichas() {
+  const baseTemplatePath = path.join(projectRoot, "empresa.html");
+  if (!fs.existsSync(baseTemplatePath)) {
+    console.warn("empresa.html not found, skipping ficha pre-generation.");
+    return;
+  }
+  const baseHtml = fs.readFileSync(baseTemplatePath, "utf8");
+
+  const outDir = path.join(projectRoot, "empresa");
+  fs.mkdirSync(outDir, { recursive: true });
+
+  const publicOutDir = path.join(projectRoot, "public", "empresa");
+  const hasPublic = fs.existsSync(path.join(projectRoot, "public"));
+  if (hasPublic) fs.mkdirSync(publicOutDir, { recursive: true });
+
+  const now = new Date("2026-11-04T23:00:00Z").getTime();
+  const days30 = 30 * 86400 * 1000;
+
+  let totalFichas = 0;
+  let indexableCount = 0;
+  let nonIndexableCount = 0;
+  const indexableList = [];
+
+  for (const e of data.emisores) {
+    const issuerStatus = issuerStatuses[e.codigoBVL] || {};
+    const ruc = rucs[e.codigoBVL] || null;
+    const shInfo = ruc ? shareholdersData[ruc] : null;
+    const holders = shInfo?.accionistas || [];
+    const name = prettyName(e.razonSocial || "Emisor");
+    const sectorFormatted = formatSector(e.sector);
+    const isActivaIssuer = issuerStatus.ultimo_cierre != null || e.valores.some(v => v.fechaUltimaNegociacion);
+
+    for (const v of e.valores) {
+      totalFichas++;
+      const nemo = v.nemonico;
+      const textInfo = generateCompanyTextBlock(e, v);
+
+      const dateStr = issuerStatus.ultima_fecha || v.fechaUltimaNegociacion || e.fechaUltimaNegociacion;
+      const hasPrice = issuerStatus.ultimo_cierre != null;
+      const isRecent = dateStr && (now - new Date(dateStr + "T00:00:00Z").getTime()) <= days30;
+      const isIndexable = textInfo.wordCount > 300 && hasPrice && isRecent;
+
+      if (isIndexable) {
+        indexableCount++;
+        indexableList.push({ nemo, name, words: textInfo.wordCount, price: issuerStatus.ultimo_cierre });
+      } else {
+        nonIndexableCount++;
+      }
+
+      // Pre-rendered values
+      const title = `${name} (${nemo}): precio, proyección y hechos de importancia · PerData`;
+      const desc = `${name}, ${sectorFormatted} que cotiza en la Bolsa de Valores de Lima: último precio, gráfico, proyección de PerData Engine y hechos de importancia de la SMV.`;
+      const canonical = `https://perdata.site/empresa/${encodeURIComponent(nemo)}`;
+      const hasProyeccion = Boolean(v.simbolo_proyeccion);
+      const currency = issuerStatus.moneda || v.moneda || "S/";
+      const close = Number(issuerStatus.ultimo_cierre);
+      const priceText = Number.isFinite(close) ? `${currency} ${close.toFixed(close < 1 ? 3 : 2)}` : "—";
+      const validDate = dateStr ? new Date(`${dateStr}T00:00:00Z`) : null;
+      const dateParts = validDate && !Number.isNaN(validDate.getTime())
+        ? new Intl.DateTimeFormat("es-PE", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(validDate)
+        : (dateStr || "Fecha no disponible");
+      const priceDateText = Number.isFinite(close) ? `Cierre del ${dateParts}` : (dateStr ? `Última negociación: ${dateParts}` : "Sin operaciones recientes");
+
+      let statusMsg = "";
+      if (hasProyeccion) {
+        statusMsg = "Con proyección PerData Engine";
+      } else if (issuerStatus.estado === "poca_liquidez") {
+        statusMsg = `Cotiza poco · último cierre ${priceText} (${dateParts})`;
+      } else if (issuerStatus.estado === "parada" || issuerStatus.estado === "dormida") {
+        statusMsg = `Sin operaciones recientes · último precio ${priceText}`;
+      } else {
+        statusMsg = "Sus acciones no se negocian activamente en bolsa";
+      }
+
+      // Shareholders table rows
+      let shHtml = "";
+      if (holders.length > 0) {
+        shHtml = holders.map(h => `<tr><td>${escapeHtml(h.nombre)}</td><td>${escapeHtml(h.nacionalidad)}</td><td>${escapeHtml(h.desde)}</td><td class="numeric">${Number(h.pct).toFixed(2)} %</td></tr>`).join("");
+      }
+
+      // Hechos de importancia list
+      const issuerHechos = hechosData[nemo] || [];
+      let hechosHtml = "";
+      if (issuerHechos.length > 0) {
+        hechosHtml = issuerHechos.slice(0, 5).map(h => {
+          const cleanFecha = h.fecha ? h.fecha.split(" ")[0] : "";
+          const url = h.url_oficial ? escapeHtml(h.url_oficial) : "https://www.smv.gob.pe";
+          return `<li class="hecho-item"><div class="hecho-meta"><span class="hecho-fecha">${escapeHtml(cleanFecha)}</span><span class="hecho-tipo">${escapeHtml(h.tipo || "COMUNICADO")}</span></div><div class="hecho-titulo"><a href="${url}" target="_blank" rel="noopener">${escapeHtml(h.titulo)}</a></div></li>`;
+        }).join("");
+      } else {
+        hechosHtml = `<li class="hechos-empty">Sin hechos de importancia recientes registrados en el sistema.</li>`;
+      }
+
+      // Paragraphs for perfilEmpresa
+      const paragraphsHtml = textInfo.paragraphs.map(p => `<p class="mb-3">${escapeHtml(p)}</p>`).join("\n            ");
+
+      // Replace in baseHtml
+      let fichaHtml = baseHtml;
+
+      // Meta and Title
+      fichaHtml = fichaHtml.replace(/<title id="metaTitle">[^<]*<\/title>/, `<title id="metaTitle">${escapeHtml(title)}</title>`);
+      fichaHtml = fichaHtml.replace(/<meta name="description" id="metaDesc" content="[^"]*" \/>/, `<meta name="description" id="metaDesc" content="${escapeHtml(desc)}" />\n  <link rel="canonical" href="${canonical}" />${isIndexable ? '\n  <meta name="pd-ads" content="1">' : ''}`);
+
+      // Body tag
+      if (isIndexable) {
+        fichaHtml = fichaHtml.replace(/<body([^>]*)>/, `<body$1 data-indexable="1">`);
+      }
+
+      // Loading state hidden
+      fichaHtml = fichaHtml.replace(/<div id="loadingState" class="company-header py-4">/, `<div id="loadingState" class="company-header py-4 hidden">`);
+
+      // Company detail visible
+      fichaHtml = fichaHtml.replace(/<div id="companyDetail" class="hidden">/, `<div id="companyDetail">`);
+
+      // Header fields
+      fichaHtml = fichaHtml.replace(/<span id="breadName"><span class="pd-skeleton"[^>]*><\/span><\/span>/, `<span id="breadName">${escapeHtml(name)}</span>`);
+      fichaHtml = fichaHtml.replace(/<h1 class="company-title" id="companyTitle"><span class="pd-skeleton"[^>]*><\/span><\/h1>/, `<h1 class="company-title" id="companyTitle">${escapeHtml(name)}</h1>`);
+      fichaHtml = fichaHtml.replace(/<p class="company-meta" id="companyMeta"><span class="pd-skeleton"[^>]*><\/span><\/p>/, `<p class="company-meta" id="companyMeta">${escapeHtml(sectorFormatted)} · ${escapeHtml(nemo)} · ${escapeHtml(v.moneda || "S/")}</p>`);
+
+      // Price block
+      fichaHtml = fichaHtml.replace(/<div class="text-xs text-ink-soft mb-1 font-mono" id="exchangeLabel">BVL<\/div>/, `<div class="text-xs text-ink-soft mb-1 font-mono" id="exchangeLabel">BVL · ${escapeHtml(nemo)}</div>`);
+      fichaHtml = fichaHtml.replace(/<span class="price-main" id="priceMain"><span class="pd-skeleton"[^>]*><\/span><\/span>/, `<span class="price-main" id="priceMain">${escapeHtml(priceText)}</span>`);
+      fichaHtml = fichaHtml.replace(/<p class="price-date" id="priceDate"><span class="pd-skeleton"[^>]*><\/span><\/p>/, `<p class="price-date" id="priceDate">${escapeHtml(priceDateText)}</p>`);
+
+      // CTA block
+      if (hasProyeccion) {
+        fichaHtml = fichaHtml.replace(/<a href="#" id="btnProyeccion" class="btn-primary">Ver proyección en la terminal<\/a>/, `<a href="/explorer?symbol=${encodeURIComponent(v.simbolo_proyeccion)}" id="btnProyeccion" class="btn-primary">Ver proyección en la terminal</a>`);
+      } else {
+        fichaHtml = fichaHtml.replace(/<a href="#" id="btnProyeccion" class="btn-primary">Ver proyección en la terminal<\/a>/, `<a href="#" id="btnProyeccion" class="btn-primary hidden">Ver proyección en la terminal</a>`);
+        fichaHtml = fichaHtml.replace(/<p id="proyeccionDisabled" class="hidden text-xs text-ink-soft mt-2 text-center">/, `<p id="proyeccionDisabled" class="text-xs text-ink-soft mt-2 text-center">`);
+      }
+
+      // Status
+      fichaHtml = fichaHtml.replace(/<p class="issuer-status" id="issuerStatusText"><\/p>/, `<p class="issuer-status" id="issuerStatusText">${escapeHtml(statusMsg)}</p>`);
+
+      // Shareholders
+      if (holders.length > 0) {
+        fichaHtml = fichaHtml.replace(/<div class="section hidden" id="shareholdersSection">/, `<div class="section" id="shareholdersSection">`);
+        fichaHtml = fichaHtml.replace(/<tbody id="shareholdersRows"><\/tbody>/, `<tbody id="shareholdersRows">${shHtml}</tbody>`);
+        fichaHtml = fichaHtml.replace(/<p class="shareholders-source" id="shareholdersSource"><\/p>/, `<p class="shareholders-source" id="shareholdersSource">Fuente: Superintendencia del Mercado de Valores (SMV), Datos Abiertos bajo licencia ODC-BY.</p>`);
+      }
+
+      // Hechos
+      fichaHtml = fichaHtml.replace(/<li class="hechos-empty">Buscando los hechos de importancia de esta empresa…<\/li>/, hechosHtml);
+
+      // Datos grid
+      fichaHtml = fichaHtml.replace(/<p class="dato-val" id="datoCodigo">—<\/p>/, `<p class="dato-val" id="datoCodigo">${escapeHtml(e.codigoBVL)}</p>`);
+      fichaHtml = fichaHtml.replace(/<p class="dato-val" id="datoSector">—<\/p>/, `<p class="dato-val" id="datoSector">${escapeHtml(sectorFormatted)}</p>`);
+      fichaHtml = fichaHtml.replace(/<p class="dato-val" id="datoNemonico">—<\/p>/, `<p class="dato-val" id="datoNemonico">${escapeHtml(nemo)}</p>`);
+      fichaHtml = fichaHtml.replace(/<p class="dato-val" id="datoMoneda">—<\/p>/, `<p class="dato-val" id="datoMoneda">${escapeHtml(v.moneda || "S/")}</p>`);
+      fichaHtml = fichaHtml.replace(/<p class="dato-val" id="datoSimboloProyeccion">—<\/p>/, `<p class="dato-val" id="datoSimboloProyeccion">${escapeHtml(v.simbolo_proyeccion || "—")}</p>`);
+      fichaHtml = fichaHtml.replace(/<p class="dato-val" id="datoProyeccion">—<\/p>/, `<p class="dato-val" id="datoProyeccion">${hasProyeccion ? "Sí (calibrada)" : "No"}</p>`);
+      fichaHtml = fichaHtml.replace(/<p class="dato-val" id="datoFecha">—<\/p>/, `<p class="dato-val" id="datoFecha">${escapeHtml(v.fechaUltimaNegociacion || "—")}</p>`);
+      fichaHtml = fichaHtml.replace(/<p class="dato-val" id="datoActiva">—<\/p>/, `<p class="dato-val" id="datoActiva">${isActivaIssuer ? "Sí" : "No"}</p>`);
+
+      // Perfil Empresa content
+      fichaHtml = fichaHtml.replace(/<div class="prose max-w-none text-ink text-sm leading-relaxed" id="perfilEmpresaContent" style="font-family: var\(--pd-font-read\);">[\s\S]*?<\/div>/, `<div class="prose max-w-none text-ink text-sm leading-relaxed" id="perfilEmpresaContent" style="font-family: var(--pd-font-read);">${paragraphsHtml}</div>`);
+
+      // Write static ficha
+      fs.writeFileSync(path.join(outDir, `${nemo}.html`), fichaHtml, "utf8");
+      if (hasPublic) {
+        fs.writeFileSync(path.join(publicOutDir, `${nemo}.html`), fichaHtml, "utf8");
+      }
+    }
+  }
+
+  console.log(`Successfully generated ${totalFichas} company fichas in empresa/:`);
+  console.log(`- Indexable fichas (data-indexable="1", words > 300, price last 30d): ${indexableCount}`);
+  console.log(`- Non-indexable fichas (noindex): ${nonIndexableCount}`);
+}
+
+buildFichas();
