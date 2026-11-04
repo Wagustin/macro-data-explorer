@@ -15,13 +15,13 @@ const key = process.env.SUPABASE_SERVICE_KEY || "";
 if (!base || !key) { console.log("Sin Supabase: no se guarda el sentimiento"); process.exit(0); }
 
 const news = read("noticias.json", { noticias: [] }).noticias || [];
-const laya = read("noticias-laya.json", { items: {} }).items || {};
+const clasif = read("noticias-clasificadas.json", { items: {} }).items || {};
 const limaDay = (isoDate) => new Date(Date.parse(isoDate) - 5 * 36e5).toISOString().slice(0, 10);
 const FIELD = { POSITIVO: "positivas", NEGATIVO: "negativas" };
 
 const counts = new Map();
 for (const n of news) {
-  const c = laya[n.id];
+  const c = clasif[n.id];
   if (!c || !n.fecha_iso || !c.sentimiento) continue;
   const fecha = limaDay(n.fecha_iso);
   const field = FIELD[c.sentimiento] || "neutras";

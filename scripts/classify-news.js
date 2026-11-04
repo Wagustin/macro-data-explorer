@@ -1,9 +1,8 @@
 // Classifies the new headlines of data/noticias.json with the language model of scripts/llm.js
 // (NVIDIA NIM, Gemini as fallback): whether it can move Peruvian or world markets, topic, sentiment
-// for those markets and the listed companies it is about (by nemónico). Replaces the Laya model,
-// which marked most headlines as positive and missed the companies.
+// for those markets and the listed companies it is about (by nemónico).
 // Headlines judged irrelevant (processions, sports, crime...) are dropped from noticias.json.
-// Writes data/noticias-laya.json (same format the digest, newsletter, notes and sentiment read).
+// Writes data/noticias-clasificadas.json (same format the digest, newsletter, notes and sentiment read).
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -14,7 +13,7 @@ import { fetchT } from "./http.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FEED = path.join(ROOT, "data", "noticias.json");
-const OUT = path.join(ROOT, "data", "noticias-laya.json");
+const OUT = path.join(ROOT, "data", "noticias-clasificadas.json");
 const TEMAS = ["Dólar y BCRP", "Economía y fiscal", "Minería y metales", "Bolsa y empresas", "Energía", "Mundo"];
 const SENT = ["POSITIVO", "NEGATIVO", "NEUTRO"];
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -24,8 +23,7 @@ const MARKET_TERMS = /\b(d[oó]lar|tipo\s+de\s+cambio|bolsa|bvl|mercados?|accion
 
 const feed = JSON.parse(fs.readFileSync(FEED, "utf8"));
 const prev = fs.existsSync(OUT) ? JSON.parse(fs.readFileSync(OUT, "utf8")) : { items: {} };
-// First run after Laya: classify everything again
-const items = /laya/i.test(prev.modelo || "") ? {} : prev.items || {};
+const items = prev.items || {};
 // Headlines already judged irrelevant (they come back with every fetch of the feeds)
 const dropped = new Set(prev.descartados || []);
 
@@ -76,7 +74,7 @@ function labelRow(n, x, modelName) {
 
 const pending = (feed.noticias || []).filter((n) => n.id && !items[n.id] && !dropped.has(n.id));
 console.log(`Titulares nuevos: ${pending.length}`);
-let model = prev.modelo && !/laya/i.test(prev.modelo) ? prev.modelo : null;
+let model = prev.modelo || null;
 const drop = new Set([...dropped].filter((id) => (feed.noticias || []).some((n) => n.id === id)));
 
 let failedBatches = 0;
@@ -122,14 +120,14 @@ Devuelve SOLO este JSON: {"r":[{"i":0,"relevante":"ALTA","tema":"...","sentimien
 }
 
 if (process.argv.includes("--sync-all")) {
-  const laya = JSON.parse(fs.readFileSync(OUT, "utf8"));
+  const clasif = JSON.parse(fs.readFileSync(OUT, "utf8"));
   const allNews = new Map();
-  for (const n of [...(feed.noticias || []), ...(laya.noticias || [])]) if (n?.id) allNews.set(n.id, n);
-  const discarded = new Set(laya.descartados || []);
+  for (const n of [...(feed.noticias || []), ...(clasif.noticias || [])]) if (n?.id) allNews.set(n.id, n);
+  const discarded = new Set(clasif.descartados || []);
   const rows = [...allNews.values()].map((n) => labelRow(
     n,
-    discarded.has(n.id) ? { relevancia: "NINGUNA" } : (laya.items || {})[n.id] || {},
-    laya.modelo || model,
+    discarded.has(n.id) ? { relevancia: "NINGUNA" } : (clasif.items || {})[n.id] || {},
+    clasif.modelo || model,
   ));
   for (let i = 0; i < rows.length; i += 500) await saveLabels(rows.slice(i, i + 500));
   console.log(`Sincronizadas ${rows.length} noticias históricas con Supabase`);

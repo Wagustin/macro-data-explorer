@@ -27,18 +27,18 @@ if (!r.ok) throw new Error(`Supabase HTTP ${r.status}`);
 const rows = await r.json();
 
 const news = read("noticias.json", { noticias: [] }).noticias || [];
-const laya = read("noticias-laya.json", { items: {} }).items || {};
+const clasif = read("noticias-clasificadas.json", { items: {} }).items || {};
 const nameOf = Object.fromEntries(CATALOG.map((a) => [a.symbol, a.name]));
 const since = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10);
 const forecasts = new Map(rows.map((row) => [`${row.symbol}|${row.horizon}`, row]));
-const averageAll = (items) => sentimentAverage(items.map((item) => ({ sentimiento: laya[item.id]?.sentimiento })));
+const averageAll = (items) => sentimentAverage(items.map((item) => ({ sentimiento: clasif[item.id]?.sentimiento })));
 
 const facts = rows.filter((row) => Number(row.horizon) === 1).map((row) => {
   const sym = row.symbol;
   const asset = CATALOG.find((a) => a.symbol === sym) || { symbol: sym, name: nameOf[sym] || sym, tags: [] };
   const threeMonth = forecasts.get(`${sym}|3`);
   const last = Number(row.last_close);
-  const headlines = selectHeadlines({ asset, news, labels: laya, since });
+  const headlines = selectHeadlines({ asset, news, labels: clasif, since });
   const today = new Date(Date.now() - 5 * 36e5).toISOString().slice(0, 10);
   const todayHeadlines = headlines.filter((item) => new Date(Date.parse(item.fecha) - 5 * 36e5).toISOString().slice(0, 10) === today);
   const p50 = Number(row.p50);

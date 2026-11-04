@@ -1,7 +1,7 @@
 // «Lo importante de hoy»: picks the stories that matter for someone following Peru's economy and
 // stock market, groups headlines about the same event and writes a short note of our own for each,
 // using only the facts in the headlines (we never copy articles) and listing every source link.
-// Laya's labels go in as a hint; the language model makes the final choice.
+// Classifier labels go in as a hint; the language model makes the final choice.
 // Writes data/noticias-resumen.json and the dated public archive. Runs after fetch-news.js and classify-news.js (news.yml).
 import fs from "fs";
 import path from "path";
@@ -33,7 +33,7 @@ function updateArchive(summary) {
 }
 
 const feed = read("noticias.json", { noticias: [] });
-const laya = read("noticias-laya.json", { items: {} }).items || {};
+const clasif = read("noticias-clasificadas.json", { items: {} }).items || {};
 const since = Date.now() - 36 * 36e5;
 const recent = (feed.noticias || []).filter((n) => Date.parse(n.fecha_iso) >= since).slice(0, 90);
 if (recent.length < 5) {
@@ -42,8 +42,8 @@ if (recent.length < 5) {
 }
 
 const lines = recent.map((n, i) => {
-  const c = laya[n.id] || {};
-  return `${i}|${n.fuente}|${n.categoria}|laya:${c.relevancia || "-"}|${n.titulo}`;
+  const c = clasif[n.id] || {};
+  return `${i}|${n.fuente}|${n.categoria}|clasif:${c.relevancia || "-"}|${n.titulo}`;
 }).join("\n");
 
 const prompt = `Eres el editor de PerData, un medio sobre economía y bolsa del Perú. Tienes estos titulares de las últimas 36 horas (formato: índice|fuente|categoría|relevancia según un clasificador automático|titular):
@@ -68,7 +68,7 @@ const stories = (res.out.historias || []).map((h) => {
   const src = used.map((i) => recent[i].titulo).join(" ");
   const nota = grounded(h.nota, src);
   if (!nota) return null;
-  const empresas = [...new Set(used.flatMap((i) => laya[recent[i].id]?.empresas || []))];
+  const empresas = [...new Set(used.flatMap((i) => clasif[recent[i].id]?.empresas || []))];
   return {
     titulo: String(h.titulo || "").slice(0, 120),
     nota,

@@ -342,7 +342,7 @@ function render(f, ai, dateLabel) {
 const issuers = (await getJson(`${RAW}/empresas.json`).catch(() => ({ emisores: [] }))).emisores || [];
 const issuerOf = (nemo) => issuers.find((e) => e.valores.some((v) => v.nemonico === nemo));
 
-async function companyCard(nemo, smvAll, laya, newsById) {
+async function companyCard(nemo, smvAll, clasif, newsById) {
   const e = issuerOf(nemo);
   if (!e) return null;
   const nemos = e.valores.map((v) => v.nemonico);
@@ -377,7 +377,7 @@ async function companyCard(nemo, smvAll, laya, newsById) {
     const k = `${String(h.fecha).slice(0, 10)} ${String(h.titulo).toLowerCase().replace(/\s+/g, " ").trim()}`;
     return seen.has(k) ? false : seen.add(k);
   }).slice(0, 3);
-  for (const [id, c] of Object.entries(laya)) {
+  for (const [id, c] of Object.entries(clasif)) {
     const story = newsById[id];
     const recent = story?.fecha_iso && Date.parse(story.fecha_iso) >= Date.now() - 7 * 864e5;
     if (recent && (c.empresas || []).some((x) => nemos.includes(x)) && mencionaEmpresa(`${story.titulo} ${story.resumen || ""}`, e)) card.news.push({ ...story, sentimiento: c.sentimiento });
@@ -430,10 +430,10 @@ const html = render(f, ai, dateLabel);
 let previewPersonal = "";
 if (process.env.PREVIEW_EMPRESAS) {
   const smvAll = (await getJson(`${RAW}/smv-hechos.json`).catch(() => ({ hechos: {} }))).hechos || {};
-  const laya = (await getJson(`${RAW}/noticias-laya.json`).catch(() => ({ items: {} }))).items || {};
+  const clasif = (await getJson(`${RAW}/noticias-clasificadas.json`).catch(() => ({ items: {} }))).items || {};
   const newsById = Object.fromEntries(((await getJson(`${RAW}/noticias.json`).catch(() => ({ noticias: [] }))).noticias || []).map((n) => [n.id, n]));
   const cards = [];
-  for (const n of process.env.PREVIEW_EMPRESAS.split(",")) { const c = await companyCard(n.trim(), smvAll, laya, newsById); if (c) cards.push(c); }
+  for (const n of process.env.PREVIEW_EMPRESAS.split(",")) { const c = await companyCard(n.trim(), smvAll, clasif, newsById); if (c) cards.push(c); }
   previewPersonal = renderPersonal(cards);
 }
 const previewPath = process.env.BOLETIN_PREVIEW_PATH || "boletin-preview.html";
@@ -486,10 +486,10 @@ if (!DRY && !PREVIEW) {
   // Company cards are built once per company and shared between subscribers
   const wanted = [...new Set(list.filter((x) => x.personal).flatMap((x) => x.empresas || []))];
   const smvAll = (await getJson(`${RAW}/smv-hechos.json`).catch(() => ({ hechos: {} }))).hechos || {};
-  const laya = (await getJson(`${RAW}/noticias-laya.json`).catch(() => ({ items: {} }))).items || {};
+  const clasif = (await getJson(`${RAW}/noticias-clasificadas.json`).catch(() => ({ items: {} }))).items || {};
   const newsById = Object.fromEntries(((await getJson(`${RAW}/noticias.json`).catch(() => ({ noticias: [] }))).noticias || []).map((n) => [n.id, n]));
   const cards = {};
-  for (const nemo of wanted) cards[nemo] = await companyCard(nemo, smvAll, laya, newsById);
+  for (const nemo of wanted) cards[nemo] = await companyCard(nemo, smvAll, clasif, newsById);
   console.log(`Empresas seguidas: ${wanted.length}`);
 
   const upsell = `<tr><td style="padding:24px 0 0;font-family:'Libre Franklin',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#5E584E">Elegiste empresas para seguir. La sección «Tus empresas» (precio, proyección, hechos y noticias de cada una) es parte del plan Boletín, por US$&nbsp;1.99 al mes. <a href="${SITE}/precios" style="color:#1B1916">Ver planes</a></td></tr>`;

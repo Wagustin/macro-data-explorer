@@ -3,7 +3,8 @@ import path from "path";
 import dns from "node:dns";
 import { fileURLToPath } from "url";
 import defaultNewsCache from "../data/news-cache.json" with { type: "json" };
-import newsAnalysis from "../data/noticias-laya.json" with { type: "json" };
+// Bundled at build time: the Worker has no file system to read it from at runtime
+import newsAnalysis from "../data/noticias-clasificadas.json" with { type: "json" };
 import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
 
 // Prioritize IPv4 for DNS resolution in Node to prevent RSS fetch timeouts
