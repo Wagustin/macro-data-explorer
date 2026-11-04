@@ -1,14 +1,17 @@
 """Official, openly licensed market data for PerData (runs daily on GitHub Actions).
 
 Writes to data/official/:
-  eia-oil.json      WTI and Brent spot, daily (U.S. EIA, public domain, 17 U.S.C. 105)
-  wb-metals.json    copper, gold, silver, zinc, WTI and Brent, monthly
-                    (World Bank Pink Sheet, CC BY 4.0)
-  sunat-fx.json     USD/PEN buy and sell published by SUNAT, one point per day,
-                    accumulated from the day this job started (SUNAT only publishes today's rate)
-  bcrp-daily.json   BCRP daily series: USD/PEN (SBS, sell) and international copper, gold,
-                    silver, zinc and WTI quotes. Downloaded once a day here so the site never
-                    calls the BCRP API on visitor requests (its API started showing a bot check).
+  eia-oil.json        WTI and Brent spot, daily (U.S. EIA, public domain, 17 U.S.C. 105)
+  wb-metals.json      copper, gold, silver, zinc, WTI and Brent, monthly
+                      (World Bank Pink Sheet, CC BY 4.0)
+  sunat-fx.json       USD/PEN buy and sell published by SUNAT, one point per day,
+                      accumulated from the day this job started (SUNAT only publishes today's rate)
+  bcrp-daily.json     BCRP daily series: USD/PEN (SBS, sell) and international copper, gold,
+                      silver, zinc and WTI quotes. Downloaded once a day here so the site never
+                      calls the BCRP API on visitor requests (its API started showing a bot check).
+  bcrp-contexto.json  BCRP monetary and macroeconomic series providing context for USD/PEN:
+                      net international reserves, policy rate, FX interventions, swaps, CDRs,
+                      annual inflation, terms of trade and export copper price.
 
 Identified User-Agent, a few requests per day, nothing behind logins or bot checks.
 Needs: xlrd, openpyxl.  Usage: python scripts/fetch_official.py
@@ -192,6 +195,70 @@ def bcrp_daily():
     return "BCRP: " + ", ".join(f"{k} {len(v['serie'])} puntos {v['serie'][0][0]}–{v['serie'][-1][0]}" for k, v in out.items())
 
 
+BCRP_CONTEXTO_SERIES = {
+    # Diarias
+    "RIN": ("PD04650MD", "Millones US$", 1, "diaria"),
+    "POSICION_CAMBIO": ("PD04649MD", "Millones US$", 1, "diaria"),
+    "TASA_REFERENCIA": ("PD12301MD", "% anual", 1, "diaria"),
+    "INTERVENCION_BCRP": ("PD04658MD", "Millones US$", 1, "diaria"),
+    "COMPRAS_MESA_NEGOCIACION": ("PD04659MD", "Millones US$", 1, "diaria"),
+    "SWAPS_CAMBIARIOS_NETOS": ("PD04660MD", "Millones US$", 1, "diaria"),
+    "CDR_EMITIDO": ("PD37517TD", "Millones US$", 1, "diaria"),
+    "SWAP_VENTA_PACTADO": ("PD37521TD", "Millones US$", 1, "diaria"),
+    # Mensuales
+    "INFLACION_ANUAL": ("PN01273PM", "Var. % 12 meses", 1, "mensual"),
+    "INFLACION_SUBYACENTE": ("PN01277PM", "Var. % 12 meses", 1, "mensual"),
+    "TERMINOS_INTERCAMBIO": ("PN38923BM", "Índice 2007 = 100", 1, "mensual"),
+    "TERMINOS_INTERCAMBIO_VAR12M": ("PN38926BM", "Var. % 12 meses", 1, "mensual"),
+    "COBRE_EXPORTACION": ("PN38784BM", "¢US$ por libra", 1, "mensual"),
+}
+
+
+def bcrp_contexto():
+    end = dt.date.today()
+    start = dt.date(2012, 1, 1)
+    out = {}
+    for name, (code, unit, scale, freq) in BCRP_CONTEXTO_SERIES.items():
+        raw = get(f"https://estadisticas.bcrp.gob.pe/estadisticas/series/api/{code}/json/{start}/{end}").decode("utf-8", "replace")
+        if raw.lstrip().startswith("<"):
+            raise RuntimeError(f"BCRP contexto {code}: devolvió HTML (¿comprobación antibots?)")
+        cut = raw[: raw.index("<")] if raw.find("<") > 0 else raw
+        data = json.loads(cut[: cut.rindex("}") + 1])
+        points = []
+        for per in data.get("periods", []):
+            try:
+                value = float(per["values"][0])
+            except (ValueError, KeyError, IndexError):
+                continue
+            pname = per.get("name", "")
+            if freq == "diaria":
+                m = re.match(r"^(\d{2})\.([A-Za-z]{3})\.(\d{2})$", pname)
+                if m and m.group(2) in BCRP_MONTHS:
+                    points.append([f"20{m.group(3)}-{BCRP_MONTHS[m.group(2)]}-{m.group(1)}", round(value * scale, 6)])
+            else:
+                m = re.match(r"^([A-Za-z]{3})\.(\d{4})$", pname)
+                if m and m.group(1) in BCRP_MONTHS:
+                    points.append([f"{m.group(2)}-{BCRP_MONTHS[m.group(1)]}", round(value * scale, 6)])
+        min_pts = 100 if freq == "diaria" else 50
+        if len(points) < min_pts:
+            raise RuntimeError(f"BCRP contexto {code}: solo {len(points)} datos")
+        out[name] = {"codigo": code, "unidad": unit, "frecuencia": freq, "serie": points}
+        time.sleep(6)
+    path = os.path.join(OUT, "bcrp-contexto.json")
+    payload = {
+        "fuente": "Banco Central de Reserva del Perú (BCRP), estadísticas macroeconómicas y monetarias",
+        "url": "https://estadisticas.bcrp.gob.pe/estadisticas/series/",
+        "licencia": "Información pública del BCRP, citando la fuente",
+        "series": out,
+    }
+    encoded = json.dumps({**payload, "actualizado": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")}, ensure_ascii=False, separators=(",", ":"))
+    if len(encoded.encode("utf-8")) >= 1_500_000:
+        raise RuntimeError(f"BCRP contexto: archivo resultante demasiado grande ({len(encoded.encode('utf-8'))} bytes)")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(encoded + "\n")
+    return "BCRP contexto: " + ", ".join(f"{k} {len(v['serie'])} puntos {v['serie'][0][0]}–{v['serie'][-1][0]}" for k, v in out.items())
+
+
 FED_SERIES = {
     # DDP series names, resolved against the H.10/H.15 release XML.
     "EURUSD": ("H10", "RXI$US_N.B.EU", "USD por EUR"),
@@ -252,7 +319,7 @@ def fed_rates():
 
 if __name__ == "__main__":
     errors = []
-    for job in (bcrp_daily, eia_oil, wb_metals, sunat_fx, fed_rates):
+    for job in (bcrp_daily, bcrp_contexto, eia_oil, wb_metals, sunat_fx, fed_rates):
         try:
             print(job())
         except Exception as e:  # one source failing must not block the others
