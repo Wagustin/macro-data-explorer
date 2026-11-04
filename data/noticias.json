@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-04T05:31:34.191Z",
+  "actualizado": "2026-11-04T06:20:34.696Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -13,8 +13,8 @@
     },
     "inei": {
       "nombre": "Instituto Nacional de Estadística e Informática",
-      "ok": true,
-      "items": 25
+      "ok": false,
+      "items": 0
     },
     "bcrp": {
       "nombre": "Banco Central de Reserva del Perú",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 61
+      "items": 60
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -34,7 +34,7 @@
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 11
+      "items": 12
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 28
+      "items": 27
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,15 @@
     }
   },
   "noticias": [
+    {
+      "id": "rpp-32a3a7e835",
+      "titulo": "Aplastante victoria demócrata en EE.UU.: arrebatan el Congreso a republicanos en elecciones de medio mandato en duro castigo a Trump",
+      "url": "https://rpp.pe/mundo/estados-unidos/aplastante-victoria-democrata-en-eeuu-arrebatan-el-congreso-a-republicanos-en-elecciones-de-medio-mandato-en-duro-castigo-a-trump-noticia-1715840",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-04T05:27:08.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "bloomberg_linea-dcf6dc6c23",
       "titulo": "Demócratas obtienen el control del Congreso de EE.UU. en un duro revés para Trump",
@@ -412,6 +421,15 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-03T23:45:00.000Z",
       "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-cc3718b569",
+      "titulo": "Presupuesto 2027: piden CTS al 100% para CAS que cesen por edad y bonos para trabajadores de Educación",
+      "url": "https://larepublica.pe/economia/2026/11/03/presupuesto-2027-piden-cts-al-100-para-cas-que-cesen-por-edad-y-bonos-para-trabajadores-de-educacion-hnews-298728",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-03T23:36:16.000Z",
+      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -997,15 +1015,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-03T13:50:42.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-bea670442c",
-      "titulo": "¿Por qué le importa a México y al T-MEC el resultado de las elecciones intermedias en EE.UU.?",
-      "url": "https://www.bloomberglinea.com/latinoamerica/mexico/por-que-le-importa-a-mexico-y-al-t-mec-el-resultado-de-las-elecciones-intermedias-en-eeuu/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-03T13:49:12.000Z",
-      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     }
   ]
