@@ -10,7 +10,7 @@
 
   const INK = '#EDE8DC';
   const INTRO_MS = 1800;
-  const PULSE_PERIOD = 5200;  // ms between two soft pulses along the fan
+  const PULSE_PERIOD = 2600;  // ms between two soft pulses along the fan
   const PULSE_MS = 1400;
   const IDLE_FPS = 15;
   // Parallax shift (px) of each layer at the edge of the panel (desktop only): far, fan, line
@@ -99,7 +99,7 @@
     isMobile = width < 680 || height < 260;
     t0X = Math.round(width * (isMobile ? 0.34 : 0.40));
     midY = Math.round(height * 0.5);
-    spread = isMobile ? 0.36 : 0.30;
+    spread = isMobile ? 0.46 : 0.40;
 
     far = [];
     const farStep = isMobile ? 20 : 18;
@@ -200,9 +200,9 @@
     ctx.stroke();
     ctx.restore();
 
-    // A soft pulse leaves «hoy» every few seconds (none while the pointer bends the line)
+    // A soft pulse leaves «hoy» every few seconds
     const since = (now - startTime - INTRO_MS) % PULSE_PERIOD;
-    const pulseX = !still && t > INTRO_MS && since < PULSE_MS && !bend ? t0X + (width - t0X) * (since / PULSE_MS) : -1;
+    const pulseX = !still && t > INTRO_MS && since < PULSE_MS ? t0X + (width - t0X) * (since / PULSE_MS) : -1;
 
     drawTicks(ticks, (s) => {
       const k = settle(s.x);
@@ -254,19 +254,18 @@
     let moving = false;
     const tx = pointer && !isMobile ? (pointer.x / width - 0.5) * 2 : 0;
     const ty = pointer && !isMobile ? (pointer.y / height - 0.5) * 2 : 0;
-    parallax.x += (tx - parallax.x) * 0.1;
-    parallax.y += (ty - parallax.y) * 0.1;
+    parallax.x += (tx - parallax.x) * 0.05;
+    parallax.y += (ty - parallax.y) * 0.05;
     if (Math.abs(tx - parallax.x) + Math.abs(ty - parallax.y) > 0.002) moving = true;
 
+    // The projection follows the pointer anywhere on the page, aimed at its height, inside the band
     let target = 0;
-    if (pointer && pointer.x > t0X + 20) {
-      const half = halfBand(pointer.x);
-      if (Math.abs(pointer.y - midY) < half + 60) {
-        target = Math.max(-half, Math.min(half, pointer.y - midY));
-        bendX = pointer.x;
-      }
+    if (pointer) {
+      bendX = Math.max(t0X + (width - t0X) * 0.35, Math.min(width, pointer.x));
+      const half = halfBand(bendX);
+      target = Math.max(-half, Math.min(half, pointer.y - midY));
     }
-    bend += (target - bend) * 0.12;
+    bend += (target - bend) * 0.045;
     if (Math.abs(target - bend) > 0.3) moving = true; else if (!target) bend = 0;
     return moving;
   }
@@ -288,8 +287,8 @@
   function handleMove(e) {
     if (!canvas) return;
     const r = canvas.getBoundingClientRect();
-    const x = e.clientX - r.left, y = e.clientY - r.top;
-    pointer = x >= 0 && y >= 0 && x <= r.width && y <= r.height ? { x, y } : null;
+    // Tracked over the whole page, not only the panel: the form side steers the projection too
+    pointer = { x: e.clientX - r.left, y: Math.max(0, Math.min(r.height, e.clientY - r.top)) };
   }
 
   function handleVisibility() {
