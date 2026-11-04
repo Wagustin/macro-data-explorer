@@ -1447,7 +1447,15 @@
             }
           });
         }
-        renderHeroChart();
+        // While the intro plays the chart waits: on slow phones its first render would take the intro's frames
+        var introOn = function () { return /^(play|dock)$/.test(document.documentElement.dataset.intro || ''); };
+        if (introOn()) {
+          new MutationObserver(function (m, obs) {
+            if (!introOn()) { obs.disconnect(); renderHeroChart(); }
+          }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-intro'] });
+        } else {
+          renderHeroChart();
+        }
 
         var themeObserver = new MutationObserver(function (mutations) {
           for (var i = 0; i < mutations.length; i++) {
