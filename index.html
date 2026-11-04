@@ -569,6 +569,10 @@
     /* La leyenda bajo el grafico solo existe cuando llegan los datos. Reservamos las lineas que
        ocupa en cada ancho (medidas el 4-nov: 84 en movil y en 1024-1279, 56 en 768 y desde 1280)
        para que la tarjeta no cambie de alto al cargar y no empuje lo que va debajo. */
+    /* La linea de estado del mercado pasa de una a dos lineas al llegar los datos en telefonos
+       estrechos (medido: 18 -> 36 px hasta 479 px). Se reserva para que no empuje el heroe. */
+    #homeStatus { min-height: 18px; }
+    @media (max-width: 479px) { #homeStatus { min-height: 36px; } }
     #pdChartCaption { min-height: 84px; }
     .pd-chart-model-header { min-height: 24px; }
     @media (min-width: 768px) and (max-width: 1023px) { #pdChartCaption { min-height: 56px; } }
