@@ -69,6 +69,7 @@ const FILES_TO_COPY = [
   "entrar.html",
   "entrar.js",
   "pd-login-field.js",
+  "pd-intro.js",
   "favicon.ico",
   "icon.svg",
   "apple-touch-icon.png",
@@ -78,7 +79,7 @@ const FILES_TO_COPY = [
   "tailwind.theme.json"
 ];
 
-const FILES_TO_MINIFY = ["pd.css", "auth.js", "pd-login-field.js", "pd-chart.js", "ads.js", "motion.js", "consent.js", "entrar.js"];
+const FILES_TO_MINIFY = ["pd.css", "auth.js", "pd-login-field.js", "pd-intro.js", "pd-chart.js", "ads.js", "motion.js", "consent.js", "entrar.js"];
 const STATIC_HEADERS = `/*.js
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 /*.css

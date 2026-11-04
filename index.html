@@ -30,6 +30,19 @@
     })();
   </script>
 
+  <!-- Intro Gate (T77) -->
+  <script>
+    (function() {
+      try {
+        var rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var sd = Boolean(navigator.connection && navigator.connection.saveData);
+        if (!sessionStorage.getItem('pd_intro_seen') && !rm && !sd) {
+          document.documentElement.dataset.intro = 'play';
+        }
+      } catch (_) {}
+    })();
+  </script>
+
   <script>
     window.__pdEarly = {
       hist: fetch('/api/historical?symbol=PEN=X&range=1y&interval=1mo').then(function (r) { return r.json(); }).catch(function () { return null; }),
@@ -144,6 +157,205 @@
   <script src="/pd-chart.js" defer></script>
 
 <style>
+    /* Intro Animada T77d (Abliteration-style Domino) */
+    #pdIntro {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      background-color: #F5F1E8;
+      display: none;
+      pointer-events: auto;
+      overflow: hidden;
+      transition: background-color 0.4s ease;
+    }
+    html.dark #pdIntro {
+      background-color: #141311;
+    }
+    html[data-intro="play"] #pdIntro,
+    html[data-intro="dock"] #pdIntro {
+      display: block;
+    }
+    html[data-intro="dock"] #pdIntro {
+      background-color: transparent !important;
+      pointer-events: none;
+    }
+    html[data-intro="dock"] #pdIntroCanvas {
+      mix-blend-mode: multiply;
+    }
+    html.dark[data-intro="dock"] #pdIntroCanvas {
+      mix-blend-mode: screen;
+    }
+    #pdIntroCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .pd-intro-hud {
+      display: none !important;
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 71;
+    }
+    @media (max-width: 640px) {
+      .pd-intro-hud {
+        padding: 20px 20px;
+      }
+    }
+    html[data-intro="dock"] .pd-intro-hud,
+    html[data-intro="in"] .pd-intro-hud,
+    html[data-intro="done"] .pd-intro-hud {
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    .pd-intro-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .pd-intro-wordmark {
+      font-family: var(--pd-font-read, 'Source Serif 4', Georgia, serif);
+      font-style: italic;
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: -0.01em;
+      color: #EDE8DC;
+      display: inline-flex;
+      align-items: baseline;
+    }
+    @media (max-width: 640px) {
+      .pd-intro-wordmark {
+        font-size: 21px;
+      }
+    }
+    .pd-intro-dot {
+      color: #C8102E;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 1;
+      margin-left: 1px;
+    }
+    @media (max-width: 640px) {
+      .pd-intro-dot {
+        font-size: 21px;
+      }
+    }
+    .pd-intro-badge {
+      font-family: var(--pd-font-mono, 'IBM Plex Mono', monospace);
+      font-size: 11px;
+      font-weight: 500;
+      color: #8C8273;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    @media (max-width: 640px) {
+      .pd-intro-badge {
+        font-size: 10px;
+      }
+    }
+    .pd-intro-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .pd-intro-cifra {
+      font-family: var(--pd-font-mono, 'IBM Plex Mono', monospace);
+      font-size: 15px;
+      font-weight: 500;
+      color: #EDE8DC;
+      letter-spacing: -0.02em;
+      min-height: 1.4em;
+    }
+    @media (max-width: 640px) {
+      .pd-intro-cifra {
+        font-size: 12px;
+      }
+    }
+    .pd-intro-subcifra {
+      font-family: var(--pd-font-mono, 'IBM Plex Mono', monospace);
+      font-size: 11px;
+      color: #8C8273;
+      letter-spacing: 0.02em;
+      margin-top: 2px;
+    }
+    html[data-intro="in"] .pdl-h1 {
+      animation: pdIntroRise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      animation-delay: 0ms;
+    }
+    html[data-intro="in"] .pdl-quote {
+      animation: pdIntroRise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      animation-delay: 60ms;
+    }
+    html[data-intro="in"] .pdl-card {
+      animation: pdIntroRise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      animation-delay: 120ms;
+    }
+    html[data-intro="in"] .pd-home-actions {
+      animation: pdIntroRise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      animation-delay: 180ms;
+    }
+    html[data-intro="play"] header nav,
+    html[data-intro="dock"] header nav {
+      opacity: 0;
+    }
+    html[data-intro="play"] header a:has([data-header-logo]),
+    html[data-intro="dock"] header a:has([data-header-logo]),
+    html[data-intro="play"] header [data-header-logo],
+    html[data-intro="dock"] header [data-header-logo],
+    html[data-intro="play"] header .pd-wordmark,
+    html[data-intro="dock"] header .pd-wordmark,
+    html[data-intro="play"] #pdConsentBanner,
+    html[data-intro="dock"] #pdConsentBanner {
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+    html[data-intro="in"] header a:has([data-header-logo]),
+    html[data-intro="done"] header a:has([data-header-logo]),
+    html[data-intro="in"] header [data-header-logo],
+    html[data-intro="done"] header [data-header-logo],
+    html[data-intro="in"] header .pd-wordmark,
+    html[data-intro="done"] header .pd-wordmark {
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+    html[data-intro="in"] #pdConsentBanner,
+    html[data-intro="done"] #pdConsentBanner {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.4s ease;
+    }
+    html[data-intro="in"] header nav,
+    html[data-intro="done"] header nav {
+      opacity: 1;
+      transition: opacity 0.4s ease;
+    }
+    @keyframes pdIntroRise {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #pdIntro { display: none !important; }
+      html[data-intro] .pdl-h1,
+      html[data-intro] .pdl-quote,
+      html[data-intro] .pdl-card,
+      html[data-intro] .pd-home-actions {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+
     html, body {
       overflow-x: hidden !important;
       width: 100% !important;
@@ -274,6 +486,7 @@
   <link rel="preload" as="style" href="/pd.css" data-async-css>
   <noscript>  <!-- Fuentes auto-alojadas (T74) -->
   <link rel="preload" href="/fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/source-serif-4-italic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/libre-franklin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/pd.css"></noscript>
   <style>
@@ -407,13 +620,28 @@
 </head>
 <body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 
+  <!-- Overlay Intro Animada (T77) -->
+  <aside id="pdIntro" aria-label="Introducción animada PerData">
+    <canvas id="pdIntroCanvas"></canvas>
+    <div class="pd-intro-hud" id="pdIntroHud">
+      <div class="pd-intro-top">
+        <div class="pd-wordmark pd-intro-wordmark" id="pdIntroWordmark">PerData<span class="pd-intro-dot">.</span></div>
+        <div class="pd-intro-badge">PERDATA ENGINE v6</div>
+      </div>
+      <div class="pd-intro-bottom">
+        <div class="pd-intro-cifra" id="pdIntroCifra"></div>
+        <div class="pd-intro-subcifra" id="pdIntroSubcifra"></div>
+      </div>
+    </div>
+  </aside>
+
   <!-- Shared Institutional Header -->
   <header class="border-b border-rule bg-card sticky top-0 z-30 transition-colors">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
       <!-- Brand & Navigation -->
       <div class="flex items-center space-x-6">
         <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
-          <span class="pd-wordmark" data-hero-seq="0">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
+          <span class="pd-wordmark" data-hero-seq="0" data-header-logo>PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
         </a>
 
         <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
@@ -1399,6 +1627,8 @@
     carga();
   })();
 </script>
+<script src="/pd-login-field.js" defer></script>
+<script src="/pd-intro.js" defer></script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "bc9abca1e97b4bcaa6261b23afc498e5"}'></script>
 </body>
 </html>
