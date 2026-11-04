@@ -1,350 +1,334 @@
 /**
- * PerData — Campo de Tinta (Login Modal Ink Field)
- * Canvas 2D scene with short strokes aligning into a probabilistic forecast fan (P10–P90).
- * Exported as window.PDLoginField.start(canvas) / stop().
+ * PerData — Campo de Tinta (login)
+ * Canvas 2D scene in three depth layers: a faint ink background, the P10–P90 fan and the price
+ * line, which converge on load and keep a slow flow at rest. Exported as
+ * window.PDLoginField.start(canvas) / stop().
  */
 (function(window, document) {
   'use strict';
 
-  let activeCanvas = null;
+  const INK = '#EDE8DC';
+  const INTRO_MS = 1800;
+  const REST_FPS = 30;
+  const REST_INTERVAL = 1000 / REST_FPS;
+  const ALPHA_BUCKETS = 12;
+  // Parallax shift (px) of each layer at the edge of the panel: far, fan, line
+  const DEPTH = { far: 4, mid: 9, near: 15 };
+
+  let canvas = null;
+  let ctx = null;
   let animId = null;
   let resizeObserver = null;
-  let isRunning = false;
+  let running = false;
   let startTime = 0;
-  let lastFrameTime = 0;
-  let lastInteractionTime = 0;
+  let lastFrame = 0;
   let frameCount = 0;
-  let mouseX = -1000;
-  let mouseY = -1000;
-  let boundMouseMove = null;
-  let boundVisibility = null;
-
-  const DURATION_MS = 1800;
-  const MAX_STROKES = 2400;
-  const REST_FPS = 12;
-  const REST_INTERVAL = 1000 / REST_FPS;
-
-  let strokes = [];
   let width = 0;
   let height = 0;
   let dpr = 1;
   let t0X = 0;
   let midY = 0;
+  let layers = { far: [], mid: [], near: [] };
+  let pointer = { x: 0, y: 0 };   // -1..1 relative to the panel centre
+  let parallax = { x: 0, y: 0 };  // eased towards pointer
+  let onMove = null;
+  let onVisibility = null;
 
-  function prefersReducedMotion() {
-    try {
-      return Boolean(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-    } catch (_) {
-      return false;
-    }
+  function reducedMotion() {
+    try { return Boolean(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (_) { return false; }
   }
 
-  function initStrokes() {
-    if (!width || !height) return;
-    strokes = [];
-    const isMobile = (typeof window !== 'undefined' && window.innerWidth < 680) || height < 250;
-    const spacing = isMobile ? 12 : 14;
-    const baseLen = isMobile ? 8 : 9;
-    const cols = Math.floor(width / spacing) + 1;
-    const rows = Math.floor(height / spacing) + 1;
-    const count = Math.min(cols * rows, MAX_STROKES);
+  // Deterministic pseudo-random numbers, so the scene is the same on every visit
+  function mulberry32(seed) {
+    let a = seed >>> 0;
+    return function() {
+      a = (a + 0x6d2b79f5) >>> 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
 
-    const p50Row = Math.round((height * 0.50 - spacing / 2) / spacing);
-    midY = p50Row * spacing + (spacing / 2);
+  const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+  const clamp01 = (t) => (t < 0 ? 0 : t > 1 ? 1 : t);
 
-    const t0Col = Math.round((width * (isMobile ? 0.36 : 0.40) - spacing / 2) / spacing);
-    t0X = t0Col * spacing + (spacing / 2);
+  // Smoothed random walk that ends exactly at «hoy» (t0X, midY)
+  function pricePath(rand, isMobile) {
+    const n = 90;
+    const raw = [0];
+    for (let i = 1; i < n; i++) raw.push(raw[i - 1] + (rand() - 0.5));
+    const smooth = raw.map((_, i) => {
+      let s = 0, c = 0;
+      for (let k = -4; k <= 4; k++) { const v = raw[i + k]; if (v !== undefined) { s += v; c++; } }
+      return s / c;
+    });
+    // Remove the overall drift so the line wanders around «hoy» instead of crashing into it
+    const drift = smooth[n - 1] - smooth[0];
+    const flat = smooth.map((v, i) => v - drift * (i / (n - 1)));
+    const last = flat[n - 1];
+    const span = Math.max(...flat.map((v) => Math.abs(v - last))) || 1;
+    const amp = height * (isMobile ? 0.2 : 0.11);
+    const x0 = width * 0.03;
+    return flat.map((v, i) => ({ x: x0 + (t0X - x0) * (i / (n - 1)), y: midY - ((v - last) / span) * amp }));
+  }
 
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        if (strokes.length >= count) break;
-        const x = c * spacing + (spacing / 2);
-        const y = r * spacing + (spacing / 2);
-        const initialAngle = Math.random() * Math.PI * 2;
+  // Strokes placed every `step` px along a polyline, aligned to its tangent
+  function strokesAlong(points, step, opts) {
+    const out = [];
+    let carry = 0;
+    let arc = 0;
+    for (let i = 1; i < points.length; i++) {
+      const a = points[i - 1], b = points[i];
+      const seg = Math.hypot(b.x - a.x, b.y - a.y);
+      const ang = Math.atan2(b.y - a.y, b.x - a.x);
+      let d = step - carry;
+      while (d <= seg) {
+        const f = d / seg;
+        out.push({ x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f, angle: ang, arc: arc + d, ...opts });
+        d += step;
+      }
+      carry = seg - (d - step);
+      arc += seg;
+    }
+    return out;
+  }
 
-        let targetAngle = 0;
-        let targetOpacity = 0.08;
-        let targetThickness = 0.8;
-        let isMainLine = false;
+  function build() {
+    const rand = mulberry32(7);
+    const isMobile = width < 680 || height < 260;
+    t0X = Math.round(width * (isMobile ? 0.34 : 0.40));
+    midY = Math.round(height * 0.5);
+    const spread = isMobile ? 0.36 : 0.30;  // half-width of the fan per px to the right of «hoy»
 
-        if (x <= t0X) {
-          // Historical price line to the left of «hoy» (T0)
-          const dx = t0X - x;
-          const waveY = midY - Math.sin(dx * 0.045) * (height * 0.16) + Math.sin(dx * 0.09) * (height * 0.06);
-          const slope = 0.045 * Math.cos(dx * 0.045) * (height * 0.16) - 0.09 * Math.cos(dx * 0.09) * (height * 0.06);
-          const priceRow = Math.round((waveY - spacing / 2) / spacing);
-
-          if (r === priceRow) {
-            // Price line matches P50: thickness 1.8px and opacity 1.0
-            targetAngle = Math.atan2(slope, 1);
-            targetOpacity = 1.0;
-            targetThickness = 1.8;
-            isMainLine = true;
-          } else {
-            // Outside of price line
-            targetAngle = (Math.random() - 0.5) * 0.25;
-            targetOpacity = 0.06 + Math.random() * 0.06;
-            targetThickness = 0.8;
-          }
-        } else {
-          // Forecast Fan P10-P90 to the right of «hoy»
-          const dx = x - t0X;
-          const halfSpread = dx * (isMobile ? 0.30 : 0.38) + (spacing * 0.6);
-          const topY = midY - halfSpread;
-          const botY = midY + halfSpread;
-
-          if (r === p50Row) {
-            // P50 line: thickness 1.8px and opacity 1.0
-            targetAngle = 0;
-            targetOpacity = 1.0;
-            targetThickness = 1.8;
-            isMainLine = true;
-          } else if (y >= topY && y <= botY) {
-            // Inside P10-P90 band: opacity 0.45-0.8 aligned with fan direction
-            const relY = halfSpread > 0 ? (y - midY) / halfSpread : 0;
-            targetAngle = Math.atan2(y - midY, dx);
-            targetOpacity = 0.45 + (1 - Math.abs(relY)) * 0.35;
-            targetThickness = 1.1 + (1 - Math.abs(relY)) * 0.3;
-          } else {
-            // Outside of fan: opacity 0.06-0.12
-            targetAngle = y < midY ? -0.55 : 0.55;
-            targetOpacity = 0.06 + Math.random() * 0.06;
-            targetThickness = 0.8;
-          }
-        }
-
-        strokes.push({
-          x, y,
-          initialAngle,
-          targetAngle,
-          targetOpacity,
-          targetThickness,
-          baseLen,
-          isMainLine,
-          driftPhase: Math.random() * Math.PI * 2,
-          driftSpeed: 0.25 + Math.random() * 0.5
+    const far = [];
+    const farStep = isMobile ? 16 : 18;
+    for (let y = farStep / 2; y < height; y += farStep) {
+      for (let x = farStep / 2; x < width; x += farStep) {
+        far.push({
+          x, y, len: isMobile ? 5 : 6, width: 0.8,
+          alpha: 0.07 + rand() * 0.07,
+          angle: -0.5 + rand() * 0.3,
+          phase: rand() * Math.PI * 2,
+          scatter: 30 + rand() * 30,
+          scatterAngle: rand() * Math.PI * 2,
+          spin: (rand() - 0.5) * 4
         });
       }
     }
+
+    const mid = [];
+    const midStep = isMobile ? 11 : 12;
+    for (let y = midStep / 2; y < height; y += midStep) {
+      for (let x = t0X + midStep; x < width; x += midStep) {
+        const dx = x - t0X;
+        const half = dx * spread + 4;
+        const rel = (y - midY) / half;
+        if (Math.abs(rel) > 1) continue;
+        mid.push({
+          x, y, len: isMobile ? 7 : 8, width: 1.1 - Math.abs(rel) * 0.3,
+          alpha: 0.28 + (1 - Math.abs(rel)) * 0.42,
+          angle: Math.atan2(rel * spread, 1),
+          dx, phase: rand() * Math.PI * 2,
+          scatter: 22 + rand() * 18,
+          scatterAngle: rand() * Math.PI * 2,
+          spin: (rand() - 0.5) * 3
+        });
+      }
+    }
+
+    const path = pricePath(rand, isMobile);
+    const line = strokesAlong(path, 7, { len: 5.5, width: 1.7, alpha: 0.95 });
+    const p50 = strokesAlong([{ x: t0X, y: midY }, { x: width, y: midY }], 9, { len: 6, width: 1.6, alpha: 0.9 });
+    const total = (line.length ? line[line.length - 1].arc : 1) + (p50.length ? p50[p50.length - 1].arc : 0);
+    const near = line.concat(p50.map((s) => ({ ...s, arc: s.arc + (line.length ? line[line.length - 1].arc : 0) })));
+    near.forEach((s) => { s.write = s.arc / total; s.phase = rand() * Math.PI * 2; });
+
+    layers = { far, mid, near };
   }
 
   function resize() {
-    if (!activeCanvas) return;
-    const rect = activeCanvas.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) return;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
     width = rect.width;
     height = rect.height;
     dpr = Math.min(window.devicePixelRatio || 1, 2);
-    activeCanvas.width = Math.round(width * dpr);
-    activeCanvas.height = Math.round(height * dpr);
-    const ctx = activeCanvas.getContext('2d');
-    if (ctx) {
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-    initStrokes();
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    ctx = canvas.getContext('2d');
+    if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    build();
   }
 
-  function drawFrame(now, isFinalOnly) {
-    if (!activeCanvas) return;
-    const ctx = activeCanvas.getContext('2d');
+  // Draws a layer grouping strokes by opacity, so each frame needs only a few stroke() calls
+  function drawLayer(list, place, shift) {
+    const buckets = [];
+    for (let i = 0; i < list.length; i++) {
+      const p = place(list[i]);
+      if (!p || p.alpha <= 0.004) continue;
+      const k = Math.min(ALPHA_BUCKETS - 1, Math.floor(p.alpha * ALPHA_BUCKETS));
+      const w = p.width > 1.3 ? 1 : 0;
+      const key = k * 2 + w;
+      (buckets[key] || (buckets[key] = [])).push(p);
+    }
+    ctx.strokeStyle = INK;
+    ctx.lineCap = 'round';
+    for (let key = 0; key < buckets.length; key++) {
+      const b = buckets[key];
+      if (!b) continue;
+      ctx.globalAlpha = ((key >> 1) + 0.5) / ALPHA_BUCKETS;
+      ctx.lineWidth = key & 1 ? 1.7 : 1;
+      ctx.beginPath();
+      for (const p of b) {
+        const c = Math.cos(p.angle) * p.len / 2, s = Math.sin(p.angle) * p.len / 2;
+        ctx.moveTo(p.x + shift.x - c, p.y + shift.y - s);
+        ctx.lineTo(p.x + shift.x + c, p.y + shift.y + s);
+      }
+      ctx.stroke();
+    }
+  }
+
+  function draw(now, still) {
     if (!ctx) return;
-
-    const elapsed = now - startTime;
-    const progress = isFinalOnly ? 1 : Math.min(elapsed / DURATION_MS, 1);
-    // Cubic ease-out
-    const ease = 1 - Math.pow(1 - progress, 3);
-
+    const t = still ? INTRO_MS : now - startTime;
+    const intro = clamp01(t / INTRO_MS);
+    const sec = now * 0.001;
     ctx.clearRect(0, 0, width, height);
 
-    // Fine vertical dotted line at «hoy» (T0)
-    if (t0X > 0) {
-      ctx.save();
-      ctx.strokeStyle = '#EDE8DC';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([2, 3]);
-      ctx.globalAlpha = 0.32 * (isFinalOnly ? 1 : Math.max(0.15, ease));
-      ctx.beginPath();
-      ctx.moveTo(t0X, 0);
-      ctx.lineTo(t0X, height);
-      ctx.stroke();
-      ctx.restore();
+    if (!still) {
+      parallax.x += (pointer.x - parallax.x) * 0.08;
+      parallax.y += (pointer.y - parallax.y) * 0.08;
     }
+    const shift = (d) => ({ x: -parallax.x * d, y: -parallax.y * d });
 
-    const isDesktop = width >= 640;
-    const timeSec = now * 0.001;
+    // Converge from a scattered state, in a wave that crosses the panel from left to right
+    const settle = (s) => easeOut(clamp01((intro - (s.x / width) * 0.45) / 0.55));
 
-    for (let i = 0; i < strokes.length; i++) {
-      const s = strokes[i];
-      let angle = s.initialAngle + (s.targetAngle - s.initialAngle) * ease;
-      let opacity = 0.05 + (s.targetOpacity - 0.05) * ease;
-      let thickness = 0.8 + (s.targetThickness - 0.8) * ease;
+    drawLayer(layers.far, (s) => {
+      const k = settle(s);
+      const off = (1 - k) * s.scatter;
+      const breathe = still ? 0 : Math.sin(sec * 0.35 + s.phase + s.x * 0.004) * 0.12;
+      return {
+        x: s.x + Math.cos(s.scatterAngle) * off, y: s.y + Math.sin(s.scatterAngle) * off,
+        angle: s.angle + (1 - k) * s.spin + breathe, len: s.len, width: s.width, alpha: s.alpha * k
+      };
+    }, shift(DEPTH.far));
 
-      if (progress >= 1 && !isFinalOnly) {
-        if (!s.isMainLine) {
-          // Slow natural drift in resting mode for background and fan strokes
-          angle += Math.sin(timeSec * s.driftSpeed + s.driftPhase) * 0.04;
+    // «hoy» marker
+    const k0 = easeOut(clamp01((intro - 0.3) / 0.5));
+    ctx.save();
+    ctx.globalAlpha = 0.28 * k0;
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2, 4]);
+    ctx.beginPath();
+    ctx.moveTo(t0X - parallax.x * DEPTH.mid, 0);
+    ctx.lineTo(t0X - parallax.x * DEPTH.mid, height);
+    ctx.stroke();
+    ctx.restore();
 
-          // Desktop mouse deflection
-          if (isDesktop && mouseX >= 0 && mouseY >= 0) {
-            const ddx = mouseX - s.x;
-            const ddy = mouseY - s.y;
-            const dist = Math.hypot(ddx, ddy);
-            if (dist < 80) {
-              const toMouse = Math.atan2(ddy, ddx);
-              const weight = (1 - dist / 80) * 0.32;
-              angle += (toMouse - angle) * weight;
-            }
-          }
-        } else {
-          // Subtle stable breathing for main price/P50 trajectory
-          angle += Math.sin(timeSec * 0.4 + s.driftPhase) * 0.008;
-        }
-      }
+    drawLayer(layers.mid, (s) => {
+      const k = settle(s);
+      const off = (1 - k) * s.scatter;
+      // A soft pulse that flows out of «hoy» along the fan
+      const flow = still ? 0 : 0.18 * Math.max(0, Math.sin(s.dx * 0.022 - sec * 1.4));
+      return {
+        x: s.x + Math.cos(s.scatterAngle) * off, y: s.y + Math.sin(s.scatterAngle) * off,
+        angle: s.angle + (1 - k) * s.spin, len: s.len, width: s.width, alpha: Math.min(1, (s.alpha + flow) * k)
+      };
+    }, shift(DEPTH.mid));
 
-      const len = s.baseLen * (0.6 + 0.4 * ease);
-      const cos = Math.cos(angle) * (len / 2);
-      const sin = Math.sin(angle) * (len / 2);
+    // Price line and P50 are written on, stroke by stroke
+    const writeHead = clamp01((intro - 0.1) / 0.75);
+    drawLayer(layers.near, (s) => {
+      const k = clamp01((writeHead - s.write) / 0.06);
+      if (k <= 0) return null;
+      const lift = (1 - easeOut(k)) * 10;
+      return { x: s.x, y: s.y - lift, angle: s.angle, len: s.len, width: s.width, alpha: s.alpha * easeOut(k) };
+    }, shift(DEPTH.near));
 
-      ctx.strokeStyle = '#EDE8DC';
-      ctx.globalAlpha = opacity;
-      ctx.lineWidth = thickness;
-      ctx.beginPath();
-      ctx.moveTo(s.x - cos, s.y - sin);
-      ctx.lineTo(s.x + cos, s.y + sin);
-      ctx.stroke();
+    // «hoy» point with one slow pulse
+    if (writeHead > 0.5) {
+      const hx = t0X - parallax.x * DEPTH.near, hy = midY - parallax.y * DEPTH.near;
+      const pulse = still ? 0 : (Math.sin(sec * 1.6) + 1) / 2;
+      ctx.globalAlpha = 0.18 * pulse * k0;
+      ctx.fillStyle = INK;
+      ctx.beginPath(); ctx.arc(hx, hy, 6 + pulse * 5, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = k0;
+      ctx.beginPath(); ctx.arc(hx, hy, 3, 0, Math.PI * 2); ctx.fill();
     }
+    ctx.globalAlpha = 1;
   }
 
   function loop(now) {
-    if (!isRunning || !activeCanvas) return;
-
-    if (document.hidden) {
-      animId = null;
-      return;
-    }
-
-    const timeSinceInteraction = now - lastInteractionTime;
-    if (timeSinceInteraction >= 2500) {
-      // Resting repose: draw final frame and stop rAF loop
+    if (!running) return;
+    if (document.hidden) { animId = null; return; }
+    const introDone = now - startTime >= INTRO_MS;
+    if (!introDone || now - lastFrame >= REST_INTERVAL) {
+      lastFrame = now;
       frameCount++;
-      drawFrame(now, true);
-      animId = null;
-      return;
+      draw(now, false);
     }
-
-    const elapsed = now - startTime;
-    const inRestingState = elapsed >= DURATION_MS;
-
-    if (inRestingState) {
-      // Throttle to <= 12 fps during resting state
-      if (now - lastFrameTime >= REST_INTERVAL) {
-        lastFrameTime = now;
-        frameCount++;
-        drawFrame(now, false);
-      }
-    } else {
-      lastFrameTime = now;
-      frameCount++;
-      drawFrame(now, false);
-    }
-
     animId = requestAnimationFrame(loop);
   }
 
-  function handleMouseMove(e) {
-    if (!activeCanvas) return;
-    const rect = activeCanvas.getBoundingClientRect();
-    mouseX = e.clientX - rect.left;
-    mouseY = e.clientY - rect.top;
-    lastInteractionTime = performance.now();
-    if (isRunning && !animId) {
-      animId = requestAnimationFrame(loop);
-    }
+  function handleMove(e) {
+    if (!canvas) return;
+    const r = canvas.getBoundingClientRect();
+    pointer.x = Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width - 0.5) * 2));
+    pointer.y = Math.max(-1, Math.min(1, ((e.clientY - r.top) / r.height - 0.5) * 2));
   }
 
-  function handleVisibilityChange() {
-    if (!isRunning || !activeCanvas) return;
-    if (!document.hidden && !animId) {
-      lastInteractionTime = performance.now();
-      lastFrameTime = performance.now();
-      animId = requestAnimationFrame(loop);
-    }
+  function handleVisibility() {
+    if (running && !document.hidden && !animId) animId = requestAnimationFrame(loop);
   }
 
   const PDLoginField = {
-    start(canvas) {
-      if (!canvas) return;
+    start(el) {
+      if (!el) return;
       this.stop();
-
-      activeCanvas = canvas;
-      activeCanvas.setAttribute('aria-hidden', 'true');
-      isRunning = true;
+      canvas = el;
+      canvas.setAttribute('aria-hidden', 'true');
+      running = true;
       startTime = performance.now();
-      lastFrameTime = startTime;
-      lastInteractionTime = startTime;
+      lastFrame = startTime;
       frameCount = 0;
-      mouseX = -1000;
-      mouseY = -1000;
-
+      pointer = { x: 0, y: 0 };
+      parallax = { x: 0, y: 0 };
       resize();
 
-      if (prefersReducedMotion()) {
-        // Draw single final frame without loop
-        drawFrame(startTime + DURATION_MS, true);
+      if (reducedMotion()) {
+        draw(startTime, true);
         return;
       }
 
       if (typeof ResizeObserver !== 'undefined') {
-        resizeObserver = new ResizeObserver(() => {
-          resize();
-          if (prefersReducedMotion()) {
-            drawFrame(performance.now() + DURATION_MS, true);
-          }
-        });
-        resizeObserver.observe(activeCanvas);
+        resizeObserver = new ResizeObserver(() => resize());
+        resizeObserver.observe(canvas);
       } else {
         window.addEventListener('resize', resize);
       }
-
-      boundMouseMove = handleMouseMove;
-      window.addEventListener('mousemove', boundMouseMove, { passive: true });
-
-      boundVisibility = handleVisibilityChange;
-      document.addEventListener('visibilitychange', boundVisibility);
-
+      onMove = handleMove;
+      window.addEventListener('mousemove', onMove, { passive: true });
+      onVisibility = handleVisibility;
+      document.addEventListener('visibilitychange', onVisibility);
       animId = requestAnimationFrame(loop);
     },
 
     stop() {
-      isRunning = false;
-      if (animId) {
-        cancelAnimationFrame(animId);
-        animId = null;
-      }
-      if (resizeObserver) {
-        resizeObserver.disconnect();
-        resizeObserver = null;
-      }
+      running = false;
+      if (animId) { cancelAnimationFrame(animId); animId = null; }
+      if (resizeObserver) { resizeObserver.disconnect(); resizeObserver = null; }
       window.removeEventListener('resize', resize);
-      if (boundMouseMove) {
-        window.removeEventListener('mousemove', boundMouseMove);
-        boundMouseMove = null;
-      }
-      if (boundVisibility) {
-        document.removeEventListener('visibilitychange', boundVisibility);
-        boundVisibility = null;
-      }
-      activeCanvas = null;
-      strokes = [];
+      if (onMove) { window.removeEventListener('mousemove', onMove); onMove = null; }
+      if (onVisibility) { document.removeEventListener('visibilitychange', onVisibility); onVisibility = null; }
+      canvas = null;
+      ctx = null;
+      layers = { far: [], mid: [], near: [] };
     },
 
-    getAnimId() {
-      return animId;
-    },
-
-    getFrameCount() {
-      return frameCount;
-    }
+    getAnimId() { return animId; },
+    getFrameCount() { return frameCount; }
   };
 
   window.PDLoginField = PDLoginField;
