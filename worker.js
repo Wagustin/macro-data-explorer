@@ -182,6 +182,33 @@ const SECURITY_HEADERS = {
   "Content-Security-Policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
 };
 
+const NOINDEX_ROUTES = new Set([
+  "/estado",
+  "/resumenes",
+  "/resumen",
+  "/noticias",
+  "/news",
+  "/entrar",
+  "/cuenta",
+  "/restablecer",
+  "/empresa",
+  "/404"
+]);
+
+function shouldNoindex(pathname) {
+  const clean = pathname.replace(/\/+$/, "") || "/";
+  if (NOINDEX_ROUTES.has(clean)) return true;
+  if (clean.endsWith(".html")) {
+    const withoutHtml = clean.slice(0, -5);
+    if (NOINDEX_ROUTES.has(withoutHtml)) return true;
+  }
+  return false;
+}
+
+function isIndexableBody(html) {
+  return /<body[^>]*\bdata-indexable=["']?1["']?/i.test(html);
+}
+
 const API_CACHE_TTLS = new Map([
   ["/api/historical", 300],
   ["/api/forecast", 1800],
@@ -279,6 +306,9 @@ export default {
       }
       const r = new Response(response.body, response);
       for (const [k, v] of Object.entries(SECURITY_HEADERS)) if (!r.headers.has(k)) r.headers.set(k, v);
+      if (r.status === 404 || shouldNoindex(url.pathname)) {
+        r.headers.set("X-Robots-Tag", "noindex, follow");
+      }
       return r;
     }
     const fresh = new Headers(request.headers);
@@ -287,6 +317,9 @@ export default {
     const response = withScriptNonce(await this.route(new Request(request, { headers: fresh }), env, ctx), geo);
     const r = new Response(response.body, response);
     for (const [k, v] of Object.entries(SECURITY_HEADERS)) if (!r.headers.has(k)) r.headers.set(k, v);
+    if (r.status === 404 || shouldNoindex(url.pathname)) {
+      r.headers.set("X-Robots-Tag", "noindex, follow");
+    }
     return r;
   },
 
@@ -326,12 +359,19 @@ export default {
     const fichaMatch = /^\/empresa\/([^/]+)\/?$/.exec(pathname);
     if (fichaMatch) {
       const nemo = decodeURIComponent(fichaMatch[1]).toUpperCase();
-      const page = await env.ASSETS.fetch(new Request(new URL("/empresa", request.url).toString(), request));
-      const issuer = await findIssuer(env, request, nemo);
-      if (!issuer) {
-        const nf = await env.ASSETS.fetch(new Request(new URL("/404.html", request.url).toString(), request));
-        return new Response(nf.body, { status: 404, headers: nf.headers });
+      let page = await env.ASSETS.fetch(new Request(new URL(`/empresa/${encodeURIComponent(nemo)}`, request.url).toString(), request));
+      if (!page.ok) {
+        page = await env.ASSETS.fetch(new Request(new URL("/empresa", request.url).toString(), request));
       }
+      if (!page.ok) {
+        page = await env.ASSETS.fetch(new Request(new URL("/empresa.html", request.url).toString(), request));
+      }
+      const issuer = await findIssuer(env, request, nemo);
+      if (!issuer || !page.ok) {
+        return notFound(env, request);
+      }
+      const html = await page.text();
+      const isIndexable = isIndexableBody(html);
       const name = prettyName(issuer.razonSocial);
       const title = `${name} (${nemo}): precio, proyección y hechos de importancia · PerData`;
       const kind = SECTOR_PHRASE[String(issuer.sector || "").toUpperCase()] || "empresa";
@@ -367,9 +407,12 @@ export default {
             `<meta property="og:url" content="${url}" /><meta property="og:type" content="website" />` +
             `<meta property="og:image" content="https://perdata.site/og-image.png" />` + structuredData, { html: true });
         } })
-        .transform(page);
+        .transform(new Response(html, { status: page.status, statusText: page.statusText, headers: page.headers }));
       const headers = new Headers(transformed.headers);
       headers.set("Cache-Control", "no-cache");
+      if (!isIndexable) {
+        headers.set("X-Robots-Tag", "noindex, follow");
+      }
       return new Response(transformed.body, { status: transformed.status, statusText: transformed.statusText, headers });
     }
 
@@ -377,7 +420,11 @@ export default {
     if (pathname === "/resumenes" || pathname === "/resumenes/") {
       const index = await env.ASSETS.fetch(new Request(new URL("/data/resumenes/index.json", request.url)));
       if (!index.ok) return notFound(env, request);
-      return env.ASSETS.fetch(new Request(new URL("/resumen.html", request.url), request));
+      const res = await env.ASSETS.fetch(new Request(new URL("/resumen.html", request.url), request));
+      const headers = new Headers(res.headers);
+      headers.set("Cache-Control", "no-cache");
+      headers.set("X-Robots-Tag", "noindex, follow");
+      return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
     }
     if (digestMatch) {
       const date = digestMatch[1];
@@ -417,11 +464,15 @@ export default {
       if (notFoundRes.status === 200) {
         const headers = new Headers(notFoundRes.headers);
         headers.set("Cache-Control", "no-cache");
+        headers.set("X-Robots-Tag", "noindex, follow");
         return new Response(notFoundRes.body, {
           status: 404,
           headers
         });
       }
+      const headers = new Headers(assetResponse.headers);
+      headers.set("X-Robots-Tag", "noindex, follow");
+      return new Response(assetResponse.body, { status: 404, headers });
     }
 
     if (assetResponse.ok) {
@@ -440,6 +491,9 @@ export default {
       if (ct.includes("text/html") || pathname.endsWith(".html") || CLEAN_PAGES[pathname] || pathname === "/") {
         const headers = new Headers(assetResponse.headers);
         headers.set("Cache-Control", "no-cache");
+        if (shouldNoindex(pathname)) {
+          headers.set("X-Robots-Tag", "noindex, follow");
+        }
         return new Response(assetResponse.body, {
           status: assetResponse.status,
           statusText: assetResponse.statusText,
@@ -467,7 +521,10 @@ export default {
 
 async function notFound(env, request) {
   const response = await env.ASSETS.fetch(new Request(new URL("/404.html", request.url), request));
-  return new Response(response.body, { status: 404, headers: response.headers });
+  const headers = new Headers(response.headers);
+  headers.set("Cache-Control", "no-cache");
+  headers.set("X-Robots-Tag", "noindex, follow");
+  return new Response(response.body, { status: 404, headers });
 }
 
 const REPO = "Wagustin/macro-data-explorer";
@@ -544,3 +601,6 @@ function prettyName(raw) {
 function escapeAttr(t) {
   return String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 }
+
+export { shouldNoindex, isIndexableBody };
+
