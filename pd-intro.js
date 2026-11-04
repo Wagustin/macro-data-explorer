@@ -19,7 +19,7 @@
   const YR = NARROW ? 16 : 14;  // world height of the price range (candle x step = 1): tall enough to read the peaks
   const T_FIRST = 320;        // ms until the first candle starts to stand up
   const T_WAVE = 2600;        // ms for the wave front to reach the last candle (a slow sweep)
-  const T_TIP = 180;          // ms a candle takes to stand up (each one snaps up fast)
+  const T_TIP = 200;          // ms a candle takes to stand up (each one snaps up fast)
   const T_PAUSE = 180;        // ms held on «hoy»
   const T_DOT = 220;          // ms for the last candle to become the dot
   const T_WORD = 260;         // ms for the wordmark to appear
@@ -29,7 +29,7 @@
   let overlay, canvas, ctx, W, H, dpr;
   let candles = [], lo = 0, hi = 1, label = '';
   let start = 0, prevT = 0, raf = 0, ended = false;
-  let cam = { x: 0, y: 0, s: 1 };
+  let cam = { x: 0, y: 0, s: 1 }, vel = { x: 0, y: 0, s: 0 };
 
   const clamp01 = (t) => (t < 0 ? 0 : t > 1 ? 1 : t);
   const lerp = (a, b, t) => a + (b - a) * t;
@@ -85,7 +85,8 @@
 
   // Draws with setTransform instead of save/restore; the caller sets colours and resets the transform
   function drawCandle(c, i, t, alpha) {
-    const k = easeOut(clamp01((t - tStart(i)) / T_TIP));
+    const p = clamp01((t - tStart(i)) / T_TIP);
+    const k = 1 - Math.pow(1 - p, 4);
     if (k <= 0) return;
     const bw = 0.5;
     const base = toScreen(i - bw / 2, wy(Math.min(c.prev, c.close)));
@@ -122,14 +123,35 @@
     const near = candles[Math.min(N - 1, Math.round(f))];
     const targetY = lerp(near ? wy((near.close + near.prev) / 2) : YR / 2, YR / 2, zoom);
     // Time-based easing, so a slow phone that drops frames keeps the same camera path
-    const a = 1 - Math.exp(-(Math.max(t - prevT, 1000 / 60) / 1000) * 7);
+    // Critically damped spring with velocity: no jolts when a frame is dropped, no overshoot
+    const dt = Math.min(Math.max(t - prevT, 1000 / 120), 1000 / 20) / 1000;
     prevT = t;
-    cam.x += (targetX - cam.x) * a; cam.y += (targetY - cam.y) * a; cam.s += (targetS - cam.s) * a;
+    const w0 = 6.5, k1 = w0 * w0, k2 = 2 * w0;
+    for (const [key, target] of [['x', targetX], ['y', targetY], ['s', targetS]]) {
+      vel[key] += (k1 * (target - cam[key]) - k2 * vel[key]) * dt;
+      cam[key] += vel[key] * dt;
+    }
 
     // Candles fade while the wordmark appears, so only the wordmark travels to the header
     const fadeOut = 1 - clamp01((t - T_DOT_END) / T_WORD);
     ctx.fillStyle = ctx.strokeStyle = color;
     ctx.lineWidth = Math.max(1.2, cam.s * 0.05);
+    // Price grid of a real chart: round levels that move and scale with the camera
+    if (fadeOut > 0) {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const span = hi - lo || 0.01;
+      const step = [0.005, 0.01, 0.02, 0.025, 0.05, 0.1].find((v) => span / v <= 5) || 0.1;
+      ctx.font = `500 ${NARROW ? 10 : 11}px 'IBM Plex Mono', ui-monospace, monospace`;
+      ctx.lineWidth = 1;
+      for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) {
+        const y = Math.round(toScreen(0, wy(v)).y) + 0.5;
+        if (y < 0 || y > H) continue;
+        ctx.globalAlpha = 0.09 * fadeOut;
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+        ctx.globalAlpha = 0.42 * fadeOut;
+        ctx.fillText(`S/ ${v.toFixed(step < 0.01 ? 3 : 2)}`, W - (NARROW ? 62 : 84), y - 5);
+      }
+    }
     // A thin line through the closes, drawn behind the wave, so the series reads as an asset's peaks
     if (fadeOut > 0) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -137,10 +159,14 @@
       ctx.lineWidth = Math.max(1, cam.s * 0.03);
       ctx.lineJoin = 'round';
       ctx.beginPath();
+      let prevQ = null;
       for (let i = 0; i < N && t >= tStart(i) + T_TIP * 0.5; i++) {
         const q = toScreen(i, wy(candles[i].close));
-        if (i === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
+        if (!prevQ) ctx.moveTo(q.x, q.y);
+        else ctx.quadraticCurveTo(prevQ.x, prevQ.y, (prevQ.x + q.x) / 2, (prevQ.y + q.y) / 2);
+        prevQ = q;
       }
+      if (prevQ) ctx.lineTo(prevQ.x, prevQ.y);
       ctx.stroke();
       ctx.lineWidth = Math.max(1.2, cam.s * 0.05);
       for (let i = 0; i < N - 1; i++) drawCandle(candles[i], i, t, fadeOut);
