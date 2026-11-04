@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-04T06:20:34.696Z",
+  "actualizado": "2026-11-04T09:31:36.296Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -13,8 +13,8 @@
     },
     "inei": {
       "nombre": "Instituto Nacional de Estadística e Informática",
-      "ok": false,
-      "items": 0
+      "ok": true,
+      "items": 25
     },
     "bcrp": {
       "nombre": "Banco Central de Reserva del Perú",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 60
+      "items": 59
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -63,6 +63,24 @@
     }
   },
   "noticias": [
+    {
+      "id": "andina-df93af6139",
+      "titulo": "Campaña navideña: empleo temporal crecería hasta 15% este año",
+      "url": "https://andina.pe/agencia/noticia-campana-navidena-empleo-temporal-creceria-hasta-15-este-ano-1098518.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-04T08:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "bloomberg_linea-7db6741fc2",
+      "titulo": "Trii busca acelerar su crecimiento en Chile y prepara apuestas en IA y criptomonedas",
+      "url": "https://www.bloomberglinea.com/mercados/trii-busca-acelerar-su-crecimiento-en-chile-y-prepara-apuestas-en-ia-y-criptomonedas/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-04T07:00:03.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "rpp-32a3a7e835",
       "titulo": "Aplastante victoria demócrata en EE.UU.: arrebatan el Congreso a republicanos en elecciones de medio mandato en duro castigo a Trump",
@@ -997,24 +1015,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-03T14:27:04.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-b5799c7df2",
-      "titulo": "Cyber Wow 2026: tecnología y belleza apuntan a ser las categorías con mayor crecimiento en esta tercera edición",
-      "url": "https://elcomercio.pe/economia/peru/cyber-wow-2026-tecnologia-y-belleza-apuntan-a-ser-las-categorias-con-mayor-crecimiento-en-esta-tercera-edicion-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-03T14:09:13.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-76ed0fa3fb",
-      "titulo": "Ganadería de Perú ante fuertes lluvias y sequías por El Niño: así la impactaría",
-      "url": "https://gestion.pe/economia/el-nino-ganaderia-de-peru-preocupada-por-fuertes-lluvias-y-sequias-asi-la-impactaria-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-03T13:50:42.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     }
   ]
