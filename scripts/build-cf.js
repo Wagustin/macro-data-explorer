@@ -37,6 +37,7 @@ buildSitemap();
 
 const FILES_TO_COPY = [
   "index.html",
+  "dolar.html",
   "explorer.html",
   "news.html",
   "metodologia.html",

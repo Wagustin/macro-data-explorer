@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="es-PE" class="light pd-marketing">
+<head>
+  <meta name="pd-geo" content="otro">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Dólar en Perú hoy: precio, rango probable y contexto BCRP · PerData</title>
+  <meta name="description" content="Cotización oficial del dólar en el Perú (BCRP), rangos de probabilidad estadística P10-P50-P90 para mañana, próxima semana y próximo mes, cobertura empírica y contexto monetario oficial." />
+  <meta name="pd-ads" content="1">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://perdata.site/dolar" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- SEO & Social Open Graph -->
+  <meta property="og:locale" content="es_PE" />
+  <meta property="og:site_name" content="PerData" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://perdata.site/dolar" />
+  <meta property="og:title" content="Dólar en Perú hoy: precio, rango probable y contexto BCRP · PerData" />
+  <meta property="og:description" content="Cotización oficial del dólar en el Perú (BCRP), rangos de probabilidad estadística P10-P50-P90 para mañana, próxima semana y próximo mes, cobertura empírica y contexto monetario oficial." />
+  <meta property="og:image" content="https://perdata.site/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Dólar en Perú hoy: precio, rango probable y contexto BCRP · PerData" />
+  <meta name="twitter:description" content="Cotización oficial del dólar en el Perú (BCRP), rangos de probabilidad estadística P10-P50-P90 para mañana, próxima semana y próximo mes, cobertura empírica y contexto monetario oficial." />
+  <meta name="twitter:image" content="https://perdata.site/og-image.png" />
+
+  <!-- Structured Data JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Dólar en Perú hoy: precio, rango probable y contexto BCRP · PerData",
+    "url": "https://perdata.site/dolar",
+    "description": "Cotización oficial del dólar en el Perú (BCRP), rangos de probabilidad estadística P10-P50-P90 para mañana, próxima semana y próximo mes, cobertura empírica y contexto monetario oficial.",
+    "inLanguage": "es-PE",
+    "author": {
+      "@type": "Organization",
+      "name": "PerData",
+      "url": "https://perdata.site/"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "PerData",
+      "url": "https://perdata.site/",
+      "logo": "https://perdata.site/icon.svg"
+    }
+  }
+  </script>
+
+  <!-- Early Theme Init -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
+      } else {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.classList.add("light");
+      }
+    })();
+  </script>
+
+  <style>
+    html, body {
+      overflow-x: hidden !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      letter-spacing: -0.011em;
+      -webkit-tap-highlight-color: transparent;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .tnum {
+      font-feature-settings: "tnum" 1, "cv01" 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    .micro-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .ui-switch {
+      --switch-bg: rgb(229, 229, 234);
+      --switch-checked-bg: rgb(0, 0, 0);
+      --circle-diameter: 18px;
+      --circle-bg: #FFFFFF;
+      --circle-inset: 2px;
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+    html.dark .ui-switch {
+      --switch-bg: rgb(44, 44, 46);
+      --switch-checked-bg: rgb(255, 255, 255);
+      --circle-bg: #0D0D0E;
+    }
+    .ui-switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--switch-bg);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 9999px;
+    }
+    .slider .circle {
+      top: var(--circle-inset); left: var(--circle-inset);
+      width: var(--circle-diameter); height: var(--circle-diameter);
+      position: absolute; background: var(--circle-bg); border-radius: inherit;
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .ui-switch input:checked + .slider { background-color: var(--switch-checked-bg); }
+    .ui-switch input:checked + .slider .circle {
+      left: calc(100% - var(--circle-diameter) - var(--circle-inset));
+    }
+    @keyframes mde-rise { from { opacity: 0; } to { opacity: 1; } }
+    main > section, .rise-in { animation: mde-rise 0.6s ease both; }
+    @media (prefers-reduced-motion: reduce) {
+      main > section, .rise-in { animation: none; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+    .eyebrow { font-size: 12px; font-weight: 600; color: #6e6e73; }
+    html.dark .eyebrow { color: #86868b; }
+  </style>
+
+  <link rel="preload" href="/fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/libre-franklin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/pd.css">
+  <script defer src="/motion.js"></script>
+  <link rel="stylesheet" href="/tw.css">
+</head>
+<body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
+
+  <!-- Shared Institutional Header -->
+  <header class="border-b border-rule bg-card sticky top-0 z-30 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
+      <div class="flex items-center space-x-6">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
+        </a>
+
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
+          <a href="/dolar" class="text-ink font-semibold border-b border-ink pb-0.5 no-underline">Dólar</a>
+          <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a>
+          <a href="/empresas" class="hover:text-ink transition no-underline">Empresas</a>
+          <a href="/aprende" class="hover:text-ink transition no-underline">Aprende</a>
+          <a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a>
+        </nav>
+      </div>
+
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <div id="navbarAuthContainer"></div>
+
+        <label class="ui-switch" title="Alternar modo claro / oscuro">
+          <input id="themeToggle" type="checkbox" aria-label="Modo oscuro" />
+          <div class="slider">
+            <div class="circle"></div>
+          </div>
+        </label>
+
+        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menú" aria-expanded="false">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-10 space-y-12 flex-grow w-full">
+
+    <!-- Hero Section -->
+    <section class="space-y-4">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-card border border-rule text-xs font-medium text-ink-soft">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Último Cierre Oficial BCRP · 2 de noviembre de 2026</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-ink font-serif">
+        Dólar en Perú hoy: precio interbancario y rango probable
+      </h1>
+      <p class="text-lg sm:text-xl text-ink-soft max-w-3xl leading-relaxed" style="font-family: var(--pd-font-read);">
+        Seguimiento cuantitativo del tipo de cambio PEN en el mercado interbancario, respaldado por las series estadísticas del Banco Central de Reserva del Perú (BCRP) y proyecciones probabilísticas fuera de muestra con calibración empírica.
+      </p>
+      <div class="flex items-baseline space-x-4 pt-2">
+        <span class="text-4xl sm:text-5xl font-bold mono tnum tracking-tight text-ink">S/ 3.466</span>
+        <span class="text-sm text-ink-soft font-medium">Cierre spot oficial BCRP</span>
+      </div>
+    </section>
+
+    <!-- Probabilistic Ranges Cards -->
+    <section class="space-y-6">
+      <div class="border-b border-rule pb-3">
+        <h2 class="text-2xl font-bold tracking-tight text-ink">Rangos Probables de Cotización</h2>
+        <p class="text-sm text-ink-soft">Intervalos de confianza (P10 - P50 - P90) calculados por PerData Engine para distintos horizontes temporales.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Mañana -->
+        <div class="bg-card border border-rule rounded-xl p-6 space-y-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="micro-label text-ink-soft">Corto Plazo</span>
+              <h3 class="text-xl font-bold text-ink mt-1">Mañana</h3>
+            </div>
+            <span class="text-xs font-mono bg-rule/50 px-2.5 py-1 rounded text-ink">5 de noviembre de 2026</span>
+          </div>
+          <div class="space-y-1">
+            <div class="text-3xl font-bold mono tnum text-ink">S/ 3.466</div>
+            <div class="text-xs text-ink-soft">Mediana esperada (P50)</div>
+          </div>
+          <div class="space-y-2 pt-2 border-t border-rule text-xs text-ink-soft">
+            <div class="flex justify-between">
+              <span>Piso probable (P10):</span>
+              <span class="mono font-semibold text-ink">S/ 3.443</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Techo probable (P90):</span>
+              <span class="mono font-semibold text-ink">S/ 3.487</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Ancho de banda:</span>
+              <span class="mono text-ink">±1.26%</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Cobertura 80% (fuera de muestra):</span>
+              <span class="mono font-semibold text-emerald-600 dark:text-emerald-400">81.2%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Próxima Semana -->
+        <div class="bg-card border border-rule rounded-xl p-6 space-y-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="micro-label text-ink-soft">Mediano Plazo</span>
+              <h3 class="text-xl font-bold text-ink mt-1">Próxima Semana</h3>
+            </div>
+            <span class="text-xs font-mono bg-rule/50 px-2.5 py-1 rounded text-ink">11 de noviembre de 2026</span>
+          </div>
+          <div class="space-y-1">
+            <div class="text-3xl font-bold mono tnum text-ink">S/ 3.466</div>
+            <div class="text-xs text-ink-soft">Mediana esperada (P50)</div>
+          </div>
+          <div class="space-y-2 pt-2 border-t border-rule text-xs text-ink-soft">
+            <div class="flex justify-between">
+              <span>Piso probable (P10):</span>
+              <span class="mono font-semibold text-ink">S/ 3.427</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Techo probable (P90):</span>
+              <span class="mono font-semibold text-ink">S/ 3.497</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Ancho de banda:</span>
+              <span class="mono text-ink">±2.00%</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Cobertura 80% (fuera de muestra):</span>
+              <span class="mono font-semibold text-emerald-600 dark:text-emerald-400">84.3%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Próximo Mes -->
+        <div class="bg-card border border-rule rounded-xl p-6 space-y-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="micro-label text-ink-soft">Horizonte Mensual</span>
+              <h3 class="text-xl font-bold text-ink mt-1">Próximo Mes</h3>
+            </div>
+            <span class="text-xs font-mono bg-rule/50 px-2.5 py-1 rounded text-ink">30 días</span>
+          </div>
+          <div class="space-y-1">
+            <div class="text-3xl font-bold mono tnum text-ink">S/ 3.420</div>
+            <div class="text-xs text-ink-soft">Mediana esperada (P50)</div>
+          </div>
+          <div class="space-y-2 pt-2 border-t border-rule text-xs text-ink-soft">
+            <div class="flex justify-between">
+              <span>Piso probable (P10):</span>
+              <span class="mono font-semibold text-ink">S/ 3.290</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Techo probable (P90):</span>
+              <span class="mono font-semibold text-ink">S/ 3.570</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Incertidumbre:</span>
+              <span class="mono text-ink">±8.2%</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Calibración (n=826):</span>
+              <span class="mono font-semibold text-emerald-600 dark:text-emerald-400">80.1%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Resumen Anual 2026 -->
+    <section class="space-y-6">
+      <div class="border-b border-rule pb-3">
+        <h2 class="text-2xl font-bold tracking-tight text-ink">Comportamiento del Dólar en el Año 2026</h2>
+        <p class="text-sm text-ink-soft">Resumen estadístico de las 206 sesiones de negociación interbancaria registradas por el BCRP durante el presente año.</p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="bg-card border border-rule rounded-lg p-4">
+          <div class="micro-label text-ink-soft">Mínimo Anual</div>
+          <div class="text-2xl font-bold mono tnum text-ink mt-1">S/ 3.345</div>
+          <div class="text-xs text-ink-soft mt-1">28 de enero de 2026</div>
+        </div>
+        <div class="bg-card border border-rule rounded-lg p-4">
+          <div class="micro-label text-ink-soft">Máximo Anual</div>
+          <div class="text-2xl font-bold mono tnum text-ink mt-1">S/ 3.529</div>
+          <div class="text-xs text-ink-soft mt-1">29 de abril de 2026</div>
+        </div>
+        <div class="bg-card border border-rule rounded-lg p-4">
+          <div class="micro-label text-ink-soft">Variación Acumulada</div>
+          <div class="text-2xl font-bold mono tnum text-emerald-600 dark:text-emerald-400 mt-1">+2.79%</div>
+          <div class="text-xs text-ink-soft mt-1">+0.094 soles</div>
+        </div>
+        <div class="bg-card border border-rule rounded-lg p-4">
+          <div class="micro-label text-ink-soft">Amplitud Total</div>
+          <div class="text-2xl font-bold mono tnum text-ink mt-1">18.4 cént.</div>
+          <div class="text-xs text-ink-soft mt-1">Rango S/ 3.345 - 3.529</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contexto Oficial BCRP -->
+    <section class="space-y-6">
+      <div class="border-b border-rule pb-3">
+        <h2 class="text-2xl font-bold tracking-tight text-ink">Contexto Macroeconómico y Monetario (BCRP)</h2>
+        <p class="text-sm text-ink-soft">Variables oficiales del Banco Central de Reserva del Perú que determinan los fundamentos del tipo de cambio.</p>
+      </div>
+
+      <div class="bg-card border border-rule rounded-xl overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-rule bg-rule/20 text-xs font-semibold text-ink uppercase tracking-wider">
+                <th class="py-3 px-4">Indicador / Variable</th>
+                <th class="py-3 px-4">Código BCRP</th>
+                <th class="py-3 px-4">Valor Actual</th>
+                <th class="py-3 px-4">Fecha de Dato</th>
+                <th class="py-3 px-4">Unidad</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-rule text-sm">
+              <tr>
+                <td class="py-3 px-4 font-medium text-ink">Reservas Internacionales Netas (RIN)</td>
+                <td class="py-3 px-4 mono text-xs text-ink-soft">PD04650MD</td>
+                <td class="py-3 px-4 mono font-semibold text-ink">93,525.06</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">30 de octubre de 2026</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">Millones US$</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-medium text-ink">Posición de Cambio del BCRP</td>
+                <td class="py-3 px-4 mono text-xs text-ink-soft">PD04649MD</td>
+                <td class="py-3 px-4 mono font-semibold text-ink">68,920.00</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">30 de octubre de 2026</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">Millones US$</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-medium text-ink">Tasa de Referencia de Política Monetaria</td>
+                <td class="py-3 px-4 mono text-xs text-ink-soft">PD12301MD</td>
+                <td class="py-3 px-4 mono font-semibold text-ink">4.25%</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">3 de noviembre de 2026</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">% anual</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-medium text-ink">Intervención Cambiaria Total</td>
+                <td class="py-3 px-4 mono text-xs text-ink-soft">PD04658MD</td>
+                <td class="py-3 px-4 mono font-semibold text-ink">0.2087</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">2 de noviembre de 2026</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">Millones US$</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-medium text-ink">Swaps Cambiarios de Venta Pactados</td>
+                <td class="py-3 px-4 mono text-xs text-ink-soft">PD37521TD</td>
+                <td class="py-3 px-4 mono font-semibold text-ink">0.00</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">3 de noviembre de 2026</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">Millones US$</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-medium text-ink">Inflación Anual (IPC Lima Metropolitana)</td>
+                <td class="py-3 px-4 mono text-xs text-ink-soft">PN01273PM</td>
+                <td class="py-3 px-4 mono font-semibold text-ink">4.55%</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">septiembre de 2026</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">Var. % 12 meses</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-medium text-ink">Inflación Subyacente (sin alimentos ni energía)</td>
+                <td class="py-3 px-4 mono text-xs text-ink-soft">PN01277PM</td>
+                <td class="py-3 px-4 mono font-semibold text-ink">4.51%</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">septiembre de 2026</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">Var. % 12 meses</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-medium text-ink">Términos de Intercambio (Variación 12 Meses)</td>
+                <td class="py-3 px-4 mono text-xs text-ink-soft">PN38926BM</td>
+                <td class="py-3 px-4 mono font-semibold text-ink">+14.31%</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">agosto de 2026</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">Var. % 12 meses</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-medium text-ink">Precio de Exportación del Cobre</td>
+                <td class="py-3 px-4 mono text-xs text-ink-soft">PN38784BM</td>
+                <td class="py-3 px-4 mono font-semibold text-ink">689.70</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">agosto de 2026</td>
+                <td class="py-3 px-4 text-xs text-ink-soft">¢US$ por libra</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Últimos 20 Cierres Tabla -->
+    <section class="space-y-6">
+      <div class="border-b border-rule pb-3">
+        <h2 class="text-2xl font-bold tracking-tight text-ink">Historial Reciente: Últimos 20 Cierres Interbancarios</h2>
+        <p class="text-sm text-ink-soft">Registro oficial diario del BCRP con la variación absoluta y porcentual sesión a sesión.</p>
+      </div>
+
+      <div class="bg-card border border-rule rounded-xl overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-rule bg-rule/20 text-xs font-semibold text-ink uppercase tracking-wider">
+                <th class="py-3 px-4">Fecha de Cierre</th>
+                <th class="py-3 px-4">Tipo de Cambio (S/)</th>
+                <th class="py-3 px-4">Variación Diaria (S/)</th>
+                <th class="py-3 px-4">Variación (%)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-rule text-sm mono">
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">2 de noviembre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.466</td>
+                  <td class="py-3 px-4 text-rose-600 dark:text-rose-400">
+                    -0.0010
+                  </td>
+                  <td class="py-3 px-4 text-rose-600 dark:text-rose-400">
+                    -0.03%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">30 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.467</td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.0060
+                  </td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.17%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">29 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.461</td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.0030
+                  </td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.09%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">28 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.458</td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.0060
+                  </td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.17%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">27 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.452</td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.0060
+                  </td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.17%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">26 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.446</td>
+                  <td class="py-3 px-4 text-rose-600 dark:text-rose-400">
+                    -0.0050
+                  </td>
+                  <td class="py-3 px-4 text-rose-600 dark:text-rose-400">
+                    -0.14%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">23 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.451</td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.0010
+                  </td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.03%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">22 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.450</td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.0120
+                  </td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.35%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">21 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.438</td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.0020
+                  </td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.06%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">20 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.436</td>
+                  <td class="py-3 px-4 text-rose-600 dark:text-rose-400">
+                    -0.0110
+                  </td>
+                  <td class="py-3 px-4 text-rose-600 dark:text-rose-400">
+                    -0.32%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">19 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.447</td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.0160
+                  </td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.47%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">16 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.431</td>
+                  <td class="py-3 px-4 text-rose-600 dark:text-rose-400">
+                    -0.0010
+                  </td>
+                  <td class="py-3 px-4 text-rose-600 dark:text-rose-400">
+                    -0.03%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">15 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.432</td>
+                  <td class="py-3 px-4 text-rose-600 dark:text-rose-400">
+                    -0.0080
+                  </td>
+                  <td class="py-3 px-4 text-rose-600 dark:text-rose-400">
+                    -0.23%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">14 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.440</td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.0010
+                  </td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.03%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">13 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.439</td>
+                  <td class="py-3 px-4 text-rose-600 dark:text-rose-400">
+                    -0.0090
+                  </td>
+                  <td class="py-3 px-4 text-rose-600 dark:text-rose-400">
+                    -0.26%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">12 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.448</td>
+                  <td class="py-3 px-4 text-rose-600 dark:text-rose-400">
+                    -0.0090
+                  </td>
+                  <td class="py-3 px-4 text-rose-600 dark:text-rose-400">
+                    -0.26%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">9 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.457</td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.0040
+                  </td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.12%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">7 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.453</td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.0160
+                  </td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.47%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">6 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.437</td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.0020
+                  </td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">
+                    +0.06%
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td class="py-3 px-4 font-sans text-ink">5 de octubre de 2026</td>
+                  <td class="py-3 px-4 font-semibold text-ink">S/ 3.435</td>
+                  <td class="py-3 px-4 text-rose-600 dark:text-rose-400">
+                    -0.0070
+                  </td>
+                  <td class="py-3 px-4 text-rose-600 dark:text-rose-400">
+                    -0.20%
+                  </td>
+                </tr>
+              
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Editorial / Analitical Content (>900 words) -->
+    <section class="space-y-8 max-w-4xl mx-auto pt-6 text-ink leading-relaxed" style="font-family: var(--pd-font-read); font-size: 17px;">
+      <div class="border-b border-rule pb-4">
+        <h2 class="text-3xl font-bold tracking-tight text-ink font-sans">Análisis Económico y Metodológico del Tipo de Cambio</h2>
+        <p class="text-sm text-ink-soft mt-1 font-sans">Fundamentos macroeconómicos, intervención del BCRP y lectura rigurosa de los rangos de probabilidad.</p>
+      </div>
+
+      <div class="space-y-6">
+        <h3 class="text-2xl font-bold text-ink font-sans">1. Qué factores determinan la cotización del dólar en el Perú</h3>
+        <p>
+          El tipo de cambio nominal del sol peruano (PEN) frente al dólar estadounidense (USD) opera en un régimen de flotación administrada, lo que significa que su precio se determina fundamentalmente por las fuerzas de oferta y demanda en el mercado interbancario, con intervenciones puntuales del Banco Central de Reserva del Perú (BCRP) orientadas exclusivamente a mitigar la volatilidad desordenada.
+        </p>
+        <p>
+          Entre los determinantes estructurales de la oferta de divisas destaca la balanza comercial y, de manera muy sobresaliente, el ciclo de los metales de exportación. El Perú es un productor minero global de primer orden, siendo el cobre el principal generador de divisas por exportaciones tradicionales. Cuando el precio internacional del cobre repunta en la Bolsa de Metales de Londres o en los índices de exportación del BCRP (como la serie <code>PN38784BM</code>), las empresas mineras incrementan la liquidación de sus ingresos en moneda extranjera para cubrir costos locales en soles, generando una presión compradora sobre el sol y provocando la apreciación de la moneda nacional.
+        </p>
+        <p>
+          Adicionalmente, los términos de intercambio —medidos por la relación entre los precios de exportación y los precios de importación— configuran la capacidad real de compra del país frente al resto del mundo. Un incremento sostenido en los términos de intercambio fortalece la cuenta corriente y consolida una posición macroeconómica favorable para el sol. Por el contrario, un encarecimiento abrupto de los insumos importados, como los combustibles o los alimentos procesados en los mercados globales, deteriora la balanza comercial y presiona al alza el tipo de cambio.
+        </p>
+        <p>
+          En el plano financiero, el diferencial de tasas de interés entre el BCRP y la Reserva Federal de los Estados Unidos (Fed) establece el incentivo para los flujos de capital transfronterizos. Cuando la tasa de referencia del BCRP se sitúa por encima de la tasa de fondos federales, los inversionistas institucionales encuentran atractivo mantener posiciones en activos denominados en soles (carry trade), siempre que las expectativas de devaluación se mantengan controladas. Un recorte de tasas en EE. UU. o un endurecimiento monetario local amplía este diferencial, favoreciendo la estabilidad o apreciación del sol.
+        </p>
+
+        <h3 class="text-2xl font-bold text-ink font-sans">2. El rol del BCRP y la gestión de la flotación administrada</h3>
+        <p>
+          A diferencia de los regímenes de tipo de cambio fijo o de flotación pura sin intervención, el BCRP implementa una política de flotación administrada cuyo objetivo no es fijar un precio determinado para el dólar, sino evitar saltos abruptos y volatilidad excesiva que puedan comprometer la estabilidad del sistema financiero y la hoja de balance de las empresas y familias endeudadas en moneda extranjera.
+        </p>
+        <p>
+          Para ejecutar esta política, el BCRP dispone de un conjunto robusto de instrumentos monetarios. En primer lugar, opera de manera directa en la mesa de negociación de divisas comprando o vendiendo dólares en el mercado spot. Las estadísticas oficiales muestran que el banco central interviene de forma quirúrgica para absorber excesos de liquidez o proveer dólares en momentos de aversión global al riesgo.
+        </p>
+        <p>
+          En segundo lugar, el BCRP utiliza instrumentos derivados e indirectos, destacando los swaps cambiarios de venta y los Certificados de Depósito Reajustables (CDR). Los swaps cambiarios permiten inyectar liquidez en soles al sistema financiero a cambio de dólares, operando como un mecanismo de cobertura forward sin comprometer de manera permanente el nivel de las reservas internacionales netas (RIN). Las RIN del Perú, que superan holguramente los 93 mil millones de dólares (código BCRP <code>PD04650MD</code>), junto con una sólida posición de cambio superior a los 68 mil millones de dólares (código <code>PD04649MD</code>), constituyen un escudo disuasorio de primer orden frente a ataques especulativos y episodios de salida masiva de capitales.
+        </p>
+
+        <h3 class="text-2xl font-bold text-ink font-sans">3. Cómo interpretar correctamente un rango probable y las bandas P10-P50-P90</h3>
+        <p>
+          Los modelos cuantitativos de PerData Engine no buscan emitir una única predicción puntual —un ejercicio estadísticamente frágil dado el carácter estocástico de los mercados financieros—, sino construir un abanico probabilístico de precios futuros mediante simulación histórica filtrada (FHS) y volatilidad condicional EWMA.
+        </p>
+        <p>
+          La lectura de los rangos se desglosa en tres percentiles clave:
+        </p>
+        <ul>
+          <li><strong>Percentil 10 (P10):</strong> Representa el límite inferior del intervalo de confianza al 80%. Históricamente, solo el 10% de las observaciones reales cayeron por debajo de este valor en el horizonte evaluado. Funciona como el piso probable de soporte estadístico.</li>
+          <li><strong>Percentil 50 (P50):</strong> Es la mediana de la distribución proyectada y constituye el valor central más probable. No representa una cotización determinista, sino el punto de equilibrio donde convergen las inercias de tendencia y la reversión a la media.</li>
+          <li><strong>Percentil 90 (P90):</strong> Representa el límite superior del intervalo al 80%. Solo el 10% de los cierres reales superaron este umbral en las pruebas retrospectivas. Funciona como el techo probable de resistencia estadística.</li>
+        </ul>
+        <p>
+          Un aspecto metodológico crucial de PerData es la validación de la <strong>cobertura empírica fuera de muestra</strong>. Al evaluar el modelo en miles de cortes temporales históricos donde los datos futuros eran desconocidos para el algoritmo, se comprueba que el intervalo P10-P90 logró contener el cierre real en aproximadamente el 80% al 84% de las ocasiones (según el horizonte). Esta métrica certifica que las bandas no son producto de sobreajuste (overfitting), sino que poseen genuino poder predictivo en condiciones reales de mercado.
+        </p>
+
+        <h3 class="text-2xl font-bold text-ink font-sans">4. Límites metodológicos: qué no es una proyección probabilística</h3>
+        <p>
+          Es imperativo establecer con rigor los límites de cualquier herramienta de pronóstico financiero. Ningún modelo matemático, por sofisticado que sea, constituye una garantía de rentabilidad ni un asesoramiento financiero formal. Las proyecciones de PerData son herramientas analíticas de apoyo a la toma de decisiones.
+        </p>
+        <p>
+          Los intervalos de confianza asumen que la estructura estadística subyacente y la volatilidad reciente guardan una continuidad razonable con el comportamiento futuro. Sin embargo, los mercados están expuestos a eventos de cola y choques exógenos imprevisibles —conocidos coloquialmente como cisnes negros—, tales como crisis geopolíticas severas, cambios abruptos e imprevistos en la política monetaria de la Reserva Federal o inestabilidad política interna aguda. Ante tales eventos, los precios pueden perforar los límites P10 o P90 de forma inmediata, ya que ninguna serie histórica pasada puede anticipar un régimen de ruptura sin precedentes.
+        </p>
+      </div>
+
+      <!-- Preguntas Frecuentes (FAQ) -->
+      <div class="space-y-6 pt-6 border-t border-rule">
+        <h3 class="text-2xl font-bold text-ink font-sans">Preguntas Frecuentes (FAQ)</h3>
+
+        <div class="space-y-4">
+          <div class="bg-card border border-rule rounded-xl p-5 space-y-2">
+            <h4 class="font-bold text-ink font-sans">1. Por qué el rango de mañana es más estrecho que el de la próxima semana o el próximo mes</h4>
+            <p class="text-sm text-ink-soft" style="font-family: var(--pd-font-read);">
+              La incertidumbre en los mercados financieros se acumula con el paso del tiempo. En un horizonte de un día hábil (mañana), el margen de variación posible del tipo de cambio es acotado por la inercia diaria y los límites operativos del mercado interbancario. Conforme se amplía el horizonte a una semana o un mes, los choques acumulados de oferta, demanda, noticias macroeconómicas y flujos corporativos ensanchan la distribución de probabilidad, reflejándose en un abanico de precios (P10-P90) más amplio.
+            </p>
+          </div>
+
+          <div class="bg-card border border-rule rounded-xl p-5 space-y-2">
+            <h4 class="font-bold text-ink font-sans">2. Qué significa exactamente que la cobertura fuera de muestra sea del 84%</h4>
+            <p class="text-sm text-ink-soft" style="font-family: var(--pd-font-read);">
+              Significa que al simular el desempeño del modelo en cerca de 2,000 fechas pasadas diferentes —utilizando exclusivamente la información disponible hasta cada fecha de corte y evaluando contra el precio real que ocurrió días después—, el intervalo delimitado entre P10 y P90 contuvo al precio real en el 84.27% de las pruebas para el horizonte semanal. Esto valida empíricamente que la calibración del modelo es precisa y confiable.
+            </p>
+          </div>
+
+          <div class="bg-card border border-rule rounded-xl p-5 space-y-2">
+            <h4 class="font-bold text-ink font-sans">3. Cómo afecta el precio del cobre al tipo de cambio en el Perú</h4>
+            <p class="text-sm text-ink-soft" style="font-family: var(--pd-font-read);">
+              El cobre es el principal producto de exportación del Perú. Un precio internacional elevado incrementa los ingresos en dólares de las empresas mineras, las cuales deben liquidar parte de esas divisas en el mercado local para pagar tributos, planillas y proveedores en soles. Este flujo masivo de oferta de dólares presiona el tipo de cambio a la baja (apreciación del sol). Cuando el cobre cae, el ingreso de divisas se contrae y el dólar tiende a subir.
+            </p>
+          </div>
+
+          <div class="bg-card border border-rule rounded-xl p-5 space-y-2">
+            <h4 class="font-bold text-ink font-sans">4. Por qué el BCRP interviene vendiendo dólares o swaps si el régimen es de flotación</h4>
+            <p class="text-sm text-ink-soft" style="font-family: var(--pd-font-read);">
+              El BCRP no interviene para defender un precio fijo ni para contrarrestar tendencias fundamentales de largo plazo impulsadas por los mercados globales. Su intervención responde estrictamente a la mitigación de la volatilidad extrema y los movimientos erráticos o desordenados (disorderly markets). Dado que una parte significativa del endeudamiento corporativo en el Perú se ha mantenido históricamente en dólares, una depreciación violenta y repentina puede generar riesgos sistémicos de hoja de balance; de ahí la conveniencia de suavizar los choques transitorios.
+            </p>
+          </div>
+
+          <div class="bg-card border border-rule rounded-xl p-5 space-y-2">
+            <h4 class="font-bold text-ink font-sans">5. Con qué frecuencia se actualizan los datos, tablas y pronósticos en esta página</h4>
+            <p class="text-sm text-ink-soft" style="font-family: var(--pd-font-read);">
+              Esta página se genera de forma completamente automatizada todos los días hábiles de la semana, inmediatamente después del cierre de las operaciones cambiarias interbancarias y la publicación oficial de los boletines estadísticos del BCRP. Los motores de cálculo procesan los nuevos cierres y actualizan las series monetarias, las métricas de backtest y los rangos de probabilidad sin intervención manual.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Shared Institutional Footer -->
+  <footer class="border-t border-rule bg-card py-10 px-4 sm:px-6 transition-colors">
+    <div class="max-w-6xl mx-auto flex flex-col gap-6 text-left">
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-rule">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
+        </a>
+        <nav class="flex flex-wrap items-center gap-6 text-xs text-ink-soft" aria-label="Navegación secundaria">
+          <a href="/dolar" class="hover:text-ink transition no-underline">Dólar</a>
+          <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a>
+          <a href="/empresas" class="hover:text-ink transition no-underline">Empresas</a>
+          <a href="/aprende" class="hover:text-ink transition no-underline">Aprende</a>
+          <a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a>
+          <a href="/guia" class="hover:text-ink transition no-underline">Guía</a>
+          <a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
+          <a href="/boletin" class="hover:text-ink transition no-underline">Boletín</a>
+          <a href="/terms" class="hover:text-ink transition no-underline">Términos</a>
+          <a href="/privacidad" class="hover:text-ink transition no-underline">Privacidad</a>
+          <a href="mailto:soporte@perdata.site" class="hover:text-ink transition no-underline">Contacto</a>
+        </nav>
+      </div>
+
+      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 text-[11px] text-ink-soft leading-relaxed">
+        <span class="font-medium text-ink shrink-0">© 2026 PerData</span>
+        <p class="max-w-2xl m-0 text-ink-soft">
+          Información financiera y cuantitativa con fines estrictamente informativos y de investigación. No constituye asesoramiento de inversión ni oferta pública de valores. Datos oficiales provistos por el Banco Central de Reserva del Perú (BCRP).
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById("themeToggle");
+    const isDark = document.documentElement.classList.contains("dark");
+    if (themeToggle) {
+      themeToggle.checked = isDark;
+      themeToggle.addEventListener("change", (e) => {
+        if (e.target.checked) {
+          document.documentElement.classList.add("dark");
+          document.documentElement.classList.remove("light");
+          localStorage.setItem("theme", "dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+          document.documentElement.classList.add("light");
+          localStorage.setItem("theme", "light");
+        }
+      });
+    }
+  </script>
+
+  <!-- Mobile Menu Toggle -->
+  <script>
+    (function() {
+      var btn = document.getElementById('mobileMenuBtn');
+      if (btn) {
+        btn.addEventListener('click', function() {
+          // mobile menu logic if needed
+        });
+      }
+    })();
+  </script>
+
+  <script src="/consent.js" defer></script>
+  <script src="/auth.js" defer></script>
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "bc9abca1e97b4bcaa6261b23afc498e5"}'></script>
+</body>
+</html>

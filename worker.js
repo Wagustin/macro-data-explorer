@@ -18,6 +18,7 @@ import { ensureSchema } from "./api/_lib/d1.js";
 // Clean URL route map for static subpages
 const CLEAN_PAGES = {
   "/": "index.html",
+  "/dolar": "dolar.html",
   "/explorer": "explorer.html",
   "/metodologia": "metodologia.html",
   "/aprende": "aprende.html",
