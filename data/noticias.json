@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-03T23:23:01.956Z",
+  "actualizado": "2026-11-04T02:31:28.235Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,27 +24,27 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 62
+      "items": 63
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 66
+      "items": 67
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 11
+      "items": 10
     },
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 11
+      "items": 12
     },
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 18
+      "items": 20
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 25
+      "items": 24
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -64,11 +64,191 @@
   },
   "noticias": [
     {
+      "id": "andina-1238df2b18",
+      "titulo": "Mincetur coordina acciones para garantizar conectividad marítima ante fenómeno El Niño",
+      "url": "https://andina.pe/agencia/noticia-mincetur-coordina-acciones-para-garantizar-conectividad-maritima-ante-fenomeno-nino-1098505.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-04T02:00:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "bloomberg_linea-7e9531b06e",
+      "titulo": "Elecciones intermedias en EE.UU.: demócratas logran una victoria temprana en el Senado mientras avanza el conteo",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/inicia-el-cierre-de-urnas-en-eeuu-con-democratas-y-republicanos-disputandose-el-control-del-congreso/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-04T01:51:20.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-f32e259216",
+      "titulo": "La transformación empresarial comienza por el liderazgo",
+      "url": "https://www.infobae.com/peru/2026/11/04/la-transformacion-empresarial-comienza-por-el-liderazgo/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-04T01:35:35.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-fe8999bc7b",
+      "titulo": "¿Perú enfrentaría años de escasez de energía barata? La advertencia por atraso en inversión",
+      "url": "https://gestion.pe/economia/peru-enfrentaria-anos-de-escasez-de-energia-barata-la-advertencia-del-coes-por-atraso-en-inversion-privada-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-04T01:34:00.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-6eff9d773e",
+      "titulo": "Este es el precio de la gasolina en Lima hoy, martes 3 de noviembre",
+      "url": "https://www.infobae.com/peru/2026/11/03/este-es-el-precio-de-la-gasolina-en-lima-hoy/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-04T01:32:38.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-1277b0ae6d",
+      "titulo": "ANIN ofrece contratos para mantenimiento de tres centros de salud por S/ 48 millones",
+      "url": "https://andina.pe/agencia/noticia-anin-ofrece-contratos-para-mantenimiento-tres-centros-salud-s-48-millones-1098503.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-04T01:20:15.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "infobae-4783463614",
+      "titulo": "Departamentos en Lima: estos son los factores que pueden marcar la diferencia en el valor de tu inversión",
+      "url": "https://www.infobae.com/peru/2026/11/04/departamentos-en-lima-estos-son-los-factores-que-pueden-marcar-la-diferencia-en-el-valor-de-tu-inversion/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-04T01:19:43.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-39660ccdd6",
+      "titulo": "Precio del dólar en Perú: cuál fue el tipo de cambio del martes 3 de noviembre",
+      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-a-cuanto-esta-el-dolar-este-martes-3-de-noviembre-2026-tipo-de-cambio-segun-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-04T01:00:00.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-051833aa15",
+      "titulo": "MEF destina S/13,9 millones para intervenciones ante ocurrencias de desastres naturales",
+      "url": "https://elcomercio.pe/economia/peru/mef-destina-s139-millones-para-intervenciones-ante-ocurrencias-de-desastres-naturales-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-04T00:59:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-269ee35130",
+      "titulo": "Monserrat Seminario sobre la pensión de alimentos de Melcochita: \"Yo sé cuánto él gana, cuál es su capacidad mensual\"",
+      "url": "https://www.infobae.com/peru/2026/11/04/monserrat-seminario-sobre-la-pension-de-alimentos-de-melcochita-yo-se-cuanto-el-gana-cual-es-su-capacidad-mensual/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-04T00:35:07.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-4eaa90208b",
+      "titulo": "ADEX: exportaciones pesqueras de Perú cerrarán este año “en rojo” por el impacto de El Niño",
+      "url": "https://gestion.pe/economia/exportaciones-pesqueras-de-peru-cerraran-este-ano-en-rojo-por-el-impacto-de-el-nino-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-04T00:33:26.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-9f35dc2e43",
+      "titulo": "Latam creció 16,3% en utilidades el tercer trimestre, pero impacto del alza de combustible fue de US$520 millones",
+      "url": "https://elcomercio.pe/economia/latam-crecio-163-en-utilidades-el-tercer-trimestre-pero-impacto-del-alza-de-combustible-fue-de-us520-millones-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-04T00:29:05.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-da21d05070",
+      "titulo": "Auge de la IA divide a Wall Street: gestores alertan sobre una burbuja y bancos ven oportunidades",
+      "url": "https://www.bloomberglinea.com/mercados/auge-de-la-ia-divide-a-wall-street-gestores-alertan-sobre-una-burbuja-y-bancos-ven-oportunidades/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-04T00:16:40.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-b00643b841",
+      "titulo": "Gobierno prevé la construcción de dos megapenales en Huacho, anuncia Ernesto Álvarez",
+      "url": "https://rpp.pe/politica/gobierno/gobierno-preve-la-construccion-de-un-megapenal-en-huacho-con-capacidad-para-10-mil-internos-afirma-ernesto-alvarez-noticia-1715818",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-04T00:10:26.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-0007e8ffbe",
+      "titulo": "Bernie Navarro: negociaciones con Perú por aranceles avanzan hacia un “término medio”",
+      "url": "https://gestion.pe/economia/estados-unidos-negociaciones-con-peru-por-aranceles-avanzan-hacia-un-termino-medio-dice-embajador-bernie-navarro-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-04T00:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-df9a1d3a27",
+      "titulo": "Energía nuclear: Perú quiere diversificar matriz energética con llamados SMR, ¿qué son?",
+      "url": "https://gestion.pe/economia/energia-nuclear-peru-quiere-diversificar-matriz-energetica-con-llamados-smr-que-son-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-03T23:55:55.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-a2f5782c8a",
+      "titulo": "Indecopi advierte a empresas de transporte: pasajeros pueden reprogramar sus viajes sin penalidad si avisan con 24 horas de anticipación",
+      "url": "https://www.infobae.com/peru/2026/11/03/indecopi-advierte-a-empresas-de-transporte-pasajeros-pueden-reprogramar-sus-viajes-sin-penalidad-si-avisan-con-24-horas-de-anticipacion/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-03T23:55:09.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-dd6ad72b22",
+      "titulo": "Vehículos eléctricos avanzan, pero sin electrolineras: despliegue se frena, ¿qué pasa?",
+      "url": "https://gestion.pe/economia/empresas/vehiculos-electricos-expansion-de-electrolineras-se-frena-en-lima-y-mas-de-50-empresas-proveedoras-miran-potencial-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-03T23:45:00.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-485cd4085b",
+      "titulo": "¿Nuevo polo de oficinas en Centro de Lima? Scipion invertirá US$30 millones en edificios",
+      "url": "https://gestion.pe/economia/empresas/scipion-real-estate-alista-inversion-de-us30-millones-para-recuperar-edificios-en-el-centro-de-lima-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-03T23:30:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "gestion-3601e916fe",
       "titulo": "Petroperú logra utilidad de US$ 144.9 millones, pero capital de trabajo aún es negativo",
       "url": "https://gestion.pe/economia/petroperu-logra-utilidad-neta-de-us-1449-millones-pero-capital-de-trabajo-aun-es-negativo-noticia/",
       "fuente": "Gestión",
-      "fecha_iso": "2026-11-03T23:15:14.000Z",
+      "fecha_iso": "2026-11-03T23:29:17.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-2680d96a23",
+      "titulo": "Servicios por Impuestos y OxI Exprés para enfrentar a El Niño aún a paso lento: ¿qué falta?",
+      "url": "https://gestion.pe/economia/el-nino-servicios-por-impuestos-y-oxi-expres-para-enfrentar-el-fenomeno-tardan-en-acelerar-ritmo-que-pasa-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-03T23:26:00.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
@@ -96,15 +276,6 @@
       "url": "https://elcomercio.pe/economia/precios-de-alimentos-cuanto-ha-evolucionado-el-costo-de-la-papa-el-choclo-el-limon-y-el-pollo-en-los-mercados-de-lima-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-03T22:50:25.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-485cd4085b",
-      "titulo": "¿Nuevo polo de oficinas en Centro de Lima? Scipion invertirá US$30 millones en edificios",
-      "url": "https://gestion.pe/economia/empresas/scipion-real-estate-alista-inversion-de-us30-millones-para-recuperar-edificios-en-el-centro-de-lima-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-03T22:47:16.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
@@ -151,15 +322,6 @@
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-03T22:34:23.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-fe8999bc7b",
-      "titulo": "¿Perú enfrentaría años de escasez de energía barata? La advertencia por atraso en inversión",
-      "url": "https://gestion.pe/economia/peru-enfrentaria-anos-de-escasez-de-energia-barata-la-advertencia-del-coes-por-atraso-en-inversion-privada-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-03T22:34:19.000Z",
-      "categoria": "Energía",
       "semaforo": "AMARILLO"
     },
     {
@@ -244,15 +406,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-39660ccdd6",
-      "titulo": "Precio del dólar en Perú: cotización en compra y venta del martes 3 de noviembre",
-      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-a-cuanto-esta-el-dolar-este-martes-3-de-noviembre-2026-tipo-de-cambio-segun-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-03T21:59:50.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "rpp-e9da3e5f46",
       "titulo": "Disney planea despedir a miles de trabajadores para reducir sus costes anuales",
       "url": "https://rpp.pe/cine/internacional/disney-planea-despedir-a-miles-de-trabajadores-para-reducir-sus-costes-anuales-noticia-1715796",
@@ -286,15 +439,6 @@
       "fuente": "RPP Noticias",
       "fecha_iso": "2026-11-03T21:35:08.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-2680d96a23",
-      "titulo": "Servicios por Impuestos y OxI Exprés para enfrentar a El Niño aún a paso lento: ¿qué falta?",
-      "url": "https://gestion.pe/economia/el-nino-servicios-por-impuestos-y-oxi-expres-para-enfrentar-el-fenomeno-tardan-en-acelerar-ritmo-que-pasa-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-03T21:30:00.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -367,15 +511,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-03T20:32:00.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-0007e8ffbe",
-      "titulo": "Bernie Navarro: negociaciones con Perú por aranceles avanzan hacia un “término medio”",
-      "url": "https://gestion.pe/economia/estados-unidos-negociaciones-con-peru-por-aranceles-avanzan-hacia-un-termino-medio-dice-embajador-bernie-navarro-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-03T20:26:39.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -457,15 +592,6 @@
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-03T19:20:31.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-dd6ad72b22",
-      "titulo": "Vehículos eléctricos avanzan, pero sin electrolineras: despliegue se frena, ¿qué pasa?",
-      "url": "https://gestion.pe/economia/empresas/vehiculos-electricos-expansion-de-electrolineras-se-frena-en-lima-y-mas-de-50-empresas-proveedoras-miran-potencial-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-03T19:17:54.000Z",
-      "categoria": "Energía",
       "semaforo": "AMARILLO"
     },
     {
@@ -568,39 +694,12 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "infobae-aeecf5f33a",
-      "titulo": "La anemia y la obesidad le costaron al Perú USD 10.585 millones, según INSA",
-      "url": "https://www.infobae.com/peru/2026/11/03/la-anemia-y-la-obesidad-le-costaron-al-peru-usd-10585-millones-segun-insa/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-03T18:43:22.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-ff0a05d07d",
       "titulo": "Doe Run: nuevo liquidador reaviva disputa por el fideicomiso PAMA de casi US$ 20 millones",
       "url": "https://gestion.pe/economia/empresas/doe-run-peru-la-disputa-por-los-casi-us-20-millones-del-fideicomiso-pama-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-03T18:42:47.000Z",
       "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-ba3c4fe9f8",
-      "titulo": "Piden CTS al 100% para los trabajadores CAS de 70 años en Comisión de Presupuesto",
-      "url": "https://www.infobae.com/peru/2026/11/03/piden-cts-al-100-para-los-trabajadores-cas-de-70-anos-en-comision-de-presupuesto/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-03T18:42:07.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-f2dcb919aa",
-      "titulo": "Convocatoria laboral con más de 350 vacantes para este 04 de noviembre: conoce el punto de atención y el horario",
-      "url": "https://www.infobae.com/peru/2026/11/03/convocatoria-laboral-con-mas-de-350-vacantes-para-este-04-de-noviembre-conoce-el-punto-de-atencion-y-el-horario/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-03T18:35:38.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -637,24 +736,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-03T17:59:36.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-4e2ae89dd7",
-      "titulo": "Retiro de AFP: Sindicato de Ositrán pide aprobar las 4 UIT ante gastos extraordinarios por El Niño",
-      "url": "https://www.infobae.com/peru/2026/11/03/retiro-de-afp-sindicato-de-ositran-pide-aprobar-las-4-uit-ante-gastos-extraordinarios-por-el-nino/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-03T17:57:10.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-051833aa15",
-      "titulo": "MEF destina S/13.9 millones para intervenciones ante ocurrencias de desastres naturales",
-      "url": "https://elcomercio.pe/economia/peru/mef-destina-s139-millones-para-intervenciones-ante-ocurrencias-de-desastres-naturales-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-03T17:55:28.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -712,15 +793,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "infobae-473b653ae9",
-      "titulo": "CTS se paga hasta el 16 de noviembre y si tu empresa no cumple la pueden multar con hasta S/143 mil",
-      "url": "https://www.infobae.com/peru/2026/11/03/cts-se-paga-hasta-el-16-de-noviembre-y-si-tu-empresa-no-cumple-la-pueden-multar-con-hasta-s143-mil/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-03T17:00:50.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-c55023bba9",
       "titulo": "Agroexportadora Masojo prevé elevar exportaciones de palta a 350 contenedores en próxima campaña",
       "url": "https://gestion.pe/economia/empresas/agroexportadora-peruana-masojo-preve-elevar-exportaciones-de-palta-a-350-contenedores-en-proxima-campana-y-da-proyeccion-de-aradanos-noticia/",
@@ -772,15 +844,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-03T15:54:37.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-df9a1d3a27",
-      "titulo": "Energía nuclear: Perú quiere diversificar matriz energética con llamados SMR, ¿qué son?",
-      "url": "https://gestion.pe/economia/energia-nuclear-peru-quiere-diversificar-matriz-energetica-con-llamados-smr-que-son-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-03T15:43:20.000Z",
-      "categoria": "Energía",
       "semaforo": "AMARILLO"
     },
     {
@@ -952,105 +1015,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-03T11:25:00.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-fc715c85d9",
-      "titulo": "Mercados e indicadores – Hoy martes 3 de noviembre",
-      "url": "https://gestion.pe/economia/mercados/mercados-e-indicadores-hoy-martes-3-de-noviembre-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-03T11:09:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-56accbcc86",
-      "titulo": "Precio del dólar Perú y tipo de cambio hoy 03 de noviembre del 2026",
-      "url": "https://rpp.pe/economia/economia/precio-del-dolar-peru-y-tipo-de-cambio-hoy-03-de-noviembre-del-2026-noticia-1715694",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-03T11:05:39.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-44dc378a97",
-      "titulo": "Felaban: Banca regional aborda en Lima los retos del sistema financiero global",
-      "url": "https://andina.pe/agencia/noticia-felaban-banca-regional-aborda-lima-los-retos-del-sistema-financiero-global-1098348.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-03T11:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "rpp-ebb5235972",
-      "titulo": "Argentina: dólar blue hoy a cuánto cotiza este martes 03 de noviembre",
-      "url": "https://rpp.pe/mundo/argentina/argentina-dolar-blue-hoy-a-cuanto-cotiza-este-martes-03-de-noviembre-noticia-1715693",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-03T10:59:39.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-23fa823642",
-      "titulo": "Trump, Milei y las elecciones en EE.UU.: qué está en juego en la relación con Argentina",
-      "url": "https://www.bloomberglinea.com/latinoamerica/argentina/trump-milei-y-las-elecciones-en-eeuu-que-esta-en-juego-en-la-relacion-con-argentina/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-03T08:30:00.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-d9df317edb",
-      "titulo": "La bodega argentina que recibió el oro en un premio global de enoturismo",
-      "url": "https://www.bloomberglinea.com/latinoamerica/argentina/la-bodega-argentina-que-recibio-el-oro-en-un-premio-global-de-enoturismo/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-03T08:15:01.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-4fab2d5e6e",
-      "titulo": "DP World Callao registra el mayor movimiento mensual de su historia: 200 mil TEU en octubre",
-      "url": "https://gestion.pe/peru/dp-world-callao-registra-el-mayor-movimiento-mensual-de-su-historia-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-03T07:00:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-5e3d18dab4",
-      "titulo": "Claro y El Niño: el plan para blindar su red y crecer a doble dígito en nube e IA",
-      "url": "https://gestion.pe/economia/empresas/claro-alista-su-red-ante-el-nino-y-apuesta-por-nube-e-ia-para-crecer-a-doble-digito-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-03T04:15:00.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-97468bfb89",
-      "titulo": "Ministerio de Vivienda desplaza maquinaria ante intensas lluvias en Tumbes",
-      "url": "https://andina.pe/agencia/noticia-ministerio-vivienda-desplaza-maquinaria-ante-intensas-lluvias-tumbes-1098340.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-03T04:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-69c64b0b4d",
-      "titulo": "El Niño: los productos podrían subir de precio en los mercados ante menor oferta",
-      "url": "https://gestion.pe/economia/el-nino-en-peru-los-productos-podrian-subir-de-precio-en-los-mercados-ante-escasez-por-menor-oferta-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-03T03:46:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-cf5a05d03b",
-      "titulo": "Precio del dólar en Perú: cuál fue el tipo de cambio del lunes 2 de noviembre",
-      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-2026-hoy-lunes-2-de-noviembre-tipo-de-cambio-segun-el-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-03T03:39:55.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     }
   ]
