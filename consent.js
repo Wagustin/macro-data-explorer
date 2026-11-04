@@ -27,6 +27,24 @@
     }
   }
 
+  function getGeo() {
+    const meta = document.querySelector('meta[name="pd-geo"]');
+    const geo = meta ? (meta.getAttribute("content") || "").toLowerCase().trim() : "";
+    return geo === "eea" ? "eea" : "otro";
+  }
+
+  function loadScript() {
+    if (getGeo() === "eea") return;
+    if (document.querySelector('script[src*="adsbygoogle.js"]')) return;
+    const s = document.createElement("script");
+    s.async = true;
+    s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3342536112010915";
+    s.crossOrigin = "anonymous";
+    const nonce = document.querySelector("script[nonce]")?.getAttribute("nonce");
+    if (nonce) s.setAttribute("nonce", nonce);
+    document.head.appendChild(s);
+  }
+
   function saveConsent(ads) {
     const dateStr = new Date().toISOString();
     const val = encodeURIComponent(`ads=${ads ? 1 : 0}&v=1&date=${dateStr}`);
@@ -34,7 +52,7 @@
     const isSecure = window.location.protocol === "https:";
     document.cookie = `${COOKIE_NAME}=${val}; max-age=${maxAge}; path=/; SameSite=Lax${isSecure ? "; Secure" : ""}`;
 
-    // Actualizar estado de AdSense en tiempo real si aplica
+    // Actualizar estado de AdSense en tiempo real si aplica (solo fuera de EEE)
     if (getGeo() === "otro") {
       if (ads) {
         if (window.adsbygoogle) {
@@ -43,13 +61,8 @@
       } else {
         (window.adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds = 1;
       }
+      loadScript();
     }
-  }
-
-  function getGeo() {
-    const meta = document.querySelector('meta[name="pd-geo"]');
-    const geo = meta ? (meta.getAttribute("content") || "").toLowerCase().trim() : "";
-    return geo === "eea" ? "eea" : "otro";
   }
 
   function initAdSense() {
@@ -59,21 +72,18 @@
     }
 
     const consent = parseConsent();
-    if (!consent || consent.ads !== 1) {
-      // Sin elección o con ads=0 -> anuncios no personalizados
-      (window.adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds = 1;
+    if (!consent) {
+      // Sin elección guardada NO se carga AdSense
+      return;
     }
 
-    const loadScript = function() {
-      if (document.querySelector('script[src*="adsbygoogle.js"]')) return;
-      const s = document.createElement("script");
-      s.async = true;
-      s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3342536112010915";
-      s.crossOrigin = "anonymous";
-      const nonce = document.querySelector("script[nonce]")?.getAttribute("nonce");
-      if (nonce) s.setAttribute("nonce", nonce);
-      document.head.appendChild(s);
-    };
+    if (consent.ads === 1) {
+      if (window.adsbygoogle) {
+        delete window.adsbygoogle.requestNonPersonalizedAds;
+      }
+    } else {
+      (window.adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds = 1;
+    }
 
     if ("requestIdleCallback" in window) {
       window.requestIdleCallback(loadScript, { timeout: 2000 });

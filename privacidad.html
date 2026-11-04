@@ -237,7 +237,7 @@
       </section>
       <section class="pd-legal-sec">
         <h2>2. Qué datos recopilamos</h2>
-        <p><b>Cuenta:</b> correo electrónico, nombre (opcional) y tu contraseña, que nuestro proveedor de autenticación (Supabase Auth) guarda solo como un hash cifrado, nunca en texto plano. <b>Si entras con Google:</b> Google nos comparte solo tu nombre, tu correo y tu foto de perfil (los permisos básicos «email» y «profile»); los usamos únicamente para crear tu cuenta e iniciar sesión, no accedemos a tu Gmail, contactos, archivos ni a ningún otro dato de tu cuenta de Google y no los compartimos con nadie. Puedes retirar el acceso cuando quieras en myaccount.google.com/permissions. El uso de la información recibida de las API de Google cumple la <a href="https://developers.google.com/terms/api-services-user-data-policy" rel="noopener">Política de datos de usuario de los servicios de API de Google</a>, incluidos los requisitos de uso limitado. <b>Si entras con Google:</b> Google nos comparte solo tu nombre, tu correo y tu foto de perfil (los permisos básicos «email» y «profile»). Los usamos únicamente para crear tu cuenta e iniciar sesión; no accedemos a tu Gmail, contactos, archivos ni a ningún otro dato de tu cuenta de Google y no los compartimos con nadie. Puedes retirar el acceso cuando quieras en myaccount.google.com/permissions. El uso de la información recibida de las API de Google cumple la <a href="https://developers.google.com/terms/api-services-user-data-policy" rel="noopener">Política de datos de usuario de los servicios de API de Google</a>, incluidos los requisitos de uso limitado. <b>Boletín:</b> tu correo, el estado de la suscripción (pendiente, activa o de baja), su fecha y las empresas que elijas seguir. <b>Suscripción:</b> plan contratado, estado de la suscripción y fecha de renovación. Los datos de tu tarjeta los recibe y procesa directamente Stripe; PerData nunca los ve ni los almacena. <b>Uso técnico:</b> registros de servidor (dirección IP, fecha y ruta solicitada) que nuestro proveedor de alojamiento conserva por un periodo corto para seguridad y diagnóstico. <b>Estadísticas de visitas:</b> usamos Cloudflare Web Analytics, que cuenta visitas sin cookies y sin identificarte personalmente.</p>
+        <p><b>Cuenta:</b> correo electrónico, nombre (opcional) y tu contraseña, que nuestro proveedor de autenticación (Supabase Auth) guarda solo como un hash cifrado, nunca en texto plano. <b>Si entras con Google:</b> Google nos comparte solo tu nombre, tu correo y tu foto de perfil (los permisos básicos «email» y «profile»); los usamos únicamente para crear tu cuenta e iniciar sesión, no accedemos a tu Gmail, contactos, archivos ni a ningún otro dato de tu cuenta de Google y no los compartimos con nadie. Puedes retirar el acceso cuando quieras en myaccount.google.com/permissions. El uso de la información recibida de las API de Google cumple la <a href="https://developers.google.com/terms/api-services-user-data-policy" rel="noopener">Política de datos de usuario de los servicios de API de Google</a>, incluidos los requisitos de uso limitado. <b>Boletín:</b> tu correo, el estado de la suscripción (pendiente, activa o de baja), su fecha y las empresas que elijas seguir. <b>Suscripción:</b> plan contratado, estado de la suscripción y fecha de renovación. Los datos de tu tarjeta los recibe y procesa directamente Stripe; PerData nunca los ve ni los almacena. <b>Uso técnico:</b> registros de servidor (dirección IP, fecha y ruta solicitada) que nuestro proveedor de alojamiento conserva por un periodo corto para seguridad y diagnóstico. No utilizamos cookies publicitarias sin tu consentimiento explícito.</p>
       </section>
       <section class="pd-legal-sec">
         <h2>3. Para qué los usamos</h2>
@@ -249,26 +249,93 @@
       </section>
       <section class="pd-legal-sec">
         <h2>5. Almacenamiento en tu navegador y cookies</h2>
-        <p>En PerData aplicamos un principio estricto de minimización de datos. A continuación detallamos los elementos que se almacenan en tu dispositivo:</p>
+        <p>En PerData aplicamos un principio estricto de minimización de datos. A continuación detallamos la tabla completa de elementos que se almacenan en tu dispositivo o navegador:</p>
 
-        <p><b>Cookies propias:</b></p>
-        <ul>
-          <li><b>pd_consent:</b> almacena tu elección de consentimiento de cookies y preferencias de publicidad (valores <code>ads=1|0</code>, versión de política y fecha). Su duración es de 180 días y se emite con atributos <code>SameSite=Lax</code> y <code>Secure</code>. Es necesaria para recordar tu elección sin solicitarla en cada visita.</li>
-        </ul>
-
-        <p><b>Almacenamiento local (localStorage):</b></p>
-        <ul>
-          <li><b>theme:</b> preferencia de visualización (tema claro u oscuro).</li>
-          <li><b>mde_terms_accepted_v2:</b> registro de aceptación del aviso inicial de la terminal.</li>
-          <li><b>mde_auth_session:</b> token de sesión cifrado al iniciar sesión (se elimina automáticamente al cerrar sesión).</li>
-        </ul>
+        <div class="overflow-x-auto my-6 border border-rule rounded-sm">
+          <table class="w-full text-left border-collapse text-xs sm:text-[13px]">
+            <thead class="bg-surface border-b border-rule">
+              <tr>
+                <th class="py-2.5 px-3 font-semibold text-ink">Elemento</th>
+                <th class="py-2.5 px-3 font-semibold text-ink">Tipo y origen</th>
+                <th class="py-2.5 px-3 font-semibold text-ink">Finalidad</th>
+                <th class="py-2.5 px-3 font-semibold text-ink">Duración</th>
+                <th class="py-2.5 px-3 font-semibold text-ink">Carácter</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-rule text-ink-soft">
+              <tr>
+                <td class="py-2.5 px-3 font-mono font-medium text-ink">pd_consent</td>
+                <td class="py-2.5 px-3">Cookie propia</td>
+                <td class="py-2.5 px-3">Almacena tu elección sobre cookies y preferencias de publicidad (valores <code>ads=1|0</code>, versión de política y fecha). Con atributos <code>SameSite=Lax</code> y <code>Secure</code>.</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">180 días</td>
+                <td class="py-2.5 px-3 font-medium text-ink">Necesaria</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-mono font-medium text-ink">pd_intro_seen</td>
+                <td class="py-2.5 px-3">sessionStorage</td>
+                <td class="py-2.5 px-3">Evita repetir la animación e introducción interactiva de la portada durante la misma sesión de navegación.</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">Sesión</td>
+                <td class="py-2.5 px-3 font-medium text-ink">Necesaria</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-mono font-medium text-ink">theme</td>
+                <td class="py-2.5 px-3">localStorage</td>
+                <td class="py-2.5 px-3">Conserva tu preferencia de visualización de la interfaz (tema claro u oscuro).</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">Persistente</td>
+                <td class="py-2.5 px-3">Funcional / Preferencia</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-mono font-medium text-ink">mde_terms_accepted_v2</td>
+                <td class="py-2.5 px-3">localStorage</td>
+                <td class="py-2.5 px-3">Registro de aceptación del aviso inicial y términos de uso de la terminal.</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">Persistente</td>
+                <td class="py-2.5 px-3 font-medium text-ink">Necesaria</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-mono font-medium text-ink">mde_auth_session</td>
+                <td class="py-2.5 px-3">localStorage</td>
+                <td class="py-2.5 px-3">Token cifrado de sesión para mantener el inicio de sesión autenticado y seguro. Se elimina automáticamente al cerrar sesión.</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">Hasta cierre de sesión</td>
+                <td class="py-2.5 px-3 font-medium text-ink">Necesaria</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-mono font-medium text-ink">IDE</td>
+                <td class="py-2.5 px-3">Cookie de terceros (.doubleclick.net / Google AdSense)</td>
+                <td class="py-2.5 px-3">Personalización y medición de anuncios publicitarios relevantes. Solo fuera del EEE y solo si el visitante lo permite expresamente («Aceptar»).</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">Hasta 13 meses (~400 días)</td>
+                <td class="py-2.5 px-3">Publicidad (opcional)</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-mono font-medium text-ink">__gads, __gpi</td>
+                <td class="py-2.5 px-3">Cookies de terceros (.perdata.site / Google AdSense)</td>
+                <td class="py-2.5 px-3">Medición de impresiones y prevención de fraude en anuncios. Solo fuera del EEE y solo tras elegir en el banner («Solo necesarias» o «Aceptar»).</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">Hasta 13 meses</td>
+                <td class="py-2.5 px-3">Publicidad (opcional)</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-mono font-medium text-ink">Cookies de Stripe (__stripe_mid, __stripe_sid)</td>
+                <td class="py-2.5 px-3">Cookies de terceros (.stripe.com / Stripe)</td>
+                <td class="py-2.5 px-3">Prevención de fraude financiero y seguridad en el procesamiento de transacciones. Solo se cargan en la pasarela de pago al adquirir una suscripción.</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">De sesión a 1 año</td>
+                <td class="py-2.5 px-3 font-medium text-ink">Necesaria (pasarela)</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-mono font-medium text-ink">Cloudflare Web Analytics</td>
+                <td class="py-2.5 px-3">Sin cookies (técnica)</td>
+                <td class="py-2.5 px-3">Medición de rendimiento y tráfico agregada para diagnóstico técnico de la infraestructura, sin almacenar cookies ni identificadores en tu dispositivo.</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">No aplica</td>
+                <td class="py-2.5 px-3 font-medium text-ink">Sin cookies</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <p><b>Tipografías auto-alojadas (sin Google Fonts):</b> No utilizamos Google Fonts ni servidores externos de fuentes. Todas las familias tipográficas del sitio (Source Serif 4, Libre Franklin e IBM Plex Mono) están auto-alojadas directamente en nuestros servidores y se sirven desde nuestro propio dominio, impidiendo cualquier transferencia de tu dirección IP a terceros.</p>
 
         <p><b>Publicidad y cookies de terceros (Google AdSense):</b> PerData no muestra anuncios a los usuarios con planes de pago (Boletín o Pro). Para visitantes de la versión gratuita:</p>
         <ul>
-          <li><b>En el Espacio Económico Europeo (EEE), Reino Unido y Suiza:</b> Google AdSense está desactivado en su totalidad; no se cargan scripts ni cookies publicitarias de Google.</li>
-          <li><b>Fuera del EEE, Reino Unido y Suiza:</b> solo si otorgas tu consentimiento explícito (<code>ads=1</code>) se activan anuncios personalizados. Si no otorgas consentimiento o seleccionas «Solo necesarias» (<code>ads=0</code>), el sistema solicita exclusivamente anuncios no personalizados (<code>requestNonPersonalizedAds = 1</code>).</li>
+          <li><b>En el Espacio Económico Europeo (EEE), Reino Unido y Suiza:</b> Google AdSense está desactivado en su totalidad; nunca se cargan scripts ni cookies publicitarias de Google.</li>
+          <li><b>Fuera del EEE, Reino Unido y Suiza:</b> Sin elección previa guardada no se carga ningún script ni cookie de AdSense. Si seleccionas «Solo necesarias» (<code>ads=0</code>), se solicitan exclusivamente anuncios no personalizados (<code>requestNonPersonalizedAds = 1</code>). Solo si otorgas tu consentimiento explícito («Aceptar», <code>ads=1</code>) se activan anuncios personalizados.</li>
         </ul>
 
         <p><b>Cómo cambiar tu elección:</b> Puedes modificar o revocar tu consentimiento en cualquier momento haciendo clic en el enlace permanente <a href="#cookies" class="pd-cookies-link" data-open-cookies>Cookies</a> presente en el pie de página de todas las secciones de PerData.</p>
