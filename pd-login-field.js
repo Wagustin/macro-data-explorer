@@ -1,19 +1,20 @@
 /**
  * PerData — Campo de Tinta (login)
- * Canvas 2D scene in three depth layers: a faint ink background, the P10–P90 fan and the price
- * line, which converge on load and keep a slow flow at rest. Exported as
- * window.PDLoginField.start(canvas) / stop().
+ * Canvas 2D scene: a faint ink background, the P10–P90 fan drawn as vertical ticks and a smooth
+ * price line written on at load. Near the pointer the central projection bends towards it, always
+ * inside the band, and the ticks along it light up. Redraws only while something moves.
+ * Exported as window.PDLoginField.start(canvas) / stop().
  */
 (function(window, document) {
   'use strict';
 
   const INK = '#EDE8DC';
   const INTRO_MS = 1800;
-  const REST_FPS = 30;
-  const REST_INTERVAL = 1000 / REST_FPS;
-  const ALPHA_BUCKETS = 12;
-  // Parallax shift (px) of each layer at the edge of the panel: far, fan, line
-  const DEPTH = { far: 4, mid: 9, near: 15 };
+  const PULSE_PERIOD = 5200;  // ms between two soft pulses along the fan
+  const PULSE_MS = 1400;
+  const IDLE_FPS = 15;
+  // Parallax shift (px) of each layer at the edge of the panel (desktop only): far, fan, line
+  const DEPTH = { far: 3, mid: 7, near: 11 };
 
   let canvas = null;
   let ctx = null;
@@ -26,12 +27,19 @@
   let width = 0;
   let height = 0;
   let dpr = 1;
+  let isMobile = false;
   let t0X = 0;
   let midY = 0;
-  let layers = { far: [], mid: [], near: [] };
-  let pointer = { x: 0, y: 0 };   // -1..1 relative to the panel centre
-  let parallax = { x: 0, y: 0 };  // eased towards pointer
+  let spread = 0.3;
+  let far = [];
+  let ticks = [];
+  let line = [];            // smooth price path, dense points
+  let pointer = null;       // {x, y} in canvas px, or null when away
+  let parallax = { x: 0, y: 0 };
+  let bend = 0;             // current offset of the projection at the pointer, px
+  let bendX = 0;            // x where the bend is anchored
   let onMove = null;
+  let onLeave = null;
   let onVisibility = null;
 
   function reducedMotion() {
@@ -51,15 +59,16 @@
 
   const easeOut = (t) => 1 - Math.pow(1 - t, 3);
   const clamp01 = (t) => (t < 0 ? 0 : t > 1 ? 1 : t);
+  const halfBand = (x) => (x - t0X) * spread + 4;
 
-  // Smoothed random walk that ends exactly at «hoy» (t0X, midY)
-  function pricePath(rand, isMobile) {
-    const n = 90;
+  // Smoothed random walk that ends at «hoy», resampled with Catmull-Rom so it has no corners
+  function pricePath(rand) {
+    const n = 48;
     const raw = [0];
     for (let i = 1; i < n; i++) raw.push(raw[i - 1] + (rand() - 0.5));
     const smooth = raw.map((_, i) => {
       let s = 0, c = 0;
-      for (let k = -4; k <= 4; k++) { const v = raw[i + k]; if (v !== undefined) { s += v; c++; } }
+      for (let k = -3; k <= 3; k++) { const v = raw[i + k]; if (v !== undefined) { s += v; c++; } }
       return s / c;
     });
     // Remove the overall drift so the line wanders around «hoy» instead of crashing into it
@@ -69,81 +78,47 @@
     const span = Math.max(...flat.map((v) => Math.abs(v - last))) || 1;
     const amp = height * (isMobile ? 0.2 : 0.11);
     const x0 = width * 0.03;
-    return flat.map((v, i) => ({ x: x0 + (t0X - x0) * (i / (n - 1)), y: midY - ((v - last) / span) * amp }));
-  }
-
-  // Strokes placed every `step` px along a polyline, aligned to its tangent
-  function strokesAlong(points, step, opts) {
+    const pts = flat.map((v, i) => ({ x: x0 + (t0X - x0) * (i / (n - 1)), y: midY - ((v - last) / span) * amp }));
     const out = [];
-    let carry = 0;
-    let arc = 0;
-    for (let i = 1; i < points.length; i++) {
-      const a = points[i - 1], b = points[i];
-      const seg = Math.hypot(b.x - a.x, b.y - a.y);
-      const ang = Math.atan2(b.y - a.y, b.x - a.x);
-      let d = step - carry;
-      while (d <= seg) {
-        const f = d / seg;
-        out.push({ x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f, angle: ang, arc: arc + d, ...opts });
-        d += step;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+      for (let k = 0; k < 6; k++) {
+        const t = k / 6, t2 = t * t, t3 = t2 * t;
+        out.push({
+          x: 0.5 * (2 * p1.x + (-p0.x + p2.x) * t + (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 + (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3),
+          y: 0.5 * (2 * p1.y + (-p0.y + p2.y) * t + (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 + (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3)
+        });
       }
-      carry = seg - (d - step);
-      arc += seg;
     }
+    out.push(pts[pts.length - 1]);
     return out;
   }
 
   function build() {
     const rand = mulberry32(7);
-    const isMobile = width < 680 || height < 260;
+    isMobile = width < 680 || height < 260;
     t0X = Math.round(width * (isMobile ? 0.34 : 0.40));
     midY = Math.round(height * 0.5);
-    const spread = isMobile ? 0.36 : 0.30;  // half-width of the fan per px to the right of «hoy»
+    spread = isMobile ? 0.36 : 0.30;
 
-    const far = [];
-    const farStep = isMobile ? 16 : 18;
+    far = [];
+    const farStep = isMobile ? 20 : 18;
     for (let y = farStep / 2; y < height; y += farStep) {
       for (let x = farStep / 2; x < width; x += farStep) {
-        far.push({
-          x, y, len: isMobile ? 5 : 6, width: 0.8,
-          alpha: 0.07 + rand() * 0.07,
-          angle: -0.5 + rand() * 0.3,
-          phase: rand() * Math.PI * 2,
-          scatter: 30 + rand() * 30,
-          scatterAngle: rand() * Math.PI * 2,
-          spin: (rand() - 0.5) * 4
-        });
+        far.push({ x, y, alpha: 0.06 + rand() * 0.06, angle: -0.5 + rand() * 0.3, scatter: 30 + rand() * 30, dir: rand() * Math.PI * 2 });
       }
     }
 
-    const mid = [];
-    const midStep = isMobile ? 11 : 12;
-    for (let y = midStep / 2; y < height; y += midStep) {
-      for (let x = t0X + midStep; x < width; x += midStep) {
-        const dx = x - t0X;
-        const half = dx * spread + 4;
-        const rel = (y - midY) / half;
-        if (Math.abs(rel) > 1) continue;
-        mid.push({
-          x, y, len: isMobile ? 7 : 8, width: 1.1 - Math.abs(rel) * 0.3,
-          alpha: 0.28 + (1 - Math.abs(rel)) * 0.42,
-          angle: Math.atan2(rel * spread, 1),
-          dx, phase: rand() * Math.PI * 2,
-          scatter: 22 + rand() * 18,
-          scatterAngle: rand() * Math.PI * 2,
-          spin: (rand() - 0.5) * 3
-        });
+    ticks = [];
+    const tickStep = isMobile ? 12 : 11;
+    for (let x = t0X + tickStep; x < width; x += tickStep) {
+      const half = halfBand(x);
+      for (let y = midY - half; y <= midY + half; y += tickStep) {
+        ticks.push({ x, y: Math.round(y), scatter: 18 + rand() * 18, dir: rand() * Math.PI * 2 });
       }
     }
 
-    const path = pricePath(rand, isMobile);
-    const line = strokesAlong(path, 7, { len: 5.5, width: 1.7, alpha: 0.95 });
-    const p50 = strokesAlong([{ x: t0X, y: midY }, { x: width, y: midY }], 9, { len: 6, width: 1.6, alpha: 0.9 });
-    const total = (line.length ? line[line.length - 1].arc : 1) + (p50.length ? p50[p50.length - 1].arc : 0);
-    const near = line.concat(p50.map((s) => ({ ...s, arc: s.arc + (line.length ? line[line.length - 1].arc : 0) })));
-    near.forEach((s) => { s.write = s.arc / total; s.phase = rand() * Math.PI * 2; });
-
-    layers = { far, mid, near };
+    line = pricePath(rand);
   }
 
   function resize() {
@@ -158,31 +133,40 @@
     ctx = canvas.getContext('2d');
     if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     build();
+    // Redraw after a resize: the loop only paints while something moves
+    if (running) draw(performance.now(), false); else if (reducedMotion()) draw(performance.now(), true);
   }
 
-  // Draws a layer grouping strokes by opacity, so each frame needs only a few stroke() calls
-  function drawLayer(list, place, shift) {
-    const buckets = [];
-    for (let i = 0; i < list.length; i++) {
-      const p = place(list[i]);
-      if (!p || p.alpha <= 0.004) continue;
-      const k = Math.min(ALPHA_BUCKETS - 1, Math.floor(p.alpha * ALPHA_BUCKETS));
-      const w = p.width > 1.3 ? 1 : 0;
-      const key = k * 2 + w;
-      (buckets[key] || (buckets[key] = [])).push(p);
+  // Central projection: straight at rest; with a pointer over the fan it bends to pass near it
+  function projectionY(x) {
+    if (!bend || x <= t0X) return midY;
+    const ax = Math.max(bendX, t0X + 1);
+    const f = x <= ax ? (x - t0X) / (ax - t0X) : 1;
+    const curve = f * f * (3 - 2 * f);  // smoothstep: leaves «hoy» flat, reaches the bend softly
+    const y = midY + bend * curve * Math.min(1, halfBand(x) / halfBand(ax));
+    const half = halfBand(x) - 2;
+    return Math.max(midY - half, Math.min(midY + half, y));
+  }
+
+  // Ticks grouped in a few opacity levels, so each frame needs few stroke() calls
+  function drawTicks(list, place, sx, sy) {
+    const levels = [[], [], [], [], [], []];
+    for (const s of list) {
+      const p = place(s);
+      if (!p || p.alpha <= 0.01) continue;
+      levels[Math.min(5, Math.floor(p.alpha * 6))].push(p);
     }
     ctx.strokeStyle = INK;
     ctx.lineCap = 'round';
-    for (let key = 0; key < buckets.length; key++) {
-      const b = buckets[key];
-      if (!b) continue;
-      ctx.globalAlpha = ((key >> 1) + 0.5) / ALPHA_BUCKETS;
-      ctx.lineWidth = key & 1 ? 1.7 : 1;
+    for (let i = 0; i < levels.length; i++) {
+      if (!levels[i].length) continue;
+      ctx.globalAlpha = (i + 0.5) / 6;
+      ctx.lineWidth = i >= 4 ? 1.5 : 1;
       ctx.beginPath();
-      for (const p of b) {
+      for (const p of levels[i]) {
         const c = Math.cos(p.angle) * p.len / 2, s = Math.sin(p.angle) * p.len / 2;
-        ctx.moveTo(p.x + shift.x - c, p.y + shift.y - s);
-        ctx.lineTo(p.x + shift.x + c, p.y + shift.y + s);
+        ctx.moveTo(p.x + sx - c, p.y + sy - s);
+        ctx.lineTo(p.x + sx + c, p.y + sy + s);
       }
       ctx.stroke();
     }
@@ -192,82 +176,111 @@
     if (!ctx) return;
     const t = still ? INTRO_MS : now - startTime;
     const intro = clamp01(t / INTRO_MS);
-    const sec = now * 0.001;
     ctx.clearRect(0, 0, width, height);
-
-    if (!still) {
-      parallax.x += (pointer.x - parallax.x) * 0.08;
-      parallax.y += (pointer.y - parallax.y) * 0.08;
-    }
-    const shift = (d) => ({ x: -parallax.x * d, y: -parallax.y * d });
-
+    const px = (d) => (isMobile ? 0 : -parallax.x * d);
+    const py = (d) => (isMobile ? 0 : -parallax.y * d);
     // Converge from a scattered state, in a wave that crosses the panel from left to right
-    const settle = (s) => easeOut(clamp01((intro - (s.x / width) * 0.45) / 0.55));
+    const settle = (x) => easeOut(clamp01((intro - (x / width) * 0.45) / 0.55));
 
-    drawLayer(layers.far, (s) => {
-      const k = settle(s);
+    drawTicks(far, (s) => {
+      const k = settle(s.x);
       const off = (1 - k) * s.scatter;
-      const breathe = still ? 0 : Math.sin(sec * 0.35 + s.phase + s.x * 0.004) * 0.12;
-      return {
-        x: s.x + Math.cos(s.scatterAngle) * off, y: s.y + Math.sin(s.scatterAngle) * off,
-        angle: s.angle + (1 - k) * s.spin + breathe, len: s.len, width: s.width, alpha: s.alpha * k
-      };
-    }, shift(DEPTH.far));
+      return { x: s.x + Math.cos(s.dir) * off, y: s.y + Math.sin(s.dir) * off, angle: s.angle, len: 6, alpha: s.alpha * k };
+    }, px(DEPTH.far), py(DEPTH.far));
 
-    // «hoy» marker
     const k0 = easeOut(clamp01((intro - 0.3) / 0.5));
     ctx.save();
-    ctx.globalAlpha = 0.28 * k0;
+    ctx.globalAlpha = 0.26 * k0;
     ctx.strokeStyle = INK;
     ctx.lineWidth = 1;
     ctx.setLineDash([2, 4]);
     ctx.beginPath();
-    ctx.moveTo(t0X - parallax.x * DEPTH.mid, 0);
-    ctx.lineTo(t0X - parallax.x * DEPTH.mid, height);
+    ctx.moveTo(t0X + px(DEPTH.mid), 0);
+    ctx.lineTo(t0X + px(DEPTH.mid), height);
     ctx.stroke();
     ctx.restore();
 
-    drawLayer(layers.mid, (s) => {
-      const k = settle(s);
+    // A soft pulse leaves «hoy» every few seconds (none while the pointer bends the line)
+    const since = (now - startTime - INTRO_MS) % PULSE_PERIOD;
+    const pulseX = !still && t > INTRO_MS && since < PULSE_MS && !bend ? t0X + (width - t0X) * (since / PULSE_MS) : -1;
+
+    drawTicks(ticks, (s) => {
+      const k = settle(s.x);
       const off = (1 - k) * s.scatter;
-      // A soft pulse that flows out of «hoy» along the fan
-      const flow = still ? 0 : 0.18 * Math.max(0, Math.sin(s.dx * 0.022 - sec * 1.4));
-      return {
-        x: s.x + Math.cos(s.scatterAngle) * off, y: s.y + Math.sin(s.scatterAngle) * off,
-        angle: s.angle + (1 - k) * s.spin, len: s.len, width: s.width, alpha: Math.min(1, (s.alpha + flow) * k)
-      };
-    }, shift(DEPTH.mid));
+      const near = Math.abs(s.y - projectionY(s.x)) / Math.max(6, halfBand(s.x));  // 0 on the projection
+      let alpha = 0.16 + 0.5 * Math.pow(1 - Math.min(1, near), 2);
+      if (pulseX > 0) alpha += 0.22 * Math.max(0, 1 - Math.abs(s.x - pulseX) / 60);
+      return { x: s.x + Math.cos(s.dir) * off, y: s.y + Math.sin(s.dir) * off, angle: Math.PI / 2 + (1 - k) * 1.2, len: near < 0.25 ? 9 : 7, alpha: Math.min(1, alpha * k) };
+    }, px(DEPTH.mid), py(DEPTH.mid));
 
-    // Price line and P50 are written on, stroke by stroke
-    const writeHead = clamp01((intro - 0.1) / 0.75);
-    drawLayer(layers.near, (s) => {
-      const k = clamp01((writeHead - s.write) / 0.06);
-      if (k <= 0) return null;
-      const lift = (1 - easeOut(k)) * 10;
-      return { x: s.x, y: s.y - lift, angle: s.angle, len: s.len, width: s.width, alpha: s.alpha * easeOut(k) };
-    }, shift(DEPTH.near));
+    // Price line, one continuous smooth stroke written on from left to right
+    const head = clamp01((intro - 0.1) / 0.6);
+    const nx = px(DEPTH.near), ny = py(DEPTH.near);
+    ctx.globalAlpha = 0.95;
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 1.8;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    const upto = Math.max(1, Math.floor(line.length * head));
+    ctx.beginPath();
+    ctx.moveTo(line[0].x + nx, line[0].y + ny);
+    for (let i = 1; i < upto; i++) ctx.lineTo(line[i].x + nx, line[i].y + ny);
+    ctx.stroke();
 
-    // «hoy» point with one slow pulse
-    if (writeHead > 0.5) {
-      const hx = t0X - parallax.x * DEPTH.near, hy = midY - parallax.y * DEPTH.near;
-      const pulse = still ? 0 : (Math.sin(sec * 1.6) + 1) / 2;
-      ctx.globalAlpha = 0.18 * pulse * k0;
-      ctx.fillStyle = INK;
-      ctx.beginPath(); ctx.arc(hx, hy, 6 + pulse * 5, 0, Math.PI * 2); ctx.fill();
+    // Central projection, dashed, written on after the price line
+    const head2 = clamp01((intro - 0.6) / 0.4);
+    if (head2 > 0) {
+      const xEnd = t0X + (width - t0X) * head2;
+      ctx.globalAlpha = 0.9;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      ctx.moveTo(t0X + nx, midY + ny);
+      for (let x = t0X + 4; x <= xEnd; x += 4) ctx.lineTo(x + nx, projectionY(x) + ny);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    if (head >= 1) {
       ctx.globalAlpha = k0;
-      ctx.beginPath(); ctx.arc(hx, hy, 3, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = INK;
+      ctx.beginPath(); ctx.arc(t0X + nx, midY + ny, 3, 0, Math.PI * 2); ctx.fill();
     }
     ctx.globalAlpha = 1;
+  }
+
+  // Eases parallax and bend towards their targets; returns true while still moving
+  function step() {
+    let moving = false;
+    const tx = pointer && !isMobile ? (pointer.x / width - 0.5) * 2 : 0;
+    const ty = pointer && !isMobile ? (pointer.y / height - 0.5) * 2 : 0;
+    parallax.x += (tx - parallax.x) * 0.1;
+    parallax.y += (ty - parallax.y) * 0.1;
+    if (Math.abs(tx - parallax.x) + Math.abs(ty - parallax.y) > 0.002) moving = true;
+
+    let target = 0;
+    if (pointer && pointer.x > t0X + 20) {
+      const half = halfBand(pointer.x);
+      if (Math.abs(pointer.y - midY) < half + 60) {
+        target = Math.max(-half, Math.min(half, pointer.y - midY));
+        bendX = pointer.x;
+      }
+    }
+    bend += (target - bend) * 0.12;
+    if (Math.abs(target - bend) > 0.3) moving = true; else if (!target) bend = 0;
+    return moving;
   }
 
   function loop(now) {
     if (!running) return;
     if (document.hidden) { animId = null; return; }
-    const introDone = now - startTime >= INTRO_MS;
-    if (!introDone || now - lastFrame >= REST_INTERVAL) {
-      lastFrame = now;
-      frameCount++;
-      draw(now, false);
+    const inIntro = now - startTime < INTRO_MS;
+    const moving = step();
+    const pulsing = (now - startTime - INTRO_MS) % PULSE_PERIOD < PULSE_MS + 100;
+    if (inIntro || moving) {
+      lastFrame = now; frameCount++; draw(now, false);
+    } else if (pulsing && now - lastFrame >= 1000 / IDLE_FPS) {
+      lastFrame = now; frameCount++; draw(now, false);
     }
     animId = requestAnimationFrame(loop);
   }
@@ -275,8 +288,8 @@
   function handleMove(e) {
     if (!canvas) return;
     const r = canvas.getBoundingClientRect();
-    pointer.x = Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width - 0.5) * 2));
-    pointer.y = Math.max(-1, Math.min(1, ((e.clientY - r.top) / r.height - 0.5) * 2));
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    pointer = x >= 0 && y >= 0 && x <= r.width && y <= r.height ? { x, y } : null;
   }
 
   function handleVisibility() {
@@ -289,18 +302,16 @@
       this.stop();
       canvas = el;
       canvas.setAttribute('aria-hidden', 'true');
-      running = true;
       startTime = performance.now();
       lastFrame = startTime;
       frameCount = 0;
-      pointer = { x: 0, y: 0 };
+      pointer = null;
       parallax = { x: 0, y: 0 };
+      bend = 0;
       resize();
 
-      if (reducedMotion()) {
-        draw(startTime, true);
-        return;
-      }
+      if (reducedMotion()) return;  // resize() already drew the final, still frame
+      running = true;
 
       if (typeof ResizeObserver !== 'undefined') {
         resizeObserver = new ResizeObserver(() => resize());
@@ -308,8 +319,12 @@
       } else {
         window.addEventListener('resize', resize);
       }
-      onMove = handleMove;
-      window.addEventListener('mousemove', onMove, { passive: true });
+      if (window.matchMedia && window.matchMedia('(pointer: fine)').matches) {
+        onMove = handleMove;
+        onLeave = () => { pointer = null; };
+        window.addEventListener('mousemove', onMove, { passive: true });
+        document.addEventListener('mouseleave', onLeave);
+      }
       onVisibility = handleVisibility;
       document.addEventListener('visibilitychange', onVisibility);
       animId = requestAnimationFrame(loop);
@@ -321,10 +336,11 @@
       if (resizeObserver) { resizeObserver.disconnect(); resizeObserver = null; }
       window.removeEventListener('resize', resize);
       if (onMove) { window.removeEventListener('mousemove', onMove); onMove = null; }
+      if (onLeave) { document.removeEventListener('mouseleave', onLeave); onLeave = null; }
       if (onVisibility) { document.removeEventListener('visibilitychange', onVisibility); onVisibility = null; }
       canvas = null;
       ctx = null;
-      layers = { far: [], mid: [], near: [] };
+      far = []; ticks = []; line = [];
     },
 
     getAnimId() { return animId; },
