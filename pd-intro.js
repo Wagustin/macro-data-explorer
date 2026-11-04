@@ -1,6 +1,6 @@
 /**
  * PerData — intro de la portada
- * The last 60 daily USD/PEN closes as candles (hollow = the dollar rose that day, filled = it fell,
+ * The last 60 (36 on phones) daily USD/PEN closes as candles (hollow = the dollar rose that day, filled = it fell,
  * body from the previous close to the close, no wicks: we only have closes). They lie flat and stand
  * up one after another in an accelerating wave while a camera follows it, starting very close and
  * pulling back until the whole series fits. The last candle («hoy») shrinks into a dot, the
@@ -13,7 +13,10 @@
   const root = document.documentElement;
   if (root.dataset.intro !== 'play') return;
 
-  const N = 60;
+  // Phones get fewer, taller candles so the final series stays legible at 390 px
+  const NARROW = window.innerWidth < 680;
+  const N = NARROW ? 36 : 60;
+  const YR = NARROW ? 16 : 6;  // world height of the price range (candle x step = 1)
   const T_FIRST = 260;        // ms until the first candle starts to stand up
   const T_WAVE = 1450;        // ms for the wave front to reach the last candle
   const T_TIP = 320;          // ms a candle takes to stand up
@@ -25,7 +28,7 @@
 
   let overlay, canvas, ctx, W, H, dpr;
   let candles = [], lo = 0, hi = 1, label = '';
-  let start = 0, raf = 0, ended = false;
+  let start = 0, prevT = 0, raf = 0, ended = false;
   let cam = { x: 0, y: 0, s: 1 };
 
   const clamp01 = (t) => (t < 0 ? 0 : t > 1 ? 1 : t);
@@ -55,11 +58,12 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
-  // World: candle i sits at x = i; prices map to y in [0, 6] (up is positive)
-  const wy = (v) => ((v - lo) / (hi - lo || 1)) * 6;
+  // World: candle i sits at x = i; prices map to y in [0, YR] (up is positive)
+  const wy = (v) => ((v - lo) / (hi - lo || 1)) * YR;
   // Final framing: the series from 5 % of the width to «hoy», leaving room for the wordmark
-  const lastFrac = () => (W < 680 ? 0.42 : 0.58);
-  const fitScale = () => Math.min((W * (lastFrac() - 0.05)) / (N - 1), (H * 0.42) / 6);
+  // (beside «hoy» on desktop; on phones it goes above it, so the series can use the width)
+  const lastFrac = () => (NARROW ? 0.9 : 0.58);
+  const fitScale = () => Math.min((W * (lastFrac() - 0.05)) / (N - 1), (H * 0.42) / YR);
   const fitX = () => (N - 1) - (W * (lastFrac() - 0.5)) / fitScale();
   const closeScale = () => W / (W < 680 ? 3.2 : 4.2);
   const toScreen = (x, y) => ({ x: W / 2 + (x - cam.x) * cam.s, y: H * 0.5 - (y - cam.y) * cam.s });
@@ -79,24 +83,20 @@
     return Math.pow(p, 1 / 0.62) * (N - 1);
   }
 
-  function drawCandle(c, i, t, color) {
+  // Draws with setTransform instead of save/restore; the caller sets colours and resets the transform
+  function drawCandle(c, i, t, alpha) {
     const k = easeOut(clamp01((t - tStart(i)) / T_TIP));
     if (k <= 0) return;
-    const y0 = wy(Math.min(c.prev, c.close));
-    const h = Math.max(0.14, Math.abs(wy(c.close) - wy(c.prev)));
     const bw = 0.5;
-    const base = toScreen(i - bw / 2, y0);
+    const base = toScreen(i - bw / 2, wy(Math.min(c.prev, c.close)));
+    const w = bw * cam.s, hh = Math.max(0.14 * YR / 6, Math.abs(wy(c.close) - wy(c.prev))) * cam.s;
+    if (base.x > W + hh || base.x + w + hh < 0) return;  // off screen (the camera starts very close)
     // Lying flat (rotated -90° about its bottom-left corner) → standing
-    const ang = (1 - k) * (-Math.PI / 2);
-    ctx.save();
-    ctx.translate(base.x, base.y);
-    ctx.rotate(-ang);
-    ctx.globalAlpha = 0.25 + 0.75 * k;
-    const w = bw * cam.s, hh = h * cam.s;
-    ctx.lineWidth = Math.max(1.2, cam.s * 0.05);
-    if (c.up) { ctx.strokeStyle = color; ctx.strokeRect(0, -hh, w, hh); }
-    else { ctx.fillStyle = color; ctx.fillRect(0, -hh, w, hh); }
-    ctx.restore();
+    const ang = (1 - k) * (Math.PI / 2), cs = Math.cos(ang) * dpr, sn = Math.sin(ang) * dpr;
+    ctx.setTransform(cs, sn, -sn, cs, base.x * dpr, base.y * dpr);
+    ctx.globalAlpha = alpha * (0.25 + 0.75 * k);
+    if (c.up) ctx.strokeRect(0, -hh, w, hh);
+    else ctx.fillRect(0, -hh, w, hh);
   }
 
   function headerTextBox() {
@@ -120,33 +120,40 @@
     const targetS = Math.exp(lerp(Math.log(closeScale()), Math.log(fitScale()), zoom));
     const targetX = lerp(f - 0.6, fitX(), zoom);
     const near = candles[Math.min(N - 1, Math.round(f))];
-    const targetY = lerp(near ? wy((near.close + near.prev) / 2) : 3, 3, zoom);
-    const a = 1 - Math.exp(-(1 / 60) * 7);
+    const targetY = lerp(near ? wy((near.close + near.prev) / 2) : YR / 2, YR / 2, zoom);
+    // Time-based easing, so a slow phone that drops frames keeps the same camera path
+    const a = 1 - Math.exp(-(Math.max(t - prevT, 1000 / 60) / 1000) * 7);
+    prevT = t;
     cam.x += (targetX - cam.x) * a; cam.y += (targetY - cam.y) * a; cam.s += (targetS - cam.s) * a;
 
     // Candles fade while the wordmark appears, so only the wordmark travels to the header
     const fadeOut = 1 - clamp01((t - T_DOT_END) / T_WORD);
-    ctx.globalAlpha = 1;
-    for (let i = 0; i < N - 1; i++) {
-      ctx.save(); ctx.globalAlpha = fadeOut; drawCandle(candles[i], i, t, color); ctx.restore();
-    }
+    ctx.fillStyle = ctx.strokeStyle = color;
+    ctx.lineWidth = Math.max(1.2, cam.s * 0.05);
+    if (fadeOut > 0) for (let i = 0; i < N - 1; i++) drawCandle(candles[i], i, t, fadeOut);
 
     // «hoy»: the last candle stands, then shrinks into the dot
     const last = candles[N - 1];
     const dotK = easeInOut(clamp01((t - T_HOLD) / T_DOT));
     const dotCenter = toScreen(N - 1, wy(last.close));
-    if (dotK <= 0) drawCandle(last, N - 1, t, color);
+    if (dotK <= 0) drawCandle(last, N - 1, t, 1);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalAlpha = 1;
 
     // Wordmark next to the dot, then the dock onto the header logo
     const wordK = easeOut(clamp01((t - T_DOT_END) / T_WORD));
     const dockK = easeInOut(clamp01((t - T_DOCK_START) / T_DOCK));
-    const fontPx = Math.max(34, Math.min(W * (W < 680 ? 0.13 : 0.075), 96));
+    const fontPx = Math.max(34, Math.min(W * (NARROW ? 0.13 : 0.075), 96));
     ctx.font = `italic 600 ${fontPx}px 'Source Serif 4', Georgia, serif`;
     const metrics = ctx.measureText('PerData');
     const textW = metrics.width;
     const ascent = metrics.fontBoundingBoxAscent || fontPx * 0.95;
     let tx = dotCenter.x + fontPx * 0.45, ty = dotCenter.y + fontPx * 0.32, scale = 1;
-    if (W < 680 && tx + textW > W * 0.95) tx = W * 0.95 - textW;
+    if (NARROW) {
+      // Above «hoy», ending just past it, but never above the top tenth of the screen
+      tx = Math.max(W * 0.05, Math.min(dotCenter.x + fontPx * 0.15, W * 0.95) - textW);
+      ty = Math.max(dotCenter.y - fontPx * 0.55, H * 0.1 + ascent);
+    }
     let textColor = color;
     const box = dockK > 0 ? headerTextBox() : null;
     if (box) {
