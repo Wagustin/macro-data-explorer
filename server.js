@@ -188,7 +188,9 @@ const server = http.createServer(async (req, res) => {
         PUBLIC_EXTENSIONS.has(path.extname(relativePath).toLowerCase())) {
       const candidatePath = path.join(__dirname, relativePath);
       const publicPath = path.join(__dirname, "public", relativePath);
-      if (fs.existsSync(candidatePath) && fs.statSync(candidatePath).isFile()) {
+      if ((relativePath.endsWith(".css") || relativePath.endsWith(".js")) && fs.existsSync(publicPath) && fs.statSync(publicPath).isFile()) {
+        targetFile = path.join("public", relativePath);
+      } else if (fs.existsSync(candidatePath) && fs.statSync(candidatePath).isFile()) {
         targetFile = relativePath;
       } else if (fs.existsSync(publicPath) && fs.statSync(publicPath).isFile()) {
         targetFile = path.join("public", relativePath);

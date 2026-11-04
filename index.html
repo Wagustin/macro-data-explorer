@@ -482,13 +482,10 @@
     html.dark .eyebrow { color: var(--pd-ink-soft); }
   </style>
   <!-- Identidad PerData (DESIGN.md) -->
-  <noscript></noscript>
-  <link rel="preload" as="style" href="/pd.css" data-async-css>
-  <noscript>  <!-- Fuentes auto-alojadas (T74) -->
   <link rel="preload" href="/fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/fonts/source-serif-4-italic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/libre-franklin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/pd.css"></noscript>
+  <link rel="preload" as="style" href="/pd.css" data-async-css>
+  <noscript><link rel="stylesheet" href="/pd.css"></noscript>
   <style>
     /* Critical landing styles; pd.css and tw.css finish the full page without blocking its first paint. */
     @font-face { font-family: 'Libre Franklin Fallback'; src: local('Arial'); size-adjust: 95.05%; ascent-override: 102.06%; descent-override: 18.94%; line-gap-override: 0%; }
@@ -1633,10 +1630,9 @@
     window.addEventListener("mde:auth-change", carga);
     document.addEventListener("DOMContentLoaded", carga);
     carga();
-  })();
-</script>
-<script src="/pd-login-field.js" defer></script>
-<script src="/pd-intro.js" defer></script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "bc9abca1e97b4bcaa6261b23afc498e5"}'></script>
+    })();
+    </script>
+    <script src="/pd-intro.js" defer></script>
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "bc9abca1e97b4bcaa6261b23afc498e5"}'></script>
 </body>
 </html>

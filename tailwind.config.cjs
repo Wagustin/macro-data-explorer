@@ -1,6 +1,6 @@
 module.exports = {
   darkMode: "class",
-  content: ["./**/*.html", "./**/*.js", "!./node_modules/**"],
+  content: ["./**/*.html", "./**/*.js", "!./node_modules/**", "!./public/**"],
   safelist: [
     // Utility names that are selected from runtime data in explorer.html.
     { pattern: /^(text|bg)-(emerald|rose)-(400|500|600)$/, variants: ["dark"] }
