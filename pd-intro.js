@@ -16,10 +16,10 @@
   // Phones get fewer, taller candles so the final series stays legible at 390 px
   const NARROW = window.innerWidth < 680;
   const N = NARROW ? 36 : 60;
-  const YR = NARROW ? 16 : 6;  // world height of the price range (candle x step = 1)
-  const T_FIRST = 260;        // ms until the first candle starts to stand up
-  const T_WAVE = 1450;        // ms for the wave front to reach the last candle
-  const T_TIP = 320;          // ms a candle takes to stand up
+  const YR = NARROW ? 16 : 14;  // world height of the price range (candle x step = 1): tall enough to read the peaks
+  const T_FIRST = 320;        // ms until the first candle starts to stand up
+  const T_WAVE = 2600;        // ms for the wave front to reach the last candle (a slow sweep)
+  const T_TIP = 180;          // ms a candle takes to stand up (each one snaps up fast)
   const T_PAUSE = 180;        // ms held on «hoy»
   const T_DOT = 220;          // ms for the last candle to become the dot
   const T_WORD = 260;         // ms for the wordmark to appear
@@ -130,7 +130,21 @@
     const fadeOut = 1 - clamp01((t - T_DOT_END) / T_WORD);
     ctx.fillStyle = ctx.strokeStyle = color;
     ctx.lineWidth = Math.max(1.2, cam.s * 0.05);
-    if (fadeOut > 0) for (let i = 0; i < N - 1; i++) drawCandle(candles[i], i, t, fadeOut);
+    // A thin line through the closes, drawn behind the wave, so the series reads as an asset's peaks
+    if (fadeOut > 0) {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.globalAlpha = 0.45 * fadeOut;
+      ctx.lineWidth = Math.max(1, cam.s * 0.03);
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      for (let i = 0; i < N && t >= tStart(i) + T_TIP * 0.5; i++) {
+        const q = toScreen(i, wy(candles[i].close));
+        if (i === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
+      }
+      ctx.stroke();
+      ctx.lineWidth = Math.max(1.2, cam.s * 0.05);
+      for (let i = 0; i < N - 1; i++) drawCandle(candles[i], i, t, fadeOut);
+    }
 
     // «hoy»: the last candle stands, then shrinks into the dot
     const last = candles[N - 1];
