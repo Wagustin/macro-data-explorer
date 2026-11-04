@@ -294,6 +294,57 @@
         <li class="py-3 border-t border-rule first:border-t-0"><strong class="text-ink">Lectura en lenguaje claro.</strong> <span class="text-ink-soft">Las notas que acompañan cada proyección las redacta PerData Engine v6 con ayuda de IA, solo a partir de las cifras de la proyección y de hechos publicados; las cifras se comprueban contra los datos.</span></li>
       </ul>
     </section>
+    <section id="diario" class="space-y-4 border-t border-rule pt-8" data-reveal>
+      <h2 class="text-2xl font-bold tracking-tight text-ink">Rango para mañana y la próxima semana</h2>
+      <p class="text-ink-soft leading-relaxed" style="font-family: var(--pd-font-read); font-size:18px; line-height:1.55;">
+        Para horizontes de muy corto plazo (mañana y la próxima semana), PerData calcula un rango diario probabilístico diseñado para capturar la incertidumbre real de céntimos sin prometer una falsa precisión puntual.
+      </p>
+
+      <h3 class="text-lg font-semibold text-ink">Cómo se calcula</h3>
+      <p class="text-ink-soft leading-relaxed" style="font-family: var(--pd-font-read); font-size:16px; line-height:1.55;">
+        El motor combina dos componentes en lenguaje llano: la <strong>volatilidad reciente</strong> (estimada con un filtro EWMA ponderado hacia los últimos días) y los <strong>movimientos observados durante los últimos 3 años</strong> de negociación formal en el mercado cambiario interbancario de Lima. A partir de esa distribución histórica filtrada se construyen los percentiles P10, P25, P50, P75 y P90.
+      </p>
+      <p class="text-ink-soft leading-relaxed" style="font-family: var(--pd-font-read); font-size:16px; line-height:1.55;">
+        El valor central (P50) es siempre el <strong>último precio de cierre oficial</strong>: en las pruebas retrospectivas, ningún ajuste de tendencia, promedio móvil ni deriva estructural mejoró el pronóstico frente a un paseo aleatorio a 1 o 5 días.
+      </p>
+
+      <h3 class="text-lg font-semibold text-ink">Cobertura fuera de muestra del dólar (2024–2026)</h3>
+      <p class="text-ink-soft leading-relaxed" style="font-family: var(--pd-font-read); font-size:16px; line-height:1.55;">
+        En la evaluación fuera de muestra realizada sobre 1.954 cortes temporales entre 2024 y 2026, la banda del 80 % demostró ser conservadora y confiable:
+      </p>
+
+      <div class="overflow-x-auto my-3">
+        <table class="w-full text-left text-sm border border-rule">
+          <thead class="bg-paper border-b border-rule font-mono text-xs text-ink uppercase">
+            <tr>
+              <th class="py-2.5 px-4 font-semibold">Horizonte</th>
+              <th class="py-2.5 px-4 font-semibold">Cobertura real del 80 %</th>
+              <th class="py-2.5 px-4 font-semibold">Ancho medio</th>
+              <th class="py-2.5 px-4 font-semibold">Error medio (MAE)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-rule font-mono tnum text-ink">
+            <tr>
+              <td class="py-2.5 px-4 font-sans font-medium">Mañana (1 día hábil)</td>
+              <td class="py-2.5 px-4">81 %</td>
+              <td class="py-2.5 px-4">1,30 % (~4,5 céntimos)</td>
+              <td class="py-2.5 px-4">S/ 0,014</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-4 font-sans font-medium">Próxima semana (5 días hábiles)</td>
+              <td class="py-2.5 px-4">86 %</td>
+              <td class="py-2.5 px-4">2,30 % (~8,0 céntimos)</td>
+              <td class="py-2.5 px-4">S/ 0,026</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="text-lg font-semibold text-ink">Resultado de la prueba de noticias</h3>
+      <p class="text-ink-soft leading-relaxed" style="font-family: var(--pd-font-read); font-size:16px; line-height:1.55;">
+        Las noticias del día <strong>no entran en el cálculo del rango</strong>. En las pruebas sistemáticas de 2024 a 2026 evaluamos incorporar titulares de prensa y análisis de sentimiento automatizado, pero ninguna variable noticiosa redujo el error ni mejoró la cobertura de las bandas; de hecho, introdujeron ruido en días de alta volatilidad declarativa. Por esa razón, los titulares se muestran en la plataforma exclusivamente como contexto informativo para el lector, sin alterar el modelo matemático.
+      </p>
+    </section>
     <section id="avisos" class="space-y-3 border-t border-rule pt-8" data-reveal>
       <h2 class="text-2xl font-bold tracking-tight text-ink">Avisos de precio</h2>
       <p class="text-ink-soft leading-relaxed" style="font-family: var(--pd-font-read); font-size:18px; line-height:1.55;">Si defines alertas en tu cuenta, las cotizaciones se revisan cada media hora contra el último cierre disponible. Se envía un aviso por correo una sola vez por cada cruce del nivel configurado; para volver a avisar, el precio debe alejarse antes de volver a cruzarlo. Puedes seguir una empresa desde su ficha, con el botón «Seguir», o desde «Empresas que sigo» en tu cuenta, y modificar o quitar cualquier alerta cuando quieras en ese mismo panel. Lo que sigues aparece también en la portada cuando entras con tu sesión.</p>

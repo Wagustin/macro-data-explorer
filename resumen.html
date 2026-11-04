@@ -12,7 +12,82 @@
   <link rel="preload" href="/fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/libre-franklin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/pd.css">
+
+  <!-- Early Theme Init to prevent flash of unstyled content -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
+      } else {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.classList.add("light");
+      }
+    })();
+  </script>
+
   <style>
+    .ui-switch {
+      --switch-bg: rgb(229, 229, 234);
+      --switch-checked-bg: rgb(0, 0, 0);
+      --circle-diameter: 18px;
+      --circle-bg: #FFFFFF;
+      --circle-inset: 2px;
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    html.dark .ui-switch {
+      --switch-bg: rgb(44, 44, 46);
+      --switch-checked-bg: rgb(255, 255, 255);
+      --circle-bg: #0D0D0E;
+    }
+
+    .ui-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--switch-bg);
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 9999px;
+    }
+
+    .slider .circle {
+      top: var(--circle-inset);
+      left: var(--circle-inset);
+      width: var(--circle-diameter);
+      height: var(--circle-diameter);
+      position: absolute;
+      background: var(--circle-bg);
+      border-radius: inherit;
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .ui-switch input:checked + .slider {
+      background-color: var(--switch-checked-bg);
+    }
+
+    .ui-switch input:checked + .slider .circle {
+      left: calc(100% - var(--circle-diameter) - var(--circle-inset));
+    }
+
     .digest-shell { width: min(100% - 40px, 760px); margin: 0 auto; padding: 64px 0 88px; }
     .digest-kicker { color: var(--pd-ink-soft); font: 500 11px var(--pd-font-mono, monospace); letter-spacing: .08em; text-transform: uppercase; }
     .digest-title { margin: 12px 0 8px; font: 600 clamp(34px, 7vw, 54px)/1.08 var(--pd-font-read, Georgia, serif); letter-spacing: -.035em; }
@@ -30,8 +105,20 @@
   </style>
   <link rel="stylesheet" href="/tw.css" />
 </head>
-<body class="bg-paper text-ink">
-  <main class="pd-data-main digest-shell">
+<body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
+  <header class="border-b border-rule bg-card sticky top-0 z-30 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
+      <div class="flex items-center space-x-6">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline"><span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span></a>
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft" aria-label="Navegación principal">
+          <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a><a href="/empresas" class="hover:text-ink transition no-underline">Empresas</a><a href="/mercado" class="hover:text-ink transition no-underline">Mercado</a><a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a><a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a><a href="/guia" class="hover:text-ink transition no-underline">Guía</a><a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
+        </nav>
+      </div>
+      <div class="flex items-center space-x-2 sm:space-x-3"><div id="navbarAuthContainer"></div><label class="ui-switch" title="Alternar modo claro / oscuro"><input id="themeToggle" type="checkbox" aria-label="Modo oscuro" /><div class="slider"><div class="circle"></div></div></label><button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menú" aria-expanded="false"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+    </div>
+    <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors"><nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft" aria-label="Menú móvil"><a href="/explorer" class="hover:text-ink py-1 no-underline">Terminal</a><a href="/empresas" class="hover:text-ink py-1 no-underline">Empresas</a><a href="/mercado" class="hover:text-ink py-1 no-underline">Mercado</a><a href="/noticias" class="hover:text-ink py-1 no-underline">Noticias</a><a href="/metodologia" class="hover:text-ink py-1 no-underline">Metodología</a><a href="/guia" class="hover:text-ink py-1 no-underline">Guía</a><a href="/precios" class="hover:text-ink py-1 no-underline">Precios</a></nav></div>
+  </header>
+  <main class="pd-data-main digest-shell flex-grow">
     <a href="/resumenes" id="backLink" class="digest-kicker" hidden>Archivo de resúmenes</a>
     <p class="digest-kicker" id="eyebrow">PerData · Economía y mercados</p>
     <h1 class="digest-title" id="pageTitle">Resumen del día</h1>
@@ -96,7 +183,24 @@
       document.getElementById("stories").textContent = "No encontramos esta edición.";
       document.getElementById("days").hidden = true;
     });
+    const toggle = document.getElementById('themeToggle');
+    if (toggle) {
+      toggle.checked = document.documentElement.classList.contains('dark');
+      toggle.addEventListener('change', (event) => {
+        document.documentElement.classList.toggle('dark', event.target.checked);
+        document.documentElement.classList.toggle('light', !event.target.checked);
+        localStorage.setItem('theme', event.target.checked ? 'dark' : 'light');
+      });
+    }
+    const menuButton = document.getElementById('mobileMenuBtn');
+    if (menuButton) {
+      menuButton.addEventListener('click', () => {
+        const open = document.getElementById('mobileMenu').classList.toggle('hidden') === false;
+        menuButton.setAttribute('aria-expanded', String(open));
+      });
+    }
   </script>
   <script src="/consent.js" defer></script>
+  <script src="/auth.js" defer></script>
 </body>
 </html>

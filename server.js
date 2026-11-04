@@ -7,6 +7,7 @@ import historicalHandler from "./api/historical.js";
 import forecastHandler from "./api/forecast.js";
 import interpretHandler from "./api/interpret.js";
 import newsHandler from "./api/news.js";
+import diarioHandler from "./api/diario.js";
 import statusHandler from "./api/status.js";
 import boletinHandler from "./api/boletin.js";
 import mercadoHandler from "./api/mercado.js";
@@ -117,6 +118,9 @@ const server = http.createServer(async (req, res) => {
   }
   if (pathname === "/api/news") {
     return newsHandler(req, res);
+  }
+  if (pathname === "/api/diario") {
+    return diarioHandler(req, res);
   }
   if (pathname === "/api/status") {
     return statusHandler(req, res);

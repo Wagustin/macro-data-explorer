@@ -634,8 +634,6 @@
             <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="VOLCABC1.LM">Volcan</button>
             <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="MINSURI1.LM">Minsur</button>
             <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="PEN=X">USD/PEN</button>
-            <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="HG=F">Cobre</button>
-            <button class="chip-btn shrink-0 whitespace-nowrap border border-[#E5E5EA] dark:border-[#2C2C2E] bg-[#F5F5F7] dark:bg-[#141416] text-[#1D1D1F] dark:text-[#F5F5F7] hover:border-black dark:hover:border-white transition" data-symbol="PEN=X">USD/PEN</button>
           </div>
         </div>
 
@@ -740,9 +738,8 @@
             <span id="liveChangePct" class="hidden text-xs font-mono tnum font-semibold px-1.5 py-0.5 rounded text-rose-700 dark:text-rose-300 bg-rose-500/10">-3.69%</span>
           </div>
           <div id="latestDate" class="text-[10px] text-ink-soft mt-0.5 font-mono tnum">Último cierre registrado</div>
-          <div id="liveQuoteNote" class="hidden text-xs text-emerald-800 dark:text-emerald-300 mt-0.5">
-            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 align-middle"></span>
-            <span id="liveQuoteText">En vivo</span>
+          <div id="liveQuoteNote" class="hidden text-xs text-ink-soft mt-0.5">
+            <span id="liveQuoteText">Último cierre</span>
           </div>
         </div>
       </div>
@@ -1896,6 +1893,12 @@ const state = {
     }
 
     // Render Basic Dashboard KPIs
+    // Prices of USD/PEN and of Lima shares are in soles, whatever currency field the API sends
+    function curSym(p) {
+      const s = (p && p.symbol) || "";
+      return (/^PEN/.test((p && p.currency) || "") || s === "PEN=X" || /\.LM$/i.test(s)) ? "S/ " : "$";
+    }
+
     function renderDashboardBasics() {
       const p = state.primaryData;
       const m = state.macroData;
@@ -1918,7 +1921,7 @@ const state = {
       assetTitle.title = p.name;
       document.getElementById("assetSymbolBadge").textContent = p.symbol;
       document.getElementById("assetMeta").textContent = `${p.sector || 'Sector'} · ${p.country || 'Mercado'} · Moneda: ${p.currency} · 10 Años de Datos`;
-      document.getElementById("latestPrice").textContent = `${p.currency === 'PEN' ? 'S/ ' : '$'}${lastClose.toFixed(2)}`;
+      document.getElementById("latestPrice").textContent = `${curSym(p)}${lastClose.toFixed(2)}`;
       document.getElementById("latestDate").textContent = `Cierre mensual: ${series[series.length - 1].date}`;
 
       // LIVE market signal (may be more recent than the monthly series)
@@ -1944,15 +1947,14 @@ const state = {
         }
         if (p.live.time) {
           const t = new Date(p.live.time);
-          const hhmm = String(t.getHours()).padStart(2, "0") + ":" + String(t.getMinutes()).padStart(2, "0");
-          liveText.textContent = `En vivo · ${t.toLocaleDateString("es-PE", { day: "2-digit", month: "short" })} ${hhmm}`;
+          liveText.textContent = `Último cierre · ${t.toLocaleDateString("es-PE", { day: "numeric", month: "short", timeZone: "UTC" }).replace(".", "")}`;
           liveNote.classList.remove("hidden");
         }
         // If live price is newer than the last monthly close, show it as the headline
         const liveT = p.live.time ? new Date(p.live.time).getTime() : 0;
         const lastT = series[series.length - 1].timestamp ? series[series.length - 1].timestamp * 1000 : 0;
         if (liveT > lastT) {
-          document.getElementById("latestPrice").textContent = `${p.currency === 'PEN' ? 'S/ ' : '$'}${p.live.price.toFixed(2)}`;
+          document.getElementById("latestPrice").textContent = `${curSym(p)}${p.live.price.toFixed(2)}`;
         }
       }
       // Daily micro-context: freshest 5 sessions under the quote (best-effort)
@@ -1971,8 +1973,8 @@ const state = {
         mHistReturn.className = `ledger-val tnum ${returnPct >= 0 ? 'text-emerald-800 dark:text-emerald-300' : 'text-rose-700 dark:text-rose-300'}`;
       }
 
-      const highStr = `${p.currency === 'PEN' ? 'S/' : '$'}${highVal.toFixed(2)}`;
-      const lowStr = `${p.currency === 'PEN' ? 'S/' : '$'}${lowVal.toFixed(2)}`;
+      const highStr = `${curSym(p).trim()}${highVal.toFixed(2)}`;
+      const lowStr = `${curSym(p).trim()}${lowVal.toFixed(2)}`;
 
       document.getElementById("metricHigh").textContent = highStr;
       document.getElementById("metricHighDate").textContent = `En ${highDate.substring(0, 7)}`;
@@ -2031,7 +2033,7 @@ const state = {
       const p = state.primaryData;
       if (!f || !f.forecastSeries) return;
 
-      const currencyPrefix = p?.currency === "PEN" ? "S/ " : "$";
+      const currencyPrefix = curSym(p);
       const hDisplay = (f.horizonLabel || '').toLowerCase().replace('1 meses', '1 mes');
       document.getElementById("tfmP50").textContent = `${currencyPrefix}${f.predictedPrice.toFixed(2)}`;
       document.getElementById("tfmHorizonDate").textContent = `Precio central a ${hDisplay}`;
@@ -2162,7 +2164,7 @@ const state = {
         if (!f || !f.forecastSeries || !f.forecastSeries.length) {
           glanceEl.innerHTML = `<span style="color:var(--pd-ink-soft);">Elige un activo para ver su proyección</span>`;
         } else {
-          const sym = /^PEN/.test(p.currency || "") ? "S/ " : "$";
+          const sym = curSym(p);
           const lastReal = Number(p.series[p.series.length - 1].close);
           const targetItem = f.forecastSeries[f.forecastSeries.length - 1];
           const p10 = Number(targetItem.p10);
@@ -2286,7 +2288,7 @@ const state = {
       if (!p || !p.series) return;
 
       const series = p.series;
-      const currencySymbol = /^PEN/.test(p.currency || "") ? "S/ " : "$";
+      const currencySymbol = curSym(p);
       const tbody = document.getElementById("tableBody");
       let html = "";
 
@@ -2302,7 +2304,7 @@ const state = {
           html += `
             <tr class="bg-[#F5F5F7]/70 dark:bg-[#2C2C2E]/40 font-medium">
               <td class="py-2.5 px-4 font-mono tnum whitespace-nowrap text-black dark:text-white sticky left-0 z-[5] bg-[#F5F5F7] dark:bg-[#2C2C2E]">${escapeHTML(item.date)}</td>
-              <td class="py-2.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 micro-label rounded-full bg-black dark:bg-white text-white dark:text-black">ENGINE P50</span></td>
+              <td class="py-2.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 micro-label rounded-full" style="background:var(--pd-ink);color:var(--pd-paper)">ENGINE P50</span></td>
               <td class="py-2.5 px-4 font-bold font-mono tnum whitespace-nowrap text-black dark:text-white">${currencySymbol}${item.p50.toFixed(2)}</td>
               <td class="py-2.5 px-4 text-ink-soft whitespace-nowrap">-</td>
               <td class="py-2.5 px-4 text-ink-soft font-mono tnum whitespace-nowrap">${currencySymbol}${item.p90.toFixed(2)}</td>

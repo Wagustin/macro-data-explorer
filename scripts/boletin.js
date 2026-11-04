@@ -11,6 +11,7 @@ import fs from "fs";
 import path from "path";
 import { smvRows } from "../api/_lib/smv.js";
 import { mencionaEmpresa } from "./empresa-mencion.js";
+import { formatFechaObjetivo, formatSemanaFecha } from "../api/diario.js";
 
 const DRY = process.argv.includes("--dry-run");
 const PREVIEW = Boolean(process.env.PREVIEW_EMPRESAS);
@@ -57,7 +58,7 @@ const prettyName = (raw) => String(raw || "").trim().split(/\s+/).map((w, i) => 
 const sentence = (t) => { const x = String(t || "").trim(); return x && x === x.toUpperCase() ? x.charAt(0) + x.slice(1).toLowerCase() : x; };
 
 async function facts() {
-  const [bcrp, eia, smv, news, fx, empresas, digest] = await Promise.all([
+  const [bcrp, eia, smv, news, fx, empresas, digest, dailyRaw] = await Promise.all([
     getJson(`${RAW}/official/bcrp-daily.json`),
     getJson(`${RAW}/official/eia-oil.json`).catch(() => null),
     getJson(`${RAW}/smv-hechos.json`).catch(() => ({ hechos: {} })),
@@ -65,6 +66,7 @@ async function facts() {
     getJson(`${SITE}/api/forecast?symbol=PEN%3DX&horizon=1`).catch(() => null),
     getJson(`${RAW}/empresas.json`).catch(() => ({ emisores: [] })),
     getJson(`${RAW}/noticias-resumen.json`).catch(() => null),
+    getJson(`${RAW}/daily-forecasts.json`).catch(() => null),
   ]);
   const nameOf = {};
   for (const e of empresas.emisores || []) for (const v of e.valores) nameOf[v.nemonico] = e.razonSocial;
@@ -108,11 +110,22 @@ async function facts() {
     p90: fx.quantiles.p90 ?? fx.quantiles.P90, probRise: fx.probabilityOfRise, model: fx.architecture?.split(" (")[0],
   } : null;
 
+  let dailyData = dailyRaw;
+  if (!dailyData) {
+    try {
+      const localDaily = path.resolve(process.cwd(), "data/daily-forecasts.json");
+      if (fs.existsSync(localDaily)) dailyData = JSON.parse(fs.readFileSync(localDaily, "utf8"));
+    } catch {}
+  }
+  const todayLima = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Lima" }).format(new Date());
+  const penDaily = dailyData?.simbolos?.PEN;
+  const dailyVigente = Boolean(penDaily?.manana?.fecha_objetivo && penDaily.manana.fecha_objetivo >= todayLima);
+
   // Stories from the digest (only if it is from the last day); their sources leave the plain headline list
   const fresh = digest && Date.now() - Date.parse(digest.actualizado) < 30 * 36e5;
   const stories = fresh ? (digest.historias || []).slice(0, 5) : [];
   const used = new Set(stories.flatMap((h) => h.fuentes.map((x) => x.url)));
-  return { markets, smvFacts: uniqueFacts.slice(0, 8), headlines: headlines.filter((h) => !used.has(h.url)).slice(0, 6), forecast, stories };
+  return { markets, smvFacts: uniqueFacts.slice(0, 8), headlines: headlines.filter((h) => !used.has(h.url)).slice(0, 6), forecast, stories, daily: dailyVigente ? penDaily : null, dailyVigente, todayLima };
 }
 
 // Numbers in the model's text must exist in the facts; otherwise the sentence is dropped.
@@ -227,11 +240,51 @@ function render(f, ai, dateLabel) {
   }).join("");
   const dates = [...new Set(f.markets.map((m) => m.date))].join(", ");
 
-  const fc = f.forecast ? `<tr><td style="padding:18px 0 0">
+  const dollarRows = [];
+  if (f.dailyVigente && f.daily) {
+    if (f.daily.manana) {
+      const label = formatFechaObjetivo(f.daily.manana.fecha_objetivo, f.todayLima || todayLima);
+      dollarRows.push({
+        label: esc(label),
+        p10: f.daily.manana.p10,
+        p50: f.daily.manana.p50,
+        p90: f.daily.manana.p90
+      });
+    }
+    if (f.daily.semana) {
+      const semLabel = formatSemanaFecha(f.daily.semana.fecha_objetivo);
+      dollarRows.push({
+        label: `Próxima semana (${esc(semLabel)})`,
+        p10: f.daily.semana.p10,
+        p50: f.daily.semana.p50,
+        p90: f.daily.semana.p90
+      });
+    }
+  }
+  if (f.forecast) {
+    dollarRows.push({
+      label: `Próximo mes (${esc(f.forecast.horizon)})`,
+      p10: f.forecast.p10,
+      p50: f.forecast.p50,
+      p90: f.forecast.p90
+    });
+  }
+
+  const fc = dollarRows.length ? `<tr><td style="padding:18px 0 0">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.card};border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule}"><tr><td style="padding:16px 4px">
-      <div style="font-family:${ui};font-size:13px;color:${C.soft}">Dólar al ${esc(f.forecast.horizon)} · ${esc(f.forecast.model)}</div>
-      <div style="font-family:${serif};font-size:30px;line-height:1.2;color:${C.ink};margin-top:4px">S/ ${fmt(f.forecast.p50, 3)}</div>
-      ${f.forecast.p10 ? `<div style="font-family:${ui};font-size:14px;color:${C.soft};margin-top:4px">Entre S/ ${fmt(f.forecast.p10, 3)} y S/ ${fmt(f.forecast.p90, 3)}, 8 de cada 10 veces · probabilidad de alza ${esc(f.forecast.probRise)} %</div>` : ""}
+      <div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin-bottom:8px">Dólar interbancario (USD/PEN) · Rango proyectado</div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        ${dollarRows.map((r, idx) => `
+          <tr>
+            <td style="padding:8px 0;${idx < dollarRows.length - 1 ? `border-bottom:1px solid ${C.rule}` : ''}">
+              <div style="font-family:${ui};font-size:12px;color:${C.soft}">${r.label}</div>
+              <div style="font-family:${mono};font-size:14px;color:${C.ink};margin-top:2px">
+                entre S/ ${fmt(r.p10, 3)} y S/ ${fmt(r.p90, 3)} <span style="font-size:11px;color:${C.soft}">(8 de cada 10 veces)</span> · central: S/ ${fmt(r.p50, 3)}
+              </div>
+            </td>
+          </tr>
+        `).join('')}
+      </table>
     </td></tr></table></td></tr>` : "";
 
   const smv = f.smvFacts.map((h) => `<tr><td style="padding:12px 0;border-bottom:1px solid ${C.rule}">

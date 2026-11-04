@@ -3,6 +3,7 @@ import historicalHandler from "./api/historical.js";
 import forecastHandler from "./api/forecast.js";
 import interpretHandler from "./api/interpret.js";
 import newsHandler from "./api/news.js";
+import diarioHandler from "./api/diario.js";
 import authHandler from "./api/auth.js";
 import billingHandler from "./api/billing.js";
 import stripeWebhookHandler from "./api/stripe-webhook.js";
@@ -158,6 +159,7 @@ const routes = {
   "/api/forecast": adaptNodeHandler(forecastHandler),
   "/api/interpret": adaptNodeHandler(interpretHandler),
   "/api/news": adaptNodeHandler(newsHandler),
+  "/api/diario": adaptNodeHandler(diarioHandler),
   "/api/billing": adaptNodeHandler(billingHandler),
   "/api/stripe-webhook": adaptNodeHandler(stripeWebhookHandler),
   "/api/status": adaptNodeHandler(statusHandler),
@@ -182,6 +184,7 @@ const SECURITY_HEADERS = {
 const API_CACHE_TTLS = new Map([
   ["/api/historical", 300],
   ["/api/forecast", 1800],
+  ["/api/diario", 1800],
   ["/api/news", 180],
   ["/api/mercado", 600]
 ]);

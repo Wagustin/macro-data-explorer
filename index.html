@@ -34,17 +34,84 @@
     window.__pdEarly = {
       hist: fetch('/api/historical?symbol=PEN=X&range=1y&interval=1mo').then(function (r) { return r.json(); }).catch(function () { return null; }),
       fc1: fetch('/api/forecast?symbol=PEN=X&horizon=1').then(function (r) { return r.json(); }).catch(function () { return null; }),
-      fc3: fetch('/api/forecast?symbol=PEN=X&horizon=3').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+      fc3: fetch('/api/forecast?symbol=PEN=X&horizon=3').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+      diario: fetch('/api/diario?symbol=PEN').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+      noticias: fetch('/api/news').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
     };
     function paintEarlyCard() {
+      var fmt3 = function (v) { return typeof v === 'number' && !isNaN(v) ? v.toLocaleString('es-PE', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) : '—'; };
+      var fmt2 = function (v) { return typeof v === 'number' && !isNaN(v) ? v.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—'; };
+      window.__pdEarly.diario.then(function (d) {
+        if (d && d.vigente && d.manana) {
+          var qEl = document.getElementById('pdHeroQuestion');
+          if (qEl) qEl.textContent = d.pregunta || '¿A cuánto estará el dólar mañana?';
+          var hHorizon = document.getElementById('pdCardHorizon');
+          if (hHorizon) hHorizon.textContent = 'Horizonte: diario';
+          var cDaily = document.getElementById('pdCardDaily');
+          var cMonthly = document.getElementById('pdCardMonthly');
+          if (cDaily) cDaily.classList.remove('hidden');
+          if (cMonthly) cMonthly.classList.add('hidden');
+
+          var hF = document.getElementById('pdCardHoyFecha');
+          if (hF && d.fecha_ultimo_cierre) {
+            var pts = String(d.fecha_ultimo_cierre).split('-');
+            if (pts.length === 3) {
+              var dt = new Date(parseInt(pts[0], 10), parseInt(pts[1], 10) - 1, parseInt(pts[2], 10));
+              hF.textContent = dt.toLocaleDateString('es-PE', { day: 'numeric', month: 'short' }).replace('.', '');
+            }
+          }
+          var hC = document.getElementById('pdCardHoyCierre');
+          if (hC) hC.textContent = fmt3(d.ultimo_cierre);
+
+          var mF = document.getElementById('pdCardMananaFecha');
+          if (mF && d.manana.fecha_objetivo) {
+            var mpts = String(d.manana.fecha_objetivo).split('-');
+            if (mpts.length === 3) {
+              var mdt = new Date(parseInt(mpts[0], 10), parseInt(mpts[1], 10) - 1, parseInt(mpts[2], 10));
+              var wk = mdt.toLocaleDateString('es-PE', { weekday: 'long' });
+              var dm = mdt.toLocaleDateString('es-PE', { day: 'numeric', month: 'short' }).replace('.', '');
+              mF.textContent = wk.charAt(0).toUpperCase() + wk.slice(1) + ' ' + dm;
+            }
+          }
+          var mP10 = document.getElementById('pdCardMananaP10');
+          var mP50 = document.getElementById('pdCardMananaP50');
+          var mP90 = document.getElementById('pdCardMananaP90');
+          if (mP10) mP10.textContent = fmt3(d.manana.p10);
+          if (mP50) mP50.textContent = fmt3(d.manana.p50);
+          if (mP90) mP90.textContent = fmt3(d.manana.p90);
+
+          if (d.semana) {
+            var sF = document.getElementById('pdCardSemanaFecha');
+            if (sF && d.semana.fecha_objetivo) {
+              var spts = String(d.semana.fecha_objetivo).split('-');
+              if (spts.length === 3) {
+                var sdt = new Date(parseInt(spts[0], 10), parseInt(spts[1], 10) - 1, parseInt(spts[2], 10));
+                sF.textContent = sdt.toLocaleDateString('es-PE', { day: 'numeric', month: 'short' }).replace('.', '');
+              }
+            }
+            var sP10 = document.getElementById('pdCardSemanaP10');
+            var sP90 = document.getElementById('pdCardSemanaP90');
+            if (sP10) sP10.textContent = fmt3(d.semana.p10);
+            if (sP90) sP90.textContent = fmt3(d.semana.p90);
+          }
+          return;
+        }
+        window.__pdEarly.fc1.then(function (fc) {
+          var q = fc && fc.quantiles;
+          if (!q) return;
+          var p10 = document.getElementById('pdCardP10'), p50 = document.getElementById('pdCardP50'), p90 = document.getElementById('pdCardP90');
+          if (p10) p10.textContent = fmt2(q.p10);
+          if (p50) p50.textContent = fmt2(q.p50);
+          if (p90) p90.textContent = fmt2(q.p90);
+        });
+      });
       window.__pdEarly.fc1.then(function (fc) {
         var q = fc && fc.quantiles;
         if (!q) return;
-        var fmt = function (v) { return typeof v === 'number' && !isNaN(v) ? v.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—'; };
         var p10 = document.getElementById('pdCardP10'), p50 = document.getElementById('pdCardP50'), p90 = document.getElementById('pdCardP90');
-        if (p10) p10.textContent = fmt(q.p10);
-        if (p50) p50.textContent = fmt(q.p50);
-        if (p90) p90.textContent = fmt(q.p90);
+        if (p10 && !p10.textContent.trim()) p10.textContent = fmt2(q.p10);
+        if (p50 && !p50.textContent.trim()) p50.textContent = fmt2(q.p50);
+        if (p90 && !p90.textContent.trim()) p90.textContent = fmt2(q.p90);
         window.__pdEarly.hist.then(function (hist) {
           var series = hist && hist.series || [], byMonth = {}, months = [];
           series.forEach(function (pt) {
@@ -256,8 +323,8 @@
     .pdl-stats { min-height: 136px; }
     .pdl-card { padding: 24px 0; border-top: 1px solid var(--pd-rule); border-bottom: 1px solid var(--pd-rule); }
     .pdl-card-head { box-sizing: border-box; height: 37px; padding-bottom: 16px; border-bottom: 1px solid var(--pd-rule); }
-    .pdl-card-body { box-sizing: border-box; height: 251px; padding: 20px 0; border-bottom: 1px solid var(--pd-rule); }
-    .pdl-card-chart { box-sizing: border-box; min-height: 420px; padding-top: 18px; }
+    .pdl-card-body { box-sizing: border-box; padding: 20px 0; border-bottom: 1px solid var(--pd-rule); }
+    .pdl-card-chart { box-sizing: border-box; min-height: 420px; padding-top: 32px; }
     .pd-chart-model-header { min-height: 16px; margin-bottom: 6px; }
     @media (min-width: 640px) { main .pd-home-actions { height: 52px; min-height: 0; flex-direction: row !important; align-items: center !important; } }
     @media (min-width: 1024px) {
@@ -265,11 +332,27 @@
       .pdl-quote { height: 160px; min-height: 0; }
       main .pd-home-actions { height: 52px; min-height: 0; }
       .pdl-stats { min-height: 112px; }
-      .pdl-card-chart { min-height: 412px; }
+      .pdl-card-chart { min-height: 412px; padding-top: 32px; }
     }
-    .pdl-card-body { min-height: 251px; }
     @media (max-width: 380px) { .pdl-card-chart { min-height: 440px; } }
     @media (min-width: 381px) and (max-width: 399px) { .pdl-card-chart { min-height: 420px; } }
+    /* Hero rhythm: one spacing scale (8/16/24/32/48). The quote takes the height of its text; the
+       answer keeps a two- or three-line reserve so the async numbers do not shift the page */
+    .pdl-h1 { margin-bottom: 16px; }
+    .pd-home-status { min-height: 18px; margin: 0 0 32px; }
+    .pdl-quote, .pdl-question { height: auto; min-height: 0; }
+    .pdl-quote { margin: 0 0 32px; padding-left: 20px; }
+    .pdl-question { margin: 0 0 8px; }
+    .pd-hero-answer { height: auto; min-height: 60px; }
+    #pd-forecast-fallback { position: static; }
+    .pdl-stats { min-height: 0; margin-top: 32px; }
+    .pdl-week { display: flex; flex-direction: column; gap: 8px; padding-top: 16px; font-size: 13px; line-height: 1.4; }
+    .pdl-nowrap { white-space: nowrap; }
+    @media (min-width: 1024px) {
+      .pd-hero-answer { min-height: 60px; }
+      .pdl-quote { height: auto; }
+      .pdl-stats { margin-top: 48px; }
+    }
     @media (min-width: 400px) and (max-width: 639px) { .pdl-card-chart { min-height: 392px; } }
     @media (min-width: 640px) and (max-width: 1023px) { .pdl-card-chart { min-height: 412px; } }
     @media (min-width: 1280px) { .pdl-card-chart { min-height: 415px; } }
@@ -389,7 +472,7 @@
             </h1>
             <div id="homeStatus" class="pd-home-status mono tnum" role="status" aria-live="polite">Cargando estado del mercado…</div>
             <div class="pdl-quote" data-hero-seq="2">
-              <p class="pdl-question">¿A cuánto estará el dólar el próximo mes?</p>
+              <p class="pdl-question" id="pdHeroQuestion">¿A cuánto estará el dólar el próximo mes?</p>
               <p class="pd-hero-answer pdl-answer">
                 <span class="pd-skeleton" style="width: 85%; height: 20px; display: block; margin-bottom: 8px;"></span><span class="pd-skeleton" style="width: 55%; height: 20px; display: block;"></span>
               </p>
@@ -410,18 +493,39 @@
             <div class="pdl-card">
               <div class="pdl-card-head">
                 <span class="font-mono text-[12px] font-semibold text-ink">USD / PEN</span>
-                <span class="font-mono text-[11px] text-ink-soft">Horizonte: 1 mes</span>
+                <span id="pdCardHeadRight" class="font-mono text-[12px] text-ink-soft">
+                  <span id="pdCardHorizon" class="hidden">Horizonte: 1 mes</span>
+                  <span id="pdCardLastCloseWrap">Último cierre · <span id="pdCardHoyFecha" class="tnum">2 nov</span> · S/&nbsp;<span id="pdCardHoyCierre" class="tnum">3.466</span></span>
+                </span>
               </div>
               <div class="pdl-card-body">
-                <span class="pdl-label">Valor central estimado (P50)</span>
-                <div class="flex items-baseline gap-3 flex-wrap">
-                  <span class="pdl-big tnum">S/&nbsp;<span id="pdCardP50"><span class="pd-skeleton" style="width: 80px; height: 1em; display: inline-block;"></span></span></span>
-                  <span id="pdCardChange" class="pdl-chip font-mono"><span class="pd-skeleton" style="width: 48px; height: 12px; display: inline-block;"></span></span>
+                <div id="pdCardDaily" class="hidden">
+                  <span id="pdCardDailyLabel" class="pdl-label block mb-2" style="font-family: var(--pd-font-ui); font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;">PARA EL CIERRE DE HOY, MIÉRCOLES 4 NOV</span>
+                  <div class="flex items-baseline gap-3 flex-wrap">
+                    <span class="pdl-big tnum">S/&nbsp;<span id="pdCardDailyRange"><span id="pdCardDailyP10">3.449</span> &ndash; <span id="pdCardDailyP90">3.482</span></span></span>
+                    <span class="pdl-chip text-xs">8 de cada 10 veces</span>
+                  </div>
+                  <div class="pdl-band">
+                    <div><span class="pdl-label block">Piso</span><span class="font-mono text-sm font-semibold text-ink tnum">S/&nbsp;<span id="pdCardMananaP10">3.449</span></span></div>
+                    <div class="text-center"><span class="pdl-label block">Central</span><span class="font-mono text-sm font-semibold text-ink tnum">S/&nbsp;<span id="pdCardMananaP50">3.466</span></span></div>
+                    <div class="text-right"><span class="pdl-label block">Techo</span><span class="font-mono text-sm font-semibold text-ink tnum">S/&nbsp;<span id="pdCardMananaP90">3.482</span></span></div>
+                  </div>
+                  <div class="pdl-week text-ink-soft font-sans">
+                    <span>Próxima semana (<span id="pdCardSemanaFecha" class="tnum font-medium text-ink">mar 10 nov</span>): <span class="font-mono font-medium text-ink tnum pdl-nowrap">S/&nbsp;<span id="pdCardSemanaP10">3.431</span> &ndash; <span id="pdCardSemanaP90">3.496</span></span></span>
+                    <a href="/explorer?symbol=PEN%3DX" class="pdl-link text-[13px] text-ink hover:underline">Próximo mes en la terminal &rarr;</a>
+                  </div>
                 </div>
-                <div class="pdl-band">
-                  <div><span class="pdl-label">P10 · piso</span><span class="font-mono text-sm font-semibold text-ink tnum">S/&nbsp;<span id="pdCardP10"><span class="pd-skeleton" style="width: 50px; height: 1em; display: inline-block;"></span></span></span></div>
-                  <div class="text-center"><span class="pdl-label">Probabilidad</span><span class="font-mono text-sm font-semibold text-ink">80&nbsp;%</span></div>
-                  <div class="text-right"><span class="pdl-label">P90 · techo</span><span class="font-mono text-sm font-semibold text-ink tnum">S/&nbsp;<span id="pdCardP90"><span class="pd-skeleton" style="width: 50px; height: 1em; display: inline-block;"></span></span></span></div>
+                <div id="pdCardMonthly">
+                  <span class="pdl-label">Valor central estimado (P50)</span>
+                  <div class="flex items-baseline gap-3 flex-wrap">
+                    <span class="pdl-big tnum">S/&nbsp;<span id="pdCardP50"><span class="pd-skeleton" style="width: 80px; height: 1em; display: inline-block;"></span></span></span>
+                    <span id="pdCardChange" class="pdl-chip font-mono"><span class="pd-skeleton" style="width: 48px; height: 12px; display: inline-block;"></span></span>
+                  </div>
+                  <div class="pdl-band">
+                    <div><span class="pdl-label">P10 · piso</span><span class="font-mono text-sm font-semibold text-ink tnum">S/&nbsp;<span id="pdCardP10"><span class="pd-skeleton" style="width: 50px; height: 1em; display: inline-block;"></span></span></span></div>
+                    <div class="text-center"><span class="pdl-label">Probabilidad</span><span class="font-mono text-sm font-semibold text-ink">80&nbsp;%</span></div>
+                    <div class="text-right"><span class="pdl-label">P90 · techo</span><span class="font-mono text-sm font-semibold text-ink tnum">S/&nbsp;<span id="pdCardP90"><span class="pd-skeleton" style="width: 50px; height: 1em; display: inline-block;"></span></span></span></div>
+                  </div>
                 </div>
               </div>
               <div class="pdl-card-chart">
@@ -434,6 +538,12 @@
                 <p class="mt-1 text-[11px] text-ink-soft leading-normal" id="pdChartFooter" style="font-family: var(--pd-font-ui);"><span id="heroModelBadge" class="font-mono">Modelo: PerData Engine v6</span> · Fuente: <span id="pdChartSource">BCRP</span> · Datos al <span id="pdChartDate"><span class="pd-skeleton" style="width: 70px; height: 11px; display: inline-block;"></span></span></p>
                 <a href="/explorer?symbol=PEN%3DX" class="pdl-link mt-2 inline-block">Abrir en la terminal &rarr;</a>
               </div>
+            </div>
+            <!-- Noticias como contexto -->
+            <div id="pdNewsContextBlock" class="mt-4 pt-3 border-t border-[var(--pd-rule)] hidden" aria-label="Noticias de contexto">
+              <div class="text-[11px] font-semibold uppercase tracking-wider text-ink mb-2" style="font-family: var(--pd-font-ui); letter-spacing: .08em;">Hoy en las noticias</div>
+              <ul id="pdNewsContextList" class="list-none p-0 m-0 divide-y divide-[var(--pd-rule)]"></ul>
+              <p class="text-[12px] text-ink-soft leading-normal mt-3">Las noticias no entran en el cálculo del rango: en las pruebas de 2024-2026 no lo mejoraron. <a href="/metodologia#diario" class="pdl-link underline">Cómo lo calculamos</a></p>
             </div>
           </div>
         </div>
@@ -913,14 +1023,18 @@
       }
 
       var early = window.__pdEarly;
-      Promise.all(early ? [early.hist, early.fc1, early.fc3] : [
+      Promise.all(early ? [early.hist, early.fc1, early.fc3, early.diario, early.noticias] : [
         fetch('/api/historical?symbol=PEN=X&range=1y&interval=1mo').then(function (r) { return r.json(); }).catch(function () { return null; }),
         fetch('/api/forecast?symbol=PEN=X&horizon=1').then(function (r) { return r.json(); }).catch(function () { return null; }),
-        fetch('/api/forecast?symbol=PEN=X&horizon=3').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+        fetch('/api/forecast?symbol=PEN=X&horizon=3').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+        fetch('/api/diario?symbol=PEN').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+        fetch('/api/news').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
       ]).then(function (res) {
         var hist = res[0];
         var fc = res[1];
         var fcPath = res[2] && res[2].forecastSeries ? res[2] : fc;
+        var diario = res[3];
+        var noticiasData = res[4];
         var series = hist && hist.series ? (window.pdMonthlyCloses ? window.pdMonthlyCloses(hist.series) : hist.series) : [];
         var srcEl = document.getElementById('pdChartSource');
         if (srcEl && hist && hist.dailySource) srcEl.textContent = hist.dailySource;
@@ -955,21 +1069,116 @@
         if (dateEl) dateEl.textContent = hDate;
         if (tableDateEl) tableDateEl.textContent = hDate;
 
-        if (answerEl) {
-          if (p10 !== null && p50 !== null && p90 !== null) {
-            answerEl.innerHTML = 'Entre <span class="pd-num">S/&nbsp;' + fmt(p10, 2) + '</span> y <span class="pd-num">S/&nbsp;' + fmt(p90, 2) + '</span>, con un <span class="pd-num">80&nbsp;%</span> de probabilidad. Valor central: <span class="pd-num">S/&nbsp;' + fmt(p50, 2) + '</span>.';
-            var cP50 = document.getElementById('pdCardP50'), cP10 = document.getElementById('pdCardP10'), cP90 = document.getElementById('pdCardP90'), cChg = document.getElementById('pdCardChange');
-            if (cP50) cP50.textContent = fmt(p50, 2);
-            if (cP10) cP10.textContent = fmt(p10, 2);
-            if (cP90) cP90.textContent = fmt(p90, 2);
-            if (cChg && lastClose) {
-              var ch = (p50 - lastClose) / lastClose * 100;
-              cChg.textContent = (ch >= 0 ? '+' : '') + ch.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' % est.';
+        var heroQ = document.getElementById('pdHeroQuestion');
+        var cardHorizon = document.getElementById('pdCardHorizon');
+        var cardDaily = document.getElementById('pdCardDaily');
+        var cardMonthly = document.getElementById('pdCardMonthly');
+
+        if (diario && diario.vigente && diario.manana) {
+          if (heroQ) heroQ.textContent = diario.pregunta || '¿A cuánto estará el dólar mañana?';
+          if (cardHorizon) cardHorizon.textContent = 'Horizonte: diario';
+          if (cardDaily) cardDaily.classList.remove('hidden');
+          if (cardMonthly) cardMonthly.classList.add('hidden');
+
+          var hF = document.getElementById('pdCardHoyFecha');
+          if (hF && diario.fecha_ultimo_cierre) {
+            var pts = String(diario.fecha_ultimo_cierre).split('-');
+            if (pts.length === 3) {
+              var dt = new Date(parseInt(pts[0], 10), parseInt(pts[1], 10) - 1, parseInt(pts[2], 10));
+              hF.textContent = dt.toLocaleDateString('es-PE', { day: 'numeric', month: 'short' }).replace('.', '');
             }
-            if (fallbackEl) fallbackEl.classList.add('hidden');
-          } else {
-            if (fallbackEl) fallbackEl.classList.remove('hidden');
           }
+          var hC = document.getElementById('pdCardHoyCierre');
+          if (hC) hC.textContent = fmt(diario.ultimo_cierre, 3);
+
+          var mF = document.getElementById('pdCardMananaFecha');
+          if (mF && diario.manana.fecha_objetivo) {
+            var mpts = String(diario.manana.fecha_objetivo).split('-');
+            if (mpts.length === 3) {
+              var mdt = new Date(parseInt(mpts[0], 10), parseInt(mpts[1], 10) - 1, parseInt(mpts[2], 10));
+              var wk = mdt.toLocaleDateString('es-PE', { weekday: 'long' });
+              var dm = mdt.toLocaleDateString('es-PE', { day: 'numeric', month: 'short' }).replace('.', '');
+              mF.textContent = wk.charAt(0).toUpperCase() + wk.slice(1) + ' ' + dm;
+            }
+          }
+          var mP10 = document.getElementById('pdCardMananaP10');
+          var mP50 = document.getElementById('pdCardMananaP50');
+          var mP90 = document.getElementById('pdCardMananaP90');
+          if (mP10) mP10.textContent = fmt(diario.manana.p10, 3);
+          if (mP50) mP50.textContent = fmt(diario.manana.p50, 3);
+          if (mP90) mP90.textContent = fmt(diario.manana.p90, 3);
+
+          if (diario.semana) {
+            var sF = document.getElementById('pdCardSemanaFecha');
+            if (sF && diario.semana.fecha_objetivo) {
+              var spts = String(diario.semana.fecha_objetivo).split('-');
+              if (spts.length === 3) {
+                var sdt = new Date(parseInt(spts[0], 10), parseInt(spts[1], 10) - 1, parseInt(spts[2], 10));
+                sF.textContent = sdt.toLocaleDateString('es-PE', { day: 'numeric', month: 'short' }).replace('.', '');
+              }
+            }
+            var sP10 = document.getElementById('pdCardSemanaP10');
+            var sP90 = document.getElementById('pdCardSemanaP90');
+            if (sP10) sP10.textContent = fmt(diario.semana.p10, 3);
+            if (sP90) sP90.textContent = fmt(diario.semana.p90, 3);
+          }
+
+          if (answerEl) {
+            answerEl.innerHTML = 'Entre <span class="pd-num font-mono tnum">S/&nbsp;' + fmt(diario.manana.p10, 3) + '</span> y <span class="pd-num font-mono tnum">S/&nbsp;' + fmt(diario.manana.p90, 3) + '</span> (8 de cada 10 veces). Valor central: <span class="pd-num font-mono tnum">S/&nbsp;' + fmt(diario.manana.p50, 3) + '</span>.';
+            if (fallbackEl) fallbackEl.classList.add('hidden');
+          }
+        } else {
+          if (heroQ) heroQ.textContent = '¿A cuánto estará el dólar el próximo mes?';
+          if (cardHorizon) cardHorizon.textContent = 'Horizonte: 1 mes';
+          if (cardDaily) cardDaily.classList.add('hidden');
+          if (cardMonthly) cardMonthly.classList.remove('hidden');
+
+          if (answerEl) {
+            if (p10 !== null && p50 !== null && p90 !== null) {
+              answerEl.innerHTML = 'Entre <span class="pd-num">S/&nbsp;' + fmt(p10, 2) + '</span> y <span class="pd-num">S/&nbsp;' + fmt(p90, 2) + '</span>, con un <span class="pd-num">80&nbsp;%</span> de probabilidad. Valor central: <span class="pd-num">S/&nbsp;' + fmt(p50, 2) + '</span>.';
+              var cP50 = document.getElementById('pdCardP50'), cP10 = document.getElementById('pdCardP10'), cP90 = document.getElementById('pdCardP90'), cChg = document.getElementById('pdCardChange');
+              if (cP50) cP50.textContent = fmt(p50, 2);
+              if (cP10) cP10.textContent = fmt(p10, 2);
+              if (cP90) cP90.textContent = fmt(p90, 2);
+              if (cChg && lastClose) {
+                var ch = (p50 - lastClose) / lastClose * 100;
+                cChg.textContent = (ch >= 0 ? '+' : '') + ch.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' % est.';
+              }
+              if (fallbackEl) fallbackEl.classList.add('hidden');
+            } else {
+              if (fallbackEl) fallbackEl.classList.remove('hidden');
+            }
+          }
+        }
+
+        // Contextual news
+        try {
+          var newsItems = (noticiasData && Array.isArray(noticiasData.news)) ? noticiasData.news : [];
+          var now = Date.now();
+          var oneDay = 24 * 60 * 60 * 1000;
+          var bcrpNews = newsItems.filter(function (item) {
+            if (!item) return false;
+            var isCategory = item.category === 'Dólar y BCRP' || item.impact === 'BCRP' || (item.tema && item.tema === 'Dólar y BCRP');
+            var itemTime = typeof item.timestamp === 'number' ? item.timestamp : (item.pubDate ? new Date(item.pubDate).getTime() : 0);
+            var isRecent = itemTime && (Math.abs(now - itemTime) <= oneDay);
+            return isCategory && isRecent;
+          });
+          var newsBlock = document.getElementById('pdNewsContextBlock');
+          var newsList = document.getElementById('pdNewsContextList');
+          if (newsBlock && newsList) {
+            if (bcrpNews.length > 0) {
+              var topNews = bcrpNews.slice(0, 3);
+              newsList.innerHTML = topNews.map(function (it) {
+                var src = it.source ? ' <span class="text-ink-soft">· ' + it.source + '</span>' : '';
+                return '<li class="text-xs leading-snug"><a href="' + (it.url || '#') + '" target="_blank" rel="noopener noreferrer" class="text-ink font-medium hover:underline">' + (it.title || '') + '</a>' + src + '</li>';
+              }).join('');
+              newsBlock.classList.remove('hidden');
+            } else {
+              newsBlock.classList.add('hidden');
+            }
+          }
+        } catch (eNews) {
+          console.warn('News context render error:', eNews);
         }
 
         var chartContainer = document.getElementById('pdHeroChartContainer');
