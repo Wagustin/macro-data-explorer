@@ -4,7 +4,6 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { fetchPrecomputedForecast } from '../api/forecast.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -45,24 +44,20 @@ const semanaAnchoPct = semana.ancho_banda_pct;
 const semanaCoberturaFuera = semana.backtest.cobertura_80_fuera_muestra;
 const semanaCortes = semana.backtest.cortes_evaluados;
 
-// 1b. Pronostico mensual (motor precalculado, horizonte 3 meses, step 1)
+// 1b. Pronóstico mensual: el mismo que sirve la web (endpoint público), nunca cifras escritas a mano
 let forecastMensual = null;
 try {
-  forecastMensual = await fetchPrecomputedForecast('PEN=X', 3);
+  const r = await fetch('https://perdata.site/api/forecast?symbol=PEN=X&horizon=1', { signal: AbortSignal.timeout(15000) });
+  if (r.ok) forecastMensual = await r.json();
 } catch (error) {
-  console.warn(`Aviso: fetchPrecomputedForecast('PEN=X', 3) fallo (${error.message}).`);
+  console.warn(`Aviso: no se pudo leer el pronóstico mensual (${error.message}).`);
 }
-
-const serieMensual =
-  forecastMensual && Array.isArray(forecastMensual.forecastSeries) && forecastMensual.forecastSeries[0]
-    ? forecastMensual.forecastSeries[0]
-    : { p10: 3.29, p25: 3.34, p50: 3.42, p75: 3.47, p90: 3.57, date: '2026-11-01' };
-
-const calibracionMensual =
-  forecastMensual && forecastMensual.calibration && Number(forecastMensual.calibration.coverage80)
-    ? forecastMensual.calibration
-    : { coverage80: 80.1, n: 826 };
-
+if (!forecastMensual || !forecastMensual.quantiles) {
+  console.error('Sin pronóstico mensual: no se genera dolar.html (mejor la versión anterior que cifras inventadas).');
+  process.exit(1);
+}
+const serieMensual = { ...forecastMensual.quantiles, date: forecastMensual.horizonDate };
+const calibracionMensual = forecastMensual.calibration || {};
 const mesP10 = serieMensual.p10;
 const mesP25 = serieMensual.p25;
 const mesP50 = serieMensual.p50;
@@ -70,7 +65,7 @@ const mesP75 = serieMensual.p75;
 const mesP90 = serieMensual.p90;
 const mesFechaObjetivo = serieMensual.date;
 const mesAnchoPct = Math.abs((mesP90 - mesP10) / mesP50) * 100;
-const mesCobertura = calibracionMensual.coverage80;
+const mesCobertura = Number(calibracionMensual.coverage80) || null;
 const mesN = calibracionMensual.n;
 
 // 1c. bcrp-daily.json -> ultimos 20 cierres oficiales y resumen 2026
@@ -163,11 +158,11 @@ const fechaLarga = (iso) => {
 
 const escapeHtml = (valor) =>
   String(valor ?? '').replace(/[&<>"']/g, (caracter) => ({
-    '&': '&',
-    '<': '<',
-    '>': '>',
-    '"': '"',
-    "'": ''',
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
   })[caracter]);
 
 // Formatea el valor de un indicador oficial con su unidad
@@ -199,9 +194,11 @@ const tarjetaRango = ({ titulo, subtitulo, fechaObjetivo, p10, p25, p50, p75, p9
         ${extra ? `<p class="pd-range-meta">${extra}</p>` : ''}
       </article>`;
 
+const diaSemana = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('es-PE', { weekday: 'long', timeZone: 'UTC' });
+
 const tarjetaManana = tarjetaRango({
   titulo: 'Mañana',
-  subtitulo: '3 dias habiles',
+  subtitulo: diaSemana(manana.fecha_objetivo),
   fechaObjetivo: fechaLarga(manana.fecha_objetivo),
   p10: mananaP10,
   p25: mananaP25,
@@ -215,7 +212,7 @@ const tarjetaManana = tarjetaRango({
 
 const tarjetaSemana = tarjetaRango({
   titulo: 'Proxima semana',
-  subtitulo: '7 dias habiles',
+  subtitulo: diaSemana(semana.fecha_objetivo),
   fechaObjetivo: fechaLarga(semana.fecha_objetivo),
   p10: semanaP10,
   p25: semanaP25,
@@ -405,7 +402,7 @@ const textoExplicativo = `
 
 // ---- 7. HTML ----
 
-const htmlGenerado = `<!DOCTYPE html>
+let htmlGenerado = `<!DOCTYPE html>
 <html lang="es-PE" class="light">
 <head>
   <meta name="pd-geo" content="otro">
@@ -594,6 +591,33 @@ const htmlGenerado = `<!DOCTYPE html>
 // ---- 8. Escritura ----
 
 const outputPath = path.join(rootDir, 'dolar.html');
+// The page text was written without accents; restore them in visible text and meta descriptions only
+// (never inside tags, links or attribute names), so every regeneration comes out right
+const ACENTOS = {
+  peru: 'perú', guia: 'guía',
+  dias: 'días', habiles: 'hábiles', manana: 'mañana', proxima: 'próxima', proximo: 'próximo',
+  ultimo: 'último', ultimos: 'últimos', ultima: 'última', ultimas: 'últimas', ano: 'año', anos: 'años',
+  pronostico: 'pronóstico', pronosticos: 'pronósticos', empirica: 'empírica', empirico: 'empírico',
+  calibracion: 'calibración', minimo: 'mínimo', maximo: 'máximo', dolar: 'dólar', dolares: 'dólares',
+  politica: 'política', interes: 'interés', tambien: 'también', mas: 'más', numero: 'número',
+  metodologia: 'metodología', estadisticas: 'estadísticas', estadistica: 'estadística', variacion: 'variación',
+  proyeccion: 'proyección', proyecciones: 'proyecciones', intervencion: 'intervención', posicion: 'posición',
+  inflacion: 'inflación', terminos: 'términos', deposito: 'depósito', depositos: 'depósitos', senal: 'señal',
+  rapido: 'rápido', historica: 'histórica', historico: 'histórico', ademas: 'además', economica: 'económica',
+  economico: 'económico', analisis: 'análisis', periodo: 'período', publica: 'pública', publico: 'público',
+  credito: 'crédito', cotizacion: 'cotización', evolucion: 'evolución', despues: 'después', tecnica: 'técnica',
+  util: 'útil', segun: 'según', informacion: 'información', region: 'región', decision: 'decisión',
+  decisiones: 'decisiones', minima: 'mínima', maxima: 'máxima', limite: 'límite', facil: 'fácil'
+};
+const conAcentos = (txt) => txt.replace(/[A-Za-z]+/g, (w) => {
+  const fixed = ACENTOS[w.toLowerCase()];
+  if (!fixed) return w;
+  return w[0] === w[0].toUpperCase() ? fixed[0].toUpperCase() + fixed.slice(1) : fixed;
+});
+htmlGenerado = htmlGenerado
+  .replace(/(<(script|style)[^>]*>[\s\S]*?<\/\2>)|>([^<]+)</g, (m, block, _t, text) => (block ? block : '>' + conAcentos(text) + '<'))
+  .replace(/(<meta[^>]+content=")([^"]*)(")/g, (m, a, b, c) => a + conAcentos(b) + c);
+
 fs.writeFileSync(outputPath, htmlGenerado);
 console.log(`Escrito ${outputPath}`);
 
