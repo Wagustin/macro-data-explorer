@@ -15,20 +15,19 @@ const tailwindOutput = path.join(publicDir, "tw.css");
 fs.rmSync(publicDir, { recursive: true, force: true });
 
 function buildSitemap() {
-  const sitemapPath = path.join(rootDir, "sitemap.xml");
-  const sitemap = fs.readFileSync(sitemapPath, "utf8");
-  const staticUrls = [...sitemap.matchAll(/<url>[\s\S]*?<\/url>/g)]
-    .map(([entry]) => entry)
-    .filter((entry) => !/<loc>https:\/\/perdata\.site\/empresa\/[^<]+<\/loc>/.test(entry));
-  const catalog = JSON.parse(fs.readFileSync(path.join(rootDir, "data/empresas.json"), "utf8"));
-  const tickers = [...new Set((catalog.emisores || []).flatMap((issuer) =>
-    (issuer.valores || []).map((value) => value.nemonico).filter(Boolean)
-  ))].sort();
+  // Only pages with content of our own go to search engines; the rest are noindex (see worker.js)
+  const pages = ["/", "/dolar", "/explorer", "/empresas", "/aprende", "/metodologia", "/guia", "/precios",
+    "/boletin", "/nosotros", "/contacto", "/privacidad", "/terms"];
   const lastmod = new Date().toISOString().slice(0, 10);
-  const issuerUrls = tickers.map((ticker) =>
-    `  <url><loc>https://perdata.site/empresa/${encodeURIComponent(ticker)}</loc><lastmod>${lastmod}</lastmod><changefreq>weekly</changefreq></url>`
-  );
-  const nextSitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[...staticUrls, ...issuerUrls].join("\n")}\n</urlset>\n`;
+  const fichasDir = path.join(rootDir, "empresa");
+  const fichas = fs.existsSync(fichasDir)
+    ? fs.readdirSync(fichasDir).filter((f) => f.endsWith(".html") &&
+        /<body[^>]*data-indexable="1"/.test(fs.readFileSync(path.join(fichasDir, f), "utf8")))
+      .map((f) => `/empresa/${encodeURIComponent(f.slice(0, -5))}`).sort()
+    : [];
+  const urls = [...pages, ...fichas].map((p) =>
+    `  <url><loc>https://perdata.site${p}</loc><lastmod>${lastmod}</lastmod></url>`);
+  const nextSitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`;
   fs.mkdirSync(publicDir, { recursive: true });
   fs.writeFileSync(path.join(publicDir, "sitemap.xml"), nextSitemap);
 }

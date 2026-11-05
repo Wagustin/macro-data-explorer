@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="es-PE" class="light">
+<head>
+  <meta name="pd-geo" content="otro">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title id="metaTitle">Empresa Agricola San Juan S.A. (ASJUANC1): precio, proyección y hechos de importancia · PerData</title>
+  <meta name="description" id="metaDesc" content="Empresa Agricola San Juan S.A., Agrario que cotiza en la Bolsa de Valores de Lima: último precio, gráfico, proyección de PerData Engine y hechos de importancia de la SMV." />
+  <link rel="canonical" href="https://perdata.site/empresa/ASJUANC1" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- Fonts & Tailwind -->
+    <!-- Fuentes auto-alojadas (T74) -->
+  <link rel="preload" href="/fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/libre-franklin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/pd.css" />
+
+  <style>
+    .ficha-container {
+      max-width: 840px;
+      margin: 0 auto;
+    }
+    .company-header {
+      padding: 24px 16px 16px;
+    }
+    .breadcrumb {
+      font-size: 12px;
+      color: var(--pd-ink-soft);
+      margin-bottom: 8px;
+    }
+    .breadcrumb a {
+      color: var(--pd-ink-soft);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .breadcrumb a:hover {
+      color: var(--pd-ink);
+    }
+    .company-title {
+      font-family: var(--pd-font-read);
+      font-size: 26px;
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+    }
+    .company-meta {
+      font-family: var(--pd-font-ui);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--pd-ink-soft);
+      text-transform: uppercase;
+    }
+    .price-block {
+      padding: 0 16px 20px;
+      min-height: 250px;
+    }
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+    .price-main {
+      font-family: var(--pd-font-mono);
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+    .price-var {
+      font-family: var(--pd-font-mono);
+      font-size: 14px;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
+    .price-var.pos { color: var(--pd-pos); }
+    .price-var.neg { color: var(--pd-neg); }
+    .price-var.none { color: var(--pd-ink-soft); }
+    .price-date {
+      font-size: 12px;
+      color: var(--pd-ink-muted);
+      margin-bottom: 16px;
+      min-height: 13px;
+    }
+    .issuer-status { min-height: 56px; padding: 10px 12px; margin-top: 10px; border-left: 2px solid var(--pd-rule); color: var(--pd-ink-soft); font-size: 13px; line-height: 1.5; }
+    .issuer-status .mono { color: var(--pd-ink); font-variant-numeric: tabular-nums; }
+    .shareholders-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .shareholders-table th, .shareholders-table td { padding: 9px 6px; border-bottom: 1px solid var(--pd-rule); text-align: left; vertical-align: top; }
+    .shareholders-table th { color: var(--pd-ink-soft); font-size: 11px; font-weight: 600; }
+    .shareholders-table .numeric { text-align: right; font-family: var(--pd-font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .shareholders-source { margin-top: 12px; font-size: 12px; color: var(--pd-ink-soft); line-height: 1.5; }
+    @media (max-width: 390px) { .shareholders-table { font-size: 11px; } .shareholders-table th, .shareholders-table td { padding: 8px 3px; } }
+    .price-2nd {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--pd-card);
+      border-left: 2px solid var(--pd-rule);
+      margin-bottom: 16px;
+    }
+    .price-2nd-label {
+      font-size: 12px;
+      color: var(--pd-ink-soft);
+    }
+    .price-2nd-val {
+      font-family: var(--pd-font-mono);
+      font-variant-numeric: tabular-nums;
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .btn-primary {
+      display: block;
+      width: 100%;
+      background: var(--pd-brand);
+      color: var(--pd-paper);
+      text-align: center;
+      font-family: var(--pd-font-ui);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 14px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      transition: opacity 0.15s;
+    }
+    .btn-primary:hover {
+      opacity: 0.88;
+    }
+    .chart-section {
+      padding: 0 16px 20px;
+      height: 230px;
+    }
+    .chart-wrap {
+      background: var(--pd-card);
+      border-top: 1px solid var(--pd-rule);
+      border-bottom: 1px solid var(--pd-rule);
+      height: 180px;
+      position: relative;
+      overflow: hidden;
+    }
+    .chart-svg {
+      width: 100%;
+      height: 100%;
+    }
+    .chart-ranges { display: flex; gap: 6px; margin-bottom: 8px; }
+    .chart-ranges button { font-family: var(--pd-font-mono, "IBM Plex Mono", monospace); font-size: 11px; padding: 4px 10px; border: 1px solid var(--pd-rule); background: transparent; color: var(--pd-ink-soft); cursor: pointer; }
+    .chart-ranges button[aria-pressed="true"] { color: var(--pd-ink); border-color: var(--pd-ink); font-weight: 600; }
+    .chart-label {
+      font-size: 12px;
+      color: var(--pd-ink-muted);
+      margin-top: 6px;
+      text-align: right;
+      font-family: var(--pd-font-ui);
+    }
+    .section {
+      padding: 20px 16px;
+      border-top: 1px solid var(--pd-rule);
+    }
+    /* Ad slot aligned with the sections' inner padding */
+    .pd-ad-inset.is-on { margin-left: 16px; margin-right: 16px; }
+    @media (min-width: 768px) { .pd-ad-inset.is-on { margin-left: 28px; margin-right: 28px; } }
+    .section-title {
+      font-family: var(--pd-font-read);
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .link-smv {
+      display: inline-block;
+      font-size: 12px;
+      color: var(--pd-ink);
+      text-decoration: underline;
+      margin-top: 10px;
+      text-underline-offset: 2px;
+    }
+    .datos-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 16px;
+    }
+    .dato-label {
+      font-size: 12px;
+      color: var(--pd-ink-muted);
+      margin-bottom: 1px;
+      font-family: var(--pd-font-ui);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .dato-val {
+      font-family: var(--pd-font-mono);
+      font-variant-numeric: tabular-nums;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .btn-outline {
+      display: block;
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--pd-rule);
+      color: var(--pd-ink);
+      text-align: center;
+      font-family: var(--pd-font-ui);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.15s, border-color 0.15s;
+    }
+    .btn-outline:hover {
+      background: var(--pd-hover);
+      border-color: var(--pd-ink-soft);
+    }
+    .badge-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-right: 6px;
+      flex-shrink: 0;
+    }
+    .badge-dot.red { background: var(--pd-peru); }
+    .badge-dot.gray { background: var(--pd-ink-muted); }
+
+    @media (min-width: 768px) {
+      .company-header, .price-block, .chart-section, .section {
+        padding-left: 28px;
+        padding-right: 28px;
+      }
+      .company-title {
+        font-size: 32px;
+      }
+      .datos-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  
+    /* Interruptor de tema (igual que en el resto del sitio) */
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--switch-bg);
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 9999px;
+    }
+    .slider .circle {
+      top: var(--circle-inset);
+      left: var(--circle-inset);
+      width: var(--circle-diameter);
+      height: var(--circle-diameter);
+      position: absolute;
+      background: var(--circle-bg);
+      border-radius: inherit;
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .ui-switch {
+      --switch-bg: rgb(229, 229, 234);
+      --switch-checked-bg: rgb(0, 0, 0);
+      --circle-diameter: 18px;
+      --circle-bg: #FFFFFF;
+      --circle-inset: 2px;
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+html.dark .ui-switch {
+      --switch-bg: rgb(44, 44, 46);
+      --switch-checked-bg: rgb(255, 255, 255);
+      --circle-bg: #0D0D0E;
+    }
+.ui-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+.ui-switch input:checked + .slider {
+      background-color: var(--switch-checked-bg);
+    }
+.ui-switch input:checked + .slider .circle {
+      left: calc(100% - var(--circle-diameter) - var(--circle-inset));
+    }    .hechos-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--pd-rule); }
+    .hechos-list li { border-bottom: 1px solid var(--pd-rule); padding: 12px 0; }
+    .hechos-list a { color: var(--pd-ink); text-decoration: none; display: grid; gap: 3px; }
+    .hechos-list a:hover .hecho-titulo { text-decoration: underline; text-underline-offset: 3px; }
+    .hecho-meta { font-family: var(--pd-font-mono, monospace); font-size: 12px; color: var(--pd-ink-soft); font-variant-numeric: tabular-nums; }
+    .hecho-titulo { font-size: 14px; line-height: 1.45; }
+    .hecho-tipo { font-size: 12px; color: var(--pd-ink-soft); }
+    .hechos-empty { font-size: 13px; color: var(--pd-ink-soft); }
+    .hechos-source { font-size: 12px; color: var(--pd-ink-soft); margin: 8px 0 0; }
+    #hechosList { min-height: 240px; }
+    .pd-ad.is-armed[data-ad-kind="display"] { min-height: 280px; }
+</style>
+
+  <!-- Early Theme Init -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
+      } else {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.classList.add("light");
+      }
+    })();
+  </script>
+<link rel="stylesheet" href="/tw.css">
+</head>
+<body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
+
+  <!-- Shared Institutional Header -->
+  <header class="border-b border-rule bg-card sticky top-0 z-30 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
+      <div class="flex items-center space-x-6">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
+        </a>
+
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
+          <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a>
+          <a href="/empresas" class="text-ink font-semibold transition no-underline">Empresas</a>
+          <a href="/mercado" class="hover:text-ink transition no-underline">Mercado</a>
+          <a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a>
+          <a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a>
+          <a href="/guia" class="hover:text-ink transition no-underline">Guía</a>
+          <a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
+        </nav>
+      </div>
+
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <div id="navbarAuthContainer"></div>
+
+        <label class="ui-switch" title="Alternar modo claro / oscuro">
+          <input id="themeToggle" type="checkbox" aria-label="Modo oscuro" />
+          <div class="slider">
+            <div class="circle"></div>
+          </div>
+        </label>
+
+        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menú" aria-expanded="false">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors">
+      <nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft">
+        <a href="/explorer" class="hover:text-ink py-1 transition no-underline">Terminal</a>
+        <a href="/empresas" class="text-ink font-semibold py-1 transition no-underline">Empresas</a>
+        <a href="/mercado" class="hover:text-ink py-1 transition no-underline">Mercado</a>
+        <a href="/noticias" class="hover:text-ink py-1 transition no-underline">Noticias</a>
+        <a href="/metodologia" class="hover:text-ink py-1 transition no-underline">Metodología</a>
+        <a href="/guia" class="hover:text-ink py-1 transition no-underline">Guía</a>
+        <a href="/precios" class="hover:text-ink py-1 transition no-underline">Precios</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Company Detail Content -->
+  <main class="pd-data-main pd-fill flex-grow w-full py-8">
+    <div class="ficha-container" id="fichaContent">
+
+      <!-- Loading State Skeleton -->
+      <div id="loadingState" class="company-header py-4 hidden">
+        <p class="breadcrumb mb-2"><span class="pd-skeleton" style="width: 120px; height: 14px; display: inline-block;"></span></p>
+        <div class="company-title mb-2"><span class="pd-skeleton" style="width: 280px; height: 32px; display: inline-block;"></span></div>
+        <p class="company-meta mb-4"><span class="pd-skeleton" style="width: 160px; height: 14px; display: inline-block;"></span></p>
+        <div class="price-block px-0" style="min-height: auto;">
+          <div class="text-xs mb-1 font-mono"><span class="pd-skeleton" style="width: 40px; height: 12px; display: inline-block;"></span></div>
+          <div class="price-row mb-1">
+            <span class="pd-skeleton" style="width: 120px; height: 36px; display: inline-block;"></span>
+            <span class="pd-skeleton" style="width: 60px; height: 20px; display: inline-block;"></span>
+          </div>
+          <p class="price-date mb-4"><span class="pd-skeleton" style="width: 200px; height: 14px; display: inline-block;"></span></p>
+        </div>
+      </div>
+
+      <!-- Detail Card (populated by JS) -->
+      <div id="companyDetail">
+        <div class="company-header">
+          <p class="breadcrumb">
+            <a href="/empresas">Empresas</a> / <span id="breadName">Empresa Agricola San Juan S.A.</span>
+          </p>
+          <h1 class="company-title" id="companyTitle">Empresa Agricola San Juan S.A.</h1>
+          <div class="flex items-center gap-3 mt-1">
+            <button type="button" id="pdFollowBtn" class="pd-btn pd-btn-ghost text-xs" aria-pressed="false" hidden>Seguir</button>
+            <a href="/cuenta" id="pdFollowLink" class="text-xs text-ink-soft hover:text-ink no-underline" hidden>Umbrales de aviso</a>
+            <span id="pdFollowMsg" class="text-xs text-ink-soft" role="status"></span>
+          </div>
+          <p class="company-meta" id="companyMeta">Agrario · ASJUANC1 · S/</p>
+        </div>
+
+        <div class="price-block">
+          <div class="text-xs text-ink-soft mb-1 font-mono" id="exchangeLabel">BVL · ASJUANC1</div>
+          <div class="price-row">
+            <span class="price-main" id="priceMain">S/ 1.63</span>
+            <span class="price-var none" id="priceVar"><span class="pd-skeleton" style="width: 50px; height: 18px; display: inline-block;"></span></span>
+          </div>
+          <p class="price-date" id="priceDate">Cierre del 13 de agosto de 2026</p>
+
+          <!-- Secondary price row when an issuer has multiple share classes -->
+          <div id="price2ndBlock" class="hidden price-2nd">
+            <span class="price-2nd-label" id="price2ndLabel">BVL</span>
+            <span class="price-2nd-val" id="price2ndVal">—</span>
+            <span class="text-xs text-ink-soft ml-auto" id="price2ndDate"></span>
+          </div>
+
+          <!-- Notice box when no market symbol -->
+          <div id="noProyeccionNotice" class="hidden p-4 mb-4 border border-rule bg-card text-xs leading-relaxed">
+            <p class="font-medium text-ink mb-1">Sin historial de precios disponible</p>
+            <p class="text-ink-soft mb-2" id="noMarketCopy">Este valor se negocia directamente en la Bolsa de Valores de Lima. Su precio se consulta en la ficha oficial de la BVL.</p>
+            <a href="https://www.bvl.com.pe" target="_blank" rel="noopener" class="text-ink underline underline-offset-2 font-medium">Ver ficha oficial en bvl.com.pe &rarr;</a>
+          </div>
+
+          <!-- Projection Button or Disabled State -->
+          <div id="ctaBlock">
+            <a href="#" id="btnProyeccion" class="btn-primary hidden">Ver proyección en la terminal</a>
+            <p id="proyeccionDisabled" class="text-xs text-ink-soft mt-2 text-center">
+              Sin proyección: esta acción no tiene un historial de precios continuo.
+            </p>
+          </div>
+        </div>
+
+        <div class="section" id="issuerStatusSection" aria-live="polite"><p class="issuer-status" id="issuerStatusText">Sin operaciones recientes · último precio S/ 1.63</p></div>
+
+        <!-- 90-Day Chart Section -->
+        <div class="chart-section" id="chartSection">
+          <div class="chart-ranges" id="chartRanges" role="group" aria-label="Rango del gráfico">
+            <button type="button" data-range="1y">1 año</button>
+            <button type="button" data-range="3y">3 años</button>
+            <button type="button" data-range="5y">5 años</button>
+          </div>
+          <div class="chart-wrap" id="chartWrap">
+            <svg class="chart-svg" id="chartSvg" viewBox="0 0 600 180" preserveAspectRatio="none">
+              <!-- Grid line -->
+              <line x1="0" y1="90" x2="600" y2="90" stroke="var(--pd-rule)" stroke-width="1" stroke-dasharray="3,3" />
+              <!-- Points polyline -->
+              <polyline id="chartPolyline" points="" fill="none" stroke="var(--pd-ink)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+            </svg>
+            <div id="chartEmptyText" class="hidden absolute inset-0 flex items-center justify-center text-xs text-ink-soft">
+              Historial gráfico no disponible para este emisor
+            </div>
+          </div>
+          <div class="flex flex-wrap justify-between items-center gap-x-3 gap-y-1 mt-2">
+            <span class="text-xs text-ink-soft font-mono" id="chartMinMax"></span>
+            <p class="chart-label" id="chartLabel">Historial 90 días · Datos de mercado (cierre)</p>
+          </div>
+        </div>
+
+        <div class="section" id="shareholdersSection">
+          <h2 class="section-title">Accionistas principales (más del 4 %)</h2>
+          <div class="overflow-x-auto"><table class="shareholders-table"><thead><tr><th>Accionista</th><th>País</th><th>Desde</th><th class="numeric">Participación</th></tr></thead><tbody id="shareholdersRows"><tr><td>CORPORACION PERHUSA S.A.</td><td>PERU</td><td>2017-01-20</td><td class="numeric">91.99 %</td></tr></tbody></table></div>
+          <p class="shareholders-source" id="shareholdersSource">Fuente: Superintendencia del Mercado de Valores (SMV), Datos Abiertos bajo licencia ODC-BY.</p>
+        </div>
+
+        <!-- Hechos de Importancia -->
+        <div class="section">
+          <h2 class="section-title">Hechos de importancia</h2>
+          <ol id="hechosList" class="hechos-list" aria-live="polite">
+            <li class="hechos-empty">Sin hechos de importancia recientes registrados en el sistema.</li>
+          </ol>
+          <p class="hechos-source">Fuente: Superintendencia del Mercado de Valores (SMV). Cada enlace abre el documento oficial.</p>
+          <a href="https://www.smv.gob.pe" target="_blank" rel="noopener" class="link-smv">
+            Ver todos en la SMV &rarr;
+          </a>
+        </div>
+
+        <div class="pd-ad pd-ad-inset" data-ad-kind="display"></div>
+
+        <!-- Datos de la Empresa (SOLO del JSON) -->
+        <div class="section">
+          <h2 class="section-title">Datos de la empresa</h2>
+          <div class="datos-grid" id="datosGrid">
+            <div class="dato-item">
+              <p class="dato-label">Código BVL</p>
+              <p class="dato-val" id="datoCodigo">77075</p>
+            </div>
+            <div class="dato-item">
+              <p class="dato-label">Sector</p>
+              <p class="dato-val" id="datoSector">Agrario</p>
+            </div>
+            <div class="dato-item">
+              <p class="dato-label">Nemónico Principal</p>
+              <p class="dato-val" id="datoNemonico">ASJUANC1</p>
+            </div>
+            <div class="dato-item">
+              <p class="dato-label">Moneda</p>
+              <p class="dato-val" id="datoMoneda">S/</p>
+            </div>
+            <div class="dato-item">
+              <p class="dato-label">Símbolo de mercado</p>
+              <p class="dato-val" id="datoSimboloProyeccion">—</p>
+            </div>
+            <div class="dato-item">
+              <p class="dato-label">Proyección</p>
+              <p class="dato-val" id="datoProyeccion">No</p>
+            </div>
+            <div class="dato-item">
+              <p class="dato-label">Última Negociación</p>
+              <p class="dato-val" id="datoFecha">2026-08-13</p>
+            </div>
+            <div class="dato-item">
+              <p class="dato-label">Activa últimos 12m</p>
+              <p class="dato-val" id="datoActiva">Sí</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Perfil y análisis de la empresa (K3) -->
+        <div class="section" id="perfilEmpresa">
+          <h2 class="section-title">Perfil y análisis de la empresa</h2>
+          <div class="prose max-w-none text-ink text-sm leading-relaxed" id="perfilEmpresaContent" style="font-family: var(--pd-font-read);"><p class="mb-3">Empresa Agricola San Juan S.A. es una entidad registrada en la Bolsa de Valores de Lima bajo el código BVL 77075 y número de RUC 20103272964. Su actividad económica principal se enmarca en la actividad agrícola y agroindustrial, orientada a la producción, cultivo y comercialización de productos del campo tanto para abastecimiento local como de exportación. La compañía participa formalmente en el mercado bursátil peruano cumpliendo con los estándares de información corporativa y transparencia que supervisa la Superintendencia del Mercado de Valores (SMV).</p>
+            <p class="mb-3">En el ámbito de renta variable, el emisor tiene inscritos en la BVL los siguientes instrumentos: ASJUANC1 (S/, segmento RV2, valor principal de seguimiento). El capital social negociable en rueda de bolsa está centralizado en el nemónico ASJUANC1, a través del cual los inversionistas institucionales y particulares ejecutan sus posturas de compra y venta en moneda S/.</p>
+            <p class="mb-3">En cuanto a su estructura de control societario, el registro de la SMV identifica a los siguientes accionistas con participaciones superiores al 4% del capital social: CORPORACION PERHUSA S.A. (de PERU, con 91.99% de participación, declarada desde 2017-01-20). En conjunto, estos accionistas representativos acumulan el 91.99% del capital con derecho a voto reportado en la plataforma de datos abiertos de la Superintendencia del Mercado de Valores (SMV), bajo licencia ODC-BY.</p>
+            <p class="mb-3">Durante el ciclo de seguimiento reciente no se han registrado nuevos hechos de importancia específicos para los nemónicos de esta firma en el registro automatizado de la SMV, manteniéndose vigentes las comunicaciones institucionales ordinarias y estados financieros depositados formalmente ante el regulador bursátil.</p>
+            <p class="mb-3">En los últimos 12 meses, la acción ASJUANC1 computó un total de 2 operaciones en rueda de bolsa, marcando su último cierre oficial de negociación en S/ 1.63 con fecha 2026-08-13.</p>
+            <p class="mb-3">Actualmente esta empresa no dispone de estimación de proyección algorítmica en PerData Engine debido a que no cumple con el umbral mínimo de liquidez continua e historial diario ininterrumpido requerido para calibrar los modelos predictivos del sistema.</p></div>
+        </div>
+
+        <!-- Volver al directorio -->
+        <div class="section">
+          <a href="/empresas" class="btn-outline">&larr; Volver al directorio de empresas</a>
+        </div>
+      </div>
+
+      <!-- Not Found State -->
+      <div id="notFoundState" class="hidden py-16 text-center">
+        <h2 class="text-2xl font-serif text-ink mb-2">Empresa no encontrada</h2>
+        <p class="text-sm text-ink-soft mb-6">El nemónico indicado no figura en el registro oficial de renta variable de la BVL.</p>
+        <a href="/empresas" class="btn-outline inline-block max-w-xs mx-auto">Ir al directorio de empresas</a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Mobile Bottom Bar (≤768px: Terminal, Empresas, Noticias, Mi cuenta) -->
+  <nav class="mobile-nav" aria-label="Navegación móvil">
+    <a href="/explorer" class="nav-item">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </div>
+      <span>Terminal</span>
+    </a>
+    <a href="/empresas" class="nav-item active">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M8 7h6M8 11h4"/></svg>
+      </div>
+      <span>Empresas</span>
+    </a>
+  <a href="/noticias" class="nav-item">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/></svg>
+      </div>
+      <span>Noticias</span>
+    </a>
+    <a href="/cuenta" class="nav-item">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <span>Mi cuenta</span>
+    </a>
+  </nav>
+
+  <!-- Shared Institutional Footer -->
+  <footer class="border-t border-rule bg-card py-10 px-4 sm:px-6 transition-colors">
+    <div class="max-w-6xl mx-auto flex flex-col gap-6 text-left">
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-rule">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
+        </a>
+        <nav class="flex flex-wrap items-center gap-6 text-xs text-ink-soft" aria-label="Navegación secundaria">
+          <a href="/boletin" class="hover:text-ink transition no-underline">Boletín</a>
+          <a href="/terms" class="hover:text-ink transition no-underline">Términos</a>
+          <a href="/estado" class="hover:text-ink transition no-underline">Estado</a>
+          <a href="/nosotros" class="hover:text-ink transition no-underline">Quiénes somos</a>
+          <a href="/privacidad" class="hover:text-ink transition no-underline">Privacidad</a>
+          <a href="#cookies" class="pd-cookies-link hover:text-ink transition no-underline" data-open-cookies>Cookies</a>
+          <a href="mailto:soporte@perdata.site" class="hover:text-ink transition no-underline">Contacto</a>
+        </nav>
+      </div>
+      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 text-xs text-ink-soft leading-relaxed">
+        <span class="font-medium text-ink shrink-0">© 2026 PerData</span>
+        <p class="max-w-2xl m-0 text-ink-soft">
+          Información financiera y cuantitativa con fines estrictamente informativos y de investigación. No constituye asesoramiento de inversión ni oferta pública de valores.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle & Drawer -->
+  <script>
+    const themeToggle = document.getElementById("themeToggle");
+    const isDark = document.documentElement.classList.contains("dark");
+    if (themeToggle) {
+      themeToggle.checked = isDark;
+      themeToggle.addEventListener("change", (e) => {
+        if (e.target.checked) {
+          document.documentElement.classList.add("dark");
+          document.documentElement.classList.remove("light");
+          localStorage.setItem("theme", "dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+          document.documentElement.classList.add("light");
+          localStorage.setItem("theme", "light");
+        }
+      });
+    }
+
+    (function() {
+      const btn = document.getElementById('mobileMenuBtn');
+      const menu = document.getElementById('mobileMenu');
+      if (btn && menu) {
+        btn.addEventListener('click', function() {
+          const open = menu.classList.toggle('hidden');
+          btn.setAttribute('aria-expanded', String(!open));
+        });
+      }
+    })();
+  </script>
+
+  <!-- Page Logic -->
+  <script>
+    (async function() {
+      const loadingState = document.getElementById("loadingState");
+      const companyDetail = document.getElementById("companyDetail");
+      const notFoundState = document.getElementById("notFoundState");
+      const escapeHTML = (value) => String(value ?? "").replace(/[&<>\"']/g, (char) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+      })[char]);
+
+      // Extract symbol from URL path (/empresa/ALICORC1) or query param (?symbol=ALICORC1)
+      const pathParts = window.location.pathname.split("/").filter(Boolean);
+      let symbolParam = null;
+      if (pathParts.length >= 2 && pathParts[0] === "empresa") {
+        symbolParam = decodeURIComponent(pathParts[1]);
+      }
+      if (!symbolParam) {
+        symbolParam = new URLSearchParams(window.location.search).get("symbol") || "ALICORC1.LM";
+      }
+      const targetSymbol = symbolParam.trim().toUpperCase();
+
+      try {
+        const res = await fetch("/data/empresas.json");
+        if (!res.ok) throw new Error("No se pudo cargar la base de empresas");
+        const json = await res.json();
+
+        // Find emitter by matching nemonico in valores, or market symbol
+        let emitter = json.emisores.find(e => 
+          e.valores.some(v => v.nemonico.toUpperCase() === targetSymbol)
+        );
+        if (!emitter) {
+          emitter = json.emisores.find(e => 
+            e.valores.some(v => v.simbolo_proyeccion && v.simbolo_proyeccion.toUpperCase().startsWith(targetSymbol))
+          );
+        }
+
+        if (!emitter) {
+          loadingState.classList.add("hidden");
+          notFoundState.classList.remove("hidden");
+          return;
+        }
+
+        // Identify primary valor (matching target symbol, or with market data)
+        let primaryValor = emitter.valores.find(v => v.nemonico.toUpperCase() === targetSymbol);
+        if (!primaryValor) {
+          primaryValor = emitter.valores.find(v => v.simbolo_proyeccion) || emitter.valores[0];
+        }
+        const secondaryValores = emitter.valores.filter(v => v !== primaryValor);
+        const hasProyeccion = Boolean(primaryValor.simbolo_proyeccion);
+        const [statusResponse, shareholdersResponse, rucResponse] = await Promise.all([
+          fetch("/data/empresas-estado.json").catch(() => null),
+          fetch("/data/smv-accionistas.json").catch(() => null),
+          fetch("/data/empresas-ruc.json").catch(() => null)
+        ]);
+        const statuses = statusResponse?.ok ? await statusResponse.json() : { emisores: {} };
+        const shareholders = shareholdersResponse?.ok ? await shareholdersResponse.json() : { emisores: {} };
+        const rucs = rucResponse?.ok ? await rucResponse.json() : {};
+        const issuerStatus = statuses.emisores?.[emitter.codigoBVL] || {};
+        const status = issuerStatus.estado || (hasProyeccion ? "con_proyeccion" : "sin_negociacion");
+        const lastStatusDate = issuerStatus.ultima_fecha || primaryValor.fechaUltimaNegociacion || emitter.fechaUltimaNegociacion;
+        const lastClose = Number(issuerStatus.ultimo_cierre);
+        // Issuers without a trade in the last year open on five years, so their last trades are visible
+        // The status is per issuer (its most traded share); the chart shows primaryValor, which may differ
+        const chartDate = issuerStatus.nemonico === primaryValor.nemonico ? lastStatusDate : primaryValor.fechaUltimaNegociacion;
+        const tradedThisYear = chartDate && (Date.now() - Date.parse(chartDate)) < 365 * 864e5;
+        const defaultRange = tradedThisYear ? "1y" : "5y";
+        const currency = issuerStatus.moneda || primaryValor.moneda || "S/";
+        const priceText = Number.isFinite(lastClose) ? `${currency} ${lastClose.toFixed(lastClose < 1 ? 3 : 2)}` : "precio no disponible";
+        const parsedStatusDate = lastStatusDate ? new Date(`${lastStatusDate}T00:00:00Z`) : null;
+        const validStatusDate = parsedStatusDate && !Number.isNaN(parsedStatusDate.getTime());
+        const statusMonthYear = validStatusDate ? new Intl.DateTimeFormat("es-PE", { month: "long", year: "numeric", timeZone: "UTC" }).format(parsedStatusDate) : "fecha no disponible";
+        const statusFullDate = validStatusDate ? new Intl.DateTimeFormat("es-PE", { dateStyle: "long", timeZone: "UTC" }).format(parsedStatusDate) : "fecha no disponible";
+        const safePriceText = escapeHTML(priceText);
+        const messages = {
+          con_proyeccion: "Con proyección PerData Engine",
+          poca_liquidez: `Cotiza poco · último cierre <span class="mono">${safePriceText}</span> (${escapeHTML(statusFullDate)})`,
+          parada: `Sin operaciones desde ${escapeHTML(statusMonthYear)} · último precio <span class="mono">${safePriceText}</span>`,
+          dormida: `Sin operaciones desde ${validStatusDate ? parsedStatusDate.getUTCFullYear() : "fecha no disponible"} · último precio <span class="mono">${safePriceText}</span>`,
+          sin_negociacion: "Sus acciones no se negocian en bolsa"
+        };
+        const statusEl = document.getElementById("issuerStatusText");
+        statusEl.innerHTML = messages[status] || messages.sin_negociacion;
+        if (!hasProyeccion && Number.isFinite(lastClose) && lastClose > 0 && validStatusDate) statusEl.innerHTML += `<br>Último precio negociado: <span class="mono">${safePriceText}</span> el ${escapeHTML(statusFullDate)} · Fuente: SMV`;
+        const ruc = rucs[emitter.codigoBVL];
+        const shareholderRows = shareholders.emisores?.[ruc]?.accionistas || [];
+        if (shareholderRows.length) {
+          document.getElementById("shareholdersRows").innerHTML = shareholderRows.map((holder) => `<tr><td>${escapeHTML(holder.nombre)}</td><td>${escapeHTML(holder.nacionalidad)}</td><td>${escapeHTML(holder.desde)}</td><td class="numeric">${escapeHTML(Number(holder.pct).toLocaleString("es-PE", { maximumFractionDigits: 2 }))} %</td></tr>`).join("");
+          const datasetUrl = escapeHTML(shareholders.url_conjunto || "https://www.datosabiertos.gob.pe/dataset/listado-de-accionistas-mayores-al-4-vigentes-comunicados-la-superintendencia-del-mercado-de");
+          const licenseUrl = escapeHTML(shareholders.url_licencia || "https://opendefinition.org/licenses/odc-by/");
+          document.getElementById("shareholdersSource").innerHTML = `Fuente: <a href="${datasetUrl}" target="_blank" rel="noopener">Superintendencia del Mercado de Valores (SMV), datos abiertos</a>, licencia <a href="${licenseUrl}" target="_blank" rel="noopener">ODC-BY</a>`;
+          document.getElementById("shareholdersSection").classList.remove("hidden");
+        }
+
+        // Populate header and breadcrumb
+        const KEEP = new Set(["BBVA", "AFP", "BVL", "FTE", "IDE", "SEAL", "AIB", "XP", "OH!"]);
+        const SMALL = new Set(["de", "del", "la", "las", "los", "y", "e", "en"]);
+        const prettyName = (raw) => String(raw || "").trim().split(/\s+/).map((w, i) => {
+          if (KEEP.has(w.toUpperCase())) return w.toUpperCase();
+          if (/^\(?([A-Za-z]\.){2,}[-)]*$/.test(w)) return w.toUpperCase();
+          const lw = w.toLowerCase();
+          if (i > 0 && SMALL.has(lw)) return lw;
+          return lw.replace(/(^|[-(«"])(\p{L})/gu, (m, a, b) => a + b.toUpperCase());
+        }).join(" ");
+        const sectorName = (x) => x ? x.charAt(0) + x.slice(1).toLowerCase() : "—";
+        emitter.razonSocial = prettyName(emitter.razonSocial);
+        document.title = `${emitter.razonSocial} (${primaryValor.nemonico}) · PerData`;
+        document.getElementById("breadName").textContent = emitter.razonSocial;
+        document.getElementById("companyTitle").textContent = emitter.razonSocial;
+        
+        const marketLabel = "BVL";
+        document.getElementById("companyMeta").textContent = `${sectorName(emitter.sector)} · ${primaryValor.nemonico}${hasProyeccion ? " · " + marketLabel : ""}`;
+
+        // Populate exchange label
+        document.getElementById("exchangeLabel").textContent = `${marketLabel} · ${primaryValor.nemonico}`;
+
+        // Precio solo de la fuente de mercado (se carga abajo). Los precios de la BVL no se copian hasta
+        // revisar sus términos de uso: se enlaza a la ficha oficial.
+        const pm = document.getElementById("priceMain");
+        const hasSmvHistory = !hasProyeccion || /\.LM$/i.test(primaryValor.simbolo_proyeccion);
+        if (hasProyeccion) {
+          pm.textContent = "…";
+        } else {
+          pm.textContent = "…";
+        }
+        document.getElementById("priceDate").textContent = hasProyeccion
+          ? ""
+          : `Última negociación: ${emitter.fechaUltimaNegociacion || "sin registro"}`;
+
+        // Handle market vs no-market states
+        if (hasProyeccion) {
+          document.getElementById("btnProyeccion").setAttribute("href", `/explorer?symbol=${encodeURIComponent(primaryValor.simbolo_proyeccion)}`);
+          document.getElementById("btnProyeccion").classList.remove("hidden");
+          document.getElementById("proyeccionDisabled").classList.add("hidden");
+          document.getElementById("noProyeccionNotice").classList.add("hidden");
+
+          // Fetch live price & 90-day history from /api/historical
+          setupChartRanges(primaryValor.simbolo_proyeccion, primaryValor.moneda, hasSmvHistory, defaultRange);
+        } else {
+          // Keep projections disabled while checking for SMV historical quotes.
+          document.getElementById("btnProyeccion").classList.add("hidden");
+          document.getElementById("proyeccionDisabled").classList.remove("hidden");
+          document.getElementById("noProyeccionNotice").classList.remove("hidden");
+          if (status === "sin_negociacion") {
+            document.getElementById("noMarketCopy").textContent = "Esta empresa no tiene precio de mercado: sus acciones no se negocian en bolsa. Mostramos lo que sí es público: accionistas, hechos de importancia y noticias.";
+            document.getElementById("priceMain").textContent = "Sin precio de mercado";
+          }
+          document.getElementById("chartLabel").textContent = "Historial SMV · Cierre mensual";
+          if (status !== "sin_negociacion") setupChartRanges(`${primaryValor.nemonico}.LM`, primaryValor.moneda, true, defaultRange);
+          else document.getElementById("chartRanges").classList.add("hidden");
+        }
+
+        loadHechos(primaryValor.nemonico);
+
+        // Populate Datos de la Empresa (SOLO datos del JSON)
+        document.getElementById("datoCodigo").textContent = emitter.codigoBVL || "—";
+        document.getElementById("datoSector").textContent = sectorName(emitter.sector);
+        document.getElementById("datoNemonico").textContent = primaryValor.nemonico || "—";
+        document.getElementById("datoMoneda").textContent = primaryValor.moneda || "S/";
+        document.getElementById("datoSimboloProyeccion").textContent = primaryValor.simbolo_proyeccion || "No disponible";
+        document.getElementById("datoProyeccion").textContent = hasProyeccion ? "Disponible en Terminal" : "No disponible";
+        document.getElementById("datoFecha").textContent = primaryValor.fechaUltimaNegociacion || emitter.fechaUltimaNegociacion || "Sin registro";
+        document.getElementById("datoActiva").textContent = emitter.negociadaUltimos12m ? "Sí (negociada < 12m)" : "No";
+
+        loadingState.classList.add("hidden");
+        companyDetail.classList.remove("hidden");
+      } catch (err) {
+        loadingState.innerHTML = `<p class="text-sm text-neg">Error al cargar la ficha: ${escapeHTML(err.message)}</p>`;
+      }
+
+      function setupChartRanges(symbol, moneda, smvFallback, initial) {
+        const buttons = [...document.querySelectorAll("#chartRanges button")];
+        const select = (range) => {
+          buttons.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.range === range)));
+          fetchHistorical(symbol, moneda, smvFallback, range);
+        };
+        buttons.forEach((b) => b.addEventListener("click", () => select(b.dataset.range)));
+        select(initial);
+      }
+
+      async function fetchHistorical(symbol, defaultMoneda, smvFallback = false, chosenRange = "1y") {
+        try {
+          const range = smvFallback ? chosenRange : "3mo";
+          const interval = smvFallback ? "1mo" : "1d";
+          const res = await fetch(`/api/historical?symbol=${encodeURIComponent(symbol)}&range=${range}&interval=${interval}`);
+          if (!res.ok) {
+            if (smvFallback) {
+              const empty = document.getElementById("chartEmptyText");
+              document.getElementById("chartPolyline").setAttribute("points", "");
+              empty.textContent = "Sin cotizaciones en este rango. Prueba un rango mayor.";
+              empty.classList.remove("hidden");
+            }
+            return;
+          }
+          const data = await res.json();
+
+          if (smvFallback) {
+            const points = Array.isArray(data.series) ? data.series.filter(point => Number.isFinite(Number(point.close)) && Number(point.close) > 0) : [];
+            const dailyPoints = Array.isArray(data.daily)
+                ? data.daily.filter(point => Number.isFinite(Number(point.close)) && Number(point.close) > 0 && point.date)
+                : [];
+            const quotePoints = dailyPoints.length
+              ? dailyPoints
+              : Number.isFinite(lastClose) && lastClose > 0 && lastStatusDate
+                ? [{ date: lastStatusDate, close: lastClose }]
+                : [];
+            if (quotePoints.length) {
+              const lastPt = quotePoints[quotePoints.length - 1];
+              const previousPt = quotePoints.length > 1 ? quotePoints[quotePoints.length - 2] : null;
+              const close = Number(lastPt.close);
+              const currency = defaultMoneda === "US$" ? "US$" : "S/";
+              document.getElementById("priceMain").textContent = `${currency} ${close.toFixed(close < 1 ? 3 : 2)}`;
+              document.getElementById("priceDate").textContent = `Fuente: SMV · Cierre ${lastPt.date || ""}`;
+              document.getElementById("noProyeccionNotice").classList.add("hidden");
+              const varEl = document.getElementById("priceVar");
+              if (previousPt && Number(previousPt.close) > 0) {
+                const changePct = ((close - Number(previousPt.close)) / Number(previousPt.close)) * 100;
+                varEl.classList.remove("pos", "neg", "none", "hidden");
+                varEl.classList.add(changePct > 0 ? "pos" : changePct < 0 ? "neg" : "none");
+                varEl.textContent = `${changePct > 0 ? "+" : ""}${changePct.toFixed(2)}%`;
+              } else {
+                varEl.classList.add("hidden");
+              }
+              const empty = document.getElementById("chartEmptyText");
+              const years = { "1y": "1 año", "3y": "3 años", "5y": "5 años" }[range] || range;
+              if (points.length >= 2) { empty.classList.add("hidden"); renderChart(points); }
+              else {
+                document.getElementById("chartPolyline").setAttribute("points", "");
+                empty.textContent = `Sin cotizaciones mensuales en ${years}. Prueba un rango mayor.`;
+                empty.classList.remove("hidden");
+              }
+              document.getElementById("chartLabel").textContent = `Fuente: SMV · Cierres mensuales (${years})`;
+            }
+            return;
+          }
+
+          // Update live price if present
+          if (data.live && typeof data.live.price === "number") {
+            const isUsd = (data.currency === "USD" || defaultMoneda === "US$");
+            const cSign = isUsd ? "US$" : "S/";
+            document.getElementById("priceMain").textContent = `${cSign} ${data.live.price.toFixed(data.live.price < 1 ? 3 : 2)}`;
+            
+            const varEl = document.getElementById("priceVar");
+            if (typeof data.live.changePct === "number") {
+              const pct = data.live.changePct;
+              varEl.classList.remove("pos", "neg", "none");
+              if (pct > 0.001) {
+                varEl.classList.add("pos");
+                varEl.textContent = `+${pct.toFixed(2)}%`;
+              } else if (pct < -0.001) {
+                varEl.classList.add("neg");
+                varEl.textContent = `${pct.toFixed(2)}%`;
+              } else {
+                varEl.classList.add("none");
+                varEl.textContent = "0.00%";
+              }
+            }
+
+            if (data.live.time) {
+              const d = new Date(data.live.time);
+              document.getElementById("priceDate").textContent = `Cierre ${d.toLocaleDateString("es-PE")} · Datos de mercado`;
+            }
+          }
+
+          // Sin cotización en vivo: último cierre de la serie
+          if (!(data.live && typeof data.live.price === "number") && Array.isArray(data.series) && data.series.length) {
+            const lastPt = data.series[data.series.length - 1];
+            const cSign = defaultMoneda === "US$" ? "US$" : "S/";
+            const v = Number(lastPt.close);
+            document.getElementById("priceMain").textContent = `${cSign} ${v.toFixed(v < 1 ? 3 : 2)}`;
+            document.getElementById("priceDate").textContent = `Cierre ${lastPt.date || ""} · Datos de mercado`;
+          }
+
+          // Render 90-day SVG chart
+          if (Array.isArray(data.series) && data.series.length >= 2) {
+            renderChart(data.series);
+          }
+        } catch (e) {
+          console.warn("Historical fetch error:", e);
+        }
+      }
+
+      function renderChart(series) {
+        const svg = document.getElementById("chartSvg");
+        const polyline = document.getElementById("chartPolyline");
+        const minMaxEl = document.getElementById("chartMinMax");
+        if (!svg || !polyline) return;
+
+        const closes = series.map(p => Number(p.close)).filter(v => !isNaN(v) && v > 0);
+        if (closes.length < 2) return;
+
+        const minVal = Math.min(...closes);
+        const maxVal = Math.max(...closes);
+        const range = maxVal - minVal || 1;
+
+        const svgW = 600;
+        const svgH = 180;
+        const padTop = 20;
+        const padBottom = 20;
+        const usableH = svgH - padTop - padBottom;
+
+        const points = series.map((p, i) => {
+          const x = (i / (series.length - 1)) * svgW;
+          const y = padTop + usableH - ((p.close - minVal) / range) * usableH;
+          return `${x.toFixed(1)},${y.toFixed(1)}`;
+        }).join(" ");
+
+        polyline.setAttribute("points", points);
+
+        // Color based on overall 90d trend
+        const first = closes[0];
+        const last = closes[closes.length - 1];
+        if (last >= first) {
+          polyline.setAttribute("stroke", "var(--pd-pos)");
+        } else {
+          polyline.setAttribute("stroke", "var(--pd-neg)");
+        }
+
+        if (minMaxEl) {
+          const startDate = series[0].date || "";
+          const endDate = series[series.length - 1].date || "";
+          minMaxEl.textContent = `Mín: ${minVal.toFixed(2)} · Máx: ${maxVal.toFixed(2)} (${startDate} a ${endDate})`;
+        }
+      }
+    })();
+  
+      // Hechos de importancia de la SMV, recopilados a diario por scripts/fetch-smv.js
+      async function loadHechos(nemo) {
+        const list = document.getElementById("hechosList");
+        const esc = (t) => String(t || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+        const sentence = (t) => { const x = String(t || "").trim(); return x === x.toUpperCase() ? x.charAt(0) + x.slice(1).toLowerCase() : x; };
+        let data = null;
+        for (const src of ["https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data/smv-hechos.json", "/data/smv-hechos.json"]) {
+          try { const r = await fetch(src, { cache: "no-cache" }); if (r.ok) { data = await r.json(); break; } } catch (e) {}
+        }
+        const items = data?.hechos?.[nemo] || [];
+        if (!items.length) {
+          list.innerHTML = '<li class="hechos-empty">Aún no hay hechos de importancia de esta empresa. Los recopilamos de la SMV cada día desde el 24 de octubre de 2026.</li>';
+          return;
+        }
+        list.innerHTML = items.map((h) => `<li><a href="${esc(h.url_oficial)}" target="_blank" rel="noopener">
+          <span class="hecho-meta">${esc(h.fecha)} · Exp. ${esc(h.expediente)}</span>
+          <span class="hecho-titulo">${esc(sentence(h.titulo) || sentence(h.tipo))}</span>
+          ${h.titulo && h.tipo && h.titulo.toUpperCase() !== h.tipo.toUpperCase() ? `<span class="hecho-tipo">${esc(sentence(h.tipo))}</span>` : ""}</a></li>`).join("");
+      }
+</script>
+
+  <!-- Auth -->
+  <script src="/consent.js" defer></script>
+  <script src="/auth.js" defer></script>
+  <script>
+  (function () {
+    var btn = document.getElementById("pdFollowBtn");
+    var link = document.getElementById("pdFollowLink");
+    var msg = document.getElementById("pdFollowMsg");
+    if (!btn) return;
+
+    var raw = "";
+    var parts = location.pathname.split("/").filter(Boolean);
+    if (parts.length >= 2 && parts[0] === "empresa") raw = decodeURIComponent(parts[1]);
+    if (!raw) raw = new URLSearchParams(location.search).get("symbol") || "";
+    raw = raw.trim().toUpperCase();
+    if (!raw) return;
+
+    var simbolo = null;
+    var siguiendo = false;
+
+    function auth() { return window.MDE_Auth; }
+    function token() { var a = auth(); return a && a.getToken ? a.getToken() : null; }
+
+    function pinta() {
+      if (!simbolo) return;
+      btn.hidden = false;
+      btn.textContent = siguiendo ? "Siguiendo" : "Seguir";
+      btn.setAttribute("aria-pressed", siguiendo ? "true" : "false");
+      btn.className = siguiendo ? "pd-btn pd-btn-accent text-xs" : "pd-btn pd-btn-ghost text-xs";
+      link.hidden = !siguiendo;
+    }
+
+    function texto(t) { if (msg) msg.textContent = t || ""; }
+
+    async function resolver() {
+      try {
+        var r = await fetch("/api/search?q=" + encodeURIComponent(raw), { cache: "no-store" });
+        if (!r.ok) return;
+        var d = await r.json();
+        var hit = (d.results || []).find(function (x) { return x.symbol.toUpperCase() === raw; }) ||
+                  (d.results || []).find(function (x) { return x.symbol.toUpperCase().indexOf(raw + ".") === 0; }) ||
+                  (d.results || [])[0];
+        simbolo = hit ? hit.symbol : null;
+        pinta();
+      } catch (e) {}
+    }
+
+    async function estado() {
+      var t = token();
+      if (!t || !simbolo) { siguiendo = false; pinta(); return; }
+      try {
+        var r = await fetch("/api/seguimiento", { headers: { Authorization: "Bearer " + t }, cache: "no-store" });
+        if (!r.ok) { pinta(); return; }
+        var d = await r.json();
+        siguiendo = (d.simbolos || []).some(function (x) { return x.simbolo === simbolo; });
+        pinta();
+      } catch (e) { pinta(); }
+    }
+
+    btn.addEventListener("click", async function () {
+      var a = auth();
+      var t = token();
+      if (!t) { if (a && a.openModal) a.openModal("Entra para seguir esta empresa y recibir avisos de precio.", "signin"); return; }
+      
+      var anterior = siguiendo;
+      siguiendo = !siguiendo;
+      pinta();
+      texto(siguiendo ? "Guardando…" : "Quitando…");
+
+      try {
+        var r = !siguiendo
+          ? await fetch("/api/seguimiento?simbolo=" + encodeURIComponent(simbolo), { method: "DELETE", headers: { Authorization: "Bearer " + t } })
+          : await fetch("/api/seguimiento", { method: "POST", headers: { Authorization: "Bearer " + t, "Content-Type": "application/json" }, body: JSON.stringify({ simbolo: simbolo }) });
+        var d = await r.json().catch(function () { return {}; });
+        if (!r.ok) {
+          siguiendo = anterior;
+          pinta();
+          texto(d.error || "No se pudo guardar.");
+        } else {
+          texto(siguiendo ? "La sigues. Pon umbrales en tu cuenta." : "Ya no la sigues.");
+        }
+      } catch (e) {
+        siguiendo = anterior;
+        pinta();
+        texto("No se pudo guardar.");
+      }
+    });
+
+    function arranca() {
+      resolver().then(estado);
+    }
+    if (window.MDE_Auth) arranca();
+    else {
+      var n = 0;
+      var t = setInterval(function () {
+        n++;
+        if (window.MDE_Auth) { clearInterval(t); arranca(); }
+        else if (n > 40) clearInterval(t);
+      }, 100);
+    }
+    window.addEventListener("mde:auth-change", estado);
+  })();
+  </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "bc9abca1e97b4bcaa6261b23afc498e5"}'></script>
+<script defer src="/ads.js"></script>
+</body>
+</html>

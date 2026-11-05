@@ -198,6 +198,8 @@ const NOINDEX_ROUTES = new Set([
 function shouldNoindex(pathname) {
   const clean = pathname.replace(/\/+$/, "") || "/";
   if (NOINDEX_ROUTES.has(clean)) return true;
+  // Daily AI summaries are for readers, not for search engines
+  if (clean.startsWith("/resumen/")) return true;
   if (clean.endsWith(".html")) {
     const withoutHtml = clean.slice(0, -5);
     if (NOINDEX_ROUTES.has(withoutHtml)) return true;
