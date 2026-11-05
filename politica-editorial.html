@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es-PE" class="light pd-marketing">
+<head>
+  <meta name="pd-geo" content="otro">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Política editorial · PerData</title>
+  <meta name="description" content="Fuentes oficiales, licencias de datos, rigor cuantitativo y política de rectificación en la terminal PerData." />
+  <link rel="canonical" href="https://perdata.site/politica-editorial" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- SEO & Social Open Graph -->
+  <meta property="og:locale" content="es_PE" />
+  <meta property="og:site_name" content="PerData" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://perdata.site/politica-editorial" />
+  <meta property="og:title" content="Política editorial · PerData" />
+  <meta property="og:description" content="Fuentes oficiales, licencias de datos, rigor cuantitativo y política de rectificación en la terminal PerData." />
+  <meta property="og:image" content="https://perdata.site/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Política editorial · PerData" />
+  <meta name="twitter:description" content="Fuentes oficiales, licencias de datos, rigor cuantitativo y política de rectificación en la terminal PerData." />
+  <meta name="twitter:image" content="https://perdata.site/og-image.png" />
+
+  <!-- Early Theme Init -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
+      } else {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.classList.add("light");
+      }
+    })();
+  </script>
+
+  <style>
+    html, body {
+      overflow-x: hidden !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      letter-spacing: -0.011em;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tnum {
+      font-feature-settings: "tnum" 1, "cv01" 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .micro-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .ui-switch {
+      --switch-bg: rgb(229, 229, 234);
+      --switch-checked-bg: rgb(0, 0, 0);
+      --circle-diameter: 18px;
+      --circle-bg: #FFFFFF;
+      --circle-inset: 2px;
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    html.dark .ui-switch {
+      --switch-bg: rgb(44, 44, 46);
+      --switch-checked-bg: rgb(255, 255, 255);
+      --circle-bg: #0D0D0E;
+    }
+
+    .ui-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--switch-bg);
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 9999px;
+    }
+
+    .slider .circle {
+      top: var(--circle-inset);
+      left: var(--circle-inset);
+      width: var(--circle-diameter);
+      height: var(--circle-diameter);
+      position: absolute;
+      background: var(--circle-bg);
+      border-radius: inherit;
+      -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .ui-switch input:checked + .slider {
+      background-color: var(--switch-checked-bg);
+    }
+
+    .ui-switch input:checked + .slider .circle {
+      left: calc(100% - var(--circle-diameter) - var(--circle-inset));
+    }
+
+    @keyframes mde-rise {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    main > section,
+    .rise-in {
+      animation: mde-rise 0.6s ease both;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      main > section, .rise-in { animation: none; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+  </style>
+
+  <!-- Fuentes auto-alojadas -->
+  <link rel="preload" href="/fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/libre-franklin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/pd.css">
+  <script defer src="/motion.js"></script>
+  <link rel="stylesheet" href="/tw.css">
+</head>
+<body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
+
+  <!-- Shared Institutional Header -->
+  <header class="border-b border-rule bg-card sticky top-0 z-30 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
+      <!-- Brand & Navigation -->
+      <div class="flex items-center space-x-6">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
+        </a>
+
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
+          <a href="/dolar" class="hover:text-ink transition no-underline">Dólar</a>
+          <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a>
+          <a href="/empresas" class="hover:text-ink transition no-underline">Empresas</a>
+          <a href="/aprende" class="hover:text-ink transition no-underline">Aprende</a>
+          <a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a>
+        </nav>
+      </div>
+
+      <!-- Right Actions -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <div id="navbarAuthContainer"></div>
+
+        <label class="ui-switch" title="Alternar modo claro / oscuro">
+          <input id="themeToggle" type="checkbox" aria-label="Modo oscuro" />
+          <div class="slider">
+            <div class="circle"></div>
+          </div>
+        </label>
+
+        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menú" aria-expanded="false">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors">
+      <nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft">
+        <a href="/dolar" class="hover:text-ink py-1 transition no-underline">Dólar</a>
+        <a href="/explorer" class="hover:text-ink py-1 transition no-underline">Terminal</a>
+        <a href="/empresas" class="hover:text-ink py-1 transition no-underline">Empresas</a>
+        <a href="/aprende" class="hover:text-ink py-1 transition no-underline">Aprende</a>
+        <a href="/metodologia" class="hover:text-ink py-1 transition no-underline">Metodología</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="flex-grow w-full">
+    <section class="pd-page-head max-w-3xl mx-auto px-4 sm:px-6">
+      <p class="pd-kicker">PerData</p>
+      <h1 class="pd-page-title">Política editorial</h1>
+      <p class="pd-page-lede">Fuentes oficiales, licencias de datos, criterios de cálculo estadístico y compromiso de rectificación en la terminal.</p>
+    </section>
+
+    <div class="pd-legal max-w-3xl mx-auto px-4 sm:px-6 pb-24">
+      <section class="pd-legal-sec">
+        <h2>Principios editoriales</h2>
+        <p>PerData es una plataforma de consulta e investigación cuantitativa enfocada en la economía peruana, sus mercados y sus variables fundamentales. Nuestra misión es brindar información veraz, trazable y matemáticamente contrastable, evitando juicios de valor infundados, promesas engañosas o terminología de mercadeo sin respaldo empírico. Todas las cifras mostradas en la plataforma provienen de registros oficiales o de modelos estadísticos documentados de forma pública.</p>
+      </section>
+
+      <section class="pd-legal-sec">
+        <h2>Fuentes oficiales y licencias de uso</h2>
+        <p>No inventamos registros históricos ni agregamos cotizaciones sin procedencia verificada. Cada indicador, tipo de cambio, reserva o precio de activo proviene de entidades oficiales con competencia regulatoria y estadística. Las principales fuentes y sus términos de licenciamiento son:</p>
+        <ul class="list-disc pl-6 space-y-3 mt-3 text-sm text-ink-soft leading-relaxed">
+          <li><strong>Banco Central de Reserva del Perú (BCRP):</strong> Estadísticas de política monetaria, tipo de cambio interbancario de cierre y promedio ponderado, reservas internacionales netas (RIN), operaciones de intervención cambiaria en la mesa de negociación (compras y ventas netas), instrumentos derivados de esterilización y cobertura cambiaria (swaps cambiarios y certificados de depósito reajustables - CDR), e inflación acumulada. Se trata de información de libre acceso público oficial provista por el Banco Central del Perú para fines de difusión económica y transparencia institucional.</li>
+          <li><strong>Superintendencia del Mercado de Valores (SMV):</strong> Información de cotizaciones del mercado bursátil local, estados de emisores registrados, participaciones accionarias relevantes superiores al 4% del capital social y hechos de importancia reportados por las empresas cotizantes. Los conjuntos de datos abiertos de la SMV se utilizan conforme a las disposiciones de datos públicos del Estado peruano y los principios de la licencia abierta Open Data Commons Attribution License (ODC-By).</li>
+          <li><strong>U.S. Energy Information Administration (EIA):</strong> Precios spot y series históricas del petróleo crudo West Texas Intermediate (WTI) y gas natural, variables clave para el seguimiento de la balanza comercial y los términos de intercambio del Perú. Corresponden a publicaciones del gobierno federal de los Estados Unidos en dominio público libre de restricciones de derechos de autor.</li>
+          <li><strong>Banco Mundial (World Bank Open Data):</strong> Series agregadas de balanza de pagos, producto bruto interno y comercio exterior de economías emergentes y socios comerciales del Perú. Su reutilización se realiza bajo los términos de la licencia Creative Commons Atribución 4.0 Internacional (CC BY 4.0).</li>
+          <li><strong>Reserva Federal de los Estados Unidos (Federal Reserve / FRED):</strong> Tasas de política monetaria (Federal Funds Rate) y condiciones globales de liquidez en dólares, consultadas a través de los sistemas oficiales del Banco de la Reserva Federal de St. Louis.</li>
+        </ul>
+      </section>
+
+      <section class="pd-legal-sec">
+        <h2>Cómo calculamos: datos y metodología</h2>
+        <p>En PerData establecemos una línea clara entre los datos observados y las estimaciones probabilísticas hacia el futuro. Las series históricas de precios, volúmenes y balances se incorporan tal cual son reportadas por las fuentes primarias, sin alteraciones manuales ni ajustes selectivos.</p>
+        <p class="mt-3">Las proyecciones del dólar y de cotizaciones (rangos P10, P50 y P90 a horizontes de un día, una semana o un mes) se construyen mediante modelos estadísticos cuantitativos englobados bajo el motor PerData Engine. Estos modelos aplican técnicas de simulación histórica filtrada (FHS) y calibración empírica evaluada rigurosamente fuera de muestra. Un rango del 80% de probabilidad describe la variabilidad empírica observada y significa que, en pruebas históricas retrospectivas, 8 de cada 10 observaciones cayeron dentro del intervalo delimitado entre el percentil 10 y el percentil 90. Para examinar en detalle las ecuaciones, los factores de ponderación y las métricas de cobertura empírica, consulte nuestra página de <a href="/metodologia" class="text-ink underline">Metodología</a>.</p>
+      </section>
+
+      <section class="pd-legal-sec">
+        <h2>Separación entre estadística determinista y modelos de lenguaje</h2>
+        <p>Mantenemos una separación estricta de responsabilidades entre el procesamiento numérico y la generación de textos informativos:</p>
+        <ul class="list-disc pl-6 space-y-2 mt-3 text-sm text-ink-soft leading-relaxed">
+          <li><strong>Cálculo cuantitativo auditable:</strong> Todas las cifras, tablas, percentiles, cuantiles, variaciones porcentuales, mínimos y máximos anuales son el resultado directo de código algorítmico determinista. Ningún modelo de lenguaje participa en la fijación de números, en el cálculo de rangos ni en la alteración de valores empíricos.</li>
+          <li><strong>Redacción de notas y boletín:</strong> Empleamos modelos de lenguaje de manera asistida y supervisada exclusivamente para estructurar en prosa legible los resúmenes de contexto, las notas del día y el boletín matutino. Estas herramientas operan bajo una política obligatoria de fundamentación fáctica estricta (grounded text): solo pueden utilizar cifras validadas que figuren expresamente en el contexto oficial del día y deben enlazar a las fuentes primarias. La revisión de criterios y el control de calidad corresponden al equipo editorial.</li>
+        </ul>
+      </section>
+
+      <section class="pd-legal-sec">
+        <h2>Política de corrección de errores</h2>
+        <p>La exactitud es la base de la confianza en PerData. Si identifica alguna discrepancia entre una cifra presentada en nuestro sitio y la serie oficial emitida por la fuente correspondiente (BCRP, SMV, EIA, Banco Mundial o Reserva Federal), le solicitamos que nos lo comunique.</p>
+        <p class="mt-3">Para reportar un error, escriba a <a href="mailto:soporte@perdata.site" class="text-ink underline">soporte@perdata.site</a> indicando:</p>
+        <ol class="list-decimal pl-6 space-y-1 mt-2 text-sm text-ink-soft leading-relaxed">
+          <li>La dirección web (URL) de la página donde observó la inconsistencia.</li>
+          <li>El indicador, símbolo o activo involucrado.</li>
+          <li>La fecha de la observación y la cifra exacta que figura en la fuente oficial.</li>
+        </ol>
+        <p class="mt-3">Al recibir su mensaje, nuestro equipo técnico contrasta de inmediato el dato contra el reporte primario de la institución. Si se confirma una omisión o desfase técnico en la sincronización, corregimos la cifra en el sistema y consignamos una nota de rectificación transparente para garantizar la trazabilidad histórica de la corrección.</p>
+      </section>
+
+      <section class="pd-legal-sec">
+        <h2>Sin recomendaciones de inversión ni asesoría financiera</h2>
+        <p>La información, los gráficos, los análisis cuantitativos y las proyecciones estadísticas expuestos en PerData se difunden con fines exclusivamente educativos, analíticos y de investigación académica o profesional. PerData no presta servicios de asesoramiento financiero personalizado ni actúa como intermediario de valores o sociedad agente de bolsa.</p>
+        <p class="mt-3">Ninguna sección de este sitio web debe interpretarse como una recomendación u oferta de compra, venta, toma de posiciones o liquidación de divisas, instrumentos de renta fija, acciones bursátiles u otros activos financieros. Toda inversión o transacción cambiaria conlleva riesgos de pérdida patrimonial asociados a factores macroeconómicos, eventos imprevistos y volatilidad de mercado. Cada usuario es responsable individual y exclusivo de sus decisiones patrimoniales, debiendo buscar orientación financiera profesional independiente antes de comprometer capital.</p>
+        <p class="mt-6 text-sm font-medium text-ink">— El equipo de PerData</p>
+      </section>
+    </div>
+  </main>
+
+  <!-- Shared Institutional Footer -->
+  <footer class="border-t border-rule bg-card py-10 px-4 sm:px-6 transition-colors">
+    <div class="max-w-6xl mx-auto flex flex-col gap-6 text-left">
+      <!-- Fila 1: Logo y enlaces cortos -->
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-rule">
+        <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline">
+          <span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
+        </a>
+        <nav class="flex flex-wrap items-center gap-6 text-xs text-ink-soft" aria-label="Navegación secundaria">
+          <a href="/boletin" class="hover:text-ink transition no-underline">Boletín</a>
+          <a href="/terms" class="hover:text-ink transition no-underline">Términos</a>
+          <a href="/estado" class="hover:text-ink transition no-underline">Estado</a>
+          <a href="/nosotros" class="hover:text-ink transition no-underline">Quiénes somos</a>
+          <a href="/privacidad" class="hover:text-ink transition no-underline">Privacidad</a>
+          <a href="/politica-editorial" class="hover:text-ink transition no-underline font-medium text-ink">Política editorial</a>
+          <a href="/contacto" class="hover:text-ink transition no-underline">Contacto</a>
+          <a href="#cookies" class="pd-cookies-link hover:text-ink transition no-underline" data-open-cookies>Cookies</a>
+        </nav>
+      </div>
+
+      <!-- Fila 2: Copyright y aviso legal corto -->
+      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 text-[11px] text-ink-soft leading-relaxed">
+        <span class="font-medium text-ink shrink-0">© 2026 PerData</span>
+        <p class="max-w-2xl m-0 text-ink-soft">
+          Información financiera y cuantitativa con fines estrictamente informativos y de investigación. No constituye asesoramiento de inversión ni oferta pública de valores.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById("themeToggle");
+    const isDark = document.documentElement.classList.contains("dark");
+    if (themeToggle) {
+      themeToggle.checked = isDark;
+      themeToggle.addEventListener("change", (e) => {
+        if (e.target.checked) {
+          document.documentElement.classList.add("dark");
+          document.documentElement.classList.remove("light");
+          localStorage.setItem("theme", "dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+          document.documentElement.classList.add("light");
+          localStorage.setItem("theme", "light");
+        }
+      });
+    }
+  </script>
+
+  <!-- Mobile Menu Toggle -->
+  <script>
+    (function() {
+      var btn = document.getElementById('mobileMenuBtn');
+      var menu = document.getElementById('mobileMenu');
+      if (btn && menu) {
+        btn.addEventListener('click', function() {
+          var open = menu.classList.toggle('hidden');
+          btn.setAttribute('aria-expanded', String(!open));
+        });
+      }
+    })();
+  </script>
+
+  <!-- Auth -->
+  <script src="/consent.js" defer></script>
+  <script src="/auth.js" defer></script>
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "bc9abca1e97b4bcaa6261b23afc498e5"}'></script>
+</body>
+</html>

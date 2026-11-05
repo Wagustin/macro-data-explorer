@@ -17,7 +17,7 @@ fs.rmSync(publicDir, { recursive: true, force: true });
 function buildSitemap() {
   // Only pages with content of our own go to search engines; the rest are noindex (see worker.js)
   const pages = ["/", "/dolar", "/explorer", "/empresas", "/aprende", "/metodologia", "/guia", "/precios",
-    "/boletin", "/nosotros", "/contacto", "/privacidad", "/terms"];
+    "/boletin", "/nosotros", "/politica-editorial", "/contacto", "/privacidad", "/terms"];
   const lastmod = new Date().toISOString().slice(0, 10);
   const fichasDir = path.join(rootDir, "empresa");
   const fichas = fs.existsSync(fichasDir)
@@ -47,6 +47,7 @@ const FILES_TO_COPY = [
   "restablecer.html",
   "privacidad.html",
   "nosotros.html",
+  "politica-editorial.html",
   "contacto.html",
   "terms.html",
   "404.html",

@@ -40,6 +40,7 @@ test("shouldNoindex leaves indexable routes indexable", () => {
     "/precios", "/precios.html",
     "/boletin", "/boletin.html",
     "/nosotros", "/nosotros.html",
+    "/politica-editorial", "/politica-editorial.html",
     "/privacidad", "/privacidad.html",
     "/terms", "/terms.html",
     "/mercado", "/mercado.html",
