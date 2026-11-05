@@ -3,7 +3,7 @@ import historicalHandler from "./api/historical.js";
 import forecastHandler from "./api/forecast.js";
 import interpretHandler from "./api/interpret.js";
 import newsHandler from "./api/news.js";
-import diarioHandler from "./api/diario.js";
+import diarioHandler, { getDailyDollarSummary } from "./api/diario.js";
 import authHandler from "./api/auth.js";
 import billingHandler from "./api/billing.js";
 import stripeWebhookHandler from "./api/stripe-webhook.js";
@@ -233,7 +233,7 @@ const EEA_COUNTRIES = new Set([
 
 // Per-response CSP nonce: every <script> in our HTML gets it, and 'strict-dynamic' then trusts the
 // scripts they load (Google sign-in, AdSense, Stripe). Enforced since 29-oct-2026, when no page reported violations.
-function withScriptNonce(response, geo = "otro") {
+function withScriptNonce(response, geo = "otro", isHome = false, dailyData = null) {
   if (response.status === 304 || !(response.headers.get("Content-Type") || "").includes("text/html")) return response;
   const bytes = crypto.getRandomValues(new Uint8Array(16));
   const nonce = btoa(String.fromCharCode(...bytes));
@@ -262,7 +262,7 @@ function withScriptNonce(response, geo = "otro") {
   ].join("; "));
   const rewritten = new Response(response.body, { status: response.status, statusText: response.statusText, headers });
   let hasGeo = false;
-  return new HTMLRewriter()
+  let rewriter = new HTMLRewriter()
     .on("script", { element(e) { e.setAttribute("nonce", nonce); } })
     .on('meta[name="pd-geo"]', {
       element(e) {
@@ -276,8 +276,115 @@ function withScriptNonce(response, geo = "otro") {
           e.append(`<meta name="pd-geo" content="${geo}">`, { html: true });
         }
       }
-    })
-    .transform(rewritten);
+    });
+
+  if (isHome && dailyData && dailyData.vigente && dailyData.manana) {
+    const fmt = (v, dec) => (typeof v === "number" && !isNaN(v))
+      ? v.toLocaleString("es-PE", { minimumFractionDigits: dec, maximumFractionDigits: dec })
+      : "—";
+    const p10Str = fmt(dailyData.manana.p10, 3);
+    const p50Str = fmt(dailyData.manana.p50, 3);
+    const p90Str = fmt(dailyData.manana.p90, 3);
+    const semP10Str = dailyData.semana ? fmt(dailyData.semana.p10, 3) : "";
+    const semP90Str = dailyData.semana ? fmt(dailyData.semana.p90, 3) : "";
+    const cierreStr = fmt(dailyData.ultimo_cierre, 3);
+
+    rewriter = rewriter
+      .on("#pdHeroQuestion", {
+        element(e) {
+          if (dailyData.pregunta) e.setInnerContent(dailyData.pregunta);
+        }
+      })
+      .on(".pd-hero-answer", {
+        element(e) {
+          e.setInnerContent(
+            `Entre <span class="pd-num font-mono tnum">S/&nbsp;${p10Str}</span> y <span class="pd-num font-mono tnum">S/&nbsp;${p90Str}</span> (8 de cada 10 veces). Valor central: <span class="pd-num font-mono tnum">S/&nbsp;${p50Str}</span>.`,
+            { html: true }
+          );
+        }
+      })
+      .on("#pdCardDaily", {
+        element(e) {
+          const cls = (e.getAttribute("class") || "").replace(/\bhidden\b/g, "").trim();
+          if (cls) e.setAttribute("class", cls);
+          else e.removeAttribute("class");
+        }
+      })
+      .on("#pdCardMonthly", {
+        element(e) {
+          const cls = (e.getAttribute("class") || "").trim();
+          if (!/\bhidden\b/.test(cls)) {
+            e.setAttribute("class", cls ? `${cls} hidden` : "hidden");
+          }
+        }
+      })
+      .on("#pdCardHorizon", {
+        element(e) {
+          e.setInnerContent("Horizonte: diario");
+        }
+      })
+      .on("#pdCardHoyFecha", {
+        element(e) {
+          if (dailyData.etiqueta_cierre) e.setInnerContent(dailyData.etiqueta_cierre);
+        }
+      })
+      .on("#pdCardHoyCierre", {
+        element(e) {
+          e.setInnerContent(cierreStr);
+        }
+      })
+      .on("#pdCardDailyLabel", {
+        element(e) {
+          if (dailyData.etiqueta) e.setInnerContent(dailyData.etiqueta.toUpperCase());
+        }
+      })
+      .on("#pdCardDailyP10", {
+        element(e) {
+          e.setInnerContent(p10Str);
+        }
+      })
+      .on("#pdCardDailyP90", {
+        element(e) {
+          e.setInnerContent(p90Str);
+        }
+      })
+      .on("#pdCardMananaP10", {
+        element(e) {
+          e.setInnerContent(p10Str);
+        }
+      })
+      .on("#pdCardMananaP50", {
+        element(e) {
+          e.setInnerContent(p50Str);
+        }
+      })
+      .on("#pdCardMananaP90", {
+        element(e) {
+          e.setInnerContent(p90Str);
+        }
+      });
+
+    if (dailyData.semana) {
+      rewriter = rewriter
+        .on("#pdCardSemanaFecha", {
+          element(e) {
+            if (dailyData.etiqueta_semana) e.setInnerContent(dailyData.etiqueta_semana);
+          }
+        })
+        .on("#pdCardSemanaP10", {
+          element(e) {
+            e.setInnerContent(semP10Str);
+          }
+        })
+        .on("#pdCardSemanaP90", {
+          element(e) {
+            e.setInnerContent(semP90Str);
+          }
+        });
+    }
+  }
+
+  return rewriter.transform(rewritten);
 }
 
 export default {
@@ -317,7 +424,16 @@ export default {
     const fresh = new Headers(request.headers);
     fresh.delete("If-None-Match");
     fresh.delete("If-Modified-Since");
-    const response = withScriptNonce(await this.route(new Request(request, { headers: fresh }), env, ctx), geo);
+    const isHome = (url.pathname === "/" || url.pathname === "/index.html");
+    let dailyData = null;
+    if (isHome) {
+      try {
+        dailyData = await getDailyDollarSummary();
+      } catch {
+        dailyData = null;
+      }
+    }
+    const response = withScriptNonce(await this.route(new Request(request, { headers: fresh }), env, ctx), geo, isHome, dailyData);
     const r = new Response(response.body, response);
     for (const [k, v] of Object.entries(SECURITY_HEADERS)) if (!r.headers.has(k)) r.headers.set(k, v);
     if (r.status === 404 || shouldNoindex(url.pathname)) {
@@ -605,5 +721,5 @@ function escapeAttr(t) {
   return String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 }
 
-export { shouldNoindex, isIndexableBody };
+export { shouldNoindex, isIndexableBody, withScriptNonce };
 

@@ -78,7 +78,7 @@ function getTodayLima() {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Lima" }).format(new Date());
 }
 
-async function loadDailyData() {
+export async function loadDailyData() {
   if (cache && Date.now() - cache.at < CACHE_TTL_MS) {
     return cache.value;
   }
@@ -203,4 +203,36 @@ export default async function handler(req, res) {
     etiqueta_cierre: etiquetaCierre,
     etiqueta_semana: etiquetaSemana
   });
+}
+
+export async function getDailyDollarSummary() {
+  try {
+    const data = await loadDailyData();
+    if (!data || !data.simbolos || !data.simbolos.PEN) return null;
+    const symbolData = data.simbolos.PEN;
+    if (!symbolData.manana) return null;
+
+    const todayLima = getTodayLima();
+    const mananaFecha = symbolData.manana?.fecha_objetivo;
+    if (!mananaFecha || mananaFecha < todayLima) return null;
+
+    const etiqueta = formatFechaObjetivo(mananaFecha, todayLima);
+    const pregunta = formatPreguntaObjetivo(mananaFecha, todayLima);
+    const etiquetaCierre = formatCierreFecha(symbolData.fecha_ultimo_cierre);
+    const etiquetaSemana = formatSemanaFecha(symbolData.semana?.fecha_objetivo);
+
+    return {
+      vigente: true,
+      symbol: "PEN",
+      actualizado: data.actualizado,
+      hoy_lima: todayLima,
+      ...symbolData,
+      etiqueta,
+      pregunta,
+      etiqueta_cierre: etiquetaCierre,
+      etiqueta_semana: etiquetaSemana
+    };
+  } catch {
+    return null;
+  }
 }
