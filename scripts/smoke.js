@@ -81,6 +81,18 @@ async function fetchWithTimeout(url, opts = {}, timeoutMs = 8000) {
   }
 }
 
+// Visible text of a served page without executing JavaScript: scripts, styles, comments and tags
+// are dropped. A word is a token carrying at least one letter, the same rule as verify-dolar.js.
+function visibleWords(html) {
+  const text = html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<!--[\s\S]*?-->/g, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&[a-z#0-9]+;/gi, " ");
+  return text.split(/\s+/).filter((word) => /[A-Za-zÁÉÍÓÚÑáéíóúñ]/.test(word));
+}
+
 async function testPages() {
   const htmlMap = new Map();
 
@@ -402,6 +414,103 @@ async function testRefresh() {
   }
 }
 
+// AdSense phase: only pages with content of their own reach search engines, the rest are noindex
+// and stay out of the sitemap. The local dev server never sets X-Robots-Tag and answers every
+// /empresa/* with the same shell, so these checks only make sense against a deployment.
+async function testIndexability() {
+  if (/localhost|127\.0\.0\.1/.test(base)) return;
+
+  for (const check of [
+    { page: "/dolar", minWords: 800, needle: "S/" },
+    { page: "/contacto" },
+    { page: "/politica-editorial" }
+  ]) {
+    try {
+      const res = await fetchWithTimeout(`${base}${check.page}`);
+      const html = await res.text();
+      const words = visibleWords(html).length;
+      const robots = res.headers.get("X-Robots-Tag");
+      const enoughWords = !check.minWords || words >= check.minWords;
+      const hasNeedle = !check.needle || html.includes(check.needle);
+      const pass = res.status === 200 && !robots && enoughWords && hasNeedle;
+      record(
+        `Indexable ${check.page}`,
+        pass,
+        `HTTP ${res.status} · X-Robots-Tag: ${robots || "ausente"} · ${words} palabras` +
+        `${check.minWords ? ` (mínimo ${check.minWords})` : ""}` +
+        `${check.needle ? ` · «${check.needle}»: ${hasNeedle ? "sí" : "no"}` : ""}`
+      );
+    } catch (err) {
+      record(`Indexable ${check.page}`, false, `Error: ${err.message}`);
+    }
+  }
+
+  // The ficha rule lives in the body attribute: a rich ficha keeps it, a thin one loses it.
+  // AENZA S.A.A. (AENZAC1) is indexable; AGROINDUSTRIAS AIB S.A. (AIBC1) shows no trades in the
+  // last 12 months (data/empresas-estado.json), so the Worker keeps it out of the index.
+  for (const check of [
+    { page: "/empresa/AENZAC1", indexable: true, needle: 'data-indexable="1"' },
+    { page: "/empresa/AIBC1", indexable: false }
+  ]) {
+    try {
+      const res = await fetchWithTimeout(`${base}${check.page}`);
+      const html = await res.text();
+      const robots = res.headers.get("X-Robots-Tag");
+      const hasNeedle = !check.needle || html.includes(check.needle);
+      const pass = res.status === 200 && (robots === "noindex, follow") === !check.indexable && hasNeedle;
+      record(
+        `Ficha ${check.indexable ? "indexable" : "noindex"} ${check.page}`,
+        pass,
+        `HTTP ${res.status} · X-Robots-Tag: ${robots || "ausente"}` +
+        `${check.needle ? ` · ${check.needle}: ${hasNeedle ? "sí" : "no"}` : ""}`
+      );
+    } catch (err) {
+      record(`Ficha ${check.indexable ? "indexable" : "noindex"} ${check.page}`, false, `Error: ${err.message}`);
+    }
+  }
+
+  try {
+    const res = await fetchWithTimeout(`${base}/noticias`);
+    const robots = res.headers.get("X-Robots-Tag");
+    record(
+      "Noindex /noticias",
+      res.status === 200 && robots === "noindex, follow",
+      `HTTP ${res.status} · X-Robots-Tag: ${robots || "ausente"}`
+    );
+  } catch (err) {
+    record("Noindex /noticias", false, `Error: ${err.message}`);
+  }
+
+  try {
+    const res = await fetchWithTimeout(`${base}/sitemap.xml`);
+    const xml = await res.text();
+    const locs = (xml.match(/<loc>/g) || []).length;
+    const leaked = ["/resumen/", "/noticias"].filter((path) => xml.includes(path));
+    record(
+      "Sitemap solo indexables",
+      res.status === 200 && locs >= 60 && locs <= 200 && leaked.length === 0,
+      `HTTP ${res.status} · <loc>: ${locs} (entre 60 y 200)` +
+      `${leaked.length ? ` · coladas: ${leaked.join(", ")}` : ""}`
+    );
+  } catch (err) {
+    record("Sitemap solo indexables", false, `Error: ${err.message}`);
+  }
+
+  // The Worker writes the dollar question into the homepage, so it is readable without JavaScript
+  try {
+    const res = await fetchWithTimeout(`${base}/`);
+    const html = (await res.text()).replace(/<script[\s\S]*?<\/script>/gi, " ");
+    const hasQuestion = /¿A cuánto/.test(html);
+    record(
+      "Portada con la pregunta sin JS",
+      res.status === 200 && hasQuestion,
+      `HTTP ${res.status} · «¿A cuánto»: ${hasQuestion ? "sí" : "no"}`
+    );
+  } catch (err) {
+    record("Portada con la pregunta sin JS", false, `Error: ${err.message}`);
+  }
+}
+
 async function main() {
   console.log(`\n======================================================`);
   console.log(`  PERDATA SANITY SMOKE TEST — Target: ${base}`);
@@ -410,6 +519,7 @@ async function main() {
   await testCalibration();
   await testPages();
   await testRefresh();
+  await testIndexability();
   await testIssuerData();
   await testHistorical();
   await testForecast();
