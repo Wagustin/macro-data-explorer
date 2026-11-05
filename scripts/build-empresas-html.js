@@ -448,6 +448,7 @@ html.dark .ui-switch {
         </a>
 
         <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
+          <a href="/dolar" class="hover:text-ink transition no-underline">Dólar</a>
           <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a>
           <a href="/empresas" class="text-ink font-semibold transition no-underline">Empresas</a>
           <a href="/mercado" class="hover:text-ink transition no-underline">Mercado</a>
@@ -478,7 +479,8 @@ html.dark .ui-switch {
     <!-- Mobile Drawer -->
     <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors">
       <nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft">
-        <a href="/explorer" class="hover:text-ink py-1 transition no-underline">Terminal</a>
+        <a href="/dolar" class="hover:text-ink py-1 transition no-underline">Dólar</a>
+          <a href="/explorer" class="hover:text-ink py-1 transition no-underline">Terminal</a>
         <a href="/empresas" class="text-ink font-semibold py-1 transition no-underline">Empresas</a>
         <a href="/mercado" class="hover:text-ink py-1 transition no-underline">Mercado</a>
         <a href="/noticias" class="hover:text-ink py-1 transition no-underline">Noticias</a>
@@ -582,6 +584,7 @@ ${rowsHtml}
           <a href="/terms" class="hover:text-ink transition no-underline">Términos</a>
           <a href="/nosotros" class="hover:text-ink transition no-underline">Quiénes somos</a>
           <a href="/privacidad" class="hover:text-ink transition no-underline">Privacidad</a>
+          <a href="/contacto" class="hover:text-ink transition no-underline">Contacto</a>
           <a href="#cookies" class="pd-cookies-link hover:text-ink transition no-underline" data-open-cookies>Cookies</a>
           <a href="mailto:soporte@perdata.site" class="hover:text-ink transition no-underline">Contacto</a>
         </nav>
@@ -1018,6 +1021,7 @@ function buildFichas() {
       // Body tag
       if (isIndexable) {
         fichaHtml = fichaHtml.replace(/<body([^>]*)>/, `<body$1 data-indexable="1">`);
+        fichaHtml = fichaHtml.replace("<head>", '<head>\n  <meta name="pd-ads" content="1">');
       }
 
       // Loading state hidden

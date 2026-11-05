@@ -35,6 +35,8 @@
 
   function loadScript() {
     if (getGeo() === "eea") return;
+    // Ads only on pages with content of our own (marked with <meta name="pd-ads" content="1">)
+    if (!document.querySelector('meta[name="pd-ads"][content="1"]')) return;
     if (document.querySelector('script[src*="adsbygoogle.js"]')) return;
     const s = document.createElement("script");
     s.async = true;

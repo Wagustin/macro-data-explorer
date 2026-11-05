@@ -405,6 +405,7 @@ const textoExplicativo = `
 let htmlGenerado = `<!DOCTYPE html>
 <html lang="es-PE" class="light">
 <head>
+  <meta name="pd-ads" content="1">
   <meta name="pd-geo" content="otro">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -557,6 +558,7 @@ let htmlGenerado = `<!DOCTYPE html>
       <nav class="flex flex-wrap gap-5" aria-label="Navegacion secundaria">
         <a href="/noticias">Noticias</a><a href="/resumenes">Archivo de resumenes</a><a href="/mercado">Mercado</a><a href="/dolar">Dolar</a><a href="/estado">Estado</a><a href="/nosotros" class="hover:text-ink transition no-underline">Quienes somos</a>
           <a href="/privacidad">Privacidad</a>
+          <a href="/contacto">Contacto</a>
           <a href="#cookies" class="pd-cookies-link hover:text-ink transition no-underline" data-open-cookies>Cookies</a>
       </nav>
     </div>
