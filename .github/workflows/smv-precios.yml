@@ -39,4 +39,11 @@ jobs:
           git config user.name "perdata-bot"
           git config user.email "perdata-bot@users.noreply.github.com"
           git add data/empresas-estado.json empresas.html empresa
-          git diff --cached --quiet || (git commit -m "data(smv): estado de emisores $(date -u +%F)" && git push)
+          git diff --cached --quiet || (
+            git commit -m "data(smv): estado de emisores $(date -u +%F)" &&
+            for i in 1 2 3 4; do
+              git pull --rebase -q origin main && git push -q origin HEAD:main && break
+              [ "$i" -eq 4 ] && exit 1
+              sleep $((i*5))
+            done
+          )
