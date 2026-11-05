@@ -1,18 +1,18 @@
 {
-  "actualizado": "2026-11-04T18:38:39.383Z",
+  "actualizado": "2026-11-05T11:26:41.432Z",
   "timesfm": {
     "ok": true,
     "error": null
   },
   "model": "perdata-engine-v6",
   "filas": 2976,
-  "validas": 2943,
-  "descartadas": 33,
-  "pct_descartadas": 1.11,
+  "validas": 2942,
+  "descartadas": 34,
+  "pct_descartadas": 1.14,
   "sospechosas": 0,
   "simbolos_sin_datos": 0,
   "simbolos_totales": 62,
-  "tiempo_ms": 47,
+  "tiempo_ms": 24,
   "cobertura_ok": true,
   "frescura_ok": true,
   "exito": true,
@@ -92,7 +92,7 @@
       "symbol": "AENZAC1.LM",
       "horizon": 42,
       "reason": "absurd_width",
-      "width": 7195.5
+      "width": 7195.749999999999
     },
     {
       "index": 570,
@@ -247,6 +247,13 @@
       "horizon": 48,
       "reason": "absurd_width",
       "width": 109.26877470355731
+    },
+    {
+      "index": 815,
+      "symbol": "CASAGRC1.LM",
+      "horizon": 48,
+      "reason": "absurd_width",
+      "width": 40.86054790280142
     }
   ],
   "detalles_sospechosas": [],
