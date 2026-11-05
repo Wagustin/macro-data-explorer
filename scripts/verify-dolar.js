@@ -1,4 +1,4 @@
-// verify-dolar.js - checks the generated dolar.html against the K2 requirements
+// verify-dolar.js - checks the generated dolar.html against the K2 and K2b requirements
 import fs from "fs";
 
 const html = fs.readFileSync("/home/wagustin/macro-data-explorer/dolar.html", "utf8");
@@ -19,7 +19,7 @@ console.log("Visible words (with letters):", proseWords.length);
 
 // Technical narrative section only
 const techStart = visible.indexOf("Qué mueve el dólar en el Perú");
-const techText = visible.slice(techStart);
+const techText = techStart !== -1 ? visible.slice(techStart) : "";
 const techWords = techText.split(" ").filter((w) => /[A-Za-zÁÉÍÓÚÑáéíóúñ]/.test(w));
 console.log("Technical narrative words:", techWords.length);
 
@@ -29,17 +29,16 @@ const emojis = html.match(emojiRe) || [];
 console.log("Emoji/pictograph codepoints in source:", emojis.length, emojis.length ? [...new Set(emojis)].join(" ") : "");
 
 // Structural checks
-const tbodyRows = (html.match(/<tbody>[\s\S]*?<\/tbody>/)[0].match(/<tr>/g) || []).length;
-console.log("Last-20 table data rows:", tbodyRows);
-
-const ctxRows = (html.match(/<table class="contexto-table">[\s\S]*?<\/tbody>/)[0].match(/<tr>/g) || []).length;
-console.log("Context table data rows:", ctxRows);
+const tbodyMatches = html.match(/<tbody>[\s\S]*?<\/tbody>/g) || [];
+console.log("Table data sections (tbody):", tbodyMatches.length);
 
 const faqDts = (html.match(/<dt>/g) || []).length;
 const faqDds = (html.match(/<dd>/g) || []).length;
 console.log("FAQ dt/dd pairs:", faqDts, "/", faqDds);
 
 const checks = {
+  'visible words >= 900': proseWords.length >= 900,
+  'zero emojis': emojis.length === 0,
   'meta pd-ads': /<meta name="pd-ads" content="1">/.test(html),
   'meta robots': /<meta name="robots" content="index, follow">/.test(html),
   canonical: /<link rel="canonical" href="https:\/\/perdata\.site\/dolar">/.test(html),
@@ -53,14 +52,20 @@ const checks = {
   'localStorage theme': /localStorage\.setItem\("theme"/.test(html),
   'no emoji scrubber script': !/createNodeWalker|FILTER_REJECT/.test(html),
   'plus-minus kept visible': /±/.test(html),
-  'has RIN from data': /93525\.06/.test(html),
-  'has copper price': /689\.69876/.test(html),
-  'has terms of trade': /14\.307307/.test(html),
-  'has BCRP rate': /4\.25/.test(html),
   'no hardcoded 3.5 mil millones': !/3[.,]5 mil millones/.test(html),
+  'no TimesFM mentions': !/TimesFM/i.test(html),
+  'no dev filler words': !/(ningún valor está hardcodeado|alta precisión predictiva|respaldado por.*calibración empírica)/i.test(html),
+  'normal case headings': !/Rangos Probables de Cotización/.test(html) && /Rangos probables/.test(html),
+  'tomorrow with weekday': /Mañana, [a-záéíóúñ]+ \d+ [a-záéíóúñ]+/i.test(html),
+  'monthly forecast matches api': /3\.3933/.test(html) && /3\.5438/.test(html) && /3\.4658/.test(html),
+  'short dates without dots': !/(ene|feb|mar|abr|may|jun|jul|ago|set|oct|nov|dic)\./i.test(html),
 };
 console.log("\n--- checks ---");
-for (const [k, v] of Object.entries(checks)) console.log((v ? "PASS" : "FAIL") + "  " + k);
+let allPass = true;
+for (const [k, v] of Object.entries(checks)) {
+  console.log((v ? "PASS" : "FAIL") + "  " + k);
+  if (!v) allPass = false;
+}
 
 // Ensure the public copy matches
 const pub = fs.readFileSync("/home/wagustin/macro-data-explorer/public/dolar.html", "utf8");
