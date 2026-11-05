@@ -494,8 +494,7 @@ export default {
       const isIndexable = isIndexableBody(html);
       const name = prettyName(issuer.razonSocial);
       const title = `${name} (${nemo}): precio, proyección y hechos de importancia · PerData`;
-      const kind = SECTOR_PHRASE[String(issuer.sector || "").toUpperCase()] || "empresa";
-      const desc = `${name}, ${kind} que cotiza en la Bolsa de Valores de Lima: último precio, gráfico, proyección de PerData Engine y hechos de importancia de la SMV.`;
+      const desc = buildDesc(name, nemo);
       const url = `https://perdata.site/empresa/${encodeURIComponent(nemo)}`;
       const structuredData = [
         {
@@ -507,15 +506,18 @@ export default {
           industry: issuer.sector || "",
           url
         },
-        {
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Inicio", item: "https://perdata.site/" },
-            { "@type": "ListItem", position: 2, name: "Empresas", item: "https://perdata.site/empresas" },
-            { "@type": "ListItem", position: 3, name }
-          ]
-        }
+        // Indexable fichas already ship their BreadcrumbList from the generator; only inject one here otherwise
+        ...(html.includes('"BreadcrumbList"') ? [] : [
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Inicio", item: "https://perdata.site/" },
+              { "@type": "ListItem", position: 2, name: "Empresas", item: "https://perdata.site/empresas" },
+              { "@type": "ListItem", position: 3, name, item: url }
+            ]
+          }
+        ])
       ].map((data) => `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, "\\u003c")}</script>`).join("");
       const transformed = new HTMLRewriter()
         .on("title", { element(e) { e.setInnerContent(title); } })
@@ -704,11 +706,23 @@ async function findIssuer(env, request, nemo) {
   return issuersCache.find((e) => (e.valores || []).some((v) => v.nemonico === nemo)) || null;
 }
 
-const SECTOR_PHRASE = {
-  "MINERAS": "empresa minera", "BANCOS Y FINANCIERAS": "entidad financiera", "INDUSTRIALES": "empresa industrial",
-  "SERVICIOS PÚBLICOS": "empresa de servicios públicos", "SEGUROS": "aseguradora", "AGRARIO": "empresa agraria",
-  "ADMINISTRADORAS DE FONDOS DE PENSIONES": "administradora de fondos de pensiones", "DIVERSAS": "empresa"
-};
+// Meta description unica por ficha: cabeza con nombre y nemonico + el primer segmento
+// (de mas largo a mas corto) que mantenga la descripcion dentro de 160 caracteres
+const DESC_TAILS = [
+  " cotiza en la Bolsa de Valores de Lima: último precio, gráfico, proyección de PerData Engine y hechos de importancia de la SMV.",
+  " cotiza en la BVL: último precio, gráfico, proyección de PerData Engine y hechos de importancia de la SMV.",
+  " en la BVL: último precio, proyección de PerData Engine y hechos de importancia de la SMV.",
+  " en la BVL: precio, proyección de PerData Engine y hechos de importancia.",
+  " en la BVL: precio, proyección y hechos de importancia.",
+];
+function buildDesc(name, nemo) {
+  const head = `${name} (${nemo})`;
+  for (const tail of DESC_TAILS) {
+    const desc = head + tail;
+    if (desc.length <= 160) return desc;
+  }
+  return head + DESC_TAILS[DESC_TAILS.length - 1];
+}
 const KEEP_UPPER = new Set(["BBVA", "AFP", "BVL", "FTE", "IDE", "SEAL", "AIB", "XP", "OH!"]);
 const SMALL_WORDS = new Set(["de", "del", "la", "las", "los", "y", "e", "en"]);
 function prettyName(raw) {

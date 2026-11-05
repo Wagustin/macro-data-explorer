@@ -9,7 +9,9 @@
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://perdata.site/dolar">
   <title>Dólar en Perú hoy: precio, rango probable y contexto BCRP · PerData</title>
-  <meta name="description" content="Último cierre oficial del dólar en el Perú (BCRP), rangos probables P10-P50-P90 para mañana, la próxima semana y el próximo mes, cobertura empírica fuera de muestra y contexto macro y monetario oficial.">
+  <meta name="description" content="Último cierre oficial del dólar en el Perú (BCRP) y rangos probables P10-P50-P90 para mañana, la próxima semana y el próximo mes, con cobertura medida.">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Por qué el dólar sube o baja con tanta rapidez?","acceptedAnswer":{"@type":"Answer","text":"Porque el precio del dólar en el Perú es un precio de flujo: se ajusta rápido ante cambios en la oferta de divisas de los exportadores y ante la demanda de dólares de importadores e inversionistas. Un día de cobre favorable o un anuncio de la Reserva Federal puede mover el precio en la sesión, sin que cambie el panorama de fondo."}},{"@type":"Question","name":"¿Qué significa exactamente la cobertura del 80% fuera de muestra?","acceptedAnswer":{"@type":"Answer","text":"Que, al probar el modelo con períodos que no usó para ajustarse, el intervalo entre P10 y P90 contuvo el cierre real en cerca del 80% de los cortes evaluados. Es una medida honesta de error, distinta de la cobertura sobre los mismos datos con los que se calibró el modelo."}},{"@type":"Question","name":"¿El P50 va a ser el precio del cierre del día?","acceptedAnswer":{"@type":"Answer","text":"No necesariamente. El P50 es la mediana de la distribución y suele coincidir con el último cierre cuando el modelo no detecta una tendencia que perdura, como en los pronósticos de corto plazo publicados hoy, donde el P50 coincide con el cierre de 3.4520 S/ del 2026-11-04. Cuando el P50 se aparta del último cierre, la separación es la señal de que el modelo detecta una deriva."}},{"@type":"Question","name":"¿El rango mensual y el rango semanal no son el mismo pronóstico, verdad?","acceptedAnswer":{"@type":"Answer","text":"Son modelos distintos con horizontes distintos. El pronóstico diario y semanal se construye con simulación histórica filtrada sobre la serie de cierres del BCRP; el pronóstico mensual proviene del motor mensual precalculado, con su propia calibración (80.00% sobre 827 observaciones) y una trayectoria de tres meses. No se deben sumar ni comparar percentil por percentil entre horizontes distintos."}},{"@type":"Question","name":"¿Con qué frecuencia se actualiza esta página?","acceptedAnswer":{"@type":"Answer","text":"La página se genera de forma automática cuando termina la corrida diaria del PerData Engine: los cierres oficiales del BCRP, los pronósticos de corto plazo y el contexto macro se leen de los archivos de datos del proyecto y se vuelven a renderizar sin intervención manual. Por eso el último cierre que se muestra aquí es el del 2026-11-04, con fecha 4 de noviembre de 2026."}}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","name":"Tipo de cambio oficial del sol peruano frente al dólar (serie diaria PD04640PD del BCRP)","description":"Serie diaria del tipo de cambio de cierre publicado por el Banco Central de Reserva del Perú (BCRP), estadísticas diarias, en S/ por US$. Información pública del BCRP, citando la fuente.","url":"https://perdata.site/dolar","license":"Información pública del BCRP, citando la fuente","creator":{"@type":"Organization","name":"Banco Central de Reserva del Perú","url":"https://estadisticas.bcrp.gob.pe/estadisticas/series/"},"temporalCoverage":"2012-01-02/2026-11-04","variableMeasured":{"@type":"PropertyValue","name":"Tipo de cambio de cierre PEN/USD","unitText":"S/ por US$","codeValue":"PD04640PD"},"distribution":[{"@type":"DataDownload","encodingFormat":"application/json","contentUrl":"https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PD04640PD/json/2012-01-02/2026-11-04"}]}</script>
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/svg+xml" href="/icon.svg">
 
@@ -482,43 +484,16 @@
 
           <h2>Preguntas frecuentes</h2>
           <dl class="pd-faq-list">
-            <dt>Por que el dólar sube o baja con tanta rapidez?</dt>
-            <dd>
-              Porque el precio del dólar en el Perú es un precio de flujo: se ajusta rápido ante cambios en
-              la oferta de divisas de los exportadores y ante la demanda de dólares de importadores e
-              inversionistas. Un dia de cobre favorable o un anuncio de la Reserva Federal puede mover el
-              precio en la sesion, sin que cambie el panorama de fondo.
-            </dd>
-            <dt>Que significa exactamente la cobertura del 80% fuera de muestra?</dt>
-            <dd>
-              Que, al probar el modelo con periodos que no uso para ajustarse, el intervalo entre P10 y P90
-              contenio el cierre real en cerca del 80% de los cortes evaluados. Es una medida honesta de
-              error, distinta de la cobertura sobre los mismos datos con los que se calibro el modelo.
-            </dd>
-            <dt>El P50 va a ser el precio del cierre del dia?</dt>
-            <dd>
-              No necesariamente. El P50 es la mediana de la distribucion y suele coincidir con el último
-              cierre cuando el modelo no detecta una tendencia que продол, como en los pronósticos de
-              corto plazo publicados hoy, donde el P50 coincide con el cierre de
-              3.4520 S/ del 2026-11-04. Cuando el P50
-              se aparta del último cierre, la separacion es la señal de que el modelo detecta una deriva.
-            </dd>
-            <dt>El rango mensual y el rango semanal no son el mismo pronóstico, verdad?</dt>
-            <dd>
-              Son modelos distintos con horizontes distintos. El pronóstico diario y semanal se construye
-              con simulacion histórica filtrada sobre la serie de cierres del BCRP; el pronóstico mensual
-              proviene del motor mensual precalculado, con su propia calibración
-              (80.00% sobre 827 observaciones) y una trayectoria de tres
-              meses. No se deben sumar ni comparar quantile por quantile entre horizontes distintos.
-            </dd>
-            <dt>Con que frecuencia se actualiza esta pagina?</dt>
-            <dd>
-              La pagina se genera de forma automatica cuando termina la corrida diaria del PerData Engine:
-              los cierres oficiales del BCRP, los pronósticos de corto plazo y el contexto macro se leen de
-              los archivos de datos del proyecto y se vuelven a renderizar sin intervención manual. Por eso
-              el último cierre que se muestra aqui es el del 2026-11-04, con fecha
-              4 de noviembre de 2026.
-            </dd>
+            <dt>¿Por qué el dólar sube o baja con tanta rapidez?</dt>
+            <dd>Porque el precio del dólar en el Perú es un precio de flujo: se ajusta rápido ante cambios en la oferta de divisas de los exportadores y ante la demanda de dólares de importadores e inversionistas. Un día de cobre favorable o un anuncio de la Reserva Federal puede mover el precio en la sesión, sin que cambie el panorama de fondo.</dd>
+            <dt>¿Qué significa exactamente la cobertura del 80% fuera de muestra?</dt>
+            <dd>Que, al probar el modelo con períodos que no usó para ajustarse, el intervalo entre P10 y P90 contuvo el cierre real en cerca del 80% de los cortes evaluados. Es una medida honesta de error, distinta de la cobertura sobre los mismos datos con los que se calibró el modelo.</dd>
+            <dt>¿El P50 va a ser el precio del cierre del día?</dt>
+            <dd>No necesariamente. El P50 es la mediana de la distribución y suele coincidir con el último cierre cuando el modelo no detecta una tendencia que perdura, como en los pronósticos de corto plazo publicados hoy, donde el P50 coincide con el cierre de 3.4520 S/ del 2026-11-04. Cuando el P50 se aparta del último cierre, la separación es la señal de que el modelo detecta una deriva.</dd>
+            <dt>¿El rango mensual y el rango semanal no son el mismo pronóstico, verdad?</dt>
+            <dd>Son modelos distintos con horizontes distintos. El pronóstico diario y semanal se construye con simulación histórica filtrada sobre la serie de cierres del BCRP; el pronóstico mensual proviene del motor mensual precalculado, con su propia calibración (80.00% sobre 827 observaciones) y una trayectoria de tres meses. No se deben sumar ni comparar percentil por percentil entre horizontes distintos.</dd>
+            <dt>¿Con qué frecuencia se actualiza esta página?</dt>
+            <dd>La página se genera de forma automática cuando termina la corrida diaria del PerData Engine: los cierres oficiales del BCRP, los pronósticos de corto plazo y el contexto macro se leen de los archivos de datos del proyecto y se vuelven a renderizar sin intervención manual. Por eso el último cierre que se muestra aquí es el del 2026-11-04, con fecha 4 de noviembre de 2026.</dd>
           </dl>
         </section>
   </main>

@@ -51,6 +51,24 @@ function prettyName(raw) {
   }).join(" ");
 }
 
+// Meta description unica por ficha: cabeza con nombre y nemonico + el primer segmento
+// (de mas largo a mas corto) que mantenga la descripcion dentro de 160 caracteres
+const DESC_TAILS = [
+  " cotiza en la Bolsa de Valores de Lima: último precio, gráfico, proyección de PerData Engine y hechos de importancia de la SMV.",
+  " cotiza en la BVL: último precio, gráfico, proyección de PerData Engine y hechos de importancia de la SMV.",
+  " en la BVL: último precio, proyección de PerData Engine y hechos de importancia de la SMV.",
+  " en la BVL: precio, proyección de PerData Engine y hechos de importancia.",
+  " en la BVL: precio, proyección y hechos de importancia.",
+];
+function buildDesc(name, nemo) {
+  const head = `${name} (${nemo})`;
+  for (const tail of DESC_TAILS) {
+    const desc = head + tail;
+    if (desc.length <= 160) return desc;
+  }
+  return head + DESC_TAILS[DESC_TAILS.length - 1];
+}
+
 // Process emitters
 const rows = data.emisores.map(e => {
   // Determine primary valor
@@ -160,7 +178,7 @@ const template = `<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Empresas de la Bolsa de Valores de Lima · PerData</title>
-  <meta name="description" content="Directorio de renta variable de la BVL con 182 emisores peruanos. Precio de cierre, historial y proyección de PerData Engine." />
+  <meta name="description" content="Directorio de emisores de la Bolsa de Valores de Lima (BVL): precio de cierre, historial, proyección de PerData Engine y hechos de importancia de la SMV." />
   <link rel="canonical" href="https://perdata.site/empresas" />
 
   <!-- Favicon -->
@@ -967,7 +985,7 @@ function buildFichas() {
 
       // Pre-rendered values
       const title = `${name} (${nemo}): precio, proyección y hechos de importancia · PerData`;
-      const desc = `${name}, ${sectorFormatted} que cotiza en la Bolsa de Valores de Lima: último precio, gráfico, proyección de PerData Engine y hechos de importancia de la SMV.`;
+      const desc = buildDesc(name, nemo);
       const canonical = `https://perdata.site/empresa/${encodeURIComponent(nemo)}`;
       const hasProyeccion = Boolean(v.simbolo_proyeccion);
       const currency = issuerStatus.moneda || v.moneda || "S/";
@@ -1021,8 +1039,18 @@ function buildFichas() {
 
       // Body tag
       if (isIndexable) {
+        const breadcrumbLd = {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Inicio", item: "https://perdata.site/" },
+            { "@type": "ListItem", position: 2, name: "Empresas", item: "https://perdata.site/empresas" },
+            { "@type": "ListItem", position: 3, name, item: canonical },
+          ],
+        };
+        const breadcrumbScript = `<script type="application/ld+json">${JSON.stringify(breadcrumbLd).replace(/</g, "\\u003c")}</script>`;
         fichaHtml = fichaHtml.replace(/<body([^>]*)>/, `<body$1 data-indexable="1">`);
-        fichaHtml = fichaHtml.replace("<head>", '<head>\n  <meta name="pd-ads" content="1">');
+        fichaHtml = fichaHtml.replace("<head>", `<head>\n  <meta name="pd-ads" content="1">\n  ${breadcrumbScript}`);
       }
 
       // Loading state hidden

@@ -272,6 +272,35 @@ const filasIndicadores = indicadores
 
 // ---- 6. Texto explicativo propio (700-1000 palabras visibles) ----
 
+// Preguntas frecuentes: fuente unica del <dl> visible y del JSON-LD FAQPage.
+// Se escriben con acentos porque el pipeline de acentos no modifica los bloques <script>.
+const faqItems = [
+  {
+    q: "¿Por qué el dólar sube o baja con tanta rapidez?",
+    a: "Porque el precio del dólar en el Perú es un precio de flujo: se ajusta rápido ante cambios en la oferta de divisas de los exportadores y ante la demanda de dólares de importadores e inversionistas. Un día de cobre favorable o un anuncio de la Reserva Federal puede mover el precio en la sesión, sin que cambie el panorama de fondo.",
+  },
+  {
+    q: "¿Qué significa exactamente la cobertura del 80% fuera de muestra?",
+    a: "Que, al probar el modelo con períodos que no usó para ajustarse, el intervalo entre P10 y P90 contuvo el cierre real en cerca del 80% de los cortes evaluados. Es una medida honesta de error, distinta de la cobertura sobre los mismos datos con los que se calibró el modelo.",
+  },
+  {
+    q: "¿El P50 va a ser el precio del cierre del día?",
+    a: `No necesariamente. El P50 es la mediana de la distribución y suele coincidir con el último cierre cuando el modelo no detecta una tendencia que perdura, como en los pronósticos de corto plazo publicados hoy, donde el P50 coincide con el cierre de ${num(ultimoCierre, 4)} S/ del ${fechaUltimoCierre}. Cuando el P50 se aparta del último cierre, la separación es la señal de que el modelo detecta una deriva.`,
+  },
+  {
+    q: "¿El rango mensual y el rango semanal no son el mismo pronóstico, verdad?",
+    a: `Son modelos distintos con horizontes distintos. El pronóstico diario y semanal se construye con simulación histórica filtrada sobre la serie de cierres del BCRP; el pronóstico mensual proviene del motor mensual precalculado, con su propia calibración (${pct(mesCobertura, 2)} sobre ${num(mesN, 0)} observaciones) y una trayectoria de tres meses. No se deben sumar ni comparar percentil por percentil entre horizontes distintos.`,
+  },
+  {
+    q: "¿Con qué frecuencia se actualiza esta página?",
+    a: `La página se genera de forma automática cuando termina la corrida diaria del PerData Engine: los cierres oficiales del BCRP, los pronósticos de corto plazo y el contexto macro se leen de los archivos de datos del proyecto y se vuelven a renderizar sin intervención manual. Por eso el último cierre que se muestra aquí es el del ${fechaUltimoCierre}, con fecha ${fechaLarga(fechaUltimoCierre)}.`,
+  },
+];
+
+const faqHtml = faqItems
+  .map((item) => `            <dt>${escapeHtml(item.q)}</dt>\n            <dd>${escapeHtml(item.a)}</dd>`)
+  .join("\n");
+
 const textoExplicativo = `
         <section class="pd-prose">
           <h2>Que mueve el dolar en el Peru</h2>
@@ -360,45 +389,54 @@ const textoExplicativo = `
 
           <h2>Preguntas frecuentes</h2>
           <dl class="pd-faq-list">
-            <dt>Por que el dolar sube o baja con tanta rapidez?</dt>
-            <dd>
-              Porque el precio del dolar en el Peru es un precio de flujo: se ajusta rapido ante cambios en
-              la oferta de divisas de los exportadores y ante la demanda de dolares de importadores e
-              inversionistas. Un dia de cobre favorable o un anuncio de la Reserva Federal puede mover el
-              precio en la sesion, sin que cambie el panorama de fondo.
-            </dd>
-            <dt>Que significa exactamente la cobertura del 80% fuera de muestra?</dt>
-            <dd>
-              Que, al probar el modelo con periodos que no uso para ajustarse, el intervalo entre P10 y P90
-              contenio el cierre real en cerca del 80% de los cortes evaluados. Es una medida honesta de
-              error, distinta de la cobertura sobre los mismos datos con los que se calibro el modelo.
-            </dd>
-            <dt>El P50 va a ser el precio del cierre del dia?</dt>
-            <dd>
-              No necesariamente. El P50 es la mediana de la distribucion y suele coincidir con el ultimo
-              cierre cuando el modelo no detecta una tendencia que продол, como en los pronosticos de
-              corto plazo publicados hoy, donde el P50 coincide con el cierre de
-              ${escapeHtml(num(ultimoCierre, 4))} S/ del ${escapeHtml(fechaUltimoCierre)}. Cuando el P50
-              se aparta del ultimo cierre, la separacion es la senal de que el modelo detecta una deriva.
-            </dd>
-            <dt>El rango mensual y el rango semanal no son el mismo pronostico, verdad?</dt>
-            <dd>
-              Son modelos distintos con horizontes distintos. El pronostico diario y semanal se construye
-              con simulacion historica filtrada sobre la serie de cierres del BCRP; el pronostico mensual
-              proviene del motor mensual precalculado, con su propia calibracion
-              (${pct(mesCobertura, 2)} sobre ${num(mesN, 0)} observaciones) y una trayectoria de tres
-              meses. No se deben sumar ni comparar quantile por quantile entre horizontes distintos.
-            </dd>
-            <dt>Con que frecuencia se actualiza esta pagina?</dt>
-            <dd>
-              La pagina se genera de forma automatica cuando termina la corrida diaria del PerData Engine:
-              los cierres oficiales del BCRP, los pronosticos de corto plazo y el contexto macro se leen de
-              los archivos de datos del proyecto y se vuelven a renderizar sin intervencion manual. Por eso
-              el ultimo cierre que se muestra aqui es el del ${escapeHtml(fechaUltimoCierre)}, con fecha
-              ${escapeHtml(fechaLarga(fechaUltimoCierre))}.
-            </dd>
+${faqHtml}
           </dl>
         </section>`;
+
+// ---- 6b. JSON-LD: FAQPage con las preguntas reales y Dataset con la serie oficial del BCRP ----
+
+const ldJson = (obj) => JSON.stringify(obj).replace(/</g, "\\u003c");
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+
+const penSerie = bcrpDaily.series.PEN;
+const primeraFechaSerie = penSerie.serie[0][0];
+const ultimaFechaSerie = penSerie.serie[penSerie.serie.length - 1][0];
+
+const datasetLd = {
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  name: `Tipo de cambio oficial del sol peruano frente al dólar (serie diaria ${penSerie.codigo} del BCRP)`,
+  description: `Serie diaria del tipo de cambio de cierre publicado por el ${bcrpDaily.fuente}, en ${penSerie.unidad}. ${bcrpDaily.licencia}.`,
+  url: "https://perdata.site/dolar",
+  license: bcrpDaily.licencia,
+  creator: { "@type": "Organization", name: "Banco Central de Reserva del Perú", url: bcrpDaily.url },
+  temporalCoverage: `${primeraFechaSerie}/${ultimaFechaSerie}`,
+  variableMeasured: {
+    "@type": "PropertyValue",
+    name: "Tipo de cambio de cierre PEN/USD",
+    unitText: penSerie.unidad,
+    codeValue: penSerie.codigo,
+  },
+  distribution: [
+    {
+      "@type": "DataDownload",
+      encodingFormat: "application/json",
+      contentUrl: `https://estadisticas.bcrp.gob.pe/estadisticas/series/api/${penSerie.codigo}/json/${primeraFechaSerie}/${ultimaFechaSerie}`,
+    },
+  ],
+};
+
+const faqLdScript = `  <script type="application/ld+json">${ldJson(faqLd)}</script>`;
+const datasetLdScript = `  <script type="application/ld+json">${ldJson(datasetLd)}</script>`;
 
 // ---- 7. HTML ----
 
@@ -413,7 +451,7 @@ let htmlGenerado = `<!DOCTYPE html>
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://perdata.site/dolar">
   <title>Dolar en Peru hoy: precio, rango probable y contexto BCRP · PerData</title>
-  <meta name="description" content="Ultimo cierre oficial del dolar en el Peru (BCRP), rangos probables P10-P50-P90 para manana, la proxima semana y el proximo mes, cobertura empirica fuera de muestra y contexto macro y monetario oficial.">
+  <meta name="description" content="Ultimo cierre oficial del dolar en el Peru (BCRP) y rangos probables P10-P50-P90 para manana, la proxima semana y el proximo mes, con cobertura medida.">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/svg+xml" href="/icon.svg">
 
@@ -620,6 +658,13 @@ const conAcentos = (txt) => txt.replace(/[A-Za-z]+/g, (w) => {
 htmlGenerado = htmlGenerado
   .replace(/(<(script|style)[^>]*>[\s\S]*?<\/\2>)|>([^<]+)</g, (m, block, _t, text) => (block ? block : '>' + conAcentos(text) + '<'))
   .replace(/(<meta[^>]+content=")([^"]*)(")/g, (m, a, b, c) => a + conAcentos(b) + c);
+
+// Los bloques JSON-LD se insertan despues del pipeline de acentos para que ningun dato
+// dentro de ellos (URLs del BCRP, textos ya con acentos) se altere
+htmlGenerado = htmlGenerado.replace(
+  '  <link rel="icon" href="/favicon.ico" sizes="any">',
+  `${faqLdScript}\n${datasetLdScript}\n  <link rel="icon" href="/favicon.ico" sizes="any">`
+);
 
 fs.writeFileSync(outputPath, htmlGenerado);
 console.log(`Escrito ${outputPath}`);
