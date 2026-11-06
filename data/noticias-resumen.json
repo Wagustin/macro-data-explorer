@@ -1,10 +1,10 @@
 {
- "actualizado": "2026-11-06T16:12:51.983Z",
+ "actualizado": "2026-11-06T16:55:16.031Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "Petroperú revierte pérdidas y gana 145 millones",
+   "titulo": "Petroperú revierte pérdidas y gana 144,9 millones",
    "nota": "Petroperú pasó de perder 355 millones de dólares a ganar 144,9 millones entre enero y septiembre de 2026. El resultado marca un giro radical en la situación financiera de la petrolera estatal.",
    "tema": "Bolsa y empresas",
    "empresas": [
@@ -25,8 +25,7 @@
    }
   },
   {
-   "titulo": "Holcim lanza OPA por el 49,99 % de Pacasmayo",
-   "nota": "Holcim presentó una oferta pública de adquisición para comprar el 49,99 % de Cementos Pacasmayo. La oferta establece un precio por acción para concretar la transacción.",
+   "titulo": "Holcim lanza OPA para adquirir el 49.99% de Cementos Pacasmayo: ¿cuánto ofrece por acción?",
    "tema": "Bolsa y empresas",
    "empresas": [
     "CPAC"
@@ -41,13 +40,13 @@
    ],
    "revision": {
     "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
+    "ok": false,
+    "motivo": "La nota añade un precio de 6,50 soles por acción que no aparece en el titular, por lo que incumple la fidelidad."
    }
   },
   {
-   "titulo": "Fibra Prime capta 40,37 millones de dólares en la Bolsa de Lima",
-   "nota": "Fibra Prime recaudó 40,37 millones de dólares mediante una emisión en la Bolsa de Valores de Lima.",
+   "titulo": "Fibra Prime obtiene 40,37 millones de dólares en la Bolsa de Lima",
+   "nota": "Fibra Prime captó 40,37 millones de dólares mediante una emisión en la Bolsa de Valores de Lima.",
    "tema": "Bolsa y empresas",
    "empresas": [
     "FIBPRIME"
@@ -67,7 +66,32 @@
    }
   },
   {
-   "titulo": "La recaudación tributaria subió 14,6 % en octubre de 2026",
+   "titulo": "BCRP aprueba estándar QR Perú para interoperabilidad digital",
+   "nota": "El Banco Central de Reserva aprobó el nuevo estándar QR Perú. La norma busca fortalecer la interoperabilidad de los pagos digitales.",
+   "tema": "Dólar y BCRP",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "BCRP aprueba el estándar QR Perú para fortalecer los pagos digitales",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/tu-dinero/bcrp-aprueba-el-estandar-qr-peru-para-fortalecer-los-pagos-digitales-noticia/",
+     "fecha": "2026-11-06T14:01:30.000Z"
+    },
+    {
+     "titulo": "BCR aprobó nuevo Estándar QR Perú para fortalecer interoperabilidad de pagos digitales",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-bcr-aprobo-nuevo-estandar-qr-peru-para-fortalecer-interoperabilidad-pagos-digitales-1098857.aspx",
+     "fecha": "2026-11-06T13:34:20.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Recaudación tributaria sube 14,6 % en octubre",
    "nota": "La Sunat informó que la recaudación tributaria aumentó 14,6 % en octubre de 2026 respecto al mismo mes del año anterior.",
    "tema": "Economía y fiscal",
    "empresas": [],
@@ -86,34 +110,16 @@
    }
   },
   {
-   "titulo": "Presupuesto Público 2027: Comisión Bicameral aprueba dictamen de S/266.506 millones, ¿qué medidas incorpora?",
+   "titulo": "Perú prevé exportaciones superiores a 120.000 millones en 2026",
+   "nota": "El Gobierno estima que los envíos al exterior superarán los 120.000 millones de dólares al cierre de 2026.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Presupuesto Público 2027: Comisión Bicameral aprueba dictamen de S/266.506 millones, ¿qué medidas incorpora?",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/2026/11/05/presupuesto-publico-2027-congreso-aprueba-dictamen-por-mas-de-s266500-millones-hnews-371465",
-     "fecha": "2026-11-05T23:01:16.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": false,
-    "motivo": "La nota añade que el presupuesto incorpora medidas para enfrentar el Fenómeno El Niño y reactivar la inversión pública, pero el titular solo menciona qué medidas incorpora, sin especificar ninguna; además, el título omite la precisión de que se trata de un dictamen y omite la cifra en soles."
-   }
-  },
-  {
-   "titulo": "Velarde advierte que alza de combustibles frena inflación",
-   "nota": "Julio Velarde señaló que el aumento del precio de los combustibles dificulta la reducción de la inflación. También previó un impacto temporal del Fenómeno El Niño sobre los precios.",
-   "tema": "Dólar y BCRP",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Julio Velarde advierte que alza de combustibles dificulta bajar la inflación y prevé impacto temporal de El Niño",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/2026/11/04/julio-velarde-preve-que-impacto-global-de-el-nino-sera-temporal-pero-combustibles-frenan-caida-de-la-inflacion-288040",
-     "fecha": "2026-11-06T15:06:02.000Z"
+     "titulo": "Perú proyecta exportaciones por más de 120,000 millones de dólares al cierre del 2026",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-peru-proyecta-exportaciones-mas-120000-millones-dolares-al-cierre-del-2026-1098706.aspx",
+     "fecha": "2026-11-06T12:33:22.000Z"
     }
    ],
    "revision": {
