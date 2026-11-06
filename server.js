@@ -70,6 +70,7 @@ const PAGES = {
   "/contacto": "contacto.html",
   "/empresas": "empresas.html",
   "/mercado": "mercado.html",
+  "/semana": "semana/index.html",
   "/estado": "estado.html",
   "/resumenes": "resumen.html",
   "/entrar": "entrar.html"
@@ -174,6 +175,15 @@ const server = http.createServer(async (req, res) => {
       targetFile = null;
     } else {
       targetFile = "resumen.html";
+    }
+  }
+  const semanaPage = /^\/semana\/(\d{4}-\d{2}-\d{2})$/.exec(cleanPath);
+  if (semanaPage) {
+    const weekPath = path.join(__dirname, "semana", semanaPage[1], "index.html");
+    if (!fs.existsSync(weekPath) || !fs.statSync(weekPath).isFile()) {
+      targetFile = null;
+    } else {
+      targetFile = path.join("semana", semanaPage[1], "index.html");
     }
   }
   if (!targetFile && cleanPath.startsWith("/empresa/")) {

@@ -538,6 +538,19 @@ export default {
       return new Response(transformed.body, { status: transformed.status, statusText: transformed.statusText, headers });
     }
 
+    // Notas semanales del dolar: un directorio por semana (semana/AAAA-MM-DD/index.html) y el
+    // indice semanal (semana/index.html). Las rutas limpias las resuelve el Worker porque los
+    // archivos viven en un subdirectorio.
+    const semanaMatch = /^\/semana\/(\d{4}-\d{2}-\d{2})\/?$/.exec(pathname);
+    if (pathname === "/semana" || pathname === "/semana/" || semanaMatch) {
+      const destino = semanaMatch ? `/semana/${semanaMatch[1]}/index.html` : "/semana/index.html";
+      const res = await env.ASSETS.fetch(new Request(new URL(destino, request.url).toString(), request));
+      if (!res.ok) return notFound(env, request);
+      const headers = new Headers(res.headers);
+      headers.set("Cache-Control", "no-cache");
+      return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
+    }
+
     const digestMatch = /^\/resumen\/(\d{4}-\d{2}-\d{2})\/?$/.exec(pathname);
     if (pathname === "/resumenes" || pathname === "/resumenes/") {
       const index = await env.ASSETS.fetch(new Request(new URL("/data/resumenes/index.json", request.url)));

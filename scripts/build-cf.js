@@ -17,7 +17,7 @@ fs.rmSync(publicDir, { recursive: true, force: true });
 function buildSitemap() {
   // Only pages with content of our own go to search engines; the rest are noindex (see worker.js)
   const pages = ["/", "/dolar", "/explorer", "/empresas", "/aprende", "/metodologia", "/guia", "/precios",
-    "/boletin", "/nosotros", "/politica-editorial", "/contacto", "/privacidad", "/terms"];
+    "/boletin", "/nosotros", "/politica-editorial", "/contacto", "/privacidad", "/terms", "/semana"];
   const lastmod = new Date().toISOString().slice(0, 10);
   const fichasDir = path.join(rootDir, "empresa");
   const fichas = fs.existsSync(fichasDir)
@@ -25,7 +25,12 @@ function buildSitemap() {
         /<body[^>]*data-indexable="1"/.test(fs.readFileSync(path.join(fichasDir, f), "utf8")))
       .map((f) => `/empresa/${encodeURIComponent(f.slice(0, -5))}`).sort()
     : [];
-  const urls = [...pages, ...fichas].map((p) =>
+  const notasDir = path.join(rootDir, "data/semana-dolar");
+  const notas = fs.existsSync(notasDir)
+    ? fs.readdirSync(notasDir).filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f))
+      .map((f) => `/semana/${f.slice(0, -5)}`).sort()
+    : [];
+  const urls = [...pages, ...notas, ...fichas].map((p) =>
     `  <url><loc>https://perdata.site${p}</loc><lastmod>${lastmod}</lastmod></url>`);
   const nextSitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`;
   fs.mkdirSync(publicDir, { recursive: true });
@@ -144,6 +149,16 @@ fs.writeFileSync(path.join(publicDir, "_headers"), `${STATIC_HEADERS}\n`);
 const digestArchive = path.join(rootDir, "data/resumenes");
 if (fs.existsSync(digestArchive)) {
   fs.cpSync(digestArchive, path.join(publicDir, "data/resumenes"), { recursive: true });
+}
+
+// Weekly notes: one page per week under /semana and the data behind them
+const semanaPages = path.join(rootDir, "semana");
+if (fs.existsSync(semanaPages)) {
+  fs.cpSync(semanaPages, path.join(publicDir, "semana"), { recursive: true });
+}
+const semanaData = path.join(rootDir, "data/semana-dolar");
+if (fs.existsSync(semanaData)) {
+  fs.cpSync(semanaData, path.join(publicDir, "data/semana-dolar"), { recursive: true });
 }
 
 // Alias copy: news.html -> noticias.html for static serving of /noticias

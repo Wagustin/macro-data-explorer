@@ -534,6 +534,10 @@ let htmlGenerado = `<!DOCTYPE html>
       ${tarjetaMes}
     </section>
 
+    <section class="mt-10">
+      <p class="pd-fineprint">Notas semanales: <a href="/semana" class="hover:text-ink transition no-underline">el resumen de cada semana cerrada, con el recorrido del dolar, la intervencion del BCRP y el rango frente al cierre real</a>.</p>
+    </section>
+
     <section class="mt-12">
       <h2 class="pd-section-title">Resumen de 2026</h2>
       <dl class="pd-dl">
@@ -594,7 +598,7 @@ let htmlGenerado = `<!DOCTYPE html>
     <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs text-ink-soft">
       <a href="/" class="pd-wordmark no-underline">PerData<span class="pd-flag" aria-hidden="true"><b></b><b></b><b></b></span></a>
       <nav class="flex flex-wrap gap-5" aria-label="Navegacion secundaria">
-        <a href="/noticias">Noticias</a><a href="/resumenes">Archivo de resumenes</a><a href="/mercado">Mercado</a><a href="/dolar">Dolar</a><a href="/estado">Estado</a><a href="/nosotros" class="hover:text-ink transition no-underline">Quienes somos</a>
+        <a href="/noticias">Noticias</a><a href="/resumenes">Archivo de resumenes</a><a href="/mercado">Mercado</a><a href="/dolar">Dolar</a><a href="/semana">Notas semanales</a><a href="/estado">Estado</a><a href="/nosotros" class="hover:text-ink transition no-underline">Quienes somos</a>
           <a href="/privacidad">Privacidad</a>
           <a href="/contacto">Contacto</a>
           <a href="/politica-editorial">Política editorial</a>

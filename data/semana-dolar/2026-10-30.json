@@ -1,0 +1,106 @@
+{
+  "version": "Nota semanal del dolar v1",
+  "semana": "2026-10-30",
+  "titulo": "El dolar esta semana: del 26 oct al 30 oct de 2026",
+  "generado": "2026-11-05T23:55:25.908Z",
+  "fuente_cierres": {
+    "codigo": "PD04640PD",
+    "unidad": "S/ por US$",
+    "fuente": "Banco Central de Reserva del Perú (BCRP), estadísticas diarias"
+  },
+  "fuente_contexto": {
+    "fuente": "Banco Central de Reserva del Perú (BCRP), estadísticas macroeconómicas y monetarias",
+    "url": "https://estadisticas.bcrp.gob.pe/estadisticas/series/",
+    "licencia": "Información pública del BCRP, citando la fuente"
+  },
+  "mercado": {
+    "inicio": {
+      "fecha": "2026-10-26",
+      "cierre": 3.446
+    },
+    "fin": {
+      "fecha": "2026-10-30",
+      "cierre": 3.467
+    },
+    "variacion_sol": 0.020999999999999908,
+    "variacion_pct": 0.609402205455598,
+    "maximo": {
+      "fecha": "2026-10-30",
+      "cierre": 3.467
+    },
+    "minimo": {
+      "fecha": "2026-10-26",
+      "cierre": 3.446
+    },
+    "cierres": [
+      [
+        "2026-10-26",
+        3.446
+      ],
+      [
+        "2026-10-27",
+        3.452
+      ],
+      [
+        "2026-10-28",
+        3.458
+      ],
+      [
+        "2026-10-29",
+        3.461
+      ],
+      [
+        "2026-10-30",
+        3.467
+      ]
+    ]
+  },
+  "bcrp": {
+    "intervencion": {
+      "codigo": "PD04658MD",
+      "unidad": "Millones US$",
+      "total": 5.6355699999999995,
+      "dias": 5,
+      "dias_operacion": 3,
+      "ultimo": {
+        "fecha": "2026-10-30",
+        "valor": 3.351556
+      },
+      "maximo": {
+        "fecha": "2026-10-30",
+        "valor": 3.351556
+      }
+    },
+    "swaps_netos": {
+      "codigo": "PD04660MD",
+      "unidad": "Millones US$",
+      "total": 0,
+      "dias": 5,
+      "dias_operacion": 0,
+      "ultimo": {
+        "fecha": "2026-10-30",
+        "valor": 0
+      },
+      "maximo": {
+        "fecha": "2026-10-26",
+        "valor": 0
+      }
+    }
+  },
+  "rango_publicado": {
+    "p10": 3.4163,
+    "p25": 3.434,
+    "p50": 3.452,
+    "p75": 3.4663,
+    "p90": 3.4818,
+    "fecha_objetivo": "2026-11-12",
+    "horizonte_dias_habiles": 6,
+    "ancho_banda_pct": 1.9,
+    "cobertura_80_fuera_muestra": 85.78,
+    "cortes_evaluados": 1951,
+    "referencia_cierre": "2026-11-04",
+    "publicado": "2026-11-05T22:03:29.019Z"
+  },
+  "comparacion_semana_anterior": null,
+  "p50_criterio": "Paseo aleatorio (ultimo cierre) respaldado por backtest"
+}

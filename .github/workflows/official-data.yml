@@ -30,10 +30,15 @@ jobs:
         run: node scripts/engine-daily.js
       - name: Generar página de dólar estática
         run: node scripts/build-dolar-html.js
+      # Nota semanal «El dólar esta semana»: el script solo escribe la semana que falta, así que
+      # puede correr en cualquier día hábil. La nota de la semana que cerró el viernes se publica
+      # en la primera corrida después de que el BCRP difunde ese cierre (normalmente el lunes).
+      - name: Generar la nota semanal del dólar
+        run: node scripts/build-semana-dolar.js
       - name: Guardar si hay cambios
         if: always()
         run: |
           git config user.name "perdata-bot"
           git config user.email "perdata-bot@users.noreply.github.com"
-          git add data/official/*.json data/daily-forecasts.json dolar.html
+          git add data/official/*.json data/daily-forecasts.json dolar.html data/semana-dolar semana
           git diff --cached --quiet || (git commit -m "data(official): $(date -u +%F)" && git pull --rebase -q && git push)
