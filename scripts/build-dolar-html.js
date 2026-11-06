@@ -462,8 +462,8 @@ let htmlGenerado = `<!DOCTYPE html>
   <meta name="pd-ads" content="1">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://perdata.site/dolar">
-  <title>Dolar en Peru hoy: precio, rango probable y contexto BCRP · PerData</title>
-  <meta name="description" content="Ultimo cierre oficial del dolar en el Peru (BCRP) y rangos probables P10-P50-P90 para manana, la proxima semana y el proximo mes, con cobertura medida.">
+  <title>Tipo de cambio hoy en Perú: S/ ${num(ultimoCierre, 3)} y rango para mañana · PerData</title>
+  <meta name="description" content="Precio del dólar hoy en Perú: cierre oficial del BCRP de S/ ${num(ultimoCierre, 3)} (${fechaLarga(fechaUltimoCierre)}). Para el ${diaSemana(manana.fecha_objetivo)}, entre S/ ${num(mananaP10, 3)} y S/ ${num(mananaP90, 3)} (8 de cada 10 veces).">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/svg+xml" href="/icon.svg">
 
@@ -533,7 +533,7 @@ let htmlGenerado = `<!DOCTYPE html>
   <main class="pd-data-main max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 w-full">
     <section class="space-y-3">
       <p class="micro-label text-ink-soft">Banco Central de Reserva del Peru · serie ${escapeHtml(penDaily.codigo)}</p>
-      <h1 class="pd-page-title">Dolar en Peru hoy</h1>
+      <h1 class="pd-page-title">Tipo de cambio hoy en Perú</h1>
       <p class="pd-page-lede">
         Ultimo cierre oficial de ${escapeHtml(num(ultimoCierre, 4))} S/ por dolar, del
         ${escapeHtml(fechaLarga(fechaUltimoCierre))}, con rangos probables para manana, la proxima semana

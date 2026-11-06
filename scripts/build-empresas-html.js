@@ -984,7 +984,7 @@ function buildFichas() {
       }
 
       // Pre-rendered values
-      const title = `${name} (${nemo}): precio, proyección y hechos de importancia · PerData`;
+      const title = `Acciones de ${name} (${nemo}): precio hoy, proyección y hechos · PerData`;
       const desc = buildDesc(name, nemo);
       const canonical = `https://perdata.site/empresa/${encodeURIComponent(nemo)}`;
       const hasProyeccion = Boolean(v.simbolo_proyeccion);
