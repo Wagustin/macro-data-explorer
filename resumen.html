@@ -178,7 +178,8 @@
           const url = /^https?:\/\//i.test(source.url || "") ? source.url : "#";
           return `<a href="${escapeHTML(url)}" target="_blank" rel="noopener nofollow">${escapeHTML(source.titulo || source.fuente || "Fuente")}</a>`;
         }).join("");
-        return `<article class="digest-story"><h2>${escapeHTML(story.titulo)}</h2><p>${escapeHTML(story.nota)}</p><div class="digest-sources">${sources}</div></article>`;
+        const nota = story.nota ? `<p>${escapeHTML(story.nota)}</p>` : "";
+        return `<article class="digest-story"><h2>${escapeHTML(story.titulo)}</h2>${nota}<div class="digest-sources">${sources}</div></article>`;
       }).join("");
       document.getElementById("notice").textContent = "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos.";
     }

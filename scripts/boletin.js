@@ -328,7 +328,7 @@ function render(f, ai, dateLabel) {
   ${f.stories.length ? section("Lo importante de hoy") + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${f.stories.map((h) => `<tr><td style="padding:14px 0;border-bottom:1px solid ${C.rule}">
       <div style="font-family:${ui};font-size:12px;color:${C.soft}">${esc(h.tema)}</div>
       <div style="font-family:${serif};font-size:19px;font-weight:600;line-height:1.3;color:${C.ink};margin-top:2px">${esc(h.titulo)}</div>
-      <div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:6px">${esc(h.nota)}</div>
+      ${h.nota ? `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:6px">${esc(h.nota)}</div>` : ""}
       <div style="font-family:${ui};font-size:12px;color:${C.soft};margin-top:6px">${h.fuentes.filter((x, i, a) => a.findIndex((y) => y.fuente === x.fuente) === i).map((x) => `<a href="${esc(x.url)}" style="color:${C.soft}">${esc(x.fuente)}</a>`).join(" · ")}</div>
     </td></tr>`).join("")}</table><div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:6px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
   ${section("Mercados")}
