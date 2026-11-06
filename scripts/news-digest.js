@@ -5,11 +5,16 @@
 // Every title and note goes through textoValido() before it is published: if a block fails, the
 // model rewrites that block once; if it fails again, the story keeps only the headline of its
 // first source, with no note of our own.
+// A second model (another NVIDIA NIM model, NIM_REVIEW_MODEL) then reviews each drafted block
+// against the headlines of its sources; a rejected block is rewritten once with the reason and
+// reviewed again. The verdict is kept in each block's "revision" field for auditing (not shown
+// in the email). If the reviewer is unavailable, a block is published only if it passes
+// textoValido() and the figure check (grounded).
 // Writes data/noticias-resumen.json and the dated public archive. Runs after fetch-news.js and classify-news.js (news.yml).
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { askJSON, grounded } from "./llm.js";
+import { askJSON, askNIM, grounded } from "./llm.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (f, fallback) => { try { return JSON.parse(fs.readFileSync(path.join(ROOT, "data", f), "utf8")); } catch (e) { return fallback; } };
@@ -99,12 +104,16 @@ function updateArchive(summary) {
 const bloqueValido = (titulo, nota) => textoValido(titulo, { minPalabras: MIN_PALABRAS_TITULO }) && textoValido(nota, { minPalabras: MIN_PALABRAS_NOTA });
 
 // Un reintento por bloque: el modelo vuelve a redactar ese título y esa nota, con las reglas claras.
-function promptReintento(h, used, recent) {
+// Si hay motivo, es el rechazo del revisor y se le pasa al redactor.
+function promptReintento(h, used, recent, motivo) {
   const titulares = used.map((i) => `${i}|${recent[i].fuente}|${recent[i].titulo}`).join("\n");
+  const rechazo = motivo
+    ? `Un segundo modelo revisó el texto y lo rechazó por esto: ${motivo}`
+    : "El texto anterior quedó mal y no se puede publicar:";
   return `Eres el editor de PerData, un medio sobre economía y bolsa del Perú. Vuelve a redactar UNA historia (un título y una nota) a partir de estos titulares (formato: índice|fuente|titular):
 ${titulares}
 
-El texto anterior quedó mal y no se puede publicar:
+${rechazo}
 título: ${String(h.titulo || "").slice(0, 200)}
 nota: ${String(h.nota || "").slice(0, 400)}
 
@@ -130,34 +139,104 @@ function historiaDeFuente(used, recent, clasif, tema) {
 
 // El modelo vuelve a redactar ese bloque una sola vez. El presupuesto es corto: si el modelo no
 // responde a tiempo, la historia conserva el titular de su fuente.
-async function redactarConModelo(h, used, recent) {
-  const otra = await askJSON(promptReintento(h, used, recent), { budgetMs: 90 * 1000 });
+async function redactarConModelo(h, used, recent, motivo) {
+  const otra = await askJSON(promptReintento(h, used, recent, motivo), { budgetMs: 90 * 1000 });
   if (!otra?.out) return null;
   return { titulo: otra.out.titulo, nota: otra.out.nota };
 }
 
-export async function construirHistoria(h, recent, clasif, redactar = redactarConModelo) {
+// Segundo control: tras redactar cada bloque, OTRO modelo de NVIDIA NIM (distinto del redactor)
+// compara el título y la nota con los titulares de sus fuentes. 30 s por modelo; si el primero no
+// responde, el respaldo. Sin clave o si ambos fallan devuelve null (revisor no disponible).
+const REVISOR_RESPALDO = "minimaxai/minimax-m3.1-flash";
+
+function modelosRevisor() {
+  const primero = process.env.NIM_REVIEW_MODEL || "mistralai/mistral-large-4-1t-a52b";
+  return [...new Set([primero, REVISOR_RESPALDO])];
+}
+
+function promptRevision(titulo, nota, used, recent) {
+  const titulares = used.map((i) => `${i}|${recent[i].fuente}|${recent[i].titulo}`).join("\n");
+  return `Eres el revisor de PerData, un medio sobre economía y bolsa del Perú. Otro modelo redactó la historia de abajo a partir de los titulares de las fuentes; tú no redactas, solo compruebas.
+
+Titulares de las fuentes (formato: índice|fuente|titular):
+${titulares}
+
+Historia redactada:
+título: ${String(titulo || "").slice(0, 200)}
+nota: ${String(nota || "").slice(0, 400)}
+
+Evalúa solo estos tres puntos:
+(a) Fidelidad: la nota no añade hechos, cifras, causas ni nombres que no estén en los titulares de las fuentes.
+(b) El título dice lo mismo que esas fuentes.
+(c) El español es correcto y completo, sin palabras en otro idioma ni frases cortadas a media.
+
+Devuelve SOLO este JSON:
+{"ok": true|false, "motivo": "si ok es false, una frase con lo que falla; si es true, cadena vacía"}`;
+}
+
+async function revisorNIM(titulo, nota, used, recent) {
+  if (!process.env.NVIDIA_API_KEY) return null;
+  for (const model of modelosRevisor()) {
+    const res = await askNIM(model, promptRevision(titulo, nota, used, recent), { timeoutMs: 30000, maxTokens: 1000 });
+    if (typeof res?.out?.ok === "boolean") return { modelo: res.model, ok: res.out.ok, motivo: String(res.out.motivo || "") };
+  }
+  return null;
+}
+
+export async function construirHistoria(h, recent, clasif, redactar = redactarConModelo, revisar = revisorNIM) {
   const used = (h.indices || []).map(Number).filter((i) => recent[i]);
   if (!used.length) return null;
   const src = used.map((i) => recent[i].titulo).join(" ");
   const tema = h.tema || recent[used[0]].categoria;
   const fuentes = used.map((i) => ({ titulo: recent[i].titulo, fuente: recent[i].fuente, url: recent[i].url, fecha: recent[i].fecha_iso }));
   const empresas = [...new Set(used.flatMap((i) => clasif[recent[i].id]?.empresas || []))];
+  const base = { tema, empresas, fuentes };
 
   let titulo = recortarTitulo(h.titulo);
   let nota = grounded(String(h.nota || "").trim(), src);
-  if (bloqueValido(titulo, nota)) return { titulo, nota, tema, empresas, fuentes };
+  if (!bloqueValido(titulo, nota)) {
+    console.error(`Bloque incompleto, se reescribe: ${titulo.slice(0, 80)}`);
+    const otro = await redactar(h, used, recent);
+    if (otro) {
+      titulo = recortarTitulo(otro.titulo);
+      nota = grounded(String(otro.nota || "").trim(), src);
+    }
+  }
 
-  console.error(`Bloque incompleto, se reescribe: ${titulo.slice(0, 80)}`);
-  const otro = await redactar(h, used, recent);
+  // Segundo control: otro modelo revisa el bloque redactado contra los titulares de sus fuentes.
+  const rev = await revisar(titulo, nota, used, recent);
+  if (!rev) {
+    // Revisor no disponible: solo se publica si pasa textoValido() y el control de cifras.
+    console.error("revisor no disponible");
+    const revision = { modelo: null, ok: null, motivo: "revisor no disponible" };
+    if (bloqueValido(titulo, nota)) return { titulo, nota, ...base, revision };
+    console.error(`Bloque descartado, se publica el titular de la fuente: ${titulo.slice(0, 80)}`);
+    const deFuente = historiaDeFuente(used, recent, clasif, tema);
+    return deFuente ? { ...deFuente, revision } : null;
+  }
+  if (rev.ok && bloqueValido(titulo, nota)) {
+    return { titulo, nota, ...base, revision: { modelo: rev.modelo, ok: true, motivo: rev.motivo } };
+  }
+
+  // El revisor rechazó el bloque: el redactor lo reescribe UNA vez recibiendo el motivo, y se
+  // vuelve a pasar por el revisor y por textoValido. Si sigue fallando, titular de la fuente.
+  console.error(`Revisor rechaza el bloque (${rev.motivo || "sin motivo"}), se reescribe: ${titulo.slice(0, 80)}`);
+  const otro = await redactar(h, used, recent, rev.motivo);
   if (otro) {
     titulo = recortarTitulo(otro.titulo);
     nota = grounded(String(otro.nota || "").trim(), src);
-    if (bloqueValido(titulo, nota)) return { titulo, nota, tema, empresas, fuentes };
+  }
+  const rev2 = await revisar(titulo, nota, used, recent);
+  if (!rev2) console.error("revisor no disponible");
+  if (rev2?.ok && bloqueValido(titulo, nota)) {
+    return { titulo, nota, ...base, revision: { modelo: rev2.modelo, ok: true, motivo: rev2.motivo } };
   }
 
   console.error(`Bloque descartado, se publica el titular de la fuente: ${titulo.slice(0, 80)}`);
-  return historiaDeFuente(used, recent, clasif, tema);
+  const deFuente = historiaDeFuente(used, recent, clasif, tema);
+  if (!deFuente) return null;
+  return { ...deFuente, revision: { modelo: rev2?.modelo ?? rev.modelo, ok: false, motivo: rev2?.motivo || rev.motivo } };
 }
 
 async function main() {
