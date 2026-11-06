@@ -5,8 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Boletín diario · PerData</title>
-  <meta name="description" content="Boletín diario de PerData, de lunes a viernes a las 06:00: dólar, cobre, oro y petróleo con fuentes oficiales, hechos de la SMV y titulares del Perú. Gratis." />
+  <title>Boletín diario del dólar en Perú · PerData</title>
+  <meta name="description" content="Boletín diario del dólar en Perú: gratis, el cierre y el rango de mañana. Plan Boletín (US$ 1.99/mes): el dólar a semana y mes, cobre, oro, petróleo y la SMV." />
   <link rel="canonical" href="https://perdata.site/boletin" />
 
   <!-- Favicon -->
@@ -19,14 +19,14 @@
   <meta property="og:site_name" content="PerData" />
   <meta property="og:type" content="article" />
   <meta property="og:url" content="https://perdata.site/boletin" />
-  <meta property="og:title" content="Boletín diario · PerData" />
-  <meta property="og:description" content="El boletín diario de PerData: dólar, cobre, oro y petróleo con fuentes oficiales, hechos de importancia de la SMV y titulares del Perú. Gratis, de lunes a viernes a las 06:00." />
+  <meta property="og:title" content="Boletín diario del dólar en Perú · PerData" />
+  <meta property="og:description" content="Boletín diario del dólar en Perú. Gratis: el cierre y el rango del dólar para mañana. Plan Boletín (US$ 1.99/mes): además el dólar a una semana y a un mes, cobre, oro y petróleo, hechos de la SMV, lo importante del día y tus empresas." />
   <meta property="og:image" content="https://perdata.site/og-image.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Boletín diario · PerData" />
-  <meta name="twitter:description" content="El boletín diario de PerData: dólar, cobre, oro y petróleo con fuentes oficiales, hechos de importancia de la SMV y titulares del Perú. Gratis, de lunes a viernes a las 06:00." />
+  <meta name="twitter:title" content="Boletín diario del dólar en Perú · PerData" />
+  <meta name="twitter:description" content="Boletín diario del dólar en Perú. Gratis: el cierre y el rango del dólar para mañana. Plan Boletín (US$ 1.99/mes): además el dólar a una semana y a un mes, cobre, oro y petróleo, hechos de la SMV, lo importante del día y tus empresas." />
   <meta name="twitter:image" content="https://perdata.site/og-image.png" />
 
   <!-- Structured Data JSON-LD -->
@@ -239,15 +239,15 @@
   <!-- Main Content -->
   <main class="flex-grow max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16 space-y-10 w-full">
     <div class="space-y-4" data-reveal>
-      <h1 class="text-4xl sm:text-5xl text-ink" style="line-height:1.05;">El boletín de PerData, <em>cada mañana</em></h1>
-      <p class="pdl-lede">De lunes a viernes a las 06:00 (hora de Lima): el dólar, el cobre, el oro y el petróleo con fuentes oficiales, la proyección del dólar, los hechos de importancia de la SMV y los titulares del día. Gratis.</p>
+      <h1 class="text-4xl sm:text-5xl text-ink" style="line-height:1.05;">Boletín diario del <em>dólar</em> en Perú</h1>
+      <p class="pdl-lede">De lunes a viernes a las 06:00 (hora de Lima): el último cierre oficial del dólar y el rango probable para el próximo día hábil, con las fuentes detrás de cada cifra. Gratis. Con el plan Boletín (US$&nbsp;1.99 al mes) recibes además el dólar a una semana y a un mes, cobre, oro y petróleo, los hechos de importancia de la SMV, lo importante del día y tus propias empresas.</p>
     </div>
 
     <div id="estadoMsg" class="hidden pdl-text" role="status"></div>
 
     <section id="empresas" class="hidden border-t border-rule pt-8 space-y-4">
       <h2 class="text-3xl text-ink">Tus empresas</h2>
-      <p class="pdl-text">Elige hasta 15 empresas de la Bolsa de Valores de Lima. Cada mañana verás su precio, su proyección, sus hechos de importancia y las noticias que las mencionan. Esta sección es parte del <a href="/precios" class="pdl-link">plan Boletín</a> (US$&nbsp;1.99 al mes); con la suscripción gratuita recibes el boletín general. <span id="prefEmail" class="text-ink-soft"></span></p>
+      <p class="pdl-text">Elige hasta 15 empresas de la Bolsa de Valores de Lima. Con el plan Boletín verás cada mañana su precio, su proyección, sus hechos de importancia y las noticias que las mencionan. Esta sección es parte del <a href="/precios" class="pdl-link">plan Boletín</a> (US$&nbsp;1.99 al mes); con la suscripción gratuita recibes el cierre y el rango del dólar para mañana. <span id="prefEmail" class="text-ink-soft"></span></p>
       <div id="prefChips" class="flex flex-wrap gap-x-5 gap-y-2" aria-live="polite"></div>
       <label for="prefSearch" class="block text-sm text-ink-soft pt-2">Añadir empresa</label>
       <input id="prefSearch" type="search" autocomplete="off" placeholder="Busca por nombre o nemónico: Alicorp, bancos…"
@@ -272,11 +272,42 @@
     </section>
 
     <section class="border-t border-rule pt-8 space-y-3" data-reveal>
-      <h2 class="text-3xl text-ink">Qué trae</h2>
-      <p class="pdl-text"><strong>Mercados.</strong> Dólar, cobre, oro, plata, zinc y petróleo del BCRP y la EIA, con la variación del día.</p>
-      <p class="pdl-text"><strong>Proyección.</strong> Dónde estaría el dólar en un mes según PerData Engine, con su rango probable.</p>
-      <p class="pdl-text"><strong>Empresas.</strong> Los hechos de importancia publicados en la SMV, con enlace al documento oficial.</p>
-      <p class="pdl-text"><strong>Titulares.</strong> Lo más relevante de la prensa económica, con su fuente.</p>
+      <h2 class="text-3xl text-ink">Qué trae cada plan</h2>
+      <p class="pdl-text">El correo gratis lleva solo el dólar. El plan Boletín añade el resto del mercado y tus empresas.</p>
+      <div class="pd-plans pd-plans--2">
+        <article class="pd-plan">
+          <div class="pd-plan-head">
+            <h3 class="pd-plan-name">Gratis</h3>
+            <p class="pd-plan-price"><span class="pd-plan-amount font-mono tnum">US$ 0</span><span class="pd-plan-per">para siempre</span></p>
+            <p class="pd-plan-desc">El correo del dólar, cada mañana.</p>
+          </div>
+          <ul class="pd-perks">
+            <li><span>Último cierre oficial del dólar (BCRP), con su fecha</span></li>
+            <li><span>Rango probable para el próximo día hábil: P10–P90 y central</span></li>
+          </ul>
+          <div class="pd-plan-cta">
+            <a class="pd-btn pd-btn-ghost pd-btn-block" href="#suscribirse">Suscribirme gratis</a>
+          </div>
+        </article>
+        <article class="pd-plan">
+          <div class="pd-plan-head">
+            <h3 class="pd-plan-name">Boletín</h3>
+            <p class="pd-plan-price"><span class="pd-plan-amount font-mono tnum">US$ 1.99</span><span class="pd-plan-per">al mes</span></p>
+            <p class="pd-plan-desc">Todo lo del correo gratis y además el mercado completo.</p>
+          </div>
+          <ul class="pd-perks">
+            <li><span>Todo lo del plan Gratis</span></li>
+            <li><span>Dólar a un día, una semana y un mes, con su rango probable</span></li>
+            <li><span>Mercados: cobre, oro, plata, zinc y petróleo del BCRP y la EIA</span></li>
+            <li><span>Hechos de importancia de la SMV, con enlace al documento oficial</span></li>
+            <li><span>Lo importante del día y los titulares de la prensa económica</span></li>
+            <li><span>Hasta 15 empresas de la BVL, con precio, proyección y noticias</span></li>
+          </ul>
+          <div class="pd-plan-cta">
+            <a class="pd-btn pd-btn-primary pd-btn-block" href="/precios">Ver los planes</a>
+          </div>
+        </article>
+      </div>
       <p class="pdl-text text-ink-soft">La interpretación de cada mañana la redacta un modelo de IA usando solo esos datos; las cifras se comprueban contra la fuente. No es una recomendación de inversión.</p>
     </section>
   </main>

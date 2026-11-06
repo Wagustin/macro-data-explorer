@@ -441,11 +441,11 @@ const datasetLdScript = `  <script type="application/ld+json">${ldJson(datasetLd
 
 const bloqueBoletin = `
     <section class="mt-12 border-t border-rule pt-8" aria-label="Boletin diario">
-      <p class="micro-label text-ink-soft">Boletin diario · gratis</p>
-      <h2 class="pd-section-title" style="margin-top: 8px;">Recibe el rango del dolar cada manana</h2>
+      <p class="micro-label text-ink-soft">Boletin diario</p>
+      <h2 class="pd-section-title" style="margin-top: 8px;">El dolar cada manana en tu correo</h2>
       <p class="pd-boletin-cta-text">
-        De lunes a viernes a las 06:00 te enviamos el rango probable del dolar para el dia y para la
-        semana, con las fuentes oficiales detras de cada cifra. Puedes darte de baja cuando quieras.
+        Recibe gratis cada manana el dolar y su rango para el proximo dia habil. Con el plan Boletin,
+        todo el mercado y tus empresas.
       </p>
       <p class="mt-4 mb-0"><a href="/boletin" class="pdl-btn pdl-btn-secondary no-underline">Ver el boletin y suscribirte</a></p>
     </section>`;
@@ -657,7 +657,7 @@ const ACENTOS = {
   boletin: 'boletín', detras: 'detrás', dia: 'día', lunes: 'lunes',
   peru: 'perú', guia: 'guía',
   dias: 'días', dia: 'día', detras: 'detrás', boletin: 'boletín',
-  habiles: 'hábiles', manana: 'mañana', proxima: 'próxima', proximo: 'próximo',
+  habiles: 'hábiles', habil: 'hábil', manana: 'mañana', proxima: 'próxima', proximo: 'próximo',
   ultimo: 'último', ultimos: 'últimos', ultima: 'última', ultimas: 'últimas', ano: 'año', anos: 'años',
   pronostico: 'pronóstico', pronosticos: 'pronósticos', empirica: 'empírica', empirico: 'empírico',
   calibracion: 'calibración', minimo: 'mínimo', maximo: 'máximo', dolar: 'dólar', dolares: 'dólares',

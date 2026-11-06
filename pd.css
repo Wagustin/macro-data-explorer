@@ -2466,6 +2466,11 @@ html.pd-motion.hero-ready [data-hero-seq="3"]  { opacity: 1; transform: translat
   .pd-plans > .pd-plan + .pd-plan { border-left: 0; padding-left: 0; border-top: 1px solid var(--pd-rule); }
 }
 
+/* Boletín: comparación de dos planes (Gratis · Boletín) */
+@media (min-width: 768px) {
+  .pd-plans.pd-plans--2 { grid-template-columns: 1fr 1fr; max-width: 760px; }
+}
+
 /* Publicidad (ads.js): oculta hasta que el script la activa; mismo lenguaje de filetes que el resto */
 .pd-ad { display: none; }
 .pd-ad.is-armed { display: block; height: 1px; }

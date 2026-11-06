@@ -3,18 +3,24 @@
 //    USD/PEN projection and news headlines from allowed sources (title + link only).
 // 2. NVIDIA NIM writes short plain-Spanish blocks using ONLY those facts; any sentence with a
 //    number that is not in the facts is dropped, and if NIM fails the email goes out without it.
-// 3. Renders an editorial HTML email and sends it with Resend.
+// 3. Renders an editorial HTML email and sends it with Resend. Two versions: the free one carries
+//    only the dollar (official close and probable range of the next business day); the Boletín and
+//    Pro plans (and the owner's copy) get the full email.
 // Env: RESEND_API_KEY, BOLETIN_TO (comma list), SUPABASE_URL + SUPABASE_SERVICE_KEY (subscribers),
 //      NVIDIA_API_KEY and GEMINI_API_KEY (optional), NIM_MODEL (optional)
-// Usage: node scripts/boletin.js [--dry-run] (writes boletin-preview.html, sends nothing)
+// Usage: node scripts/boletin.js [--dry-run] (writes the preview, sends nothing)
+// Preview: PREVIEW_PLAN=gratis|boletin (default boletin), PREVIEW_EMPRESAS="ALICORC1" (sample
+//          personal section), BOLETIN_PREVIEW_PATH=path/to/preview.html
 import fs from "fs";
 import path from "path";
 import { smvRows } from "../api/_lib/smv.js";
 import { mencionaEmpresa } from "./empresa-mencion.js";
-import { formatFechaObjetivo, formatSemanaFecha } from "../api/diario.js";
+import { formatFechaObjetivo, formatSemanaFecha, formatCierreFecha } from "../api/diario.js";
 
 const DRY = process.argv.includes("--dry-run");
 const PREVIEW = Boolean(process.env.PREVIEW_EMPRESAS);
+// The content depends on the plan: "gratis" (only the dollar) or "boletin" (the full email)
+const PREVIEW_PLAN = (process.env.PREVIEW_PLAN || "boletin").toLowerCase() === "gratis" ? "gratis" : "boletin";
 const SITE = "https://perdata.site";
 const RAW = "https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data";
 const FROM = process.env.BOLETIN_FROM || "PerData <boletin@perdata.site>";
@@ -56,6 +62,8 @@ const prettyName = (raw) => String(raw || "").trim().split(/\s+/).map((w, i) => 
   return i > 0 && SMALL.has(lw) ? lw : lw.replace(/(^|[-(«"])(\p{L})/gu, (m, a, b) => a + b.toUpperCase());
 }).join(" ");
 const sentence = (t) => { const x = String(t || "").trim(); return x && x === x.toUpperCase() ? x.charAt(0) + x.slice(1).toLowerCase() : x; };
+// Bandera de Perú junto a la marca (misma en las dos versiones del correo)
+const flagHtml = (C) => `<table role="presentation" cellpadding="0" cellspacing="0" style="display:inline-table;vertical-align:middle;margin-left:8px;border:1px solid ${C.ink}"><tr><td width="5" height="12" style="background:${C.peru}"></td><td width="5" style="background:#ffffff"></td><td width="5" style="background:${C.peru}"></td></tr></table>`;
 
 async function facts() {
   const [bcrp, eia, smv, news, fx, empresas, digest, dailyRaw] = await Promise.all([
@@ -120,12 +128,18 @@ async function facts() {
   const todayLima = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Lima" }).format(new Date());
   const penDaily = dailyData?.simbolos?.PEN;
   const dailyVigente = Boolean(penDaily?.manana?.fecha_objetivo && penDaily.manana.fecha_objetivo >= todayLima);
+  // Último cierre oficial del dólar: la misma cifra que muestra /dolar, con la serie del BCRP como respaldo
+  const penSerie = s.PEN?.serie || [];
+  const penUltimo = penSerie.length ? { fecha: penSerie[penSerie.length - 1][0], valor: penSerie[penSerie.length - 1][1] } : null;
+  const cierre = penDaily?.ultimo_cierre != null
+    ? { valor: penDaily.ultimo_cierre, fecha: penDaily.fecha_ultimo_cierre, fuente: "BCRP" }
+    : (penUltimo ? { ...penUltimo, fuente: "BCRP" } : null);
 
   // Stories from the digest (only if it is from the last day); their sources leave the plain headline list
   const fresh = digest && Date.now() - Date.parse(digest.actualizado) < 30 * 36e5;
   const stories = fresh ? (digest.historias || []).slice(0, 5) : [];
   const used = new Set(stories.flatMap((h) => h.fuentes.map((x) => x.url)));
-  return { markets, smvFacts: uniqueFacts.slice(0, 8), headlines: headlines.filter((h) => !used.has(h.url)).slice(0, 6), forecast, stories, daily: dailyVigente ? penDaily : null, dailyVigente, todayLima };
+  return { markets, smvFacts: uniqueFacts.slice(0, 8), headlines: headlines.filter((h) => !used.has(h.url)).slice(0, 6), forecast, stories, daily: penDaily, dailyVigente, cierre, todayLima };
 }
 
 // Numbers in the model's text must exist in the facts; otherwise the sentence is dropped.
@@ -229,7 +243,6 @@ function render(f, ai, dateLabel) {
   const edition = Math.floor((Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()) - Date.UTC(2026, 9, 26)) / 864e5) + 1;
   const para = (t, size = 17) => t ? `<p style="margin:0 0 14px;font-family:${serif};font-size:${size}px;line-height:1.55;color:${C.ink}">${esc(t)}</p>` : "";
   const section = (title) => `<tr><td style="padding:30px 0 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:2px solid ${C.ink};padding-top:10px;font-family:${serif};font-size:22px;font-weight:600;color:${C.ink}">${title}</td></tr></table></td></tr>`;
-  const flag = `<table role="presentation" cellpadding="0" cellspacing="0" style="display:inline-table;vertical-align:middle;margin-left:8px;border:1px solid ${C.ink}"><tr><td width="5" height="12" style="background:${C.peru}"></td><td width="5" style="background:#ffffff"></td><td width="5" style="background:${C.peru}"></td></tr></table>`;
 
   const rows = f.markets.map((m) => {
     const up = m.change >= 0;
@@ -305,7 +318,7 @@ function render(f, ai, dateLabel) {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px">
   <tr><td style="padding:28px 0 12px;border-bottom:4px double ${C.ink}">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td style="font-family:${serif};font-size:32px;font-style:italic;font-weight:600;color:${C.ink};white-space:nowrap">PerData${flag}</td>
+      <td style="font-family:${serif};font-size:32px;font-style:italic;font-weight:600;color:${C.ink};white-space:nowrap">PerData${flagHtml(C)}</td>
       <td align="right" style="font-family:${ui};font-size:12px;line-height:1.5;color:${C.soft}">Boletín diario<br>Edición ${edition > 0 ? edition : 1}</td>
     </tr></table>
     <div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:6px;text-transform:none">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
@@ -330,6 +343,78 @@ function render(f, ai, dateLabel) {
   </td></tr>
   <tr><td style="padding:24px 0 36px;border-top:1px solid ${C.rule};font-family:${ui};font-size:12px;line-height:1.6;color:${C.soft}">
     ${ai ? "La interpretación la redacta un modelo de IA a partir de los datos de este correo; las cifras se comprueban contra la fuente.<br>" : ""}
+    Información con fines informativos; no es una recomendación de inversión.<br>
+    <a href="${SITE}" style="color:${C.ink}">perdata.site</a> · Equipo de PerData<br>
+    Recibes este correo porque te suscribiste al boletín. <a href="{{EMPRESAS}}" style="color:${C.soft}">Elegir mis empresas</a> · <a href="{{BAJA}}" style="color:${C.soft}">Darme de baja</a>
+  </td></tr>
+</table></td></tr></table></body></html>`;
+}
+
+// ---- Versión gratis: solo el dólar (cierre oficial y rango probable del próximo día hábil) ----
+// El bloque del plan va entre las marcas "plan-boletin": es lo único que nombra los contenidos
+// de pago, para que el resto del correo sea solo el dólar.
+function renderGratis(f, dateLabel) {
+  const C = { paper: "#F5F1E8", card: "#FBF9F4", ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", peru: "#D91023" };
+  const serif = "'Source Serif 4',Georgia,'Times New Roman',serif";
+  const ui = "'Libre Franklin',Helvetica,Arial,sans-serif";
+  const mono = "'IBM Plex Mono',Menlo,Consolas,monospace";
+  const edition = Math.floor((Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()) - Date.UTC(2026, 9, 26)) / 864e5) + 1;
+  const manana = f.daily?.manana;
+  // The range is only shown when it is still valid (the same rule as /api/diario)
+  const rango = f.dailyVigente ? manana : null;
+  const cierre = f.cierre;
+  const etiquetaManana = rango ? formatFechaObjetivo(rango.fecha_objetivo, f.todayLima) : "";
+
+  const dollar = `<tr><td style="padding:18px 0 0">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.card};border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule}"><tr><td style="padding:16px 4px">
+      <div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin-bottom:8px">Dólar interbancario (USD/PEN)</div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        ${cierre ? `<tr><td style="padding:8px 0;border-bottom:1px solid ${C.rule}">
+          <div style="font-family:${ui};font-size:12px;color:${C.soft}">Último cierre oficial (BCRP) · cierre del ${esc(formatCierreFecha(cierre.fecha))}</div>
+          <div style="font-family:${mono};font-size:14px;color:${C.ink};margin-top:2px">S/ ${fmt(cierre.valor, 3)}</div>
+        </td></tr>` : ""}
+        ${rango ? `<tr><td style="padding:8px 0">
+          <div style="font-family:${ui};font-size:12px;color:${C.soft}">Rango probable · ${esc(etiquetaManana)}</div>
+          <div style="font-family:${mono};font-size:14px;color:${C.ink};margin-top:2px">
+            entre S/ ${fmt(rango.p10, 3)} y S/ ${fmt(rango.p90, 3)} <span style="font-size:11px;color:${C.soft}">(8 de cada 10 veces)</span> · central: S/ ${fmt(rango.p50, 3)}
+          </div>
+        </td></tr>` : `<tr><td style="padding:8px 0">
+          <div style="font-family:${ui};font-size:12px;color:${C.soft}">Rango probable</div>
+          <div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:2px">Se publica cada mañana con el cierre del día anterior.</div>
+        </td></tr>`}
+      </table>
+      <div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:8px">El rango sale del motor de PerData y es una estadística, no una promesa.</div>
+    </td></tr></table></td></tr>`;
+
+  const plan = `<!-- plan-boletin -->
+  <tr><td style="padding:24px 0 0">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.card};border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule}"><tr><td style="padding:16px 4px">
+      <div style="font-family:${ui};font-size:14px;line-height:1.55;color:${C.ink}">Con el plan Boletín (US$&nbsp;1.99 al mes) recibes cada mañana el dólar a una semana y a un mes, el cobre, el oro y el petróleo, los hechos de importancia de la SMV, lo importante del día y tus propias empresas.</div>
+      <div style="margin-top:12px"><a href="${SITE}/precios" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${ui};font-size:14px;font-weight:600;text-decoration:none;padding:10px 18px">Ver los planes</a></div>
+    </td></tr></table>
+  </td></tr>
+  <!-- /plan-boletin -->`;
+
+  const preheader = esc(`Cierre oficial del dólar y rango probable (${etiquetaManana ? etiquetaManana.charAt(0).toLowerCase() + etiquetaManana.slice(1) : "del próximo día hábil"}).`);
+
+  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light only">
+<title>Boletín PerData</title></head>
+<body style="margin:0;padding:0;background:${C.paper}">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0">${preheader}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.paper}"><tr><td align="center" style="padding:0 16px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px">
+  <tr><td style="padding:28px 0 12px;border-bottom:4px double ${C.ink}">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+      <td style="font-family:${serif};font-size:32px;font-style:italic;font-weight:600;color:${C.ink};white-space:nowrap">PerData${flagHtml(C)}</td>
+      <td align="right" style="font-family:${ui};font-size:12px;line-height:1.5;color:${C.soft}">Boletín diario<br>Edición ${edition > 0 ? edition : 1}</td>
+    </tr></table>
+    <div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:6px;text-transform:none">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
+  </td></tr>
+  ${dollar}
+  {{PERSONAL}}
+  ${plan}
+  <tr><td style="padding:24px 0 36px;border-top:1px solid ${C.rule};font-family:${ui};font-size:12px;line-height:1.6;color:${C.soft}">
     Información con fines informativos; no es una recomendación de inversión.<br>
     <a href="${SITE}" style="color:${C.ink}">perdata.site</a> · Equipo de PerData<br>
     Recibes este correo porque te suscribiste al boletín. <a href="{{EMPRESAS}}" style="color:${C.soft}">Elegir mis empresas</a> · <a href="{{BAJA}}" style="color:${C.soft}">Darme de baja</a>
@@ -425,7 +510,16 @@ const f = await facts();
 const ai = await interpret(f);
 const lima = new Date(Date.now() - 5 * 36e5);
 const dateLabel = lima.toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
-const html = render(f, ai, dateLabel);
+const htmlCompleto = render(f, ai, dateLabel);
+const htmlGratis = renderGratis(f, dateLabel);
+// Aviso para quien sigue empresas sin plan: la sección «Tus empresas» es del plan Boletín
+const upsell = `<tr><td style="padding:24px 0 0;font-family:'Libre Franklin',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#5E584E">Elegiste empresas para seguir. La sección «Tus empresas» (precio, proyección, hechos y noticias de cada una) llega con el plan Boletín.</td></tr>`;
+// Los textos se insertan con una función: si no, "$&" del HTML (por ejemplo "US$&nbsp;") se
+// interpretaría como el texto reemplazado
+const fill = (html, personal, baja = `${SITE}/boletin`, prefs = `${SITE}/boletin`) => html
+  .replace("{{BAJA}}", () => baja)
+  .replace("{{EMPRESAS}}", () => prefs)
+  .replace("{{PERSONAL}}", () => personal);
 // Preview: PREVIEW_EMPRESAS="ALICORC1.LM,ALICORC1" adds a sample personal section
 let previewPersonal = "";
 if (process.env.PREVIEW_EMPRESAS) {
@@ -434,12 +528,13 @@ if (process.env.PREVIEW_EMPRESAS) {
   const newsById = Object.fromEntries(((await getJson(`${RAW}/noticias.json`).catch(() => ({ noticias: [] }))).noticias || []).map((n) => [n.id, n]));
   const cards = [];
   for (const n of process.env.PREVIEW_EMPRESAS.split(",")) { const c = await companyCard(n.trim(), smvAll, clasif, newsById); if (c) cards.push(c); }
-  previewPersonal = renderPersonal(cards);
+  // The free version has no «Tus empresas» section: only the note about the plan
+  previewPersonal = PREVIEW_PLAN === "gratis" ? upsell : renderPersonal(cards);
 }
 const previewPath = process.env.BOLETIN_PREVIEW_PATH || "boletin-preview.html";
 fs.mkdirSync(path.dirname(path.resolve(previewPath)), { recursive: true });
-fs.writeFileSync(previewPath, html.replace("{{BAJA}}", `${SITE}/boletin`).replace("{{EMPRESAS}}", `${SITE}/boletin`).replace("{{PERSONAL}}", previewPersonal));
-console.log(`Mercados: ${f.markets.length} · SMV: ${f.smvFacts.length} · titulares: ${f.headlines.length} · IA: ${ai ? "sí" : "no"}`);
+fs.writeFileSync(previewPath, fill(PREVIEW_PLAN === "gratis" ? htmlGratis : htmlCompleto, previewPersonal));
+console.log(`Vista previa: ${PREVIEW_PLAN} · mercados: ${f.markets.length} · SMV: ${f.smvFacts.length} · titulares: ${f.headlines.length} · IA: ${ai ? "sí" : "no"}`);
 
 if (!DRY && !PREVIEW) {
   if (!process.env.RESEND_API_KEY) throw new Error("Falta RESEND_API_KEY");
@@ -470,8 +565,8 @@ if (!DRY && !PREVIEW) {
   if (!list.length) throw new Error("Sin destinatarios");
 
   // One personalised email each (own unsubscribe link), sent in batches of 100 (Resend batch API)
-  // The personal section is part of the Boletín and Pro plans (and the owner's copy). Plans come from
-  // the users table by email; subscribers on other plans who picked companies get a short note instead.
+  // The content depends on the plan: the Boletín and Pro plans (and the owner's copy) get the full
+  // email; the rest get the free one, with only the dollar. Plans come from the users table by email.
   const paid = new Set();
   if (base && process.env.SUPABASE_SERVICE_KEY && list.length) {
     const emails = list.map((x) => `"${x.email}"`).join(",");
@@ -481,10 +576,10 @@ if (!DRY && !PREVIEW) {
     if (r.ok) for (const u of await r.json()) paid.add(String(u.email).toLowerCase());
   }
   const owners = new Set((process.env.BOLETIN_TO || "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean));
-  for (const x of list) x.personal = paid.has(x.email) || owners.has(x.email);
+  for (const x of list) x.plan = paid.has(x.email) || owners.has(x.email) ? "boletin" : "gratis";
 
   // Company cards are built once per company and shared between subscribers
-  const wanted = [...new Set(list.filter((x) => x.personal).flatMap((x) => x.empresas || []))];
+  const wanted = [...new Set(list.filter((x) => x.plan === "boletin").flatMap((x) => x.empresas || []))];
   const smvAll = (await getJson(`${RAW}/smv-hechos.json`).catch(() => ({ hechos: {} }))).hechos || {};
   const clasif = (await getJson(`${RAW}/noticias-clasificadas.json`).catch(() => ({ items: {} }))).items || {};
   const newsById = Object.fromEntries(((await getJson(`${RAW}/noticias.json`).catch(() => ({ noticias: [] }))).noticias || []).map((n) => [n.id, n]));
@@ -492,13 +587,14 @@ if (!DRY && !PREVIEW) {
   for (const nemo of wanted) cards[nemo] = await companyCard(nemo, smvAll, clasif, newsById);
   console.log(`Empresas seguidas: ${wanted.length}`);
 
-  const upsell = `<tr><td style="padding:24px 0 0;font-family:'Libre Franklin',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#5E584E">Elegiste empresas para seguir. La sección «Tus empresas» (precio, proyección, hechos y noticias de cada una) es parte del plan Boletín, por US$&nbsp;1.99 al mes. <a href="${SITE}/precios" style="color:#1B1916">Ver planes</a></td></tr>`;
-  const emails = list.map(({ email, token, empresas, personal: allowed }) => {
+  const emails = list.map(({ email, token, empresas, plan }) => {
     const baja = token ? `${SITE}/api/boletin?accion=baja&t=${token}` : `${SITE}/boletin`;
     const prefs = token ? `${SITE}/boletin?t=${token}#empresas` : `${SITE}/boletin`;
     const mine = (empresas || []).map((n) => cards[n]).filter(Boolean);
-    const personal = !allowed ? ((empresas || []).length ? upsell : "") : (mine.length ? renderPersonal(mine) : "");
-    const msg = { from: FROM, to: [email], subject: `PerData · ${dateLabel}`, html: html.replace("{{BAJA}}", baja).replace("{{EMPRESAS}}", prefs).replace("{{PERSONAL}}", personal) };
+    // Free version: no «Tus empresas» section, only the note about the plan
+    const personal = plan === "gratis" ? ((empresas || []).length ? upsell : "") : (mine.length ? renderPersonal(mine) : "");
+    const base = plan === "gratis" ? htmlGratis : htmlCompleto;
+    const msg = { from: FROM, to: [email], subject: `PerData · ${dateLabel}`, html: fill(base, personal, baja, prefs) };
     if (token) msg.headers = { "List-Unsubscribe": `<${baja}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" };
     return msg;
   });

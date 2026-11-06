@@ -19,7 +19,8 @@ export const PLANS = {
     maxHorizon: 6,
     excel: false
   },
-  // Boletín: the terminal stays as in Gratis; adds the personal section of the daily newsletter.
+  // Boletín: the terminal stays as in Gratis; adds the full newsletter (markets, dollar ranges,
+  // SMV facts, headlines) and the personal section with the companies each subscriber follows.
   boletin: {
     id: "boletin",
     label: "Boletín",
