@@ -45,6 +45,7 @@
     .pd-prose p { margin: 0 0 14px; font: 400 16px/1.7 var(--pd-font-read); color: var(--pd-ink); }
     .pd-fact-table td, .pd-fact-table th { white-space: nowrap; }
     .pd-fact-table td:first-child { white-space: normal; }
+    .pd-boletín-cta-text { margin: 0; font: 400 16px/1.7 var(--pd-font-read); color: var(--pd-ink); max-width: 60ch; }
     @media (max-width: 560px) { .pd-range-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   </style>
 
@@ -500,6 +501,17 @@
             <dd>La página se genera de forma automática cuando termina la corrida diaria del PerData Engine: los cierres oficiales del BCRP, los pronósticos de corto plazo y el contexto macro se leen de los archivos de datos del proyecto y se vuelven a renderizar sin intervención manual. Por eso el último cierre que se muestra aquí es el del 2026-11-04, con fecha 4 de noviembre de 2026.</dd>
           </dl>
         </section>
+
+    
+    <section class="mt-12 border-t border-rule pt-8" aria-label="Boletin diario">
+      <p class="micro-label text-ink-soft">Boletín diario · gratis</p>
+      <h2 class="pd-section-title" style="margin-top: 8px;">Recibe el rango del dólar cada mañana</h2>
+      <p class="pd-boletin-cta-text">
+        De lunes a viernes a las 06:00 te enviamos el rango probable del dólar para el día y para la
+        semana, con las fuentes oficiales detrás de cada cifra. Puedes darte de baja cuando quieras.
+      </p>
+      <p class="mt-4 mb-0"><a href="/boletin" class="pdl-btn pdl-btn-secondary no-underline">Ver el boletín y suscribirte</a></p>
+    </section>
   </main>
 
   <footer class="border-t border-rule bg-card py-8 px-4">

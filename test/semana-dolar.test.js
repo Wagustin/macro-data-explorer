@@ -130,8 +130,8 @@ test("el Worker y el servidor local sirven las rutas de las notas semanales", ()
   const worker = fs.readFileSync(path.join(ROOT, "worker.js"), "utf8");
   assert.ok(worker.includes('pathname === "/semana"'), "el Worker sirve /semana");
   assert.ok(worker.includes("semanaMatch"), "el Worker sirve /semana/AAAA-MM-DD");
-  assert.ok(worker.includes('"/semana/index.html"'), "el indice semanal se pide desde el Worker");
-  assert.ok(worker.includes("/semana/${semanaMatch[1]}/index.html"), "la nota semanal se pide desde el Worker");
+  assert.ok(worker.includes(': "/semana";'), "el indice semanal se pide desde el Worker");
+  assert.ok(worker.includes("`/semana/${semanaMatch[1]}`"), "la nota semanal se pide desde el Worker");
 
   const server = fs.readFileSync(path.join(ROOT, "server.js"), "utf8");
   assert.ok(server.includes('"/semana": "semana/index.html"'), "el servidor local sirve /semana");
@@ -148,10 +148,10 @@ test("el Worker responde las notas semanales con su pagina y sin marcarla como n
         if (ruta === "/404.html") {
           return new Response("<html><body>404</body></html>", { status: 200, headers: { "Content-Type": "text/html" } });
         }
-        if (ruta === "/semana/index.html") {
+        if (ruta === "/semana") {
           return new Response(htmlIndice, { status: 200, headers: { "Content-Type": "text/html" } });
         }
-        if (ruta === `/semana/${notas[0].semana}/index.html`) {
+        if (ruta === `/semana/${notas[0].semana}`) {
           return new Response(htmlNota, { status: 200, headers: { "Content-Type": "text/html" } });
         }
         return new Response("Not found", { status: 404, headers: { "Content-Type": "text/plain" } });

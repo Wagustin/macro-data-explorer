@@ -437,6 +437,18 @@ const datasetLd = {
 
 const faqLdScript = `  <script type="application/ld+json">${ldJson(faqLd)}</script>`;
 const datasetLdScript = `  <script type="application/ld+json">${ldJson(datasetLd)}</script>`;
+// ---- 6b. Bloque de invitacion al boletin (estatico, sin pop-ups) ----
+
+const bloqueBoletin = `
+    <section class="mt-12 border-t border-rule pt-8" aria-label="Boletin diario">
+      <p class="micro-label text-ink-soft">Boletin diario · gratis</p>
+      <h2 class="pd-section-title" style="margin-top: 8px;">Recibe el rango del dolar cada manana</h2>
+      <p class="pd-boletin-cta-text">
+        De lunes a viernes a las 06:00 te enviamos el rango probable del dolar para el dia y para la
+        semana, con las fuentes oficiales detras de cada cifra. Puedes darte de baja cuando quieras.
+      </p>
+      <p class="mt-4 mb-0"><a href="/boletin" class="pdl-btn pdl-btn-secondary no-underline">Ver el boletin y suscribirte</a></p>
+    </section>`;
 
 // ---- 7. HTML ----
 
@@ -485,6 +497,7 @@ let htmlGenerado = `<!DOCTYPE html>
     .pd-prose p { margin: 0 0 14px; font: 400 16px/1.7 var(--pd-font-read); color: var(--pd-ink); }
     .pd-fact-table td, .pd-fact-table th { white-space: nowrap; }
     .pd-fact-table td:first-child { white-space: normal; }
+    .pd-boletin-cta-text { margin: 0; font: 400 16px/1.7 var(--pd-font-read); color: var(--pd-ink); max-width: 60ch; }
     @media (max-width: 560px) { .pd-range-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   </style>
 
@@ -592,6 +605,8 @@ let htmlGenerado = `<!DOCTYPE html>
     </section>
 
     ${textoExplicativo}
+
+    ${bloqueBoletin}
   </main>
 
   <footer class="border-t border-rule bg-card py-8 px-4">
@@ -639,8 +654,10 @@ const outputPath = path.join(rootDir, 'dolar.html');
 // The page text was written without accents; restore them in visible text and meta descriptions only
 // (never inside tags, links or attribute names), so every regeneration comes out right
 const ACENTOS = {
+  boletin: 'boletín', detras: 'detrás', dia: 'día', lunes: 'lunes',
   peru: 'perú', guia: 'guía',
-  dias: 'días', habiles: 'hábiles', manana: 'mañana', proxima: 'próxima', proximo: 'próximo',
+  dias: 'días', dia: 'día', detras: 'detrás', boletin: 'boletín',
+  habiles: 'hábiles', manana: 'mañana', proxima: 'próxima', proximo: 'próximo',
   ultimo: 'último', ultimos: 'últimos', ultima: 'última', ultimas: 'últimas', ano: 'año', anos: 'años',
   pronostico: 'pronóstico', pronosticos: 'pronósticos', empirica: 'empírica', empirico: 'empírico',
   calibracion: 'calibración', minimo: 'mínimo', maximo: 'máximo', dolar: 'dólar', dolares: 'dólares',

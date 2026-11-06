@@ -543,7 +543,8 @@ export default {
     // archivos viven en un subdirectorio.
     const semanaMatch = /^\/semana\/(\d{4}-\d{2}-\d{2})\/?$/.exec(pathname);
     if (pathname === "/semana" || pathname === "/semana/" || semanaMatch) {
-      const destino = semanaMatch ? `/semana/${semanaMatch[1]}/index.html` : "/semana/index.html";
+      // Assets use drop-trailing-slash: a folder index is served at the path without «/» or «index.html»
+      const destino = semanaMatch ? `/semana/${semanaMatch[1]}` : "/semana";
       const res = await env.ASSETS.fetch(new Request(new URL(destino, request.url).toString(), request));
       if (!res.ok) return notFound(env, request);
       const headers = new Headers(res.headers);
