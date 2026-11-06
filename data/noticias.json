@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-06T05:31:33.891Z",
+  "actualizado": "2026-11-06T06:42:55.551Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -34,7 +34,7 @@
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 10
+      "items": 12
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -44,7 +44,7 @@
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 20
+      "items": 19
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 17
+      "items": 18
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,51 @@
     }
   },
   "noticias": [
+    {
+      "id": "gestion-8b1cbc7573",
+      "titulo": "TC admite a trámite demanda contra ley que da pensión de S/ 3,500 a profesores",
+      "url": "https://gestion.pe/peru/politica/tc-admite-a-tramite-demanda-contra-ley-que-otorgar-pension-de-s3300-a-docentes-cesantes-y-jubilados-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T06:09:46.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-b759ff484a",
+      "titulo": "Se facilitaría permisos a Reinfo para explotar, pero gran minería enfrentaría este riesgo",
+      "url": "https://gestion.pe/economia/oro-se-facilitaria-permisos-a-reinfo-para-explotar-pero-gran-mineria-enfrentaria-este-riesgo-en-peru-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T06:00:27.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-2af32ceed1",
+      "titulo": "El Banco Central de Paraguay comienza los pagos a los ahorristas del intervenido Ueno bank",
+      "url": "https://rpp.pe/mundo/latinoamerica/el-banco-central-de-paraguay-comienza-los-pagos-a-los-ahorristas-del-intervenido-ueno-bank-noticia-1716235",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-06T05:48:49.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-4c5397cde6",
+      "titulo": "Cobre pierde terreno por dudas sobre la IA y los aranceles tras las elecciones en EE.UU.",
+      "url": "https://www.bloomberglinea.com/mercados/cobre-pierde-terreno-por-dudas-sobre-la-ia-y-los-aranceles-tras-las-elecciones-en-eeuu/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-06T05:31:46.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-42453a7f9f",
+      "titulo": "Tres estados de EE.UU. ejecutan a presos en un mismo día y Florida iguala su récord anual",
+      "url": "https://rpp.pe/mundo/estados-unidos/tres-estados-de-eeuu-ejecutan-a-presos-en-un-mismo-dia-y-florida-iguala-su-record-anual-noticia-1716233",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-06T05:30:17.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "gestion-19c026c11c",
       "titulo": "Tarifas eléctricas para usuarios domiciliarios en el SEIN se reducirán en noviembre",
@@ -196,15 +241,6 @@
       "fuente": "RPP Noticias",
       "fecha_iso": "2026-11-06T01:27:13.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-b759ff484a",
-      "titulo": "Se facilitaría permisos a Reinfo para explotar, pero gran minería enfrentaría este riesgo",
-      "url": "https://gestion.pe/economia/oro-se-facilitaria-permisos-a-reinfo-para-explotar-pero-gran-mineria-enfrentaria-este-riesgo-en-peru-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T01:20:00.000Z",
-      "categoria": "Minería y metales",
       "semaforo": "AMARILLO"
     },
     {
@@ -367,15 +403,6 @@
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-05T22:30:39.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-8b1cbc7573",
-      "titulo": "TC admite a trámite demanda contra ley que da pensión de S/ 3,500 a profesores",
-      "url": "https://gestion.pe/peru/politica/tc-admite-a-tramite-demanda-contra-ley-que-otorgar-pension-de-s3300-a-docentes-cesantes-y-jubilados-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-05T22:30:00.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -712,15 +739,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "infobae-8d09d5455a",
-      "titulo": "Precio del dólar baja hoy en Perú: ¿A cuánto cerró el tipo de cambio este 5 de noviembre?",
-      "url": "https://www.infobae.com/peru/2026/11/04/precio-del-dolar-baja-hoy-en-peru-asi-abrio-el-tipo-de-cambio-este-4-de-noviembre/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-05T18:52:21.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "bloomberg_linea-6403e7b316",
       "titulo": "Alphabet perdió US$758.000 millones en octubre y el Modo IA de Google presiona ingresos de las búsquedas",
       "url": "https://www.bloomberglinea.com/tecnologia/alphabet-perdio-us758000-millones-en-octubre-y-el-modo-ia-de-google-presiona-ingresos-de-las-busquedas/",
@@ -988,24 +1006,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-05T09:56:00.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-3c92a9de38",
-      "titulo": "Proyecto 7 regiones de gas natural en recta final: esta es la nueva fecha clave del Minem",
-      "url": "https://gestion.pe/economia/proyecto-7-regiones-de-gas-natural-en-recta-final-esta-es-la-nueva-fecha-clave-del-minem-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-05T09:00:00.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-aff8e71a0c",
-      "titulo": "Oro extiende su repunte y supera los US$4.100 tras caída del dólar y bonos del Tesoro",
-      "url": "https://www.bloomberglinea.com/mercados/oro-extiende-su-repunte-y-supera-los-us4100-tras-caida-del-dolar-y-bonos-del-tesoro/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-05T08:51:21.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     }
   ]
