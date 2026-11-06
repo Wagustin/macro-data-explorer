@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-06T23:01:31.279Z",
+  "actualizado": "2026-11-06T23:07:28.896Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,17 +24,17 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 56
+      "items": 55
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 64
+      "items": 63
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 8
+      "items": 9
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -64,6 +64,24 @@
   },
   "noticias": [
     {
+      "id": "la_republica-7357984cbd",
+      "titulo": "Expectativas empresariales caen a 49,5 puntos y crece el pesimismo sobre la economía peruana",
+      "url": "https://larepublica.pe/economia/2026/11/06/gobierno-afirma-que-invirtio-s1500-millones-contra-el-nino-pero-fondos-preventivos-registran-solo-159-de-gasto-hnews-170058",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-06T23:01:54.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-1872eaa44a",
+      "titulo": "‘Papa King kones’, ‘Papaletas’, viajes, polos y las cifras que bendecirán la economía peruana por la visita de León XIV",
+      "url": "https://elcomercio.pe/economia/peru/papa-king-kones-y-papaletas-asi-se-mueve-la-economia-peruana-por-la-visita-de-leon-xiv-apuesplan-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-06T22:55:16.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "el_comercio-6553a61311",
       "titulo": "Los precios del transporte subieron 15,75% en un año en Lima: las razones del incremento",
       "url": "https://elcomercio.pe/economia/los-precios-del-transporte-subieron-1575-en-un-ano-en-lima-que-explico-el-incremento-noticia/",
@@ -91,6 +109,15 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "rpp-fd6118f47a",
+      "titulo": "Perú acelera sus exportaciones a China: en nueve meses ya roza lo vendido en todo el 2025 por boom de minerales",
+      "url": "https://rpp.pe/economia/economia/peru-acelera-sus-exportaciones-a-china-en-nueve-meses-ya-roza-lo-vendido-en-todo-el-2025-por-boom-de-minerales-noticia-1716429",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-06T22:45:08.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "andina-489b1547fe",
       "titulo": "Perú incorpora protección de marcas país en TLC con China",
       "url": "https://andina.pe/agencia/noticia-peru-incorpora-proteccion-marcas-pais-tlc-china-1098943.aspx",
@@ -100,21 +127,21 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "gestion-9371accc3d",
-      "titulo": "Más allá de Torre Trecca: EsSalud estudia nuevas alianzas con privados en hospitales, ¿cómo?",
-      "url": "https://gestion.pe/economia/essalud-mas-alla-de-torre-trecca-seguro-social-de-salud-estudia-nuevas-alianzas-con-privados-en-hospitales-como-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T22:30:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-78d5ad0861",
       "titulo": "El Niño pone en riesgo a 58 lotes petroleros, ¿Perú debería preocuparse por su crudo?",
       "url": "https://gestion.pe/economia/el-nino-pone-en-riesgo-a-58-lotes-petroleros-peru-deberia-preocuparse-por-su-crudo-este-es-el-plan-para-evitar-golpe-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-06T22:30:00.000Z",
       "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-9371accc3d",
+      "titulo": "Más allá de Torre Trecca: EsSalud estudia nuevas alianzas con privados en hospitales, ¿cómo?",
+      "url": "https://gestion.pe/economia/essalud-mas-alla-de-torre-trecca-seguro-social-de-salud-estudia-nuevas-alianzas-con-privados-en-hospitales-como-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T22:30:00.000Z",
+      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -133,15 +160,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-06T22:06:00.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-1872eaa44a",
-      "titulo": "‘Papa King kones’, ‘Papaletas’, viajes, polos y las cifras que bendecirán la economía peruana por la visita de León XIV",
-      "url": "https://elcomercio.pe/economia/peru/papa-king-kones-y-papaletas-asi-se-mueve-la-economia-peruana-por-la-visita-de-leon-xiv-apuesplan-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-06T21:57:44.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -170,15 +188,6 @@
       "fecha_iso": "2026-11-06T21:49:51.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "la_republica-7357984cbd",
-      "titulo": "Expectativas empresariales caen a 49,5 puntos y crece el pesimismo sobre la economía peruana",
-      "url": "https://larepublica.pe/economia/2026/11/06/gobierno-afirma-que-invirtio-s1500-millones-contra-el-nino-pero-fondos-preventivos-registran-solo-159-de-gasto-hnews-170058",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-06T21:47:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "la_republica-28abe26dfb",
@@ -802,21 +811,21 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-d97ed644ca",
-      "titulo": "Lima corporativa sin espacio: la escasez de oficinas impulsa alza en renta de alquileres",
-      "url": "https://gestion.pe/economia/empresas/lima-corporativa-sin-espacio-la-escasez-de-oficinas-en-distritos-como-san-isdro-miraflores-magdalena-y-san-borja-impulsa-alza-en-renta-de-alquileres-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T10:15:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-c2a54e3ebf",
       "titulo": "Cencosud y los planes para Wong y Metro y el avance de su canal digital",
       "url": "https://gestion.pe/economia/empresas/chilena-cencosud-avanza-en-peru-gracias-a-su-canal-digital-que-planes-tiene-para-wong-y-metro-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-06T10:15:00.000Z",
       "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-d97ed644ca",
+      "titulo": "Lima corporativa sin espacio: la escasez de oficinas impulsa alza en renta de alquileres",
+      "url": "https://gestion.pe/economia/empresas/lima-corporativa-sin-espacio-la-escasez-de-oficinas-en-distritos-como-san-isdro-miraflores-magdalena-y-san-borja-impulsa-alza-en-renta-de-alquileres-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T10:15:00.000Z",
+      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -1006,15 +1015,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-05T23:45:00.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-3fe0066217",
-      "titulo": "El Niño presiona el empleo en agricultura, pesca y minería: 162.900 puestos menos y trabajadores independientes desprotegidos",
-      "url": "https://larepublica.pe/economia/2026/11/05/sectores-primarios-pierden-162900-empleos-y-respuesta-ante-el-nino-deja-vacios-de-proteccion-laboral-374870",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-05T23:08:47.000Z",
-      "categoria": "Minería y metales",
       "semaforo": "AMARILLO"
     }
   ]
