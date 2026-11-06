@@ -1,76 +1,20 @@
 {
- "actualizado": "2026-11-06T16:55:16.031Z",
+ "actualizado": "2026-11-06T20:13:25.104Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "Petroperú revierte pérdidas y gana 144,9 millones",
-   "nota": "Petroperú pasó de perder 355 millones de dólares a ganar 144,9 millones entre enero y septiembre de 2026. El resultado marca un giro radical en la situación financiera de la petrolera estatal.",
-   "tema": "Bolsa y empresas",
-   "empresas": [
-    "PETROBC1"
-   ],
-   "fuentes": [
-    {
-     "titulo": "Petroperú pasó de perder US$355 millones a ganar US$144,9 millones entre enero y septiembre de 2026",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/2026/11/03/petroperu-gano-us145-millones-pero-aun-enfrenta-restricciones-para-abastecer-sus-refinerias-hnews-139401",
-     "fecha": "2026-11-06T15:08:36.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "Holcim lanza OPA para adquirir el 49.99% de Cementos Pacasmayo: ¿cuánto ofrece por acción?",
-   "tema": "Bolsa y empresas",
-   "empresas": [
-    "CPAC"
-   ],
-   "fuentes": [
-    {
-     "titulo": "Holcim lanza OPA para adquirir el 49.99% de Cementos Pacasmayo: ¿cuánto ofrece por acción?",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/empresas/cementos-pacasmayo-holcim-lanza-opa-para-comprar-las-acciones-que-aun-no-controla-cual-es-el-precio-ofrecido-noticia/",
-     "fecha": "2026-11-06T00:15:00.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": false,
-    "motivo": "La nota añade un precio de 6,50 soles por acción que no aparece en el titular, por lo que incumple la fidelidad."
-   }
-  },
-  {
-   "titulo": "Fibra Prime obtiene 40,37 millones de dólares en la Bolsa de Lima",
-   "nota": "Fibra Prime captó 40,37 millones de dólares mediante una emisión en la Bolsa de Valores de Lima.",
-   "tema": "Bolsa y empresas",
-   "empresas": [
-    "FIBPRIME"
-   ],
-   "fuentes": [
-    {
-     "titulo": "Fibra Prime capta US$ 40.37 millones en la Bolsa de Lima: ¿en qué utilizará los recursos?",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/empresas/fibra-prime-capta-us-4037-millones-para-reducir-financiamiento-por-compra-de-parque-logistico-lima-sur-noticia/",
-     "fecha": "2026-11-06T15:14:03.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "BCRP aprueba estándar QR Perú para interoperabilidad digital",
-   "nota": "El Banco Central de Reserva aprobó el nuevo estándar QR Perú. La norma busca fortalecer la interoperabilidad de los pagos digitales.",
+   "titulo": "BCRP aprueba estándar QR Perú para pagos digitales",
+   "nota": "El Banco Central de Reserva aprobó el nuevo estándar QR Perú que busca fortalecer la interoperabilidad de los pagos digitales en el país. La medida fue confirmada por múltiples fuentes oficiales y medios especializados.",
    "tema": "Dólar y BCRP",
    "empresas": [],
    "fuentes": [
+    {
+     "titulo": "BCR aprueba nuevo estándar QR Perú para fortalecer la interoperabilidad de los pagos digitales",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/economia/peru/bcr-aprueba-nuevo-estandar-qr-peru-para-fortalecer-la-interoperabilidad-de-los-pagos-digitales-l-ultimas-noticia/",
+     "fecha": "2026-11-06T17:27:14.000Z"
+    },
     {
      "titulo": "BCRP aprueba el estándar QR Perú para fortalecer los pagos digitales",
      "fuente": "Gestión",
@@ -91,16 +35,58 @@
    }
   },
   {
-   "titulo": "Recaudación tributaria sube 14,6 % en octubre",
-   "nota": "La Sunat informó que la recaudación tributaria aumentó 14,6 % en octubre de 2026 respecto al mismo mes del año anterior.",
-   "tema": "Economía y fiscal",
+   "titulo": "Dólar cae a S/ 3,44 tras datos de empleo en EE. UU.",
+   "nota": "El tipo de cambio abrió a la baja en S/ 3,44 pese a los sólidos datos de empleo en Estados Unidos. Analistas evalúan si el dólar romperá la barrera de S/ 3,40 en los próximos días.",
+   "tema": "Dólar y BCRP",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Sunat: recaudación tributaria crece 14,6% en octubre de 2026",
+     "titulo": "Dólar y petróleo caen tras derrota de Trump: ¿tipo de cambio romperá S/ 3.40?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/tu-dinero/dolar-y-petroleo-caen-tras-derrota-de-trump-tipo-de-cambio-rompera-s-340-noticia/",
+     "fecha": "2026-11-06T19:31:53.000Z"
+    },
+    {
+     "titulo": "Precio del dólar en Perú: tipo de cambio del viernes 6 de noviembre",
      "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/sunat-recaudacion-tributaria-crece-146-en-octubre-de-2026-l-ultimas-noticia/",
-     "fecha": "2026-11-06T14:11:34.000Z"
+     "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-2026-a-cuanto-esta-el-dolar-este-viernes-6-de-noviembre-tipo-de-cambio-segun-el-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
+     "fecha": "2026-11-06T19:18:59.000Z"
+    },
+    {
+     "titulo": "Precio del dólar hoy en Perú, viernes 6 noviembre: consulta el tipo de cambio para compra y venta",
+     "fuente": "La República Economía",
+     "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/06/precio-del-dolar-hoy-en-peru-viernes-6-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-167720",
+     "fecha": "2026-11-06T19:17:15.000Z"
+    },
+    {
+     "titulo": "Precio del dólar con caída pronunciada hoy en Perú: Así cerró el tipo de cambio del 6 de noviembre",
+     "fuente": "Infobae Perú",
+     "url": "https://www.infobae.com/peru/2026/11/06/precio-del-dolar-hoy-en-peru-cotizacion-de-apertura-del-6-de-noviembre/",
+     "fecha": "2026-11-06T19:03:31.000Z"
+    },
+    {
+     "titulo": "Tipo de cambio hoy en Perú: ¿en cuánto cerró el dólar este viernes 6 de noviembre?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/mercados/tipo-de-cambio-dolar-hoy-en-peru-cuanto-esta-el-precio-del-dolar-este-viernes-6-de-noviembre-dolares-a-soles-compra-y-venta-bcrp-noticia/",
+     "fecha": "2026-11-06T18:51:26.000Z"
+    },
+    {
+     "titulo": "El dólar abre a la baja en S/3,44 pese a sólidos datos de empleo en Estados Unidos",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/economia/peru/el-dolar-abre-a-la-baja-en-s344-pese-a-solidos-datos-de-empleo-en-estados-unidos-l-tipo-de-cambio-l-dolar-l-ultimas-noticia/",
+     "fecha": "2026-11-06T15:06:36.000Z"
+    },
+    {
+     "titulo": "¿Cuál es la cotización del dólar hoy viernes 6 de noviembre del 2026?",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-cual-es-cotizacion-del-dolar-hoy-viernes-6-noviembre-del-2026-1098848.aspx",
+     "fecha": "2026-11-06T14:30:00.000Z"
+    },
+    {
+     "titulo": "Precio del dólar Perú y tipo de cambio hoy 06 de noviembre del 2026",
+     "fuente": "RPP Noticias",
+     "url": "https://rpp.pe/economia/economia/precio-del-dolar-peru-y-tipo-de-cambio-hoy-06-de-noviembre-del-2026-noticia-1716256",
+     "fecha": "2026-11-06T11:05:39.000Z"
     }
    ],
    "revision": {
@@ -110,16 +96,89 @@
    }
   },
   {
-   "titulo": "Perú prevé exportaciones superiores a 120.000 millones en 2026",
-   "nota": "El Gobierno estima que los envíos al exterior superarán los 120.000 millones de dólares al cierre de 2026.",
+   "titulo": "Confianza empresarial cae a nivel pesimista por primera vez",
+   "nota": "La confianza empresarial sobre la economía peruana se ubicó en terreno pesimista por primera vez desde el inicio del gobierno de Keiko Fujimori. Las expectativas a tres meses se hundieron reflejando el retorno del pesimismo.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Perú proyecta exportaciones por más de 120,000 millones de dólares al cierre del 2026",
+     "titulo": "Confianza empresarial sobre la economía cae a nivel pesimista por primera vez desde el inicio del gobierno de Keiko Fujimori",
+     "fuente": "RPP Noticias",
+     "url": "https://rpp.pe/economia/economia/confianza-empresarial-sobre-la-economia-cae-a-nivel-pesimista-por-primera-vez-desde-el-inicio-del-gobierno-de-keiko-fujimori-noticia-1716355",
+     "fecha": "2026-11-06T19:15:51.000Z"
+    },
+    {
+     "titulo": "Expectativas sobre la economía a 3 meses se hunden: retorna el pesimismo",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/el-nino-expectativas-sobre-la-economia-a-3-meses-se-hunden-retorna-el-pesimismo-en-peru-noticia/",
+     "fecha": "2026-11-06T17:51:19.000Z"
+    },
+    {
+     "titulo": "Empresas ahora ven con pesimismo la economía peruana para los próximos meses",
+     "fuente": "Infobae Perú",
+     "url": "https://www.infobae.com/peru/2026/11/06/empresas-ahora-ven-con-pesimismo-la-economia-peruana-para-los-proximos-meses/",
+     "fecha": "2026-11-06T15:59:04.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": null,
+    "ok": null,
+    "motivo": "revisor no disponible"
+   }
+  },
+  {
+   "titulo": "Petroperú revierte pérdidas y gana US$ 144,9 millones",
+   "nota": "La empresa estatal Petroperú pasó de perder US$ 355 millones a ganar US$ 144,9 millones entre enero y septiembre de 2026. El resultado marca un giro significativo en su desempeño financiero.",
+   "tema": "Bolsa y empresas",
+   "empresas": [
+    "PETROBC1"
+   ],
+   "fuentes": [
+    {
+     "titulo": "Petroperú pasó de perder US$355 millones a ganar US$144,9 millones entre enero y septiembre de 2026",
+     "fuente": "La República Economía",
+     "url": "https://larepublica.pe/economia/2026/11/03/petroperu-gano-us145-millones-pero-aun-enfrenta-restricciones-para-abastecer-sus-refinerias-hnews-139401",
+     "fecha": "2026-11-06T15:08:36.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Fibra Prime capta US$ 40,37 millones en la Bolsa de Lima",
+   "nota": "El fideicomiso Fibra Prime logró captar US$ 40,37 millones en una emisión en la Bolsa de Valores de Lima. Los recursos se destinarán a inversiones en activos inmobiliarios.",
+   "tema": "Bolsa y empresas",
+   "empresas": [
+    "FIBPRIME"
+   ],
+   "fuentes": [
+    {
+     "titulo": "Fibra Prime capta US$ 40.37 millones en la Bolsa de Lima: ¿en qué utilizará los recursos?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/empresas/fibra-prime-capta-us-4037-millones-para-reducir-financiamiento-por-compra-de-parque-logistico-lima-sur-noticia/",
+     "fecha": "2026-11-06T15:14:03.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": null,
+    "ok": null,
+    "motivo": "revisor no disponible"
+   }
+  },
+  {
+   "titulo": "ProInversión presenta cartera de US$ 10.000 millones para el sur",
+   "nota": "ProInversión dio a conocer una cartera de proyectos por más de US$ 10.000 millones destinados al sur del Perú. La iniciativa busca dinamizar la inversión privada en la región.",
+   "tema": "Economía y fiscal",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "ProInversión presenta cartera de más de US$ 10,000 millones para el sur del Perú",
      "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-peru-proyecta-exportaciones-mas-120000-millones-dolares-al-cierre-del-2026-1098706.aspx",
-     "fecha": "2026-11-06T12:33:22.000Z"
+     "url": "https://andina.pe/agencia/noticia-proinversion-presenta-cartera-mas-10000-millones-para-sur-del-peru-1098881.aspx",
+     "fecha": "2026-11-06T17:14:38.000Z"
     }
    ],
    "revision": {

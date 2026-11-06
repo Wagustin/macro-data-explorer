@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-06T16:45:53.666Z",
+  "actualizado": "2026-11-06T20:01:30.060Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -29,12 +29,12 @@
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 63
+      "items": 60
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 9
+      "items": 10
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -64,12 +64,273 @@
   },
   "noticias": [
     {
+      "id": "andina-8007da55df",
+      "titulo": "Felaban: aparición de neobancos digitales obliga a banca tradicional a adaptarse",
+      "url": "https://andina.pe/agencia/noticia-felaban-aparicion-neobancos-digitales-obliga-a-banca-tradicional-a-adaptarse-1098900.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-06T19:52:37.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-cc6e93fa81",
+      "titulo": "DP World va por la fase 3 del Muelle Sur del Callao: plazos y la condición para invertir",
+      "url": "https://gestion.pe/economia/empresas/puerto-del-callao-dp-world-alista-otra-ampliacion-del-muelle-sur-pero-pone-una-condicion-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T19:42:34.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-aa60645a6a",
+      "titulo": "Donita Rodriguez es designada como nueva miembro del Consejo Fiscal",
+      "url": "https://elcomercio.pe/economia/peru/donita-rodriguez-es-designada-como-nueva-miembro-del-consejo-fiscal-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-06T19:33:26.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-64186da091",
+      "titulo": "Dólar y petróleo caen tras derrota de Trump: ¿tipo de cambio romperá S/ 3.40?",
+      "url": "https://gestion.pe/tu-dinero/dolar-y-petroleo-caen-tras-derrota-de-trump-tipo-de-cambio-rompera-s-340-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T19:31:53.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-649b07b1ff",
+      "titulo": "Vecino Pizzas prepara su expansión hacia nuevos formatos gastronómicos, ¿a dónde apunta?",
+      "url": "https://elcomercio.pe/economia/dia-1/vecino-pizzas-prepara-su-expansion-hacia-nuevos-formatos-gastronomicos-a-donde-apunta-restaurantes-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-06T19:31:49.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-49266b3119",
+      "titulo": "Precio del dólar en Perú: tipo de cambio del viernes 6 de noviembre",
+      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-2026-a-cuanto-esta-el-dolar-este-viernes-6-de-noviembre-tipo-de-cambio-segun-el-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-06T19:18:59.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-c7fa57c7bf",
+      "titulo": "Precio del dólar hoy en Perú, viernes 6 noviembre: consulta el tipo de cambio para compra y venta",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/06/precio-del-dolar-hoy-en-peru-viernes-6-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-167720",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-06T19:17:15.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-380278b3f3",
+      "titulo": "Confianza empresarial sobre la economía cae a nivel pesimista por primera vez desde el inicio del gobierno de Keiko Fujimori",
+      "url": "https://rpp.pe/economia/economia/confianza-empresarial-sobre-la-economia-cae-a-nivel-pesimista-por-primera-vez-desde-el-inicio-del-gobierno-de-keiko-fujimori-noticia-1716355",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-06T19:15:51.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-1872eaa44a",
+      "titulo": "‘Papa King kones’, ‘Papaletas’, viajes, polos y las cifras que bendecirán la economía peruana por la visita de León XIV",
+      "url": "https://elcomercio.pe/economia/peru/papa-king-kones-y-papaletas-asi-se-mueve-la-economia-peruana-por-la-visita-de-leon-xiv-apuesplan-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-06T19:14:44.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-6553a61311",
+      "titulo": "Los precios del transporte subieron 15,75% en un año en Lima: las razones del incremento",
+      "url": "https://elcomercio.pe/economia/los-precios-del-transporte-subieron-1575-en-un-ano-en-lima-que-explico-el-incremento-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-06T19:14:33.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-4db29de985",
+      "titulo": "Crisis eléctrica en el norte: el gas de Piura sería la solución, pero ¿por qué hoy es más caro?",
+      "url": "https://elcomercio.pe/economia/peru/gas-piura-la-crisis-electrica-que-sufre-el-norte-peruano-se-puede-solucionar-con-el-gas-de-piura-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-06T19:14:15.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-08c0f3e979",
+      "titulo": "SAP da sus primeros pasos con agentes de IA en el Perú: ¿qué industrias ya exploran esta tecnología?",
+      "url": "https://elcomercio.pe/economia/dia-1/sap-da-sus-primeros-pasos-con-agentes-de-ia-en-el-peru-que-industrias-ya-exploran-esta-tecnologia-inteligencia-artificial-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-06T19:14:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-d420849f0d",
+      "titulo": "Daly, de la Fed, dice que probablemente se necesiten más alzas de tasas para contener los precios",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/daly-de-la-fed-dice-que-probablemente-se-necesiten-mas-alzas-de-tasas-para-contener-los-precios/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-06T19:09:18.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-e317d1f129",
+      "titulo": "Precio del dólar con caída pronunciada hoy en Perú: Así cerró el tipo de cambio del 6 de noviembre",
+      "url": "https://www.infobae.com/peru/2026/11/06/precio-del-dolar-hoy-en-peru-cotizacion-de-apertura-del-6-de-noviembre/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-06T19:03:31.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-03e42e775b",
+      "titulo": "CTS de noviembre podría ser de mayor monto para estos trabajadores privados",
+      "url": "https://www.infobae.com/peru/2026/11/06/cts-de-noviembre-podria-ser-de-mayor-monto-para-estos-trabajadores-privados/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-06T19:01:14.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-8ddb35da09",
+      "titulo": "Minem: hay perspectivas para firma de 5 contratos de exploración de hidrocarburos en 2027",
+      "url": "https://andina.pe/agencia/noticia-minem-hay-perspectivas-para-firma-5-contratos-exploracion-hidrocarburos-2027-1098899.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-06T18:58:08.000Z",
+      "categoria": "Energía",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-df668f1014",
+      "titulo": "Tipo de cambio hoy en Perú: ¿en cuánto cerró el dólar este viernes 6 de noviembre?",
+      "url": "https://gestion.pe/economia/mercados/tipo-de-cambio-dolar-hoy-en-peru-cuanto-esta-el-precio-del-dolar-este-viernes-6-de-noviembre-dolares-a-soles-compra-y-venta-bcrp-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T18:51:26.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-64201b8a98",
+      "titulo": "Joel Ludeña, candidato a la Alcaldía de VMT, denuncia demora en proclamación de resultados de las elecciones municipales",
+      "url": "https://rpp.pe/peru/actualidad/joel-ludena-candidato-a-la-alcaldia-de-vmt-denuncia-demora-en-proclamacion-de-resultados-de-las-elecciones-municipales-noticia-1716344",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-06T18:28:32.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-f51225144a",
+      "titulo": "Ministerios de Economía y Educación evalúan propuesta para mejorar pensiones de profesores",
+      "url": "https://andina.pe/agencia/noticia-ministerios-economia-y-educacion-evaluan-propuesta-para-mejorar-pensiones-profesores-1098895.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-06T18:21:06.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "el_comercio-b47d0fe0d1",
+      "titulo": "CCL: ¿En qué casos la CTS puede ser embargada, retenida o afectada en garantía?",
+      "url": "https://elcomercio.pe/economia/peru/ccl-en-que-casos-la-cts-puede-ser-embargada-retenida-o-afectada-en-garantia-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-06T18:14:56.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-f18c80a48a",
+      "titulo": "Expectativas sobre la economía a 3 meses se hunden: retorna el pesimismo",
+      "url": "https://gestion.pe/economia/el-nino-expectativas-sobre-la-economia-a-3-meses-se-hunden-retorna-el-pesimismo-en-peru-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T17:51:19.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-cb80993328",
+      "titulo": "¿Qué tendencia muestran las tasas de interés preferenciales en los últimos meses?",
+      "url": "https://andina.pe/agencia/noticia-que-tendencia-muestran-las-tasas-interes-preferenciales-los-ultimos-meses-1098739.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-06T17:49:24.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-5586262bed",
+      "titulo": "Cusco recibiría más de US$ 11 millones por CADE 2026: ¿está listo para el turismo de negocios?",
+      "url": "https://gestion.pe/economia/empresas/cade-2026-cusco-proyecta-un-movimiento-economico-de-s-38-millones-y-espera-elevar-la-ocupacion-hotelera-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T17:38:27.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-22423ea6ab",
+      "titulo": "“Es inconstitucional”: Ministro Elmer Cuba ratifica su posición sobre ley de pensión de S/3.500 para maestros",
+      "url": "https://www.infobae.com/peru/2026/11/06/es-inconstitucional-ministro-elmer-cuba-ratifica-su-posicion-sobre-ley-de-pension-de-s3500-para-maestros/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-06T17:32:01.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-2a074f3f85",
+      "titulo": "BCR aprueba nuevo estándar QR Perú para fortalecer la interoperabilidad de los pagos digitales",
+      "url": "https://elcomercio.pe/economia/peru/bcr-aprueba-nuevo-estandar-qr-peru-para-fortalecer-la-interoperabilidad-de-los-pagos-digitales-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-06T17:27:14.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-de657d7228",
+      "titulo": "Sol peruano perdería valor y dólar se fortalecería hacia el 2028, proyecta el mercado",
+      "url": "https://www.infobae.com/peru/2026/11/06/sol-peruano-perderia-valor-y-dolar-se-fortaleceria-hacia-el-2028-proyecta-el-mercado/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-06T17:27:03.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-9460f1ab4d",
+      "titulo": "ProInversión presenta cartera de más de US$ 10,000 millones para el sur del Perú",
+      "url": "https://andina.pe/agencia/noticia-proinversion-presenta-cartera-mas-10000-millones-para-sur-del-peru-1098881.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-06T17:14:38.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-9371accc3d",
+      "titulo": "Más allá de Torre Trecca: EsSalud estudia nuevas alianzas con privados en hospitales, ¿cómo?",
+      "url": "https://gestion.pe/economia/essalud-mas-alla-de-torre-trecca-seguro-social-de-salud-estudia-nuevas-alianzas-con-privados-en-hospitales-como-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T17:14:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "la_republica-28abe26dfb",
       "titulo": "Elmer Cuba: feriados que caigan entre martes y viernes serán trasladados a los lunes desde 2027",
       "url": "https://larepublica.pe/economia/2026/11/06/elmer-cuba-feriados-que-caigan-entre-martes-y-viernes-seran-trasladados-a-los-lunes-desde-2027-hnews-121902",
       "fuente": "La República Economía",
-      "fecha_iso": "2026-11-06T16:44:30.000Z",
+      "fecha_iso": "2026-11-06T17:11:45.000Z",
       "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-a93bcc30a7",
+      "titulo": "Tarifas eléctricas para hogares y comercios se reducirán en noviembre, según Osinergmin",
+      "url": "https://elcomercio.pe/economia/peru/tarifas-electricas-para-usuarios-domiciliarios-se-reduciran-en-noviembre-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-06T16:48:29.000Z",
+      "categoria": "Energía",
       "semaforo": "AMARILLO"
     },
     {
@@ -82,21 +343,12 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "gestion-df668f1014",
-      "titulo": "Tipo de cambio hoy en Perú: ¿cuánto está el dólar este viernes 6 de noviembre?",
-      "url": "https://gestion.pe/economia/mercados/tipo-de-cambio-dolar-hoy-en-peru-cuanto-esta-el-precio-del-dolar-este-viernes-6-de-noviembre-dolares-a-soles-compra-y-venta-bcrp-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T16:36:00.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-c7fa57c7bf",
-      "titulo": "Precio del dólar hoy en Perú, viernes 6 noviembre: consulta el tipo de cambio para compra y venta",
-      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/06/precio-del-dolar-hoy-en-peru-viernes-6-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-167720",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-06T16:17:19.000Z",
-      "categoria": "Dólar y BCRP",
+      "id": "infobae-288e4db155",
+      "titulo": "Hasta 10 horas sin electricidad: estos distritos de Lima y Callao tendrán cortes de luz este sábado 7 de noviembre",
+      "url": "https://www.infobae.com/peru/2026/11/06/hasta-10-horas-sin-electricidad-estos-distritos-de-lima-y-callao-tendran-cortes-de-luz-este-sabado-7-de-noviembre/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-06T16:42:59.000Z",
+      "categoria": "Energía",
       "semaforo": "AMARILLO"
     },
     {
@@ -107,24 +359,6 @@
       "fecha_iso": "2026-11-06T16:17:03.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-cc6e93fa81",
-      "titulo": "DP World va por la fase 3 del Muelle Sur del Callao: plazos y la condición para invertir",
-      "url": "https://gestion.pe/economia/empresas/puerto-del-callao-dp-world-alista-otra-ampliacion-del-muelle-sur-pero-pone-una-condicion-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T16:13:10.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-6553a61311",
-      "titulo": "Los precios del transporte subieron 15,75% en un año en Lima: las razones del incremento",
-      "url": "https://elcomercio.pe/economia/los-precios-del-transporte-subieron-1575-en-un-ano-en-lima-que-explico-el-incremento-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-06T16:11:29.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "el_comercio-3c6320fa03",
@@ -217,24 +451,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-9371accc3d",
-      "titulo": "Más allá de Torre Trecca: EsSalud estudia nuevas alianzas con privados en hospitales, ¿cómo?",
-      "url": "https://gestion.pe/economia/essalud-mas-alla-de-torre-trecca-seguro-social-de-salud-estudia-nuevas-alianzas-con-privados-en-hospitales-como-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T15:01:55.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-1872eaa44a",
-      "titulo": "‘Papa King kones’, ‘Papaletas’, viajes, polos y las cifras que bendecirán la economía peruana por la visita de León XIV",
-      "url": "https://elcomercio.pe/economia/peru/papa-king-kones-y-papaletas-asi-se-mueve-la-economia-peruana-por-la-visita-de-leon-xiv-apuesplan-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-06T15:01:22.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "rpp-9128ae8dd5",
       "titulo": "Elmer Cuba: \"Estoy satisfecho\" del trabajo del MEF en los primeros 100 días del Gobierno de Keiko Fujimori",
       "url": "https://rpp.pe/economia/economia/elmer-cuba-estoy-satisfecho-del-trabajo-del-mef-en-los-primeros-100-dias-del-gobierno-de-keiko-fujimori-noticia-1716295",
@@ -251,15 +467,6 @@
       "fecha_iso": "2026-11-06T14:45:00.000Z",
       "categoria": "Bolsa y empresas",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "infobae-e317d1f129",
-      "titulo": "Precio del dólar vuelve a bajar hoy en Perú: Así abrió el tipo de cambio este 6 de noviembre",
-      "url": "https://www.infobae.com/peru/2026/11/06/precio-del-dolar-hoy-en-peru-cotizacion-de-apertura-del-6-de-noviembre/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-06T14:31:39.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "rpp-f66acc428e",
@@ -286,15 +493,6 @@
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-06T14:22:24.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-49266b3119",
-      "titulo": "Precio del dólar en Perú: compra y venta del viernes 6 de noviembre",
-      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-2026-a-cuanto-esta-el-dolar-este-viernes-6-de-noviembre-tipo-de-cambio-segun-el-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-06T14:18:43.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -388,15 +586,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "rpp-a43c4ae73b",
-      "titulo": "Flávio Bolsonaro reapareció en público en EE.UU.: participó en reunión de la Conferencia de Acción Política Conservadora",
-      "url": "https://rpp.pe/mundo/estados-unidos/flavio-bolsonaro-reaparecio-en-publico-en-eeuu-participo-en-reunion-de-la-conferencia-de-accion-politica-conservadora-noticia-1716264",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-06T12:30:44.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "infobae-9211282da1",
       "titulo": "Cómo ahorrar en combustible en Lima: estos son los grifos con los precios más bajos de gasolina y diésel",
       "url": "https://www.infobae.com/peru/2026/11/06/como-ahorrar-en-combustible-en-lima-estos-son-los-grifos-con-los-precios-mas-bajos-de-gasolina-y-diesel/",
@@ -421,15 +610,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-06T12:00:00.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-4db29de985",
-      "titulo": "Crisis eléctrica en el norte: el gas de Piura sería la solución, pero ¿por qué hoy es más caro?",
-      "url": "https://elcomercio.pe/economia/peru/gas-piura-la-crisis-electrica-que-sufre-el-norte-peruano-se-puede-solucionar-con-el-gas-de-piura-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-06T12:00:00.000Z",
-      "categoria": "Energía",
       "semaforo": "AMARILLO"
     },
     {
@@ -466,24 +646,6 @@
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-06T11:36:40.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-08c0f3e979",
-      "titulo": "SAP da sus primeros pasos con agentes de IA en el Perú: ¿qué industrias ya exploran esta tecnología?",
-      "url": "https://elcomercio.pe/economia/dia-1/sap-da-sus-primeros-pasos-con-agentes-de-ia-en-el-peru-que-industrias-ya-exploran-esta-tecnologia-inteligencia-artificial-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-06T11:33:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-649b07b1ff",
-      "titulo": "Vecino Pizzas prepara su expansión hacia nuevos formatos gastronómicos, ¿a dónde apunta?",
-      "url": "https://elcomercio.pe/economia/dia-1/vecino-pizzas-prepara-su-expansion-hacia-nuevos-formatos-gastronomicos-a-donde-apunta-restaurantes-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-06T11:27:00.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -550,15 +712,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-c2a54e3ebf",
-      "titulo": "Cencosud y los planes para Wong y Metro y el avance de su canal digital",
-      "url": "https://gestion.pe/economia/empresas/chilena-cencosud-avanza-en-peru-gracias-a-su-canal-digital-que-planes-tiene-para-wong-y-metro-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T10:15:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-7cb672dd0b",
       "titulo": "Empresa española de explosivos afina su estrategia en el sur con nueva planta en La Joya",
       "url": "https://gestion.pe/economia/empresas/espanola-de-explosivos-maxam-afina-su-estrategia-en-el-sur-con-nueva-planta-en-la-joya-arequipa-y-busca-acercarse-a-tia-maria-noticia/",
@@ -574,6 +727,15 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-06T10:15:00.000Z",
       "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-c2a54e3ebf",
+      "titulo": "Cencosud y los planes para Wong y Metro y el avance de su canal digital",
+      "url": "https://gestion.pe/economia/empresas/chilena-cencosud-avanza-en-peru-gracias-a-su-canal-digital-que-planes-tiene-para-wong-y-metro-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T10:15:00.000Z",
+      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -766,15 +928,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-64186da091",
-      "titulo": "Dólar y petróleo caen tras derrota de Trump: ¿tipo de cambio romperá S/ 3.40?",
-      "url": "https://gestion.pe/tu-dinero/dolar-y-petroleo-caen-tras-derrota-de-trump-tipo-de-cambio-rompera-s-340-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T01:38:48.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-0dbf379a6d",
       "titulo": "Juliaca inicia la modernización integral de su aeropuerto con una inversión superior a los US$200 millones",
       "url": "https://elcomercio.pe/economia/peru/juliaca-inicia-la-modernizacion-integral-de-su-aeropuerto-con-una-inversion-superior-a-los-us200-millones-l-ultimas-noticia/",
@@ -799,33 +952,6 @@
       "fuente": "Agencia Andina",
       "fecha_iso": "2026-11-06T00:59:41.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "infobae-a8c287b523",
-      "titulo": "Lima: este es el precio de la gasolina este jueves 5 de noviembre",
-      "url": "https://www.infobae.com/peru/2026/11/05/lima-este-es-el-precio-de-la-gasolina-este-jueves-5-de-noviembre/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-06T00:54:56.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-73ea8c6bdd",
-      "titulo": "UPC compra la totalidad de UCAL por USD 35 millones e incorporará su campus de La Molina en 2027",
-      "url": "https://www.infobae.com/peru/2026/11/06/upc-compra-la-totalidad-de-ucal-por-usd-35-millones-e-incorporara-su-campus-de-la-molina-en-2027/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-06T00:47:36.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-c2ac98acb9",
-      "titulo": "Dólar cierra en S/ 3.445 y mantiene estabilidad en el mercado peruano",
-      "url": "https://andina.pe/agencia/noticia-dolar-cierra-s-3445-y-mantiene-estabilidad-el-mercado-peruano-1098808.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-06T00:22:31.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "VERDE"
     },
     {
@@ -888,96 +1014,6 @@
       "url": "https://www.bloomberglinea.com/mundo/estados-unidos/la-derrota-republicana-en-eeuu-mueve-la-carrera-presidencial-de-2028-quienes-ganan-y-pierden-terreno/",
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-05T22:30:39.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-e1f4069726",
-      "titulo": "Produce destina más de S/ 100 millones a 250 proyectos de innovación en 13 regiones",
-      "url": "https://andina.pe/agencia/noticia-produce-destina-mas-s-100-millones-a-250-proyectos-innovacion-13-regiones-1098791.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-05T22:13:18.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-95d527801b",
-      "titulo": "UPC adquiere UCAL por US$35 millones y ampliará su capacidad en Lima",
-      "url": "https://gestion.pe/economia/empresas/upc-adquiere-ucal-por-us35-millones-y-ampliara-su-capacidad-en-lima-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-05T22:07:39.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-4281c48127",
-      "titulo": "Wall Street borra la subida poselectoral y el Nasdaq cae un 5,52% arrastrado por la IA",
-      "url": "https://elcomercio.pe/economia/mercados/wall-street-borra-la-subida-poselectoral-y-el-nasdaq-cae-un-552-arrastrado-por-la-ia-l-mercados-l-wall-street-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-05T22:01:50.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-065e91e353",
-      "titulo": "Producción de petróleo en Perú alcanza los 37,87 miles de barriles por día en octubre de 2026",
-      "url": "https://elcomercio.pe/economia/peru/produccion-de-petroleo-en-peru-alcanza-los-3787-miles-de-barriles-por-dia-en-octubre-de-2026-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-05T21:51:51.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-8da7f02ac4",
-      "titulo": "MEF y Congreso coordinan aprobación del presupuesto público 2027 antes del plazo límite",
-      "url": "https://andina.pe/agencia/noticia-mef-y-congreso-coordinan-aprobacion-del-presupuesto-publico-2027-antes-del-plazo-limite-1098787.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-05T21:41:05.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "bloomberg_linea-957df73bc8",
-      "titulo": "Amazon Prime suma Uber Eats en EE.UU. con envíos gratis desde US$25, tras acuerdo de DoorDash por Instacart",
-      "url": "https://www.bloomberglinea.com/negocios/amazon-prime-suma-uber-eats-en-eeuu-con-envios-gratis-desde-us25-tras-acuerdo-de-doordash-por-instacart/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-05T21:39:17.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-7a8e8e3c59",
-      "titulo": "El dólar cierra en S/3,44 en Perú en una jornada de estabilidad cambiaria",
-      "url": "https://elcomercio.pe/economia/peru/el-dolar-cierra-en-s344-en-peru-en-una-jornada-de-estabilidad-cambiaria-l-tipo-de-cambio-l-dolar-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-05T21:28:58.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-b32e3762fc",
-      "titulo": "Kjolle alcanza el séptimo puesto en The 50 Best: ¿qué prepara Pía León para lo que viene?",
-      "url": "https://gestion.pe/economia/empresas/pia-leon-abre-la-puerta-a-expandir-su-negocio-gastronomico-fuera-del-peru-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-05T21:22:56.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-3642f6c989",
-      "titulo": "Efecto “El Niño” en la industria automotriz: el segmento de vehículos que sería el más afectado",
-      "url": "https://gestion.pe/economia/empresas/fenomeno-el-nino-y-su-impacto-en-el-sector-automotor-segmento-de-vehiculos-pesados-seria-el-mas-afectado-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-05T21:15:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-b7f38a01cc",
-      "titulo": "Los venezolanos vuelven a comprar en Amazon: envíos crecen 37% y esto cuesta traer un paquete desde EE.UU.",
-      "url": "https://www.bloomberglinea.com/latinoamerica/venezuela/los-venezolanos-vuelven-a-comprar-en-amazon-envios-crecen-37-y-esto-cuesta-traer-un-paquete-desde-eeuu/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-05T21:13:11.000Z",
       "categoria": "Mundo",
       "semaforo": "AMARILLO"
     }
