@@ -1,31 +1,21 @@
 {
- "actualizado": "2026-11-06T13:09:47.262Z",
+ "actualizado": "2026-11-06T16:12:51.983Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "Dólar cierra en S/ 3,44 y se acerca a S/ 3,40",
-   "nota": "El tipo de cambio cerró en S/ 3,445 manteniendo la estabilidad en el mercado peruano. La caída del dólar y el petróleo tras la derrota de Trump genera expectativas sobre una posible ruptura del nivel de S/ 3,40.",
-   "tema": "Dólar y BCRP",
-   "empresas": [],
+   "titulo": "Petroperú revierte pérdidas y gana 145 millones",
+   "nota": "Petroperú pasó de perder 355 millones de dólares a ganar 144,9 millones entre enero y septiembre de 2026. El resultado marca un giro radical en la situación financiera de la petrolera estatal.",
+   "tema": "Bolsa y empresas",
+   "empresas": [
+    "PETROBC1"
+   ],
    "fuentes": [
     {
-     "titulo": "Dólar y petróleo caen tras derrota de Trump: ¿tipo de cambio romperá S/ 3.40?",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/tu-dinero/dolar-y-petroleo-caen-tras-derrota-de-trump-tipo-de-cambio-rompera-s-340-noticia/",
-     "fecha": "2026-11-06T01:38:48.000Z"
-    },
-    {
-     "titulo": "Dólar cierra en S/ 3.445 y mantiene estabilidad en el mercado peruano",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-dolar-cierra-s-3445-y-mantiene-estabilidad-el-mercado-peruano-1098808.aspx",
-     "fecha": "2026-11-06T00:22:31.000Z"
-    },
-    {
-     "titulo": "El dólar cierra en S/3,44 en Perú en una jornada de estabilidad cambiaria",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/el-dolar-cierra-en-s344-en-peru-en-una-jornada-de-estabilidad-cambiaria-l-tipo-de-cambio-l-dolar-l-ultimas-noticia/",
-     "fecha": "2026-11-05T21:28:58.000Z"
+     "titulo": "Petroperú pasó de perder US$355 millones a ganar US$144,9 millones entre enero y septiembre de 2026",
+     "fuente": "La República Economía",
+     "url": "https://larepublica.pe/economia/2026/11/03/petroperu-gano-us145-millones-pero-aun-enfrenta-restricciones-para-abastecer-sus-refinerias-hnews-139401",
+     "fecha": "2026-11-06T15:08:36.000Z"
     }
    ],
    "revision": {
@@ -35,8 +25,8 @@
    }
   },
   {
-   "titulo": "Holcim lanza OPA para adquirir el 49,99% de Cementos Pacasmayo",
-   "nota": "La cementera Holcim presentó una oferta pública de adquisición para comprar el 49,99% de Cementos Pacasmayo. El titular informa sobre el lanzamiento de esta operación en el mercado bursátil peruano.",
+   "titulo": "Holcim lanza OPA por el 49,99 % de Pacasmayo",
+   "nota": "Holcim presentó una oferta pública de adquisición para comprar el 49,99 % de Cementos Pacasmayo. La oferta establece un precio por acción para concretar la transacción.",
    "tema": "Bolsa y empresas",
    "empresas": [
     "CPAC"
@@ -56,41 +46,37 @@
    }
   },
   {
-   "titulo": "Recaudación tributaria sube 14,6% en octubre",
-   "nota": "La recaudación tributaria aumentó 14,6% en octubre frente al mismo mes del año anterior. El titular plantea la interrogante sobre los factores que impulsaron este incremento.",
+   "titulo": "Fibra Prime capta 40,37 millones de dólares en la Bolsa de Lima",
+   "nota": "Fibra Prime recaudó 40,37 millones de dólares mediante una emisión en la Bolsa de Valores de Lima.",
+   "tema": "Bolsa y empresas",
+   "empresas": [
+    "FIBPRIME"
+   ],
+   "fuentes": [
+    {
+     "titulo": "Fibra Prime capta US$ 40.37 millones en la Bolsa de Lima: ¿en qué utilizará los recursos?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/empresas/fibra-prime-capta-us-4037-millones-para-reducir-financiamiento-por-compra-de-parque-logistico-lima-sur-noticia/",
+     "fecha": "2026-11-06T15:14:03.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "La recaudación tributaria subió 14,6 % en octubre de 2026",
+   "nota": "La Sunat informó que la recaudación tributaria aumentó 14,6 % en octubre de 2026 respecto al mismo mes del año anterior.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Recaudación tributaria creció 14.6% en octubre, ¿qué impulsó el incremento?",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/sunat-recaudacion-mantiene-tendencia-positiva-desde-junio-de-2024-y-crece-146-en-octubre-noticia/",
-     "fecha": "2026-11-05T20:35:57.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "Tarifas eléctricas bajarán en noviembre para hogares y comercios",
-   "nota": "Osinergmin confirmó que las tarifas del SEIN disminuirán a partir de noviembre. La reducción alcanzará a usuarios domiciliarios y comercios.",
-   "tema": "Energía",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Tarifas eléctricas para usuarios domiciliarios en el SEIN se reducirán en noviembre",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/tarifas-electricas-para-usuarios-domiciliarios-se-reduciran-en-noviembre-noticia/",
-     "fecha": "2026-11-06T04:45:00.000Z"
-    },
-    {
-     "titulo": "Tarifas eléctricas para hogares y comercios se reducirán en noviembre, según Osinergmin",
+     "titulo": "Sunat: recaudación tributaria crece 14,6% en octubre de 2026",
      "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/tarifas-electricas-para-usuarios-domiciliarios-se-reduciran-en-noviembre-l-ultimas-noticia/",
-     "fecha": "2026-11-05T20:13:59.000Z"
+     "url": "https://elcomercio.pe/economia/peru/sunat-recaudacion-tributaria-crece-146-en-octubre-de-2026-l-ultimas-noticia/",
+     "fecha": "2026-11-06T14:11:34.000Z"
     }
    ],
    "revision": {
@@ -100,34 +86,34 @@
    }
   },
   {
-   "titulo": "Brasil prioriza tierras raras y cobre en lista de minerales críticos para reducir dependencia de China",
-   "tema": "Minería y metales",
+   "titulo": "Presupuesto Público 2027: Comisión Bicameral aprueba dictamen de S/266.506 millones, ¿qué medidas incorpora?",
+   "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Brasil prioriza tierras raras y cobre en lista de minerales críticos para reducir dependencia de China",
-     "fuente": "Bloomberg Línea",
-     "url": "https://www.bloomberglinea.com/latinoamerica/brasil/brasil-prioriza-tierras-raras-y-cobre-en-lista-de-minerales-criticos-para-reducir-dependencia-de-china/",
-     "fecha": "2026-11-06T09:09:09.000Z"
+     "titulo": "Presupuesto Público 2027: Comisión Bicameral aprueba dictamen de S/266.506 millones, ¿qué medidas incorpora?",
+     "fuente": "La República Economía",
+     "url": "https://larepublica.pe/economia/2026/11/05/presupuesto-publico-2027-congreso-aprueba-dictamen-por-mas-de-s266500-millones-hnews-371465",
+     "fecha": "2026-11-05T23:01:16.000Z"
     }
    ],
    "revision": {
     "modelo": "minimaxai/minimax-m3.1-flash",
     "ok": false,
-    "motivo": "La nota añade que la decisión impacta directamente en la cadena de suministro global de metales estratégicos, un hecho que no figura en el titular; además, el título omite el propósito de reducir la dependencia de China."
+    "motivo": "La nota añade que el presupuesto incorpora medidas para enfrentar el Fenómeno El Niño y reactivar la inversión pública, pero el titular solo menciona qué medidas incorpora, sin especificar ninguna; además, el título omite la precisión de que se trata de un dictamen y omite la cifra en soles."
    }
   },
   {
-   "titulo": "Bolsa japonesa se hunde por temor a reglas de IA estadounidense",
-   "nota": "El índice Nikkei registró una caída del 5,8 por ciento durante la jornada. Los inversionistas reaccionaron ante la posibilidad de nuevas regulaciones sobre inteligencia artificial en Estados Unidos.",
-   "tema": "Mundo",
+   "titulo": "Velarde advierte que alza de combustibles frena inflación",
+   "nota": "Julio Velarde señaló que el aumento del precio de los combustibles dificulta la reducción de la inflación. También previó un impacto temporal del Fenómeno El Niño sobre los precios.",
+   "tema": "Dólar y BCRP",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Asia profundiza desplome bursátil: Nikkei cae 5,8% por temores sobre la regulación de la IA en EE.UU.",
-     "fuente": "Bloomberg Línea",
-     "url": "https://www.bloomberglinea.com/mercados/las-bolsas-de-asia-caen-con-fuerza-tras-el-desplome-de-las-acciones-tecnologicas-en-wall-street/",
-     "fecha": "2026-11-06T07:00:22.000Z"
+     "titulo": "Julio Velarde advierte que alza de combustibles dificulta bajar la inflación y prevé impacto temporal de El Niño",
+     "fuente": "La República Economía",
+     "url": "https://larepublica.pe/economia/2026/11/04/julio-velarde-preve-que-impacto-global-de-el-nino-sera-temporal-pero-combustibles-frenan-caida-de-la-inflacion-288040",
+     "fecha": "2026-11-06T15:06:02.000Z"
     }
    ],
    "revision": {
