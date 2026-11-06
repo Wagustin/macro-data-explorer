@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-06T02:32:15.363Z",
+ "actualizado": "2026-11-06T05:31:36.386Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "items": {
   "gestion-3642f6c989": {
@@ -402,12 +402,6 @@
    "sentimiento": "POSITIVO",
    "empresas": []
   },
-  "rpp-7b5a623ce2": {
-   "relevancia": "ALTA",
-   "tema": "Dólar y BCRP",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
   "infobae-a719347e0a": {
    "relevancia": "MEDIA",
    "tema": "Economía y fiscal",
@@ -631,6 +625,24 @@
    "tema": "Economía y fiscal",
    "sentimiento": "NEUTRO",
    "empresas": []
+  },
+  "infobae-82b8f08cdc": {
+   "relevancia": "ALTA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "rpp-1e8a727ad3": {
+   "relevancia": "BAJA",
+   "tema": "Mundo",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "andina-e63bce7ca7": {
+   "relevancia": "MEDIA",
+   "tema": "Energía",
+   "sentimiento": "NEUTRO",
+   "empresas": []
   }
  },
  "descartados": [
@@ -823,6 +835,7 @@
   "el_comercio-11480ed884",
   "rpp-ac84296a70",
   "bloomberg_linea-3a366c49eb",
-  "infobae-bb36fbd7e2"
+  "infobae-bb36fbd7e2",
+  "infobae-bdc9110258"
  ]
 }

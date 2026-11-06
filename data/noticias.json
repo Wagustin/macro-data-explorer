@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-06T02:31:30.881Z",
+  "actualizado": "2026-11-06T05:31:33.891Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 62
+      "items": 57
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -34,7 +34,7 @@
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 12
+      "items": 10
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -44,7 +44,7 @@
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 19
+      "items": 20
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 19
+      "items": 17
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,87 @@
     }
   },
   "noticias": [
+    {
+      "id": "gestion-19c026c11c",
+      "titulo": "Tarifas eléctricas para usuarios domiciliarios en el SEIN se reducirán en noviembre",
+      "url": "https://gestion.pe/economia/tarifas-electricas-para-usuarios-domiciliarios-se-reduciran-en-noviembre-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T04:45:00.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-82b8f08cdc",
+      "titulo": "Keiko Fujimori presentó balance de sus 100 días de gobierno en Mensaje a la Nación: qué dijo sobre seguridad, El Niño y economía",
+      "url": "https://www.infobae.com/peru/2026/11/06/keiko-fujimori-dio-mensaje-a-la-nacion-por-sus-100-dias-de-gobierno-cifras-anuncios-y-balance-de-su-gestion/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-06T04:42:35.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-ba2787a4c3",
+      "titulo": "Mercado boliviano se abre para la pitahaya de Perú: la nueva ruta comercial",
+      "url": "https://gestion.pe/economia/pitahaya-mercado-boliviano-se-abre-para-este-cultivo-en-peru-la-nueva-ruta-comercial-para-pequenos-productores-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T04:15:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-1e8a727ad3",
+      "titulo": "Ecuador autoriza aplazar hasta 90 días el pago de créditos a los afectados por fenómeno El Niño",
+      "url": "https://rpp.pe/mundo/latinoamerica/ecuador-autoriza-aplazar-hasta-90-dias-el-pago-de-creditos-a-los-afectados-por-fenomeno-el-nino-noticia-1716223",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-06T04:02:14.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-a75267db93",
+      "titulo": "El Niño interrumpiría obras durante el verano, ¿qué “salvaría” la construcción en 2027?",
+      "url": "https://gestion.pe/economia/el-nino-interrumpiria-obras-durante-el-verano-en-peru-que-salvaria-la-construccion-en-2027-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T04:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-8f6b22eb51",
+      "titulo": "Precio del dólar hoy en Perú, jueves 5 noviembre: consulta el tipo de cambio para compra y venta",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/05/precio-del-dolar-hoy-en-peru-jueves-5-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-373580",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-06T03:54:53.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-8066a8d06a",
+      "titulo": "El desafío de las mujeres en tecnología: ¿por qué Perú se distancia de México, Chile y Colombia?",
+      "url": "https://gestion.pe/economia/empresas/mujeres-en-tecnologia-peru-registra-el-mayor-retroceso-regional-en-percepcion-sobre-participacion-femenina-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T03:44:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-3c5bfdacd2",
+      "titulo": "En 100 días de mandato, estos son los aciertos y desaciertos ‘económicos’ del Gobierno",
+      "url": "https://www.infobae.com/peru/2026/11/06/en-100-dias-de-mandato-estos-son-los-aciertos-y-desaciertos-economicos-del-gobierno/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-06T03:41:07.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-e63bce7ca7",
+      "titulo": "Ministro Shinno plantea medidas para superar crisis energética en Iquitos",
+      "url": "https://andina.pe/agencia/noticia-ministro-shinno-plantea-medidas-para-superar-crisis-energetica-iquitos-1098833.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-06T03:34:38.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
     {
       "id": "rpp-a1f4d867cc",
       "titulo": "Piura: fuerte lluvia con tormenta eléctrica y granizo inunda calles y mercados de Ayabaca [VIDEO]",
@@ -115,15 +196,6 @@
       "fuente": "RPP Noticias",
       "fecha_iso": "2026-11-06T01:27:13.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-19c026c11c",
-      "titulo": "Tarifas eléctricas para usuarios domiciliarios en el SEIN se reducirán en noviembre",
-      "url": "https://gestion.pe/economia/tarifas-electricas-para-usuarios-domiciliarios-se-reduciran-en-noviembre-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T01:24:09.000Z",
-      "categoria": "Energía",
       "semaforo": "AMARILLO"
     },
     {
@@ -187,15 +259,6 @@
       "fuente": "RPP Noticias",
       "fecha_iso": "2026-11-06T00:43:12.000Z",
       "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-3c5bfdacd2",
-      "titulo": "En 100 días de mandato, estos son los aciertos y desaciertos ‘económicos’ del Gobierno",
-      "url": "https://www.infobae.com/peru/2026/11/06/en-100-dias-de-mandato-estos-son-los-aciertos-y-desaciertos-economicos-del-gobierno/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-06T00:41:01.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -397,15 +460,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-ba2787a4c3",
-      "titulo": "Mercado boliviano se abre para la pitahaya de Perú: la nueva ruta comercial",
-      "url": "https://gestion.pe/economia/pitahaya-mercado-boliviano-se-abre-para-este-cultivo-en-peru-la-nueva-ruta-comercial-para-pequenos-productores-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-05T21:45:07.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-8da7f02ac4",
       "titulo": "MEF y Congreso coordinan aprobación del presupuesto público 2027 antes del plazo límite",
       "url": "https://andina.pe/agencia/noticia-mef-y-congreso-coordinan-aprobacion-del-presupuesto-publico-2027-antes-del-plazo-limite-1098787.aspx",
@@ -469,15 +523,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-8066a8d06a",
-      "titulo": "El desafío de las mujeres en tecnología: ¿por qué Perú se distancia de México, Chile y Colombia?",
-      "url": "https://gestion.pe/economia/empresas/mujeres-en-tecnologia-peru-registra-el-mayor-retroceso-regional-en-percepcion-sobre-participacion-femenina-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-05T21:19:34.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-3642f6c989",
       "titulo": "Efecto “El Niño” en la industria automotriz: el segmento de vehículos que sería el más afectado",
       "url": "https://gestion.pe/economia/empresas/fenomeno-el-nino-y-su-impacto-en-el-sector-automotor-segmento-de-vehiculos-pesados-seria-el-mas-afectado-noticia/",
@@ -532,30 +577,12 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "la_republica-8f6b22eb51",
-      "titulo": "Precio del dólar hoy en Perú, jueves 5 noviembre: consulta el tipo de cambio para compra y venta",
-      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/05/precio-del-dolar-hoy-en-peru-jueves-5-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-373580",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-05T20:34:17.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-034110f14a",
       "titulo": "LG: Demanda de aire acondicionado crecerá entre 10% y 20% por Fenómeno de El Niño, ¿ya se quebró el stock?",
       "url": "https://elcomercio.pe/economia/lg-demanda-de-aire-acondicionado-crecera-entre-10-y-20-por-fenomeno-de-el-nino-se-quebro-el-stock-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-05T20:22:59.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-a75267db93",
-      "titulo": "El Niño interrumpiría obras durante el verano, ¿qué “salvaría” la construcción en 2027?",
-      "url": "https://gestion.pe/economia/el-nino-interrumpiria-obras-durante-el-verano-en-peru-que-salvaria-la-construccion-en-2027-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-05T20:15:00.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -898,15 +925,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-05T12:00:00.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-7b5a623ce2",
-      "titulo": "Precio del dólar Perú y tipo de cambio hoy 05 de noviembre del 2026",
-      "url": "https://rpp.pe/economia/economia/precio-del-dolar-peru-y-tipo-de-cambio-hoy-05-de-noviembre-del-2026-noticia-1716025",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-05T11:05:39.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
