@@ -1754,7 +1754,7 @@ html.dark .pdl-band {
 .pdl-ind-chg { font-size: 12px; }
 .pdl-ind-unit { display: block; margin-top: 2px; font-family: var(--pd-font-ui); font-size: 11px; color: var(--pd-ink-soft); }
 
-.pdl-sec-head { display: flex; flex-direction: column; gap: 20px; padding-bottom: 28px; border-bottom: 1px solid var(--pd-rule); }
+.pdl-sec-head { display: flex; flex-direction: column; gap: 16px; padding-bottom: 20px; border-bottom: 1px solid var(--pd-rule); }
 @media (min-width: 768px) { .pdl-sec-head { flex-direction: row; align-items: flex-end; justify-content: space-between; } }
 .pdl-h2 { font-family: var(--pd-font-read); font-weight: 400; font-size: clamp(28px, 3.4vw, 38px); line-height: 1.12; letter-spacing: -.02em; color: var(--pd-ink); margin: 6px 0 0; }
 .pdl-h2-lg { font-size: clamp(32px, 4.2vw, 46px); }
@@ -1763,7 +1763,7 @@ html.dark .pdl-band {
 .pdl-sub { display: block; font-family: var(--pd-font-mono); font-size: 11px; color: var(--pd-ink-soft); margin-top: 2px; }
 
 .pdl-meth { background: var(--pd-surface); border-top: 1px solid var(--pd-rule); border-bottom: 1px solid var(--pd-rule); }
-.pdl-principle { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 40px 0; border-bottom: 1px solid var(--pd-rule); }
+.pdl-principle { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 28px 0; border-bottom: 1px solid var(--pd-rule); }
 @media (min-width: 1024px) { .pdl-principle { grid-template-columns: repeat(12, minmax(0,1fr)); gap: 40px; align-items: baseline; } }
 .pdl-num-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
 .pdl-num { font-family: var(--pd-font-mono); font-size: 12px; font-weight: 600; color: var(--pd-accent); }
@@ -1779,7 +1779,7 @@ html.dark .pdl-band {
 .pdl-fact dd { margin: 0; font-family: var(--pd-font-mono); font-size: 12px; font-weight: 600; color: var(--pd-ink); text-align: right; }
 
 .pdl-close { background: var(--pd-card); }
-.pdl-perks { list-style: none; margin: 48px 0 0; padding: 24px 0 0; border-top: 1px solid var(--pd-rule); display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 28px; font-family: var(--pd-font-mono); font-size: 11px; color: var(--pd-ink-soft); }
+.pdl-perks { list-style: none; margin: 32px 0 0; padding: 24px 0 0; border-top: 1px solid var(--pd-rule); display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 28px; font-family: var(--pd-font-mono); font-size: 11px; color: var(--pd-ink-soft); }
 .pdl-perks li::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--pd-accent); margin-right: 8px; vertical-align: middle; }
 .pdl-ind-row { flex-wrap: wrap; }
 .pdl-ind-val { white-space: nowrap; }
@@ -2292,10 +2292,10 @@ header[class*="sticky"]::after {
 .pdl-data-sec {
   border-top: 1px solid var(--pd-rule);
   border-bottom: 1px solid var(--pd-rule);
-  padding: 64px 0;
+  padding: 44px 0;
 }
 @media (max-width: 767px) {
-  .pdl-data-sec { padding: 40px 0; }
+  .pdl-data-sec { padding: 30px 0; }
 }
 
 /* ---- 3. Completar bordería de secciones existentes ------------------ */
@@ -2402,6 +2402,8 @@ html.pd-motion.hero-ready [data-hero-seq="0"]  { opacity: 1; transform: translat
 html.pd-motion.hero-ready [data-hero-seq="1"]  { opacity: 1; transform: translateY(0); transition-delay: 120ms; }
 html.pd-motion.hero-ready [data-hero-seq="2"]  { opacity: 1; transform: translateY(0); transition-delay: 240ms; }
 html.pd-motion.hero-ready [data-hero-seq="3"]  { opacity: 1; transform: translateY(0); transition-delay: 360ms; }
+html.pd-motion.hero-ready [data-hero-seq="4"]  { opacity: 1; transform: translateY(0); transition-delay: 480ms; }
+html.pd-motion.hero-ready [data-hero-seq="5"]  { opacity: 1; transform: translateY(0); transition-delay: 560ms; }
 
 /* ---- 10. prefers-reduced-motion: desactivar todo -------------------- */
 @media (prefers-reduced-motion: reduce) {
@@ -2965,14 +2967,14 @@ html.dark .pd-skeleton {
 
 /* Tira «Por dónde empezar» (portada) */
 .pd-start-kicker {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   font-family: var(--pd-font-ui);
   font-size: 11px;
   letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--pd-ink-soft);
 }
-.pd-start-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.pd-start-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 2px; }
 .pd-start-item {
   display: block;
   padding: 0 20px 4px 0;
@@ -3020,4 +3022,11 @@ html.dark .pd-skeleton {
   ::view-transition-group(*),
   ::view-transition-old(*),
   ::view-transition-new(*) { animation: none !important; }
+}
+
+/* Héroe: la columna de texto respira y sus cifras se apoyan en el pie de la rejilla */
+@media (min-width: 1024px) {
+  .pd-hero-grid { align-items: start; }
+  .pd-hero-copy { display: flex; flex-direction: column; }
+  .pd-hero-copy .pdl-stats { margin-top: auto; padding-top: 18px; }
 }
