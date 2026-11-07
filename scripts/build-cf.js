@@ -70,6 +70,7 @@ const FILES_TO_COPY = [
   "pd.css",
   "pd-chart.js",
   "motion.js",
+  "pd-follow.js",
   "ads.js",
   "auth.js",
   "consent.js",
@@ -86,7 +87,7 @@ const FILES_TO_COPY = [
   "tailwind.theme.json"
 ];
 
-const FILES_TO_MINIFY = ["pd.css", "auth.js", "pd-login-field.js", "pd-intro.js", "pd-chart.js", "ads.js", "motion.js", "consent.js", "entrar.js"];
+const FILES_TO_MINIFY = ["pd.css", "pd-follow.js", "auth.js", "pd-login-field.js", "pd-intro.js", "pd-chart.js", "ads.js", "motion.js", "consent.js", "entrar.js"];
 const STATIC_HEADERS = `/*.js
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 /*.css
