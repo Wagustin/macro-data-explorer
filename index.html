@@ -644,6 +644,48 @@
     }
     .pd-hero-search input::placeholder { color: var(--pd-ink-soft); }
     .pd-hero-search input:focus { outline: 2px solid var(--pd-ink); outline-offset: 1px; }
+    .pd-hero-search-box { position: relative; flex: 1 1 260px; min-width: 0; }
+    .pd-hero-search-box input { width: 100%; }
+    .pd-hero-suggest {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(100% + 4px);
+      z-index: 40;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      max-height: 320px;
+      overflow-y: auto;
+      background: var(--pd-card);
+      border: 1px solid var(--pd-ink);
+      box-shadow: none;
+    }
+    .pd-hero-suggest li { border-bottom: 1px solid var(--pd-rule); }
+    .pd-hero-suggest li:last-child { border-bottom: 0; }
+    .pd-hero-suggest button {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+      padding: 9px 12px;
+      text-align: left;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      font-family: var(--pd-font-ui);
+      font-size: 14px;
+      color: var(--pd-ink);
+    }
+    .pd-hero-suggest button:hover,
+    .pd-hero-suggest button[aria-selected="true"] { background: rgba(27, 25, 22, .06); }
+    html.dark .pd-hero-suggest button:hover,
+    html.dark .pd-hero-suggest button[aria-selected="true"] { background: rgba(237, 232, 220, .10); }
+    .pd-hero-suggest .pd-sg-name { font-weight: 600; }
+    .pd-hero-suggest .pd-sg-meta { display: block; margin-top: 2px; font-size: 12px; color: var(--pd-ink-soft); }
+    .pd-hero-suggest .pd-sg-sym { font-family: var(--pd-font-mono, ui-monospace, monospace); font-size: 12px; color: var(--pd-ink-soft); white-space: nowrap; }
+    .pd-hero-suggest .pd-sg-vacio { padding: 10px 12px; font-size: 13px; color: var(--pd-ink-soft); }
     .pd-hero-search .pdl-btn { padding: 11px 18px; }
     .pd-hero-search-hint { flex: 1 0 100%; margin: 2px 0 0; font-family: var(--pd-font-ui); font-size: 12px; color: var(--pd-ink-soft); }
     .pd-link-quiet { font-family: var(--pd-font-ui); font-size: 13px; color: var(--pd-ink-soft); text-decoration: underline; text-underline-offset: 3px; }
@@ -745,10 +787,14 @@
               <p id="pd-forecast-fallback" class="pdl-answer hidden">Abre la terminal para ver la proyección de hoy.</p>
             </div>
             <form class="pd-hero-search" id="pdHeroSearch" role="search" action="/empresas" method="get" data-hero-seq="3">
-              <label class="sr-only" for="pdHeroQuery">Buscar una empresa o un activo</label>
-              <input id="pdHeroQuery" name="q" type="search" autocomplete="off" spellcheck="false"
-                     placeholder="Alicorp, BCP, Southern Copper, dólar…"
-                     aria-describedby="pdHeroSearchHint">
+              <div class="pd-hero-search-box">
+                <label class="sr-only" for="pdHeroQuery">Buscar una empresa o un activo</label>
+                <input id="pdHeroQuery" name="q" type="search" autocomplete="off" spellcheck="false"
+                       placeholder="Alicorp, BCP, Southern Copper, dólar…"
+                       role="combobox" aria-expanded="false" aria-controls="pdHeroSugerencias"
+                       aria-autocomplete="list" aria-describedby="pdHeroSearchHint">
+                <ul id="pdHeroSugerencias" class="pd-hero-suggest" role="listbox" aria-label="Sugerencias" hidden></ul>
+              </div>
               <button type="submit" class="pdl-btn pdl-btn-primary">Buscar</button>
               <p id="pdHeroSearchHint" class="pd-hero-search-hint">Busca por nombre o nemónico entre las 182 emisoras de la BVL.</p>
             </form>
@@ -1717,6 +1763,138 @@
     })();
     </script>
     <script src="/pd-intro.js" defer></script>
-    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "bc9abca1e97b4bcaa6261b23afc498e5"}'></script>
+    <script>
+  // Sugerencias del buscador de portada: nombre, nemónico y sector mientras se escribe.
+  (function () {
+    var form = document.getElementById("pdHeroSearch");
+    if (!form) return;
+    var input = document.getElementById("pdHeroQuery");
+    var lista = document.getElementById("pdHeroSugerencias");
+    if (!input || !lista) return;
+
+    var timer = null;
+    var ultimaConsulta = "";
+    var indice = -1;
+
+    function cerrar() {
+      lista.hidden = true;
+      lista.innerHTML = "";
+      input.setAttribute("aria-expanded", "false");
+      input.removeAttribute("aria-activedescendant");
+      indice = -1;
+    }
+
+    function destino(symbol) {
+      var s = String(symbol || "");
+      if (/\.LM$/i.test(s)) return "/empresa/" + encodeURIComponent(s.replace(/\.LM$/i, ""));
+      return "/explorer?symbol=" + encodeURIComponent(s);
+    }
+
+    function opciones() {
+      return Array.prototype.slice.call(lista.querySelectorAll("button"));
+    }
+
+    function seleccionar(i) {
+      var ops = opciones();
+      if (!ops.length) return;
+      if (i < 0) i = ops.length - 1;
+      if (i >= ops.length) i = 0;
+      indice = i;
+      ops.forEach(function (b, j) { b.setAttribute("aria-selected", j === i ? "true" : "false"); });
+      input.setAttribute("aria-activedescendant", ops[i].id);
+      ops[i].scrollIntoView({ block: "nearest" });
+    }
+
+    function pintar(resultados, consulta) {
+      lista.innerHTML = "";
+      if (!resultados.length) {
+        var vacio = document.createElement("li");
+        vacio.className = "pd-sg-vacio";
+        vacio.textContent = "Ninguna empresa coincide con «" + consulta + "». Prueba con el nemónico.";
+        lista.appendChild(vacio);
+      } else {
+        resultados.slice(0, 8).forEach(function (r, i) {
+          var li = document.createElement("li");
+          li.setAttribute("role", "presentation");
+          var b = document.createElement("button");
+          b.type = "button";
+          b.id = "pdHeroSug" + i;
+          b.setAttribute("role", "option");
+          b.setAttribute("aria-selected", "false");
+          var izq = document.createElement("span");
+          izq.className = "pd-sg-name";
+          izq.textContent = r.name;
+          var meta = document.createElement("span");
+          meta.className = "pd-sg-meta";
+          meta.textContent = [r.sector, r.country].filter(Boolean).join(" · ");
+          izq.appendChild(meta);
+          var der = document.createElement("span");
+          der.className = "pd-sg-sym";
+          der.textContent = r.symbol;
+          b.appendChild(izq);
+          b.appendChild(der);
+          b.addEventListener("click", function () { ir(r.symbol); });
+          li.appendChild(b);
+          lista.appendChild(li);
+        });
+      }
+      lista.hidden = false;
+      input.setAttribute("aria-expanded", "true");
+      indice = -1;
+    }
+
+    function ir(symbol) {
+      window.location.href = destino(symbol);
+    }
+
+    function buscar(q) {
+      if (q === ultimaConsulta) return;
+      ultimaConsulta = q;
+      fetch("/api/search?q=" + encodeURIComponent(q), { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) {
+          if (!d || q !== input.value.trim()) return;
+          pintar(d.results || [], q);
+        })
+        .catch(function () { cerrar(); });
+    }
+
+    input.addEventListener("input", function () {
+      var q = input.value.trim();
+      clearTimeout(timer);
+      if (q.length < 2) { cerrar(); return; }
+      timer = setTimeout(function () { buscar(q); }, 160);
+    });
+
+    input.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape") { cerrar(); return; }
+      if (lista.hidden) return;
+      if (ev.key === "ArrowDown") { ev.preventDefault(); seleccionar(indice + 1); }
+      else if (ev.key === "ArrowUp") { ev.preventDefault(); seleccionar(indice - 1); }
+      else if (ev.key === "Enter" && indice >= 0) {
+        ev.preventDefault();
+        var ops = opciones();
+        if (ops[indice]) ops[indice].click();
+      }
+    });
+
+    document.addEventListener("mousedown", function (ev) {
+      if (!form.contains(ev.target)) cerrar();
+    });
+
+    form.addEventListener("submit", function (ev) {
+      var q = input.value.trim();
+      // Con una sugerencia marcada, Enter/click va directo a la ficha; si no, a la lista filtrada.
+      if (indice >= 0) { ev.preventDefault(); opciones()[indice].click(); return; }
+      if (!q) { ev.preventDefault(); input.focus(); }
+    });
+
+    input.addEventListener("focus", function () {
+      var q = input.value.trim();
+      if (q.length >= 2 && lista.hidden) buscar(q);
+    });
+  })();
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "bc9abca1e97b4bcaa6261b23afc498e5"}'></script>
 </body>
 </html>
