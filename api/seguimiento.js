@@ -47,6 +47,21 @@ async function readBody(req) {
   }
 }
 
+// Porcentaje de aviso: número entre 0 y 90, o null si viene vacío.
+function readPct(value) {
+  if (value === undefined || value === null || value === "") return { ok: true, value: null };
+  const n = Number(value);
+  if (!Number.isFinite(n) || n <= 0 || n > 90) return { ok: false, value: null };
+  return { ok: true, value: n };
+}
+
+// Precio de referencia: número mayor que 0, o null si viene vacío.
+function readBase(value) {
+  if (value === undefined || value === null || value === "") return null;
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
+
 export default async function handler(req, res) {
   applyCors(req, res, "GET, POST, DELETE, OPTIONS");
   if (req.method === "OPTIONS") {
@@ -77,7 +92,7 @@ export default async function handler(req, res) {
 
   if (req.method === "GET") {
     try {
-      const r = await db(`?user_id=eq.${encodeURIComponent(user.id)}&select=simbolo,alerta_arriba,alerta_abajo&order=creado.asc`);
+      const r = await db(`?user_id=eq.${encodeURIComponent(user.id)}&select=simbolo,alerta_arriba,alerta_abajo,alerta_pct_arriba,alerta_pct_abajo,alerta_diaria,precio_base&order=creado.asc`);
       if (!r.ok) {
         return send(res, 502, { error: "No se pudieron obtener los símbolos de seguimiento." });
       }
@@ -113,6 +128,12 @@ export default async function handler(req, res) {
       abajo = n;
     }
 
+    const pctArriba = readPct(body.alerta_pct_arriba);
+    const pctAbajo = readPct(body.alerta_pct_abajo);
+    if (!pctArriba.ok || !pctAbajo.ok) {
+      return send(res, 400, { error: "El porcentaje de aviso debe estar entre 0 y 90." });
+    }
+
     try {
       const currRes = await db(`?user_id=eq.${encodeURIComponent(user.id)}&select=simbolo`);
       if (!currRes.ok) {
@@ -130,6 +151,10 @@ export default async function handler(req, res) {
         simbolo: rawSimbolo,
         alerta_arriba: arriba,
         alerta_abajo: abajo,
+        alerta_pct_arriba: pctArriba.value,
+        alerta_pct_abajo: pctAbajo.value,
+        precio_base: readBase(body.precio_base),
+        alerta_diaria: body.alerta_diaria === undefined ? true : Boolean(body.alerta_diaria),
       };
 
       const upsertRes = await db("?on_conflict=user_id,simbolo", {
@@ -142,7 +167,7 @@ export default async function handler(req, res) {
         return send(res, 502, { error: "No se pudo guardar el símbolo." });
       }
 
-      const listRes = await db(`?user_id=eq.${encodeURIComponent(user.id)}&select=simbolo,alerta_arriba,alerta_abajo&order=creado.asc`);
+      const listRes = await db(`?user_id=eq.${encodeURIComponent(user.id)}&select=simbolo,alerta_arriba,alerta_abajo,alerta_pct_arriba,alerta_pct_abajo,alerta_diaria,precio_base&order=creado.asc`);
       const list = listRes.ok ? await listRes.json() : [];
       return send(res, 200, { ok: true, simbolos: list });
     } catch (e) {
@@ -167,7 +192,7 @@ export default async function handler(req, res) {
         return send(res, 502, { error: "No se pudo eliminar el símbolo." });
       }
 
-      const listRes = await db(`?user_id=eq.${encodeURIComponent(user.id)}&select=simbolo,alerta_arriba,alerta_abajo&order=creado.asc`);
+      const listRes = await db(`?user_id=eq.${encodeURIComponent(user.id)}&select=simbolo,alerta_arriba,alerta_abajo,alerta_pct_arriba,alerta_pct_abajo,alerta_diaria,precio_base&order=creado.asc`);
       const list = listRes.ok ? await listRes.json() : [];
       return send(res, 200, { ok: true, simbolos: list });
     } catch (e) {

@@ -26,3 +26,8 @@ test("seguimiento requires an authorization header", async () => {
   await handler({ method: "GET", headers: {} }, res);
   assert.equal(res.statusCode, 401);
 });
+
+test("plan seguimientoMax values", () => {
+  assert.equal(PLANS.boletin.seguimientoMax, 15);
+  assert.equal(PLANS.pro.seguimientoMax, 20);
+});
