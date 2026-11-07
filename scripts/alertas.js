@@ -89,12 +89,19 @@ Recibes este aviso porque sigues este activo en PerData. Puedes quitarlo en tu c
   return { to, subject, html, text };
 }
 
+// Si la migración 0013 aún no está aplicada, PostgREST devuelve 400 por las columnas
+// nuevas; en ese caso se lee con las columnas antiguas y los avisos por porcentaje
+// quedan inactivos hasta que la migración exista.
+const CAMPOS_SEGUIMIENTO = "user_id,simbolo,alerta_arriba,alerta_abajo,precio_base,alerta_pct_arriba,alerta_pct_abajo";
+const CAMPOS_SEGUIMIENTO_BASE = "user_id,simbolo,alerta_arriba,alerta_abajo";
+
 async function fetchSeguimiento(url, key) {
   const all = [];
   const pageSize = 1000;
+  let campos = CAMPOS_SEGUIMIENTO;
   for (let offset = 0; ; offset += pageSize) {
     const to = offset + pageSize - 1;
-    const res = await fetch(`${url}/rest/v1/seguimiento?select=user_id,simbolo,alerta_arriba,alerta_abajo,precio_base,alerta_pct_arriba,alerta_pct_abajo`, {
+    const res = await fetch(`${url}/rest/v1/seguimiento?select=${campos}`, {
       headers: {
         apikey: key,
         Authorization: `Bearer ${key}`,
@@ -105,6 +112,11 @@ async function fetchSeguimiento(url, key) {
     });
     if (!res.ok) {
       if (res.status === 416) break;
+      if (res.status === 400 && campos !== CAMPOS_SEGUIMIENTO_BASE) {
+        campos = CAMPOS_SEGUIMIENTO_BASE;
+        offset -= pageSize;
+        continue;
+      }
       const err = await res.text().catch(() => "");
       throw new Error(`HTTP ${res.status} al leer seguimiento: ${err.slice(0, 100)}`);
     }
