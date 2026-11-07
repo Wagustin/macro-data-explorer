@@ -536,6 +536,32 @@ fs.mkdirSync(path.dirname(path.resolve(previewPath)), { recursive: true });
 fs.writeFileSync(previewPath, fill(PREVIEW_PLAN === "gratis" ? htmlGratis : htmlCompleto, previewPersonal));
 console.log(`Vista previa: ${PREVIEW_PLAN} · mercados: ${f.markets.length} · SMV: ${f.smvFacts.length} · titulares: ${f.headlines.length} · IA: ${ai ? "sí" : "no"}`);
 
+// Empresas que el usuario sigue desde su cuenta (tabla seguimiento). Devuelve [] si algo falla.
+async function seguimientoDe(email) {
+  const base = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
+  const key = process.env.SUPABASE_SERVICE_KEY || "";
+  if (!base || !key) return [];
+  try {
+    const u = await fetch(`${base}/rest/v1/users?email=eq.${encodeURIComponent(email)}&select=id`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!u.ok) return [];
+    const rows = await u.json();
+    const id = rows && rows[0] && rows[0].id;
+    if (!id) return [];
+    const s = await fetch(`${base}/rest/v1/seguimiento?user_id=eq.${encodeURIComponent(id)}&select=simbolo&order=creado.asc`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!s.ok) return [];
+    const list = await s.json();
+    return Array.isArray(list) ? list.map((r) => r.simbolo).filter(Boolean) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
 if (!DRY && !PREVIEW) {
   if (!process.env.RESEND_API_KEY) throw new Error("Falta RESEND_API_KEY");
   // One send per day (Lima): the scheduled run and the server's backup trigger can both fire,
@@ -577,6 +603,14 @@ if (!DRY && !PREVIEW) {
   }
   const owners = new Set((process.env.BOLETIN_TO || "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean));
   for (const x of list) x.plan = paid.has(x.email) || owners.has(x.email) ? "boletin" : "gratis";
+
+  // Paid-plan subscribers pick their companies in /cuenta (tabla seguimiento); when the account
+  // has none (or the lookup fails) we fall back to the token list (x.empresas), as before.
+  for (const x of list) {
+    if (x.plan !== "boletin") continue;
+    const seguidos = await seguimientoDe(x.email);
+    if (seguidos.length) x.empresas = seguidos;
+  }
 
   // Company cards are built once per company and shared between subscribers
   const wanted = [...new Set(list.filter((x) => x.plan === "boletin").flatMap((x) => x.empresas || []))];
