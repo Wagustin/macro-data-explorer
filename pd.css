@@ -3026,7 +3026,7 @@ html.dark .pd-skeleton {
 
 /* Héroe: la columna de texto respira y sus cifras se apoyan en el pie de la rejilla */
 @media (min-width: 1024px) {
-  .pd-hero-grid { align-items: start; }
+  .pd-hero-grid { align-items: stretch; }
   .pd-hero-copy { display: flex; flex-direction: column; }
   .pd-hero-copy .pdl-stats { margin-top: auto; padding-top: 18px; }
 }
