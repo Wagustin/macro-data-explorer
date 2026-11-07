@@ -1,6 +1,42 @@
 // PerData search catalog: SMV-listed Peruvian companies, macro indicators, and
 // assets backed by the official datasets in data/official/.
 import { applyCors, setCdnCache, handleRateLimit } from "./_lib/ratelimit.js";
+import EMPRESAS from "../data/empresas.json" with { type: "json" };
+
+// La BVL publica las razones sociales en mayúsculas; en la lista de sugerencias se leen mejor
+// con mayúscula inicial, dejando intactas las siglas y las formas societarias.
+const SIGLAS = new Set(["S.A.", "S.A.A.", "S.A.C.", "S.R.L.", "BBVA", "AFP", "BVL", "RPP", "SEAL", "AIB", "XP", "OH!", "S.A", "PERÚ", "PERU", "FIBRA"]);
+const MENORES = new Set(["de", "del", "la", "las", "los", "y", "e", "en"]);
+function nombreLegible(raw) {
+  return String(raw || "")
+    .trim()
+    .split(/\s+/)
+    .map((w, i) => {
+      const up = w.toUpperCase();
+      if (SIGLAS.has(up) && up !== "PERU" && up !== "PERÚ") return up;
+      if (/^\(?([A-Za-z]\.){2,}[-)]*$/.test(w)) return up;
+      const lw = w.toLowerCase();
+      if (i > 0 && MENORES.has(lw)) return lw;
+      return lw.replace(/(^|[-(«"])(\p{L})/gu, (m, a, b) => a + b.toUpperCase());
+    })
+    .join(" ");
+}
+
+// Sectores tal como los publica la BVL, en una etiqueta legible.
+function sectorLegible(sec) {
+  const t = String(sec || "").toUpperCase();
+  const mapa = {
+    "ADMINISTRADORAS DE FONDOS DE PENSIONES": "AFP",
+    "BANCOS Y FINANCIERAS": "Bancos",
+    "SERVICIOS PÚBLICOS": "Servicios Públicos",
+    "INDUSTRIALES": "Industriales",
+    "MINERAS": "Mineras",
+    "AGRARIO": "Agrario",
+    "SEGUROS": "Seguros",
+    "DIVERSAS": "Diversas",
+  };
+  return mapa[t] || (sec ? String(sec) : "Diversas");
+}
 
 export const CATALOG = [
   { symbol: "SCCO.LM", name: "Southern Copper Corporation", sector: "Minería", country: "Perú / México", category: "bvl_pe", tags: ["cobre", "toquepala", "cuajone", "bvl", "spcc"] },
@@ -92,6 +128,50 @@ export const CATALOG = [
   { symbol: "^FVX", name: "Rendimiento del Tesoro de EE.UU. a 5 años", sector: "Tasas", country: "Global", category: "fx", tags: ['tesoro', 'bonos'] },
 ];
 
+
+// Todas las emisoras de la BVL que publican las fichas: nemónico y, si existe, el símbolo
+// con el que se proyecta. Se deduplica contra CATALOG para no repetir entradas ya curadas.
+const EMISORAS = (() => {
+  const vistos = new Set(CATALOG.map((c) => c.symbol.toUpperCase()));
+  const extra = [];
+  for (const e of EMPRESAS.emisores || []) {
+    const nombre = e.razonSocial || "";
+    const sector = sectorLegible(e.sector);
+    const palabras = nombre
+      .toLowerCase()
+      .replace(/[.,]/g, " ")
+      .split(/\s+/)
+      .filter((w) => w.length > 2);
+    for (const v of e.valores || []) {
+      const nemo = String(v.nemonico || "").toUpperCase();
+      if (!nemo) continue;
+      const objetivos = [nemo];
+      const proy = String(v.simbolo_proyeccion || "").toUpperCase();
+      if (proy && proy !== nemo) objetivos.push(proy);
+      for (const sym of objetivos) {
+        const clave = (sym.endsWith(".LM") || sym.includes("=") ? sym : sym + ".LM").toUpperCase();
+        if (vistos.has(clave)) continue;
+        vistos.add(clave);
+        extra.push({
+          symbol: clave,
+          name: nombreLegible(nombre),
+          sector,
+          country: "Perú",
+          category: "bvl_pe",
+          tags: [nemo.toLowerCase(), ...palabras.slice(0, 6)],
+        });
+      }
+    }
+  }
+  return extra;
+})();
+
+// «tradable» cuenta los activos con datos de mercado de la lista curada; las emisoras
+// añadidas sólo amplían la búsqueda, no la cobertura declarada.
+const TRADABLE_CURADO = CATALOG.filter((c) => c.category !== "unlisted").length;
+
+for (const extra of EMISORAS) CATALOG.push(extra);
+
 export default async function handler(req, res) {
   applyCors(req, res, "GET, OPTIONS");
 
@@ -106,7 +186,7 @@ export default async function handler(req, res) {
   const hasAuth = Boolean(req.headers?.authorization);
   setCdnCache(res, hasAuth);
 
-  const tradable = CATALOG.filter(c => c.category !== "unlisted").length;
+  const tradable = TRADABLE_CURADO;
   const total = CATALOG.length;
 
   if (req.query.stats === "1" || req.query.stats === "true") {
