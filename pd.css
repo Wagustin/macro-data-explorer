@@ -2889,4 +2889,75 @@ html.dark .pd-skeleton {
 .pd-entrar-form-wrap,
 .pd-entrar-form-col { padding-bottom: var(--pd-consent-h, 0px); }
 
-
+/* Campana de seguimiento (pd-follow.js) y botón de acento */
+.pd-btn-accent {
+  background: var(--pd-peru);
+  color: #ffffff;
+  border: 1px solid var(--pd-peru);
+}
+.pd-btn-accent:hover {
+  background: #a80c26;
+  border-color: #a80c26;
+}
+.pd-bell-slot { position: relative; display: inline-block; }
+.pd-bell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--pd-rule);
+  background: transparent;
+  color: var(--pd-ink-soft);
+  cursor: pointer;
+}
+.pd-bell:hover { color: var(--pd-ink); border-color: var(--pd-ink); }
+.pd-bell[data-on="true"] { color: var(--pd-ink); border-color: var(--pd-ink); }
+.pd-bell-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 60;
+  width: 288px;
+  padding: 14px 16px;
+  background: var(--pd-card);
+  border: 1px solid var(--pd-rule);
+  text-align: left;
+}
+.pd-bell-title {
+  margin: 0 0 10px;
+  font-family: var(--pd-font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--pd-ink-soft);
+}
+.pd-bell-sep { border-top: 1px solid var(--pd-rule); margin: 8px 0; }
+.pd-bell-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-family: var(--pd-font-ui);
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--pd-ink);
+}
+.pd-bell-row input[type="number"] {
+  width: 62px;
+  padding: 2px 6px;
+  border: 1px solid var(--pd-rule);
+  background: var(--pd-card);
+  color: var(--pd-ink);
+  font-family: var(--pd-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-variant-numeric: tabular-nums;
+}
+.pd-bell-acciones { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.pd-bell-acciones .pd-btn { padding: 7px 12px; font-size: 13px; }
+.pd-bell-status { margin: 8px 0 0; font-family: var(--pd-font-ui); font-size: 12px; line-height: 1.4; color: var(--pd-ink-soft); }
+.pd-bell-status a { color: var(--pd-ink); text-decoration: underline; }
+@media (max-width: 479px) {
+  .pd-bell-panel { width: min(288px, calc(100vw - 40px)); }
+}

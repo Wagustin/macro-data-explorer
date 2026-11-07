@@ -1436,10 +1436,18 @@ const state = {
             <div class="text-[11px] text-ink-soft">${escapeHTML(item.sector || 'Mercado')} · ${escapeHTML(item.country || 'Global')}</div>
           </div>
           <span class="text-xs font-bold font-mono tnum px-2 py-1 bg-[#F5F5F7] dark:bg-[#2C2C2E] text-black dark:text-white rounded-md border border-[#E5E5EA] dark:border-[#3A3A3C]">${escapeHTML(item.symbol)}</span>
+          <span class="pd-bell-slot" data-symbol="${escapeHTML(item.symbol)}"></span>
         </div>
       `).join("");
 
       targetDiv.classList.remove("hidden");
+
+      if (window.PD_Follow) {
+        targetDiv.querySelectorAll(".pd-bell-slot").forEach(slot => {
+          slot.addEventListener("click", ev => ev.stopPropagation());
+          window.PD_Follow.bind(slot, slot.getAttribute("data-symbol"), { precio: null });
+        });
+      }
 
       targetDiv.querySelectorAll(".search-item").forEach(el => {
         el.addEventListener("click", () => {
@@ -2554,6 +2562,7 @@ const state = {
       <span>Mi cuenta</span>
     </a>
   </nav>
+<script defer src="/pd-follow.js"></script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "bc9abca1e97b4bcaa6261b23afc498e5"}'></script>
 </body>
 </html>
