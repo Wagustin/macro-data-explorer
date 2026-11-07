@@ -629,6 +629,30 @@
 <link rel="preload" as="style" href="/tw.css" data-async-css>
   <noscript><link rel="stylesheet" href="/tw.css"></noscript>
   <script>document.querySelectorAll("link[data-async-css]").forEach(function (l) { l.rel = "stylesheet"; });</script>
+  <style>
+    .pd-hero-search { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 18px 0 14px; }
+    .pd-hero-search input {
+      flex: 1 1 260px;
+      min-width: 0;
+      padding: 10px 12px;
+      font-family: var(--pd-font-ui);
+      font-size: 15px;
+      color: var(--pd-ink);
+      background: var(--pd-card);
+      border: 1px solid var(--pd-rule);
+      border-radius: 0;
+    }
+    .pd-hero-search input::placeholder { color: var(--pd-ink-soft); }
+    .pd-hero-search input:focus { outline: 2px solid var(--pd-ink); outline-offset: 1px; }
+    .pd-hero-search .pdl-btn { padding: 11px 18px; }
+    .pd-hero-search-hint { flex: 1 0 100%; margin: 2px 0 0; font-family: var(--pd-font-ui); font-size: 12px; color: var(--pd-ink-soft); }
+    .pd-link-quiet { font-family: var(--pd-font-ui); font-size: 13px; color: var(--pd-ink-soft); text-decoration: underline; text-underline-offset: 3px; }
+    .pd-link-quiet:hover { color: var(--pd-ink); }
+    .pdl-btn-boletin { background: transparent; color: var(--pd-ink) !important; border: 1px solid var(--pd-ink); }
+    .pdl-btn-boletin:hover { background: var(--pd-ink); color: var(--pd-paper) !important; }
+    html.dark .pdl-btn-boletin { border-color: var(--pd-ink); color: var(--pd-ink) !important; }
+    html.dark .pdl-btn-boletin:hover { background: var(--pd-ink); color: #141311 !important; }
+  </style>
 </head>
 <body class="bg-paper text-ink min-h-screen antialiased transition-colors duration-200 flex flex-col justify-between">
 
@@ -720,9 +744,19 @@
               </p>
               <p id="pd-forecast-fallback" class="pdl-answer hidden">Abre la terminal para ver la proyección de hoy.</p>
             </div>
-            <div class="pd-home-actions flex flex-col sm:flex-row items-stretch sm:items-center gap-3" data-hero-seq="3">
+            <form class="pd-hero-search" id="pdHeroSearch" role="search" action="/empresas" method="get" data-hero-seq="3">
+              <label class="sr-only" for="pdHeroQuery">Buscar una empresa o un activo</label>
+              <input id="pdHeroQuery" name="q" type="search" autocomplete="off" spellcheck="false"
+                     placeholder="Alicorp, BCP, Southern Copper, dólar…"
+                     aria-describedby="pdHeroSearchHint">
+              <button type="submit" class="pdl-btn pdl-btn-primary">Buscar</button>
+              <p id="pdHeroSearchHint" class="pd-hero-search-hint">Busca por nombre o nemónico entre las 182 emisoras de la BVL.</p>
+            </form>
+
+            <div class="pd-home-actions flex flex-col sm:flex-row items-stretch sm:items-center gap-3" data-hero-seq="4">
               <a href="/explorer?symbol=PEN%3DX" class="pdl-btn pdl-btn-primary">Abrir la terminal <span aria-hidden="true">&#8599;</span></a>
-              <a href="#metodologia" class="pdl-btn pdl-btn-secondary">Cómo lo calculamos</a>
+              <a href="/boletin#suscribirse" class="pdl-btn pdl-btn-boletin">Recibir el boletín gratis</a>
+              <a href="#metodologia" class="pd-link-quiet">Cómo lo calculamos</a>
             </div>
             <dl class="pdl-stats">
               <div><dt class="pdl-label">Activos con datos</dt><dd class="pdl-stat-val"><span data-stat="tradable-count">61</span></dd></div>

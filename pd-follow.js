@@ -7,6 +7,7 @@
   "use strict";
 
   var cache = null; // { simbolos: {SYM: fila}, permitido: bool, limite: number }
+  var precios = {}; // { SYM: último cierre } resuelto a demanda desde /api/historical
   var sinSesion = false;
   var abierto = null; // { panel, mount, symbol }
 
@@ -69,6 +70,25 @@
     }).catch(function () { return { ok: false, status: 0, data: {} }; });
   }
 
+  // Último cierre publicado para un símbolo. Se usa como precio de referencia del aviso
+  // por porcentaje cuando el panel se abre desde el buscador, donde no hay precio a la vista.
+  function ultimoCierre(symbol) {
+    if (precios[symbol] !== undefined) return Promise.resolve(precios[symbol]);
+    return fetch("/api/historical?symbol=" + encodeURIComponent(symbol) + "&range=1mo&interval=1d", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        var serie = (d && d.series) || [];
+        var cierre = null;
+        for (var i = serie.length - 1; i >= 0; i--) {
+          var c = Number(serie[i].close);
+          if (Number.isFinite(c) && c > 0) { cierre = c; break; }
+        }
+        precios[symbol] = cierre;
+        return cierre;
+      })
+      .catch(function () { precios[symbol] = null; return null; });
+  }
+
   function aplicarCache(symbol, fila) {
     if (!cache) cache = { simbolos: {}, permitido: true, limite: 0 };
     if (fila) cache.simbolos[symbol] = fila;
@@ -103,6 +123,7 @@
     panel.innerHTML =
       '<p class="pd-bell-title">Avisarme de ' + escapar(symbol) + "</p>" +
       '<label class="pd-bell-row"><input type="checkbox" id="' + idBase + '_diaria" checked> Recibir cada mañana en el boletín</label>' +
+      '<p class="pd-bell-ref tnum"></p>' +
       '<div class="pd-bell-sep"></div>' +
       '<label class="pd-bell-row"><input type="radio" name="' + idBase + '" value="sin" checked> Sin aviso de precio</label>' +
       '<label class="pd-bell-row"><input type="radio" name="' + idBase + '" value="bajar"> Avisar si baja un ' +
@@ -123,6 +144,23 @@
     var baja = panel.querySelector("#" + idBase + "_baja");
     var sube = panel.querySelector("#" + idBase + "_sube");
     var btnSoltar = panel.querySelector(".pd-bell-soltar");
+
+    var referencia = opts && Number(opts.precio) > 0 ? Number(opts.precio) : null;
+    var lineaRef = panel.querySelector(".pd-bell-ref");
+
+    function pintaReferencia() {
+      if (!lineaRef) return;
+      lineaRef.textContent = referencia
+        ? "Referencia: " + referencia.toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 4 })
+        : "Sin precio de referencia disponible.";
+    }
+
+    if (!referencia) {
+      ultimoCierre(symbol).then(function (c) {
+        if (c) { referencia = c; pintaReferencia(); }
+      });
+    }
+    pintaReferencia();
 
     var siguiendo = !!(cache && cache.simbolos[symbol]);
     if (siguiendo) {
@@ -151,10 +189,10 @@
         estado.textContent = "Escribe un porcentaje entre 1 y 90.";
         return;
       }
-      var precio = opts && Number(opts.precio) > 0 ? Number(opts.precio) : null;
+      var precio = referencia;
       if (modo !== "sin" && !precio) {
-        estado.innerHTML = 'Necesitamos un precio de referencia; inténtalo desde la <a href="/empresa/' +
-          encodeURIComponent(symbol) + '">ficha de la empresa</a>.';
+        estado.innerHTML = 'Esta empresa no tiene precio de mercado, así que no podemos calcular el porcentaje. ' +
+          'Puedes recibirla igualmente cada mañana en el <a href="/boletin">boletín</a>.';
         return;
       }
       estado.textContent = "Guardando...";
