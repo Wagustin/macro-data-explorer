@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-07T12:01:30.955Z",
+  "actualizado": "2026-11-07T12:59:22.576Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,17 +24,17 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 53
+      "items": 52
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 51
+      "items": 53
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 2
+      "items": 1
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -44,7 +44,7 @@
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 15
+      "items": 17
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -63,6 +63,33 @@
     }
   },
   "noticias": [
+    {
+      "id": "andina-28b761eb1b",
+      "titulo": "MEF estima que Perú podría entrar a la OCDE en segundo semestre de 2028",
+      "url": "https://andina.pe/agencia/noticia-mef-estima-peru-podria-entrar-a-ocde-segundo-semestre-2028-1098885.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-07T12:49:05.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "infobae-fcd65a9565",
+      "titulo": "Este es el precio de la gasolina en Lima hoy",
+      "url": "https://www.infobae.com/peru/2026/11/07/este-es-el-precio-de-la-gasolina-en-lima-hoy/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-07T12:16:22.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-e31042c4fa",
+      "titulo": "Precio del dólar hoy en Perú, sábado 7 noviembre: consulta el tipo de cambio para compra y venta",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/06/precio-del-dolar-hoy-en-peru-sabado-7-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-332376",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-07T12:02:46.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "el_comercio-0a06a5b289",
       "titulo": "Hortalizas y pescados subieron más de 23% de precio en un año en Lima, ¿qué explica el alza?",
@@ -100,18 +127,18 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-98454fcf4b",
-      "titulo": "El papa en el Centro de Lima: negocios duplicarían ventas y hoteles alcanzarían el 100% de ocupación",
-      "url": "https://gestion.pe/economia/empresas/el-papa-leon-xiv-visitara-el-centro-de-lima-negocios-duplicarian-ventas-y-hoteles-alcanzarian-el-100-de-ocupacion-noticia/",
+      "id": "gestion-45f330ac10",
+      "titulo": "Gloria acelera su negocio de panetones: ¿qué pasa dentro de su planta y cuánto espera crecer?",
+      "url": "https://gestion.pe/economia/empresas/que-hay-detras-del-paneton-gloria-asi-prepara-su-negocio-para-navidad-y-busca-crecer-hasta-10-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-07T10:30:00.000Z",
       "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-45f330ac10",
-      "titulo": "Gloria acelera su negocio de panetones: ¿qué pasa dentro de su planta y cuánto espera crecer?",
-      "url": "https://gestion.pe/economia/empresas/que-hay-detras-del-paneton-gloria-asi-prepara-su-negocio-para-navidad-y-busca-crecer-hasta-10-noticia/",
+      "id": "gestion-98454fcf4b",
+      "titulo": "El papa en el Centro de Lima: negocios duplicarían ventas y hoteles alcanzarían el 100% de ocupación",
+      "url": "https://gestion.pe/economia/empresas/el-papa-leon-xiv-visitara-el-centro-de-lima-negocios-duplicarian-ventas-y-hoteles-alcanzarian-el-100-de-ocupacion-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-07T10:30:00.000Z",
       "categoria": "Bolsa y empresas",
@@ -357,15 +384,6 @@
       "url": "https://elcomercio.pe/economia/dia-1/sap-da-sus-primeros-pasos-con-agentes-de-ia-en-el-peru-que-industrias-ya-exploran-esta-tecnologia-inteligencia-artificial-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-06T22:54:42.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-fd6118f47a",
-      "titulo": "Perú acelera sus exportaciones a China: en nueve meses ya roza lo vendido en todo el 2025 por boom de minerales",
-      "url": "https://rpp.pe/economia/economia/peru-acelera-sus-exportaciones-a-china-en-nueve-meses-ya-roza-lo-vendido-en-todo-el-2025-por-boom-de-minerales-noticia-1716429",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-06T22:45:08.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
@@ -856,15 +874,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-fe95c3a08b",
-      "titulo": "BCR aprobó nuevo Estándar QR Perú para fortalecer interoperabilidad de pagos digitales",
-      "url": "https://andina.pe/agencia/noticia-bcr-aprobo-nuevo-estandar-qr-peru-para-fortalecer-interoperabilidad-pagos-digitales-1098857.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-06T13:34:20.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "bloomberg_linea-f8d82ad5ef",
       "titulo": "El optimismo de Warsh respecto a la inteligencia artificial podría limitar sus opciones en la Fed",
       "url": "https://www.bloomberglinea.com/opinion/el-optimismo-de-warsh-respecto-a-la-inteligencia-artificial-podria-limitar-sus-opciones-en-la-fed/",
@@ -1014,33 +1023,6 @@
       "url": "https://gestion.pe/economia/el-nino-interrumpiria-obras-durante-el-verano-en-peru-que-salvaria-la-construccion-en-2027-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-06T04:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-8f6b22eb51",
-      "titulo": "Precio del dólar hoy en Perú, jueves 5 noviembre: consulta el tipo de cambio para compra y venta",
-      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/05/precio-del-dolar-hoy-en-peru-jueves-5-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-373580",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-06T03:54:53.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-8066a8d06a",
-      "titulo": "El desafío de las mujeres en tecnología: ¿por qué Perú se distancia de México, Chile y Colombia?",
-      "url": "https://gestion.pe/economia/empresas/mujeres-en-tecnologia-peru-registra-el-mayor-retroceso-regional-en-percepcion-sobre-participacion-femenina-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T03:44:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-0dbf379a6d",
-      "titulo": "Juliaca inicia la modernización integral de su aeropuerto con una inversión superior a los US$200 millones",
-      "url": "https://elcomercio.pe/economia/peru/juliaca-inicia-la-modernizacion-integral-de-su-aeropuerto-con-una-inversion-superior-a-los-us200-millones-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-06T01:02:53.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     }
