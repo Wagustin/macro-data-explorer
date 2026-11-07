@@ -1,26 +1,39 @@
 {
- "actualizado": "2026-11-07T19:05:37.176Z",
+ "actualizado": "2026-11-07T19:32:35.616Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "Dólar cae a S/3,42 y sol lidera ganancias regionales",
-   "nota": "El tipo de cambio cerró en S/3,42 y el sol peruano encabezó las apreciaciones frente a las monedas de la región. El BCRP aprobó el nuevo estándar QR Perú para fortalecer la interoperabilidad de los pagos digitales. Las tasas de interés corporativas a 90, 180 y 360 días mostraron un alza según el reporte del banco central.",
+   "titulo": "BCRP aprueba estándar QR Perú para pagos digitales",
+   "nota": "El Banco Central de Reserva aprobó un nuevo estándar QR Perú que busca fortalecer la interoperabilidad de los pagos digitales en el país. La medida fue confirmada por el BCRP y también reportada por Gestión.",
    "tema": "Dólar y BCRP",
    "empresas": [],
    "fuentes": [
-    {
-     "titulo": "El dólar cierra en S/3,42 y sol peruano lidera ganancias frente a monedas de la región",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/el-dolar-cierra-en-s342-y-sol-peruano-lidera-ganancias-frente-a-monedas-de-la-region-l-cotizacion-del-dolar-l-dolar-l-ultimas-noticia/",
-     "fecha": "2026-11-06T21:28:52.000Z"
-    },
     {
      "titulo": "BCR aprueba nuevo estándar QR Perú para fortalecer la interoperabilidad de los pagos digitales",
      "fuente": "El Comercio Economía",
      "url": "https://elcomercio.pe/economia/peru/bcr-aprueba-nuevo-estandar-qr-peru-para-fortalecer-la-interoperabilidad-de-los-pagos-digitales-l-ultimas-noticia/",
      "fecha": "2026-11-06T17:27:14.000Z"
     },
+    {
+     "titulo": "BCRP aprueba el estándar QR Perú para fortalecer los pagos digitales",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/tu-dinero/bcrp-aprueba-el-estandar-qr-peru-para-fortalecer-los-pagos-digitales-noticia/",
+     "fecha": "2026-11-06T14:01:30.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Tasas de interés corporativas suben según reporte del BCRP",
+   "nota": "El BCRP reportó un alza en las tasas de interés corporativas a plazos de 90, 180 y 360 días. Infobae Perú dio a conocer el dato oficial del banco central.",
+   "tema": "Dólar y BCRP",
+   "empresas": [],
+   "fuentes": [
     {
      "titulo": "BCRP reporta alza en las tasas de interés corporativas a 90, 180 y 360 días",
      "fuente": "Infobae Perú",
@@ -29,34 +42,22 @@
     }
    ],
    "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
+    "modelo": null,
+    "ok": null,
+    "motivo": "revisor no disponible"
    }
   },
   {
-   "titulo": "Expectativas empresariales caen y retorna el pesimismo",
-   "nota": "El índice de expectativas empresariales descendió a 49,5 puntos, señalando un crecimiento del pesimismo sobre la economía peruana. La encuesta a tres meses muestra un hundimiento de las expectativas, revirtiendo la tendencia previa. El MEF mantiene su proyección de ingreso a la OCDE para el segundo semestre de 2028.",
-   "tema": "Economía y fiscal",
+   "titulo": "El dólar cerró en 3,42 soles y el sol lideró ganancias regionales",
+   "nota": "El tipo de cambio finalizó la jornada en S/3,42. La moneda peruana encabezó las apreciaciones frente a sus pares de la región.",
+   "tema": "Dólar y BCRP",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Expectativas empresariales caen a 49,5 puntos y crece el pesimismo sobre la economía peruana",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/2026/11/06/gobierno-afirma-que-invirtio-s1500-millones-contra-el-nino-pero-fondos-preventivos-registran-solo-159-de-gasto-hnews-170058",
-     "fecha": "2026-11-06T23:01:54.000Z"
-    },
-    {
-     "titulo": "Expectativas sobre la economía a 3 meses se hunden: retorna el pesimismo",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/el-nino-expectativas-sobre-la-economia-a-3-meses-se-hunden-retorna-el-pesimismo-en-peru-noticia/",
-     "fecha": "2026-11-06T17:51:19.000Z"
-    },
-    {
-     "titulo": "MEF estima que Perú podría entrar a la OCDE en segundo semestre de 2028",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-mef-estima-peru-podria-entrar-a-ocde-segundo-semestre-2028-1098885.aspx",
-     "fecha": "2026-11-07T12:49:05.000Z"
+     "titulo": "El dólar cierra en S/3,42 y sol peruano lidera ganancias frente a monedas de la región",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/economia/peru/el-dolar-cierra-en-s342-y-sol-peruano-lidera-ganancias-frente-a-monedas-de-la-region-l-cotizacion-del-dolar-l-dolar-l-ultimas-noticia/",
+     "fecha": "2026-11-06T21:28:52.000Z"
     }
    ],
    "revision": {
@@ -66,8 +67,8 @@
    }
   },
   {
-   "titulo": "Petroperú revierte pérdidas y gana US$144,9 millones",
-   "nota": "Petroperú pasó de perder US$355 millones a registrar ganancias de US$144,9 millones entre enero y septiembre de 2026. El ministro de Economía, Elmer Cuba, afirmó que la empresa cerrará el año con resultados positivos. El fenómeno El Niño pone en riesgo a 58 lotes petroleros, generando preocupación sobre la producción de crudo.",
+   "titulo": "Petroperú revierte pérdidas y gana 144,9 millones hasta setiembre",
+   "nota": "La empresa estatal pasó de perder US$355 millones a registrar ganancias de US$144,9 millones entre enero y septiembre de 2026. La República Economía destacó el giro en los resultados financieros.",
    "tema": "Bolsa y empresas",
    "empresas": [
     "PETROBC1"
@@ -78,18 +79,6 @@
      "fuente": "La República Economía",
      "url": "https://larepublica.pe/economia/2026/11/03/petroperu-gano-us145-millones-pero-aun-enfrenta-restricciones-para-abastecer-sus-refinerias-hnews-139401",
      "fecha": "2026-11-06T15:08:36.000Z"
-    },
-    {
-     "titulo": "Elmer Cuba, ministro de Economía: “Este año Petro-Perú va a ganar dinero”",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/petroperu-keiko-elmer-cuba-este-ano-petroperu-va-a-ganar-dinero-noticia/",
-     "fecha": "2026-11-07T01:49:16.000Z"
-    },
-    {
-     "titulo": "El Niño pone en riesgo a 58 lotes petroleros, ¿Perú debería preocuparse por su crudo?",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/el-nino-pone-en-riesgo-a-58-lotes-petroleros-peru-deberia-preocuparse-por-su-crudo-este-es-el-plan-para-evitar-golpe-noticia/",
-     "fecha": "2026-11-06T22:30:00.000Z"
     }
    ],
    "revision": {
@@ -99,28 +88,16 @@
    }
   },
   {
-   "titulo": "Exportaciones peruanas superan US$83,000 millones",
-   "nota": "Las exportaciones peruanas alcanzaron más de US$83,000 millones entre enero y setiembre, según reportó Adex. Perú incorporó protección de marcas país en el TLC con China, lo que optimizará el comercio bilateral. ProInversión presentó una cartera de más de US$10,000 millones para proyectos en el sur del país.",
+   "titulo": "Expectativas empresariales caen a 49,5 puntos y crece pesimismo",
+   "nota": "El índice de expectativas empresariales descendió a 49,5 puntos, reflejando un aumento del pesimismo sobre la economía peruana. La República Economía reportó la caída del indicador.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Adex: Exportaciones peruanas llegaron a más de US$ 83,000 millones entre enero y setiembre",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-adex-exportaciones-peruanas-llegaron-a-mas-83000-millones-entre-enero-y-setiembre-1098987.aspx",
-     "fecha": "2026-11-07T15:00:01.000Z"
-    },
-    {
-     "titulo": "Perú incorpora protección de marcas país en TLC con China",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-peru-incorpora-proteccion-marcas-pais-tlc-china-1098943.aspx",
-     "fecha": "2026-11-06T22:41:29.000Z"
-    },
-    {
-     "titulo": "ProInversión presenta cartera de más de US$ 10,000 millones para el sur del Perú",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-proinversion-presenta-cartera-mas-10000-millones-para-sur-del-peru-1098881.aspx",
-     "fecha": "2026-11-06T17:14:38.000Z"
+     "titulo": "Expectativas empresariales caen a 49,5 puntos y crece el pesimismo sobre la economía peruana",
+     "fuente": "La República Economía",
+     "url": "https://larepublica.pe/economia/2026/11/06/gobierno-afirma-que-invirtio-s1500-millones-contra-el-nino-pero-fondos-preventivos-registran-solo-159-de-gasto-hnews-170058",
+     "fecha": "2026-11-06T23:01:54.000Z"
     }
    ],
    "revision": {
@@ -130,65 +107,16 @@
    }
   },
   {
-   "titulo": "Goldman Sachs recorta previsión del precio del oro para 2027",
-   "nota": "Goldman Sachs redujo su proyección para el precio del oro de cara a 2027, afectando las expectativas del sector minero. El túnel Ollachea de Puno ganó un premio internacional de ingeniería por enfrentar aguas a 71,2 °C. La iniciativa de APEC liderada por Perú busca fortalecer la pesca y acuicultura en la región.",
-   "tema": "Minería y metales",
+   "titulo": "Recaudación tributaria crece 14,6% en octubre de 2026",
+   "nota": "Sunat informó que la recaudación tributaria aumentó 14,6% en octubre de 2026 respecto al mismo mes del año anterior. El Comercio Economía dio a conocer la cifra oficial.",
+   "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Goldman Sachs recorta su previsión para el precio del oro: ¿cuál es su proyección para 2027?",
-     "fuente": "Bloomberg Línea",
-     "url": "https://www.bloomberglinea.com/mercados/goldman-sachs-recorta-su-prevision-para-el-precio-del-oro-cual-es-su-proyeccion-para-2027/",
-     "fecha": "2026-11-06T13:41:50.000Z"
-    },
-    {
-     "titulo": "Túnel Ollachea de Puno gana oro en premio internacional de ingeniería: la obra peruana que enfrentó aguas a 71,2 °C",
-     "fuente": "Infobae Perú",
-     "url": "https://www.infobae.com/peru/2026/11/07/tunel-ollachea-de-puno-gana-oro-en-premio-internacional-de-ingenieria-la-obra-peruana-que-enfrento-aguas-a-712-c/",
-     "fecha": "2026-11-07T18:45:24.000Z"
-    },
-    {
-     "titulo": "Perú lidera iniciativa de APEC para fortalecer pesca y acuicultura",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-peru-lidera-iniciativa-apec-para-fortalecer-pesca-y-acuicultura-1098962.aspx",
-     "fecha": "2026-11-07T02:08:02.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "Wall Street acumula pérdidas semanales tras elecciones en EE.UU.",
-   "nota": "Wall Street registró pérdidas semanales tras las elecciones en Estados Unidos y la caída del sector de inteligencia artificial. Nvidia perdió más de US$440,000 millones en un día y reforzó el control de sus chips en Asia para evitar contrabando a China. La Reserva Federal señaló que probablemente se necesiten más alzas de tasas para contener la inflación.",
-   "tema": "Mundo",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Wall Street acumula pérdidas semanales tras las elecciones en EE.UU. y el batacazo de la IA",
+     "titulo": "Sunat: recaudación tributaria crece 14,6% en octubre de 2026",
      "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/mercados/wall-street-acumula-perdidas-semanales-tras-las-elecciones-en-eeuu-y-el-batacazo-de-la-ia-l-mercados-l-wall-street-l-ultimas-noticia/",
-     "fecha": "2026-11-06T21:57:34.000Z"
-    },
-    {
-     "titulo": "Nvidia perdió más de US$440.000 millones en un día: por qué las elecciones en EE.UU. asustan a Wall Street",
-     "fuente": "Bloomberg Línea",
-     "url": "https://www.bloomberglinea.com/mercados/nvidia-perdio-mas-de-us440000-millones-en-un-dia-por-que-las-elecciones-en-eeuu-asustan-a-wall-street/",
-     "fecha": "2026-11-07T02:03:17.000Z"
-    },
-    {
-     "titulo": "Nvidia refuerza el control de sus chips de IA en Asia para frenar el contrabando con destino a China",
-     "fuente": "Bloomberg Línea",
-     "url": "https://www.bloomberglinea.com/negocios/nvidia-refuerza-el-control-de-sus-chips-de-ia-en-asia-para-frenar-el-contrabando-con-destino-a-china/",
-     "fecha": "2026-11-06T21:52:47.000Z"
-    },
-    {
-     "titulo": "Daly, de la Fed, dice que probablemente se necesiten más alzas de tasas para contener los precios",
-     "fuente": "Bloomberg Línea",
-     "url": "https://www.bloomberglinea.com/mundo/estados-unidos/daly-de-la-fed-dice-que-probablemente-se-necesiten-mas-alzas-de-tasas-para-contener-los-precios/",
-     "fecha": "2026-11-06T19:09:18.000Z"
+     "url": "https://elcomercio.pe/economia/peru/sunat-recaudacion-tributaria-crece-146-en-octubre-de-2026-l-ultimas-noticia/",
+     "fecha": "2026-11-06T14:11:34.000Z"
     }
    ],
    "revision": {

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-07T19:01:28.205Z",
+  "actualizado": "2026-11-07T19:25:53.665Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 51
+      "items": 50
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -34,7 +34,7 @@
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 3
+      "items": 2
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -64,6 +64,15 @@
   },
   "noticias": [
     {
+      "id": "la_republica-e31042c4fa",
+      "titulo": "Precio del dólar hoy en Perú, sábado 7 noviembre: consulta el tipo de cambio para compra y venta",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/06/precio-del-dolar-hoy-en-peru-sabado-7-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-332376",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-07T19:05:21.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "andina-d1dbbc8b5c",
       "titulo": "Tres claves para convertir un emprendimiento en una empresa escalable",
       "url": "https://andina.pe/agencia/noticia-tres-claves-para-convertir-un-emprendimiento-una-empresa-escalable-1099001.aspx",
@@ -71,6 +80,24 @@
       "fecha_iso": "2026-11-07T19:00:01.000Z",
       "categoria": "Bolsa y empresas",
       "semaforo": "VERDE"
+    },
+    {
+      "id": "el_comercio-0a06a5b289",
+      "titulo": "Hortalizas y pescados subieron más de 23% de precio en un año en Lima, ¿qué explica el alza?",
+      "url": "https://elcomercio.pe/economia/hortalizas-y-pescados-subieron-mas-de-23-en-un-ano-en-lima-y-lideraron-el-alza-de-alimentos-apuesplan-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-07T19:00:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-4d5e2aa487",
+      "titulo": "Túnel Ollachea de Puno gana oro en premio internacional de ingeniería: la obra peruana que enfrentó aguas a 71,2 °C",
+      "url": "https://www.infobae.com/peru/2026/11/07/tunel-ollachea-de-puno-gana-oro-en-premio-internacional-de-ingenieria-la-obra-peruana-que-enfrento-aguas-a-712-c/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-07T18:59:28.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
     },
     {
       "id": "infobae-e317d1f129",
@@ -87,24 +114,6 @@
       "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-2026-cual-es-el-tipo-de-cambio-este-sabado-7-de-noviembre-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-07T18:45:42.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-4d5e2aa487",
-      "titulo": "Túnel Ollachea de Puno gana oro en premio internacional de ingeniería: la obra peruana que enfrentó aguas a 71,2 °C",
-      "url": "https://www.infobae.com/peru/2026/11/07/tunel-ollachea-de-puno-gana-oro-en-premio-internacional-de-ingenieria-la-obra-peruana-que-enfrento-aguas-a-712-c/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-07T18:45:24.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-e31042c4fa",
-      "titulo": "Precio del dólar hoy en Perú, sábado 7 noviembre: consulta el tipo de cambio para compra y venta",
-      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/06/precio-del-dolar-hoy-en-peru-sabado-7-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-332376",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-07T18:41:58.000Z",
       "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
@@ -208,15 +217,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-0a06a5b289",
-      "titulo": "Hortalizas y pescados subieron más de 23% de precio en un año en Lima, ¿qué explica el alza?",
-      "url": "https://elcomercio.pe/economia/hortalizas-y-pescados-subieron-mas-de-23-en-un-ano-en-lima-y-lideraron-el-alza-de-alimentos-apuesplan-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-07T15:10:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-cba419fc7c",
       "titulo": "Adex: Exportaciones peruanas llegaron a más de US$ 83,000 millones entre enero y setiembre",
       "url": "https://andina.pe/agencia/noticia-adex-exportaciones-peruanas-llegaron-a-mas-83000-millones-entre-enero-y-setiembre-1098987.aspx",
@@ -271,15 +271,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "rpp-4cda341351",
-      "titulo": "Callao: hombre es asesinado a balazos cuando salía de su vivienda en Carmen de la Legua",
-      "url": "https://rpp.pe/peru/callao/callao-hombre-es-asesinado-a-balazos-cuando-salia-de-su-vivienda-noticia-1716499",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-07T13:15:51.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-c8f725988c",
       "titulo": "APM Terminals Callao alista plan para extender concesión con inversiones fuera del puerto",
       "url": "https://gestion.pe/economia/empresas/el-nino-y-mas-concesion-el-plan-de-apm-terminals-para-el-puerto-del-callao-hacia-2027-noticia/",
@@ -325,15 +316,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-98454fcf4b",
-      "titulo": "El papa en el Centro de Lima: negocios duplicarían ventas y hoteles alcanzarían el 100% de ocupación",
-      "url": "https://gestion.pe/economia/empresas/el-papa-leon-xiv-visitara-el-centro-de-lima-negocios-duplicarian-ventas-y-hoteles-alcanzarian-el-100-de-ocupacion-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-07T10:30:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-52f23abaa3",
       "titulo": "Empresa estadounidense Vista Vineyards apuesta por Perú para la producción de uva",
       "url": "https://gestion.pe/economia/empresas/empresa-estadounidense-vista-vineyards-apuesta-por-peru-sembro-mas-de-200-hectareas-de-uva-en-olmos-lambayeque-noticia/",
@@ -346,6 +328,15 @@
       "id": "gestion-45f330ac10",
       "titulo": "Gloria acelera su negocio de panetones: ¿qué pasa dentro de su planta y cuánto espera crecer?",
       "url": "https://gestion.pe/economia/empresas/que-hay-detras-del-paneton-gloria-asi-prepara-su-negocio-para-navidad-y-busca-crecer-hasta-10-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-07T10:30:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-98454fcf4b",
+      "titulo": "El papa en el Centro de Lima: negocios duplicarían ventas y hoteles alcanzarían el 100% de ocupación",
+      "url": "https://gestion.pe/economia/empresas/el-papa-leon-xiv-visitara-el-centro-de-lima-negocios-duplicarian-ventas-y-hoteles-alcanzarian-el-100-de-ocupacion-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-07T10:30:00.000Z",
       "categoria": "Bolsa y empresas",
@@ -942,6 +933,15 @@
       "url": "https://gestion.pe/economia/empresas/lima-corporativa-sin-espacio-la-escasez-de-oficinas-en-distritos-como-san-isdro-miraflores-magdalena-y-san-borja-impulsa-alza-en-renta-de-alquileres-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-06T10:15:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-a18b742df7",
+      "titulo": "Cencosud y sus dos malls en Lima: ¿en qué estado están los proyectos en Miraflores y SJL?",
+      "url": "https://gestion.pe/economia/empresas/cenco-malls-de-la-chilena-cencosud-alista-sus-dos-nuevos-malls-en-lima-en-que-estado-estan-sus-proyectos-en-miraflores-y-san-juan-de-lurigancho-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T09:00:00.000Z",
       "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     }
