@@ -412,6 +412,7 @@
         document.getElementById("pdAcctPlanBadge").hidden = !isPro;
 
         var primary = document.getElementById("pdAcctPrimary");
+        primary.hidden = false;
         var billing = A.billing();
         if (isPro && u.hasBillingAccount) {
           primary.textContent = "Gestionar suscripción y facturas";
@@ -419,7 +420,7 @@
           primary.disabled = false;
         } else if (isPro) {
           // Ya tiene plan de pago pero aún no hay cliente de facturación: no se le ofrece comprar otra vez.
-          primary.hidden = true;
+          primary.textContent = "Tu plan está activo";
           primary.dataset.action = "";
           primary.disabled = true;
         } else if (u.hasBillingAccount && u.subscriptionStatus) {
