@@ -10,7 +10,7 @@ const read = (rel) => fs.readFileSync(path.join(rootDir, rel), "utf8");
 // The generated pages break some sentences in several lines: compare without line breaks
 const plano = (html) => html.replace(/\s+/g, " ");
 
-const INVITE = "Recibe gratis cada mañana el dólar y su rango para el próximo día hábil. Con el plan Boletín, todo el mercado y tus empresas.";
+const INVITE = "Recibe gratis cada mañana el boletín completo: mercados, la proyección del dólar, los hechos de la SMV y los titulares. El plan Boletín añade tus empresas.";
 
 test("/boletin explica que el correo general es gratis y que el plan añade tus empresas", () => {
   const html = read("boletin.html");
