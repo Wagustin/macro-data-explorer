@@ -1,11 +1,11 @@
 {
- "actualizado": "2026-11-07T06:01:02.438Z",
+ "actualizado": "2026-11-07T09:07:57.928Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "BCRP aprueba estándar QR Perú para pagos digitales",
-   "nota": "El Banco Central de Reserva aprobó el nuevo estándar QR Perú que fortalecerá la interoperabilidad de los pagos digitales en el país. La medida busca modernizar la infraestructura financiera y facilitar transacciones entre diferentes proveedores de servicios de pago.",
+   "titulo": "BCRP aprueba estándar QR Perú para interoperabilidad de pagos",
+   "nota": "El Banco Central de Reserva aprobó el nuevo estándar QR Perú. La medida busca fortalecer la interoperabilidad de los pagos digitales en el país.",
    "tema": "Dólar y BCRP",
    "empresas": [],
    "fuentes": [
@@ -41,8 +41,8 @@
    }
   },
   {
-   "titulo": "El sol peruano lidera ganancias regionales frente al dólar",
-   "nota": "El tipo de cambio cerró en S/3,42 y la moneda peruana encabezó las apreciaciones en la región. El dólar abrió a la baja en S/3,44 pese a sólidos datos de empleo en Estados Unidos.",
+   "titulo": "Dólar cierra en S/3,42 y sol lidera ganancias regionales",
+   "nota": "El dólar cerró en S/3,42 y el sol peruano encabezó las apreciaciones frente a las monedas de la región. La divisa abrió a la baja en S/3,44 pese a sólidos datos de empleo en Estados Unidos. Se evalúa si el tipo de cambio romperá el nivel de S/3,40.",
    "tema": "Dólar y BCRP",
    "empresas": [],
    "fuentes": [
@@ -59,12 +59,6 @@
      "fecha": "2026-11-06T19:31:53.000Z"
     },
     {
-     "titulo": "Tipo de cambio hoy en Perú: ¿en cuánto cerró el dólar este viernes 6 de noviembre?",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/mercados/tipo-de-cambio-dolar-hoy-en-peru-cuanto-esta-el-precio-del-dolar-este-viernes-6-de-noviembre-dolares-a-soles-compra-y-venta-bcrp-noticia/",
-     "fecha": "2026-11-06T18:51:26.000Z"
-    },
-    {
      "titulo": "El dólar abre a la baja en S/3,44 pese a sólidos datos de empleo en Estados Unidos",
      "fuente": "El Comercio Economía",
      "url": "https://elcomercio.pe/economia/peru/el-dolar-abre-a-la-baja-en-s344-pese-a-solidos-datos-de-empleo-en-estados-unidos-l-tipo-de-cambio-l-dolar-l-ultimas-noticia/",
@@ -78,36 +72,9 @@
    }
   },
   {
-   "titulo": "Petroperú revierte pérdidas y registra ganancias en 2026",
-   "nota": "La empresa estatal pasó de perder US$355 millones a ganar US$144,9 millones entre enero y septiembre de 2026. El ministro de Economía, Elmer Cuba, confirmó que Petroperú cerrará el año con resultados positivos.",
-   "tema": "Bolsa y empresas",
-   "empresas": [
-    "PETROBC1"
-   ],
-   "fuentes": [
-    {
-     "titulo": "Elmer Cuba, ministro de Economía: “Este año Petro-Perú va a ganar dinero”",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/petroperu-keiko-elmer-cuba-este-ano-petroperu-va-a-ganar-dinero-noticia/",
-     "fecha": "2026-11-07T01:49:16.000Z"
-    },
-    {
-     "titulo": "Petroperú pasó de perder US$355 millones a ganar US$144,9 millones entre enero y septiembre de 2026",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/2026/11/03/petroperu-gano-us145-millones-pero-aun-enfrenta-restricciones-para-abastecer-sus-refinerias-hnews-139401",
-     "fecha": "2026-11-06T15:08:36.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
    "titulo": "Expectativas empresariales caen a zona pesimista por primera vez",
-   "nota": "El índice de confianza empresarial descendió a 49,5 puntos, entrando en territorio pesimista por primera vez en la actual gestión. Las proyecciones a tres meses también muestran un retroceso significativo en el optimismo económico.",
-   "tema": "Economía y fiscal",
+   "nota": "El índice de confianza empresarial descendió a 49,5 puntos, ingresando en territorio pesimista por primera vez en la actual gestión. La caída refleja menor optimismo sobre la marcha de la economía peruana en los próximos meses.",
+   "tema": "Bolsa y empresas",
    "empresas": [],
    "fuentes": [
     {
@@ -142,8 +109,34 @@
    }
   },
   {
-   "titulo": "Exportaciones a China se aceleran por boom minero",
-   "nota": "En los primeros nueve meses del año, Perú ya iguala lo exportado a China durante todo 2025, impulsado por la mayor demanda de minerales. La optimización del TLC con China permitirá impulsar aún más el comercio y atraer inversiones.",
+   "titulo": "Petroperú logra ganancias de 144,9 millones hasta setiembre",
+   "nota": "La petrolera estatal revirtió las pérdidas de 355 millones de dólares y registró utilidades de 144,9 millones entre enero y septiembre de 2026. El ministro de Economía afirmó que la empresa ganará dinero este año.",
+   "tema": "Bolsa y empresas",
+   "empresas": [
+    "PETROBC1"
+   ],
+   "fuentes": [
+    {
+     "titulo": "Elmer Cuba, ministro de Economía: “Este año Petro-Perú va a ganar dinero”",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/economia/peru/petroperu-keiko-elmer-cuba-este-ano-petroperu-va-a-ganar-dinero-noticia/",
+     "fecha": "2026-11-07T01:49:16.000Z"
+    },
+    {
+     "titulo": "Petroperú pasó de perder US$355 millones a ganar US$144,9 millones entre enero y septiembre de 2026",
+     "fuente": "La República Economía",
+     "url": "https://larepublica.pe/economia/2026/11/03/petroperu-gano-us145-millones-pero-aun-enfrenta-restricciones-para-abastecer-sus-refinerias-hnews-139401",
+     "fecha": "2026-11-06T15:08:36.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Perú acelera sus exportaciones a China: en nueve meses ya roza lo vendido en todo el 2025 por boom de minerales",
    "tema": "Minería y metales",
    "empresas": [],
    "fuentes": [
@@ -164,23 +157,17 @@
      "fuente": "Agencia Andina",
      "url": "https://andina.pe/agencia/noticia-optimizacion-del-tlc-china-permitira-impulsar-comercio-y-atraer-inversiones-1098924.aspx",
      "fecha": "2026-11-06T20:25:53.000Z"
-    },
-    {
-     "titulo": "ProInversión presenta cartera de más de US$ 10,000 millones para el sur del Perú",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-proinversion-presenta-cartera-mas-10000-millones-para-sur-del-peru-1098881.aspx",
-     "fecha": "2026-11-06T17:14:38.000Z"
     }
    ],
    "revision": {
     "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
+    "ok": false,
+    "motivo": "El título afirma que las exportaciones a China en nueve meses igualan todo 2025, pero la fuente solo indica que en nueve meses ya rozan lo vendido en todo 2025; además, la nota omite el boom de minerales como causa indicada en el titular."
    }
   },
   {
-   "titulo": "Riesgo de El Niño amenaza lotes petroleros y precios energéticos",
-   "nota": "El fenómeno El Niño pone en riesgo a 58 lotes petroleros, generando incertidumbre sobre la producción de crudo. Simultáneamente, las tarifas eléctricas para hogares y comercios se reducirán en noviembre según Osinergmin.",
+   "titulo": "Crisis eléctrica en el norte y riesgo petrolero por El Niño",
+   "nota": "El gas de Piura se presenta como alternativa para la crisis eléctrica en el norte aunque con un costo más elevado. El fenómeno El Niño pone en riesgo 58 lotes petroleros en el país. El Minem prevé la firma de cinco contratos de exploración de hidrocarburos para 2027.",
    "tema": "Energía",
    "empresas": [],
    "fuentes": [
@@ -197,22 +184,16 @@
      "fecha": "2026-11-06T22:30:00.000Z"
     },
     {
-     "titulo": "Tarifas eléctricas para hogares y comercios se reducirán en noviembre, según Osinergmin",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/tarifas-electricas-para-usuarios-domiciliarios-se-reduciran-en-noviembre-l-ultimas-noticia/",
-     "fecha": "2026-11-06T16:48:29.000Z"
-    },
-    {
-     "titulo": "Tarifas eléctricas para usuarios domiciliarios se reducirán en noviembre del 2026",
+     "titulo": "Minem: hay perspectivas para firma de 5 contratos de exploración de hidrocarburos en 2027",
      "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-tarifas-electricas-para-usuarios-domiciliarios-se-reduciran-noviembre-del-2026-1098870.aspx",
-     "fecha": "2026-11-06T15:53:08.000Z"
+     "url": "https://andina.pe/agencia/noticia-minem-hay-perspectivas-para-firma-5-contratos-exploracion-hidrocarburos-2027-1098899.aspx",
+     "fecha": "2026-11-06T18:58:08.000Z"
     }
    ],
    "revision": {
-    "modelo": null,
-    "ok": null,
-    "motivo": "revisor no disponible"
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
    }
   }
  ]
