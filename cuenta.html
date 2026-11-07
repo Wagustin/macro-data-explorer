@@ -270,23 +270,13 @@
             <div>
               <p class="pd-kicker">Personalizar</p>
               <h2 class="pd-panel-title">Empresas que sigo</h2>
-              <p class="pd-panel-copy">Elige las empresas y activos que quieres seguir. Si defines un precio, te avisaremos por correo cuando lo cruce. <a href="/metodologia#avisos" class="underline hover:text-ink">Cómo funcionan los avisos</a>.</p>
+              <p class="pd-panel-copy">Para seguir una empresa, búscala y pulsa la campana que aparece a su derecha: allí eliges si quieres recibirla cada mañana y el porcentaje de subida o bajada que te avisa por correo. <a href="/metodologia#avisos" class="underline hover:text-ink">Cómo funcionan los avisos</a>.</p>
             </div>
           </div>
           <div id="pdSegActive">
-          <form id="pdSegForm" class="mt-3 flex flex-col sm:flex-row sm:items-end gap-2">
-            <label class="flex-1 text-xs text-ink-soft">Empresa o activo
-              <input id="pdSegBuscar" list="pdSegOpciones" class="w-full border border-rule bg-card px-2 py-1.5 text-sm text-ink" placeholder="Buscar por nombre o símbolo" autocomplete="off" required>
-              <datalist id="pdSegOpciones"></datalist>
-            </label>
-            <label class="text-xs text-ink-soft">Avisar si sube de
-              <input id="pdSegArriba" type="number" inputmode="decimal" step="0.0001" min="0" class="w-full sm:w-32 border border-rule bg-card px-2 py-1.5 text-sm text-ink tnum" placeholder="—">
-            </label>
-            <label class="text-xs text-ink-soft">Avisar si baja de
-              <input id="pdSegAbajo" type="number" inputmode="decimal" step="0.0001" min="0" class="w-full sm:w-32 border border-rule bg-card px-2 py-1.5 text-sm text-ink tnum" placeholder="—">
-            </label>
-            <button type="submit" class="pd-btn pd-btn-accent">Añadir</button>
-          </form>
+          <p class="mt-3">
+            <a href="/explorer" class="pd-btn pd-btn-ghost text-xs">Buscar empresas y marcarlas con la campana</a>
+          </p>
           <p id="pdSegEstado" class="pd-form-status" role="status"></p>
           <ul id="pdSegLista" class="mt-3"></ul>
           </div>
@@ -423,7 +413,16 @@
 
         var primary = document.getElementById("pdAcctPrimary");
         var billing = A.billing();
-        if (u.hasBillingAccount && (isPro || u.subscriptionStatus)) {
+        if (isPro && u.hasBillingAccount) {
+          primary.textContent = "Gestionar suscripción y facturas";
+          primary.dataset.action = "portal";
+          primary.disabled = false;
+        } else if (isPro) {
+          // Ya tiene plan de pago pero aún no hay cliente de facturación: no se le ofrece comprar otra vez.
+          primary.hidden = true;
+          primary.dataset.action = "";
+          primary.disabled = true;
+        } else if (u.hasBillingAccount && u.subscriptionStatus) {
           primary.textContent = "Gestionar suscripción y facturas";
           primary.dataset.action = "portal";
           primary.disabled = false;
@@ -493,14 +492,9 @@
 
   <script>
   (function () {
-    var form = document.getElementById("pdSegForm");
-    if (!form) return;
-    var input = document.getElementById("pdSegBuscar");
-    var opciones = document.getElementById("pdSegOpciones");
-    var arriba = document.getElementById("pdSegArriba");
-    var abajo = document.getElementById("pdSegAbajo");
-    var estado = document.getElementById("pdSegEstado");
     var lista = document.getElementById("pdSegLista");
+    if (!lista) return;
+    var estado = document.getElementById("pdSegEstado");
     var active = document.getElementById("pdSegActive");
     var locked = document.getElementById("pdSegLocked");
     var nombres = {};
@@ -522,6 +516,7 @@
     function render(rows) {
       ultimasRows = (rows || []).slice();
       lista.innerHTML = "";
+      if (ultimasRows.length) setTimeout(cargarNombres, 0);
       if (!rows || !rows.length) {
         var vacio = document.createElement("li");
         vacio.className = "py-3 text-sm text-ink-soft";
@@ -545,7 +540,13 @@
         right.className = "flex items-center gap-3";
         var umbrales = document.createElement("span");
         umbrales.className = "text-xs text-ink-soft tnum";
-        umbrales.textContent = "arriba " + fmt(r.alerta_arriba) + " · abajo " + fmt(r.alerta_abajo);
+        var partes = [];
+        if (r.alerta_pct_arriba) partes.push("sube " + Number(r.alerta_pct_arriba) + " %");
+        if (r.alerta_pct_abajo) partes.push("baja " + Number(r.alerta_pct_abajo) + " %");
+        if (r.alerta_arriba) partes.push("arriba " + fmt(r.alerta_arriba));
+        if (r.alerta_abajo) partes.push("abajo " + fmt(r.alerta_abajo));
+        if (r.alerta_diaria === false) partes.push("sin correo diario");
+        umbrales.textContent = partes.length ? partes.join(" · ") : "solo seguimiento";
         var quitar = document.createElement("button");
         quitar.type = "button";
         quitar.className = "pd-btn pd-btn-ghost text-xs";
@@ -630,41 +631,28 @@
       }
     }
 
-    var t0 = null;
-    input.addEventListener("input", function () {
-      var q = input.value.trim();
-      if (q.length < 2) return;
-      clearTimeout(t0);
-      t0 = setTimeout(async function () {
-        try {
-          var res = await fetch("/api/search?q=" + encodeURIComponent(q), { cache: "no-store" });
-          if (!res.ok) return;
-          var data = await res.json();
-          opciones.innerHTML = "";
-          (data.results || []).slice(0, 12).forEach(function (r) {
-            nombres[r.symbol] = r.name;
-            var o = document.createElement("option");
-            o.value = r.symbol;
-            o.label = r.name;
-            opciones.appendChild(o);
-          });
-        } catch (e) {}
-      }, 220);
-    });
-
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var simbolo = input.value.trim();
-      if (!simbolo) return;
-      guardar({
-        simbolo: simbolo,
-        alerta_arriba: arriba.value ? Number(arriba.value) : null,
-        alerta_abajo: abajo.value ? Number(abajo.value) : null
+    // Los nombres de las empresas se piden una sola vez, para que la lista no muestre nemónicos sueltos.
+    function cargarNombres() {
+      var syms = [];
+      for (var i = 0; i < ultimasRows.length; i++) {
+        if (!nombres[ultimasRows[i].simbolo]) syms.push(ultimasRows[i].simbolo);
+      }
+      if (!syms.length) return;
+      var quedan = syms.length;
+      syms.forEach(function (s) {
+        fetch("/api/search?q=" + encodeURIComponent(s), { cache: "no-store" })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) {
+            var hit = (d && d.results || []).filter(function (x) { return x.symbol === s; })[0];
+            if (hit && hit.name) {
+              nombres[s] = hit.name;
+              render(ultimasRows);
+            }
+          })
+          .catch(function () {})
+          .then(function () { quedan -= 1; });
       });
-      input.value = "";
-      arriba.value = "";
-      abajo.value = "";
-    });
+    }
 
     window.addEventListener("mde:auth-change", function () { cargar(); });
     document.addEventListener("DOMContentLoaded", cargar);
