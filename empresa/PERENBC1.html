@@ -405,8 +405,7 @@ html.dark .ui-switch {
           </p>
           <h1 class="company-title" id="companyTitle">Peruana de Energia S.A.A.</h1>
           <div class="flex items-center gap-3 mt-1">
-            <button type="button" id="pdFollowBtn" class="pd-btn pd-btn-ghost text-xs" aria-pressed="false" hidden>Seguir</button>
-            <a href="/cuenta" id="pdFollowLink" class="text-xs text-ink-soft hover:text-ink no-underline" hidden>Umbrales de aviso</a>
+            <span id="pdFollowMount"></span>
             <span id="pdFollowMsg" class="text-xs text-ink-soft" role="status"></span>
           </div>
           <p class="company-meta" id="companyMeta">Servicios Públicos · PERENBC1 · S/</p>
@@ -993,10 +992,9 @@ html.dark .ui-switch {
   <script src="/auth.js" defer></script>
   <script>
   (function () {
-    var btn = document.getElementById("pdFollowBtn");
-    var link = document.getElementById("pdFollowLink");
+    var montaje = document.getElementById("pdFollowMount");
     var msg = document.getElementById("pdFollowMsg");
-    if (!btn) return;
+    if (!montaje) return;
 
     var raw = "";
     var parts = location.pathname.split("/").filter(Boolean);
@@ -1005,93 +1003,39 @@ html.dark .ui-switch {
     raw = raw.trim().toUpperCase();
     if (!raw) return;
 
-    var simbolo = null;
-    var siguiendo = false;
-
-    function auth() { return window.MDE_Auth; }
-    function token() { var a = auth(); return a && a.getToken ? a.getToken() : null; }
-
-    function pinta() {
-      if (!simbolo) return;
-      btn.hidden = false;
-      btn.textContent = siguiendo ? "Siguiendo" : "Seguir";
-      btn.setAttribute("aria-pressed", siguiendo ? "true" : "false");
-      btn.className = siguiendo ? "pd-btn pd-btn-accent text-xs" : "pd-btn pd-btn-ghost text-xs";
-      link.hidden = !siguiendo;
-    }
-
     function texto(t) { if (msg) msg.textContent = t || ""; }
 
-    async function resolver() {
-      try {
-        var r = await fetch("/api/search?q=" + encodeURIComponent(raw), { cache: "no-store" });
-        if (!r.ok) return;
-        var d = await r.json();
-        var hit = (d.results || []).find(function (x) { return x.symbol.toUpperCase() === raw; }) ||
-                  (d.results || []).find(function (x) { return x.symbol.toUpperCase().indexOf(raw + ".") === 0; }) ||
-                  (d.results || [])[0];
-        simbolo = hit ? hit.symbol : null;
-        pinta();
-      } catch (e) {}
+    function precioActual() {
+      var el = document.querySelector("#priceValue, #companyPrice, .price-value");
+      if (!el) return null;
+      var n = Number(String(el.textContent).replace(/[^0-9.,-]/g, "").replace(/\.(?=\d{3}\b)/g, "").replace(",", "."));
+      return Number.isFinite(n) && n > 0 ? n : null;
     }
 
-    async function estado() {
-      var t = token();
-      if (!t || !simbolo) { siguiendo = false; pinta(); return; }
-      try {
-        var r = await fetch("/api/seguimiento", { headers: { Authorization: "Bearer " + t }, cache: "no-store" });
-        if (!r.ok) { pinta(); return; }
-        var d = await r.json();
-        siguiendo = (d.simbolos || []).some(function (x) { return x.simbolo === simbolo; });
-        pinta();
-      } catch (e) { pinta(); }
+    function montar(simbolo) {
+      if (!window.PD_Follow) { setTimeout(function () { montar(simbolo); }, 300); return; }
+      montaje.innerHTML = "";
+      delete montaje.dataset.pdBellListo;
+      window.PD_Follow.bind(montaje, simbolo, { precio: precioActual() });
     }
 
-    btn.addEventListener("click", async function () {
-      var a = auth();
-      var t = token();
-      if (!t) { if (a && a.openModal) a.openModal("Entra para seguir esta empresa y recibir avisos de precio.", "signin"); return; }
-      
-      var anterior = siguiendo;
-      siguiendo = !siguiendo;
-      pinta();
-      texto(siguiendo ? "Guardando…" : "Quitando…");
-
-      try {
-        var r = !siguiendo
-          ? await fetch("/api/seguimiento?simbolo=" + encodeURIComponent(simbolo), { method: "DELETE", headers: { Authorization: "Bearer " + t } })
-          : await fetch("/api/seguimiento", { method: "POST", headers: { Authorization: "Bearer " + t, "Content-Type": "application/json" }, body: JSON.stringify({ simbolo: simbolo }) });
-        var d = await r.json().catch(function () { return {}; });
-        if (!r.ok) {
-          siguiendo = anterior;
-          pinta();
-          texto(d.error || "No se pudo guardar.");
-        } else {
-          texto(siguiendo ? "La sigues. Pon umbrales en tu cuenta." : "Ya no la sigues.");
-        }
-      } catch (e) {
-        siguiendo = anterior;
-        pinta();
-        texto("No se pudo guardar.");
-      }
-    });
-
-    function arranca() {
-      resolver().then(estado);
-    }
-    if (window.MDE_Auth) arranca();
-    else {
-      var n = 0;
-      var t = setInterval(function () {
-        n++;
-        if (window.MDE_Auth) { clearInterval(t); arranca(); }
-        else if (n > 40) clearInterval(t);
-      }, 100);
-    }
-    window.addEventListener("mde:auth-change", estado);
+    fetch("/api/search?q=" + encodeURIComponent(raw), { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (!d) return;
+        var lista = d.results || [];
+        var hit = lista.find(function (x) { return x.symbol.toUpperCase() === raw; }) ||
+                  lista.find(function (x) { return x.symbol.toUpperCase().indexOf(raw + ".") === 0; }) ||
+                  lista[0];
+        if (!hit) return;
+        montar(hit.symbol);
+        texto("");
+      })
+      .catch(function () {});
   })();
   </script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "bc9abca1e97b4bcaa6261b23afc498e5"}'></script>
+<script defer src="/pd-follow.js"></script>
 <script defer src="/ads.js"></script>
 </body>
 </html>
