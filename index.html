@@ -505,7 +505,9 @@
     .pd-hero-answer { height: 180px; min-height: 180px; font-family: 'Source Serif 4', 'Source Serif 4 Fallback', Georgia, serif; font-size: 20px; line-height: 30px; }
     #pd-forecast-fallback { position: absolute; right: 0; bottom: 0; left: 20px; }
     .pdl-quote { position: relative; }
-    .hidden { display: none !important; }
+    /* Fuerza el ocultado durante la carga del héroe, pero sin pisar la navegación:
+       las barras usan «hidden md:flex», y un !important global las dejaría ocultas siempre. */
+    .hidden:not(nav) { display: none !important; }
     @media (min-width: 640px) { .pdl-h1 { line-height: 44px; min-height: 96px; } }
     @media (min-width: 1024px) { .pdl-h1 { line-height: 58px; min-height: 125px; } .pdl-quote { height: 160px; min-height: 0; } .pdl-question { height: 28px; } .pd-hero-answer { height: 90px; min-height: 90px; } }
     @media (min-width: 1280px) { .pdl-h1 { line-height: 65px; min-height: 141px; } }
