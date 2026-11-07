@@ -200,7 +200,8 @@
           <a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a>
           <a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a>
           <a href="/guia" class="hover:text-ink transition no-underline">Guía</a>
-          <a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
+          
+          <a href="/boletin" class="hover:text-ink transition no-underline">Boletín</a><a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
         </nav>
       </div>
 
@@ -231,7 +232,8 @@
         <a href="/noticias" class="hover:text-ink py-1 transition no-underline">Noticias</a>
         <a href="/metodologia" class="hover:text-ink py-1 transition no-underline">Metodología</a>
         <a href="/guia" class="hover:text-ink py-1 transition no-underline">Guía</a>
-        <a href="/precios" class="hover:text-ink py-1 transition no-underline">Precios</a>
+        
+        <a href="/boletin" class="hover:text-ink py-1 transition no-underline">Boletín</a><a href="/precios" class="hover:text-ink py-1 transition no-underline">Precios</a>
       </nav>
     </div>
   </header>
@@ -245,21 +247,9 @@
 
     <div id="estadoMsg" class="hidden pdl-text" role="status"></div>
 
-    <section id="empresas" class="hidden border-t border-rule pt-8 space-y-4">
-      <h2 class="text-3xl text-ink">Tus empresas</h2>
-      <p class="pdl-text">Elige hasta 15 empresas de la Bolsa de Valores de Lima. Con el plan Boletín verás cada mañana su precio, su proyección, sus hechos de importancia y las noticias que las mencionan. Esta sección es parte del <a href="/precios" class="pdl-link">plan Boletín</a> (US$&nbsp;1.99 al mes); con la suscripción gratuita recibes el cierre y el rango del dólar para mañana. <span id="prefEmail" class="text-ink-soft"></span></p>
-      <div id="prefChips" class="flex flex-wrap gap-x-5 gap-y-2" aria-live="polite"></div>
-      <label for="prefSearch" class="block text-sm text-ink-soft pt-2">Añadir empresa</label>
-      <input id="prefSearch" type="search" autocomplete="off" placeholder="Busca por nombre o nemónico: Alicorp, bancos…"
-        class="w-full px-0 py-2 bg-transparent text-ink" style="border:0;border-bottom:2px solid var(--pd-ink);font-family:var(--pd-font-serif,'Source Serif 4',Georgia,serif);font-size:19px;outline:none" />
-      <ul id="prefResults" class="border-t border-rule" style="list-style:none;margin:0;padding:0"></ul>
-      <div class="flex items-center gap-4 pt-2">
-        <button id="prefSave" type="button" class="pdl-btn pdl-btn-primary">Guardar mis empresas</button>
-        <span id="prefSaved" class="text-sm text-ink-soft" role="status"></span>
-      </div>
-    </section>
-
     <section id="suscribirse" class="border-t border-rule pt-8 space-y-4" data-reveal>
+      <h2 class="text-3xl text-ink">Recíbelo gratis</h2>
+      <p class="pdl-text">Deja tu correo y desde mañana lo recibes. Sin tarjeta y con baja en un clic.</p>
       <form id="boletinForm" class="space-y-3" novalidate>
         <label for="boletinEmail" class="block text-sm text-ink-soft">Tu correo</label>
         <div class="flex flex-col sm:flex-row gap-3">
@@ -269,6 +259,43 @@
         </div>
         <p class="text-xs text-ink-soft">Te enviaremos un correo para confirmar. Cada boletín trae un enlace para darte de baja con un clic. No compartimos tu correo.</p>
       </form>
+    </section>
+
+    <section class="border-t border-rule pt-8 space-y-4" data-reveal>
+      <h2 class="text-3xl text-ink">Qué cambia con el plan</h2>
+      <div class="grid gap-6 sm:grid-cols-2">
+        <div>
+          <p class="pd-kicker">Gratis</p>
+          <ul class="pdl-text" style="list-style:none;margin:0;padding:0">
+            <li>Mercados oficiales: dólar, cobre, oro, plata, zinc y petróleo.</li>
+            <li>La proyección del dólar a un mes con su rango.</li>
+            <li>Hechos de importancia de la SMV y titulares del día.</li>
+          </ul>
+        </div>
+        <div>
+          <p class="pd-kicker">Boletín + tus empresas</p>
+          <ul class="pdl-text" style="list-style:none;margin:0;padding:0">
+            <li>Todo lo del boletín general.</li>
+            <li>Hasta 15 empresas de la BVL elegidas por ti.</li>
+            <li>Para cada una: precio, proyección, hechos y noticias que la mencionan.</li>
+          </ul>
+          <a class="pdl-link" href="/precios">Ver planes</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="empresas" class="hidden border-t border-rule pt-8 space-y-4">
+      <h2 class="text-3xl text-ink">Tus empresas</h2>
+      <p class="pdl-text">Elige hasta 15 empresas de la Bolsa de Valores de Lima. Con el plan Boletín verás cada mañana su precio, su proyección, sus hechos de importancia y las noticias que las mencionan. Esta sección es parte del plan <a href="/precios" class="pdl-link">Boletín + tus empresas</a>. Si ya tienes cuenta, también puedes elegirlas desde <a href="/cuenta" class="pdl-link">Mi cuenta</a>. <span id="prefEmail" class="text-ink-soft"></span></p>
+      <div id="prefChips" class="flex flex-wrap gap-x-5 gap-y-2" aria-live="polite"></div>
+      <label for="prefSearch" class="block text-sm text-ink-soft pt-2">Añadir empresa</label>
+      <input id="prefSearch" type="search" autocomplete="off" placeholder="Busca por nombre o nemónico: Alicorp, bancos…"
+        class="w-full px-0 py-2 bg-transparent text-ink" style="border:0;border-bottom:2px solid var(--pd-ink);font-family:var(--pd-font-serif,'Source Serif 4',Georgia,serif);font-size:19px;outline:none" />
+      <ul id="prefResults" class="border-t border-rule" style="list-style:none;margin:0;padding:0"></ul>
+      <div class="flex items-center gap-4 pt-2">
+        <button id="prefSave" type="button" class="pdl-btn pdl-btn-primary">Guardar mis empresas</button>
+        <span id="prefSaved" class="text-sm text-ink-soft" role="status"></span>
+      </div>
     </section>
 
     <section class="border-t border-rule pt-8 space-y-3" data-reveal>
