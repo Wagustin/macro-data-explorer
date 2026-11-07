@@ -2961,3 +2961,62 @@ html.dark .pd-skeleton {
 @media (max-width: 479px) {
   .pd-bell-panel { width: min(288px, calc(100vw - 40px)); }
 }
+
+/* Tira «Por dónde empezar» (portada) */
+.pd-start-kicker {
+  margin: 0 0 12px;
+  font-family: var(--pd-font-ui);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--pd-ink-soft);
+}
+.pd-start-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.pd-start-item {
+  display: block;
+  padding: 0 20px 4px 0;
+  text-decoration: none;
+  color: var(--pd-ink);
+  border-right: 1px solid var(--pd-rule);
+}
+.pd-start-item:not(:first-child) { padding-left: 20px; }
+.pd-start-item:last-child { border-right: 0; padding-right: 0; }
+.pd-start-num {
+  display: block;
+  font-family: var(--pd-font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  color: var(--pd-ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.pd-start-label {
+  display: block;
+  margin-top: 5px;
+  font-family: var(--pd-font-serif, Georgia, serif);
+  font-size: 19px;
+  line-height: 1.25;
+}
+.pd-start-note {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--pd-font-ui);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--pd-ink-soft);
+}
+.pd-start-item:hover .pd-start-label { text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 767px) {
+  .pd-start-grid { grid-template-columns: 1fr; }
+  .pd-start-item,
+  .pd-start-item:not(:first-child),
+  .pd-start-item:last-child {
+    padding: 12px 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--pd-rule);
+  }
+  .pd-start-item:last-child { border-bottom: 0; padding-bottom: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+}
