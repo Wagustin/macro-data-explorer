@@ -17,6 +17,8 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
+import { evaluarFila } from "./alertas-reglas.js";
+
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DRY = process.argv.includes("--dry");
 
@@ -36,21 +38,39 @@ function formatPrice(val, symbol = "") {
   return formatted;
 }
 
-function buildAlertEmail({ to, simbolo, tipo, nivel, precio }) {
-  const levelText = formatPrice(nivel, simbolo);
+function buildAlertEmail({ to, simbolo, tipo, nivel, precio, base }) {
+  const isPct = tipo === "pct_arriba" || tipo === "pct_abajo";
   const priceText = formatPrice(precio, simbolo);
-  const subject = tipo === "arriba"
-    ? `PerData: ${simbolo} cruzó ${levelText}`
-    : `PerData: ${simbolo} bajó de ${levelText}`;
 
-  const actionText = tipo === "arriba"
-    ? `cruzó hacia arriba tu nivel de aviso de ${levelText}`
-    : `bajó por debajo de tu nivel de aviso de ${levelText}`;
+  let subject;
+  let actionText;
+  let bodyText;
+
+  if (isPct) {
+    const baseText = formatPrice(base, simbolo);
+    const pctText = Number(nivel);
+    const subio = tipo === "pct_arriba";
+    subject = `PerData: ${simbolo} ${subio ? "subió" : "bajó"} ${pctText} % desde ${baseText}`;
+    const referencia = subio ? "por encima" : "por debajo";
+    bodyText = `El activo <strong>${simbolo}</strong> cotiza a <strong>${priceText}</strong>; son <strong>${pctText} %</strong> ${referencia} de tu referencia de <strong>${baseText}</strong>.`;
+    actionText = `son ${pctText} % ${referencia} de tu referencia de ${baseText}`;
+  } else {
+    const levelText = formatPrice(nivel, simbolo);
+    subject = tipo === "arriba"
+      ? `PerData: ${simbolo} cruzó ${levelText}`
+      : `PerData: ${simbolo} bajó de ${levelText}`;
+
+    actionText = tipo === "arriba"
+      ? `cruzó hacia arriba tu nivel de aviso de ${levelText}`
+      : `bajó por debajo de tu nivel de aviso de ${levelText}`;
+
+    bodyText = `El activo <strong>${simbolo}</strong> cotiza a <strong>${priceText}</strong> y ${actionText}.`;
+  }
 
   const html = `<div style="background:#F5F1E8;padding:28px 16px;">
   <div style="max-width:480px;margin:0 auto;font-family:Helvetica,Arial,sans-serif;color:#1B1916;">
     <p style="font-family:Georgia,serif;font-style:italic;font-weight:600;font-size:26px;margin:0 0 20px;color:#1B1916;">PerData</p>
-    <p style="margin:0 0 16px;font-size:16px;line-height:1.5;">El activo <strong>${simbolo}</strong> cotiza a <strong>${priceText}</strong> y ${actionText}.</p>
+    <p style="margin:0 0 16px;font-size:16px;line-height:1.5;">${bodyText}</p>
     <p style="margin:0 0 24px;">
       <a href="https://perdata.site/empresa/${encodeURIComponent(simbolo)}" style="display:inline-block;background:#1B1916;color:#F5F1E8;text-decoration:none;font-weight:600;padding:12px 20px;font-size:14px;">Ver la ficha</a>
     </p>
@@ -74,7 +94,7 @@ async function fetchSeguimiento(url, key) {
   const pageSize = 1000;
   for (let offset = 0; ; offset += pageSize) {
     const to = offset + pageSize - 1;
-    const res = await fetch(`${url}/rest/v1/seguimiento?select=user_id,simbolo,alerta_arriba,alerta_abajo`, {
+    const res = await fetch(`${url}/rest/v1/seguimiento?select=user_id,simbolo,alerta_arriba,alerta_abajo,precio_base,alerta_pct_arriba,alerta_pct_abajo`, {
       headers: {
         apikey: key,
         Authorization: `Bearer ${key}`,
@@ -93,10 +113,13 @@ async function fetchSeguimiento(url, key) {
     all.push(...page);
     if (page.length < pageSize) break;
   }
-  return all.filter((r) => (
-    (r.alerta_arriba !== null && r.alerta_arriba !== undefined && Number.isFinite(Number(r.alerta_arriba))) ||
-    (r.alerta_abajo !== null && r.alerta_abajo !== undefined && Number.isFinite(Number(r.alerta_abajo)))
-  ));
+  const esNumero = (v) => v !== null && v !== undefined && Number.isFinite(Number(v));
+  return all.filter((r) => {
+    const absolutos = esNumero(r.alerta_arriba) || esNumero(r.alerta_abajo);
+    const base = r.precio_base !== null && r.precio_base !== undefined && Number.isFinite(Number(r.precio_base)) && Number(r.precio_base) > 0;
+    const porcentuales = base && (esNumero(r.alerta_pct_arriba) || esNumero(r.alerta_pct_abajo));
+    return absolutos || porcentuales;
+  });
 }
 
 async function fetchAlertasEnviadas(url, key) {
@@ -287,38 +310,21 @@ async function main() {
     const precio = Number(lastPoint?.close);
     if (!Number.isFinite(precio)) continue;
 
-    // Alerta arriba
-    if (row.alerta_arriba !== null && row.alerta_arriba !== undefined && Number.isFinite(Number(row.alerta_arriba))) {
-      const umbral = Number(row.alerta_arriba);
-      const tipo = "arriba";
-      const key = `${user_id}|${simbolo}|${tipo}|${umbral}`;
+    const { avisar, rearmar } = evaluarFila({ fila: row, precio, enviadas: enviadasSet });
 
-      if (precio >= umbral) {
-        if (!enviadasSet.has(key)) {
-          toSend.push({ user_id, simbolo, tipo, nivel: umbral, precio });
-        }
-      } else if (precio < umbral * 0.995) {
-        if (enviadasSet.has(key)) {
-          toRearm.push({ user_id, simbolo, tipo, nivel: umbral });
-        }
-      }
+    for (const item of avisar) {
+      toSend.push({
+        user_id,
+        simbolo,
+        tipo: item.tipo,
+        nivel: item.nivel,
+        precio,
+        base: item.base
+      });
     }
 
-    // Alerta abajo
-    if (row.alerta_abajo !== null && row.alerta_abajo !== undefined && Number.isFinite(Number(row.alerta_abajo))) {
-      const umbral = Number(row.alerta_abajo);
-      const tipo = "abajo";
-      const key = `${user_id}|${simbolo}|${tipo}|${umbral}`;
-
-      if (precio <= umbral) {
-        if (!enviadasSet.has(key)) {
-          toSend.push({ user_id, simbolo, tipo, nivel: umbral, precio });
-        }
-      } else if (precio > umbral * 1.005) {
-        if (enviadasSet.has(key)) {
-          toRearm.push({ user_id, simbolo, tipo, nivel: umbral });
-        }
-      }
+    for (const item of rearmar) {
+      toRearm.push({ user_id, simbolo, tipo: item.tipo, nivel: item.nivel });
     }
   }
 
@@ -380,7 +386,8 @@ async function main() {
         simbolo: alert.simbolo,
         tipo: alert.tipo,
         nivel: alert.nivel,
-        precio: alert.precio
+        precio: alert.precio,
+        base: alert.base
       });
 
       await sendEmail({
