@@ -36,6 +36,19 @@ function send(res, status, body) {
   res.end(JSON.stringify(body));
 }
 
+// La migración 0013 puede no estar aplicada todavía: si el select extendido falla,
+// se cae al select antiguo para no romper la lista de seguimiento.
+const FIELDS_FULL = "simbolo,alerta_arriba,alerta_abajo,alerta_pct_arriba,alerta_pct_abajo,alerta_diaria,precio_base";
+const FIELDS_LEGACY = "simbolo,alerta_arriba,alerta_abajo";
+
+async function listSeguimiento(userId) {
+  const base = `?user_id=eq.${encodeURIComponent(userId)}&order=creado.asc&select=`;
+  let r = await db(base + FIELDS_FULL);
+  if (!r.ok) r = await db(base + FIELDS_LEGACY);
+  if (!r.ok) return null;
+  return r.json();
+}
+
 async function readBody(req) {
   if (req.body && typeof req.body === "object") return req.body;
   const chunks = [];
@@ -92,11 +105,10 @@ export default async function handler(req, res) {
 
   if (req.method === "GET") {
     try {
-      const r = await db(`?user_id=eq.${encodeURIComponent(user.id)}&select=simbolo,alerta_arriba,alerta_abajo,alerta_pct_arriba,alerta_pct_abajo,alerta_diaria,precio_base&order=creado.asc`);
-      if (!r.ok) {
+      const rows = await listSeguimiento(user.id);
+      if (rows === null) {
         return send(res, 502, { error: "No se pudieron obtener los símbolos de seguimiento." });
       }
-      const rows = await r.json();
       return send(res, 200, { simbolos: rows || [], limite: followLimit(plan), permitido: canFollow(plan), plan: plan.id });
     } catch (e) {
       return send(res, 502, { error: "Error al consultar la base de datos." });
@@ -157,18 +169,32 @@ export default async function handler(req, res) {
         alerta_diaria: body.alerta_diaria === undefined ? true : Boolean(body.alerta_diaria),
       };
 
-      const upsertRes = await db("?on_conflict=user_id,simbolo", {
+      let upsertRes = await db("?on_conflict=user_id,simbolo", {
         method: "POST",
         headers: { Prefer: "resolution=merge-duplicates,return=representation" },
         body: JSON.stringify(row),
       });
 
+      // Si la migración 0013 aún no está aplicada, se guarda sólo lo que ya existía.
+      if (!upsertRes.ok) {
+        const legacy = {
+          user_id: row.user_id,
+          simbolo: row.simbolo,
+          alerta_arriba: row.alerta_arriba,
+          alerta_abajo: row.alerta_abajo,
+        };
+        upsertRes = await db("?on_conflict=user_id,simbolo", {
+          method: "POST",
+          headers: { Prefer: "resolution=merge-duplicates,return=representation" },
+          body: JSON.stringify(legacy),
+        });
+      }
+
       if (!upsertRes.ok) {
         return send(res, 502, { error: "No se pudo guardar el símbolo." });
       }
 
-      const listRes = await db(`?user_id=eq.${encodeURIComponent(user.id)}&select=simbolo,alerta_arriba,alerta_abajo,alerta_pct_arriba,alerta_pct_abajo,alerta_diaria,precio_base&order=creado.asc`);
-      const list = listRes.ok ? await listRes.json() : [];
+      const list = (await listSeguimiento(user.id)) || [];
       return send(res, 200, { ok: true, simbolos: list });
     } catch (e) {
       return send(res, 502, { error: "Error al actualizar el seguimiento." });
@@ -192,8 +218,7 @@ export default async function handler(req, res) {
         return send(res, 502, { error: "No se pudo eliminar el símbolo." });
       }
 
-      const listRes = await db(`?user_id=eq.${encodeURIComponent(user.id)}&select=simbolo,alerta_arriba,alerta_abajo,alerta_pct_arriba,alerta_pct_abajo,alerta_diaria,precio_base&order=creado.asc`);
-      const list = listRes.ok ? await listRes.json() : [];
+      const list = (await listSeguimiento(user.id)) || [];
       return send(res, 200, { ok: true, simbolos: list });
     } catch (e) {
       return send(res, 502, { error: "Error al eliminar el símbolo." });
