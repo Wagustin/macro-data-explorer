@@ -1,140 +1,133 @@
 {
-  "actualizado": "2026-11-06T17:56:54.537Z",
+  "actualizado": "2026-11-07T11:26:38.905Z",
   "timesfm": {
     "ok": true,
     "error": null
   },
   "model": "perdata-engine-v6",
   "filas": 2976,
-  "validas": 2941,
-  "descartadas": 35,
-  "pct_descartadas": 1.18,
+  "validas": 2942,
+  "descartadas": 34,
+  "pct_descartadas": 1.14,
   "sospechosas": 0,
   "simbolos_sin_datos": 0,
   "simbolos_totales": 62,
-  "tiempo_ms": 33,
+  "tiempo_ms": 39,
   "cobertura_ok": true,
   "frescura_ok": true,
   "exito": true,
   "detalles_descartadas": [
     {
+      "index": 548,
+      "symbol": "AENZAC1.LM",
+      "horizon": 21,
+      "reason": "absurd_width",
+      "width": 44.556862745098044
+    },
+    {
       "index": 549,
       "symbol": "AENZAC1.LM",
       "horizon": 22,
       "reason": "absurd_width",
-      "width": 41.09459459459459
+      "width": 71.42857142857143
+    },
+    {
+      "index": 550,
+      "symbol": "AENZAC1.LM",
+      "horizon": 23,
+      "reason": "absurd_width",
+      "width": 53.41777777777778
     },
     {
       "index": 551,
       "symbol": "AENZAC1.LM",
       "horizon": 24,
       "reason": "absurd_width",
-      "width": 53.1910569105691
+      "width": 99.71199999999999
     },
     {
       "index": 552,
       "symbol": "AENZAC1.LM",
       "horizon": 25,
       "reason": "absurd_width",
-      "width": 57.09795918367347
+      "width": 117.44736842105263
     },
     {
       "index": 553,
       "symbol": "AENZAC1.LM",
       "horizon": 26,
       "reason": "absurd_width",
-      "width": 181.85365853658536
+      "width": 2387.1666666666665
     },
     {
       "index": 554,
       "symbol": "AENZAC1.LM",
       "horizon": 27,
       "reason": "absurd_width",
-      "width": 60.40963855421687
+      "width": 141.35922330097088
     },
     {
       "index": 555,
       "symbol": "AENZAC1.LM",
       "horizon": 28,
       "reason": "absurd_width",
-      "width": 68.68995633187772
+      "width": 146.5242718446602
     },
     {
       "index": 556,
       "symbol": "AENZAC1.LM",
       "horizon": 29,
       "reason": "absurd_width",
-      "width": 163.74038461538464
-    },
-    {
-      "index": 557,
-      "symbol": "AENZAC1.LM",
-      "horizon": 30,
-      "reason": "absurd_width",
-      "width": 370.4117647058823
-    },
-    {
-      "index": 558,
-      "symbol": "AENZAC1.LM",
-      "horizon": 31,
-      "reason": "absurd_width",
-      "width": 849.5652173913044
+      "width": 1496.272727272727
     },
     {
       "index": 568,
       "symbol": "AENZAC1.LM",
       "horizon": 41,
       "reason": "absurd_width",
-      "width": 650.3333333333334
+      "width": 2503.727272727273
     },
     {
       "index": 569,
       "symbol": "AENZAC1.LM",
       "horizon": 42,
       "reason": "absurd_width",
-      "width": 893.6176470588235
+      "width": 7195.749999999999
     },
     {
       "index": 570,
       "symbol": "AENZAC1.LM",
       "horizon": 43,
       "reason": "absurd_width",
-      "width": 1681.7894736842104
+      "width": 30405
     },
     {
       "index": 571,
       "symbol": "AENZAC1.LM",
       "horizon": 44,
       "reason": "absurd_width",
-      "width": 1948.3749999999998
-    },
-    {
-      "index": 572,
-      "symbol": "AENZAC1.LM",
-      "horizon": 45,
-      "reason": "absurd_width",
-      "width": 3442.222222222222
+      "width": 29582
     },
     {
       "index": 573,
       "symbol": "AENZAC1.LM",
       "horizon": 46,
       "reason": "absurd_width",
-      "width": 335.2842105263158
+      "width": 658.5434782608696
     },
     {
       "index": 574,
       "symbol": "AENZAC1.LM",
       "horizon": 47,
       "reason": "absurd_width",
-      "width": 390.4823529411765
+      "width": 812
     },
     {
       "index": 575,
       "symbol": "AENZAC1.LM",
       "horizon": 48,
       "reason": "absurd_width",
-      "width": 1025.6571428571428
+      "width": 4310.625
     },
     {
       "index": 607,
