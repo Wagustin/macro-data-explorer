@@ -259,6 +259,7 @@
               <p class="pd-panel-copy">Elige las empresas y activos que quieres seguir. Si defines un precio, te avisaremos por correo cuando lo cruce. <a href="/metodologia#avisos" class="underline hover:text-ink">Cómo funcionan los avisos</a>.</p>
             </div>
           </div>
+          <div id="pdSegActive">
           <form id="pdSegForm" class="mt-3 flex flex-col sm:flex-row sm:items-end gap-2">
             <label class="flex-1 text-xs text-ink-soft">Empresa o activo
               <input id="pdSegBuscar" list="pdSegOpciones" class="w-full border border-rule bg-card px-2 py-1.5 text-sm text-ink" placeholder="Buscar por nombre o símbolo" autocomplete="off" required>
@@ -274,6 +275,11 @@
           </form>
           <p id="pdSegEstado" class="pd-form-status" role="status"></p>
           <ul id="pdSegLista" class="mt-3"></ul>
+          </div>
+          <div id="pdSegLocked" hidden>
+            <p class="pd-panel-copy">Las empresas que sigues son parte del plan <a href="/precios" class="underline hover:text-ink">Boletín + tus empresas</a>: cada mañana recibes su precio, su proyección y las noticias que las mencionan.</p>
+            <a href="/precios" class="pd-btn pd-btn-accent mt-2">Ver planes</a>
+          </div>
         </div>
 
         <div class="pd-panel pd-panel-quiet">
@@ -471,6 +477,8 @@
     var abajo = document.getElementById("pdSegAbajo");
     var estado = document.getElementById("pdSegEstado");
     var lista = document.getElementById("pdSegLista");
+    var active = document.getElementById("pdSegActive");
+    var locked = document.getElementById("pdSegLocked");
     var nombres = {};
 
     function token() { return window.MDE_Auth && window.MDE_Auth.getToken ? window.MDE_Auth.getToken() : null; }
@@ -535,6 +543,15 @@
         var res = await fetch("/api/seguimiento", { headers: { Authorization: "Bearer " + t }, cache: "no-store" });
         if (!res.ok) { msg("No pudimos cargar tus empresas. Inténtalo en un momento.", true); return; }
         var data = await res.json();
+        if (data.permitido === false) {
+          locked.hidden = false;
+          active.hidden = true;
+          return;
+        }
+        if (data.permitido === true) {
+          active.hidden = false;
+          locked.hidden = true;
+        }
         render(data.simbolos || []);
       } catch (e) { msg("No pudimos cargar tus empresas.", true); }
     }

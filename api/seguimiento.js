@@ -6,11 +6,11 @@
  */
 
 import { applyCors, handleRateLimit } from "./_lib/ratelimit.js";
-import { getAuthUserOrNull } from "./_lib/session.js";
+import { getAuthUser } from "./_lib/session.js";
+import { planForUser, canFollow, followLimit } from "./_lib/plans.js";
 import { CATALOG } from "./search.js";
 
 const TABLE = "seguimiento";
-const MAX = 20;
 const valid = new Set((CATALOG || []).map((c) => c.symbol));
 
 function db(path, init = {}) {
@@ -56,9 +56,19 @@ export default async function handler(req, res) {
 
   if (handleRateLimit(req, res)) return;
 
-  const user = await getAuthUserOrNull(req);
+  const user = await getAuthUser(req);
   if (!user || !user.id) {
     return send(res, 401, { error: "No autenticado" });
+  }
+
+  const plan = planForUser(user);
+
+  if ((req.method === "POST" || req.method === "DELETE") && !canFollow(plan)) {
+    return send(res, 403, { code: "plan_required", error: "Las empresas que sigues son parte del plan Boletín." });
+  }
+
+  if (req.method === "GET" && !canFollow(plan)) {
+    return send(res, 200, { simbolos: [], limite: followLimit(plan), permitido: false, plan: plan.id });
   }
 
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
@@ -72,7 +82,7 @@ export default async function handler(req, res) {
         return send(res, 502, { error: "No se pudieron obtener los símbolos de seguimiento." });
       }
       const rows = await r.json();
-      return send(res, 200, { simbolos: rows || [], limite: MAX });
+      return send(res, 200, { simbolos: rows || [], limite: followLimit(plan), permitido: canFollow(plan), plan: plan.id });
     } catch (e) {
       return send(res, 502, { error: "Error al consultar la base de datos." });
     }
@@ -110,8 +120,9 @@ export default async function handler(req, res) {
       }
       const currRows = await currRes.json();
       const alreadyFollowing = (currRows || []).some((r) => r.simbolo === rawSimbolo);
-      if (!alreadyFollowing && (currRows || []).length >= MAX) {
-        return send(res, 400, { error: `Puedes seguir hasta ${MAX} empresas o activos.` });
+      const max = followLimit(plan);
+      if (!alreadyFollowing && (currRows || []).length >= max) {
+        return send(res, 400, { error: `Puedes seguir hasta ${max} empresas o activos.` });
       }
 
       const row = {

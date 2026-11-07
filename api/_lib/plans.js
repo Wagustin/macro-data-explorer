@@ -10,14 +10,18 @@ export const PLANS = {
     label: "Sin cuenta",
     ranges: ["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y"],
     maxHorizon: 1,
-    excel: false
+    excel: false,
+    seguimiento: false,
+    seguimientoMax: 0
   },
   free: {
     id: "free",
     label: "Gratis",
     ranges: ["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y"],
     maxHorizon: 6,
-    excel: false
+    excel: false,
+    seguimiento: false,
+    seguimientoMax: 0
   },
   // Boletín: the terminal stays as in Gratis; adds the full newsletter (markets, dollar ranges,
   // SMV facts, headlines) and the personal section with the companies each subscriber follows.
@@ -27,7 +31,9 @@ export const PLANS = {
     ranges: ["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y"],
     maxHorizon: 6,
     excel: false,
-    boletinPersonal: true
+    boletinPersonal: true,
+    seguimiento: true,
+    seguimientoMax: 15
   },
   pro: {
     id: "pro",
@@ -35,7 +41,9 @@ export const PLANS = {
     ranges: ["1mo", "3mo", "6mo", "1y", "2y", "3y", "5y", "10y", "max"],
     maxHorizon: 48,
     excel: true,
-    boletinPersonal: true
+    boletinPersonal: true,
+    seguimiento: true,
+    seguimientoMax: 20
   }
 };
 
@@ -53,6 +61,14 @@ export function canUseRange(plan, range) {
 
 export function canUseHorizon(plan, months) {
   return months <= plan.maxHorizon;
+}
+
+export function canFollow(plan) {
+  return Boolean(plan && plan.seguimiento);
+}
+
+export function followLimit(plan) {
+  return plan && Number.isFinite(plan.seguimientoMax) ? plan.seguimientoMax : 0;
 }
 
 /** Shared 403 body so the client can open the right prompt. */
