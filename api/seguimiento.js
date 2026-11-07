@@ -8,6 +8,7 @@
 import { applyCors, handleRateLimit } from "./_lib/ratelimit.js";
 import { getAuthUser } from "./_lib/session.js";
 import { planForUser, canFollow, followLimit } from "./_lib/plans.js";
+import { EMAIL_ENABLED, sendEmail } from "./_lib/email.js";
 import { CATALOG } from "./search.js";
 
 const TABLE = "seguimiento";
@@ -47,6 +48,44 @@ async function listSeguimiento(userId) {
   if (!r.ok) r = await db(base + FIELDS_LEGACY);
   if (!r.ok) return null;
   return r.json();
+}
+
+// Correo de bienvenida: una sola vez por usuario, y nunca rompe el guardado.
+async function enviarBienvenida(user, simbolo) {
+  if (!EMAIL_ENABLED || !user || !user.email) return;
+  try {
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) return;
+    const base = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
+    const key = process.env.SUPABASE_SERVICE_KEY || "";
+    const field = "bienvenida_seguimiento";
+    const check = await fetch(`${base}/rest/v1/users?id=eq.${encodeURIComponent(user.id)}&select=${field}`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!check.ok) return;               // migración 0013 pendiente: no se envía nada
+    const rows = await check.json();
+    if (rows && rows[0] && rows[0][field]) return;
+
+    const html = `<div style="background:#F5F1E8;padding:28px 16px">
+  <div style="max-width:480px;margin:0 auto;font-family:Helvetica,Arial,sans-serif;color:#1B1916">
+    <p style="font-family:Georgia,serif;font-style:italic;font-weight:600;font-size:26px;margin:0 0 20px">PerData</p>
+    <p style="margin:0 0 14px;font-size:16px;line-height:1.5">Ya sigues tu primera empresa: <strong>${simbolo}</strong>.</p>
+    <p style="margin:0 0 14px;font-size:16px;line-height:1.5">Cada mañana, en el boletín, verás su precio, su proyección, sus hechos de importancia y las noticias que la mencionan. Si defines un porcentaje de aviso, te escribimos cuando el precio se mueva.</p>
+    <p style="margin:0 0 24px"><a href="https://perdata.site/cuenta" style="display:inline-block;background:#1B1916;color:#F5F1E8;text-decoration:none;font-weight:600;padding:13px 24px">Ver mis empresas</a></p>
+    <p style="margin:0;color:#5E584E;font-size:13px;line-height:1.5">Puedes dejar de seguir una empresa cuando quieras desde tu cuenta.<br>Equipo de PerData</p>
+  </div>
+</div>`;
+    await sendEmail({ to: user.email, subject: `Ya sigues ${simbolo} en PerData`, html, text: `Ya sigues ${simbolo} en PerData.\n\nCada mañana verás su precio, su proyección y las noticias que la mencionan.\n\nVer mis empresas: https://perdata.site/cuenta\n\nPuedes dejar de seguirla cuando quieras.` });
+
+    await fetch(`${base}/rest/v1/users?id=eq.${encodeURIComponent(user.id)}`, {
+      method: "PATCH",
+      headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ [field]: new Date().toISOString() }),
+      signal: AbortSignal.timeout(5000),
+    }).catch(() => {});
+  } catch (e) {
+    // Un fallo de correo nunca debe romper el guardado del seguimiento.
+  }
 }
 
 async function readBody(req) {
@@ -193,6 +232,8 @@ export default async function handler(req, res) {
       if (!upsertRes.ok) {
         return send(res, 502, { error: "No se pudo guardar el símbolo." });
       }
+
+      await enviarBienvenida(user, rawSimbolo);
 
       const list = (await listSeguimiento(user.id)) || [];
       return send(res, 200, { ok: true, simbolos: list });

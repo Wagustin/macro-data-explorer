@@ -215,6 +215,20 @@
       <p class="pd-kicker">Mi cuenta</p>
       <h1 class="pd-page-title" id="pdAcctTitle">Tu cuenta</h1>
       <p id="pdAcctNotice" class="pd-notice" role="status" hidden></p>
+      <div id="pdWelcome" class="pd-panel" hidden>
+        <div class="pd-panel-row">
+          <div>
+            <p class="pd-kicker">Bienvenido</p>
+            <h2 class="pd-panel-title" id="pdWelcomeTitle">Tu plan está activo</h2>
+            <p class="pd-panel-copy">Dos pasos para aprovecharlo:</p>
+            <ol class="pd-panel-copy" style="margin:8px 0 0;padding-left:18px">
+              <li>Elige las empresas que quieres ver cada mañana: <a href="/boletin#empresas" class="underline hover:text-ink">elegir mis empresas</a>.</li>
+              <li>Revisa tu correo: te enviamos la confirmación de la suscripción.</li>
+            </ol>
+          </div>
+        </div>
+        <button type="button" class="pd-btn pd-btn-ghost mt-2" id="pdWelcomeClose">Entendido</button>
+      </div>
     </section>
 
     <section class="max-w-3xl mx-auto px-4 sm:px-6">
@@ -427,7 +441,13 @@
 
         if (awaitingUpgrade && isPro) {
           awaitingUpgrade = false;
-          notice("Listo: tu plan Pro está activo. Gracias por suscribirte.");
+          if (localStorage.getItem("pd_welcome_done") !== "1") {
+            document.getElementById("pdWelcomeTitle").textContent = "Bienvenido a " + planName;
+            document.getElementById("pdWelcome").hidden = false;
+            notice("");
+          } else {
+            notice("Listo: tu plan Pro está activo. Gracias por suscribirte.");
+          }
           history.replaceState(null, "", "/cuenta");
         }
       }
@@ -460,6 +480,10 @@
         }
       });
       document.getElementById("pdAcctLogout").addEventListener("click", function () { window.MDE_Auth.logout(); });
+      document.getElementById("pdWelcomeClose").addEventListener("click", function () {
+        document.getElementById("pdWelcome").hidden = true;
+        localStorage.setItem("pd_welcome_done", "1");
+      });
 
       window.addEventListener("mde:auth-change", render);
       window.addEventListener("mde:billing-loaded", render);
