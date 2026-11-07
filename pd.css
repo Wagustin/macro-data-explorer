@@ -2934,6 +2934,7 @@ html.dark .pd-skeleton {
   text-transform: uppercase;
   color: var(--pd-ink-soft);
 }
+.pd-bell-ref { margin: 6px 0 2px; font-family: var(--pd-font-mono, ui-monospace, monospace); font-size: 11px; color: var(--pd-ink-soft); font-variant-numeric: tabular-nums; }
 .pd-bell-sep { border-top: 1px solid var(--pd-rule); margin: 8px 0; }
 .pd-bell-row {
   display: flex;
