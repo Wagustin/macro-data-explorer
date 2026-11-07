@@ -12,24 +12,29 @@ const plano = (html) => html.replace(/\s+/g, " ");
 
 const INVITE = "Recibe gratis cada mañana el dólar y su rango para el próximo día hábil. Con el plan Boletín, todo el mercado y tus empresas.";
 
-test("/boletin says what is free and what is in the Boletín plan", () => {
+test("/boletin explica que el correo general es gratis y que el plan añade tus empresas", () => {
   const html = read("boletin.html");
-  assert.match(html, /Gratis: el cierre y el rango del dólar para mañana/);
-  assert.match(html, /Plan Boletín \(US\$ 1\.99\/mes\)/);
-  // Comparison of the two plans, in two columns
+  // El correo general se ofrece gratis, sin plan de pago por medio
+  assert.match(html, /El correo general, cada mañana\./);
+  assert.match(html, /Es gratis\./);
+  // El plan de pago es el correo general mas tus empresas
+  assert.match(html, /Boletín \+ tus empresas/);
+  assert.match(html, /Hasta 15 empresas de la BVL, con precio, proyección y noticias/);
+  // Comparacion de los dos caminos, en dos columnas
   assert.match(html, /pd-plans--2/);
   assert.match(html, /<h3 class="pd-plan-name">Gratis<\/h3>/);
-  assert.match(html, /<h3 class="pd-plan-name">Boletín<\/h3>/);
-  // The complete newsletter is not sold as free
+  // Ya no se presenta el correo general como si fuera de pago
+  assert.doesNotMatch(html, /Gratis: el cierre y el rango del dólar para mañana/);
   assert.doesNotMatch(html, /Boletín diario general/);
-  assert.doesNotMatch(html, /boletín general/);
 });
 
-test("/precios separates the free newsletter from the complete one", () => {
+test("/precios separa el correo gratuito del plan con empresas", () => {
   const html = read("precios.html");
-  assert.match(html, /Boletín diario: el dólar y su rango para mañana/);
-  assert.match(html, /Boletín completo: dólar a un día, una semana y un mes; cobre, oro y petróleo; hechos de la SMV; lo importante del día/);
-  assert.doesNotMatch(html, /Boletín diario general/);
+  assert.match(html, /boletín general es gratis/);
+  assert.match(html, /Boletín \+ tus empresas/);
+  assert.match(html, /Recibir el boletín gratis/);
+  // La descripcion vieja (correo gratis solo del dolar) ya no esta
+  assert.doesNotMatch(html, /Boletín diario: el dólar y su rango para mañana/);
 });
 
 test("the newsletter invite offers the dollar for free", () => {
