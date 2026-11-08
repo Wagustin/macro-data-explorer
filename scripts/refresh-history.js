@@ -9,6 +9,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { nemonicoOf, smvRows } from "../api/_lib/smv.js";
 import { SOURCES, sourcePoints, monthlyPoints } from "../api/_lib/sources.js";
+import { debeFallar } from "./history-umbral.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FILE = path.join(ROOT, "data", "history-120.json");
@@ -57,12 +58,16 @@ async function monthly(symbol) {
 const cache = fs.existsSync(FILE) ? JSON.parse(fs.readFileSync(FILE, "utf8")) : {};
 const { CATALOG } = await import("../api/search.js");
 const symbols = [...new Set([...CATALOG.filter((a) => a.symbol.endsWith(".LM")).map((a) => a.symbol), ...Object.keys(SOURCES)])];
+// Symbols that already had a cached series and are still in the catalog
+const previos = new Set(symbols.filter((s) => Array.isArray(cache[s]) && cache[s].length));
+const actualizados = new Set();
 let ok = 0;
 let smvCount = 0;
 const failed = [];
 for (const s of symbols) {
   try {
     cache[s] = await monthly(s);
+    actualizados.add(s);
     ok++;
   } catch (e) {
     failed.push(`${s} (${e.message})`);
@@ -72,6 +77,8 @@ for (const s of symbols) {
 // Remove only symbols no longer represented by the catalog or an official source.
 for (const s of Object.keys(cache)) if (!symbols.includes(s)) delete cache[s];
 fs.writeFileSync(FILE, JSON.stringify(cache));
-console.log(`Historial actualizado: ${ok}/${symbols.length} (${smvCount} de la SMV)${failed.length ? ` · sin actualizar: ${failed.join(", ")}` : ""}`);
+let previosActualizados = 0;
+for (const s of previos) if (actualizados.has(s)) previosActualizados++;
+console.log(`Historial actualizado: ${ok}/${symbols.length} (${smvCount} de la SMV) · con serie previa actualizados ${previosActualizados}/${previos.size}${failed.length ? ` · sin actualizar: ${failed.join(", ")}` : ""}`);
 // The catalog also lists private companies and macro series without a market ticker (~25)
-if (ok < symbols.length * 0.75) process.exit(1);
+if (debeFallar({ previos, actualizados, ok })) process.exit(1);
