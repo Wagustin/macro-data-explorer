@@ -81,4 +81,4 @@ let previosActualizados = 0;
 for (const s of previos) if (actualizados.has(s)) previosActualizados++;
 console.log(`Historial actualizado: ${ok}/${symbols.length} (${smvCount} de la SMV) · con serie previa actualizados ${previosActualizados}/${previos.size}${failed.length ? ` · sin actualizar: ${failed.join(", ")}` : ""}`);
 // The catalog also lists private companies and macro series without a market ticker (~25)
-if (debeFallar({ previos, actualizados, ok })) process.exit(1);
+if (debeFallar({ previos, actualizados, ok, smv: smvCount })) process.exit(1);

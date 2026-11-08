@@ -33,3 +33,11 @@ test("74% of previos updated fails", () => {
   const previos = simbolos("P", 62);
   assert.equal(debeFallar({ previos, actualizados: simbolos("P", 46), ok: 46 }), true);
 });
+
+test("caché fría: con la SMV caída (pocas series de la SMV) falla aunque haya otras series", () => {
+  assert.equal(debeFallar({ previos: new Set(), actualizados: new Set(), ok: 80, smv: 20 }), true);
+});
+
+test("caché fría: con la SMV respondiendo (125 series) no falla", () => {
+  assert.equal(debeFallar({ previos: new Set(), actualizados: new Set(), ok: 158, smv: 125 }), false);
+});
