@@ -62,10 +62,10 @@ function confirmEmail(link) {
   const ink = "#1B1916", paper = "#F5F1E8", soft = "#5E584E";
   return {
     subject: "Confirma tu suscripción al boletín de PerData",
-    text: `Hola:\n\nPara recibir el boletín diario de PerData (lunes a viernes, 06:00 en Lima), confirma tu correo con este enlace:\n\n${link}\n\nSi no te suscribiste, ignora este mensaje y no recibirás nada.\n\nEquipo de PerData`,
+    text: `Hola:\n\nPara recibir el boletín diario de PerData (lunes a sábado, 06:00 en Lima), confirma tu correo con este enlace:\n\n${link}\n\nSi no te suscribiste, ignora este mensaje y no recibirás nada.\n\nEquipo de PerData`,
     html: `<div style="background:${paper};padding:28px 16px"><div style="max-width:480px;margin:0 auto;font-family:Helvetica,Arial,sans-serif;color:${ink}">
   <p style="font-family:Georgia,serif;font-style:italic;font-weight:600;font-size:26px;margin:0 0 20px">PerData</p>
-  <p style="font-family:Georgia,serif;font-size:18px;line-height:1.5;margin:0 0 16px">Confirma tu correo para recibir el boletín diario: mercados, hechos de importancia y titulares del Perú, de lunes a viernes a las 06:00 (hora de Lima).</p>
+  <p style="font-family:Georgia,serif;font-size:18px;line-height:1.5;margin:0 0 16px">Confirma tu correo para recibir el boletín diario: mercados, hechos de importancia y titulares del Perú, de lunes a sábado a las 06:00 (hora de Lima).</p>
   <p style="margin:0 0 24px"><a href="${link}" style="display:inline-block;background:${ink};color:${paper};text-decoration:none;font-weight:600;padding:13px 24px">Confirmar suscripción</a></p>
   <p style="margin:0;color:${soft};font-size:13px;line-height:1.5">Si no te suscribiste, ignora este mensaje y no recibirás nada.<br>Equipo de PerData</p>
 </div></div>`,

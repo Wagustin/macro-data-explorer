@@ -133,9 +133,9 @@ const checks = [
   }],
   ["Boletín de hoy", async () => {
     const lima = new Date(Date.now() - 5 * 36e5);
-    const weekday = lima.getUTCDay() >= 1 && lima.getUTCDay() <= 5;
+    const diaDeEnvio = lima.getUTCDay() >= 1 && lima.getUTCDay() <= 6;
     const minutes = lima.getUTCHours() * 60 + lima.getUTCMinutes();
-    if (!weekday || minutes < 7 * 60 + 30) return "no toca revisar todavía";
+    if (!diaDeEnvio || minutes < 7 * 60 + 30) return "no toca revisar todavía";
     const repo = process.env.GITHUB_REPOSITORY || "Wagustin/macro-data-explorer";
     const r = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/boletin-last.json?t=${Date.now()}`, { signal: AbortSignal.timeout(15000) });
     const d = r.ok ? await r.json() : {};
