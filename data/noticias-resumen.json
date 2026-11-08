@@ -1,11 +1,11 @@
 {
- "actualizado": "2026-11-08T18:02:27.652Z",
+ "actualizado": "2026-11-08T21:08:09.435Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "Perú desplazaría a Chile como cuarta economía sudamericana en 2027",
-   "nota": "El PBI peruano alcanzaría 413.597 millones de dólares en 2027 según proyecciones de medios económicos. El gobierno usará la fortaleza fiscal del Estado para defender el empleo y el crecimiento frente a choques externos.",
+   "titulo": "Perú superaría a Chile como cuarta economía sudamericana en 2027",
+   "nota": "El PBI peruano alcanzaría 413.597 millones de dólares en 2027, desplazando a Chile del cuarto puesto regional. ProInversión reportó adjudicaciones récord de 10.800 millones de soles en obras por impuestos durante 2026.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
@@ -14,6 +14,12 @@
      "fuente": "Gestión",
      "url": "https://gestion.pe/economia/peru-podria-superar-a-chile-y-convertirse-en-la-cuarta-economia-mas-grande-de-sudamerica-en-2027-noticia/",
      "fecha": "2026-11-08T17:45:00.000Z"
+    },
+    {
+     "titulo": "ProInversión presenta ante Congreso récord de S/10,800 millones adjudicados en 2026 en OxI",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-proinversion-presenta-ante-congreso-record-s10800-millones-adjudicados-2026-oxi-1099073.aspx",
+     "fecha": "2026-11-08T13:00:00.000Z"
     },
     {
      "titulo": "Perú a poco de convertirse en la cuarta economía más grande de Sudamérica, dejando atrás a Chile: PBI alcanzaría los USD 413.597 millones en 2027",
@@ -26,6 +32,25 @@
      "fuente": "El Comercio Economía",
      "url": "https://elcomercio.pe/economia/peru-desplazaria-a-chile-y-se-convertiria-en-la-cuarta-economia-mas-grande-de-sudamerica-noticia/",
      "fecha": "2026-11-07T16:27:46.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Gobierno usará fortaleza fiscal para defender empleo y crecimiento",
+   "nota": "El Ministerio de Economía anunció que aprovechará la solidez de las cuentas públicas para proteger el empleo y el crecimiento frente a choques externos. En paralelo, el MEF insistirá en mover los feriados al lunes.",
+   "tema": "Economía y fiscal",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "MEF insistirá en mover feriados al lunes, ¿qué falta para concretar la medida?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/peru/politica/mef-insistira-en-mover-feriados-al-lunes-que-falta-para-concretar-la-medida-noticia/",
+     "fecha": "2026-11-08T18:45:00.000Z"
     },
     {
      "titulo": "Gobierno usará fortaleza fiscal para defender empleo y crecimiento ante choques externos",
@@ -47,47 +72,18 @@
    }
   },
   {
-   "titulo": "Exportaciones peruanas superan 83.000 millones con minería dominante",
-   "nota": "Las exportaciones totales llegaron a más de 83.000 millones de dólares entre enero y septiembre. Las exportaciones mineras crecieron 45,6% y constituyen el 72,2% de las ventas al exterior.",
-   "tema": "Minería y metales",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Perú, país de materias primas: exportaciones alcanzan los US$ 83 mil millones, pero minería concentra 80% del total",
-     "fuente": "Infobae Perú",
-     "url": "https://www.infobae.com/peru/2026/11/08/peru-pais-de-materias-primas-exportaciones-alcanzan-los-us-83-mil-millones-pero-mineria-concentra-80-del-total/",
-     "fecha": "2026-11-08T12:39:25.000Z"
-    },
-    {
-     "titulo": "Adex: Exportaciones peruanas llegaron a más de US $83,000 millones en enero-setiembre",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-adex-exportaciones-peruanas-llegaron-a-mas-us-83000-millones-enerosetiembre-1098987.aspx",
-     "fecha": "2026-11-07T15:00:01.000Z"
-    },
-    {
-     "titulo": "Exportaciones mineras crecen 45,6% y representan el 72,2% de las ventas peruanas al exterior",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/2026/11/07/exportaciones-mineras-peruanas-crecen-456-y-representan-el-722-de-los-envios-al-exterior-hnews-276997",
-     "fecha": "2026-11-07T20:30:14.000Z"
-    }
+   "titulo": "Minem aprueba estudios ambientales para inversiones eléctricas por US$ 5.500 millones en 2026",
+   "nota": "El Ministerio de Energía y Minas aprobó los estudios ambientales de proyectos eléctricos por US$ 5.500 millones para 2026. Claro Perú refuerza su red ante El Niño y acelera su negocio de nube e inteligencia artificial para empresas.",
+   "tema": "Energía",
+   "empresas": [
+    "BVN"
    ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "ProInversión reporta récord de adjudicaciones en OxI para 2026",
-   "nota": "La agencia presentó ante el Congreso un monto histórico de 10.800 millones de soles adjudicados bajo Obras por Impuestos. El Ministerio de Energía y Minas aprobó estudios ambientales para proyectos eléctricos por 5.500 millones de dólares.",
-   "tema": "Economía y fiscal",
-   "empresas": [],
    "fuentes": [
     {
-     "titulo": "ProInversión presenta ante Congreso récord de S/10,800 millones adjudicados en 2026 en OxI",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-proinversion-presenta-ante-congreso-record-s10800-millones-adjudicados-2026-oxi-1099073.aspx",
-     "fecha": "2026-11-08T13:00:00.000Z"
+     "titulo": "Claro Perú refuerza su red ante El Niño y acelera su negocio de nube e IA para empresas",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/empresas/claro-alista-su-red-ante-el-nino-y-apuesta-por-nube-e-ia-para-crecer-a-doble-digito-noticia/",
+     "fecha": "2026-11-08T12:00:00.000Z"
     },
     {
      "titulo": "Minem aprobó estudios ambientales de inversiones eléctricas por US $5,500 millones en 2026",
@@ -103,48 +99,28 @@
    }
   },
   {
-   "titulo": "Metalmecánicas listas para el repunte: minería, El Niño y clientes de EE.UU las impulsan",
-   "tema": "Bolsa y empresas",
-   "empresas": [
-    "BVN"
-   ],
+   "titulo": "Exportaciones peruanas suman 83 mil millones con minería dominante",
+   "nota": "Las ventas al exterior alcanzaron 83 mil millones de dólares y la minería concentra el 80 por ciento del total. Los envíos mineros crecieron 45,6 por ciento y representan el 72,2 por ciento de las exportaciones. Las empresas metalmecánicas se alistan para un repunte impulsado por la minería, El Niño y la demanda de Estados Unidos.",
+   "tema": "Minería y metales",
+   "empresas": [],
    "fuentes": [
     {
      "titulo": "Metalmecánicas listas para el repunte: minería, El Niño y clientes de EE.UU las impulsan",
      "fuente": "Gestión",
      "url": "https://gestion.pe/economia/empresas/metalmecanicas-preven-boom-en-2027-por-mineria-reconstruccion-por-el-nino-y-demanda-de-eeuu-noticia/",
-     "fecha": "2026-11-08T17:19:12.000Z"
+     "fecha": "2026-11-08T20:00:00.000Z"
     },
     {
-     "titulo": "Claro Perú refuerza su red ante El Niño y acelera su negocio de nube e IA para empresas",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/empresas/claro-alista-su-red-ante-el-nino-y-apuesta-por-nube-e-ia-para-crecer-a-doble-digito-noticia/",
-     "fecha": "2026-11-08T12:00:00.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": false,
-    "motivo": "La nota atribuye a Claro Perú, una empresa de telecomunicaciones, al sector metalmecánico e incorpora su Acceleration Cloud y sus 单位 de IA, lo que mezcla dos fuentes distintas y añade afirmaciones no contenidas en los titulares; además, el título no refleja la segunda fuente sobre la nube y la IA empresarial."
-   }
-  },
-  {
-   "titulo": "Riesgo país en mínimos históricos fortalece capacidad ante El Niño",
-   "nota": "La Cámara de Comercio de Lima destaca que el riesgo país en mínimos históricos fortalece la capacidad del Perú para enfrentar el fenómeno El Niño. El Niño extraordinario sería el de mayor duración en esa categoría desde 1850.",
-   "tema": "Economía y fiscal",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "CCL: Riesgo país en mínimos fortalece capacidad del Perú para enfrentar El Niño",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-ccl-riesgo-pais-minimos-fortalece-capacidad-del-peru-para-enfrentar-nino-1099082.aspx",
-     "fecha": "2026-11-08T16:00:00.000Z"
+     "titulo": "Perú, país de materias primas: exportaciones alcanzan los US$ 83 mil millones, pero minería concentra 80% del total",
+     "fuente": "Infobae Perú",
+     "url": "https://www.infobae.com/peru/2026/11/08/peru-pais-de-materias-primas-exportaciones-alcanzan-los-us-83-mil-millones-pero-mineria-concentra-80-del-total/",
+     "fecha": "2026-11-08T12:39:25.000Z"
     },
     {
-     "titulo": "Niño extraordinario sería el de mayor duración en esa categoría desde 1850",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/nino-extraordinario-seria-el-de-mayor-duracion-en-esa-categoria-desde-1850-noticia/",
-     "fecha": "2026-11-08T12:02:25.000Z"
+     "titulo": "Exportaciones mineras crecen 45,6% y representan el 72,2% de las ventas peruanas al exterior",
+     "fuente": "La República Economía",
+     "url": "https://larepublica.pe/economia/2026/11/07/exportaciones-mineras-peruanas-crecen-456-y-representan-el-722-de-los-envios-al-exterior-hnews-276997",
+     "fecha": "2026-11-07T20:30:14.000Z"
     }
    ],
    "revision": {
@@ -155,21 +131,42 @@
   },
   {
    "titulo": "Empresas evalúan trasladar alza de combustibles a precios de venta",
-   "nota": "Las empresas peruanas analizan comenzar a trasladar el alza de combustibles a sus precios de venta. El Ministerio de Transportes descartó desabastecimiento de combustibles en Ucayali tras un huaico en la carretera Federico Basadre.",
+   "nota": "El sector empresarial analiza si comenzará a repercutir el incremento del costo de los combustibles en sus precios finales. La discusión surge mientras se debate la entrega de la refinería de Talara a un operador privado pese a su recuperación financiera.",
    "tema": "Energía",
-   "empresas": [],
+   "empresas": [
+    "PETROBC1"
+   ],
    "fuentes": [
+    {
+     "titulo": "Petroperú: cuestionan entrega de Talara a operador privado pese a recuperación financiera y piden fiscalizar crédito",
+     "fuente": "La República Economía",
+     "url": "https://larepublica.pe/economia/2026/11/08/petroperu-cuestionan-entrega-de-talara-a-operador-privado-pese-a-recuperacion-financiera-y-piden-fiscalizar-credito-507320",
+     "fecha": "2026-11-08T20:42:18.000Z"
+    },
     {
      "titulo": "¿Empresas en Perú empezarían a trasladar alza de combustibles a sus precios de venta?",
      "fuente": "Gestión",
      "url": "https://gestion.pe/economia/glp-gasolina-y-otros-en-peru-empresas-empezarian-a-trasladar-alza-de-combustibles-al-precio-de-venta-noticia/",
      "fecha": "2026-11-07T18:13:19.000Z"
-    },
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Wall Street acelera megatransacciones ante cuenta regresiva para era Trump",
+   "nota": "Los grandes bancos estadounidenses lanzan una carrera por cerrar megatransacciones mientras comienza la cuenta regresiva para la era Trump.",
+   "tema": "Mundo",
+   "empresas": [],
+   "fuentes": [
     {
-     "titulo": "Ministro de Transportes descartó desabastecimiento de combustibles en Ucayali tras un huaico en la carretera Federico Basadre",
-     "fuente": "RPP Noticias",
-     "url": "https://rpp.pe/peru/ucayali/ucayali-ministro-de-transportes-descarta-desabastecimiento-de-combustibles-tras-huaico-en-la-carretera-federico-basadre-noticia-1716620",
-     "fecha": "2026-11-08T03:45:24.000Z"
+     "titulo": "Wall Street se lanza a la carrera por las megatransacciones mientras comienza la cuenta regresiva para la era Trump",
+     "fuente": "Bloomberg Línea",
+     "url": "https://www.bloomberglinea.com/economia/wall-street-se-lanza-a-la-carrera-por-las-megatransacciones-mientras-comienza-la-cuenta-regresiva-para-la-era-trump/",
+     "fecha": "2026-11-08T17:21:51.000Z"
     }
    ],
    "revision": {

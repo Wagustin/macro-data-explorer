@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-08T17:56:01.674Z",
+  "actualizado": "2026-11-08T21:01:30.537Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,27 +24,27 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 35
+      "items": 29
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 39
+      "items": 37
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 2
+      "items": 0
     },
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 8
+      "items": 9
     },
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 14
+      "items": 10
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 10
+      "items": 12
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,123 @@
     }
   },
   "noticias": [
+    {
+      "id": "la_republica-9ae4bfcf63",
+      "titulo": "Petroperú: cuestionan entrega de Talara a operador privado pese a recuperación financiera y piden fiscalizar crédito",
+      "url": "https://larepublica.pe/economia/2026/11/08/petroperu-cuestionan-entrega-de-talara-a-operador-privado-pese-a-recuperacion-financiera-y-piden-fiscalizar-credito-507320",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-08T20:42:18.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-28760babb3",
+      "titulo": "Empresas: ¿qué fallas en su modelo de prevención pueden exponerlas penalmente?",
+      "url": "https://gestion.pe/economia/empresas/empresas-que-fallas-en-su-modelo-de-prevencion-pueden-exponerlas-penalmente-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-08T20:30:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-4f1a33898c",
+      "titulo": "La victoria arrolladora de los demócratas pone a prueba las operaciones vinculadas a Trump en toda América Latina",
+      "url": "https://www.bloomberglinea.com/economia/la-victoria-arrolladora-de-los-democratas-pone-a-prueba-las-operaciones-vinculadas-a-trump-en-toda-america-latina/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-08T20:04:33.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-9eaa03594d",
+      "titulo": "Los banqueros se preparan para que la IA esté \"presente en cada conversación\" en la Cumbre sobre el Clima de Turquía",
+      "url": "https://www.bloomberglinea.com/actualidad/los-banqueros-se-preparan-para-que-la-ia-este-presente-en-cada-conversacion-en-la-cumbre-sobre-el-clima-de-turquia/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-08T20:00:55.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-8ed332ce93",
+      "titulo": "Fondos locales y redes de inversión se vuelven clave para startups latinas",
+      "url": "https://andina.pe/agencia/noticia-fondos-locales-y-redes-inversion-se-vuelven-clave-para-startups-latinas-1099076.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-08T20:00:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-a546820866",
+      "titulo": "Metalmecánicas listas para el repunte: minería, El Niño y clientes de EE.UU las impulsan",
+      "url": "https://gestion.pe/economia/empresas/metalmecanicas-preven-boom-en-2027-por-mineria-reconstruccion-por-el-nino-y-demanda-de-eeuu-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-08T20:00:00.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-a91ad6910b",
+      "titulo": "¿Una alternativa para elevar la productividad del agro peruano? Los cultivos en el radar",
+      "url": "https://gestion.pe/economia/agricultura-de-peru-una-alternativa-para-elevar-la-productividad-del-agro-los-cultivos-en-el-radar-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-08T20:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-98454fcf4b",
+      "titulo": "El papa en el Centro de Lima: negocios duplicarían ventas y hoteles alcanzarían el 100% de ocupación",
+      "url": "https://gestion.pe/economia/empresas/el-papa-leon-xiv-visitara-el-centro-de-lima-negocios-duplicarian-ventas-y-hoteles-alcanzarian-el-100-de-ocupacion-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-08T19:30:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-95d527801b",
+      "titulo": "UPC adquiere UCAL por US$ 35 millones y ampliará su capacidad en Lima",
+      "url": "https://gestion.pe/economia/empresas/upc-adquiere-ucal-por-us35-millones-y-ampliara-su-capacidad-en-lima-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-08T19:15:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-ca180893da",
+      "titulo": "¿Tu empresa debe prevenir el lavado de activos? Estas son obligaciones que debes revisar",
+      "url": "https://andina.pe/agencia/noticia-tu-empresa-debe-prevenir-lavado-activos-estas-son-obligaciones-debes-revisar-1099091.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-08T19:00:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-b2959fefd4",
+      "titulo": "MEF insistirá en mover feriados al lunes, ¿qué falta para concretar la medida?",
+      "url": "https://gestion.pe/peru/politica/mef-insistira-en-mover-feriados-al-lunes-que-falta-para-concretar-la-medida-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-08T18:45:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-45f330ac10",
+      "titulo": "Gloria acelera su negocio de panetones: ¿qué pasa dentro de su planta y cuánto espera crecer?",
+      "url": "https://gestion.pe/economia/empresas/que-hay-detras-del-paneton-gloria-asi-prepara-su-negocio-para-navidad-y-busca-crecer-hasta-10-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-08T18:30:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-b96d0ea4c5",
+      "titulo": "Visita del papa León XIV impulsaría al sector retail y facturaría más de S/60,000 millones",
+      "url": "https://andina.pe/agencia/noticia-visita-del-papa-leon-xiv-impulsaria-al-sector-retail-y-facturaria-mas-s60000-millones-1099090.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-08T18:00:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "VERDE"
+    },
     {
       "id": "gestion-0999c120aa",
       "titulo": "Perú superaría a Chile y sería la cuarta economía más grande de Sudamérica el 2027",
@@ -97,15 +214,6 @@
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-08T17:21:51.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-a546820866",
-      "titulo": "Metalmecánicas listas para el repunte: minería, El Niño y clientes de EE.UU las impulsan",
-      "url": "https://gestion.pe/economia/empresas/metalmecanicas-preven-boom-en-2027-por-mineria-reconstruccion-por-el-nino-y-demanda-de-eeuu-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-08T17:19:12.000Z",
-      "categoria": "Minería y metales",
       "semaforo": "AMARILLO"
     },
     {
@@ -154,20 +262,20 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-034513c087",
-      "titulo": "Gobierno autoriza a Fuerzas Armadas a tomar estas acciones en seguridad de cárceles",
-      "url": "https://gestion.pe/economia/gobierno-de-keiko-fujimori-autoriza-a-fuerzas-armadas-a-tomar-estas-acciones-en-seguridad-de-carceles-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-08T16:32:18.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "la_republica-09daa69567",
       "titulo": "La inflación pone a prueba a las familias que apenas superaron la pobreza",
       "url": "https://larepublica.pe/economia/2026/11/06/inflacion-golpea-a-los-hogares-vulnerables-y-amenaza-con-devolverlos-a-la-pobreza-335892",
       "fuente": "La República Economía",
       "fecha_iso": "2026-11-08T16:32:15.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-0129ab0d78",
+      "titulo": "El Comercio, América Multimedia y la SNI organizan foro sobre economía, inversión y reconstrucción tras El Niño",
+      "url": "https://elcomercio.pe/economia/el-comercio-y-america-multimedia-organizan-foro-sobre-economia-inversion-y-reconstruccion-tras-el-nino-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-08T16:26:43.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
@@ -224,15 +332,6 @@
       "fecha_iso": "2026-11-08T15:00:00.000Z",
       "categoria": "Bolsa y empresas",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "rpp-22814e05a9",
-      "titulo": "Canciller Espá llegó a Moscú para reunión con su homólogo ruso por situación de peruanos involucrados en guerra con Ucrania",
-      "url": "https://rpp.pe/politica/gobierno/canciller-carlos-espa-llego-a-moscu-para-reunirse-con-su-homologo-ruso-serguei-lavrov-noticia-1716640",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-08T14:36:09.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "gestion-762687da4d",
@@ -379,15 +478,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "rpp-41c40d01d5",
-      "titulo": "Ministro de Transportes descartó desabastecimiento de combustibles en Ucayali tras un huaico en la carretera Federico Basadre",
-      "url": "https://rpp.pe/peru/ucayali/ucayali-ministro-de-transportes-descarta-desabastecimiento-de-combustibles-tras-huaico-en-la-carretera-federico-basadre-noticia-1716620",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-08T03:45:24.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "infobae-8f2dfb7f67",
       "titulo": "Perú a poco de convertirse en la cuarta economía más grande de Sudamérica, dejando atrás a Chile: PBI alcanzaría los USD 413.597 millones en 2027",
       "url": "https://www.infobae.com/peru/2026/11/07/peru-a-poco-de-convertirse-en-la-cuarta-economia-mas-grande-de-sudamerica-dejando-atras-a-chile-pbi-alcanzaria-los-usd-413597-millones-en-2027/",
@@ -424,15 +514,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-45f330ac10",
-      "titulo": "Gloria acelera su negocio de panetones: ¿qué pasa dentro de su planta y cuánto espera crecer?",
-      "url": "https://gestion.pe/economia/empresas/que-hay-detras-del-paneton-gloria-asi-prepara-su-negocio-para-navidad-y-busca-crecer-hasta-10-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-08T01:32:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-30684b4772",
       "titulo": "Precio del dólar en Perú hoy, sábado 7 de noviembre: cuál es el tipo de cambio",
       "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-2026-cual-es-el-tipo-de-cambio-este-sabado-7-de-noviembre-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
@@ -451,15 +532,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-a91ad6910b",
-      "titulo": "¿Una alternativa para elevar la productividad del agro peruano? Los cultivos en el radar",
-      "url": "https://gestion.pe/economia/agricultura-de-peru-una-alternativa-para-elevar-la-productividad-del-agro-los-cultivos-en-el-radar-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-08T00:31:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-5bab60b81f",
       "titulo": "CTS: ¿cuánto dinero adicional recibirán trabajadores tras aumento del sueldo mínimo?",
       "url": "https://andina.pe/agencia/noticia-cts-cuanto-dinero-adicional-recibiran-trabajadores-tras-aumento-del-sueldo-minimo-1099037.aspx",
@@ -467,15 +539,6 @@
       "fecha_iso": "2026-11-08T00:00:00.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-98454fcf4b",
-      "titulo": "El papa en el Centro de Lima: negocios duplicarían ventas y hoteles alcanzarían el 100% de ocupación",
-      "url": "https://gestion.pe/economia/empresas/el-papa-leon-xiv-visitara-el-centro-de-lima-negocios-duplicarian-ventas-y-hoteles-alcanzarian-el-100-de-ocupacion-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-07T23:31:17.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "andina-bf4aa5235b",
@@ -502,15 +565,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-07T21:25:00.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-49eab885ed",
-      "titulo": "¿Cuándo se sabrá quién es el alcalde de Lima 2027-2030? JNE ya tiene fecha para definir al ganador de las Elecciones Municipales 2026",
-      "url": "https://www.infobae.com/peru/2026/11/07/cuando-se-sabra-quien-es-el-alcalde-de-lima-2027-2030-jne-ya-tiene-fecha-para-definir-al-ganador-de-las-elecciones-municipales-2026/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-07T21:15:18.000Z",
-      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     },
     {
@@ -559,15 +613,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "gestion-28760babb3",
-      "titulo": "Empresas: ¿qué fallas en su modelo de prevención pueden exponerlas penalmente?",
-      "url": "https://gestion.pe/economia/empresas/empresas-que-fallas-en-su-modelo-de-prevencion-pueden-exponerlas-penalmente-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-07T19:54:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "mef-52ab8bc5fe",
       "titulo": "El Gobierno usará la fortaleza fiscal del Estado para defender el empleo y el crecimiento frente a los choques externos",
       "url": "https://www.gob.pe/institucion/mef/noticias/1471104-el-gobierno-usara-la-fortaleza-fiscal-del-estado-para-defender-el-empleo-y-el-crecimiento-frente-a-los-choques-externos",
@@ -575,15 +620,6 @@
       "fecha_iso": "2026-11-07T19:28:00.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-95d527801b",
-      "titulo": "UPC adquiere UCAL por US$ 35 millones y ampliará su capacidad en Lima",
-      "url": "https://gestion.pe/economia/empresas/upc-adquiere-ucal-por-us35-millones-y-ampliara-su-capacidad-en-lima-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-07T19:22:54.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "la_republica-e31042c4fa",
@@ -610,33 +646,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-07T19:00:00.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-4d5e2aa487",
-      "titulo": "Túnel Ollachea de Puno gana oro en premio internacional de ingeniería: la obra peruana que enfrentó aguas a 71,2 °C",
-      "url": "https://www.infobae.com/peru/2026/11/07/tunel-ollachea-de-puno-gana-oro-en-premio-internacional-de-ingenieria-la-obra-peruana-que-enfrento-aguas-a-712-c/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-07T18:59:28.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-e317d1f129",
-      "titulo": "Precio del dólar cayó en Perú: Así se cotiza el tipo de cambio hoy 7 de noviembre",
-      "url": "https://www.infobae.com/peru/2026/11/06/precio-del-dolar-hoy-en-peru-cotizacion-de-apertura-del-6-de-noviembre/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-07T18:52:53.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-5c78b4e31d",
-      "titulo": "Lima inicia la semana con cortes de luz en cinco distritos: ¿Qué zonas no tendrán electricidad este lunes 9 de noviembre?",
-      "url": "https://www.infobae.com/peru/2026/11/07/lima-inicia-la-semana-con-cortes-de-luz-en-cinco-distritos-que-zonas-no-tendran-electricidad-este-lunes-9-de-noviembre/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-07T18:26:41.000Z",
-      "categoria": "Energía",
       "semaforo": "AMARILLO"
     },
     {
@@ -694,15 +703,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-eba747895c",
-      "titulo": "MTPE: Más de 24,000 personas accedieron a empleos formales en 100 días de Gobierno",
-      "url": "https://andina.pe/agencia/noticia-mtpe-mas-24000-personas-accedieron-a-empleos-formales-100-dias-gobierno-1098989.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-07T16:00:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "el_comercio-4db29de985",
       "titulo": "Crisis eléctrica en el norte: el gas de Piura sería la solución, pero ¿por qué hoy es más caro?",
       "url": "https://elcomercio.pe/economia/peru/gas-piura-la-crisis-electrica-que-sufre-el-norte-peruano-se-puede-solucionar-con-el-gas-de-piura-noticia/",
@@ -710,33 +710,6 @@
       "fecha_iso": "2026-11-07T15:25:00.000Z",
       "categoria": "Energía",
       "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-b2959fefd4",
-      "titulo": "MEF insistirá en mover feriados al lunes, ¿qué falta para concretar la medida?",
-      "url": "https://gestion.pe/peru/politica/mef-insistira-en-mover-feriados-al-lunes-que-falta-para-concretar-la-medida-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-07T15:22:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-a9dca099a7",
-      "titulo": "Adex: Exportaciones peruanas llegaron a más de US $83,000 millones en enero-setiembre",
-      "url": "https://andina.pe/agencia/noticia-adex-exportaciones-peruanas-llegaron-a-mas-us-83000-millones-enerosetiembre-1098987.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-07T15:00:01.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "andina-a6ece451fd",
-      "titulo": "El Niño: Fondepes destinará cerca de S/11 millones en créditos para pescadores",
-      "url": "https://andina.pe/agencia/noticia-el-nino-fondepes-destinara-cerca-s11-millones-creditos-para-pescadores-1098981.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-07T14:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
     },
     {
       "id": "gestion-ad52d817c9",
@@ -946,39 +919,12 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-cc6e93fa81",
-      "titulo": "DP World va por la fase 3 del Muelle Sur del Callao: plazos y la condición para invertir",
-      "url": "https://gestion.pe/economia/empresas/puerto-del-callao-dp-world-alista-otra-ampliacion-del-muelle-sur-pero-pone-una-condicion-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T19:42:34.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-aa60645a6a",
       "titulo": "Donita Rodriguez es designada como nueva miembro del Consejo Fiscal",
       "url": "https://elcomercio.pe/economia/peru/donita-rodriguez-es-designada-como-nueva-miembro-del-consejo-fiscal-l-ultimas-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-06T19:33:26.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-64186da091",
-      "titulo": "Dólar y petróleo caen tras derrota de Trump: ¿tipo de cambio romperá S/ 3.40?",
-      "url": "https://gestion.pe/tu-dinero/dolar-y-petroleo-caen-tras-derrota-de-trump-tipo-de-cambio-rompera-s-340-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T19:31:53.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-49266b3119",
-      "titulo": "Precio del dólar en Perú: tipo de cambio del viernes 6 de noviembre",
-      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-2026-a-cuanto-esta-el-dolar-este-viernes-6-de-noviembre-tipo-de-cambio-segun-el-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-06T19:18:59.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -991,15 +937,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-df668f1014",
-      "titulo": "Tipo de cambio hoy en Perú: ¿en cuánto cerró el dólar este viernes 6 de noviembre?",
-      "url": "https://gestion.pe/economia/mercados/tipo-de-cambio-dolar-hoy-en-peru-cuanto-esta-el-precio-del-dolar-este-viernes-6-de-noviembre-dolares-a-soles-compra-y-venta-bcrp-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T18:51:26.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-b47d0fe0d1",
       "titulo": "CCL: ¿En qué casos la CTS puede ser embargada, retenida o afectada en garantía?",
       "url": "https://elcomercio.pe/economia/peru/ccl-en-que-casos-la-cts-puede-ser-embargada-retenida-o-afectada-en-garantia-l-ultimas-noticia/",
@@ -1009,11 +946,56 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-f18c80a48a",
-      "titulo": "Expectativas sobre la economía a 3 meses se hunden: retorna el pesimismo",
-      "url": "https://gestion.pe/economia/el-nino-expectativas-sobre-la-economia-a-3-meses-se-hunden-retorna-el-pesimismo-en-peru-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T17:51:19.000Z",
+      "id": "el_comercio-2a074f3f85",
+      "titulo": "BCR aprueba nuevo estándar QR Perú para fortalecer la interoperabilidad de los pagos digitales",
+      "url": "https://elcomercio.pe/economia/peru/bcr-aprueba-nuevo-estandar-qr-peru-para-fortalecer-la-interoperabilidad-de-los-pagos-digitales-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-06T17:27:14.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-3c6320fa03",
+      "titulo": "Wall Street abre mixto entre el rebote tecnológico y un sólido dato de empleo",
+      "url": "https://elcomercio.pe/economia/wall-street-abre-mixto-entre-el-rebote-tecnologico-y-un-solido-dato-de-empleo-l-mercados-l-wall-street-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-06T16:10:49.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-aeaf559253",
+      "titulo": "Confianza del consumidor en EE.UU. sube a su nivel más alto en tres meses pese a temores por los precios",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/confianza-del-consumidor-en-eeuu-sube-a-su-nivel-mas-alto-en-tres-meses-pese-a-temores-por-los-precios/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-06T15:50:43.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-ed5febcfec",
+      "titulo": "El dólar abre a la baja en S/3,44 pese a sólidos datos de empleo en Estados Unidos",
+      "url": "https://elcomercio.pe/economia/peru/el-dolar-abre-a-la-baja-en-s344-pese-a-solidos-datos-de-empleo-en-estados-unidos-l-tipo-de-cambio-l-dolar-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-06T15:06:36.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-3c0d31d6c9",
+      "titulo": "Sunat: recaudación tributaria crece 14,6% en octubre de 2026",
+      "url": "https://elcomercio.pe/economia/peru/sunat-recaudacion-tributaria-crece-146-en-octubre-de-2026-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-06T14:11:34.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-0dbf379a6d",
+      "titulo": "Juliaca inicia la modernización integral de su aeropuerto con una inversión superior a los US$200 millones",
+      "url": "https://elcomercio.pe/economia/peru/juliaca-inicia-la-modernizacion-integral-de-su-aeropuerto-con-una-inversion-superior-a-los-us200-millones-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-06T01:02:53.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     }
