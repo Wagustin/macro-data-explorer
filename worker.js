@@ -678,7 +678,7 @@ const JOBS = [
   { file: "boletin.yml", minGapMin: 25, due: (d) => {
       const lima = new Date(d.getTime() - 5 * 36e5);
       const mins = lima.getUTCHours() * 60 + lima.getUTCMinutes();
-      return lima.getUTCDay() >= 1 && lima.getUTCDay() <= 5 && mins >= 350 && mins <= 720;
+      return lima.getUTCDay() >= 1 && lima.getUTCDay() <= 6 && mins >= 350 && mins <= 720;
     }, check: async (d) => {
       const today = new Date(d.getTime() - 5 * 36e5).toISOString().slice(0, 10);
       const r = await fetch(`https://raw.githubusercontent.com/${REPO}/main/data/boletin-last.json?t=${d.getTime()}`);

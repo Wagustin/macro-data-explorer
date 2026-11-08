@@ -1,12 +1,12 @@
 name: Boletín diario
 
-# Lunes a viernes a las 06:00 en Lima, a los suscriptores confirmados (tabla boletin_suscriptores)
+# Lunes a sábado a las 06:00 en Lima, a los suscriptores confirmados (tabla boletin_suscriptores)
 # y a ALERT_EMAIL (copia del dueño).
 on:
   schedule:
-    - cron: "47 10 * * 1-5"   # 05:47 en Lima: sale hacia las 06:00 aunque GitHub se retrase unos minutos
-    - cron: "37 11 * * 1-5"   # respaldo 06:37: si GitHub se saltó o retrasó el anterior (solo envía una vez al día)
-    - cron: "17 13 * * 1-5"   # respaldo 08:17
+    - cron: "47 10 * * 1-6"   # 05:47 en Lima: sale hacia las 06:00 aunque GitHub se retrase unos minutos
+    - cron: "37 11 * * 1-6"   # respaldo 06:37: si GitHub se saltó o retrasó el anterior (solo envía una vez al día)
+    - cron: "17 13 * * 1-6"   # respaldo 08:17
   workflow_dispatch:
     inputs:
       force:
