@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-08T03:31:31.944Z",
+  "actualizado": "2026-11-08T06:31:33.408Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 40
+      "items": 34
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -34,12 +34,12 @@
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 1
+      "items": 2
     },
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 9
+      "items": 8
     },
     "infobae": {
       "nombre": "Infobae Perú",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 12
+      "items": 11
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,24 @@
     }
   },
   "noticias": [
+    {
+      "id": "gestion-c8f725988c",
+      "titulo": "APM Terminals Callao alista plan para extender concesión con inversiones fuera del puerto",
+      "url": "https://gestion.pe/economia/empresas/el-nino-y-mas-concesion-el-plan-de-apm-terminals-para-el-puerto-del-callao-hacia-2027-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-08T04:34:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-41c40d01d5",
+      "titulo": "Ministro de Transportes descartó desabastecimiento de combustibles en Ucayali tras un huaico en la carretera Federico Basadre",
+      "url": "https://rpp.pe/peru/ucayali/ucayali-ministro-de-transportes-descarta-desabastecimiento-de-combustibles-tras-huaico-en-la-carretera-federico-basadre-noticia-1716620",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-08T03:45:24.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "infobae-8f2dfb7f67",
       "titulo": "Perú a poco de convertirse en la cuarta economía más grande de Sudamérica, dejando atrás a Chile: PBI alcanzaría los USD 413.597 millones en 2027",
@@ -163,9 +181,9 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-29fd48749d",
-      "titulo": "Minem aprobó estudios ambientales de inversiones eléctricas por US$ 5 500 millones en 2026",
-      "url": "https://andina.pe/agencia/noticia-minem-aprobo-estudios-ambientales-inversiones-electricas-5-500-millones-2026-1099048.aspx",
+      "id": "andina-bf4aa5235b",
+      "titulo": "Minem aprobó estudios ambientales de inversiones eléctricas por US $5,500 millones en 2026",
+      "url": "https://andina.pe/agencia/noticia-minem-aprobo-estudios-ambientales-inversiones-electricas-us-5500-millones-2026-1099048.aspx",
       "fuente": "Agencia Andina",
       "fecha_iso": "2026-11-07T23:27:01.000Z",
       "categoria": "Energía",
@@ -476,15 +494,6 @@
       "fecha_iso": "2026-11-07T13:29:47.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-c8f725988c",
-      "titulo": "APM Terminals Callao alista plan para extender concesión con inversiones fuera del puerto",
-      "url": "https://gestion.pe/economia/empresas/el-nino-y-mas-concesion-el-plan-de-apm-terminals-para-el-puerto-del-callao-hacia-2027-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-07T13:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "andina-c63b1a0f15",
@@ -919,15 +928,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "bloomberg_linea-765b3b7fb4",
-      "titulo": "EE.UU. e Irán se acercan a un posible acuerdo mientras Teherán abre el diálogo sobre su programa nuclear",
-      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/eeuu-e-iran-se-acercan-a-un-posible-acuerdo-mientras-teheran-abre-el-dialogo-sobre-su-programa-nuclear/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-06T13:02:31.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-a3f1d4a322",
       "titulo": "Gamarra busca aliviar pérdidas por el FEN con la visita del papa y el efecto BTS",
       "url": "https://gestion.pe/economia/empresas/gamarra-busca-aliviar-perdidas-por-el-fenomeno-el-nino-con-la-visita-del-papa-leon-xiv-y-el-efecto-bts-noticia/",
@@ -946,21 +946,21 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-c2a54e3ebf",
-      "titulo": "Cencosud y los planes para Wong y Metro y el avance de su canal digital",
-      "url": "https://gestion.pe/economia/empresas/chilena-cencosud-avanza-en-peru-gracias-a-su-canal-digital-que-planes-tiene-para-wong-y-metro-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T10:15:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-d97ed644ca",
       "titulo": "Lima corporativa sin espacio: la escasez de oficinas impulsa alza en renta de alquileres",
       "url": "https://gestion.pe/economia/empresas/lima-corporativa-sin-espacio-la-escasez-de-oficinas-en-distritos-como-san-isdro-miraflores-magdalena-y-san-borja-impulsa-alza-en-renta-de-alquileres-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-06T10:15:00.000Z",
       "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-c2a54e3ebf",
+      "titulo": "Cencosud y los planes para Wong y Metro y el avance de su canal digital",
+      "url": "https://gestion.pe/economia/empresas/chilena-cencosud-avanza-en-peru-gracias-a-su-canal-digital-que-planes-tiene-para-wong-y-metro-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T10:15:00.000Z",
+      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
