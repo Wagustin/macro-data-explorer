@@ -1,11 +1,11 @@
 {
- "actualizado": "2026-11-08T09:36:07.585Z",
+ "actualizado": "2026-11-08T10:26:24.006Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "Perú se perfila como cuarta economía sudamericana en 2027",
-   "nota": "Medios económicos proyectan que el PBI peruano llegaría a 413.597 millones de dólares en 2027. Esa cifra colocaría al país por encima de Chile en el ranking regional.",
+   "titulo": "Perú alcanzaría cuarto puesto económico sudamericano en 2027",
+   "nota": "El producto bruto interno peruano llegaría a 413.597 millones de dólares en 2027. Esa cifra permitiría desplazar a Chile del cuarto lugar regional. Varias fuentes coinciden en esta proyección para los próximos años.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
@@ -35,65 +35,8 @@
    }
   },
   {
-   "titulo": "Minem aprueba estudios ambientales por 5.500 millones en energía eléctrica",
-   "nota": "El Ministerio de Energía y Minas aprobó estudios ambientales para inversiones eléctricas por 5.500 millones de dólares que se ejecutarían en 2026.",
-   "tema": "Energía",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Minem aprobó estudios ambientales de inversiones eléctricas por US $5,500 millones en 2026",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-minem-aprobo-estudios-ambientales-inversiones-electricas-us-5500-millones-2026-1099048.aspx",
-     "fecha": "2026-11-07T23:27:01.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "Exportaciones peruanas superan 83.000 millones hasta septiembre",
-   "nota": "La Adex reportó que las exportaciones peruanas llegaron a más de 83.000 millones de dólares en los primeros nueve meses del año.",
-   "tema": "Economía y fiscal",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Adex: Exportaciones peruanas llegaron a más de US $83,000 millones en enero-setiembre",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-adex-exportaciones-peruanas-llegaron-a-mas-us-83000-millones-enerosetiembre-1098987.aspx",
-     "fecha": "2026-11-07T15:00:01.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "Expectativas empresariales bajan a 49,5 puntos y aumenta pesimismo",
-   "nota": "El índice de expectativas empresariales descendió a 49,5 puntos. Este nivel indica un crecimiento del pesimismo sobre la economía peruana.",
-   "tema": "Bolsa y empresas",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Expectativas empresariales caen a 49,5 puntos y crece el pesimismo sobre la economía peruana",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/2026/11/06/gobierno-afirma-que-invirtio-s1500-millones-contra-el-nino-pero-fondos-preventivos-registran-solo-159-de-gasto-hnews-170058",
-     "fecha": "2026-11-06T23:01:54.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
    "titulo": "Gobierno usará fortaleza fiscal para defender empleo y crecimiento",
-   "nota": "El MEF anunció que utilizará la fortaleza fiscal del Estado para proteger el empleo y el crecimiento frente a choques externos.",
+   "nota": "El MEF anunció que aprovechará la solidez de las cuentas públicas para amortiguar choques externos y proteger el empleo. La medida busca mantener la estabilidad macroeconómica ante incertidumbre global.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
@@ -117,16 +60,73 @@
    }
   },
   {
-   "titulo": "Presupuesto Público 2027 avanza en Comisión Bicameral con nuevos pedidos",
-   "nota": "La Comisión Bicameral aprobó el dictamen del Presupuesto Público 2027 incorporando pedidos adicionales durante la discusión.",
+   "titulo": "Exportaciones peruanas superan 83.000 millones de dólares",
+   "nota": "Adex informó que los envíos al exterior acumularon más de 83.000 millones de dólares entre enero y septiembre.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Presupuesto Público 2027: Comisión Bicameral da luz verde a dictamen, ¿qué pedidos incluyeron?",
+     "titulo": "Adex: Exportaciones peruanas llegaron a más de US $83,000 millones en enero-setiembre",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-adex-exportaciones-peruanas-llegaron-a-mas-us-83000-millones-enerosetiembre-1098987.aspx",
+     "fecha": "2026-11-07T15:00:01.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Confianza empresarial peruana cae a nivel pesimista de 49,5 puntos",
+   "nota": "Este retroceso evidencia un deterioro en la percepción del sector privado sobre el rumbo de la economía nacional.",
+   "tema": "Bolsa y empresas",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Expectativas empresariales caen a 49,5 puntos y crece el pesimismo sobre la economía peruana",
+     "fuente": "La República Economía",
+     "url": "https://larepublica.pe/economia/2026/11/06/gobierno-afirma-que-invirtio-s1500-millones-contra-el-nino-pero-fondos-preventivos-registran-solo-159-de-gasto-hnews-170058",
+     "fecha": "2026-11-06T23:01:54.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Minem aprobó estudios ambientales para inversiones eléctricas millonarias",
+   "nota": "El Ministerio de Energía y Minas aprobó estudios ambientales de inversiones eléctricas por 5.500 millones de dólares para 2026.",
+   "tema": "Energía",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Minem aprobó estudios ambientales de inversiones eléctricas por US $5,500 millones en 2026",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-minem-aprobo-estudios-ambientales-inversiones-electricas-us-5500-millones-2026-1099048.aspx",
+     "fecha": "2026-11-07T23:27:01.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "El Niño amenaza 58 lotes petroleros en Perú",
+   "nota": "El fenómeno climático pone en riesgo la operatividad de 58 lotes de hidrocarburos. Surge la interrogante sobre si el país debería preocuparse por su producción de crudo.",
+   "tema": "Energía",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "El Niño pone en riesgo a 58 lotes petroleros, ¿Perú debería preocuparse por su crudo?",
      "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/presupuesto-publico-2027-comision-bicameral-da-luz-verde-a-dictamen-que-pedidos-incluyeron-noticia/",
-     "fecha": "2026-11-07T04:12:44.000Z"
+     "url": "https://gestion.pe/economia/el-nino-pone-en-riesgo-a-58-lotes-petroleros-peru-deberia-preocuparse-por-su-crudo-este-es-el-plan-para-evitar-golpe-noticia/",
+     "fecha": "2026-11-06T22:30:00.000Z"
     }
    ],
    "revision": {
