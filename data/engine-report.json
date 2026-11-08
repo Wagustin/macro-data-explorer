@@ -1,18 +1,18 @@
 {
-  "actualizado": "2026-11-07T16:51:20.855Z",
+  "actualizado": "2026-11-08T22:46:59.273Z",
   "timesfm": {
     "ok": true,
     "error": null
   },
   "model": "perdata-engine-v6",
-  "filas": 2976,
-  "validas": 2942,
-  "descartadas": 34,
-  "pct_descartadas": 1.14,
+  "filas": 7584,
+  "validas": 7412,
+  "descartadas": 172,
+  "pct_descartadas": 2.27,
   "sospechosas": 0,
   "simbolos_sin_datos": 0,
-  "simbolos_totales": 62,
-  "tiempo_ms": 29,
+  "simbolos_totales": 158,
+  "tiempo_ms": 63,
   "cobertura_ok": true,
   "frescura_ok": true,
   "exito": true,
@@ -92,7 +92,7 @@
       "symbol": "AENZAC1.LM",
       "horizon": 42,
       "reason": "absurd_width",
-      "width": 7195.749999999999
+      "width": 7195.5
     },
     {
       "index": 570,
@@ -254,6 +254,118 @@
       "horizon": 48,
       "reason": "absurd_width",
       "width": 40.86054790280142
+    },
+    {
+      "index": 1860,
+      "symbol": "BPICHPC1.LM",
+      "horizon": 37,
+      "reason": "absurd_width",
+      "width": 43.40131578947368
+    },
+    {
+      "index": 1861,
+      "symbol": "BPICHPC1.LM",
+      "horizon": 38,
+      "reason": "absurd_width",
+      "width": 46.761904761904766
+    },
+    {
+      "index": 1862,
+      "symbol": "BPICHPC1.LM",
+      "horizon": 39,
+      "reason": "absurd_width",
+      "width": 54.51162790697675
+    },
+    {
+      "index": 1863,
+      "symbol": "BPICHPC1.LM",
+      "horizon": 40,
+      "reason": "absurd_width",
+      "width": 51.45652173913043
+    },
+    {
+      "index": 1864,
+      "symbol": "BPICHPC1.LM",
+      "horizon": 41,
+      "reason": "absurd_width",
+      "width": 51.02777777777778
+    },
+    {
+      "index": 1865,
+      "symbol": "BPICHPC1.LM",
+      "horizon": 42,
+      "reason": "absurd_width",
+      "width": 74.19607843137254
+    },
+    {
+      "index": 1866,
+      "symbol": "BPICHPC1.LM",
+      "horizon": 43,
+      "reason": "absurd_width",
+      "width": 109.26388888888889
+    },
+    {
+      "index": 1867,
+      "symbol": "BPICHPC1.LM",
+      "horizon": 44,
+      "reason": "absurd_width",
+      "width": 90.816091954023
+    },
+    {
+      "index": 1868,
+      "symbol": "BPICHPC1.LM",
+      "horizon": 45,
+      "reason": "absurd_width",
+      "width": 117.44927536231884
+    },
+    {
+      "index": 1869,
+      "symbol": "BPICHPC1.LM",
+      "horizon": 46,
+      "reason": "absurd_width",
+      "width": 98.89411764705882
+    },
+    {
+      "index": 1870,
+      "symbol": "BPICHPC1.LM",
+      "horizon": 47,
+      "reason": "absurd_width",
+      "width": 111.84210526315789
+    },
+    {
+      "index": 1871,
+      "symbol": "BPICHPC1.LM",
+      "horizon": 48,
+      "reason": "absurd_width",
+      "width": 131.71212121212122
+    },
+    {
+      "index": 2240,
+      "symbol": "MOROCOC1.LM",
+      "horizon": 33,
+      "reason": "absurd_width",
+      "width": 42.87250237868696
+    },
+    {
+      "index": 2241,
+      "symbol": "MOROCOC1.LM",
+      "horizon": 34,
+      "reason": "absurd_width",
+      "width": 43.40255009107469
+    },
+    {
+      "index": 2242,
+      "symbol": "MOROCOC1.LM",
+      "horizon": 35,
+      "reason": "absurd_width",
+      "width": 59.039024390243895
+    },
+    {
+      "index": 2243,
+      "symbol": "MOROCOC1.LM",
+      "horizon": 36,
+      "reason": "absurd_width",
+      "width": 68.87357954545455
     }
   ],
   "detalles_sospechosas": [],
