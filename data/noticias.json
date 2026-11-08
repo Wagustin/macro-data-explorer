@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-08T13:31:32.261Z",
+  "actualizado": "2026-11-08T16:31:32.076Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 32
+      "items": 33
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -39,12 +39,12 @@
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 9
+      "items": 7
     },
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 15
+      "items": 13
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 9
+      "items": 10
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,114 @@
     }
   },
   "noticias": [
+    {
+      "id": "bloomberg_linea-6a8abaa7a8",
+      "titulo": "Wall Street se lanza a la carrera por las megatransacciones mientras comienza la cuenta regresiva para la era Trump",
+      "url": "https://www.bloomberglinea.com/economia/wall-street-se-lanza-a-la-carrera-por-las-megatransacciones-mientras-comienza-la-cuenta-regresiva-para-la-era-trump/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-08T16:30:25.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-a62272cc7a",
+      "titulo": "El 73% de trabajadores considera eficiente el pago de remuneraciones",
+      "url": "https://andina.pe/agencia/noticia-el-73-trabajadores-considera-eficiente-pago-remuneraciones-1099081.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-08T16:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "andina-e432c78eda",
+      "titulo": "CCL: Riesgo país en mínimos fortalece capacidad del Perú para enfrentar El Niño",
+      "url": "https://andina.pe/agencia/noticia-ccl-riesgo-pais-minimos-fortalece-capacidad-del-peru-para-enfrentar-nino-1099082.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-08T16:00:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "infobae-e07badea03",
+      "titulo": "ChatGPT, Gemini y Copilot dominan el uso de IA en las áreas de RRHH en Perú, pero solo el 15% la integra a su plataforma",
+      "url": "https://www.infobae.com/peru/2026/11/08/chatgpt-gemini-y-copilot-dominan-el-uso-de-ia-en-las-areas-de-rrhh-en-peru-pero-solo-el-15-la-integra-a-su-plataforma/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-08T15:47:02.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-24d945a796",
+      "titulo": "Sardina: se autoriza pesca exploratoria ante El Niño, ¿qué deberán hacer las pesqueras?",
+      "url": "https://gestion.pe/economia/sardina-produce-autoriza-pesca-exploratoria-ante-el-nino-que-deberan-hacer-las-embarcaciones-pesqueras-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-08T15:46:05.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-5b2d75fe43",
+      "titulo": "Precio del dólar hoy en Perú, domingo 8 noviembre: consulta el tipo de cambio para compra y venta",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/08/precio-del-dolar-hoy-en-peru-domingo-8-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-613277",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-08T15:45:36.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-d199c5c905",
+      "titulo": "Perú necesita US$ 516 millones adicionales para financiar startups al 2030",
+      "url": "https://andina.pe/agencia/noticia-peru-necesita-516-millones-adicionales-para-financiar-startups-al-2030-1099080.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-08T15:00:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "rpp-22814e05a9",
+      "titulo": "Canciller Espá llegó a Moscú para reunión con su homólogo ruso por situación de peruanos involucrados en guerra con Ucrania",
+      "url": "https://rpp.pe/politica/gobierno/canciller-carlos-espa-llego-a-moscu-para-reunirse-con-su-homologo-ruso-serguei-lavrov-noticia-1716640",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-08T14:36:09.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-762687da4d",
+      "titulo": "Indecopi declara ilegales 11 cobros y tres requisitos exigidos por esta municipalidad",
+      "url": "https://gestion.pe/economia/indecopi-pone-freno-a-cobros-municipales-estos-son-los-11-pagos-y-3-requisitos-declarados-ilegales-en-huancayo-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-08T14:27:54.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-0bc85783bb",
+      "titulo": "Precio del dólar hoy: tipo de cambio del domingo 8 de noviembre de 2026",
+      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-2026-cual-es-el-tipo-de-cambio-este-domingo-8-de-noviembre-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-08T14:08:02.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-f518c69afe",
+      "titulo": "Industria textil suma la trazabilidad energética como factor de competitividad exportadora",
+      "url": "https://andina.pe/agencia/noticia-industria-textil-suma-trazabilidad-energetica-como-factor-competitividad-exportadora-1099075.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-08T14:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-019984200e",
+      "titulo": "Grupo Sandoval amplía su negocio de coworking en Lima Cargo City: ¿qué viene para su próxima fase?",
+      "url": "https://gestion.pe/economia/empresas/grupo-sandoval-evalua-ampliar-su-coworking-en-lima-cargo-city-y-llegar-al-aeropuerto-jorge-chavez-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-08T14:00:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "infobae-516d357b33",
       "titulo": "Entre el ajedrez y las matemáticas: la historia de Gael, el niño peruano que conquistó el oro en Canadá y ahora busca ganar en Francia",
@@ -145,15 +253,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-0bc85783bb",
-      "titulo": "Precio del dólar hoy, domingo 8 de noviembre: cuál es el tipo de cambio",
-      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-2026-cual-es-el-tipo-de-cambio-este-domingo-8-de-noviembre-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-08T12:00:00.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-83c41b55fc",
       "titulo": "Buenaventura en Wall Street: 30 años de confianza y compromiso con el Perú",
       "url": "https://elcomercio.pe/economia/opinion/buenaventura-en-wall-street-30-anos-de-confianza-y-compromiso-con-el-peru-por-leandro-garcia-opinion-buenaventura-noticia/",
@@ -196,15 +295,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-08T10:30:00.000Z",
       "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-5b2d75fe43",
-      "titulo": "Precio del dólar hoy en Perú, domingo 8 noviembre: consulta el tipo de cambio para compra y venta",
-      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/08/precio-del-dolar-hoy-en-peru-domingo-8-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-613277",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-08T09:30:00.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -323,15 +413,6 @@
       "fecha_iso": "2026-11-07T23:27:01.000Z",
       "categoria": "Energía",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "rpp-b3a3510aae",
-      "titulo": "Miraflores: sujetos roban artículos de plata y oro valorizados en S/ 500 mil en tienda de artesanías ubicada cerca del parque Kennedy",
-      "url": "https://rpp.pe/lima/policiales/miraflores-sujetos-roban-articulos-de-plata-y-oro-valorizados-en-s-500-mil-en-tienda-de-artesanias-ubicada-cerca-del-parque-kennedy-noticia-1716584",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-07T22:00:47.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "andina-ae5b6603d2",
@@ -550,15 +631,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "infobae-2d12d1358c",
-      "titulo": "Llaman a cobrar a 31 mil 957 miembros de mesa al Banco de la Nación: Este 2026 vence el pago",
-      "url": "https://www.infobae.com/peru/2026/11/07/llaman-a-cobrar-a-31-mil-957-miembros-de-mesa-al-banco-de-la-nacion-este-2026-vence-el-pago/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-07T16:00:33.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-eba747895c",
       "titulo": "MTPE: Más de 24,000 personas accedieron a empleos formales en 100 días de Gobierno",
       "url": "https://andina.pe/agencia/noticia-mtpe-mas-24000-personas-accedieron-a-empleos-formales-100-dias-gobierno-1098989.aspx",
@@ -622,15 +694,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "andina-c63b1a0f15",
-      "titulo": "MEF estima que Perú entraría a la OCDE en el segundo semestre de 2028",
-      "url": "https://andina.pe/agencia/noticia-mef-estima-peru-entraria-a-ocde-el-segundo-semestre-2028-1098885.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-07T12:49:05.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "el_comercio-1872eaa44a",
       "titulo": "“El King kong del Papa’, ‘Papaletas’, viajes y polos: estas son las cifras que bendecirán la economía por la visita de León XIV",
       "url": "https://elcomercio.pe/economia/peru/papa-king-kones-y-papaletas-asi-se-mueve-la-economia-peruana-por-la-visita-de-leon-xiv-apuesplan-noticia/",
@@ -649,15 +712,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-7202063f8e",
-      "titulo": "Minem plantea alternativas para mejorar abastecimiento de combustibles en Ucayali",
-      "url": "https://andina.pe/agencia/noticia-minem-plantea-alternativas-para-mejorar-abastecimiento-combustibles-ucayali-1098973.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-07T04:05:11.000Z",
-      "categoria": "Energía",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "el_comercio-4a03458b1b",
       "titulo": "Gobierno mantiene plan para trasladar al lunes los feriados que caigan entre martes y viernes desde 2027",
       "url": "https://elcomercio.pe/economia/gobierno-mantiene-plan-para-trasladar-al-lunes-los-feriados-que-caigan-entre-martes-y-viernes-desde-2027-ultimas-noticia/",
@@ -665,15 +719,6 @@
       "fecha_iso": "2026-11-07T03:29:00.000Z",
       "categoria": "Otros",
       "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-efa08227d6",
-      "titulo": "Perú lidera iniciativa de APEC para fortalecer pesca y acuicultura",
-      "url": "https://andina.pe/agencia/noticia-peru-lidera-iniciativa-apec-para-fortalecer-pesca-y-acuicultura-1098962.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-07T02:08:02.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
     },
     {
       "id": "bloomberg_linea-d59b1872d4",
@@ -701,15 +746,6 @@
       "fecha_iso": "2026-11-07T01:49:16.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-eb306ce2a2",
-      "titulo": "Felaban clausura su 60ª Asamblea con récord de asistencia",
-      "url": "https://andina.pe/agencia/noticia-felaban-clausura-su-60%C2%AA-asamblea-record-asistencia-1098956.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-07T01:20:34.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
     },
     {
       "id": "gestion-9371accc3d",
@@ -838,6 +874,15 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "mef-4fb14f92e8",
+      "titulo": "MEF: Perú podría concretar su ingreso a la OCDE en el segundo semestre de 2028",
+      "url": "https://www.gob.pe/institucion/mef/noticias/1470870-mef-peru-podria-concretar-su-ingreso-a-la-ocde-en-el-segundo-semestre-de-2028",
+      "fuente": "Ministerio de Economía y Finanzas",
+      "fecha_iso": "2026-11-06T20:52:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
       "id": "el_comercio-297ab9dffb",
       "titulo": "Anthropic: inversores reducen hasta US$1.2 billones la valoración prevista de la compañía antes de salir a bolsa",
       "url": "https://elcomercio.pe/economia/peru/anthropic-inversores-reducen-hasta-us12-billones-la-valoracion-prevista-de-la-compania-antes-de-salir-a-bolsa-l-ultimas-noticia/",
@@ -964,38 +1009,11 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-f331be61af",
-      "titulo": "Fibra Prime capta US$ 40.37 millones en la Bolsa de Lima: ¿en qué utilizará los recursos?",
-      "url": "https://gestion.pe/economia/empresas/fibra-prime-capta-us-4037-millones-para-reducir-financiamiento-por-compra-de-parque-logistico-lima-sur-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T15:14:03.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-9bb55e5ddd",
-      "titulo": "Petroperú pasó de perder US$355 millones a ganar US$144,9 millones entre enero y septiembre de 2026",
-      "url": "https://larepublica.pe/economia/2026/11/03/petroperu-gano-us145-millones-pero-aun-enfrenta-restricciones-para-abastecer-sus-refinerias-hnews-139401",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-06T15:08:36.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-ed5febcfec",
       "titulo": "El dólar abre a la baja en S/3,44 pese a sólidos datos de empleo en Estados Unidos",
       "url": "https://elcomercio.pe/economia/peru/el-dolar-abre-a-la-baja-en-s344-pese-a-solidos-datos-de-empleo-en-estados-unidos-l-tipo-de-cambio-l-dolar-l-ultimas-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-06T15:06:36.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-20b2bded52",
-      "titulo": "Julio Velarde advierte que alza de combustibles dificulta bajar la inflación y prevé impacto temporal de El Niño",
-      "url": "https://larepublica.pe/economia/2026/11/04/julio-velarde-preve-que-impacto-global-de-el-nino-sera-temporal-pero-combustibles-frenan-caida-de-la-inflacion-288040",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-06T15:06:02.000Z",
       "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     }
