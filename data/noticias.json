@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-08T06:31:33.408Z",
+  "actualizado": "2026-11-08T09:31:30.820Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 34
+      "items": 32
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -39,7 +39,7 @@
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 8
+      "items": 9
     },
     "infobae": {
       "nombre": "Infobae Perú",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 11
+      "items": 10
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,15 @@
     }
   },
   "noticias": [
+    {
+      "id": "la_republica-5b2d75fe43",
+      "titulo": "Precio del dólar hoy en Perú, domingo 8 noviembre: consulta el tipo de cambio para compra y venta",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/08/precio-del-dolar-hoy-en-peru-domingo-8-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-613277",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-08T09:30:00.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "gestion-c8f725988c",
       "titulo": "APM Terminals Callao alista plan para extender concesión con inversiones fuera del puerto",
@@ -919,15 +928,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "bloomberg_linea-f8d82ad5ef",
-      "titulo": "El optimismo de Warsh respecto a la inteligencia artificial podría limitar sus opciones en la Fed",
-      "url": "https://www.bloomberglinea.com/opinion/el-optimismo-de-warsh-respecto-a-la-inteligencia-artificial-podria-limitar-sus-opciones-en-la-fed/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-06T13:14:57.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-a3f1d4a322",
       "titulo": "Gamarra busca aliviar pérdidas por el FEN con la visita del papa y el efecto BTS",
       "url": "https://gestion.pe/economia/empresas/gamarra-busca-aliviar-perdidas-por-el-fenomeno-el-nino-con-la-visita-del-papa-leon-xiv-y-el-efecto-bts-noticia/",
@@ -946,15 +946,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-d97ed644ca",
-      "titulo": "Lima corporativa sin espacio: la escasez de oficinas impulsa alza en renta de alquileres",
-      "url": "https://gestion.pe/economia/empresas/lima-corporativa-sin-espacio-la-escasez-de-oficinas-en-distritos-como-san-isdro-miraflores-magdalena-y-san-borja-impulsa-alza-en-renta-de-alquileres-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T10:15:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-c2a54e3ebf",
       "titulo": "Cencosud y los planes para Wong y Metro y el avance de su canal digital",
       "url": "https://gestion.pe/economia/empresas/chilena-cencosud-avanza-en-peru-gracias-a-su-canal-digital-que-planes-tiene-para-wong-y-metro-noticia/",
@@ -964,12 +955,21 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-a18b742df7",
-      "titulo": "Cencosud y sus dos malls en Lima: ¿en qué estado están los proyectos en Miraflores y SJL?",
-      "url": "https://gestion.pe/economia/empresas/cenco-malls-de-la-chilena-cencosud-alista-sus-dos-nuevos-malls-en-lima-en-que-estado-estan-sus-proyectos-en-miraflores-y-san-juan-de-lurigancho-noticia/",
+      "id": "gestion-d97ed644ca",
+      "titulo": "Lima corporativa sin espacio: la escasez de oficinas impulsa alza en renta de alquileres",
+      "url": "https://gestion.pe/economia/empresas/lima-corporativa-sin-espacio-la-escasez-de-oficinas-en-distritos-como-san-isdro-miraflores-magdalena-y-san-borja-impulsa-alza-en-renta-de-alquileres-noticia/",
       "fuente": "Gestión",
-      "fecha_iso": "2026-11-06T09:00:00.000Z",
+      "fecha_iso": "2026-11-06T10:15:00.000Z",
       "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-0dbf379a6d",
+      "titulo": "Juliaca inicia la modernización integral de su aeropuerto con una inversión superior a los US$200 millones",
+      "url": "https://elcomercio.pe/economia/peru/juliaca-inicia-la-modernizacion-integral-de-su-aeropuerto-con-una-inversion-superior-a-los-us200-millones-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-06T01:02:53.000Z",
+      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     }
   ]

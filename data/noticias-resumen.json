@@ -1,10 +1,11 @@
 {
- "actualizado": "2026-11-08T06:36:37.091Z",
+ "actualizado": "2026-11-08T09:36:07.585Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "Perú a poco de convertirse en la cuarta economía más grande de Sudamérica, dejando atrás a Chile: PBI alcanzaría los USD 413.597 millones en 2027",
+   "titulo": "Perú se perfila como cuarta economía sudamericana en 2027",
+   "nota": "Medios económicos proyectan que el PBI peruano llegaría a 413.597 millones de dólares en 2027. Esa cifra colocaría al país por encima de Chile en el ranking regional.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
@@ -29,38 +30,13 @@
    ],
    "revision": {
     "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": false,
-    "motivo": "La nota añade una atribución al FMI y una causa —«El crecimiento sostenido y la fortaleza fiscal respaldan este avance»— que no aparecen en los titulares; además, «413.597 millones de dólares» debería expresarse en miles de millones para ser coherente con la cifra de USD 413.597 millones."
-   }
-  },
-  {
-   "titulo": "Exportaciones peruanas superan 83.000 millones hasta septiembre",
-   "nota": "Los envíos acumulados entre enero y septiembre llegaron a más de 83.000 millones de dólares. El sector minero creció 45,6% y representa el 72,2% del total exportado.",
-   "tema": "Economía y fiscal",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Exportaciones mineras crecen 45,6% y representan el 72,2% de las ventas peruanas al exterior",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/2026/11/07/exportaciones-mineras-peruanas-crecen-456-y-representan-el-722-de-los-envios-al-exterior-hnews-276997",
-     "fecha": "2026-11-07T20:30:14.000Z"
-    },
-    {
-     "titulo": "Adex: Exportaciones peruanas llegaron a más de US $83,000 millones en enero-setiembre",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-adex-exportaciones-peruanas-llegaron-a-mas-us-83000-millones-enerosetiembre-1098987.aspx",
-     "fecha": "2026-11-07T15:00:01.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
     "ok": true,
     "motivo": ""
    }
   },
   {
-   "titulo": "Minem aprueba estudios ambientales por 5.500 millones en electricidad",
-   "nota": "El Ministerio de Energía y Minas dio luz verde a evaluaciones de impacto para proyectos eléctricos que movilizarán 5.500 millones de dólares en inversión durante 2026, fortaleciendo la matriz energética nacional.",
+   "titulo": "Minem aprueba estudios ambientales por 5.500 millones en energía eléctrica",
+   "nota": "El Ministerio de Energía y Minas aprobó estudios ambientales para inversiones eléctricas por 5.500 millones de dólares que se ejecutarían en 2026.",
    "tema": "Energía",
    "empresas": [],
    "fuentes": [
@@ -78,22 +54,16 @@
    }
   },
   {
-   "titulo": "El Niño amenaza 58 lotes petroleros y genera incertidumbre en crudo",
-   "nota": "El fenómeno climático pone en riesgo la operación de 58 concesiones petroleras, mientras el gas de Piura emerge como alternativa para el norte aunque con costos más elevados que dificultan su viabilidad inmediata.",
-   "tema": "Energía",
+   "titulo": "Exportaciones peruanas superan 83.000 millones hasta septiembre",
+   "nota": "La Adex reportó que las exportaciones peruanas llegaron a más de 83.000 millones de dólares en los primeros nueve meses del año.",
+   "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Crisis eléctrica en el norte: el gas de Piura sería la solución, pero ¿por qué hoy es más caro?",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/gas-piura-la-crisis-electrica-que-sufre-el-norte-peruano-se-puede-solucionar-con-el-gas-de-piura-noticia/",
-     "fecha": "2026-11-07T15:25:00.000Z"
-    },
-    {
-     "titulo": "El Niño pone en riesgo a 58 lotes petroleros, ¿Perú debería preocuparse por su crudo?",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/el-nino-pone-en-riesgo-a-58-lotes-petroleros-peru-deberia-preocuparse-por-su-crudo-este-es-el-plan-para-evitar-golpe-noticia/",
-     "fecha": "2026-11-06T22:30:00.000Z"
+     "titulo": "Adex: Exportaciones peruanas llegaron a más de US $83,000 millones en enero-setiembre",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-adex-exportaciones-peruanas-llegaron-a-mas-us-83000-millones-enerosetiembre-1098987.aspx",
+     "fecha": "2026-11-07T15:00:01.000Z"
     }
    ],
    "revision": {
@@ -103,32 +73,8 @@
    }
   },
   {
-   "titulo": "El dólar cierra en S/3,42 y sol peruano lidera ganancias frente a monedas de la región",
-   "tema": "Dólar y BCRP",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "El dólar cierra en S/3,42 y sol peruano lidera ganancias frente a monedas de la región",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/el-dolar-cierra-en-s342-y-sol-peruano-lidera-ganancias-frente-a-monedas-de-la-region-l-cotizacion-del-dolar-l-dolar-l-ultimas-noticia/",
-     "fecha": "2026-11-06T21:28:52.000Z"
-    },
-    {
-     "titulo": "Dólar y petróleo caen tras derrota de Trump: ¿tipo de cambio romperá S/ 3.40?",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/tu-dinero/dolar-y-petroleo-caen-tras-derrota-de-trump-tipo-de-cambio-rompera-s-340-noticia/",
-     "fecha": "2026-11-06T19:31:53.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": false,
-    "motivo": "La nota atribuye el movimiento a «El retroceso internacional del billete verde y la caída del petróleo», pero el primer titular solo informa que el dólar cerró en S/3,42 y que el sol lideró las ganancias regionales, sin establecer esa causa; además, el título presenta el 3,42 como cierre del sol, cuando corresponde al dólar."
-   }
-  },
-  {
-   "titulo": "Confianza empresarial baja a 49,5 puntos y aumenta pesimismo",
-   "nota": "Esta caída señala una visión más negativa sobre el desempeño económico peruano en el corto plazo.",
+   "titulo": "Expectativas empresariales bajan a 49,5 puntos y aumenta pesimismo",
+   "nota": "El índice de expectativas empresariales descendió a 49,5 puntos. Este nivel indica un crecimiento del pesimismo sobre la economía peruana.",
    "tema": "Bolsa y empresas",
    "empresas": [],
    "fuentes": [
@@ -137,6 +83,50 @@
      "fuente": "La República Economía",
      "url": "https://larepublica.pe/economia/2026/11/06/gobierno-afirma-que-invirtio-s1500-millones-contra-el-nino-pero-fondos-preventivos-registran-solo-159-de-gasto-hnews-170058",
      "fecha": "2026-11-06T23:01:54.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Gobierno usará fortaleza fiscal para defender empleo y crecimiento",
+   "nota": "El MEF anunció que utilizará la fortaleza fiscal del Estado para proteger el empleo y el crecimiento frente a choques externos.",
+   "tema": "Economía y fiscal",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Gobierno usará fortaleza fiscal para defender empleo y crecimiento ante choques externos",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-gobierno-usara-fortaleza-fiscal-para-defender-empleo-y-crecimiento-ante-choques-externos-1099034.aspx",
+     "fecha": "2026-11-07T20:58:15.000Z"
+    },
+    {
+     "titulo": "El Gobierno usará la fortaleza fiscal del Estado para defender el empleo y el crecimiento frente a los choques externos",
+     "fuente": "Ministerio de Economía y Finanzas",
+     "url": "https://www.gob.pe/institucion/mef/noticias/1471104-el-gobierno-usara-la-fortaleza-fiscal-del-estado-para-defender-el-empleo-y-el-crecimiento-frente-a-los-choques-externos",
+     "fecha": "2026-11-07T19:28:00.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Presupuesto Público 2027 avanza en Comisión Bicameral con nuevos pedidos",
+   "nota": "La Comisión Bicameral aprobó el dictamen del Presupuesto Público 2027 incorporando pedidos adicionales durante la discusión.",
+   "tema": "Economía y fiscal",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Presupuesto Público 2027: Comisión Bicameral da luz verde a dictamen, ¿qué pedidos incluyeron?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/presupuesto-publico-2027-comision-bicameral-da-luz-verde-a-dictamen-que-pedidos-incluyeron-noticia/",
+     "fecha": "2026-11-07T04:12:44.000Z"
     }
    ],
    "revision": {
