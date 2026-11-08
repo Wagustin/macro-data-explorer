@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-07T22:31:29.647Z",
+  "actualizado": "2026-11-08T00:35:18.671Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,12 +24,12 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 44
+      "items": 41
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 49
+      "items": 42
     },
     "rpp": {
       "nombre": "RPP Noticias",
@@ -39,12 +39,12 @@
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 11
+      "items": 9
     },
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 17
+      "items": 16
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -63,6 +63,42 @@
     }
   },
   "noticias": [
+    {
+      "id": "gestion-a91ad6910b",
+      "titulo": "¿Una alternativa para elevar la productividad del agro peruano? Los cultivos en el radar",
+      "url": "https://gestion.pe/economia/agricultura-de-peru-una-alternativa-para-elevar-la-productividad-del-agro-los-cultivos-en-el-radar-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-08T00:31:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-5bab60b81f",
+      "titulo": "CTS: ¿cuánto dinero adicional recibirán trabajadores tras aumento del sueldo mínimo?",
+      "url": "https://andina.pe/agencia/noticia-cts-cuanto-dinero-adicional-recibiran-trabajadores-tras-aumento-del-sueldo-minimo-1099037.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-08T00:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-98454fcf4b",
+      "titulo": "El papa en el Centro de Lima: negocios duplicarían ventas y hoteles alcanzarían el 100% de ocupación",
+      "url": "https://gestion.pe/economia/empresas/el-papa-leon-xiv-visitara-el-centro-de-lima-negocios-duplicarian-ventas-y-hoteles-alcanzarian-el-100-de-ocupacion-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-07T23:31:17.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-29fd48749d",
+      "titulo": "Minem aprobó estudios ambientales de inversiones eléctricas por US$ 5 500 millones en 2026",
+      "url": "https://andina.pe/agencia/noticia-minem-aprobo-estudios-ambientales-inversiones-electricas-5-500-millones-2026-1099048.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-07T23:27:01.000Z",
+      "categoria": "Energía",
+      "semaforo": "VERDE"
+    },
     {
       "id": "rpp-b3a3510aae",
       "titulo": "Miraflores: sujetos roban artículos de plata y oro valorizados en S/ 500 mil en tienda de artesanías ubicada cerca del parque Kennedy",
@@ -298,6 +334,15 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "andina-b90eb745b6",
+      "titulo": "Gobierno destraba 71 obras de agua y saneamiento durante los primeros 100 días de gestión",
+      "url": "https://andina.pe/agencia/noticia-gobierno-destraba-71-obras-agua-y-saneamiento-durante-los-primeros-100-dias-gestion-1098992.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-07T17:00:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
+    {
       "id": "bloomberg_linea-e326ece02c",
       "titulo": "Los fabricantes de cerveza artesanal se ven afectados por el conflicto comercial entre EE. UU. y Canadá",
       "url": "https://www.bloomberglinea.com/mundo/estados-unidos/los-fabricantes-de-cerveza-artesanal-se-ven-afectados-por-el-conflicto-comercial-entre-ee-uu-y-canada/",
@@ -406,9 +451,9 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-28b761eb1b",
-      "titulo": "MEF estima que Perú podría entrar a la OCDE en segundo semestre de 2028",
-      "url": "https://andina.pe/agencia/noticia-mef-estima-peru-podria-entrar-a-ocde-segundo-semestre-2028-1098885.aspx",
+      "id": "andina-c63b1a0f15",
+      "titulo": "MEF estima que Perú entraría a la OCDE en el segundo semestre de 2028",
+      "url": "https://andina.pe/agencia/noticia-mef-estima-peru-entraria-a-ocde-el-segundo-semestre-2028-1098885.aspx",
       "fuente": "Agencia Andina",
       "fecha_iso": "2026-11-07T12:49:05.000Z",
       "categoria": "Economía y fiscal",
@@ -433,27 +478,9 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-a91ad6910b",
-      "titulo": "¿Una alternativa para elevar la productividad del agro peruano? Los cultivos en el radar",
-      "url": "https://gestion.pe/economia/agricultura-de-peru-una-alternativa-para-elevar-la-productividad-del-agro-los-cultivos-en-el-radar-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-07T10:58:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-45f330ac10",
       "titulo": "Gloria acelera su negocio de panetones: ¿qué pasa dentro de su planta y cuánto espera crecer?",
       "url": "https://gestion.pe/economia/empresas/que-hay-detras-del-paneton-gloria-asi-prepara-su-negocio-para-navidad-y-busca-crecer-hasta-10-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-07T10:30:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-98454fcf4b",
-      "titulo": "El papa en el Centro de Lima: negocios duplicarían ventas y hoteles alcanzarían el 100% de ocupación",
-      "url": "https://gestion.pe/economia/empresas/el-papa-leon-xiv-visitara-el-centro-de-lima-negocios-duplicarian-ventas-y-hoteles-alcanzarian-el-100-de-ocupacion-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-07T10:30:00.000Z",
       "categoria": "Bolsa y empresas",
@@ -493,15 +520,6 @@
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-07T03:01:55.000Z",
       "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-279a7e292a",
-      "titulo": "Escuela, cuidado y becas: existen 1,8 millones de menores vinculados al trabajo en Perú, ¿cómo afrontar esta realidad?",
-      "url": "https://www.infobae.com/peru/2026/11/07/escuela-cuidado-y-becas-existen-18-millones-de-menores-vinculados-al-trabajo-en-peru-como-afrontar-esta-realidad/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-07T02:55:15.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -703,15 +721,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "andina-fa877085a7",
-      "titulo": "Optimización del TLC con China permitirá impulsar el comercio y atraer inversiones",
-      "url": "https://andina.pe/agencia/noticia-optimizacion-del-tlc-china-permitira-impulsar-comercio-y-atraer-inversiones-1098924.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-06T20:25:53.000Z",
-      "categoria": "Mundo",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "el_comercio-297ab9dffb",
       "titulo": "Anthropic: inversores reducen hasta US$1.2 billones la valoración prevista de la compañía antes de salir a bolsa",
       "url": "https://elcomercio.pe/economia/peru/anthropic-inversores-reducen-hasta-us12-billones-la-valoracion-prevista-de-la-compania-antes-de-salir-a-bolsa-l-ultimas-noticia/",
@@ -719,15 +728,6 @@
       "fecha_iso": "2026-11-06T20:19:21.000Z",
       "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-8007da55df",
-      "titulo": "Felaban: aparición de neobancos digitales obliga a banca tradicional a adaptarse",
-      "url": "https://andina.pe/agencia/noticia-felaban-aparicion-neobancos-digitales-obliga-a-banca-tradicional-a-adaptarse-1098900.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-06T19:52:37.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
     },
     {
       "id": "gestion-cc6e93fa81",
@@ -942,6 +942,15 @@
       "url": "https://gestion.pe/economia/mercados/mercados-e-indicadores-hoy-viernes-6-de-noviembre-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-06T11:02:31.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-c2a54e3ebf",
+      "titulo": "Cencosud y los planes para Wong y Metro y el avance de su canal digital",
+      "url": "https://gestion.pe/economia/empresas/chilena-cencosud-avanza-en-peru-gracias-a-su-canal-digital-que-planes-tiene-para-wong-y-metro-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-06T10:15:00.000Z",
       "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
