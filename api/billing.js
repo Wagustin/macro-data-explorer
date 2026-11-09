@@ -124,10 +124,11 @@ export default async function handler(req, res) {
         // payment_method_collection is a Checkout Session field in Stripe;
         // it must be set alongside the trial so the card is saved for the charge at day 8.
         payment_method_collection: trial ? "always" : undefined,
+        // custom_text belongs to the Checkout Session itself; inside subscription_data Stripe rejects it
+        custom_text: trial ? trial.custom_text : undefined,
         subscription_data: trial ? {
           metadata: { user_id: user.id, plan: wanted },
-          trial_period_days: trial.trial_period_days,
-          custom_text: trial.custom_text
+          trial_period_days: trial.trial_period_days
         } : {
           metadata: { user_id: user.id, plan: wanted },
           ...(legacyTrialDays > 0 ? { trial_period_days: legacyTrialDays } : {})

@@ -208,12 +208,13 @@ test("eligible boletin user: checkout carries trial_period_days=7 and payment_me
     const call = mock.stripeCalls.find((c) => c.path === "/v1/checkout/sessions");
     assert.ok(call, "checkout session call expected");
     assert.equal(call.body["subscription_data[trial_period_days]"], "7");
+    assert.ok(!Object.keys(call.body).some((k) => k.startsWith("subscription_data[custom_text]")), "custom_text no va dentro de subscription_data");
     // payment_method_collection is a top-level session field in our code
     assert.equal(call.body["payment_method_collection"], "always");
-    assert.ok(call.body["subscription_data[custom_text][submit][message]"].startsWith(TRIAL_MESSAGE_PREFIX));
+    assert.ok(call.body["custom_text[submit][message]"].startsWith(TRIAL_MESSAGE_PREFIX));
     // The exact copy required: both amounts, day 8, and the cancel hint.
     assert.equal(
-      call.body["subscription_data[custom_text][submit][message]"],
+      call.body["custom_text[submit][message]"],
       "Pruebas el plan Boletín 7 días gratis. Hoy no se cobra nada. Si no cancelas antes del día 8, se cobrará US$ 1.99 al mes (o US$ 15 al año) hasta que canceles. Cancela cuando quieras desde Mi cuenta."
     );
   } finally {
@@ -272,7 +273,7 @@ test("Pro checkout for free user: no trial fields in session", async () => {
     const call = mock.stripeCalls.find((c) => c.path === "/v1/checkout/sessions");
     assert.ok(call);
     assert.equal(call.body["subscription_data[trial_period_days]"], undefined);
-    assert.equal(call.body["subscription_data[custom_text][submit][message]"], undefined);
+    assert.equal(call.body["custom_text[submit][message]"], undefined);
   } finally {
     restore();
   }
