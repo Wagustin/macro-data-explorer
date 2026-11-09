@@ -29,6 +29,7 @@
 //          personal section), BOLETIN_PREVIEW_PATH=path/to/preview.html
 import fs from "fs";
 import path from "path";
+import { Resvg } from "@resvg/resvg-js";
 import { smvRows } from "../api/_lib/smv.js";
 import { mencionaEmpresa } from "./empresa-mencion.js";
 import { formatFechaObjetivo, formatSemanaFecha, formatCierreFecha } from "../api/diario.js";
@@ -38,6 +39,158 @@ import { lecturasEmpresas } from "./empresa-lectura.js";
 const DRY = process.argv.includes("--dry-run");
 const PREVIEW = Boolean(process.env.PREVIEW_EMPRESAS);
 const PREVIEW_PLAN = (process.env.PREVIEW_PLAN || "boletin").toLowerCase() === "gratis" ? "gratis" : "boletin";
+
+// ---------------------------------------------------------------------------
+// Chart generation (SVG → PNG via @resvg/resvg-js)
+// ---------------------------------------------------------------------------
+const CHART_WIDTH = 1200; // 600px @ 2x
+const CHART_HEIGHT = 360; // aspect ratio for email
+const SPARK_WIDTH = 240;  // 120px @ 2x for sparklines
+const SPARK_HEIGHT = 80;
+
+const C = { paper: "#F5F1E8", card: "#FBF9F4", ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", peru: "#D91023" };
+
+function generateDolarChart(series, rango, cierre) {
+  // series: [[date, value], ...] - last ~30 points
+  // rango: { p10, p50, p90, fecha } for next close
+  // cierre: { valor, fecha } last official close
+  if (!series || series.length < 2) return null;
+  
+  const data = series.slice(-30);
+  const values = data.map(([, v]) => v);
+  const minVal = Math.min(...values);
+  const maxVal = Math.max(...values);
+  const pad = (maxVal - minVal) * 0.1 || 0.01;
+  const yMin = minVal - pad;
+  const yMax = maxVal + pad;
+  
+  const xStep = CHART_WIDTH / (data.length - 1);
+  const yScale = (v) => CHART_HEIGHT - ((v - yMin) / (yMax - yMin)) * CHART_HEIGHT;
+  
+  const points = data.map((_, i) => `${i * xStep},${yScale(values[i])}`).join(" ");
+  
+  // Range band for next close
+  let rangeBand = "";
+  let rangeLabels = "";
+  if (rango && rango.p10 != null && rango.p90 != null) {
+    const yP10 = yScale(rango.p10);
+    const yP90 = yScale(rango.p90);
+    const yP50 = yScale(rango.p50);
+    const bandX = CHART_WIDTH;
+    const bandW = 40;
+    
+    rangeBand = `
+      <rect x="${bandX}" y="${yP90}" width="${bandW}" height="${yP10 - yP90}" fill="#1E7A46" fill-opacity="0.12"/>
+      <line x1="${bandX}" y1="${yP50}" x2="${bandX + bandW}" y2="${yP50}" stroke="#1E7A46" stroke-width="2" stroke-dasharray="4,3"/>
+    `;
+    rangeLabels = `
+      <text x="${bandX + bandW + 8}" y="${yP10 + 4}" font-family="IBM Plex Mono,monospace" font-size="11" fill="#5E584E" text-anchor="start">${rango.p10.toFixed(3)}</text>
+      <text x="${bandX + bandW + 8}" y="${yP50 + 4}" font-family="IBM Plex Mono,monospace" font-size="11" fill="#1B1916" text-anchor="start" font-weight="600">${rango.p50.toFixed(3)}</text>
+      <text x="${bandX + bandW + 8}" y="${yP90 + 4}" font-family="IBM Plex Mono,monospace" font-size="11" fill="#5E584E" text-anchor="start">${rango.p90.toFixed(3)}</text>
+    `;
+  }
+  
+  // Last close label
+  const lastIdx = data.length - 1;
+  const lastVal = values[lastIdx];
+  const lastX = lastIdx * xStep;
+  const lastY = yScale(lastVal);
+  const lastDate = data[lastIdx][0];
+  
+  const svg = `
+    <svg width="${CHART_WIDTH}" height="${CHART_HEIGHT}" viewBox="0 0 ${CHART_WIDTH} ${CHART_HEIGHT}" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100%" height="100%" fill="${C.paper}"/>
+      ${rangeBand}
+      <polyline fill="none" stroke="${C.ink}" stroke-width="1.5" points="${points}"/>
+      <circle cx="${lastX}" cy="${lastY}" r="3" fill="${C.ink}"/>
+      <text x="${lastX}" y="${lastY - 10}" font-family="IBM Plex Mono,monospace" font-size="11" fill="${C.ink}" text-anchor="middle" font-weight="600">${lastVal.toFixed(3)}</text>
+      <text x="${lastX}" y="${lastY + 20}" font-family="Libre Franklin,sans-serif" font-size="10" fill="${C.soft}" text-anchor="middle">${lastDate}</text>
+      ${rangeLabels}
+    </svg>
+  `;
+  
+  try {
+    const resvg = new Resvg(svg, { fitTo: { mode: "width", value: CHART_WIDTH } });
+    return resvg.render().asPng();
+  } catch (e) {
+    console.error("Dolar chart generation failed:", e.message);
+    return null;
+  }
+}
+
+function generateSparkline(series, color = C.ink) {
+  // series: [[date, value], ...] - last 30 points for a mini chart
+  if (!series || series.length < 2) return null;
+  
+  const data = series.slice(-30);
+  const values = data.map(([, v]) => v);
+  const minVal = Math.min(...values);
+  const maxVal = Math.max(...values);
+  const pad = (maxVal - minVal) * 0.08 || 0.01;
+  const yMin = minVal - pad;
+  const yMax = maxVal + pad;
+  
+  const xStep = SPARK_WIDTH / (data.length - 1);
+  const yScale = (v) => SPARK_HEIGHT - ((v - yMin) / (yMax - yMin)) * SPARK_HEIGHT;
+  
+  const points = data.map((_, i) => `${i * xStep},${yScale(values[i])}`).join(" ");
+  const up = values[values.length - 1] >= values[0];
+  const strokeColor = up ? C.pos : C.neg;
+  
+  const svg = `
+    <svg width="${SPARK_WIDTH}" height="${SPARK_HEIGHT}" viewBox="0 0 ${SPARK_WIDTH} ${SPARK_HEIGHT}" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100%" height="100%" fill="${C.paper}"/>
+      <polyline fill="none" stroke="${strokeColor}" stroke-width="1.5" points="${points}"/>
+    </svg>
+  `;
+  
+  try {
+    const resvg = new Resvg(svg, { fitTo: { mode: "width", value: SPARK_WIDTH } });
+    return resvg.render().asPng();
+  } catch (e) {
+    console.error("Sparkline generation failed:", e.message);
+    return null;
+  }
+}
+
+function generateRangeBar(p10, price, p90) {
+  // Horizontal range bar: p10 — price — p90
+  // Returns base64 PNG data URI for inline embedding
+  const BAR_WIDTH = 300;
+  const BAR_HEIGHT = 24;
+  const pad = 12;
+  
+  if (p10 == null || price == null || p90 == null) return null;
+  
+  const minVal = Math.min(p10, price, p90);
+  const maxVal = Math.max(p10, price, p90);
+  const range = maxVal - minVal || 0.01;
+  
+  const xScale = (v) => pad + ((v - minVal) / range) * (BAR_WIDTH - 2 * pad);
+  const xP10 = xScale(p10);
+  const xPrice = xScale(price);
+  const xP90 = xScale(p90);
+  
+  const svg = `
+    <svg width="${BAR_WIDTH}" height="${BAR_HEIGHT}" viewBox="0 0 ${BAR_WIDTH} ${BAR_HEIGHT}" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100%" height="100%" fill="${C.paper}"/>
+      <line x1="${xP10}" y1="${BAR_HEIGHT/2}" x2="${xP90}" y2="${BAR_HEIGHT/2}" stroke="${C.rule}" stroke-width="2"/>
+      <circle cx="${xP10}" cy="${BAR_HEIGHT/2}" r="3" fill="${C.soft}"/>
+      <circle cx="${xP90}" cy="${BAR_HEIGHT/2}" r="3" fill="${C.soft}"/>
+      <circle cx="${xPrice}" cy="${BAR_HEIGHT/2}" r="4" fill="${C.ink}"/>
+      <text x="${xP10}" y="${BAR_HEIGHT/2 - 6}" font-family="IBM Plex Mono,monospace" font-size="9" fill="${C.soft}" text-anchor="middle">${p10.toFixed(2)}</text>
+      <text x="${xP90}" y="${BAR_HEIGHT/2 - 6}" font-family="IBM Plex Mono,monospace" font-size="9" fill="${C.soft}" text-anchor="middle">${p90.toFixed(2)}</text>
+    </svg>
+  `;
+  
+  try {
+    const resvg = new Resvg(svg, { fitTo: { mode: "width", value: BAR_WIDTH } });
+    return resvg.render().asPng();
+  } catch (e) {
+    console.error("Range bar generation failed:", e.message);
+    return null;
+  }
+}
 const SITE = "https://perdata.site";
 const RAW = "https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data";
 const FROM = process.env.BOLETIN_FROM || "PerData <boletin@perdata.site>";
@@ -341,66 +494,111 @@ function render(f, ai, dateLabel, lectura) {
   const ui = "'Libre Franklin',Helvetica,Arial,sans-serif";
   const mono = "'IBM Plex Mono',Menlo,Consolas,monospace";
   const edition = Math.floor((Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()) - Date.UTC(2026, 9, 26)) / 864e5) + 1;
-  const para = (t, size = 17) => t ? `<p style="margin:0 0 14px;font-family:${serif};font-size:${size}px;line-height:1.55;color:${C.ink}">${esc(t)}</p>` : "";
-  const section = (title) => `<tr><td style="padding:30px 0 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:2px solid ${C.ink};padding-top:10px;font-family:${serif};font-size:22px;font-weight:600;color:${C.ink}">${title}</td></tr></table></td></tr>`;
+  
+  const texto = (t, size = 15, lh = 1.5, clr = C.ink, weight = 400, mgb = 14) => 
+    t ? `<p style="margin:0 0 ${mgb}px;font-family:${serif};font-size:${size}px;line-height:${lh};color:${clr};font-weight:${weight}">${esc(t)}</p>` : "";
+  
+  const tituloSeccion = (title, numero) => 
+    `<tr><td style="padding:24px 0 8px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${ui};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table></td></tr>`;
+  
+  const regla = () => `<tr><td style="padding:0"><hr style="border:none;border-top:1px solid ${C.rule};margin:0"/></td></tr>`;
 
-  // Brief (paid #2): copper, gold and oil with variation and date.
-  const metales = f.markets.filter((m) => ["Cobre", "Oro", "Petróleo WTI", "Petróleo Brent"].includes(m.name));
-  const rows = metales.map((m) => {
-    const up = m.change >= 0;
-    return `<tr>
-      <td style="padding:11px 0;border-bottom:1px solid ${C.rule};font-family:${ui};font-size:15px;color:${C.ink}">${esc(m.name)}<br><span style="font-size:12px;color:${C.soft}">${esc(m.unit)}</span></td>
-      <td align="right" style="padding:11px 0;border-bottom:1px solid ${C.rule};font-family:${mono};font-size:16px;color:${C.ink};white-space:nowrap">${fmt(m.value, m.dec)}</td>
-      <td align="right" style="padding:11px 0 11px 14px;border-bottom:1px solid ${C.rule};font-family:${mono};font-size:14px;color:${up ? C.pos : C.neg};white-space:nowrap">${up ? "&#9650;" : "&#9660;"} ${fmt(Math.abs(m.change))}&nbsp;%</td>
-      <td align="right" style="padding:11px 0 11px 14px;border-bottom:1px solid ${C.rule};font-family:${mono};font-size:11px;color:${C.soft};white-space:nowrap">${esc(m.date)}</td></tr>`;
-  }).join("");
+  // Dollar chart - reference the CID
+  const dolarChartHtml = `<tr><td style="padding:16px 0 8px" align="center">
+    <img src="cid:dolar-grafico" alt="Gráfico del dólar: serie de los últimos 30 cierres con banda de rango p10–p90 del siguiente cierre y centro" width="600" style="max-width:100%;height:auto;display:block;border:0;outline:none;text-decoration:none" />
+  </td></tr>`;
 
-  const punto = (p) => `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:2px">${esc(p.texto)}</div>`;
-  // The same factor often applies to every horizon: show it once, in the first one
+  // Dollar headline with close
+  const cierre = f.cierre;
+  const rangoManana = f.daily?.manana;
+  const etiquetaManana = rangoManana ? formatFechaObjetivo(rangoManana.fecha_objetivo, f.todayLima) : "";
+  const dollarHeadline = cierre ? `<tr><td style="padding:16px 0 8px">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+      <td style="font-family:${serif};font-size:24px;font-weight:600;color:${C.ink}">Dólar interbancario (USD/PEN)</td>
+      <td align="right" style="font-family:${mono};font-size:24px;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</td>
+    </tr></table>
+    <p style="margin:4px 0 0;font-family:${ui};font-size:13px;color:${C.soft}">Último cierre oficial (BCRP) · cierre del ${esc(formatCierreFecha(cierre.fecha))}${rangoManana ? ` · Rango ${esc(etiquetaManana)}` : ''}</p>
+  </td></tr>` : "";
+
+  // Dollar reading for mañana/horizonte
+  const punto = (p) => `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink};margin:0 0 8px;padding-left:12px;border-left:2px solid ${p.tipo === 'al_alza' ? C.pos : p.tipo === 'a_la_baja' ? C.neg : C.soft};opacity:${p.tipo === 'contexto' ? '0.7' : '1'}">${esc(p.texto)}</div>`;
+  
   const vistos = new Set();
   const nuevos = (h, lado) => (h?.[lado] || []).filter((p) => !vistos.has(p.texto) && vistos.add(p.texto));
-  const ladoOk = (h, lado, ps = nuevos(h, lado)) => ps.length ? `<div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin:10px 0 2px">${lado === "al_alza" ? "Podría presionar al dólar al alza" : lado === "a_la_baja" ? "Podría presionar al dólar a la baja" : "Contexto"}</div>${ps.map(punto).join("")}` : "";
-  const lecturaHorizonte = (h, titulo, rango, conContexto = true) => {
+  
+  const labelAlAlza = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink};margin:12px 0 4px">Podría presionar al dólar al alza</div>` : "";
+  const labelALaBaja = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink};margin:12px 0 4px">Podría presionar al dólar a la baja</div>` : "";
+  
+  const lecturaHorizonte = (h, titulo, rango, numero, conContexto = true) => {
     if (!h) return "";
-    const rangoTxt = rango ? `entre S/ ${fmt(rango.p10, 3)} y S/ ${fmt(rango.p90, 3)} <br><span style="font-size:11px;color:${C.soft}">8 de cada 10 veces · central: S/ ${fmt(rango.p50, 3)}</span>` : "";
-    return `<tr><td style="padding:14px 0;border-bottom:1px solid ${C.rule}">
-      <div style="font-family:${ui};font-size:12px;color:${C.soft}">${esc(titulo)}</div>
-      ${rangoTxt ? `<div style="font-family:${mono};font-size:14px;color:${C.ink};margin-top:2px">${rangoTxt}</div>` : ""}
-      ${h.resumen && !h.determinista ? `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:6px">${esc(h.resumen)}</div>` : ""}
-      ${ladoOk(h, "al_alza")}${ladoOk(h, "a_la_baja")}${conContexto ? ladoOk(h, "contexto") : ""}
+    const rangoTxt = rango ? `<div style="font-family:${mono};font-size:14px;color:${C.ink};margin:4px 0 8px">Rango: S/ ${fmt(rango.p10, 3)} — S/ ${fmt(rango.p90, 3)} <span style="color:${C.soft}">(central S/ ${fmt(rango.p50, 3)})</span></div>` : "";
+    const resumenHtml = h.resumen && !h.determinista ? `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink};margin:8px 0">${esc(h.resumen)}</div>` : "";
+    const alAlzaPoints = nuevos(h, "al_alza").map(p => ({...p, tipo: 'al_alza'}));
+    const aLaBajaPoints = nuevos(h, "a_la_baja").map(p => ({...p, tipo: 'a_la_baja'}));
+    const alAlza = labelAlAlza(alAlzaPoints) + alAlzaPoints.map(punto).join("");
+    const aLaBaja = labelALaBaja(aLaBajaPoints) + aLaBajaPoints.map(punto).join("");
+    const contexto = conContexto ? nuevos(h, "contexto").map(p => ({...p, tipo: 'contexto'})).map(punto).join("") : "";
+    return `<tr><td style="padding:16px 0 8px">
+      ${tituloSeccion(titulo, numero).replace('<tr><td', '<div').replace('</td></tr>', '</div>').replace('padding:24px 0 8px', 'margin:0 0 8px')}
+      ${rangoTxt}${resumenHtml}${alAlza}${aLaBaja}${contexto}
     </td></tr>`;
   };
+  
   const lect = lectura?.horizontes || {};
   const dolarRows = [];
+  let horizonteNum = 1;
   if (f.dailyVigente && f.daily) {
-    if (f.daily.manana) dolarRows.push({ key: "manana", titulo: formatFechaObjetivo(f.daily.manana.fecha_objetivo, f.todayLima), rango: f.daily.manana });
-    if (f.daily.semana) dolarRows.push({ key: "semana", titulo: `Próxima semana (${formatSemanaFecha(f.daily.semana.fecha_objetivo)})`, rango: f.daily.semana });
+    if (f.daily.manana) dolarRows.push({ key: "manana", titulo: `Cierre de ${formatFechaObjetivo(f.daily.manana.fecha_objetivo, f.todayLima)}`, rango: f.daily.manana, num: horizonteNum++ });
+    if (f.daily.semana) dolarRows.push({ key: "semana", titulo: `Próxima semana (${formatSemanaFecha(f.daily.semana.fecha_objetivo)})`, rango: f.daily.semana, num: horizonteNum++ });
   }
-  if (f.forecast) dolarRows.push({ key: "mes", titulo: `Próximo mes (${f.forecast.horizon})`, rango: f.forecast });
-  const fc = dolarRows.length ? `<tr><td style="padding:18px 0 0">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.card};border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule}"><tr><td style="padding:16px 4px">
-      <div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin-bottom:8px">Dólar interbancario (USD/PEN) · Rango proyectado y lectura</div>
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-        ${dolarRows.map((r, i) => lecturaHorizonte(lect[r.key], r.titulo, r.rango, i === 0)).join("")}
-      </table>
-    </td></tr></table></td></tr>` : "";
+  if (f.forecast) dolarRows.push({ key: "mes", titulo: `Próximo mes (${f.forecast.horizon})`, rango: f.forecast, num: horizonteNum++ });
+  
+  const fc = dolarRows.length ? 
+    `<tr><td style="padding:8px 0 16px">${dolarRows.map(r => lecturaHorizonte(lect[r.key], r.titulo, r.rango, r.num, r.num === 1)).join(regla())}</td></tr>` 
+    : "";
 
-  const smv = f.smvFacts.map((h) => `<tr><td style="padding:12px 0;border-bottom:1px solid ${C.rule}">
-      <div style="font-family:${ui};font-size:14px;font-weight:600;color:${C.ink}">${esc(h.empresa)}</div>
-      <a href="${esc(h.url_oficial)}" style="font-family:${serif};font-size:16px;line-height:1.45;color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(h.titulo || h.tipo)}</a>
-      <div style="font-family:${mono};font-size:11px;color:${C.soft};margin-top:3px">${esc(h.fecha)}</div></td></tr>`).join("");
-  const news = f.headlines.map((n) => `<tr><td style="padding:12px 0;border-bottom:1px solid ${C.rule}">
-      <a href="${esc(n.url)}" style="font-family:${serif};font-size:16px;line-height:1.45;color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(n.title)}</a>
-      <div style="font-family:${ui};font-size:12px;color:${C.soft};margin-top:3px">${esc(n.source)}</div></td></tr>`).join("");
-  const preheader = esc(entradillaDeterminista(f) || `Dólar, cobre, oro y petróleo; hechos de importancia de la SMV y titulares del ${dateLabel}.`);
-
-  // Brief (paid #4): ALL the digest stories, as the current full digest.
-  const historiaHtml = (h) => `<tr><td style="padding:14px 0;border-bottom:1px solid ${C.rule}">
-      <div style="font-family:${ui};font-size:12px;color:${C.soft}">${esc(h.tema)}</div>
-      <div style="font-family:${serif};font-size:19px;font-weight:600;line-height:1.3;color:${C.ink};margin-top:2px">${esc(h.titulo)}</div>
-      ${h.nota ? `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:6px">${esc(h.nota)}</div>` : ""}
-      <div style="font-family:${ui};font-size:12px;color:${C.soft};margin-top:6px">${(h.fuentes || []).filter((x, i, a) => a.findIndex((y) => y.fuente === x.fuente) === i).map((x) => `<a href="${esc(x.url)}" style="color:${C.soft}">${esc(x.fuente)}</a>`).join(" · ")}</div>
+  // Markets with sparklines (copper, gold, oil)
+  const metales = f.markets.filter((m) => ["Cobre", "Oro", "Petróleo WTI", "Petróleo Brent"].includes(m.name));
+  
+  const mercadoCards = metales.map((m, idx) => {
+    const up = m.change >= 0;
+    const sparkCid = idx === 0 ? "cid:cobre-spark" : idx === 1 ? "cid:oro-spark" : "cid:wti-spark";
+    return `<tr><td style="padding:16px 0">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+        <td width="140" style="vertical-align:middle;padding-right:16px">
+          <img src="${sparkCid}" alt="${esc(m.name)}: 30 sesiones" width="120" style="max-width:100%;height:auto;display:block;border:0" />
+        </td>
+        <td style="vertical-align:middle">
+          <div style="font-family:${ui};font-size:14px;font-weight:600;color:${C.ink};margin-bottom:2px">${esc(m.name)} <span style="font-weight:400;font-size:12px;color:${C.soft}">${esc(m.unit)}</span></div>
+          <div style="font-family:${mono};font-size:20px;color:${C.ink};white-space:nowrap">${fmt(m.value, m.dec)}</div>
+          <div style="font-family:${mono};font-size:13px;color:${up ? C.pos : C.neg};margin-top:2px">${up ? "▲" : "▼"} ${fmt(Math.abs(m.change))}% · ${esc(m.date)}</div>
+        </td>
+      </tr></table>
     </td></tr>`;
+  }).join(regla());
+
+  // SMV facts
+  const smv = f.smvFacts.map((h) => `<tr><td style="padding:16px 0">
+    <div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin-bottom:4px">${esc(h.empresa)}</div>
+    <a href="${esc(h.url_oficial)}" style="font-family:${serif};font-size:15px;line-height:1.45;color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(h.titulo || h.tipo)}</a>
+    <div style="font-family:${mono};font-size:11px;color:${C.soft};margin-top:4px">${esc(h.fecha)}</div>
+  </td></tr>`).join(regla());
+
+  // Headlines
+  const news = f.headlines.map((n) => `<tr><td style="padding:16px 0">
+    <a href="${esc(n.url)}" style="font-family:${serif};font-size:15px;line-height:1.45;color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(n.title)}</a>
+    <div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:4px">${esc(n.source)}</div>
+  </td></tr>`).join(regla());
+
+  // All stories (paid)
+  const historiaHtml = (h) => `<tr><td style="padding:20px 0">
+    <div style="font-family:${ui};font-size:11px;color:${C.soft};text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">${esc(h.tema)}</div>
+    <div style="font-family:${serif};font-size:18px;font-weight:600;line-height:1.3;color:${C.ink};margin-bottom:8px">${esc(h.titulo)}</div>
+    ${h.nota ? `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink}">${esc(h.nota)}</div>` : ""}
+    <div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:8px">${(h.fuentes || []).filter((x, i, a) => a.findIndex((y) => y.fuente === x.fuente) === i).map((x) => `<a href="${esc(x.url)}" style="color:${C.soft}">${esc(x.fuente)}</a>`).join(" · ")}</div>
+  </td></tr>`;
+
+  const preheader = esc(entradillaDeterminista(f) || `Dólar, cobre, oro y petróleo; hechos de importancia de la SMV y titulares del ${dateLabel}.`);
 
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light only">
@@ -414,21 +612,29 @@ function render(f, ai, dateLabel, lectura) {
       <td style="font-family:${serif};font-size:32px;font-style:italic;font-weight:600;color:${C.ink};white-space:nowrap">PerData${flagHtml(C)}</td>
       <td align="right" style="font-family:${ui};font-size:12px;line-height:1.5;color:${C.soft}">Boletín diario<br>Edición ${edition > 0 ? edition : 1}</td>
     </tr></table>
-    <div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:6px;text-transform:none">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
+    <div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:6px">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
   </td></tr>
-  ${entradillaDeterminista(f) ? `<tr><td style="padding:22px 0 4px">${para(entradillaDeterminista(f), 20)}</td></tr>` : ""}
+  
+  ${dollarHeadline}
+  ${dolarChartHtml}
   ${fc}
   {{PERSONAL}}
-  ${f.historiasTodas?.length ? section("Lo importante de hoy") + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${f.historiasTodas.map(historiaHtml).join("")}</table><div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:6px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
-  ${section("Mercados")}
-  ${ai?.mercados ? `<tr><td style="padding:12px 0 0">${para(ai.mercados)}</td></tr>` : ""}
-  ${rows ? `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid ${C.rule}">${rows}</table>
-    <div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:6px">Fuente: BCRP${f.markets.some((m) => m.name.includes("Brent")) ? " y EIA" : ""}. Variación frente al dato anterior.</div></td></tr>` : ""}
-  ${f.smvFacts.length ? section("Hechos de importancia") + (ai?.empresas ? `<tr><td style="padding:12px 0 0">${para(ai.empresas)}</td></tr>` : "") + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${smv}</table><div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:6px">Fuente: Superintendencia del Mercado de Valores (SMV).</div></td></tr>` : ""}
-  ${f.headlines.length ? section("Titulares") + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${news}</table></td></tr>` : ""}
+  
+  ${f.historiasTodas?.length ? tituloSeccion("Lo importante de hoy", 0) + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${f.historiasTodas.map(historiaHtml).join(regla())}</table><div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:16px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
+  
+  ${tituloSeccion("Mercados", 0)}
+  ${ai?.mercados ? `<tr><td style="padding:12px 0 16px">${texto(ai.mercados, 15, 1.5, C.ink, 400, 0)}</td></tr>` : ""}
+  ${metales.length ? `<tr><td style="padding:8px 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${mercadoCards}</table></td></tr>` : ""}
+  <tr><td style="padding:12px 0 0"><div style="font-family:${ui};font-size:11px;color:${C.soft}">Fuente: BCRP${f.markets.some((m) => m.name.includes("Brent")) ? " y EIA" : ""}. Variación frente al dato anterior.</div></td></tr>
+  
+  ${f.smvFacts.length ? tituloSeccion("Hechos de importancia", 0) + (ai?.empresas ? `<tr><td style="padding:12px 0 16px">${texto(ai.empresas, 15, 1.5, C.ink, 400, 0)}</td></tr>` : "") + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${smv}</table><div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:12px">Fuente: Superintendencia del Mercado de Valores (SMV).</div></td></tr>` : ""}
+  
+  ${f.headlines.length ? tituloSeccion("Titulares", 0) + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${news}</table></td></tr>` : ""}
+  
   <tr><td align="center" style="padding:32px 0 8px">
-    <a href="${SITE}/explorer" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${ui};font-size:15px;font-weight:600;text-decoration:none;padding:13px 26px">Abrir la terminal</a>
+    <a href="${SITE}/explorer" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${ui};font-size:15px;font-weight:600;text-decoration:none;padding:13px 26px;border-radius:4px">Abrir la terminal</a>
   </td></tr>
+  
   <tr><td style="padding:24px 0 36px;border-top:1px solid ${C.rule};font-family:${ui};font-size:12px;line-height:1.6;color:${C.soft}">
     El rango es estadístico; los factores son contexto, no una predicción de dirección.<br>
     ${ai ? "La interpretación la redacta un modelo de IA a partir de los datos de este correo; las cifras se comprueban contra la fuente.<br>" : ""}
@@ -440,66 +646,78 @@ function render(f, ai, dateLabel, lectura) {
 }
 
 function renderGratis(f, dateLabel, lectura) {
-  const C = { paper: "#F5F1E8", card: "#FBF9F4", ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", peru: "#D91023" };
+  const C = { paper: "#F5F1E8", card: "#FBF9F4", ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", peru: "#D91023" };
   const serif = "'Source Serif 4',Georgia,'Times New Roman',serif";
   const ui = "'Libre Franklin',Helvetica,Arial,sans-serif";
   const mono = "'IBM Plex Mono',Menlo,Consolas,monospace";
   const edition = Math.floor((Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()) - Date.UTC(2026, 9, 26)) / 864e5) + 1;
-  const manana = f.daily?.manana;
-  const rango = f.dailyVigente ? manana : null;
+  
+  const texto = (t, size = 15, lh = 1.5, clr = C.ink, weight = 400, mgb = 14) => 
+    t ? `<p style="margin:0 0 ${mgb}px;font-family:${serif};font-size:${size}px;line-height:${lh};color:${clr};font-weight:${weight}">${esc(t)}</p>` : "";
+  
+  const tituloSeccion = (title, numero) => 
+    `<tr><td style="padding:24px 0 8px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${ui};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table></td></tr>`;
+  
+  const regla = () => `<tr><td style="padding:0"><hr style="border:none;border-top:1px solid ${C.rule};margin:0"/></td></tr>`;
+
+  // Dollar chart - reference the CID
+  const dolarChartHtml = `<tr><td style="padding:16px 0 8px" align="center">
+    <img src="cid:dolar-grafico" alt="Gráfico del dólar: serie de los últimos 30 cierres con banda de rango p10–p90 del siguiente cierre y centro" width="600" style="max-width:100%;height:auto;display:block;border:0;outline:none;text-decoration:none" />
+  </td></tr>`;
+
+  // Dollar headline with close
   const cierre = f.cierre;
-  const etiquetaManana = rango ? formatFechaObjetivo(rango.fecha_objetivo, f.todayLima) : "";
-
-  const dollar = `<tr><td style="padding:18px 0 0">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.card};border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule}"><tr><td style="padding:16px 4px">
-      <div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin-bottom:8px">Dólar interbancario (USD/PEN)</div>
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-        ${cierre ? `<tr><td style="padding:8px 0;border-bottom:1px solid ${C.rule}">
-          <div style="font-family:${ui};font-size:12px;color:${C.soft}">Último cierre oficial (BCRP) · cierre del ${esc(formatCierreFecha(cierre.fecha))}</div>
-          <div style="font-family:${mono};font-size:14px;color:${C.ink};margin-top:2px">S/ ${fmt(cierre.valor, 3)}</div>
-        </td></tr>` : ""}
-        ${rango ? `<tr><td style="padding:8px 0">
-          <div style="font-family:${ui};font-size:12px;color:${C.soft}">Rango probable · ${esc(etiquetaManana)}</div>
-          <div style="font-family:${mono};font-size:14px;color:${C.ink};margin-top:2px">
-            entre S/ ${fmt(rango.p10, 3)} y S/ ${fmt(rango.p90, 3)} <span style="font-size:11px;color:${C.soft}">(8 de cada 10 veces)</span> · central: S/ ${fmt(rango.p50, 3)}
-          </div>
-        </td></tr>` : `<tr><td style="padding:8px 0">
-          <div style="font-family:${ui};font-size:12px;color:${C.soft}">Rango probable</div>
-          <div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:2px">Se publica cada mañana con el cierre del día anterior.</div>
-        </td></tr>`}
-      </table>
-    </td></tr></table></td></tr>`;
-
-  // Brief (free #3): «Qué podría presionar al dólar» of the `manana` horizon.
-  // `lectura` is the lecturaDolar result ({ horizontes }); tolerate the bare horizon too.
-  const mananaLec = lectura?.horizontes?.manana || lectura?.manana || null;
-  const mananaOk = Boolean(mananaLec && typeof mananaLec.resumen === "string" && mananaLec.resumen.length > 0);
-  const punto = (p) => `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:3px">${esc(p.texto)}</div>`;
-  const lado = (h, key, label) => (h?.[key] || []).length
-    ? `<div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin:10px 0 2px">${label}</div>${h[key].map(punto).join("")}` : "";
-  const presiona = mananaOk ? `<tr><td style="padding:24px 0 0">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:2px solid ${C.ink};padding-top:10px;font-family:${serif};font-size:22px;font-weight:600;color:${C.ink}">Qué podría presionar al dólar</td></tr></table>
-    ${mananaLec.determinista ? "" : `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:8px">${esc(mananaLec.resumen)}</div>`}
-    ${lado(mananaLec, "al_alza", "Podría presionar al dólar al alza")}${lado(mananaLec, "a_la_baja", "Podría presionar al dólar a la baja")}${lado(mananaLec, "contexto", "Contexto")}
+  const rangoManana = f.daily?.manana;
+  const etiquetaManana = rangoManana ? formatFechaObjetivo(rangoManana.fecha_objetivo, f.todayLima) : "";
+  const dollarHeadline = cierre ? `<tr><td style="padding:16px 0 8px">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+      <td style="font-family:${serif};font-size:24px;font-weight:600;color:${C.ink}">Dólar interbancario (USD/PEN)</td>
+      <td align="right" style="font-family:${mono};font-size:24px;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</td>
+    </tr></table>
+    <p style="margin:4px 0 0;font-family:${ui};font-size:13px;color:${C.soft}">Último cierre oficial (BCRP) · cierre del ${esc(formatCierreFecha(cierre.fecha))}${rangoManana ? ` · Rango ${esc(etiquetaManana)}` : ''}</p>
   </td></tr>` : "";
-  const transparencia = `<tr><td style="padding:16px 0 0;font-family:${ui};font-size:13px;line-height:1.55;color:${C.soft}">El rango es estadístico; los factores son contexto, no una predicción de dirección.</td></tr>`;
 
-  const historiaHtml = (h) => `<tr><td style="padding:14px 0;border-bottom:1px solid ${C.rule}">
-      <div style="font-family:${ui};font-size:12px;color:${C.soft}">${esc(h.tema)}</div>
-      <div style="font-family:${serif};font-size:19px;font-weight:600;line-height:1.3;color:${C.ink};margin-top:2px">${esc(h.titulo)}</div>
-      ${h.nota ? `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:6px">${esc(h.nota)}</div>` : ""}
-      <div style="font-family:${ui};font-size:12px;color:${C.soft};margin-top:6px">${(h.fuentes || []).filter((x, i, a) => a.findIndex((y) => y.fuente === x.fuente) === i).map((x) => `<a href="${esc(x.url)}" style="color:${C.soft}">${esc(x.fuente)}</a>`).join(" · ")}</div>
-    </td></tr>`;
-  const historias = f.historiasTop3?.length ? `<tr><td style="padding:30px 0 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:2px solid ${C.ink};padding-top:10px;font-family:${serif};font-size:22px;font-weight:600;color:${C.ink}">Lo importante de hoy</td></tr></table></td></tr>
-  <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${f.historiasTop3.map(historiaHtml).join("")}</table><div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:6px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : "";
+  // Dollar reading for mañana/horizonte (only mañana for free)
+  const punto = (p) => `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink};margin:0 0 8px;padding-left:12px;border-left:2px solid ${p.tipo === 'al_alza' ? C.pos : p.tipo === 'a_la_baja' ? C.neg : C.soft};opacity:${p.tipo === 'contexto' ? '0.7' : '1'}">${esc(p.texto)}</div>`;
+  
+  const vistos = new Set();
+  const nuevos = (h, lado) => (h?.[lado] || []).filter((p) => !vistos.has(p.texto) && vistos.add(p.texto));
+  
+  const labelAlAlza = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink};margin:12px 0 4px">Podría presionar al dólar al alza</div>` : "";
+  const labelALaBaja = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink};margin:12px 0 4px">Podría presionar al dólar a la baja</div>` : "";
+  const labelContexto = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink};margin:12px 0 4px">Contexto</div>` : "";
+  
+  const mananaLec = lectura?.horizontes?.manana || lectura?.manana || null;
+  const rangoMananaLec = f.daily?.manana;
+  const rangoTxt = rangoMananaLec ? `<div style="font-family:${mono};font-size:14px;color:${C.ink};margin:4px 0 8px">Rango: S/ ${fmt(rangoMananaLec.p10, 3)} — S/ ${fmt(rangoMananaLec.p90, 3)} <span style="color:${C.soft}">(central S/ ${fmt(rangoMananaLec.p50, 3)})</span></div>` : "";
+  const presionaHtml = mananaLec ? `<tr><td style="padding:16px 0 8px">
+      ${tituloSeccion("Qué podría presionar al dólar", 0).replace('<tr><td', '<div').replace('</td></tr>', '</div>').replace('padding:24px 0 8px', 'margin:0 0 8px')}
+      ${rangoTxt}
+      ${mananaLec.resumen && !mananaLec.determinista ? `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink};margin:8px 0">${esc(mananaLec.resumen)}</div>` : ""}
+      ${labelAlAlza(nuevos(mananaLec, "al_alza"))}${nuevos(mananaLec, "al_alza").map(p => ({...p, tipo: 'al_alza'})).map(punto).join("")}
+      ${labelALaBaja(nuevos(mananaLec, "a_la_baja"))}${nuevos(mananaLec, "a_la_baja").map(p => ({...p, tipo: 'a_la_baja'})).map(punto).join("")}
+      ${labelContexto(nuevos(mananaLec, "contexto"))}${nuevos(mananaLec, "contexto").map(p => ({...p, tipo: 'contexto'})).map(punto).join("")}
+    </td></tr>` : "";
 
-  // Brief (free #4): brief invitation to the Boletín plan, without promising anything
-  // the paid email does not bring.
+  // Top 3 stories
+  const historiaHtml = (h) => `<tr><td style="padding:20px 0">
+    <div style="font-family:${ui};font-size:11px;color:${C.soft};text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">${esc(h.tema)}</div>
+    <div style="font-family:${serif};font-size:18px;font-weight:600;line-height:1.3;color:${C.ink};margin-bottom:8px">${esc(h.titulo)}</div>
+    ${h.nota ? `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink}">${esc(h.nota)}</div>` : ""}
+    <div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:8px">${(h.fuentes || []).filter((x, i, a) => a.findIndex((y) => y.fuente === x.fuente) === i).map((x) => `<a href="${esc(x.url)}" style="color:${C.soft}">${esc(x.fuente)}</a>`).join(" · ")}</div>
+  </td></tr>`;
+
+  // Plan Boletín invitation - 3 bullets
   const plan = `<!-- plan-boletin -->
   <tr><td style="padding:24px 0 0">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.card};border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule}"><tr><td style="padding:16px 4px">
-      <div style="font-family:${ui};font-size:14px;line-height:1.55;color:${C.ink}">Con el plan Boletín (US$&nbsp;1.99 al mes, 7 días de prueba con tarjeta) recibes cada mañana el dólar a una semana y a un mes, el cobre, el oro y el petróleo, los hechos de importancia de la SMV, lo importante del día y tus propias empresas.</div>
-      <div style="margin-top:12px"><a href="${SITE}/precios" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${ui};font-size:14px;font-weight:600;text-decoration:none;padding:10px 18px">Ver los planes</a></div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.card};border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule}"><tr><td style="padding:20px 4px">
+      <div style="font-family:${ui};font-size:14px;line-height:1.55;color:${C.ink};margin-bottom:12px">Con el plan Boletín (US$&nbsp;1.99 al mes, 7 días de prueba con tarjeta) recibes:</div>
+      <ul style="margin:0;padding-left:20px;font-family:${serif};font-size:15px;line-height:1.6;color:${C.ink}">
+        <li style="margin-bottom:8px">Dólar a una semana y a un mes, cada uno con su rango y lectura</li>
+        <li style="margin-bottom:8px">Cobre, oro y petróleo con variación y gráficos</li>
+        <li>Tus empresas (hasta 15) con precio, proyección, hechos y noticias</li>
+      </ul>
+      <div style="margin-top:16px"><a href="${SITE}/precios" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${ui};font-size:14px;font-weight:600;text-decoration:none;padding:12px 24px;border-radius:4px">Ver los planes</a></div>
     </td></tr></table>
   </td></tr>
   <!-- /plan-boletin -->`;
@@ -518,14 +736,18 @@ function renderGratis(f, dateLabel, lectura) {
       <td style="font-family:${serif};font-size:32px;font-style:italic;font-weight:600;color:${C.ink};white-space:nowrap">PerData${flagHtml(C)}</td>
       <td align="right" style="font-family:${ui};font-size:12px;line-height:1.5;color:${C.soft}">Boletín diario<br>Edición ${edition > 0 ? edition : 1}</td>
     </tr></table>
-    <div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:6px;text-transform:none">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
+    <div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:6px">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
   </td></tr>
-  ${dollar}
+  
+  ${dollarHeadline}
+  ${dolarChartHtml}
+  ${presionaHtml}
   {{PERSONAL}}
-  ${historias}
-  ${presiona}
-  ${transparencia}
+  
+  ${f.historiasTop3?.length ? tituloSeccion("Lo importante de hoy", 0) + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${f.historiasTop3.map(historiaHtml).join(regla())}</table><div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:16px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
+  
   ${plan}
+  
   <tr><td style="padding:24px 0 36px;border-top:1px solid ${C.rule};font-family:${ui};font-size:12px;line-height:1.6;color:${C.soft}">
     El rango es estadístico; los factores son contexto, no una predicción de dirección.<br>
     Información con fines informativos; no es una recomendación de inversión.<br>
@@ -654,39 +876,84 @@ function renderPersonal(cards, lecturas) {
   const serif = "'Source Serif 4',Georgia,'Times New Roman',serif";
   const ui = "'Libre Franklin',Helvetica,Arial,sans-serif";
   const mono = "'IBM Plex Mono',Menlo,Consolas,monospace";
+  
+  const texto = (t, size = 15, lh = 1.5, clr = C.ink, weight = 400, mgb = 14) => 
+    t ? `<p style="margin:0 0 ${mgb}px;font-family:${serif};font-size:${size}px;line-height:${lh};color:${clr};font-weight:${weight}">${esc(t)}</p>` : "";
+  
+  const punto = (p) => `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink};margin:0 0 8px;padding-left:12px;border-left:2px solid ${p.tipo === 'al_alza' ? C.pos : p.tipo === 'a_la_baja' ? C.neg : C.soft};opacity:${p.tipo === 'contexto' ? '0.7' : '1'}">${esc(p.texto)}</div>`;
+  
+  const regla = () => `<tr><td style="padding:0"><hr style="border:none;border-top:1px solid ${C.rule};margin:0"/></td></tr>`;
+
   const body = cards.map((c) => {
-    const ch = c.change == null ? "" : `<span style="color:${c.change >= 0 ? C.pos : C.neg}">${c.change >= 0 ? "&#9650;" : "&#9660;"} ${fmt(Math.abs(c.change))}&nbsp;%</span>`;
-    const fc = c.forecast ? `<div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:4px">Proyección al ${esc(c.forecast.date)}: ${c.currency} ${fmt(c.forecast.p50)}${c.forecast.p10 ? ` (entre ${fmt(c.forecast.p10)} y ${fmt(c.forecast.p90)}, 8 de cada 10 veces)` : ""}</div>` : "";
+    const ch = c.change == null ? "" : `<span style="color:${c.change >= 0 ? C.pos : C.neg}">${c.change >= 0 ? "▲" : "▼"} ${fmt(Math.abs(c.change))}%</span>`;
+    
+    // Range bar CID
+    const rangeBarCid = c.forecast && c.forecast.p10 && c.forecast.p50 && c.forecast.p90 
+      ? `cid:range-${c.nemo}` 
+      : null;
+    
+    const fc = c.forecast ? `
+      <div style="font-family:${ui};font-size:13px;color:${C.soft};margin:8px 0 0">
+        Proyección al ${esc(c.forecast.date)}: ${c.currency} ${fmt(c.forecast.p50)}
+        ${c.forecast.p10 ? ` (${fmt(c.forecast.p10)} — ${fmt(c.forecast.p90)}, 8 de cada 10 veces)` : ''}
+      </div>` : "";
+    
+    // Range bar image
+    const rangeBarHtml = rangeBarCid ? `
+      <div style="margin:8px 0 0" align="center">
+        <img src="${rangeBarCid}" alt="Rango de proyección: p10 — precio — p90" width="300" style="max-width:100%;height:auto;display:block;border:0" />
+      </div>` : "";
+    
     const item = (html) => `<tr><td valign="top" style="width:16px;padding:5px 0 0;font-family:${ui};font-size:13px;color:${C.soft}">–</td><td style="padding:5px 0 0;font-family:${ui};font-size:13px;line-height:1.45">${html}</td></tr>`;
     const smv = c.smv.map((h) => item(`<span style="color:${C.soft}">SMV, ${esc(shortDay(h.fecha))}:</span> <a href="${esc(h.url_oficial)}" style="color:${C.ink}">${esc(h.titulo)}</a>`)).join("");
     const news = c.news.map((n) => item(`<a href="${esc(n.url)}" style="color:${C.ink}">${esc(n.titulo)}</a> <span style="color:${C.soft}">· ${esc(n.fuente)}</span>`)).join("");
     const quiet = !c.smv.length && !c.news.length ? `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">Sin hechos de importancia ni noticias en los últimos días.</div>` : "";
     const sentiment = c.sentiment ? `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">${esc(c.sentiment)}</div>` : (quiet ? "" : `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">Sin noticias recientes de esta empresa.</div>`);
-    // Brief (paid #5): the company reading (que_hay, podría mover, contexto).
+    
+    // Company reading
     const l = lecturas?.[c.nemo];
-    const punto = (p) => `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink};margin-top:3px">${esc(p.texto)}</div>`;
-    const bloqueLectura = (lista, label) => (lista || []).length
-      ? `<div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink};margin:8px 0 2px">${label}</div>${lista.map(punto).join("")}` : "";
-    const lecturaHtml = l ? `<div style="margin-top:10px;border-top:1px dashed ${C.rule};padding-top:6px">
-        <div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink}">Lectura de ${esc(c.name)}</div>
-        ${l.resumen && l.resumen !== l.que_hay?.[0]?.texto && !(l.que_hay?.[0]?.texto || "").startsWith(l.resumen.replace(/\.$/, "")) ? `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:4px">${esc(l.resumen)}</div>` : ""}
-        ${bloqueLectura(l.que_hay, "Qué hay")}${bloqueLectura(l.podria_mover?.al_alza, "Podría mover al alza")}${bloqueLectura(l.podria_mover?.a_la_baja, "Podría mover a la baja")}${bloqueLectura(l.contexto, "Contexto")}
+    const bloqueLectura = (lista, label, tipo) => (lista || []).length
+      ? `<div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink};margin:12px 0 4px">${label}</div>${lista.map(p => ({...p, tipo})).map(punto).join("")}` : "";
+    
+    const lecturaHtml = l ? `<div style="margin-top:12px;padding-top:10px;border-top:1px dashed ${C.rule}">
+        <div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink};margin-bottom:8px">Lectura de ${esc(c.name)}</div>
+        ${l.resumen && l.resumen !== l.que_hay?.[0]?.texto && !(l.que_hay?.[0]?.texto || "").startsWith(l.resumen.replace(/\.$/, "")) ? `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink};margin-bottom:8px">${esc(l.resumen)}</div>` : ""}
+        ${bloqueLectura(l.que_hay, "Qué hay", "contexto")}
+        ${bloqueLectura(l.podria_mover?.al_alza, "Podría mover al alza", "al_alza")}
+        ${bloqueLectura(l.podria_mover?.a_la_baja, "Podría mover a la baja", "a_la_baja")}
+        ${bloqueLectura(l.contexto, "Contexto", "contexto")}
       </div>` : "";
-    return `<tr><td style="padding:14px 0;border-bottom:1px solid ${C.rule}">
+    
+    return `<tr><td style="padding:20px 0">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-        <td style="font-family:${ui};font-size:15px;font-weight:600;color:${C.ink}">${esc(c.name)} <span style="font-family:${mono};font-size:11px;font-weight:400;color:${C.soft}">${esc(c.nemo)}</span></td>
-        <td align="right" style="font-family:${mono};font-size:15px;color:${C.ink};white-space:nowrap">${c.price != null ? `${c.currency} ${fmt(c.price)}` : `<a href="${SITE}/empresa/${encodeURIComponent(c.nemo)}" style="color:${C.soft};font-family:${ui};font-size:12px">Ver ficha</a>`}<br><span style="font-size:13px">${ch}</span>${c.price != null ? `<br><span style="font-size:10px;color:${C.soft}">${c.priceDate ? `cierre del ${esc(shortDay(c.priceDate))}` : "último cierre disponible"}</span>` : ""}</td>
-      </tr></table>${sentiment}${fc}${smv || news ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:4px">${smv}${news}</table>` : ""}${quiet}${lecturaHtml}</td></tr>`;
-  }).join("");
-  return `<tr><td style="padding:30px 0 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:2px solid ${C.ink};padding-top:10px;font-family:${serif};font-size:22px;font-weight:600;color:${C.ink}">Tus empresas</td></tr></table></td></tr>
+        <td style="font-family:${ui};font-size:15px;font-weight:600;color:${C.ink};vertical-align:top">${esc(c.name)} <span style="font-family:${mono};font-size:11px;font-weight:400;color:${C.soft}">${esc(c.nemo)}</span></td>
+        <td align="right" style="font-family:${mono};font-size:15px;color:${C.ink};white-space:nowrap;vertical-align:top">${c.price != null ? `${c.currency} ${fmt(c.price)}` : `<a href="${SITE}/empresa/${encodeURIComponent(c.nemo)}" style="color:${C.soft};font-family:${ui};font-size:12px">Ver ficha</a>`}<br><span style="font-size:13px">${ch}</span>${c.price != null ? `<br><span style="font-size:11px;color:${C.soft}">${c.priceDate ? `cierre del ${esc(shortDay(c.priceDate))}` : "último cierre disponible"}</span>` : ""}</td>
+      </tr></table>
+      ${rangeBarHtml}
+      ${fc}
+      ${sentiment}${smv || news ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px">${smv}${news}</table>` : ""}${quiet}${lecturaHtml}
+    </td></tr>`;
+  }).join(regla());
+  
+  return `<tr><td style="padding:24px 0 8px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${ui};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">Tus empresas</td></tr></table></td></tr>
   <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${body}</table>
-  <div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:6px">Precios: datos de mercado de cierre. Hechos: SMV. La proyección es estadística y no incorpora las noticias.</div></td></tr>`;
+  <div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:16px">Precios: datos de mercado de cierre. Hechos: SMV. La proyección es estadística y no incorpora las noticias.</div></td></tr>`;
 }
 
 const f = await facts();
 const ai = await interpret(f);
 const lima = new Date(Date.now() - 5 * 36e5);
 const dateLabel = lima.toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+
+// Generate charts (non-blocking - if they fail, email goes out without them)
+const penSerie = f.bcrp?.series?.PEN?.serie || [];
+const dolarChartPng = generateDolarChart(penSerie, f.daily?.manana, f.cierre);
+const cobreSerie = f.bcrp?.series?.COBRE?.serie || [];
+const cobreSparkPng = generateSparkline(cobreSerie);
+const oroSerie = f.bcrp?.series?.ORO?.serie || [];
+const oroSparkPng = generateSparkline(oroSerie);
+const wtiSerie = f.bcrp?.series?.WTI?.serie || [];
+const wtiSparkPng = generateSparkline(wtiSerie);
 const upsell = `<tr><td style="padding:24px 0 0;font-family:'Libre Franklin',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#5E584E">Elegiste empresas para seguir. La sección «Tus empresas» (precio, proyección, hechos y noticias de cada una) llega con el plan Boletín.</td></tr>`;
 const fill = (html, personal, baja = `${SITE}/boletin`, prefs = `${SITE}/boletin`) => html
   .replace("{{BAJA}}", () => baja)
@@ -755,6 +1022,30 @@ if (process.env.PREVIEW_EMPRESAS) {
     }
   }
   previewPersonal = PREVIEW_PLAN === "gratis" ? upsell : renderPersonal(cards, lecturasPreview);
+
+    // Generate charts for preview
+    const previewDolarChartPng = generateDolarChart(penSerie, f.daily?.manana, f.cierre);
+    const previewCobreSparkPng = generateSparkline(cobreSerie);
+    const previewOroSparkPng = generateSparkline(oroSerie);
+    const previewWtiSparkPng = generateSparkline(wtiSerie);
+
+    // Save chart images for preview
+    const qaDir = path.join(ROOT, "..", "handoff", "qa");
+    fs.mkdirSync(qaDir, { recursive: true });
+    if (previewDolarChartPng) fs.writeFileSync(path.join(qaDir, "correo-dolar-grafico.png"), previewDolarChartPng);
+    if (previewCobreSparkPng) fs.writeFileSync(path.join(qaDir, "correo-cobre-spark.png"), previewCobreSparkPng);
+    if (previewOroSparkPng) fs.writeFileSync(path.join(qaDir, "correo-oro-spark.png"), previewOroSparkPng);
+    if (previewWtiSparkPng) fs.writeFileSync(path.join(qaDir, "correo-wti-spark.png"), previewWtiSparkPng);
+
+    // Range bars for preview companies
+    if (PREVIEW_PLAN !== "gratis" && cards.length) {
+      for (const c of cards) {
+        if (c.forecast && c.forecast.p10 && c.forecast.p50 && c.forecast.p90) {
+          const rangeBar = generateRangeBar(c.forecast.p10, c.forecast.p50, c.forecast.p90);
+          if (rangeBar) fs.writeFileSync(path.join(qaDir, `correo-range-${c.nemo}.png`), rangeBar);
+        }
+      }
+    }
 }
 
 const htmlCompleto = render(f, ai, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null);
@@ -879,7 +1170,30 @@ if (!DRY && !PREVIEW) {
     // Free version: no «Tus empresas» section, only the note about the plan
     const personal = plan === "gratis" ? ((empresas || []).length ? upsell : "") : (mine.length ? renderPersonal(mine, lecturas) : `<tr><td style="padding:24px 0 0;font-family:'Libre Franklin',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#5E584E">Aún no elegiste empresas. Elige hasta 15 en <a href="${SITE}/cuenta" style="color:#1B1916">/cuenta</a> y cada mañana llegará tu sección «Tus empresas».</td></tr>`);
     const baseHtml = plan === "gratis" ? htmlGratis : htmlCompleto;
-    const msg = { from: FROM, to: [email], subject: `PerData · ${dateLabel}`, html: fill(baseHtml, personal, baja, prefs) };
+    const msg = { 
+      from: FROM, 
+      to: [email], 
+      subject: `PerData · ${dateLabel}`, 
+      html: fill(baseHtml, personal, baja, prefs) 
+    };
+    
+    // Add inline chart attachments
+    const attachments = [];
+    if (dolarChartPng) attachments.push({ content: dolarChartPng, filename: "dolar-grafico.png", content_id: "dolar-grafico", disposition: "inline" });
+    if (cobreSparkPng) attachments.push({ content: cobreSparkPng, filename: "cobre-spark.png", content_id: "cobre-spark", disposition: "inline" });
+    if (oroSparkPng) attachments.push({ content: oroSparkPng, filename: "oro-spark.png", content_id: "oro-spark", disposition: "inline" });
+    if (wtiSparkPng) attachments.push({ content: wtiSparkPng, filename: "wti-spark.png", content_id: "wti-spark", disposition: "inline" });
+    // Range bars for paid companies
+    if (plan === "boletin" && mine.length) {
+      for (const c of mine) {
+        if (c.forecast && c.forecast.p10 && c.forecast.p50 && c.forecast.p90) {
+          const rangeBar = generateRangeBar(c.forecast.p10, c.forecast.p50, c.forecast.p90);
+          if (rangeBar) attachments.push({ content: rangeBar, filename: `range-${c.nemo}.png`, content_id: `range-${c.nemo}`, disposition: "inline" });
+        }
+      }
+    }
+    if (attachments.length) msg.attachments = attachments;
+    
     if (token) msg.headers = { "List-Unsubscribe": `<${baja}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" };
     return msg;
   });
