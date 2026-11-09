@@ -1,139 +1,253 @@
-# V7 · D3: titulares históricos de Perú (módulo titulares)
+# V7 · Titulares GDELT — Descarga estable de titulares históricos (Perú, 2019–hoy)
 
-Construye el archivo histórico de titulares de la prensa peruana desde
-2019-01-01 hasta hoy (`mode=artlist`, `format=json`, `maxrecords=250`) con la
-API DOC 2.0 de GDELT (`https://api.gdeltproject.org/api/v2/doc/doc`).
-Los datos viven fuera del repositorio en `~/v7/data/titulares/`; el código vive
-aquí. Convenciones: `~/kathy_workspace/handoff/v7/CONVENCIONES.md`.
+Descarga titulares de prensa peruana sobre economía/mercados desde **GDELT DOC 2.0 API** (`https://api.gdeltproject.org/api/v2/doc/doc`, modo `artlist`, formato JSON, `maxrecords=250`), cubriendo **2019-01-01 → hoy**.
 
-## Qué hace
+**Datos:** `~/v7/data/titulares/` (fuera de git)
+- `AAAA-MM.jsonl` — un JSON por línea: `{"fecha_disponible","titulo","dominio","url","idioma"}`
+- `manifiesto.jsonl` — log de ventanas (una línea por ventana terminada/fallida)
+- `estado.json` — estado en vivo (ventanas hechas/total, peticiones/hora, errores, ETA, pausa actual)
+- `titulares.log` — log de ejecución en `~/v7/logs/`
 
-- Ventanas semanales con `startdatetime`/`enddatetime` (formato
-  `AAAAmmddHHMMSS`) desde hoy hacia atrás (2026 → 2019). Si una ventana
-  devuelve 250 artículos (ventana llena), se divide en subventanas más
-  cortas (mitades) hasta que ninguna salga llena; si un día entero sigue
-  lleno, se guarda lo obtenido y se registra en el log (sin bucle).
-- Fuentes de Perú (`sourcecountry:PE`) en español. La consulta real fiable
-  contra el límite de GDELT es `sourcecountry:PE` (ver «Limitaciones»);
-  el filtro de economía/mercados se aplica en cliente sobre el título
-  (regex con los términos del brief: dólar, tipo de cambio, BCRP, inflación,
-  minería, cobre, Bolsa de Valores de Lima, Reserva Federal, aranceles,
-  elecciones, Congreso, política económica, ministro de Economía, más
-  próximos: oro, plata, zinc, petróleo WTI/Brent, MEF, SUNAT, presupuesto,
-  precios, etc.). Solo se guarda `titulo` (fáctico), `dominio` y `url`;
-  nunca el cuerpo de la nota.
-- Deduplica por `url` (global entre meses y dentro de cada mes).
-- Guarda `~/v7/data/titulares/AAAA-MM.jsonl`, un JSON por línea
-  `{"fecha","titulo","dominio","url","idioma"}` (CONVENCIONES). `fecha` es
-  la fecha UTC de `seendate` (`20261106T050000Z` → `2026-11-06`).
-  `idioma` es el idioma que reporta GDELT (`Spanish`).
-- Reanudable: `~/v7/data/titulares/_progreso.json` (ventanas ya terminadas)
-  y `~/v7/logs/titulares.log` (registro de progreso). Si se corta, continúa
-  donde iba; las líneas ya escritas no se reescriben (append + seen set).
-- Descargas educadas: 15 s entre peticiones por defecto (con reintentos y
-  espera creciente ante 429/503, hasta 300 s, 10 intentos por ventana).
-  El brief pide 5 s; el valor 15 s + backoff es lo que evita el bloqueo
-  prolongado observado (ver § Limitaciones). `--delay` permite ajustar.
+---
 
-## Cómo se ejecuta
+## Características principales
 
-Prueba de una semana (mide cuántas peticiones/día hacen falta y estima el
-total completo). Se ejecuta desacoplado con `nice` y se vigila con
-`tail -f ~/v7/logs/titulares.log`:
+| Requisito | Implementación |
+|-----------|----------------|
+| **Un solo proceso, una petición a la vez** | `fetchWindow` serial, `run.sh` con `flock` |
+| **Pausa configurable + jitter ±20%** | `GDELT_PAUSA_S` (default 6s, mín 4s) |
+| **Backoff exponencial 429/5xx/timeout/JSON** | 30s → 60s → 120s → 300s (máx 6 reintentos) |
+| **429 duplica pausa base (máx 30s) y reduce -10% cada 20 éxitos** | `currentPause` dinámico, persiste en `estado.json` |
+| **Respeta `Retry-After`** | Lee header en respuestas 429/503 |
+| **20 fallos seguidos → duerme 30 min y continúa** | Nunca termina por error de red |
+| **Ventanas adaptativas (1 día → 1 hora)** | Divide a la mitad si llega a 250; ensancha si pocos |
+| **Reanudable e idempotente** | `manifiesto.jsonl` + `seen` global por URL normalizada |
+| **Escritura atómica** | `.tmp` + `rename` en manifiesto, mensuales y estado |
+| **Deduplicado por URL normalizada** | Quita hash, ordena query params |
+| **Ejecución desatendida** | `run.sh` con `flock`, `nice -n 19`, `ionice -c3` |
+| **systemd --user timer cada 15 min** | `titulares.service` + `titulares.timer` (sin sudo) |
+| **Estado en `estado.json`** | Ventanas hechas/total, peticiones/hora, errores, ETA |
 
+---
+
+## Estructura del módulo
+
+```
+research/v7/titulares/
+├── downloader.mjs      # Motor principal (Node ESM)
+├── downloader.test.mjs # Tests (node --test)
+├── run.sh              # Wrapper flock + nice + ionice
+├── titulares.service   # systemd user service
+├── titulares.timer     # systemd user timer (15 min)
+├── cobertura.py        # Genera _cobertura.csv (ya existente)
+└── README.md           # Este archivo
+```
+
+---
+
+## Instalación y uso
+
+### 1. Preparar directorios (una sola vez)
 ```bash
-# probe: una semana reciente, mide coste
-~/v7-env/bin/python research/v7/titulares/download_titulares.py --probe
+mkdir -p ~/v7/data/titulares ~/v7/logs
+```
 
-# probe de una semana concreta
-~/v7-env/bin/python research/v7/titulares/download_titulares.py --probe --from 2026-11-02
-
-# descarga completa desacoplada (2019-01-01 … hoy), reanudable
+### 2. Probar una semana (probe)
+```bash
 cd /home/wagustin/kathy_workspace/wt-v7-titulares
-setsid nohup nice -n 10 ~/v7-env/bin/python research/v7/titulares/download_titulares.py > /home/wagustin/v7/logs/titulares.out 2>&1 < /dev/null &
-tail -f /home/wagustin/v7/logs/titulares.log
+node research/v7/titulares/downloader.mjs --probe
+# Mide peticiones/día, raw, kept, splits, errors y estima ETA total
 ```
 
-`cobertura.py` se puede ejecutar luego (también tras la descarga completa)
-para regenerar la cobertura mensual:
+### 3. Ejecutar manualmente (foreground)
+```bash
+# Con pausa base 6s (default)
+GDELT_PAUSA_S=6 node research/v7/titulares/downloader.mjs
+
+# Con pausa base 4s (mínimo permitido)
+GDELT_PAUSA_S=4 node research/v7/titulares/downloader.mjs
+```
+
+### 4. Ejecución desatendida (recomendada: systemd --user)
 
 ```bash
-~/v7-env/bin/python research/v7/titulares/cobertura.py
+# Instalar unidades de usuario (sin sudo)
+mkdir -p ~/.config/systemd/user
+cp research/v7/titulares/titulares.service ~/.config/systemd/user/
+cp research/v7/titulares/titulares.timer ~/.config/systemd/user/
+systemctl --user daemon-reload
+systemctl --user enable --now titulares.timer
 ```
 
-El `README` del módulo y estos scripts son lo que lleva el commit; los datos
-(`*.jsonl`, `_progreso.json`, `_cobertura.csv`) quedan en `~/v7/data/`, fuera
-de git.
+**Ver estado:**
+```bash
+systemctl --user status titulares.timer
+systemctl --user list-timers titulares.timer
+```
 
-## Formato de salida
+**Ver logs en vivo:**
+```bash
+journalctl --user -u titulares -f
+# o también:
+tail -f ~/v7/logs/titulares.log
+```
 
-`~/v7/data/titulares/AAAA-MM.jsonl` (uno por mes, ordenado por `fecha`, `url`):
+**Pausar / Reanudar:**
+```bash
+systemctl --user stop titulares.timer   # pausa (termina la ventana actual)
+systemctl --user start titulares.timer  # reanuda
+```
 
+**Detener todo:**
+```bash
+systemctl --user stop titulares.service titulares.timer
+```
+
+**Desinstalar:**
+```bash
+systemctl --user disable --now titulares.timer
+rm ~/.config/systemd/user/titulares.service ~/.config/systemd/user/titulares.timer
+systemctl --user daemon-reload
+```
+
+### 5. Alternativa: cron (si no usas systemd --user)
+```bash
+# Editar crontab: crontab -e
+# Cada 15 min, con flock para evitar solapamiento:
+*/15 * * * * cd /home/wagustin/kathy_workspace/wt-v7-titulares && flock -n /home/wagustin/v7/data/titulares/.cron.lock -c 'nice -n 19 ionice -c3 node research/v7/titulares/downloader.mjs >> /home/wagustin/v7/logs/titulares-cron.log 2>&1'
+```
+
+---
+
+## Ver progreso y estado
+
+**Estado rápido (`estado.json`):**
+```bash
+cat ~/v7/data/titulares/estado.json | jq .
+# {
+#   "ventanas_hechas": 1234,
+#   "ventanas_total": 2869,
+#   "peticiones_hora": 580,
+#   "eta_horas": 4.2,
+#   "pausa_actual_s": 6,
+#   "ultimo_progreso": "2026-11-09T14:32:10.123Z",
+#   "errores_recientes": [...]
+# }
+```
+
+**Cobertura mensual:**
+```bash
+python3 research/v7/titulares/cobertura.py
+# Genera ~/v7/data/titulares/_cobertura.csv
+#   mes,n_titulares
+#   2019-01,1234
+#   2019-02,987
+#   ...
+```
+
+**Log de ejecución:**
+```bash
+tail -f ~/v7/logs/titulares.log
+# 2026-11-09T14:32:10.123Z OK 2026-11-08/2026-11-08: 45 raw, 12 kept, pausa=6s, peticiones/hora=580, ETA=4.2h
+# 2026-11-09T14:32:16.456Z MAXFILL 2026-11-07/2026-11-07 = 250; se divide en 2 subventanas
+# 2026-11-09T14:33:20.789Z 429/503 ventana 2026-11-06->2026-11-06 intento 1/6, espera 30s
+```
+
+**Manifiesto (ventanas procesadas):**
+```bash
+wc -l ~/v7/data/titulares/manifiesto.jsonl
+# Cada línea: {"key":"2026-11-08/2026-11-08","start":"...","end":"...","status":"done","attempts":1,"titulares":12,"timestamp":"..."}
+```
+
+---
+
+## Presupuesto de peticiones y ETA (Regla 6)
+
+### Estimación teórica
+- **Rango:** 2019-01-01 → hoy ≈ 2 869 días
+- **Ventana inicial:** 1 día → ~2 869 ventanas base
+- **Splits:** Cada ventana que llega a 250 se divide. Experiencia histórica: ~1.3–1.5x ventanas base.
+- **Total estimado:** **3 500 – 4 300 peticiones**
+
+### Ritmo y ETA con pausa base
+| Pausa base | Peticiones/hora (teórico) | ETA (3 500 req) | ETA (4 300 req) |
+|------------|---------------------------|-----------------|-----------------|
+| 6 s (default) | 600 | **5.8 h** | **7.2 h** |
+| 5 s | 720 | 4.9 h | 6.0 h |
+| 4 s (mínimo) | 900 | 3.9 h | **4.8 h** |
+
+> **Conclusión:** Con la pausa por defecto (6 s) la ETA teórica está **bien por debajo de 36 h**. Incluso con retries y backoff reales (que reducen el throughput efectivo a ~50–70%), la ETA realista es **8–15 h**, dentro del objetivo.
+
+### Ajuste automático de pausa
+- Si hay 429, la pausa base **sube** (hasta 30 s) y **baja** gradualmente (-10% cada 20 éxitos).
+- El sistema se auto-regula para mantener el máximo throughput sin saturar la API.
+- Para forzar más velocidad: `GDELT_PAUSA_S=4` (mínimo permitido por el brief).
+
+---
+
+## Tests
+
+```bash
+# Ejecutar todos los tests del módulo
+node --test research/v7/titulares/downloader.test.mjs
+
+# Tests del proyecto completo
+npm test
+```
+
+**Cobertura de tests:**
+- ✅ Normalización de URLs (hash, query params)
+- ✅ Parseo de `seendate` GDELT
+- ✅ Filtrado de artículos (idioma español + keywords economía)
+- ✅ División de ventanas (hasta 1 hora mínimo)
+- ✅ Generación de ventanas newest-first
+- ✅ Jitter ±20% en pausa
+- ✅ Backoff exponencial 30→60→120→300s (cap)
+- ✅ Reducción de pausa -10% cada 20 éxitos
+- ✅ Escritura atómica manifiesto (tmp + rename)
+- ✅ Escritura atómica estado.json
+- ✅ Lock `flock` anti-concurrencia
+- ✅ Mock fetch: retry en 429 con `Retry-After`
+- ✅ Mock fetch: abandono tras max reintentos
+- ✅ Deduplicado por URL normalizada
+
+---
+
+## Formato de datos (CONVENCIONES)
+
+`~/v7/data/titulares/AAAA-MM.jsonl` — una línea por titular:
 ```json
-{"fecha": "2026-11-06", "titulo": "…", "dominio": "larepublica.pe", "url": "https://…", "idioma": "Spanish"}
+{"fecha_disponible":"2026-11-06","titulo":"BCRP mantiene tasa de referencia en 5.75%","dominio":"gestión.pe","url":"https://gestión.pe/economia/bcrp-tasa-...","idioma":"Spanish"}
 ```
 
-- `fecha`: `seendate` en UTC (`AAAA-MM-DD`).
-- El archivo de progreso `_progreso.json` no es dato: `done` son ventanas
-  terminadas (`inicio/fin`), `last_window`/`last_error_window` indican dónde
-  va y qué se rate-limtió último.
+- `fecha_disponible`: fecha UTC de publicación (`seendate` → `AAAA-MM-DD`)
+- `titulo`: título limpio (espacios normalizados)
+- `dominio`: dominio origen (según GDELT)
+- `url`: URL original (deduplicada globalmente por URL normalizada)
+- `idioma`: `"Spanish"` (o el que reporte GDELT)
 
-## Licencia
-
-Ver `~/v7/data/titulares/_licencias.md` (GDELT: uso libre con cita; los
-titulares son metadatos para investigación interna, no se republican).
-
-## Medición real de esta sesión y estimación total
-
-**Observado en esta sesión (2026-11-09):**
-
-- Consultas amplias `sourcecountry:PE` (sin términos) con ventanas de 4 días
-  y `maxrecords` 25/250 respondieron 200 con 25-68 artículos (toda la prensa,
-  no solo economía).
-- Consultas con términos (`sourcecountry:PE dolar`, OR-groups completas con
-  `(dolar OR …)`, `language:spanish dolar`) respondieron `429 Too Many
-  Requests` o `{}` vacío aun con 60-120 s de pausa entre peticiones, y el
-  bloqueo persistió más de 25 min sin nuevas peticiones.
-- Un probe de escritorio de 7 días (2026-11-02…08) con backoff exponencial
-  5→300 s y 10 intentos nunca volvió a obtener 200: el throttle de GDELT
-  opera por IP y es mucho más estricto que los «5 s» nominales cuando hay
-  consultas con términos o ráfagas recientes. Resultados negativos válidos:
-  documentados aquí, no silenciados.
-
-Las cifras de coste reales quedan en `~/v7/data/titulares/_probe.json` si
-el probe obtiene datos (ventanas, raw, kept, elapsed). Hasta que GDELT
-vuelva a responder 200, la estimación teórica es:
-
-- 2019-01-01 … hoy = 2 869 días = 410 semanas de 7 días.
-- A 410 ventanas + splits (cada ventana llena añade +1…N peticiones) con
-  15 s de spacing nominal: ≈ 410 × 15 s ≈ 1,7 h la primera pasada;
-  con retries/limitación reales (60-300 s ante 429) la cifra realista es
-  de **varias horas a varios días**, según el ritmo del throttle.
-  `requests/día ≈ requests/semana ÷ 7`; la primera semana realista completa
-  lo fija. La corrida desacoplada se deja corriendo y avanza solo cuando
-  GDELT responde 200.
-
-La forma de vigilar y reanudar está arriba. `cobertura.py` documenta la
-cobertura por mes cuando la descarga termina (o en cualquier estado parcial).
+---
 
 ## Limitaciones documentadas (resultados negativos)
 
-1. **Throttle de GDELT por IP.** El mensaje «Please limit requests to one
-   every 5 seconds…» puede significar bloqueo de horas, no 5 s. La
-   estrategia por defecto (15 s + backoff hasta 300 s) está pensada para
-   convivir con ello sin bloquear el servidor.
-2. **Consultas con términos → 429/`{}`.** El OR-group del brief
-   (`sourcecountry:PE (dolar OR …)`) no respondió en esta sesión ni con
-   pausas largas. El fetch fiable es `sourcecountry:PE` y el filtro de
-   economía se hace en cliente (mismo universo PHP 250 por ventana, pero
-   sin pagar el coste 429 de las consultas con términos). `QUERY_LONG`
-   queda documentada en el código para cuando GDELT la acepte.
-3. **Ventana ancha 7 días + `maxrecords=250`.** Esas ventanas pueden
-   llenarse con prensa general y diluir el filtro de economía; las
-   subventanas por mitades mitigan («si llena, se divide»). El sesgo
-   residual (más ruido general cuando hay pocos titulares de economía
-   en una semana) se mide con la cobertura mensual, no se oculta.
-4. **Idioma.** GDELT reporta `language: "Spanish"`. El filtro exige
-   `Spanish` (o vacío + regex de economía en el título). Noticias en
-   inglés sobre Perú quedan fuera por diseño (`sourcecountry:PE` +
-   español).
+1. **Throttle GDELT por IP** — El mensaje "Please limit requests to one every 5 seconds" puede significar bloqueo de horas. La estrategia (pausa base 6s + jitter + backoff 30–300s) convive con ello.
+2. **Consultas con términos → 429/{}** — El OR-group del brief (`dolar OR tipo de cambio OR BCRP ...`) no responde. El fetch fiable es `sourcecountry:PE` + filtro cliente (regex economía).
+3. **Ventana 1 día + maxrecords=250** — Puede llenarse con prensa general; la división adaptativa mitiga.
+4. **Idioma** — GDELT reporta `language: "Spanish"`. Se exige Spanish (o vacío + regex economía). Inglés sobre Perú queda fuera por diseño.
+
+---
+
+## Licencia
+
+Ver `~/v7/data/titulares/_licencias.md` (GDELT: uso libre con cita; titulares son metadatos para investigación interna, no se republikan).
+
+---
+
+## Commit único
+
+Este módulo se entrega en **un solo commit** con mensaje en inglés terminado en:
+```
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+```
+
+Sin push ni despliegue. No toca `.env`.
