@@ -177,7 +177,7 @@ const valorIndicador = (ind) => {
 
 // ---- 3. Tarjetas de rangos probables ----
 
-const tarjetaRango = ({ titulo, subtitulo, fechaObjetivo, p10, p25, p50, p75, p90, anchoPct, cobertura, cortes, extra }) => `
+const tarjetaRango = ({ titulo, subtitulo, fechaObjetivo, p10, p25, p50, p75, p90, anchoPct, cobertura, cortes, extra, pie }) => `
       <article class="pd-range-card">
         <p class="micro-label text-ink-soft">${escapeHtml(titulo)}</p>
         <p class="pd-range-target">${escapeHtml(subtitulo)} · ${escapeHtml(fechaObjetivo)}</p>
@@ -192,24 +192,8 @@ const tarjetaRango = ({ titulo, subtitulo, fechaObjetivo, p10, p25, p50, p75, p9
         <p class="pd-range-meta">Ancho de banda P10-P90: ${pct(anchoPct, 2)}</p>
         <p class="pd-range-meta">Cobertura empirica fuera de muestra: ${pct(cobertura, 2)} sobre ${num(cortes, 0)} cortes</p>
         ${extra ? `<p class="pd-range-meta">${extra}</p>` : ''}
+        ${pie || ''}
       </article>`;
-
-// ---- 3b. Bloque: Rango probable para el siguiente cierre (pronostico mensual) ----
-// Usa p10, p50, p90 del motor mensual ya disponible en mesP10, mesP50, mesP90, mesFechaObjetivo
-const bloqueRangoSiguienteCierre = `
-    <section class="mt-10" aria-label="Rango probable para el siguiente cierre">
-      <p class="micro-label text-ink-soft">Rango probable para el siguiente cierre</p>
-      <div class="pd-range-next-close">
-        <p class="pd-range-next-label">Cierre estimado para ${escapeHtml(fechaLarga(mesFechaObjetivo))}</p>
-        <div class="pd-range-next-values">
-          <span class="pd-range-next-p10 mono tnum">S/ ${num(mesP10, 4)}</span>
-          <span class="pd-range-next-sep" aria-hidden="true">–</span>
-          <span class="pd-range-next-p90 mono tnum">S/ ${num(mesP90, 4)}</span>
-        </div>
-        <p class="pd-range-next-center mono tnum">Central: S/ ${num(mesP50, 4)}</p>
-        <p class="pd-range-next-note">8 de cada 10 veces el cierre queda en este intervalo (P10–P90, cobertura 80 %)</p>
-      </div>
-    </section>`;
 
 const diaSemana = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('es-PE', { weekday: 'long', timeZone: 'UTC' });
 
@@ -225,6 +209,8 @@ const tarjetaManana = tarjetaRango({
   anchoPct: mananaAnchoPct,
   cobertura: mananaCoberturaFuera,
   cortes: mananaCortes,
+  // Enlace de texto (no boton) para compartir el rango de manana por WhatsApp
+  pie: `<p class="pd-share-row"><a id="waShareLink" class="pd-share-link" href="#" target="_blank" rel="noopener noreferrer">Compartir por WhatsApp</a></p>`,
 });
 
 const tarjetaSemana = tarjetaRango({
@@ -454,7 +440,21 @@ const datasetLd = {
 
 const faqLdScript = `  <script type="application/ld+json">${ldJson(faqLd)}</script>`;
 const datasetLdScript = `  <script type="application/ld+json">${ldJson(datasetLd)}</script>`;
-// ---- 6b. Bloque de invitacion al boletin (con formulario inline que POSTea a /api/boletin) ----
+// ---- 6c. Franja de captura del boletin (formulario que POSTea a /api/boletin) ----
+// Va justo debajo de los tres horizontes: el rango de manana es lo que se lleva el correo
+const bloqueBoletinRango = `
+    <section class="pd-boletin-strip" aria-label="Boletín diario">
+      <h2 class="pd-boletin-strip-title">El rango de mañana, cada día a las <span class="mono tnum">06:00</span> en tu correo</h2>
+      <form id="pdBoletinForm" class="pd-boletin-strip-form" novalidate>
+        <label for="boletinEmail" class="sr-only">Correo electrónico</label>
+        <input type="email" id="boletinEmail" name="email" class="pd-boletin-input mono tnum" placeholder="tu@correo.com" required autocomplete="email" aria-describedby="boletinHelp">
+        <button type="submit" class="pdl-btn pdl-btn-primary" id="boletinSubmit">Recibirlo gratis</button>
+      </form>
+      <p id="boletinHelp" class="pd-boletin-note">Lunes a sábado. Gratis. Te das de baja con un clic. <a href="/politica-editorial" class="pd-boletin-policy">Política editorial</a>.</p>
+      <p id="boletinStatus" class="pd-boletin-status" aria-live="polite"></p>
+    </section>`;
+
+// ---- 6d. Bloque de invitacion al boletin al final de la pagina (solo enlace, sin formulario) ----
 
 const bloqueBoletin = `
     <section class="mt-12 border-t border-rule pt-8" aria-label="Boletin diario">
@@ -463,16 +463,6 @@ const bloqueBoletin = `
       <p class="pd-boletin-cta-text">
         Recibe gratis cada manana el correo del dolar para el proximo dia habil: su rango probable, tres noticias y una lectura de que podria moverlo. El plan Boletin (US$ 1.99 al mes o 15 al ano) trae el resto del dia y tus empresas.
       </p>
-      <form id="pdBoletinForm" class="mt-4" action="/api/boletin" method="post" novalidate>
-        <input type="hidden" name="origen" value="dolar-page">
-        <div class="pd-boletin-form-row">
-          <label for="boletinEmail" class="sr-only">Correo electronico</label>
-          <input type="email" id="boletinEmail" name="email" class="pd-boletin-input mono tnum" placeholder="tu@correo.com" required autocomplete="email" aria-describedby="boletinHelp">
-          <button type="submit" class="pdl-btn pdl-btn-primary" id="boletinSubmit">Suscribirme gratis</button>
-        </div>
-        <p id="boletinHelp" class="pd-fineprint mt-2">Te enviaremos un correo para confirmar. No hacemos spam. <a href="/politica-editorial" class="hover:text-ink underline">Politica editorial</a>.</p>
-        <div id="boletinStatus" class="mt-3" aria-live="polite"></div>
-      </form>
       <p class="mt-4 mb-0"><a href="/boletin" class="pdl-btn pdl-btn-secondary no-underline">Ver el boletin y suscribirte</a></p>
     </section>`;
 
@@ -529,62 +519,22 @@ let htmlGenerado = `<!DOCTYPE html>
     .pd-boletin-cta-text { margin: 0; font: 400 16px/1.7 var(--pd-font-read); color: var(--pd-ink); max-width: 60ch; }
     @media (max-width: 560px) { .pd-range-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
-    /* Rango probable para el siguiente cierre */
-    .pd-range-next-close {
-      background: var(--pd-card);
-      border: 1px solid var(--pd-rule);
-      border-radius: 0;
-      padding: 20px 24px;
-      margin-top: 8px;
+    /* Franja del boletin: el rango de manana cada dia por correo */
+    .pd-boletin-strip {
+      margin-top: 32px;
+      padding: 20px 0 22px;
+      border-top: 2px solid var(--pd-ink);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+      gap: 10px 32px;
+      align-items: center;
     }
-    .pd-range-next-label {
-      font: 500 13px/1.4 var(--pd-font-ui);
-      color: var(--pd-ink-soft);
-      margin: 0 0 10px;
-    }
-    .pd-range-next-values {
-      display: flex;
-      align-items: baseline;
-      justify-content: center;
-      gap: 16px;
-      margin: 8px 0 6px;
-      font-size: clamp(28px, 5vw, 38px);
-      font-weight: 600;
-      font-family: var(--pd-font-mono);
-      font-variant-numeric: tabular-nums;
-      color: var(--pd-ink);
-      line-height: 1.1;
-    }
-    .pd-range-next-sep {
-      color: var(--pd-ink-soft);
-      font-weight: 400;
-    }
-    .pd-range-next-center {
-      text-align: center;
-      font: 500 13px/1.4 var(--pd-font-mono);
-      color: var(--pd-ink-soft);
-      font-variant-numeric: tabular-nums;
-      margin: 0;
-    }
-    .pd-range-next-note {
-      text-align: center;
-      font: 500 11px/1.4 var(--pd-font-ui);
-      color: var(--pd-ink-soft);
-      margin: 10px 0 0;
-    }
-
-    /* Boletin form inline */
-    .pd-boletin-form-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: stretch;
-      max-width: 520px;
-    }
+    .pd-boletin-strip-title { margin: 0; font: 600 17px/1.35 var(--pd-font-ui); letter-spacing: -.01em; color: var(--pd-ink); }
+    .pd-boletin-strip-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; }
     .pd-boletin-input {
-      flex: 1 1 260px;
+      flex: 1 1 240px;
       min-width: 0;
-      padding: 10px 12px;
+      padding: 11px 12px;
       font: 400 15px/1.4 var(--pd-font-mono);
       color: var(--pd-ink);
       background: var(--pd-card);
@@ -594,47 +544,18 @@ let htmlGenerado = `<!DOCTYPE html>
     }
     .pd-boletin-input::placeholder { color: var(--pd-ink-soft); }
     .pd-boletin-input:focus { outline: 2px solid var(--pd-ink); outline-offset: 1px; }
-    .pd-boletin-form-row .pdl-btn { padding: 10px 18px; white-space: nowrap; }
+    .pd-boletin-strip-form .pdl-btn { padding: 11px 18px; white-space: nowrap; }
+    .pd-boletin-note { grid-column: 1 / -1; margin: 0; font: 500 12px/1.45 var(--pd-font-ui); color: var(--pd-ink-soft); }
+    .pd-boletin-policy { color: var(--pd-ink); text-decoration: underline; text-underline-offset: 3px; }
+    .pd-boletin-status { grid-column: 1 / -1; margin: 0; font: 500 13px/1.45 var(--pd-font-ui); color: var(--pd-ink-soft); }
 
-    /* Share row */
-    .pd-share-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 13px;
-    }
-    .pd-share-label { white-space: nowrap; }
-    .pd-share-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      border: 1px solid var(--pd-rule);
-      border-radius: 50%;
-      color: var(--pd-ink);
-      background: var(--pd-card);
-      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-    }
-    .pd-share-btn:hover {
-      background: var(--pd-ink);
-      color: var(--pd-paper);
-      border-color: var(--pd-ink);
-    }
-    .pd-share-btn.wa:hover {
-      background: #25D366;
-      border-color: #25D366;
-      color: #fff;
-    }
-    html.dark .pd-share-btn:hover:not(.wa) {
-      background: var(--pd-paper);
-      color: var(--pd-ink);
-      border-color: var(--pd-paper);
-    }
-    @media (max-width: 480px) {
-      .pd-range-next-values { font-size: 24px; gap: 10px; }
-      .pd-boletin-form-row .pdl-btn { width: 100%; }
-    }
+    /* Enlace para compartir por WhatsApp: enlace de texto, no boton */
+    .pd-share-row { margin: 14px 0 0; }
+    .pd-share-link { font: 600 13px/1.4 var(--pd-font-ui); color: var(--pd-ink); text-decoration: underline; text-underline-offset: 3px; }
+    .pd-share-link:hover { color: var(--pd-ink-soft); }
+
+    @media (max-width: 760px) { .pd-boletin-strip { grid-template-columns: minmax(0, 1fr); } }
+    @media (max-width: 480px) { .pd-boletin-strip-form .pdl-btn { width: 100%; } }
   </style>
 
   <!-- Early Theme Init to prevent flash of unstyled content -->
@@ -701,17 +622,7 @@ let htmlGenerado = `<!DOCTYPE html>
       ${tarjetaMes}
     </section>
 
-    ${bloqueRangoSiguienteCierre}
-
-    <section class="mt-6">
-      <div class="pd-share-row" aria-label="Compartir">
-        <span class="pd-share-label text-ink-soft">Compartir:</span>
-        <a id="waShareBtn" class="pd-share-btn wa" href="#" target="_blank" rel="noopener noreferrer" aria-label="Compartir por WhatsApp">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-          <span class="sr-only">WhatsApp</span>
-        </a>
-      </div>
-    </section>
+    ${bloqueBoletinRango}
 
     <section class="mt-10">
       <p class="pd-fineprint">Notas semanales: <a href="/semana" class="hover:text-ink transition no-underline">el resumen de cada semana cerrada, con el recorrido del dolar, la intervencion del BCRP y el rango frente al cierre real</a>.</p>
@@ -809,32 +720,36 @@ let htmlGenerado = `<!DOCTYPE html>
       }
     })();
 
-    // WhatsApp share button: build wa.me link with current dollar and monthly range
+    // Compartir por WhatsApp: enlace de texto con el cierre de hoy y el rango de mañana (P10-P90)
     (function() {
-      const btn = document.getElementById('waShareBtn');
-      if (!btn) return;
+      const link = document.getElementById('waShareLink');
+      if (!link) return;
       const hoy = '${escapeHtml(num(ultimoCierre, 3))}';
-      const p10 = '${escapeHtml(num(mesP10, 3))}';
-      const p90 = '${escapeHtml(num(mesP90, 3))}';
-      const texto = 'Dólar hoy S/ ' + hoy + '. Rango probable del siguiente cierre: S/ ' + p10 + ' – S/ ' + p90 + '. perdata.site/dolar';
-      btn.href = 'https://wa.me/?text=' + encodeURIComponent(texto);
+      const p10 = '${escapeHtml(num(mananaP10, 3))}';
+      const p90 = '${escapeHtml(num(mananaP90, 3))}';
+      const texto = 'Dólar hoy S/ ' + hoy + '. Rango probable para mañana: S/ ' + p10 + ' – S/ ' + p90 + '. perdata.site/dolar';
+      link.href = 'https://wa.me/?text=' + encodeURIComponent(texto);
     })();
 
-    // Boletin inline form: POST to /api/boletin, show status
+    // Formulario del boletin: POST JSON a /api/boletin (mismo cuerpo que la portada)
     (function() {
       const form = document.getElementById('pdBoletinForm');
       const status = document.getElementById('boletinStatus');
       const submit = document.getElementById('boletinSubmit');
-      if (!form || !status || !submit) return;
+      const email = document.getElementById('boletinEmail');
+      if (!form || !status || !submit || !email) return;
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         submit.disabled = true;
         submit.textContent = 'Enviando...';
         status.textContent = '';
-        status.className = 'mt-3';
+        status.className = 'pd-boletin-status';
         try {
-          const data = new FormData(form);
-          const res = await fetch('/api/boletin', { method: 'POST', body: data });
+          const res = await fetch('/api/boletin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email.value.trim(), origen: 'dolar' }),
+          });
           const json = await res.json().catch(() => ({}));
           if (res.ok && json.ok) {
             status.textContent = json.mensaje || 'Te enviamos un correo para confirmar. Revisa tu bandeja de entrada (y la de spam).';
@@ -849,7 +764,7 @@ let htmlGenerado = `<!DOCTYPE html>
           status.classList.add('text-neg');
         } finally {
           submit.disabled = false;
-          submit.textContent = 'Suscribirme gratis';
+          submit.textContent = 'Recibirlo gratis';
         }
       });
     })();
@@ -889,7 +804,10 @@ const conAcentos = (txt) => txt.replace(/[A-Za-z]+/g, (w) => {
   return w[0] === w[0].toUpperCase() ? fixed[0].toUpperCase() + fixed.slice(1) : fixed;
 });
 htmlGenerado = htmlGenerado
-  .replace(/(<(script|style)[^>]*>[\s\S]*?<\/\2>)|>([^<]+)</g, (m, block, _t, text) => (block ? block : '>' + conAcentos(text) + '<'))
+  // Los bloques <script> y <style> se dejan intactos: dentro hay URLs y cadenas que no deben
+  // cambiar con los acentos (/api/boletin, perdata.site/dolar). El texto visible se acenta igual.
+  .replace(/(<script\b[^>]*>[\s\S]*?<\/script>)|(<style\b[^>]*>[\s\S]*?<\/style>)|>([^<]+)/g,
+    (m, script, style, text) => (script || style ? m : '>' + conAcentos(text)))
   .replace(/(<meta[^>]+content=")([^"]*)(")/g, (m, a, b, c) => a + conAcentos(b) + c);
 
 // Los bloques JSON-LD se insertan despues del pipeline de acentos para que ningun dato
