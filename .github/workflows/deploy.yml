@@ -1,0 +1,62 @@
+name: Despliegue del Worker
+
+# Los workflows diarios regeneran /dolar, las fichas y las notas semanales y las suben a main,
+# pero producción solo se actualizaba cuando el despliegue se ejecutaba a mano. Este workflow
+# publica el Worker en Cloudflare tras cada corrida exitosa y, como respaldo, de lunes a sábado.
+# Sin el secreto CLOUDFLARE_API_TOKEN se omite sin errores (ver docs/DEPLOY_AUTOMATICO.md).
+on:
+  workflow_run:
+    workflows:
+      - Datos oficiales (BCRP, EIA, Banco Mundial, SUNAT, Reserva Federal)
+      - Cotizaciones de Lima (SMV)
+      - Boletín diario
+    types: [completed]
+  schedule:
+    - cron: "30 23 * * 1-6"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - id: token
+        name: Comprobar el token de Cloudflare
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CF_TOKEN" ]; then
+            echo "Falta el secreto CLOUDFLARE_API_TOKEN: despliegue omitido" >> "$GITHUB_STEP_SUMMARY"
+            echo "hay=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "hay=1" >> "$GITHUB_OUTPUT"
+      - name: Desplegar el Worker
+        if: steps.token.outputs.hay == '1'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: 5d726da093600803a41d55dc07b17562
+        run: npx wrangler deploy
+      - name: Esperar a que producción se propague
+        if: steps.token.outputs.hay == '1'
+        run: sleep 20
+      - name: Smoke test en producción
+        if: steps.token.outputs.hay == '1'
+        run: node scripts/smoke.js --base https://perdata.site
