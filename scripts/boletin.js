@@ -344,14 +344,14 @@ function render(f, ai, dateLabel, lectura) {
 
   const punto = (p) => `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:2px">${esc(p.texto)}</div>`;
   const ladoOk = (h, lado) => (h?.[lado] || []).length ? `<div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin:10px 0 2px">${lado === "al_alza" ? "Al alza" : lado === "a_la_baja" ? "A la baja" : "Contexto"}</div>${h[lado].map(punto).join("")}` : "";
-  const lecturaHorizonte = (h, titulo, rango) => {
+  const lecturaHorizonte = (h, titulo, rango, conContexto = true) => {
     if (!h) return "";
     const rangoTxt = rango ? `entre S/ ${fmt(rango.p10, 3)} y S/ ${fmt(rango.p90, 3)} <span style="font-size:11px;color:${C.soft}">(8 de cada 10 veces)</span> · central: S/ ${fmt(rango.p50, 3)}` : "";
     return `<tr><td style="padding:14px 0;border-bottom:1px solid ${C.rule}">
       <div style="font-family:${ui};font-size:12px;color:${C.soft}">${esc(titulo)}</div>
       ${rangoTxt ? `<div style="font-family:${mono};font-size:14px;color:${C.ink};margin-top:2px">${rangoTxt}</div>` : ""}
       ${h.resumen ? `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:6px">${esc(h.resumen)}</div>` : ""}
-      ${ladoOk(h, "al_alza")}${ladoOk(h, "a_la_baja")}${ladoOk(h, "contexto")}
+      ${ladoOk(h, "al_alza")}${ladoOk(h, "a_la_baja")}${conContexto ? ladoOk(h, "contexto") : ""}
     </td></tr>`;
   };
   const lect = lectura?.horizontes || {};
@@ -365,7 +365,7 @@ function render(f, ai, dateLabel, lectura) {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.card};border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule}"><tr><td style="padding:16px 4px">
       <div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin-bottom:8px">Dólar interbancario (USD/PEN) · Rango proyectado y lectura</div>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-        ${dolarRows.map((r) => lecturaHorizonte(lect[r.key], r.titulo, r.rango)).join("")}
+        ${dolarRows.map((r, i) => lecturaHorizonte(lect[r.key], r.titulo, r.rango, i === 0)).join("")}
       </table>
     </td></tr></table></td></tr>` : "";
 
@@ -653,7 +653,7 @@ function renderPersonal(cards, lecturas) {
       ? `<div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink};margin:8px 0 2px">${label}</div>${lista.map(punto).join("")}` : "";
     const lecturaHtml = l ? `<div style="margin-top:10px;border-top:1px dashed ${C.rule};padding-top:6px">
         <div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink}">Lectura de ${esc(c.name)}</div>
-        ${l.resumen ? `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:4px">${esc(l.resumen)}</div>` : ""}
+        ${l.resumen && l.resumen !== l.que_hay?.[0]?.texto && !(l.que_hay?.[0]?.texto || "").startsWith(l.resumen.replace(/\.$/, "")) ? `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:4px">${esc(l.resumen)}</div>` : ""}
         ${bloqueLectura(l.que_hay, "Qué hay")}${bloqueLectura(l.podria_mover?.al_alza, "Podría mover al alza")}${bloqueLectura(l.podria_mover?.a_la_baja, "Podría mover a la baja")}${bloqueLectura(l.contexto, "Contexto")}
       </div>` : "";
     return `<tr><td style="padding:14px 0;border-bottom:1px solid ${C.rule}">

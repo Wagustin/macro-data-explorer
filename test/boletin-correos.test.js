@@ -77,7 +77,7 @@ test("correo pagado: dólar x3 con lectura, metales, SMV, todas las noticias y T
   const buenas = (digest.historias || []).filter((h) => h.nota && h.revision?.ok !== false);
 
   // (1) Dólar mañana, semana y mes con rango y su lectura
-  for (const frase of ["El rango para mañana va entre", "El rango para la próxima semana va entre", "El rango para el próximo mes va entre"]) {
+  for (const frase of ["El rango para el siguiente cierre va entre", "El rango para la próxima semana va entre", "El rango para el próximo mes va entre"]) {
     assert.ok(html.includes(frase), `el pagado trae la lectura «${frase}»`);
   }
   assert.match(html, /Al alza/);

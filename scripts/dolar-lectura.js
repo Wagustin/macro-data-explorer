@@ -187,7 +187,7 @@ function bloqueValido(texto, hechosIds, hechos, rango) {
 
 // ---------- 3. Prompts ----------
 const RANGOS_TRAD = {
-  manana: "mañana",
+  manana: "el siguiente cierre",
   semana: "la próxima semana",
   mes: "el próximo mes",
 };
@@ -304,9 +304,7 @@ export function lecturaDeterminista(hechos, rango, nombreHor) {
   for (const h of [interv, tasa, rin, dolar5]) {
     if (h && bloqueValido(h.texto, [h.id], hechos)) contexto.push({ texto: h.texto, hechos: [h.id] });
   }
-  for (const h of titulares.slice(0, 2)) {
-    if (bloqueValido(h.texto, [h.id], hechos)) contexto.push({ texto: h.texto, hechos: [h.id] });
-  }
+  // Headlines are not added here: the topic filter lets unrelated stories through and a headline is not a factor
 
   const resumen = `El rango para ${RANGOS_TRAD[nombreHor] || nombreHor} va entre S/ ${n3(rango.p10)} y S/ ${n3(rango.p90)}, con centro en el último cierre; es una estadística, no una promesa.`;
   return {

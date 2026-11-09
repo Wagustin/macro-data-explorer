@@ -149,7 +149,7 @@ test("con el revisor caído, solo pasa lo que cumple forma y cifras", async () =
   };
   const out = await lecturaDolar(DATOS, {
     askJSON: async (prompt) => {
-      const h = prompt.includes("mañana") ? "manana" : prompt.includes("próxima semana") ? "semana" : "mes";
+      const h = prompt.includes("el siguiente cierre") ? "manana" : prompt.includes("próxima semana") ? "semana" : "mes";
       return {
         model: "llm-test",
         out: {
