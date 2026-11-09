@@ -444,7 +444,7 @@ const bloqueBoletin = `
       <p class="micro-label text-ink-soft">Boletin diario</p>
       <h2 class="pd-section-title" style="margin-top: 8px;">El dolar cada manana en tu correo</h2>
       <p class="pd-boletin-cta-text">
-        Recibe gratis cada manana el boletin completo: mercados, la proyeccion del dolar, los hechos de la SMV y los titulares. El plan Boletin añade tus empresas.
+        Recibe gratis cada manana el correo del dolar para el proximo dia habil: su rango probable, tres noticias y una lectura de que podria moverlo. El plan Boletin (US$ 1.99 al mes o 15 al ano) trae el resto del dia y tus empresas.
       </p>
       <p class="mt-4 mb-0"><a href="/boletin" class="pdl-btn pdl-btn-secondary no-underline">Ver el boletin y suscribirte</a></p>
     </section>`;
@@ -686,7 +686,8 @@ const ACENTOS = {
   economico: 'económico', analisis: 'análisis', periodo: 'período', publica: 'pública', publico: 'público',
   credito: 'crédito', cotizacion: 'cotización', evolucion: 'evolución', despues: 'después', tecnica: 'técnica',
   util: 'útil', segun: 'según', informacion: 'información', region: 'región', decision: 'decisión',
-  decisiones: 'decisiones', minima: 'mínima', maxima: 'máxima', limite: 'límite', facil: 'fácil'
+  decisiones: 'decisiones', minima: 'mínima', maxima: 'máxima', limite: 'límite', facil: 'fácil',
+  podria: 'podría', movidas: 'movería'
 };
 const conAcentos = (txt) => txt.replace(/[A-Za-z]+/g, (w) => {
   const fixed = ACENTOS[w.toLowerCase()];

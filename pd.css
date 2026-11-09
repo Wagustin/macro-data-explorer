@@ -1382,6 +1382,8 @@ html.dark .pd-interval button[aria-checked="true"] { background: var(--pd-surfac
 .pd-plan-amount { font: 700 44px/1 var(--pd-font-mono); font-family: var(--pd-font-mono) !important; letter-spacing: -0.04em; color: var(--pd-ink); font-variant-numeric: tabular-nums !important; }
 .pd-plan-per { font: 500 13px/1 var(--pd-font-ui); color: var(--pd-ink-soft); }
 .pd-plan-desc { margin: 0; color: var(--pd-ink-soft); font-size: 14px; line-height: 1.5; }
+.pd-plan-trial { margin: 0; color: var(--pd-ink); font-size: 14px; line-height: 1.5; }
+.pd-plan-trial-note { margin: 0; color: var(--pd-ink-soft); font-size: 13px; line-height: 1.5; }
 .pd-plan .pd-perks { margin: 12px 0 24px; flex-grow: 1; }
 .pd-plan-cta { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
 .pd-plan-cta .pd-form-status:empty { display: none; }

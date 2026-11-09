@@ -38,3 +38,10 @@ test("los textos del boletín dicen lunes a sábado", () => {
   }
   assert.match(read("boletin.html"), /lunes a sábado/);
 });
+
+test("la nota de transparencia aparece junto a las lecturas", () => {
+  const nota = "Las lecturas las redacta un modelo de lenguaje a partir de datos oficiales y noticias, y las revisa un segundo modelo. El rango es estadístico: las noticias no entran en su cálculo. No es una recomendación de inversión.";
+  assert.match(read("boletin.html"), /Cómo se lee/);
+  assert.ok(read("boletin.html").includes(nota), "boletin.html debe traer la nota de transparencia");
+  assert.ok(read("precios.html").includes("El rango es estadístico: las noticias no entran en su cálculo. No es una recomendación de inversión."), "precios.html debe traer la nota de transparencia");
+});

@@ -402,8 +402,16 @@
         var isPro = u.plan === "pro" || u.plan === "boletin";
         var planName = u.plan === "pro" ? "Pro" : (u.plan === "boletin" ? "Boletín" : "Gratis");
         var copy = "";
-        if (isPro && u.cancelAtPeriodEnd && u.currentPeriodEnd) copy = "Tu suscripción termina el " + fmtDate(u.currentPeriodEnd) + ". No se volverá a cobrar.";
-        else if (isPro && u.subscriptionStatus === "trialing" && u.currentPeriodEnd) copy = "Prueba gratuita hasta el " + fmtDate(u.currentPeriodEnd) + ".";
+        var trialCopy = "";
+        if (isPro && u.subscriptionStatus === "trialing" && u.currentPeriodEnd) {
+          var yearlyTrial = u.trialInterval === "year" || (u.trialPrice && u.trialPrice.trialInterval === "year");
+          var next = yearlyTrial
+            ? "US$ 15 al año"
+            : (u.plan === "boletin" ? "el precio del periodo que elegiste (US$ 1.99 al mes o US$ 15 al año)" : "");
+          trialCopy = "Estás en prueba gratuita hasta el " + fmtDate(u.trialUntil || u.currentPeriodEnd) + ". Después se cobrará " + next + ". Puedes cancelar antes.";
+        }
+        if (trialCopy) copy = trialCopy;
+        else if (isPro && u.cancelAtPeriodEnd && u.currentPeriodEnd) copy = "Tu suscripción termina el " + fmtDate(u.currentPeriodEnd) + ". No se volverá a cobrar.";
         else if (isPro && u.currentPeriodEnd) copy = "Se renueva el " + fmtDate(u.currentPeriodEnd) + ".";
         else if (!isPro && u.subscriptionStatus === "past_due") copy = "No pudimos cobrar tu último pago. Actualiza tu tarjeta para recuperar tu plan.";
         else if (!isPro) copy = "Historia de hasta 5 años y proyecciones de hasta 6 meses.";

@@ -1,11 +1,89 @@
 {
- "actualizado": "2026-11-09T09:37:50.573Z",
+ "actualizado": "2026-11-09T15:41:04.242Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
+   "titulo": "MEF alista emisión de bonos por diez mil millones de dólares",
+   "nota": "El Ministerio de Economía y Finanzas prepara colocaciones de deuda en mercados internacionales. Citigroup, Crédit Agricole, Deutsche Bank y Santander actuarán como bancos colocadores de la operación.",
+   "tema": "Economía y fiscal",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "MEF alista emisiones de bonos por hasta USD 10 mil millones con Citigroup, Crédit Agricole, Deutsche Bank y Santander",
+     "fuente": "Infobae Perú",
+     "url": "https://www.infobae.com/peru/2026/11/09/mef-alista-emisiones-de-bonos-por-hasta-usd-10-mil-millones-con-citigroup-credit-agricole-deutsche-bank-y-santander/",
+     "fecha": "2026-11-09T13:51:50.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Empresas peruanas aceleran financiamiento con bonos en soles y dólares",
+   "nota": "Las compañías locales aumentan la colocación de títulos de deuda en ambas monedas según reportes del sector financiero.",
+   "tema": "Bolsa y empresas",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Empresas aceleran financiamiento con bonos en soles y dólares: ¿qué las incentiva hoy?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/empresas/empresas-aceleran-financiamiento-con-bonos-en-soles-y-dolares-que-las-incentiva-hoy-noticia/",
+     "fecha": "2026-11-09T13:43:32.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Petroperú interviene cisterna por conexión clandestina en oleoducto",
+   "nota": "Una cisterna fue intervenida mientras extraía crudo mediante una conexión clandestina en el oleoducto. La acción ocurrió durante la extracción ilegal de hidrocarburos.",
+   "tema": "Energía",
+   "empresas": [
+    "PETROBC1"
+   ],
+   "fuentes": [
+    {
+     "titulo": "Petroperú: intervienen cisterna cuando extraía crudo por conexión clandestina en oleoducto",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-petroperu-intervienen-cisterna-cuando-extraia-crudo-conexion-clandestina-oleoducto-1099167.aspx",
+     "fecha": "2026-11-09T15:18:57.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Minem aprueba estudios para proyectos eléctricos millonarios",
+   "nota": "El Ministerio de Energía y Minas aprobó evaluaciones ambientales para iniciativas de generación y transmisión. Las inversiones previstas ascienden a 5.500 millones de dólares para el año 2026.",
+   "tema": "Energía",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Minem aprueba estudios ambientales para proyectos eléctricos con inversiones por US$5.500 millones en 2026",
+     "fuente": "La República Economía",
+     "url": "https://larepublica.pe/economia/2026/11/08/minem-aprueba-estudios-ambientales-para-proyectos-electricos-con-inversiones-por-us5500-millones-en-2026-662352",
+     "fecha": "2026-11-08T21:57:52.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
    "titulo": "Perú superaría a Chile como cuarta economía sudamericana en 2027",
-   "nota": "El PBI peruano alcanzaría USD 413.597 millones en 2027 según proyecciones. Esto permitiría al país desplazar a Chile del cuarto puesto regional.",
+   "nota": "El PBI peruano alcanzaría 413.597 millones de dólares en 2027 según proyecciones. Esto permitiría al país desplazar a Chile del cuarto puesto regional.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
@@ -29,97 +107,16 @@
    }
   },
   {
-   "titulo": "ProInversión presenta ante Congreso récord de S/10,800 millones adjudicados en 2026 en OxI",
-   "tema": "Economía y fiscal",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "ProInversión presenta ante Congreso récord de S/10,800 millones adjudicados en 2026 en OxI",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-proinversion-presenta-ante-congreso-record-s10800-millones-adjudicados-2026-oxi-1099073.aspx",
-     "fecha": "2026-11-08T13:00:00.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": false,
-    "motivo": "La nota añade la afirmación «La cifra supera los registros históricos del programa», que no figura en el titular, y el título usa la sigla «OxI», que no está desarrollada ni aparece en la fuente."
-   }
-  },
-  {
-   "titulo": "Minem aprueba estudios ambientales para inversiones eléctricas de 2026",
-   "nota": "El Ministerio de Energía y Minas aprobó los estudios ambientales de proyectos eléctricos con inversiones por 5.500 millones de dólares para 2026.",
-   "tema": "Energía",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Minem aprueba estudios ambientales para proyectos eléctricos con inversiones por US$5.500 millones en 2026",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/2026/11/08/minem-aprueba-estudios-ambientales-para-proyectos-electricos-con-inversiones-por-us5500-millones-en-2026-662352",
-     "fecha": "2026-11-08T21:57:52.000Z"
-    },
-    {
-     "titulo": "Minem aprobó estudios ambientales de inversiones eléctricas por US $5,500 millones en 2026",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-minem-aprobo-estudios-ambientales-inversiones-electricas-us-5500-millones-2026-1099048.aspx",
-     "fecha": "2026-11-07T23:27:01.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "Metalmecánicas se alistan para repunte impulsado por minería y El Niño",
-   "nota": "El sector metalmecánico prevé mayor demanda por la reactivación minera, la prevención ante El Niño y pedidos de clientes estadounidenses. Las empresas ajustan capacidad para atender los nuevos contratos.",
+   "titulo": "El oro sube mientras el petróleo cae y la investigación a Nvidia sacude mercados",
+   "nota": "El metal precioso gana valor mientras el crudo prolonga su descenso. La investigación sobre Nvidia genera volatilidad en los mercados globales.",
    "tema": "Minería y metales",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Metalmecánicas listas para el repunte: minería, El Niño y clientes de EE.UU las impulsan",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/empresas/metalmecanicas-preven-boom-en-2027-por-mineria-reconstruccion-por-el-nino-y-demanda-de-eeuu-noticia/",
-     "fecha": "2026-11-08T20:00:00.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "DP World impulsa fase 3 del Muelle Sur",
-   "nota": "El operador portuario avanza en la tercera fase con plazos definidos y sujeta a una condición para invertir.",
-   "tema": "Bolsa y empresas",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "DP World va por la fase 3 del Muelle Sur del Callao: plazos y la condición para invertir",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/empresas/puerto-del-callao-dp-world-alista-otra-ampliacion-del-muelle-sur-pero-pone-una-condicion-noticia/",
-     "fecha": "2026-11-08T21:00:00.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "Riesgo país mínimo fortalece al Perú frente a El Niño",
-   "nota": "La Cámara de Comercio de Lima señala que el riesgo país en mínimos fortalece la capacidad del Perú para enfrentar El Niño.",
-   "tema": "Economía y fiscal",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "CCL: Riesgo país en mínimos fortalece capacidad del Perú para enfrentar El Niño",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-ccl-riesgo-pais-minimos-fortalece-capacidad-del-peru-para-enfrentar-nino-1099082.aspx",
-     "fecha": "2026-11-08T16:00:00.000Z"
+     "titulo": "El oro sube mientras el petróleo prolonga su caída y la investigación sobre Nvidia sacude los mercados",
+     "fuente": "Bloomberg Línea",
+     "url": "https://www.bloomberglinea.com/mercados/el-oro-sube-mientras-el-petroleo-prolonga-su-caida-y-la-investigacion-sobre-nvidia-sacude-los-mercados/",
+     "fecha": "2026-11-09T07:02:55.000Z"
     }
    ],
    "revision": {
