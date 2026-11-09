@@ -194,6 +194,23 @@ const tarjetaRango = ({ titulo, subtitulo, fechaObjetivo, p10, p25, p50, p75, p9
         ${extra ? `<p class="pd-range-meta">${extra}</p>` : ''}
       </article>`;
 
+// ---- 3b. Bloque: Rango probable para el siguiente cierre (pronostico mensual) ----
+// Usa p10, p50, p90 del motor mensual ya disponible en mesP10, mesP50, mesP90, mesFechaObjetivo
+const bloqueRangoSiguienteCierre = `
+    <section class="mt-10" aria-label="Rango probable para el siguiente cierre">
+      <p class="micro-label text-ink-soft">Rango probable para el siguiente cierre</p>
+      <div class="pd-range-next-close">
+        <p class="pd-range-next-label">Cierre estimado para ${escapeHtml(fechaLarga(mesFechaObjetivo))}</p>
+        <div class="pd-range-next-values">
+          <span class="pd-range-next-p10 mono tnum">S/ ${num(mesP10, 4)}</span>
+          <span class="pd-range-next-sep" aria-hidden="true">–</span>
+          <span class="pd-range-next-p90 mono tnum">S/ ${num(mesP90, 4)}</span>
+        </div>
+        <p class="pd-range-next-center mono tnum">Central: S/ ${num(mesP50, 4)}</p>
+        <p class="pd-range-next-note">8 de cada 10 veces el cierre queda en este intervalo (P10–P90, cobertura 80 %)</p>
+      </div>
+    </section>`;
+
 const diaSemana = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('es-PE', { weekday: 'long', timeZone: 'UTC' });
 
 const tarjetaManana = tarjetaRango({
@@ -437,7 +454,7 @@ const datasetLd = {
 
 const faqLdScript = `  <script type="application/ld+json">${ldJson(faqLd)}</script>`;
 const datasetLdScript = `  <script type="application/ld+json">${ldJson(datasetLd)}</script>`;
-// ---- 6b. Bloque de invitacion al boletin (estatico, sin pop-ups) ----
+// ---- 6b. Bloque de invitacion al boletin (con formulario inline que POSTea a /api/boletin) ----
 
 const bloqueBoletin = `
     <section class="mt-12 border-t border-rule pt-8" aria-label="Boletin diario">
@@ -446,6 +463,16 @@ const bloqueBoletin = `
       <p class="pd-boletin-cta-text">
         Recibe gratis cada manana el correo del dolar para el proximo dia habil: su rango probable, tres noticias y una lectura de que podria moverlo. El plan Boletin (US$ 1.99 al mes o 15 al ano) trae el resto del dia y tus empresas.
       </p>
+      <form id="pdBoletinForm" class="mt-4" action="/api/boletin" method="post" novalidate>
+        <input type="hidden" name="origen" value="dolar-page">
+        <div class="pd-boletin-form-row">
+          <label for="boletinEmail" class="sr-only">Correo electronico</label>
+          <input type="email" id="boletinEmail" name="email" class="pd-boletin-input mono tnum" placeholder="tu@correo.com" required autocomplete="email" aria-describedby="boletinHelp">
+          <button type="submit" class="pdl-btn pdl-btn-primary" id="boletinSubmit">Suscribirme gratis</button>
+        </div>
+        <p id="boletinHelp" class="pd-fineprint mt-2">Te enviaremos un correo para confirmar. No hacemos spam. <a href="/politica-editorial" class="hover:text-ink underline">Politica editorial</a>.</p>
+        <div id="boletinStatus" class="mt-3" aria-live="polite"></div>
+      </form>
       <p class="mt-4 mb-0"><a href="/boletin" class="pdl-btn pdl-btn-secondary no-underline">Ver el boletin y suscribirte</a></p>
     </section>`;
 
@@ -496,8 +523,118 @@ let htmlGenerado = `<!DOCTYPE html>
     .pd-prose p { margin: 0 0 14px; font: 400 16px/1.7 var(--pd-font-read); color: var(--pd-ink); }
     .pd-fact-table td, .pd-fact-table th { white-space: nowrap; }
     .pd-fact-table td:first-child { white-space: normal; }
+    .pd-fact-table { table-layout: fixed; width: 100%; max-width: 100%; }
+    .pd-fact-table th, .pd-fact-table td { overflow: hidden; text-overflow: ellipsis; }
+    .overflow-x-auto { max-width: 100%; }
     .pd-boletin-cta-text { margin: 0; font: 400 16px/1.7 var(--pd-font-read); color: var(--pd-ink); max-width: 60ch; }
     @media (max-width: 560px) { .pd-range-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+    /* Rango probable para el siguiente cierre */
+    .pd-range-next-close {
+      background: var(--pd-card);
+      border: 1px solid var(--pd-rule);
+      border-radius: 0;
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+    .pd-range-next-label {
+      font: 500 13px/1.4 var(--pd-font-ui);
+      color: var(--pd-ink-soft);
+      margin: 0 0 10px;
+    }
+    .pd-range-next-values {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 16px;
+      margin: 8px 0 6px;
+      font-size: clamp(28px, 5vw, 38px);
+      font-weight: 600;
+      font-family: var(--pd-font-mono);
+      font-variant-numeric: tabular-nums;
+      color: var(--pd-ink);
+      line-height: 1.1;
+    }
+    .pd-range-next-sep {
+      color: var(--pd-ink-soft);
+      font-weight: 400;
+    }
+    .pd-range-next-center {
+      text-align: center;
+      font: 500 13px/1.4 var(--pd-font-mono);
+      color: var(--pd-ink-soft);
+      font-variant-numeric: tabular-nums;
+      margin: 0;
+    }
+    .pd-range-next-note {
+      text-align: center;
+      font: 500 11px/1.4 var(--pd-font-ui);
+      color: var(--pd-ink-soft);
+      margin: 10px 0 0;
+    }
+
+    /* Boletin form inline */
+    .pd-boletin-form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: stretch;
+      max-width: 520px;
+    }
+    .pd-boletin-input {
+      flex: 1 1 260px;
+      min-width: 0;
+      padding: 10px 12px;
+      font: 400 15px/1.4 var(--pd-font-mono);
+      color: var(--pd-ink);
+      background: var(--pd-card);
+      border: 1px solid var(--pd-rule);
+      border-radius: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .pd-boletin-input::placeholder { color: var(--pd-ink-soft); }
+    .pd-boletin-input:focus { outline: 2px solid var(--pd-ink); outline-offset: 1px; }
+    .pd-boletin-form-row .pdl-btn { padding: 10px 18px; white-space: nowrap; }
+
+    /* Share row */
+    .pd-share-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+    }
+    .pd-share-label { white-space: nowrap; }
+    .pd-share-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--pd-rule);
+      border-radius: 50%;
+      color: var(--pd-ink);
+      background: var(--pd-card);
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+    .pd-share-btn:hover {
+      background: var(--pd-ink);
+      color: var(--pd-paper);
+      border-color: var(--pd-ink);
+    }
+    .pd-share-btn.wa:hover {
+      background: #25D366;
+      border-color: #25D366;
+      color: #fff;
+    }
+    html.dark .pd-share-btn:hover:not(.wa) {
+      background: var(--pd-paper);
+      color: var(--pd-ink);
+      border-color: var(--pd-paper);
+    }
+    @media (max-width: 480px) {
+      .pd-range-next-values { font-size: 24px; gap: 10px; }
+      .pd-boletin-form-row .pdl-btn { width: 100%; }
+    }
   </style>
 
   <!-- Early Theme Init to prevent flash of unstyled content -->
@@ -562,6 +699,18 @@ let htmlGenerado = `<!DOCTYPE html>
       ${tarjetaManana}
       ${tarjetaSemana}
       ${tarjetaMes}
+    </section>
+
+    ${bloqueRangoSiguienteCierre}
+
+    <section class="mt-6">
+      <div class="pd-share-row" aria-label="Compartir">
+        <span class="pd-share-label text-ink-soft">Compartir:</span>
+        <a id="waShareBtn" class="pd-share-btn wa" href="#" target="_blank" rel="noopener noreferrer" aria-label="Compartir por WhatsApp">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+          <span class="sr-only">WhatsApp</span>
+        </a>
+      </div>
     </section>
 
     <section class="mt-10">
@@ -658,6 +807,51 @@ let htmlGenerado = `<!DOCTYPE html>
           menuButton.setAttribute('aria-expanded', String(open));
         });
       }
+    })();
+
+    // WhatsApp share button: build wa.me link with current dollar and monthly range
+    (function() {
+      const btn = document.getElementById('waShareBtn');
+      if (!btn) return;
+      const hoy = '${escapeHtml(num(ultimoCierre, 3))}';
+      const p10 = '${escapeHtml(num(mesP10, 3))}';
+      const p90 = '${escapeHtml(num(mesP90, 3))}';
+      const texto = 'Dólar hoy S/ ' + hoy + '. Rango probable del siguiente cierre: S/ ' + p10 + ' – S/ ' + p90 + '. perdata.site/dolar';
+      btn.href = 'https://wa.me/?text=' + encodeURIComponent(texto);
+    })();
+
+    // Boletin inline form: POST to /api/boletin, show status
+    (function() {
+      const form = document.getElementById('pdBoletinForm');
+      const status = document.getElementById('boletinStatus');
+      const submit = document.getElementById('boletinSubmit');
+      if (!form || !status || !submit) return;
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        submit.disabled = true;
+        submit.textContent = 'Enviando...';
+        status.textContent = '';
+        status.className = 'mt-3';
+        try {
+          const data = new FormData(form);
+          const res = await fetch('/api/boletin', { method: 'POST', body: data });
+          const json = await res.json().catch(() => ({}));
+          if (res.ok && json.ok) {
+            status.textContent = json.mensaje || 'Te enviamos un correo para confirmar. Revisa tu bandeja de entrada (y la de spam).';
+            status.classList.add('text-pos');
+            form.reset();
+          } else {
+            status.textContent = json.error || 'No pudimos procesar la solicitud. Inténtalo más tarde.';
+            status.classList.add('text-neg');
+          }
+        } catch (err) {
+          status.textContent = 'Error de red. Inténtalo más tarde.';
+          status.classList.add('text-neg');
+        } finally {
+          submit.disabled = false;
+          submit.textContent = 'Suscribirme gratis';
+        }
+      });
     })();
   </script>
   <script src="/consent.js" defer></script>
