@@ -201,10 +201,12 @@ ${lista}
 Rango estadístico para ${RANGOS_TRAD[nombreHor] || nombreHor}: P10 S/ ${n3(rango.p10)}, P50 S/ ${n3(rango.p50)}, P90 S/ ${n3(rango.p90)}${rango.fecha ? `, fecha objetivo ${rango.fecha}` : ""}. El rango es estadístico: describe una frecuencia histórica, no una promesa; el centro es el último cierre.
 El modelo de PerData NO predice dirección: nunca afirmas «subirá» ni «bajará», nunca recomiendas comprar o vender, nunca nombras TimesFM y no usas cifras que no estén en los hechos citados. Cada punto cita los ids de los hechos que lo respaldan.
 
+Reglas económicas (obligatorias): el cobre es la principal exportación del Perú: si el cobre sube, suele acompañar un sol más fuerte (dólar a la baja); si baja, un sol más débil (dólar al alza). NO atribuyas dirección al oro, al petróleo, a los movimientos recientes del propio dólar, a las operaciones del BCRP, a la tasa de referencia ni a las reservas: esos hechos solo van en «contexto», con su cifra y sin decir hacia dónde empujan. Un titular solo puede ir en al_alza o a_la_baja si el propio titular menciona un mecanismo claro que mueva el dólar (el BCRP, minería, aranceles, tasas, política económica); si no, va en «contexto».
+
 Escribe en español de Perú, tono llano de periodista económico, sin emojis, con tildes.
 
 Devuelve SOLO este JSON:
-{"al_alza":[{"texto":"una frase que describe un factor que podría presionar el dólar al alza, con su cifra","hechos":["id de hecho"]}],"a_la_baja":[{"texto":"una frase que describe un factor que podría presionar el dólar a la baja, con su cifra","hechos":["id de hecho"]}],"resumen":"resumen de máximo 45 palabras que cita el rango"}
+{"contexto":[{"texto":"hecho relevante sin dirección, con su cifra","hechos":["id"]}],"al_alza":[{"texto":"una frase que describe un factor que podría presionar el dólar al alza, con su cifra","hechos":["id de hecho"]}],"a_la_baja":[{"texto":"una frase que describe un factor que podría presionar el dólar a la baja, con su cifra","hechos":["id de hecho"]}],"resumen":"resumen de máximo 45 palabras que cita el rango"}
 0-3 puntos por lado, solo si hay hechos que los respalden; es válido dejar un lado vacío.`;
 }
 
@@ -284,47 +286,62 @@ export function lecturaDeterminista(hechos, rango, nombreHor) {
     return m ? Number(m[1].replace(",", ".")) : null;
   };
 
+  // Only one link is directional and documented: copper is Peru's main export, so a rising copper
+  // price tends to go with a stronger sol (dollar down) and a falling one with a weaker sol (dollar
+  // up). Gold, oil, the dollar's own recent moves and the BCRP operations (the sign convention of
+  // the series is not stated in the data) are NOT given a direction: they go to «contexto».
   const al_alza = [];
   const a_la_baja = [];
-  if (cobre && pctDe(cobre) != null) {
+  const contexto = [];
+  if (cobre && pctDe(cobre) != null && Math.abs(pctDe(cobre)) >= 1) {
     const v = pctDe(cobre);
-    const txt = `El cobre ${v >= 0 ? "subió" : "bajó"} ${fmtPctAbs(v)} en cinco sesiones, un factor que suele acompañar un sol más fuerte.`;
-    if (bloqueValido(txt, ["cobre-5"], hechos)) al_alza.push({ texto: txt, hechos: ["cobre-5"] });
+    const txt = v > 0
+      ? `El cobre subió ${fmtPctAbs(v)} en cinco sesiones, un factor que suele acompañar un sol más fuerte y, con él, un dólar más bajo.`
+      : `El cobre bajó ${fmtPctAbs(v)} en cinco sesiones, un factor que suele acompañar un sol más débil y, con él, un dólar más alto.`;
+    if (bloqueValido(txt, ["cobre-5"], hechos)) (v > 0 ? a_la_baja : al_alza).push({ texto: txt, hechos: ["cobre-5"] });
   }
-  if (wti && pctDe(wti) != null) {
-    const v = pctDe(wti);
-    const txt = `El petróleo WTI ${v >= 0 ? "subió" : "bajó"} ${fmtPctAbs(v)} en cinco sesiones, un factor que suele acompañar presión al alza sobre los combustibles locales.`;
-    if (bloqueValido(txt, ["wti-5"], hechos)) a_la_baja.push({ texto: txt, hechos: ["wti-5"] });
+  // Neutral context: the facts as they are, without claiming a direction
+  for (const h of [interv, tasa, rin, dolar5]) {
+    if (h && bloqueValido(h.texto, [h.id], hechos)) contexto.push({ texto: h.texto, hechos: [h.id] });
   }
-  if (oro && pctDe(oro) != null) {
-    const v = pctDe(oro);
-    const txt = `El oro ${v >= 0 ? "subió" : "bajó"} ${fmtPctAbs(v)} en cinco sesiones, un factor que suele acompañar demanda de refugio y presión sobre el dólar.`;
-    if (bloqueValido(txt, ["oro-5"], hechos)) al_alza.push({ texto: txt, hechos: ["oro-5"] });
+  for (const h of titulares.slice(0, 2)) {
+    if (bloqueValido(h.texto, [h.id], hechos)) contexto.push({ texto: h.texto, hechos: [h.id] });
   }
-  if (interv && cifraDe(interv) != null && cifraDe(interv) !== 0) {
-    const txt = `La intervención cambiaria del BCRP sumó US$ ${n2(cifraDe(interv))} millones en las últimas 5 sesiones.`;
-    if (bloqueValido(txt, ["intervencion-5"], hechos)) a_la_baja.push({ texto: txt, hechos: ["intervencion-5"] });
-  }
-  if (dolar5 && pctDe(dolar5) != null) {
-    const v = pctDe(dolar5);
-    const txt = `El dólar cambió ${pctSigno(v)} en las últimas 5 sesiones, un movimiento que suele reflejar el tono del mercado local.`;
-    if (bloqueValido(txt, ["dolar-5"], hechos)) al_alza.push({ texto: txt, hechos: ["dolar-5"] });
-  }
-  if (dolar1 && pctDe(dolar1) != null) {
-    const v = pctDe(dolar1);
-    const txt = `El dólar cerró con ${pctSigno(v)} en la última sesión, dentro de lo habitual del rango estadístico.`;
-    if (bloqueValido(txt, ["dolar-1"], hechos)) a_la_baja.push({ texto: txt, hechos: ["dolar-1"] });
-  }
-  // Los titulares no se clasifican por dirección en la versión determinista: solo el modelo
-  // los puede ubicar en al_alza o a_la_baja en la versión con LLM.
-  void titulares;
 
   const resumen = `El rango para ${RANGOS_TRAD[nombreHor] || nombreHor} va entre S/ ${n3(rango.p10)} y S/ ${n3(rango.p90)}, con centro en el último cierre; es una estadística, no una promesa.`;
   return {
     al_alza: al_alza.slice(0, 3),
     a_la_baja: a_la_baja.slice(0, 3),
+    contexto: contexto.slice(0, 5),
     resumen,
   };
+}
+
+// Directional guard for the model's output: the copper link is forced to its correct side, and a
+// point that is supported only by facts without a documented direction moves to «contexto».
+const SIN_DIRECCION = new Set(["oro-5", "wti-5", "dolar-1", "dolar-5", "intervencion-5", "tasa", "rin"]);
+export function corregirDireccion(out, hechos) {
+  const byId = (id) => hechos.find((h) => h.id === id);
+  const pct = (h) => {
+    const m = String(h?.texto || "").match(/([+\u2212-]?\d+(?:[.,]\d+)?) %/);
+    return m ? Number(m[1].replace(",", ".").replace("\u2212", "-")) : null;
+  };
+  const alza = []; const baja = []; const contexto = Array.isArray(out?.contexto) ? [...out.contexto] : [];
+  const reparte = (p, lado) => {
+    const ids = p.hechos || [];
+    if (ids.includes("cobre-5")) {
+      const v = pct(byId("cobre-5"));
+      if (v == null || Math.abs(v) < 1) { contexto.push(p); return; }
+      (v > 0 ? baja : alza).push(p);
+    } else if (ids.length && ids.every((id) => SIN_DIRECCION.has(id))) {
+      contexto.push(p);
+    } else {
+      (lado === "alza" ? alza : baja).push(p);
+    }
+  };
+  for (const p of out?.al_alza || []) reparte(p, "alza");
+  for (const p of out?.a_la_baja || []) reparte(p, "baja");
+  return { ...out, al_alza: alza, a_la_baja: baja, contexto };
 }
 
 function fmtPctAbs(v) {
@@ -356,6 +373,7 @@ export async function lecturaDolar(datos, opciones = {}) {
       return {
         al_alza: Array.isArray(out?.al_alza) ? out.al_alza.filter(okPunto).slice(0, 3) : [],
         a_la_baja: Array.isArray(out?.a_la_baja) ? out.a_la_baja.filter(okPunto).slice(0, 3) : [],
+        contexto: Array.isArray(out?.contexto) ? out.contexto.filter(okPunto).slice(0, 5) : [],
         resumen: typeof out?.resumen === "string" ? String(out.resumen) : "",
         mal,
       };
@@ -391,7 +409,7 @@ export async function lecturaDolar(datos, opciones = {}) {
           console.error(`Lectura ${nombreHor}: ${e.message}`);
         }
         if (!res || !res.out) continue;
-        const cand = ordena(res.out);
+        const cand = ordena(corregirDireccion(res.out, hechos));
         if (!pasaControles(cand)) {
           if (intento === 0) {
             salidaPrev = { texto: (cand.mal?.[0]?.texto || textoDe(cand)).slice(0, 400) };
@@ -400,7 +418,7 @@ export async function lecturaDolar(datos, opciones = {}) {
           continue;
         }
         const { mal, ...candLimpio } = cand;
-        const ids = [...candLimpio.al_alza, ...candLimpio.a_la_baja].flatMap((p) => p.hechos);
+        const ids = [...candLimpio.al_alza, ...candLimpio.a_la_baja, ...(candLimpio.contexto || [])].flatMap((p) => p.hechos);
         const rev = await revisar(nombreHor, textoDe(candLimpio), ids, hechos);
         if (!rev) {
           // revisor caído: solo pasa lo que cumple forma y cifras (ya comprobado)

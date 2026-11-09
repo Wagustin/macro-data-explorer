@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { hechosDolar, lecturaDolar } from "../scripts/dolar-lectura.js";
+import { hechosDolar, lecturaDolar, lecturaDeterminista, corregirDireccion } from "../scripts/dolar-lectura.js";
 
 const DATOS = {
   series: {
@@ -182,4 +182,50 @@ test("con el revisor caído, solo pasa lo que cumple forma y cifras", async () =
   for (const h of ["manana", "semana", "mes"]) {
     assert.equal(outMalo.horizontes[h].determinista, true, `${h} sin revisor no pasa cifras inventadas`);
   }
+});
+
+// ---- Dirección económica: el cobre es el único factor con sentido documentado ----
+const H = (id, texto) => ({ id, texto, fuente: "BCRP" });
+const RANGO = { p10: 3.43, p50: 3.45, p90: 3.47 };
+
+test("cobre a la baja presiona el dólar al alza; cobre al alza, a la baja", () => {
+  const baja = lecturaDeterminista([H("cobre-5", "El cobre acumuló −3.23 % en cinco sesiones, a US$ 6.44 por libra el 4 de noviembre de 2026.")], RANGO, "manana");
+  assert.equal(baja.al_alza.length, 1);
+  assert.equal(baja.a_la_baja.length, 0);
+  assert.match(baja.al_alza[0].texto, /sol más débil/);
+  const sube = lecturaDeterminista([H("cobre-5", "El cobre acumuló +2.10 % en cinco sesiones, a US$ 6.60 por libra el 4 de noviembre de 2026.")], RANGO, "manana");
+  assert.equal(sube.a_la_baja.length, 1);
+  assert.equal(sube.al_alza.length, 0);
+  assert.match(sube.a_la_baja[0].texto, /sol más fuerte/);
+});
+
+test("un cobre casi plano (menos de 1 %) no empuja a ningún lado", () => {
+  const r = lecturaDeterminista([H("cobre-5", "El cobre acumuló +0.40 % en cinco sesiones, a US$ 6.50 por libra el 4 de noviembre de 2026.")], RANGO, "manana");
+  assert.equal(r.al_alza.length + r.a_la_baja.length, 0);
+});
+
+test("oro, petróleo, la intervención del BCRP y los movimientos del dólar no tienen dirección: van a contexto", () => {
+  const hechos = [
+    H("oro-5", "El oro acumuló +3.10 % en cinco sesiones, a US$ 4,100.00 por onza el 4 de noviembre de 2026."),
+    H("wti-5", "El petróleo WTI acumuló −14.26 % en cinco sesiones, a US$ 88.12 por barril el 4 de noviembre de 2026."),
+    H("intervencion-5", "La intervención cambiaria del BCRP sumó US$ 9.00 millones en las últimas 5 sesiones."),
+    H("dolar-5", "El dólar cambió −0.26 % en las últimas 5 sesiones (de S/ 3.461 el 29 de octubre de 2026 a S/ 3.452)."),
+  ];
+  const r = lecturaDeterminista(hechos, RANGO, "manana");
+  assert.equal(r.al_alza.length + r.a_la_baja.length, 0);
+  const ids = r.contexto.flatMap((p) => p.hechos);
+  assert.ok(ids.includes("intervencion-5") && ids.includes("dolar-5"));
+  assert.ok(!ids.includes("oro-5") && !ids.includes("wti-5"), "oro y petróleo ni se mencionan sin relación clara");
+});
+
+test("la guardia de dirección corrige al modelo: cobre al alza en la lista equivocada pasa a la correcta", () => {
+  const hechos = [H("cobre-5", "El cobre acumuló +2.10 % en cinco sesiones, a US$ 6.60 por libra el 4 de noviembre de 2026."), H("oro-5", "El oro acumuló +3.10 % en cinco sesiones, a US$ 4,100.00 por onza el 4 de noviembre de 2026.")];
+  const salida = corregirDireccion({
+    al_alza: [{ texto: "El cobre subió 2,10 % en cinco sesiones.", hechos: ["cobre-5"] }, { texto: "El oro subió 3,10 % en cinco sesiones.", hechos: ["oro-5"] }],
+    a_la_baja: [],
+  }, hechos);
+  assert.equal(salida.al_alza.length, 0);
+  assert.equal(salida.a_la_baja.length, 1);
+  assert.deepEqual(salida.a_la_baja[0].hechos, ["cobre-5"]);
+  assert.deepEqual(salida.contexto.map((p) => p.hechos[0]), ["oro-5"]);
 });
