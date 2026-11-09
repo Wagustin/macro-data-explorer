@@ -1,19 +1,43 @@
 {
- "actualizado": "2026-11-09T15:41:04.242Z",
+ "actualizado": "2026-11-09T18:38:28.152Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "MEF alista emisión de bonos por diez mil millones de dólares",
-   "nota": "El Ministerio de Economía y Finanzas prepara colocaciones de deuda en mercados internacionales. Citigroup, Crédit Agricole, Deutsche Bank y Santander actuarán como bancos colocadores de la operación.",
+   "titulo": "MEF alista reformas laboral y tributaria para microempresas",
+   "nota": "El Ministerio de Economía presentará proyectos de reforma laboral y tributaria para impulsar la formalización de las microempresas. Las medidas incluyen la evaluación de reducir aportes a salud y pensiones para trabajadores de menores ingresos. El Congreso también busca facilitar a Sunat el cobro de deudas tributarias por hasta 123.000 millones de soles.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "MEF alista emisiones de bonos por hasta USD 10 mil millones con Citigroup, Crédit Agricole, Deutsche Bank y Santander",
-     "fuente": "Infobae Perú",
-     "url": "https://www.infobae.com/peru/2026/11/09/mef-alista-emisiones-de-bonos-por-hasta-usd-10-mil-millones-con-citigroup-credit-agricole-deutsche-bank-y-santander/",
-     "fecha": "2026-11-09T13:51:50.000Z"
+     "titulo": "MEF presentará proyectos de reforma laboral y tributaria para impulsar la formalización de las microempresas",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/economia/peru/mef-presentara-proyectos-de-reforma-laboral-y-tributaria-para-impulsar-la-formalizacion-de-las-microempresas-l-ultimas-noticia/",
+     "fecha": "2026-11-09T17:53:57.000Z"
+    },
+    {
+     "titulo": "MEF presentará proyectos de reforma laboral y tributaria para impulsar formalización",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-mef-presentara-proyectos-reforma-laboral-y-tributaria-para-impulsar-formalizacion-1099187.aspx",
+     "fecha": "2026-11-09T17:30:01.000Z"
+    },
+    {
+     "titulo": "MEF alista reformas laboral y tributaria para microempresas: ¿qué cambios plantea?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/mef-presentara-reforma-laboral-y-tributaria-en-verano-de-2027-los-cambios-que-prepara-noticia/",
+     "fecha": "2026-11-09T16:27:39.000Z"
+    },
+    {
+     "titulo": "Deudas tributarias: Congreso quiere “ayudar” a Sunat a cobrar hasta S/ 123,000 millones, ¿cómo?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/deudas-y-controversias-tributarias-congreso-quiere-ayudar-a-sunat-a-cobrar-hasta-s-123000-millones-como-noticia/",
+     "fecha": "2026-11-09T15:55:00.000Z"
+    },
+    {
+     "titulo": "MEF evalúa reducir los aportes a salud y pensiones para los trabajadores de menores ingresos",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/economia/peru/mef-evalua-reducir-los-aportes-a-salud-y-pensiones-para-los-trabajadores-de-menores-ingresos-l-ultimas-noticia/",
+     "fecha": "2026-11-09T14:25:09.000Z"
     }
    ],
    "revision": {
@@ -23,11 +47,54 @@
    }
   },
   {
-   "titulo": "Empresas peruanas aceleran financiamiento con bonos en soles y dólares",
-   "nota": "Las compañías locales aumentan la colocación de títulos de deuda en ambas monedas según reportes del sector financiero.",
+   "titulo": "Exportaciones peruanas suman 83 mil millones hasta septiembre",
+   "nota": "El gobierno reportó un récord acumulado de 83 mil millones de dólares en exportaciones hasta septiembre, impulsado por el factor precios. Los envíos a China superaron en nueve meses el total del año anterior. Las exportaciones agrarias superarían los 15 mil millones de dólares este año.",
+   "tema": "Economía y fiscal",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Exportaciones: gobierno destaca récord de USD 83 mil millones hasta septiembre, pero omite que es por factor precios",
+     "fuente": "Infobae Perú",
+     "url": "https://www.infobae.com/peru/2026/11/09/exportaciones-gobierno-destaca-record-de-usd-83-mil-millones-hasta-septiembre-pero-omite-que-es-por-factor-precios/",
+     "fecha": "2026-11-09T18:13:41.000Z"
+    },
+    {
+     "titulo": "Mincetur: Perú superaría los US$ 15,000 millones en exportaciones agrarias este año",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-mincetur-peru-superaria-los-15000-millones-exportaciones-agrarias-este-ano-1099188.aspx",
+     "fecha": "2026-11-09T16:56:04.000Z"
+    },
+    {
+     "titulo": "Exportaciones a China superan todo el 2024 en nueve meses: ¿qué sectores las sostienen?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/empresas/exportaciones-a-china-suman-us-31000-millones-a-setiembre-y-apuntan-a-nuevo-record-noticia/",
+     "fecha": "2026-11-09T15:46:58.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Bonos de vivienda y emisiones soberanas impulsan mercado de deuda",
+   "nota": "El MEF inyectará nuevos recursos al programa de bonos de vivienda este año y duplicará la cantidad para 2027. Simultáneamente, el ministerio alista emisiones de bonos soberanos por hasta 10.000 millones de dólares con bancos internacionales. Las empresas peruanas aceleran su financiamiento con bonos en soles y dólares aprovechando las condiciones actuales.",
    "tema": "Bolsa y empresas",
    "empresas": [],
    "fuentes": [
+    {
+     "titulo": "Bonos de vivienda: MEF inyectará nuevos recursos este año y duplicará cantidad para 2027",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/bonos-de-vivienda-mef-inyectara-nuevos-recursos-este-ano-y-duplicara-cantidad-para-2027-la-mirada-junto-al-fondo-mivivienda-noticia/",
+     "fecha": "2026-11-09T18:17:02.000Z"
+    },
+    {
+     "titulo": "MEF alista emisiones de bonos por hasta USD 10 mil millones con Citigroup, Crédit Agricole, Deutsche Bank y Santander",
+     "fuente": "Infobae Perú",
+     "url": "https://www.infobae.com/peru/2026/11/09/mef-alista-emisiones-de-bonos-por-hasta-usd-10-mil-millones-con-citigroup-credit-agricole-deutsche-bank-y-santander/",
+     "fecha": "2026-11-09T13:51:50.000Z"
+    },
     {
      "titulo": "Empresas aceleran financiamiento con bonos en soles y dólares: ¿qué las incentiva hoy?",
      "fuente": "Gestión",
@@ -42,62 +109,34 @@
    }
   },
   {
-   "titulo": "Petroperú interviene cisterna por conexión clandestina en oleoducto",
-   "nota": "Una cisterna fue intervenida mientras extraía crudo mediante una conexión clandestina en el oleoducto. La acción ocurrió durante la extracción ilegal de hidrocarburos.",
-   "tema": "Energía",
-   "empresas": [
-    "PETROBC1"
-   ],
-   "fuentes": [
-    {
-     "titulo": "Petroperú: intervienen cisterna cuando extraía crudo por conexión clandestina en oleoducto",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-petroperu-intervienen-cisterna-cuando-extraia-crudo-conexion-clandestina-oleoducto-1099167.aspx",
-     "fecha": "2026-11-09T15:18:57.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "Minem aprueba estudios para proyectos eléctricos millonarios",
-   "nota": "El Ministerio de Energía y Minas aprobó evaluaciones ambientales para iniciativas de generación y transmisión. Las inversiones previstas ascienden a 5.500 millones de dólares para el año 2026.",
-   "tema": "Energía",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Minem aprueba estudios ambientales para proyectos eléctricos con inversiones por US$5.500 millones en 2026",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/2026/11/08/minem-aprueba-estudios-ambientales-para-proyectos-electricos-con-inversiones-por-us5500-millones-en-2026-662352",
-     "fecha": "2026-11-08T21:57:52.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "Perú superaría a Chile como cuarta economía sudamericana en 2027",
-   "nota": "El PBI peruano alcanzaría 413.597 millones de dólares en 2027 según proyecciones. Esto permitiría al país desplazar a Chile del cuarto puesto regional.",
+   "titulo": "El Niño amenaza cultivos y suben hortalizas y pescados",
+   "nota": "El fenómeno El Niño ahoga las previsiones sobre los cinco principales cultivos del Perú. La industria se prepara ante posibles problemas logísticos. Los precios de hortalizas y pescados subieron más de 23% en un año en Lima.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Perú superaría a Chile y sería la cuarta economía más grande de Sudamérica el 2027",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/peru-podria-superar-a-chile-y-convertirse-en-la-cuarta-economia-mas-grande-de-sudamerica-en-2027-noticia/",
-     "fecha": "2026-11-09T03:45:00.000Z"
+     "titulo": "Hortalizas y pescados subieron más de 23% de precio en un año en Lima, ¿qué explica el alza?",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/economia/hortalizas-y-pescados-subieron-mas-de-23-en-un-ano-en-lima-y-lideraron-el-alza-de-alimentos-apuesplan-noticia/",
+     "fecha": "2026-11-09T16:38:11.000Z"
     },
     {
-     "titulo": "Perú a poco de convertirse en la cuarta economía más grande de Sudamérica, dejando atrás a Chile: PBI alcanzaría los USD 413.597 millones en 2027",
-     "fuente": "Infobae Perú",
-     "url": "https://www.infobae.com/peru/2026/11/07/peru-a-poco-de-convertirse-en-la-cuarta-economia-mas-grande-de-sudamerica-dejando-atras-a-chile-pbi-alcanzaria-los-usd-413597-millones-en-2027/",
-     "fecha": "2026-11-08T23:01:06.000Z"
+     "titulo": "El Niño “ahoga” previsiones sobre 5 principales cultivos de Perú, ¿aumenta amenaza?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/el-nino-ahoga-previsiones-sobre-5-principales-cultivos-de-peru-hasta-diciembre-aumenta-amenaza-noticia/",
+     "fecha": "2026-11-09T15:56:00.000Z"
+    },
+    {
+     "titulo": "El Niño: industria se prepara en caso de problemas logísticos y su foco está en esta medida",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/el-nino-industria-de-peru-se-prepara-en-caso-de-problemas-o-interrupciones-logisticas-y-su-foco-esta-en-esta-medida-segun-encuesta-de-la-sni-noticia/",
+     "fecha": "2026-11-09T14:58:00.000Z"
+    },
+    {
+     "titulo": "Crisis eléctrica en el norte: el gas de Piura sería la solución, pero ¿por qué hoy es más caro?",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/economia/peru/gas-piura-la-crisis-electrica-que-sufre-el-norte-peruano-se-puede-solucionar-con-el-gas-de-piura-noticia/",
+     "fecha": "2026-11-09T16:37:47.000Z"
     }
    ],
    "revision": {
@@ -107,16 +146,53 @@
    }
   },
   {
-   "titulo": "El oro sube mientras el petróleo cae y la investigación a Nvidia sacude mercados",
-   "nota": "El metal precioso gana valor mientras el crudo prolonga su descenso. La investigación sobre Nvidia genera volatilidad en los mercados globales.",
+   "titulo": "C3 Metals detecta nuevos blancos de cobre y oro en Cusco",
+   "nota": "La compañía C3 Metals identificó nuevos objetivos de cobre y oro en su proyecto Khaleesi, ubicado en la región Cusco.",
    "tema": "Minería y metales",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "El oro sube mientras el petróleo prolonga su caída y la investigación sobre Nvidia sacude los mercados",
-     "fuente": "Bloomberg Línea",
-     "url": "https://www.bloomberglinea.com/mercados/el-oro-sube-mientras-el-petroleo-prolonga-su-caida-y-la-investigacion-sobre-nvidia-sacude-los-mercados/",
-     "fecha": "2026-11-09T07:02:55.000Z"
+     "titulo": "C3 Metals identifica nuevos objetivos de cobre y oro en proyecto Khaleesi, en Cusco",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/empresas/minera-canadiense-c3-metals-identifica-nuevos-objetivos-de-cobre-y-oro-en-proyecto-khaleesi-en-cusco-noticia/",
+     "fecha": "2026-11-09T17:45:32.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Cortes de luz en Lima y alza de combustibles afectan a empresas",
+   "nota": "Lima inició la semana con cortes de luz en cinco distritos mientras las empresas evalúan trasladar el alza de combustibles a sus precios de venta. El precio de la gasolina registra variaciones este lunes. La transformación de las aerolíneas de bajo costo y el alto precio del combustible redefinen el sector aéreo.",
+   "tema": "Energía",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "¿Empresas en Perú empezarían a trasladar alza de combustibles a sus precios de venta?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/glp-gasolina-y-otros-en-peru-empresas-empezarian-a-trasladar-alza-de-combustibles-al-precio-de-venta-noticia/",
+     "fecha": "2026-11-09T16:56:00.000Z"
+    },
+    {
+     "titulo": "Lima inicia la semana con cortes de luz en cinco distritos: ¿Qué zonas no tendrán electricidad hoy lunes 9 de noviembre?",
+     "fuente": "Infobae Perú",
+     "url": "https://www.infobae.com/peru/2026/11/07/lima-inicia-la-semana-con-cortes-de-luz-en-cinco-distritos-que-zonas-no-tendran-electricidad-este-lunes-9-de-noviembre/",
+     "fecha": "2026-11-09T14:43:53.000Z"
+    },
+    {
+     "titulo": "Lima: este es el precio de la gasolina este lunes 9 de noviembre",
+     "fuente": "Infobae Perú",
+     "url": "https://www.infobae.com/peru/2026/11/09/lima-este-es-el-precio-de-la-gasolina-este-lunes-9-de-noviembre/",
+     "fecha": "2026-11-09T12:16:17.000Z"
+    },
+    {
+     "titulo": "La transformación de las aerolíneas ‘low cost’, el ingreso de nuevos jugadores y el alto precio del combustible redefinen el sector",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/economia/dia-1/la-transformacion-de-las-low-cost-el-ingreso-de-nuevas-aerolineas-y-el-alto-precio-del-combustible-redefinen-el-sector-noticia/",
+     "fecha": "2026-11-09T16:43:48.000Z"
     }
    ],
    "revision": {
