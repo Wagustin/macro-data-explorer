@@ -154,8 +154,8 @@ export default async function handler(req, res) {
     }
   } catch (e) {
     console.error(`[billing] ${action} failed:`, e.message);
-    // Temporary diagnostic: only the owner account sees the processor's real message
-    const detalle = user && user.email === "venturasaldanaa@gmail.com" ? String(e.message || e).slice(0, 400) : undefined;
+    // Temporary diagnostic: the checkout error shows the processor's real message (remove once the trial checkout works)
+    const detalle = action === "checkout" ? String(e.message || e).slice(0, 400) : undefined;
     return sendJson(res, 502, { success: false, error: "No pudimos conectar con el procesador de pagos. Intenta de nuevo.", ...(detalle ? { detalle } : {}) });
   }
 
