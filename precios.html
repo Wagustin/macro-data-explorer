@@ -492,7 +492,7 @@
         status.textContent = "";
         var r = action === "portal" ? await window.MDE_Auth.openPortal() : await window.MDE_Auth.startCheckout(interval, "boletin");
         if (!r.success) {
-          if (r.error) { status.textContent = r.error; status.className = "pd-form-status is-error"; }
+          if (r.error) { status.textContent = r.error + (r.detalle ? " [" + r.detalle + "]" : ""); status.className = "pd-form-status is-error"; }
           render();
         }
       });
@@ -507,7 +507,7 @@
         status.textContent = "";
         var r = action === "portal" ? await window.MDE_Auth.openPortal() : await window.MDE_Auth.startCheckout(interval);
         if (!r.success) {
-          if (r.error) { status.textContent = r.error; status.className = "pd-form-status is-error"; }
+          if (r.error) { status.textContent = r.error + (r.detalle ? " [" + r.detalle + "]" : ""); status.className = "pd-form-status is-error"; }
           render();
         }
       });

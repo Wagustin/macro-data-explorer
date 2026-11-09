@@ -154,7 +154,9 @@ export default async function handler(req, res) {
     }
   } catch (e) {
     console.error(`[billing] ${action} failed:`, e.message);
-    return sendJson(res, 502, { success: false, error: "No pudimos conectar con el procesador de pagos. Intenta de nuevo." });
+    // Temporary diagnostic: only the owner account sees the processor's real message
+    const detalle = user && user.email === "venturasaldanaa@gmail.com" ? String(e.message || e).slice(0, 400) : undefined;
+    return sendJson(res, 502, { success: false, error: "No pudimos conectar con el procesador de pagos. Intenta de nuevo.", ...(detalle ? { detalle } : {}) });
   }
 
   return sendJson(res, 400, { success: false, error: "Acción no válida." });
