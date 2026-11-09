@@ -1,11 +1,11 @@
 {
- "actualizado": "2026-11-09T09:37:50.573Z",
+ "actualizado": "2026-11-09T12:36:36.960Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "Perú superaría a Chile como cuarta economía sudamericana en 2027",
-   "nota": "El PBI peruano alcanzaría USD 413.597 millones en 2027 según proyecciones. Esto permitiría al país desplazar a Chile del cuarto puesto regional.",
+   "titulo": "Perú se acerca a ser la cuarta economía sudamericana en 2027",
+   "nota": "El PBI peruano alcanzaría 413.597 millones de dólares en 2027, superando a Chile. ProInversión adjudicó un récord de 10.800 millones de soles en obras por impuestos durante 2026. El riesgo país en mínimos históricos fortalece la capacidad para enfrentar El Niño.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
@@ -20,19 +20,13 @@
      "fuente": "Infobae Perú",
      "url": "https://www.infobae.com/peru/2026/11/07/peru-a-poco-de-convertirse-en-la-cuarta-economia-mas-grande-de-sudamerica-dejando-atras-a-chile-pbi-alcanzaria-los-usd-413597-millones-en-2027/",
      "fecha": "2026-11-08T23:01:06.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "ProInversión presenta ante Congreso récord de S/10,800 millones adjudicados en 2026 en OxI",
-   "tema": "Economía y fiscal",
-   "empresas": [],
-   "fuentes": [
+    },
+    {
+     "titulo": "CCL: Riesgo país en mínimos fortalece capacidad del Perú para enfrentar El Niño",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-ccl-riesgo-pais-minimos-fortalece-capacidad-del-peru-para-enfrentar-nino-1099082.aspx",
+     "fecha": "2026-11-08T16:00:00.000Z"
+    },
     {
      "titulo": "ProInversión presenta ante Congreso récord de S/10,800 millones adjudicados en 2026 en OxI",
      "fuente": "Agencia Andina",
@@ -42,27 +36,35 @@
    ],
    "revision": {
     "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": false,
-    "motivo": "La nota añade la afirmación «La cifra supera los registros históricos del programa», que no figura en el titular, y el título usa la sigla «OxI», que no está desarrollada ni aparece en la fuente."
+    "ok": true,
+    "motivo": ""
    }
   },
   {
-   "titulo": "Minem aprueba estudios ambientales para inversiones eléctricas de 2026",
-   "nota": "El Ministerio de Energía y Minas aprobó los estudios ambientales de proyectos eléctricos con inversiones por 5.500 millones de dólares para 2026.",
-   "tema": "Energía",
-   "empresas": [],
+   "titulo": "Empresas peruanas aceleran emisión de bonos en soles y dólares",
+   "nota": "Compañías locales aumentan su financiamiento mediante bonos en ambas monedas. APM Terminals Callao prepara plan para extender su concesión con inversiones fuera del puerto. Claro Perú refuerza su red ante El Niño y acelera su negocio de nube e inteligencia artificial para empresas.",
+   "tema": "Bolsa y empresas",
+   "empresas": [
+    "BVN"
+   ],
    "fuentes": [
     {
-     "titulo": "Minem aprueba estudios ambientales para proyectos eléctricos con inversiones por US$5.500 millones en 2026",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/2026/11/08/minem-aprueba-estudios-ambientales-para-proyectos-electricos-con-inversiones-por-us5500-millones-en-2026-662352",
-     "fecha": "2026-11-08T21:57:52.000Z"
+     "titulo": "Empresas aceleran financiamiento con bonos en soles y dólares: ¿qué las incentiva hoy?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/empresas/empresas-aceleran-financiamiento-con-bonos-en-soles-y-dolares-que-las-incentiva-hoy-noticia/",
+     "fecha": "2026-11-09T10:10:00.000Z"
     },
     {
-     "titulo": "Minem aprobó estudios ambientales de inversiones eléctricas por US $5,500 millones en 2026",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-minem-aprobo-estudios-ambientales-inversiones-electricas-us-5500-millones-2026-1099048.aspx",
-     "fecha": "2026-11-07T23:27:01.000Z"
+     "titulo": "Claro Perú refuerza su red ante El Niño y acelera su negocio de nube e IA para empresas",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/empresas/claro-alista-su-red-ante-el-nino-y-apuesta-por-nube-e-ia-para-crecer-a-doble-digito-noticia/",
+     "fecha": "2026-11-09T02:30:00.000Z"
+    },
+    {
+     "titulo": "APM Terminals Callao alista plan para extender concesión con inversiones fuera del puerto",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/empresas/el-nino-y-mas-concesion-el-plan-de-apm-terminals-para-el-puerto-del-callao-hacia-2027-noticia/",
+     "fecha": "2026-11-08T04:34:00.000Z"
     }
    ],
    "revision": {
@@ -72,11 +74,25 @@
    }
   },
   {
-   "titulo": "Metalmecánicas se alistan para repunte impulsado por minería y El Niño",
-   "nota": "El sector metalmecánico prevé mayor demanda por la reactivación minera, la prevención ante El Niño y pedidos de clientes estadounidenses. Las empresas ajustan capacidad para atender los nuevos contratos.",
-   "tema": "Minería y metales",
-   "empresas": [],
+   "titulo": "Minem aprueba proyectos eléctricos por 5.500 millones de dólares",
+   "nota": "El Ministerio de Energía y Minas aprobó estudios ambientales para proyectos eléctricos con inversiones de 5.500 millones de dólares para 2026. Petroperú enfrenta cuestionamientos por entrega de refinería Talara a operador privado pese a recuperación financiera. Metalmecánicas se alistan para repunte impulsadas por minería, El Niño y clientes de EE. UU.",
+   "tema": "Energía",
+   "empresas": [
+    "PETROBC1"
+   ],
    "fuentes": [
+    {
+     "titulo": "Minem aprueba estudios ambientales para proyectos eléctricos con inversiones por US$5.500 millones en 2026",
+     "fuente": "La República Economía",
+     "url": "https://larepublica.pe/economia/2026/11/08/minem-aprueba-estudios-ambientales-para-proyectos-electricos-con-inversiones-por-us5500-millones-en-2026-662352",
+     "fecha": "2026-11-08T21:57:52.000Z"
+    },
+    {
+     "titulo": "Petroperú: cuestionan entrega de Talara a operador privado pese a recuperación financiera y piden fiscalizar crédito",
+     "fuente": "La República Economía",
+     "url": "https://larepublica.pe/economia/2026/11/08/petroperu-cuestionan-entrega-de-talara-a-operador-privado-pese-a-recuperacion-financiera-y-piden-fiscalizar-credito-507320",
+     "fecha": "2026-11-08T20:42:18.000Z"
+    },
     {
      "titulo": "Metalmecánicas listas para el repunte: minería, El Niño y clientes de EE.UU las impulsan",
      "fuente": "Gestión",
@@ -91,16 +107,28 @@
    }
   },
   {
-   "titulo": "DP World impulsa fase 3 del Muelle Sur",
-   "nota": "El operador portuario avanza en la tercera fase con plazos definidos y sujeta a una condición para invertir.",
-   "tema": "Bolsa y empresas",
+   "titulo": "Oro sube mientras petróleo cae y Nvidia sacude mercados",
+   "nota": "El precio del oro sube mientras el petróleo prolonga su caída, en medio de una investigación sobre Nvidia que sacude los mercados globales. Bolsas asiáticas recuperan terreno con alza de 1,9% liderada por Taiwán. Wall Street se lanza a carrera por megatransacciones ante cuenta regresiva para era Trump.",
+   "tema": "Mundo",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "DP World va por la fase 3 del Muelle Sur del Callao: plazos y la condición para invertir",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/empresas/puerto-del-callao-dp-world-alista-otra-ampliacion-del-muelle-sur-pero-pone-una-condicion-noticia/",
-     "fecha": "2026-11-08T21:00:00.000Z"
+     "titulo": "El oro sube mientras el petróleo prolonga su caída y la investigación sobre Nvidia sacude los mercados",
+     "fuente": "Bloomberg Línea",
+     "url": "https://www.bloomberglinea.com/mercados/el-oro-sube-mientras-el-petroleo-prolonga-su-caida-y-la-investigacion-sobre-nvidia-sacude-los-mercados/",
+     "fecha": "2026-11-09T07:02:55.000Z"
+    },
+    {
+     "titulo": "Bolsas asiáticas suben 1,9% y recuperan terreno tras desplome; Taiwán lidera las ganancias",
+     "fuente": "Bloomberg Línea",
+     "url": "https://www.bloomberglinea.com/mercados/bolsas-asiaticas-bajo-riesgo-de-sufrir-presiones-por-la-investigacion-sobre-nvidia/",
+     "fecha": "2026-11-09T06:53:10.000Z"
+    },
+    {
+     "titulo": "Wall Street se lanza a la carrera por las megatransacciones mientras comienza la cuenta regresiva para la era Trump",
+     "fuente": "Bloomberg Línea",
+     "url": "https://www.bloomberglinea.com/economia/wall-street-se-lanza-a-la-carrera-por-las-megatransacciones-mientras-comienza-la-cuenta-regresiva-para-la-era-trump/",
+     "fecha": "2026-11-08T17:21:51.000Z"
     }
    ],
    "revision": {
@@ -110,16 +138,59 @@
    }
   },
   {
-   "titulo": "Riesgo país mínimo fortalece al Perú frente a El Niño",
-   "nota": "La Cámara de Comercio de Lima señala que el riesgo país en mínimos fortalece la capacidad del Perú para enfrentar El Niño.",
+   "titulo": "MEF propone reducir aportes a salud y pensiones para menores ingresos",
+   "nota": "El Ministerio de Economía plantea reducir aportes a salud y pensiones para trabajadores de menores ingresos. Congreso busca ayudar a Sunat a cobrar deudas tributarias de hasta 123.000 millones de soles. Elmer Cuba descarta recortes de beneficios laborales en microempresas y prevé ajustes en aportes.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "CCL: Riesgo país en mínimos fortalece capacidad del Perú para enfrentar El Niño",
+     "titulo": "Deudas tributarias: Congreso quiere “ayudar” a Sunat a cobrar hasta S/ 123,000 millones, ¿cómo?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/deudas-y-controversias-tributarias-congreso-quiere-ayudar-a-sunat-a-cobrar-hasta-s-123000-millones-como-noticia/",
+     "fecha": "2026-11-09T10:39:00.000Z"
+    },
+    {
+     "titulo": "MEF plantea reducir aportes a salud y pensiones para trabajadores de menores ingresos",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/mef-plantea-reducir-aportes-de-salud-y-pensiones-para-trabajadores-de-menores-ingresos-noticia/",
+     "fecha": "2026-11-09T06:00:00.000Z"
+    },
+    {
+     "titulo": "Elmer Cuba descarta recortes de beneficios laborales en microempresas y prevé ajustes en aportes al seguro y pensiones",
+     "fuente": "RPP Noticias",
+     "url": "https://rpp.pe/economia/economia/elmer-cuba-descarta-recortes-de-beneficios-laborales-en-microempresas-y-preve-ajustes-en-aportes-al-seguro-y-pensiones-noticia-1716729",
+     "fecha": "2026-11-09T04:04:22.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Préstamos de consumo e hipotecarios lideran créditos al sector privado",
+   "nota": "Los préstamos de consumo e hipotecarios encabezan el crecimiento de créditos al sector privado en Perú. Empresas pueden demandar a sindicatos por pérdidas durante huelgas ilegales según análisis legal. DP World avanza en fase 3 del Muelle Sur del Callao con plazos y condiciones para invertir.",
+   "tema": "Bolsa y empresas",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Perú: préstamos de consumo e hipotecarios lideran créditos al sector privado",
      "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-ccl-riesgo-pais-minimos-fortalece-capacidad-del-peru-para-enfrentar-nino-1099082.aspx",
-     "fecha": "2026-11-08T16:00:00.000Z"
+     "url": "https://andina.pe/agencia/noticia-peru-prestamos-consumo-e-hipotecarios-lideran-creditos-al-sector-privado-1098570.aspx",
+     "fecha": "2026-11-09T11:00:01.000Z"
+    },
+    {
+     "titulo": "¿Empresas en Perú pueden demandar a sindicatos por pérdidas durante huelgas ilegales?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/huelgas-ilegales-empresas-pueden-exigir-indemnizaciones-millonarias-a-sindicatos-en-peru-noticia/",
+     "fecha": "2026-11-09T04:00:00.000Z"
+    },
+    {
+     "titulo": "DP World va por la fase 3 del Muelle Sur del Callao: plazos y la condición para invertir",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/empresas/puerto-del-callao-dp-world-alista-otra-ampliacion-del-muelle-sur-pero-pone-una-condicion-noticia/",
+     "fecha": "2026-11-08T21:00:00.000Z"
     }
    ],
    "revision": {
