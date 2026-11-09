@@ -1,11 +1,32 @@
 {
- "actualizado": "2026-11-09T19:54:33.515Z",
+ "actualizado": "2026-11-09T23:09:51.342Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "Holcim lanza OPA por el 49,99% de Cementos Pacasmayo",
-   "nota": "Holcim ha presentado una oferta pública de adquisición para comprar el 49,99% de Cementos Pacasmayo, según informó El Comercio Economía. La operación busca consolidar la participación del grupo suizo en la cementera peruana.",
+   "titulo": "MEF prepara emisión de bonos con cuatro bancos internacionales",
+   "nota": "El Ministerio de Economía y Finanzas alista una colocación de bonos con Citigroup, Crédit Agricole, Deutsche Bank y Santander.",
+   "tema": "Economía y fiscal",
+   "empresas": [
+    "BVN"
+   ],
+   "fuentes": [
+    {
+     "titulo": "MEF alista emisiones de bonos con Citigroup, Crédit Agricole, Deutsche Bank y Santander",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/economia/peru/mef-alista-emisiones-de-bonos-con-citigroup-credit-agricole-deutsche-bank-y-santander-l-ultimas-noticia/",
+     "fecha": "2026-11-09T20:36:30.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Holcim lanza oferta pública para comprar casi la mitad de Pacasmayo",
+   "nota": "La cementera suiza Holcim presentó una oferta pública de adquisición por el 49,99% de Cementos Pacasmayo.",
    "tema": "Bolsa y empresas",
    "empresas": [
     "CPAC"
@@ -19,60 +40,28 @@
     }
    ],
    "revision": {
-    "modelo": null,
-    "ok": null,
-    "motivo": "revisor no disponible"
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
    }
   },
   {
-   "titulo": "MEF inyectará 18 mil millones de soles ante El Niño",
-   "nota": "El Ministerio de Economía y Finanzas anunció una inyección de 18 mil millones de soles a la economía como respuesta al fenómeno El Niño, monto que podría incrementarse según Gestión. La medida busca mitigar el impacto climático en la actividad productiva.",
+   "titulo": "ProInversión proyecta inversiones por 17.800 millones hasta 2027 mediante APP y OxI",
+   "nota": "El trimestre actual registra las mayores adjudicaciones de Obras por Impuestos en 18 años.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "El Niño: respuesta del MEF será inyectar S/ 18 mil millones a economía, ¿monto podría crecer?",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/el-nino-respuesta-del-mef-sera-inyectar-s-18-mil-millones-a-la-economia-monto-podria-crecer-noticia/",
-     "fecha": "2026-11-09T19:03:24.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": null,
-    "ok": null,
-    "motivo": "revisor no disponible"
-   }
-  },
-  {
-   "titulo": "Exportaciones a China superan todo el 2024 en nueve meses",
-   "nota": "Las exportaciones peruanas a China ya superaron el total del año 2024 en solo nueve meses, impulsadas por sectores clave según Gestión. El dinamismo comercial refuerza la dependencia del mercado asiático.",
-   "tema": "Economía y fiscal",
-   "empresas": [],
-   "fuentes": [
+     "titulo": "ProInversión: inversiones superarán los S/ 17,800 millones en 2027 mediante APP y OxI",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-proinversion-inversiones-superaran-los-s-17800-millones-2027-mediante-app-y-oxi-1099227.aspx",
+     "fecha": "2026-11-09T21:00:00.000Z"
+    },
     {
-     "titulo": "Exportaciones a China superan todo el 2024 en nueve meses: ¿qué sectores las sostienen?",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/empresas/exportaciones-a-china-suman-us-31000-millones-a-setiembre-y-apuntan-a-nuevo-record-noticia/",
-     "fecha": "2026-11-09T15:46:58.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": null,
-    "ok": null,
-    "motivo": "revisor no disponible"
-   }
-  },
-  {
-   "titulo": "C3 Metals halla nuevos objetivos de cobre y oro en Cusco",
-   "nota": "La empresa C3 Metals identificó nuevos objetivos de cobre y oro en su proyecto Khaleesi, ubicado en Cusco, según reporta Gestión. El hallazgo amplía el potencial minero en la región sur del país.",
-   "tema": "Minería y metales",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "C3 Metals identifica nuevos objetivos de cobre y oro en proyecto Khaleesi, en Cusco",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/empresas/minera-canadiense-c3-metals-identifica-nuevos-objetivos-de-cobre-y-oro-en-proyecto-khaleesi-en-cusco-noticia/",
-     "fecha": "2026-11-09T17:45:32.000Z"
+     "titulo": "Proinversión sobre Obras por Impuestos: “Es el trimestre de las mayores adjudicaciones en 18 años”",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/economia/proinversion-sobre-obras-por-impuestos-es-el-trimestre-de-las-mayores-adjudicaciones-en-18-anos-noticia/",
+     "fecha": "2026-11-09T20:53:58.000Z"
     }
    ],
    "revision": {
@@ -83,7 +72,7 @@
   },
   {
    "titulo": "Perupetro negocia lotes offshore de gas natural en el norte",
-   "nota": "Perupetro está negociando nuevos lotes offshore de gas natural frente a las costas de Lambayeque y Tumbes, de acuerdo con Gestión. La iniciativa busca ampliar la reserva de hidrocarburos para el mercado interno.",
+   "nota": "La empresa estatal Perupetro mantiene conversaciones para adjudicar lotes de exploración de gas natural frente a las costas de Lambayeque y Tumbes.",
    "tema": "Energía",
    "empresas": [],
    "fuentes": [
@@ -95,28 +84,47 @@
     }
    ],
    "revision": {
-    "modelo": null,
-    "ok": null,
-    "motivo": "revisor no disponible"
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
    }
   },
   {
-   "titulo": "MEF alista emisión de bonos por hasta 10 mil millones de dólares",
-   "nota": "El Ministerio de Economía y Finanzas prepara emisiones de bonos soberanos por hasta 10 mil millones de dólares con bancos internacionales, informó Infobae Perú. La colocación busca financiar el déficit fiscal y refinanciar deuda.",
+   "titulo": "Exportaciones a China superan todo el 2024 en nueve meses",
+   "nota": "Los envíos peruanos al gigante asiático ya superan el total del año anterior. Los sectores que sostienen este crecimiento son la interrogante central.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "MEF alista emisiones de bonos por hasta USD 10 mil millones con Citigroup, Crédit Agricole, Deutsche Bank y Santander",
-     "fuente": "Infobae Perú",
-     "url": "https://www.infobae.com/peru/2026/11/09/mef-alista-emisiones-de-bonos-por-hasta-usd-10-mil-millones-con-citigroup-credit-agricole-deutsche-bank-y-santander/",
-     "fecha": "2026-11-09T13:51:50.000Z"
+     "titulo": "Exportaciones a China superan todo el 2024 en nueve meses: ¿qué sectores las sostienen?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/empresas/exportaciones-a-china-suman-us-31000-millones-a-setiembre-y-apuntan-a-nuevo-record-noticia/",
+     "fecha": "2026-11-09T15:46:58.000Z"
     }
    ],
    "revision": {
-    "modelo": null,
-    "ok": null,
-    "motivo": "revisor no disponible"
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "El Ejecutivo presenta proyecto para elevar el límite de déficit fiscal hasta 2031",
+   "nota": "El Gobierno envió al Congreso una iniciativa que modifica el tope de déficit fiscal vigente. La propuesta extiende el plazo permitido hasta el año 2031.",
+   "tema": "Economía y fiscal",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Ejecutivo presenta ante el Congreso proyecto para elevar el límite de déficit fiscal hasta 2031",
+     "fuente": "Infobae Perú",
+     "url": "https://www.infobae.com/peru/2026/11/09/ejecutivo-presenta-ante-el-congreso-proyecto-para-elevar-el-limite-de-deficit-fiscal-hasta-2031/",
+     "fecha": "2026-11-09T19:14:31.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
    }
   }
  ],
