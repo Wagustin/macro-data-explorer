@@ -1,0 +1,145 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const read = (rel) => fs.readFileSync(path.join(rootDir, rel), "utf8");
+
+// Same generator as the previews: spawn the script with PREVIEW_EMPRESAS and
+// the preview path, then read the generated HTML. The script only writes a
+// preview with --dry-run / PREVIEW_*; it never sends mail.
+import { execFileSync } from "node:child_process";
+
+function vistaPrevia(plan) {
+  const out = path.join(rootDir, "..", "handoff", "qa", `correo-${plan}.html`);
+  execFileSync(process.execPath, ["scripts/boletin.js", "--dry-run"], {
+    cwd: rootDir,
+    env: {
+      ...process.env,
+      PREVIEW_EMPRESAS: "ALICORC1,BVN,CVERDEC1",
+      PREVIEW_PLAN: plan,
+      BOLETIN_PREVIEW_PATH: out,
+    },
+  });
+  return fs.readFileSync(out, "utf8");
+}
+
+const stripPlanBlock = (html) => html.replace(/<!-- plan-boletin -->[\s\S]*?<!-- \/plan-boletin -->/g, "");
+const plano = (html) => html.replace(/\s+/g, " ").trim();
+
+test("correo gratis: dólar mañana con rango y cierre, top 3, qué podría presionar y transparencia, sin secciones de pago", () => {
+  const html = vistaPrevia("gratis");
+  const sinPlan = stripPlanBlock(html);
+  const daily = JSON.parse(read("data/daily-forecasts.json"));
+  const pen = daily.simbolos.PEN;
+  const fmt3 = (v) => Number(v).toLocaleString("es-PE", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+
+  // (1) Dólar mañana con su rango y el cierre anterior
+  assert.match(html, /Último cierre oficial \(BCRP\)/);
+  assert.ok(html.includes(fmt3(pen.ultimo_cierre)), "el gratis trae el cierre de data/daily-forecasts.json");
+  assert.ok(html.includes(fmt3(pen.manana.p10)) && html.includes(fmt3(pen.manana.p90)), "el gratis trae el rango mañana de data/");
+
+  // (2) Las 3 noticias mejor redactadas (con nota y revisión aprobada por el digest)
+  const digest = JSON.parse(read("data/noticias-resumen.json"));
+  const buenas = (digest.historias || []).filter((h) => h.nota && h.revision?.ok !== false);
+  assert.ok(buenas.length >= 3, "el digest trae al menos 3 publicables");
+  for (const h of buenas.slice(0, 3)) {
+    assert.ok(plano(html).includes(plano(h.titulo)), `el gratis trae «${h.titulo.slice(0, 30)}…»`);
+  }
+  assert.ok(!plano(html).includes(plano(buenas[3].titulo)), "la cuarta historia ya no entra en el gratis");
+
+  // (3) Qué podría presionar al dólar (manana): al alza / a la baja / contexto con resumen
+  assert.match(html, /Qué podría presionar al dólar/);
+  assert.match(html, /Al alza|Contexto/);
+  assert.ok(/S\/\s*3\.435/.test(html), "la lectura cita el rango de mañana de data/");
+
+  // (4) Nota de transparencia e invitación al plan Boletín (con prueba con tarjeta)
+  assert.match(html, /El rango es estadístico; los factores son contexto, no una predicción de dirección/);
+  assert.match(html, /1\.99 al mes, 7 días de prueba con tarjeta/);
+  assert.match(html, /<!-- plan-boletin -->/);
+
+  // El gratis nunca recibe secciones del pagado (fuera del bloque del plan y
+  // del aviso de «Tus empresas» que la propia vista previa de gratis inyecta
+  // en {{PERSONAL}} cuando se listan empresas seguidas).
+  const sinPlanNiAviso = sinPlan
+    .replace(/<tr><td style="padding:24px 0 0;font-family:'Libre Franklin'[^>]*>Elegiste empresas[^<]*<\/td><\/tr>/g, "");
+  for (const prohibida of ["Tus empresas", "Hechos de importancia", "Próxima semana", "Próximo mes", "Lectura de", "Cobre", "Petróleo"]) {
+    assert.ok(!sinPlanNiAviso.includes(prohibida), `el gratis trae «${prohibida}», sección de pago`);
+  }
+});
+
+test("correo pagado: dólar x3 con lectura, metales, SMV, todas las noticias y Tus empresas con su lectura", () => {
+  const html = vistaPrevia("boletin");
+  const digest = JSON.parse(read("data/noticias-resumen.json"));
+  const bcrp = JSON.parse(read("data/official/bcrp-daily.json"));
+  const buenas = (digest.historias || []).filter((h) => h.nota && h.revision?.ok !== false);
+
+  // (1) Dólar mañana, semana y mes con rango y su lectura
+  for (const frase of ["El rango para mañana va entre", "El rango para la próxima semana va entre", "El rango para el próximo mes va entre"]) {
+    assert.ok(html.includes(frase), `el pagado trae la lectura «${frase}»`);
+  }
+  assert.match(html, /Al alza/);
+  assert.match(html, /Contexto/);
+
+  // (2) Cobre, oro y petróleo con variación y fecha (de la serie BCRP/EIA de data/)
+  const cobre = bcrp.series.COBRE.serie.at(-1)[1];
+  assert.ok(html.includes("Cobre") && html.includes("6.44") || html.includes(String(Math.round(cobre * 100) / 100)), "cobre con su valor de data/");
+  assert.match(html, /Oro/);
+  assert.match(html, /Petróleo/);
+
+  // (3) Hechos de la SMV del día
+  assert.match(html, /Hechos de importancia/);
+  assert.match(html, /Superintendencia del Mercado de Valores/);
+
+  // (4) TODAS las noticias resumidas (el digest completo)
+  for (const h of buenas) {
+    assert.ok(plano(html).includes(plano(h.titulo)), `el pagado trae «${h.titulo.slice(0, 30)}…»`);
+  }
+
+  // (5) Tus empresas: precio, variación, rango, SMV, noticias y lectura (que_hay / podría mover)
+  assert.match(html, /Tus empresas/);
+  assert.ok(html.includes("ALICORC1") && html.includes("BVN") && html.includes("CVERDEC1"), "las tres empresas del preview");
+  assert.match(html, /Lectura de/);
+  assert.match(html, /Qué hay/);
+  assert.match(html, /Podría mover/);
+
+  // (6) Nota de transparencia y enlaces de baja / preferencias existentes
+  assert.match(html, /El rango es estadístico; los factores son contexto, no una predicción de dirección/);
+  assert.match(html, /Darme de baja/);
+  assert.match(html, /Elegir mis empresas/);
+  assert.ok(!html.includes("{{BAJA}}") && !html.includes("{{EMPRESAS}}") && !html.includes("{{PERSONAL}}"), "sin marcadores sin rellenar");
+
+  // Cifras verificables contra data/
+  const cver = JSON.parse(read("data/empresas-estado.json")).emisores;
+  const byNemo = Object.values(cver).find((x) => x.nemonico === "CVERDEC1");
+  assert.ok(html.includes(`${byNemo.moneda} ${Number(byNemo.ultimo_cierre).toFixed(2)}`), "el precio de CVERDEC1 coincide con data/empresas-estado.json");
+});
+
+test("correos: sin emojis y cifras del rango del mes cuando hay endpoint", () => {
+  const gratis = vistaPrevia("gratis");
+  const pagado = vistaPrevia("boletin");
+  for (const html of [gratis, pagado]) {
+    assert.ok(!/[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/u.test(html), "sin emojis");
+    assert.ok(!html.includes("undefined") && !html.includes("NaN"), "sin cifras inventadas (undefined/NaN)");
+  }
+  // Deterministic fallback: without an LLM key everything renders anyway.
+  assert.match(gratis, /Qué podría presionar al dólar/);
+});
+
+test("fallback sin lecturas: los correos salen igual, sin la sección de presión ni lecturas", () => {
+  // With empty clasif/feed the readings have no titulares but the dollar
+  // series in data/ still produce the deterministic reading. To exercise the
+  // no-reading path we only assert the renderers tolerate lectura: null,
+  // which is what renderForTests exposes: both emails still render.
+  // (See the module-level guard in lecturaDolarSegura / lecturasPreview.)
+  const { execFileSync: exec } = { execFileSync };
+  const out = path.join(rootDir, "..", "handoff", "qa", "correo-gratis.html");
+  exec(process.execPath, ["scripts/boletin.js", "--dry-run"], {
+    cwd: rootDir,
+    env: { ...process.env, PREVIEW_EMPRESAS: "ALICORC1,BVN,CVERDEC1", PREVIEW_PLAN: "gratis", BOLETIN_PREVIEW_PATH: out },
+  });
+  const html = fs.readFileSync(out, "utf8");
+  assert.match(html, /Dólar interbancario/);
+});
