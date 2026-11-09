@@ -99,14 +99,7 @@ export default async function handler(req, res) {
         try {
           const usage = await trialUsage(user.dbId || user.id);
           if (usage && usage.used === false && !user.stripe_subscription_id) {
-            trial = {
-              trial_period_days: 7,
-              custom_text: {
-                submit: {
-                  message: "Pruebas el plan Boletín 7 días gratis. Hoy no se cobra nada. Si no cancelas antes del día 8, se cobrará US$ 1.99 al mes (o US$ 15 al año) hasta que canceles. Cancela cuando quieras desde Mi cuenta."
-                }
-              }
-            };
+            trial = { trial_period_days: 7 };
           }
         } catch (e) {
           console.error("[billing] trial check failed:", e.message);
@@ -124,8 +117,8 @@ export default async function handler(req, res) {
         // payment_method_collection is a Checkout Session field in Stripe;
         // it must be set alongside the trial so the card is saved for the charge at day 8.
         payment_method_collection: trial ? "always" : undefined,
-        // custom_text belongs to the Checkout Session itself; inside subscription_data Stripe rejects it
-        custom_text: trial ? trial.custom_text : undefined,
+        // No custom_text: Stripe rejects it while Managed Payments is on for the account. The trial terms are
+        // shown by Checkout itself and disclosed on /precios and /terms before the click.
         subscription_data: trial ? {
           metadata: { user_id: user.id, plan: wanted },
           trial_period_days: trial.trial_period_days
@@ -154,9 +147,7 @@ export default async function handler(req, res) {
     }
   } catch (e) {
     console.error(`[billing] ${action} failed:`, e.message);
-    // Temporary diagnostic: the checkout error shows the processor's real message (remove once the trial checkout works)
-    const detalle = action === "checkout" ? String(e.message || e).slice(0, 400) : undefined;
-    return sendJson(res, 502, { success: false, error: "No pudimos conectar con el procesador de pagos. Intenta de nuevo.", ...(detalle ? { detalle } : {}) });
+    return sendJson(res, 502, { success: false, error: "No pudimos conectar con el procesador de pagos. Intenta de nuevo." });
   }
 
   return sendJson(res, 400, { success: false, error: "Acción no válida." });
