@@ -152,6 +152,7 @@ export function publicUser(user) {
     currentPeriodEnd: user.current_period_end || null,
     cancelAtPeriodEnd: !!user.cancel_at_period_end,
     hasBillingAccount: !!user.stripe_customer_id,
+    trialUsed: user.trial_usado === true,
     trialUntil: trialing ? user.trial_hasta : null,
     trialInterval: trialing ? (user.trial_interval === "year" ? "year" : "month") : null,
     trialPrice: trialing ? { plan: user.plan === "boletin" ? "boletin" : "pro", monthly: user.plan === "boletin" ? "US$ 1.99" : null, yearly: user.plan === "boletin" ? "US$ 15" : null } : null

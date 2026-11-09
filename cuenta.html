@@ -407,7 +407,7 @@
           var yearlyTrial = u.trialInterval === "year" || (u.trialPrice && u.trialPrice.trialInterval === "year");
           var next = yearlyTrial
             ? "US$ 15 al año"
-            : (u.plan === "boletin" ? (u.trialPrice ? u.trialPrice.monthly : "US$ 1.99") : "");
+            : (u.plan === "boletin" ? "el precio del periodo que elegiste (US$ 1.99 al mes o US$ 15 al año)" : "");
           trialCopy = "Estás en prueba gratuita hasta el " + fmtDate(u.trialUntil || u.currentPeriodEnd) + ". Después se cobrará " + next + ". Puedes cancelar antes.";
         }
         if (trialCopy) copy = trialCopy;
