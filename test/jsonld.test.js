@@ -69,7 +69,7 @@ test("/dolar carries FAQPage and Dataset JSON-LD with real content", () => {
 
   const dataset = blocks.find((b) => b["@type"] === "Dataset");
   assert.ok(dataset, "dolar.html missing Dataset");
-  assert.ok(dataset.license?.length > 0, "Dataset must declare its license");
+  assert.ok(dataset.license?.["@type"] === "CreativeWork" && dataset.license?.url?.startsWith("https://"), "Dataset must declare its license as a CreativeWork object with an https url");
   assert.ok(
     dataset.distribution?.[0]?.contentUrl?.includes("estadisticas.bcrp.gob.pe"),
     "Dataset distribution must point at the official BCRP series API"

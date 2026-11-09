@@ -11,7 +11,7 @@
   <title>Tipo de cambio hoy en Perú: S/ 3.452 y rango para mañana · PerData</title>
   <meta name="description" content="Precio del dólar hoy en Perú: cierre oficial del BCRP de S/ 3.452 (5 de noviembre de 2026). Para el lunes, entre S/ 3.435 y S/ 3.468 (8 de cada 10 veces).">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Por qué el dólar sube o baja con tanta rapidez?","acceptedAnswer":{"@type":"Answer","text":"Porque el precio del dólar en el Perú es un precio de flujo: se ajusta rápido ante cambios en la oferta de divisas de los exportadores y ante la demanda de dólares de importadores e inversionistas. Un día de cobre favorable o un anuncio de la Reserva Federal puede mover el precio en la sesión, sin que cambie el panorama de fondo."}},{"@type":"Question","name":"¿Qué significa exactamente la cobertura del 80% fuera de muestra?","acceptedAnswer":{"@type":"Answer","text":"Que, al probar el modelo con períodos que no usó para ajustarse, el intervalo entre P10 y P90 contuvo el cierre real en cerca del 80% de los cortes evaluados. Es una medida honesta de error, distinta de la cobertura sobre los mismos datos con los que se calibró el modelo."}},{"@type":"Question","name":"¿El P50 va a ser el precio del cierre del día?","acceptedAnswer":{"@type":"Answer","text":"No necesariamente. El P50 es la mediana de la distribución y suele coincidir con el último cierre cuando el modelo no detecta una tendencia que perdura, como en los pronósticos de corto plazo publicados hoy, donde el P50 coincide con el cierre de 3.4520 S/ del 2026-11-05. Cuando el P50 se aparta del último cierre, la separación es la señal de que el modelo detecta una deriva."}},{"@type":"Question","name":"¿El rango mensual y el rango semanal no son el mismo pronóstico, verdad?","acceptedAnswer":{"@type":"Answer","text":"Son modelos distintos con horizontes distintos. El pronóstico diario y semanal se construye con simulación histórica filtrada sobre la serie de cierres del BCRP; el pronóstico mensual proviene del motor mensual precalculado, con su propia calibración (80.00% sobre 827 observaciones) y una trayectoria de tres meses. No se deben sumar ni comparar percentil por percentil entre horizontes distintos."}},{"@type":"Question","name":"¿Con qué frecuencia se actualiza esta página?","acceptedAnswer":{"@type":"Answer","text":"La página se genera de forma automática cuando termina la corrida diaria del PerData Engine: los cierres oficiales del BCRP, los pronósticos de corto plazo y el contexto macro se leen de los archivos de datos del proyecto y se vuelven a renderizar sin intervención manual. Por eso el último cierre que se muestra aquí es el del 2026-11-05, con fecha 5 de noviembre de 2026."}}]}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","name":"Tipo de cambio oficial del sol peruano frente al dólar (serie diaria PD04640PD del BCRP)","description":"Serie diaria del tipo de cambio de cierre publicado por el Banco Central de Reserva del Perú (BCRP), estadísticas diarias, en S/ por US$. Información pública del BCRP, citando la fuente.","url":"https://perdata.site/dolar","license":"Información pública del BCRP, citando la fuente","creator":{"@type":"Organization","name":"Banco Central de Reserva del Perú","url":"https://estadisticas.bcrp.gob.pe/estadisticas/series/"},"temporalCoverage":"2012-01-02/2026-11-05","variableMeasured":{"@type":"PropertyValue","name":"Tipo de cambio de cierre PEN/USD","unitText":"S/ por US$","codeValue":"PD04640PD"},"distribution":[{"@type":"DataDownload","encodingFormat":"application/json","contentUrl":"https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PD04640PD/json/2012-01-02/2026-11-05"}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","name":"Tipo de cambio oficial del sol peruano frente al dólar (serie diaria PD04640PD del BCRP)","description":"Serie diaria del tipo de cambio de cierre publicado por el Banco Central de Reserva del Perú (BCRP), estadísticas diarias, en S/ por US$. Información pública del BCRP, citando la fuente.","url":"https://perdata.site/dolar","license":{"@type":"CreativeWork","name":"Información pública del BCRP, citando la fuente","url":"https://estadisticas.bcrp.gob.pe/estadisticas/series/"},"creator":{"@type":"Organization","name":"Banco Central de Reserva del Perú","url":"https://estadisticas.bcrp.gob.pe/estadisticas/series/"},"temporalCoverage":"2012-01-02/2026-11-05","variableMeasured":{"@type":"PropertyValue","name":"Tipo de cambio de cierre PEN/USD","unitText":"S/ por US$","codeValue":"PD04640PD"},"distribution":[{"@type":"DataDownload","encodingFormat":"application/json","contentUrl":"https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PD04640PD/json/2012-01-02/2026-11-05"}]}</script>
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/svg+xml" href="/icon.svg">
 
@@ -79,21 +79,21 @@
           <a href="/guia" class="hover:text-ink transition no-underline">Guía</a>
           <a href="/boletin" class="hover:text-ink transition no-underline">Boletín</a>
           <a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
-</nav>
+        </nav>
       </div>
       <div class="flex items-center space-x-2 sm:space-x-3"><div id="navbarAuthContainer"></div><label class="ui-switch" title="Alternar modo claro / oscuro"><input id="themeToggle" type="checkbox" aria-label="Modo oscuro" /><div class="slider"><div class="circle"></div></div></label><button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menu" aria-expanded="false"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
     </div>
     <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors"><nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft" aria-label="Menu movil">
-<a href="/dolar" class="text-ink font-semibold py-1 no-underline" aria-current="page">Dólar</a>
-<a href="/explorer" class="hover:text-ink py-1 no-underline">Terminal</a>
-<a href="/empresas" class="hover:text-ink py-1 no-underline">Empresas</a>
-<a href="/mercado" class="hover:text-ink py-1 no-underline">Mercado</a>
-<a href="/noticias" class="hover:text-ink py-1 no-underline">Noticias</a>
-<a href="/metodologia" class="hover:text-ink py-1 no-underline">Metodología</a>
-<a href="/guia" class="hover:text-ink py-1 no-underline">Guía</a>
-<a href="/boletin" class="hover:text-ink py-1 no-underline">Boletín</a>
-<a href="/precios" class="hover:text-ink py-1 no-underline">Precios</a>
-</nav></div>
+          <a href="/dolar" class="text-ink font-semibold py-1 no-underline" aria-current="page">Dólar</a>
+          <a href="/explorer" class="hover:text-ink py-1 no-underline">Terminal</a>
+          <a href="/empresas" class="hover:text-ink py-1 no-underline">Empresas</a>
+          <a href="/mercado" class="hover:text-ink py-1 no-underline">Mercado</a>
+          <a href="/noticias" class="hover:text-ink py-1 no-underline">Noticias</a>
+          <a href="/metodologia" class="hover:text-ink py-1 no-underline">Metodología</a>
+          <a href="/guia" class="hover:text-ink py-1 no-underline">Guía</a>
+          <a href="/boletin" class="hover:text-ink py-1 no-underline">Boletín</a>
+          <a href="/precios" class="hover:text-ink py-1 no-underline">Precios</a>
+        </nav></div>
   </header>
 
   <main class="pd-data-main max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 w-full">

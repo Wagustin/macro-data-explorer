@@ -417,7 +417,7 @@ const datasetLd = {
   name: `Tipo de cambio oficial del sol peruano frente al dólar (serie diaria ${penSerie.codigo} del BCRP)`,
   description: `Serie diaria del tipo de cambio de cierre publicado por el ${bcrpDaily.fuente}, en ${penSerie.unidad}. ${bcrpDaily.licencia}.`,
   url: "https://perdata.site/dolar",
-  license: bcrpDaily.licencia,
+  license: { "@type": "CreativeWork", name: bcrpDaily.licencia, url: bcrpDaily.url },
   creator: { "@type": "Organization", name: "Banco Central de Reserva del Perú", url: bcrpDaily.url },
   temporalCoverage: `${primeraFechaSerie}/${ultimaFechaSerie}`,
   variableMeasured: {
@@ -444,8 +444,7 @@ const bloqueBoletin = `
       <p class="micro-label text-ink-soft">Boletin diario</p>
       <h2 class="pd-section-title" style="margin-top: 8px;">El dolar cada manana en tu correo</h2>
       <p class="pd-boletin-cta-text">
-        Recibe gratis cada manana el dolar y su rango para el proximo dia habil. Con el plan Boletin,
-        todo el mercado y tus empresas.
+        Recibe gratis cada manana el boletin completo: mercados, la proyeccion del dolar, los hechos de la SMV y los titulares. El plan Boletin añade tus empresas.
       </p>
       <p class="mt-4 mb-0"><a href="/boletin" class="pdl-btn pdl-btn-secondary no-underline">Ver el boletin y suscribirte</a></p>
     </section>`;
@@ -522,12 +521,30 @@ let htmlGenerado = `<!DOCTYPE html>
       <div class="flex items-center space-x-6">
         <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline"><span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Peru"><b></b><b></b><b></b></span></span></a>
         <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft" aria-label="Navegacion principal">
-          <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a><a href="/empresas" class="hover:text-ink transition no-underline">Empresas</a><a href="/dolar" class="text-ink font-semibold border-b border-ink pb-0.5 no-underline" aria-current="page">Dolar</a><a href="/mercado" class="hover:text-ink transition no-underline">Mercado</a><a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a><a href="/metodologia" class="hover:text-ink transition no-underline">Metodologia</a><a href="/guia" class="hover:text-ink transition no-underline">Guia</a><a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
+          <a href="/dolar" class="text-ink font-semibold border-b border-ink pb-0.5 no-underline" aria-current="page">Dolar</a>
+          <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a>
+          <a href="/empresas" class="hover:text-ink transition no-underline">Empresas</a>
+          <a href="/mercado" class="hover:text-ink transition no-underline">Mercado</a>
+          <a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a>
+          <a href="/metodologia" class="hover:text-ink transition no-underline">Metodologia</a>
+          <a href="/guia" class="hover:text-ink transition no-underline">Guia</a>
+          <a href="/boletin" class="hover:text-ink transition no-underline">Boletin</a>
+          <a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
         </nav>
       </div>
       <div class="flex items-center space-x-2 sm:space-x-3"><div id="navbarAuthContainer"></div><label class="ui-switch" title="Alternar modo claro / oscuro"><input id="themeToggle" type="checkbox" aria-label="Modo oscuro" /><div class="slider"><div class="circle"></div></div></label><button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menu" aria-expanded="false"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
     </div>
-    <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors"><nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft" aria-label="Menu movil"><a href="/explorer" class="hover:text-ink py-1 no-underline">Terminal</a><a href="/empresas" class="hover:text-ink py-1 no-underline">Empresas</a><a href="/dolar" class="text-ink font-semibold py-1 no-underline" aria-current="page">Dolar</a><a href="/mercado" class="hover:text-ink py-1 no-underline">Mercado</a><a href="/noticias" class="hover:text-ink py-1 no-underline">Noticias</a><a href="/metodologia" class="hover:text-ink py-1 no-underline">Metodologia</a><a href="/guia" class="hover:text-ink py-1 no-underline">Guia</a><a href="/precios" class="hover:text-ink py-1 no-underline">Precios</a></nav></div>
+    <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors"><nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft" aria-label="Menu movil">
+          <a href="/dolar" class="text-ink font-semibold py-1 no-underline" aria-current="page">Dolar</a>
+          <a href="/explorer" class="hover:text-ink py-1 no-underline">Terminal</a>
+          <a href="/empresas" class="hover:text-ink py-1 no-underline">Empresas</a>
+          <a href="/mercado" class="hover:text-ink py-1 no-underline">Mercado</a>
+          <a href="/noticias" class="hover:text-ink py-1 no-underline">Noticias</a>
+          <a href="/metodologia" class="hover:text-ink py-1 no-underline">Metodologia</a>
+          <a href="/guia" class="hover:text-ink py-1 no-underline">Guia</a>
+          <a href="/boletin" class="hover:text-ink py-1 no-underline">Boletin</a>
+          <a href="/precios" class="hover:text-ink py-1 no-underline">Precios</a>
+        </nav></div>
   </header>
 
   <main class="pd-data-main max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 w-full">
