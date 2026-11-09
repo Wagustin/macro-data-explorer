@@ -1,0 +1,54 @@
+name: V7 gdeltserie (GDELT daily tone/volume, 8 queries)
+
+# Full-history daily tone/volume refresh for the V7 engine covariates.
+# The full 2017..today download is ~1900 polite requests (~3 h); this
+# workflow only EXTENDS the tail (most recent ~3 months, newest first) so a
+# manual dispatch stays well inside the 6 h job limit, then commits the
+# merged CSVs to data/v7/ (license-clean aggregates, per CONVENCIONES).
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v7-gdeltserie
+  cancel-in-progress: false
+
+jobs:
+  extend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore cached CSVs
+        uses: actions/cache@v4
+        with:
+          path: data/v7/gdeltserie
+          key: gdeltserie-${{ hashFiles('research/v7/gdeltserie/download_gdeltserie.py') }}
+
+      - name: Prep tail dir
+        run: |
+          mkdir -p data/v7/gdeltserie
+          # Seed the tail window from the cached CSVs (if any) so the loader's
+          # merge keeps history: the loader writes per-query CSVs in-place.
+          # We run the loader with DATA_DIR=data/v7/gdeltserie and --from
+          # set to 3 months ago; its resume progress handles the rest.
+
+      - name: Extend tone/volume (tail, resumable)
+        env:
+          GDELTSERIE_DATA_DIR: data/v7/gdeltserie
+          GDELTSERIE_LOG: data/v7/gdeltserie/_gdeltserie-actions.log
+        run: |
+          python3 research/v7/gdeltserie/download_gdeltserie.py --from "$(date -u -d '3 months ago' +%F)" --delay 5 || \
+            python3 research/v7/gdeltserie/download_gdeltserie.py --from "$(date -u -d '3 months ago' +%F)" --delay 5
+
+      - name: Commit if changed
+        if: always()
+        run: |
+          git config user.name "perdata-bot"
+          git config user.email "perdata-bot@users.noreply.github.com"
+          git add data/v7/gdeltserie/*.csv
+          git diff --cached --quiet || (git commit -m "data(v7-gdeltserie): $(date -u +%F)" && git pull --rebase -q && git push)
