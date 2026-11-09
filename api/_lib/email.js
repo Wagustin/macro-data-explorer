@@ -36,3 +36,22 @@ export function passwordResetEmail(name, link) {
 </div></div>`
   };
 }
+
+// Advance notice before the 7-day Boletín trial ends. The caller fills the
+// end date; the charge is the Boletín price for the interval bought.
+export function trialEndingEmail(name, endDate, interval) {
+  const greeting = name ? `Hola, ${name}:` : "Hola:";
+  const amount = interval === "year" ? "US$ 15 al año" : "US$ 1.99 al mes";
+  return {
+    subject: "Tu prueba del plan Boletín termina pronto",
+    text: `${greeting}\n\nTu prueba gratuita del plan Boletín termina el ${endDate}.\n\nSi no cancelas antes, se cobrará ${amount} hasta que canceles.\n\nCancela antes desde https://perdata.site/cuenta si no lo quieres.\n\nEl equipo de PerData`,
+    html: `<div style="background:#F5F1E8;padding:28px 16px"><div style="max-width:480px;margin:0 auto;font-family:Helvetica,Arial,sans-serif;color:#1B1916">
+  <p style="font-family:Georgia,serif;font-style:italic;font-weight:600;font-size:26px;margin:0 0 20px">PerData</p>
+  <p style="margin:0 0 12px;font-size:16px">${greeting.replace(/</g, "&lt;")}</p>
+  <p style="margin:0 0 20px;font-size:16px;line-height:1.5">Tu prueba gratuita del plan Boletín termina el <strong>${endDate}</strong>.</p>
+  <p style="margin:0 0 24px;font-size:16px;line-height:1.5">Si no cancelas antes, se cobrará <strong>${amount}</strong> hasta que canceles.</p>
+  <p style="margin:0 0 24px"><a href="https://perdata.site/cuenta" style="display:inline-block;background:#1B1916;color:#F5F1E8;text-decoration:none;font-weight:600;padding:13px 24px">Cancelar desde Mi cuenta</a></p>
+  <p style="margin:0;color:#5E584E;font-size:13px;line-height:1.5">El equipo de PerData</p>
+</div></div>`
+  };
+}

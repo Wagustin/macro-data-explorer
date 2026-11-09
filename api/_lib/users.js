@@ -18,9 +18,11 @@ export const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_KEY);
 export const IS_PRODUCTION = process.env.VERCEL_ENV === "production" || process.env.NODE_ENV === "production";
 
 // Columns every deployment has (migration 0001). Billing columns come from 0002
-// and are only written by billing code paths.
+// and are only written by billing code paths. Trial columns come from 0014;
+// a deployment without that migration still reads the old column list.
 const BASE_COLUMNS = ["id", "email", "name", "role", "salt", "hash", "iterations", "provider", "created_at"];
 const USER_SELECT_COLUMNS = "id,email,name,role,salt,hash,iterations,provider,created_at,plan,stripe_customer_id,stripe_subscription_id,subscription_status,cancel_at_period_end,current_period_end,updated_at,reset_token_hash,reset_expires_at,password_changed_at";
+const USER_SELECT_COLUMNS_TRIAL = `${USER_SELECT_COLUMNS},trial_usado,trial_hasta`;
 
 async function supabase(method, query, body) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}${query}`, {
@@ -79,10 +81,28 @@ async function findOne(field, value) {
   if (!value) return null;
   assertStoreAvailable();
   if (USE_SUPABASE) {
-    const rows = await supabase("GET", `?${field}=eq.${encodeURIComponent(value)}&select=${USER_SELECT_COLUMNS}&limit=1`);
-    return Array.isArray(rows) && rows.length ? rows[0] : null;
+    // Prefer the trial columns (migration 0014); if the migration is not
+    // applied yet the extended select fails and we fall back to the base list.
+    let rows = await supabase("GET", `?${field}=eq.${encodeURIComponent(value)}&select=${USER_SELECT_COLUMNS_TRIAL}&limit=1`).catch(() => null);
+    if (!rows) rows = await supabase("GET", `?${field}=eq.${encodeURIComponent(value)}&select=${USER_SELECT_COLUMNS}&limit=1`).catch(() => ({}));
+    if (!Array.isArray(rows)) return null;
+    return rows.length ? rows[0] : null;
   }
   return readLocal().find(u => u[field] === value) || null;
+}
+
+// Reads only whether the user already used the 7-day trial. It throws when
+// the column does not exist yet (migration 0014 not applied) so the caller
+// can decide to offer no trial; findUserById above instead falls back silently.
+export async function trialUsage(userId) {
+  if (!userId) return null;
+  assertStoreAvailable();
+  if (USE_SUPABASE) {
+    const rows = await supabase("GET", `?id=eq.${encodeURIComponent(userId)}&select=trial_usado,trial_hasta&limit=1`);
+    if (!Array.isArray(rows) || !rows.length) return null;
+    return { used: rows[0].trial_usado === true, until: rows[0].trial_hasta || null };
+  }
+  return null; // Local development never has the trial columns: no trial there either.
 }
 
 export const findUserByEmail = (email) => findOne("email", String(email || "").toLowerCase());
@@ -122,6 +142,7 @@ export async function updateUser(id, patch) {
 
 /** Fields safe to send to the browser. */
 export function publicUser(user) {
+  const trialing = user.subscription_status === "trialing" && user.trial_hasta;
   return {
     id: user.id,
     email: user.email,
@@ -130,6 +151,8 @@ export function publicUser(user) {
     subscriptionStatus: user.subscription_status || null,
     currentPeriodEnd: user.current_period_end || null,
     cancelAtPeriodEnd: !!user.cancel_at_period_end,
-    hasBillingAccount: !!user.stripe_customer_id
+    hasBillingAccount: !!user.stripe_customer_id,
+    trialUntil: trialing ? user.trial_hasta : null,
+    trialPrice: trialing ? { plan: user.plan === "boletin" ? "boletin" : "pro", monthly: user.plan === "boletin" ? "US$ 1.99" : null, yearly: user.plan === "boletin" ? "US$ 15" : null } : null
   };
 }
