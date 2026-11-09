@@ -106,10 +106,10 @@ function rutaDe(url) {
   }
 }
 
-// Rutas exentas del mínimo de palabras: notas semanales, privacidad y términos.
+// Rutas exentas del mínimo de palabras: notas semanales, privacidad, términos y contacto (cortas por naturaleza).
 function exentoDePalabras(url) {
   const ruta = rutaDe(url);
-  return ruta.startsWith("/semana/") || ruta === "/privacidad" || ruta.startsWith("/privacidad/") || ruta === "/terms" || ruta.startsWith("/terms/");
+  return ruta.startsWith("/semana/") || ruta === "/privacidad" || ruta.startsWith("/privacidad/") || ruta === "/terms" || ruta.startsWith("/terms/") || ruta === "/contacto";
 }
 
 // Revisa una página ya descargada. `url`, `codigo`, `headers` y `html`.

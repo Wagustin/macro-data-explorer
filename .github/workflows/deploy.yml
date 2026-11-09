@@ -32,11 +32,6 @@ jobs:
         with:
           ref: main
           fetch-depth: 1
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
       - id: token
         name: Comprobar el token de Cloudflare
         env:
@@ -48,6 +43,14 @@ jobs:
             exit 0
           fi
           echo "hay=1" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        if: steps.token.outputs.hay == '1'
+        with:
+          node-version: 22
+          cache: npm
+      - name: Instalar dependencias
+        if: steps.token.outputs.hay == '1'
+        run: npm ci
       - name: Desplegar el Worker
         if: steps.token.outputs.hay == '1'
         env:
