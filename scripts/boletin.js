@@ -166,9 +166,21 @@ async function facts() {
   return { markets, smvFacts: uniqueFacts.slice(0, 8), headlines: headlines.filter((h) => !used.has(h.url)).slice(0, 6), forecast, stories, historiasTodas, historiasTop3, daily: penDaily, dailyVigente, cierre, todayLima, bcrp, ctx };
 }
 
+// Headline from the data only: no model, no claims about trends or records
+function entradillaDeterminista(f) {
+  const partes = [];
+  if (f.cierre?.valor != null) partes.push(`El dólar cerró en S/ ${fmt(f.cierre.valor, 3)}`);
+  const cobre = (f.markets || []).find((m) => /cobre/i.test(m.name));
+  if (cobre) partes.push(`el cobre en US$ ${fmt(cobre.value, 2)} la libra`);
+  return partes.length ? `${partes.join(" y ")}.` : "";
+}
+
 function grounded(text, factsText) {
   const known = new Set((factsText.match(/\d+(?:[.,]\d+)?/g) || []).map((n) => n.replace(",", ".")));
+  // Claims about records or periods ("mayor nivel del año") are not in the facts we pass: drop them
+  const UNSUPPORTED = /\b(mayor|menor|más alto|más bajo|máximo|mínimo|récord|record|histórico|histórica|en lo que va|en el año|del año|desde 20\d\d|nivel más)\b/i;
   return text.split(/(?<=[.!?])\s+/).filter((sentence) => {
+    if (UNSUPPORTED.test(sentence)) return false;
     const nums = (sentence.match(/\d+(?:[.,]\d+)?/g) || []).map((n) => n.replace(",", "."));
     return nums.every((n) => known.has(n) || known.has(String(Number(n))) || Number(n) < 32);
   }).join(" ");
@@ -211,6 +223,7 @@ Devuelve SOLO un JSON con:
       if (start < 0) throw new Error(`respuesta sin JSON: ${text.slice(0, 160).replace(/\s+/g, " ")}`);
       const out = JSON.parse(text.slice(start, text.lastIndexOf("}") + 1));
       for (const k of Object.keys(out)) out[k] = grounded(String(out[k] || ""), factsText);
+      out.entradilla = ""; // the headline is built from the data (see entradillaDeterminista)
       console.log(`Interpretación: ${model}`);
       return out;
     } catch (e) {
@@ -343,14 +356,17 @@ function render(f, ai, dateLabel, lectura) {
   }).join("");
 
   const punto = (p) => `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:2px">${esc(p.texto)}</div>`;
-  const ladoOk = (h, lado) => (h?.[lado] || []).length ? `<div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin:10px 0 2px">${lado === "al_alza" ? "Al alza" : lado === "a_la_baja" ? "A la baja" : "Contexto"}</div>${h[lado].map(punto).join("")}` : "";
+  // The same factor often applies to every horizon: show it once, in the first one
+  const vistos = new Set();
+  const nuevos = (h, lado) => (h?.[lado] || []).filter((p) => !vistos.has(p.texto) && vistos.add(p.texto));
+  const ladoOk = (h, lado, ps = nuevos(h, lado)) => ps.length ? `<div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin:10px 0 2px">${lado === "al_alza" ? "Podría presionar al dólar al alza" : lado === "a_la_baja" ? "Podría presionar al dólar a la baja" : "Contexto"}</div>${ps.map(punto).join("")}` : "";
   const lecturaHorizonte = (h, titulo, rango, conContexto = true) => {
     if (!h) return "";
-    const rangoTxt = rango ? `entre S/ ${fmt(rango.p10, 3)} y S/ ${fmt(rango.p90, 3)} <span style="font-size:11px;color:${C.soft}">(8 de cada 10 veces)</span> · central: S/ ${fmt(rango.p50, 3)}` : "";
+    const rangoTxt = rango ? `entre S/ ${fmt(rango.p10, 3)} y S/ ${fmt(rango.p90, 3)} <br><span style="font-size:11px;color:${C.soft}">8 de cada 10 veces · central: S/ ${fmt(rango.p50, 3)}</span>` : "";
     return `<tr><td style="padding:14px 0;border-bottom:1px solid ${C.rule}">
       <div style="font-family:${ui};font-size:12px;color:${C.soft}">${esc(titulo)}</div>
       ${rangoTxt ? `<div style="font-family:${mono};font-size:14px;color:${C.ink};margin-top:2px">${rangoTxt}</div>` : ""}
-      ${h.resumen ? `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:6px">${esc(h.resumen)}</div>` : ""}
+      ${h.resumen && !h.determinista ? `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:6px">${esc(h.resumen)}</div>` : ""}
       ${ladoOk(h, "al_alza")}${ladoOk(h, "a_la_baja")}${conContexto ? ladoOk(h, "contexto") : ""}
     </td></tr>`;
   };
@@ -376,7 +392,7 @@ function render(f, ai, dateLabel, lectura) {
   const news = f.headlines.map((n) => `<tr><td style="padding:12px 0;border-bottom:1px solid ${C.rule}">
       <a href="${esc(n.url)}" style="font-family:${serif};font-size:16px;line-height:1.45;color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(n.title)}</a>
       <div style="font-family:${ui};font-size:12px;color:${C.soft};margin-top:3px">${esc(n.source)}</div></td></tr>`).join("");
-  const preheader = esc(ai?.entradilla || `Dólar, cobre, oro y petróleo; hechos de importancia de la SMV y titulares del ${dateLabel}.`);
+  const preheader = esc(entradillaDeterminista(f) || `Dólar, cobre, oro y petróleo; hechos de importancia de la SMV y titulares del ${dateLabel}.`);
 
   // Brief (paid #4): ALL the digest stories, as the current full digest.
   const historiaHtml = (h) => `<tr><td style="padding:14px 0;border-bottom:1px solid ${C.rule}">
@@ -400,7 +416,7 @@ function render(f, ai, dateLabel, lectura) {
     </tr></table>
     <div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:6px;text-transform:none">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
   </td></tr>
-  ${ai?.entradilla ? `<tr><td style="padding:22px 0 4px">${para(ai.entradilla, 20)}</td></tr>` : ""}
+  ${entradillaDeterminista(f) ? `<tr><td style="padding:22px 0 4px">${para(entradillaDeterminista(f), 20)}</td></tr>` : ""}
   ${fc}
   {{PERSONAL}}
   ${f.historiasTodas?.length ? section("Lo importante de hoy") + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${f.historiasTodas.map(historiaHtml).join("")}</table><div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:6px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
@@ -463,8 +479,8 @@ function renderGratis(f, dateLabel, lectura) {
     ? `<div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin:10px 0 2px">${label}</div>${h[key].map(punto).join("")}` : "";
   const presiona = mananaOk ? `<tr><td style="padding:24px 0 0">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:2px solid ${C.ink};padding-top:10px;font-family:${serif};font-size:22px;font-weight:600;color:${C.ink}">Qué podría presionar al dólar</td></tr></table>
-    <div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:8px">${esc(mananaLec.resumen)}</div>
-    ${lado(mananaLec, "al_alza", "Al alza")}${lado(mananaLec, "a_la_baja", "A la baja")}${lado(mananaLec, "contexto", "Contexto")}
+    ${mananaLec.determinista ? "" : `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:8px">${esc(mananaLec.resumen)}</div>`}
+    ${lado(mananaLec, "al_alza", "Podría presionar al dólar al alza")}${lado(mananaLec, "a_la_baja", "Podría presionar al dólar a la baja")}${lado(mananaLec, "contexto", "Contexto")}
   </td></tr>` : "";
   const transparencia = `<tr><td style="padding:16px 0 0;font-family:${ui};font-size:13px;line-height:1.55;color:${C.soft}">El rango es estadístico; los factores son contexto, no una predicción de dirección.</td></tr>`;
 
