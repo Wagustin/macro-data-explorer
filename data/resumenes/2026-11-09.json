@@ -1,11 +1,11 @@
 {
- "actualizado": "2026-11-09T06:30:12.946Z",
+ "actualizado": "2026-11-09T09:37:50.573Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
    "titulo": "Perú superaría a Chile como cuarta economía sudamericana en 2027",
-   "nota": "El MEF proyecta que el PBI peruano alcanzará 413.597 millones de dólares en 2027, desplazando a Chile del cuarto puesto regional. La fortaleza fiscal del Estado se usará para defender empleo y crecimiento ante choques externos.",
+   "nota": "El PBI peruano alcanzaría USD 413.597 millones en 2027 según proyecciones. Esto permitiría al país desplazar a Chile del cuarto puesto regional.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
@@ -20,12 +20,6 @@
      "fuente": "Infobae Perú",
      "url": "https://www.infobae.com/peru/2026/11/07/peru-a-poco-de-convertirse-en-la-cuarta-economia-mas-grande-de-sudamerica-dejando-atras-a-chile-pbi-alcanzaria-los-usd-413597-millones-en-2027/",
      "fecha": "2026-11-08T23:01:06.000Z"
-    },
-    {
-     "titulo": "Gobierno usará fortaleza fiscal para defender empleo y crecimiento ante choques externos",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-gobierno-usara-fortaleza-fiscal-para-defender-empleo-y-crecimiento-ante-choques-externos-1099034.aspx",
-     "fecha": "2026-11-07T20:58:15.000Z"
     }
    ],
    "revision": {
@@ -35,8 +29,26 @@
    }
   },
   {
-   "titulo": "Minem autoriza estudios ambientales para proyectos eléctricos millonarios",
-   "nota": "El Ministerio de Energía y Minas aprobó los estudios ambientales de inversiones eléctricas por 5.500 millones de dólares previstas para 2026.",
+   "titulo": "ProInversión presenta ante Congreso récord de S/10,800 millones adjudicados en 2026 en OxI",
+   "tema": "Economía y fiscal",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "ProInversión presenta ante Congreso récord de S/10,800 millones adjudicados en 2026 en OxI",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-proinversion-presenta-ante-congreso-record-s10800-millones-adjudicados-2026-oxi-1099073.aspx",
+     "fecha": "2026-11-08T13:00:00.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": false,
+    "motivo": "La nota añade la afirmación «La cifra supera los registros históricos del programa», que no figura en el titular, y el título usa la sigla «OxI», que no está desarrollada ni aparece en la fuente."
+   }
+  },
+  {
+   "titulo": "Minem aprueba estudios ambientales para inversiones eléctricas de 2026",
+   "nota": "El Ministerio de Energía y Minas aprobó los estudios ambientales de proyectos eléctricos con inversiones por 5.500 millones de dólares para 2026.",
    "tema": "Energía",
    "empresas": [],
    "fuentes": [
@@ -60,33 +72,8 @@
    }
   },
   {
-   "titulo": "DP World condiciona fase 3 del Muelle Sur del Callao",
-   "nota": "DP World avanza en la fase 3 del Muelle Sur del Callao, sujeta a plazos y condiciones para concretar la inversión. APM Terminals Callao también alista plan para extender su concesión con inversiones fuera del puerto.",
-   "tema": "Bolsa y empresas",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "DP World va por la fase 3 del Muelle Sur del Callao: plazos y la condición para invertir",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/empresas/puerto-del-callao-dp-world-alista-otra-ampliacion-del-muelle-sur-pero-pone-una-condicion-noticia/",
-     "fecha": "2026-11-08T21:00:00.000Z"
-    },
-    {
-     "titulo": "APM Terminals Callao alista plan para extender concesión con inversiones fuera del puerto",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/empresas/el-nino-y-mas-concesion-el-plan-de-apm-terminals-para-el-puerto-del-callao-hacia-2027-noticia/",
-     "fecha": "2026-11-08T04:34:00.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "Metalmecánicas peruanas impulsadas por minería y El Niño",
-   "nota": "El sector metalmecánico se alista para un repunte impulsado por la minería, la prevención ante El Niño y la demanda de clientes de Estados Unidos. Las empresas prevén mayor actividad en los próximos meses.",
+   "titulo": "Metalmecánicas se alistan para repunte impulsado por minería y El Niño",
+   "nota": "El sector metalmecánico prevé mayor demanda por la reactivación minera, la prevención ante El Niño y pedidos de clientes estadounidenses. Las empresas ajustan capacidad para atender los nuevos contratos.",
    "tema": "Minería y metales",
    "empresas": [],
    "fuentes": [
@@ -104,34 +91,35 @@
    }
   },
   {
-   "titulo": "Gobierno confirma entrega de bonos de s/ 200 mensuales por el fenómeno El Niño: ¿A quiénes va dirigido?",
-   "tema": "Economía y fiscal",
+   "titulo": "DP World impulsa fase 3 del Muelle Sur",
+   "nota": "El operador portuario avanza en la tercera fase con plazos definidos y sujeta a una condición para invertir.",
+   "tema": "Bolsa y empresas",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Gobierno confirma entrega de bonos de s/ 200 mensuales por el fenómeno El Niño: ¿A quiénes va dirigido?",
-     "fuente": "Infobae Perú",
-     "url": "https://www.infobae.com/peru/2026/11/09/gobierno-confirma-entrega-de-bonos-de-s-200-por-el-fenomeno-el-nino-a-quienes-va-dirigido/",
-     "fecha": "2026-11-09T02:43:06.000Z"
+     "titulo": "DP World va por la fase 3 del Muelle Sur del Callao: plazos y la condición para invertir",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/empresas/puerto-del-callao-dp-world-alista-otra-ampliacion-del-muelle-sur-pero-pone-una-condicion-noticia/",
+     "fecha": "2026-11-08T21:00:00.000Z"
     }
    ],
    "revision": {
     "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": false,
-    "motivo": "La nota añade que la medida está dirigida a «población vulnerable», dato que no consta en el titular, y omite la precisión de a quiénes va dirigido que sí aparece en la fuente."
+    "ok": true,
+    "motivo": ""
    }
   },
   {
-   "titulo": "ProInversión reporta récord de adjudicaciones en OxI para 2026",
-   "nota": "La agencia presentó ante el Congreso un monto adjudicado de 10.800 millones de soles en Obras por Impuestos. La cifra corresponde al año 2026 y fue informada por la Agencia Andina.",
+   "titulo": "Riesgo país mínimo fortalece al Perú frente a El Niño",
+   "nota": "La Cámara de Comercio de Lima señala que el riesgo país en mínimos fortalece la capacidad del Perú para enfrentar El Niño.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "ProInversión presenta ante Congreso récord de S/10,800 millones adjudicados en 2026 en OxI",
+     "titulo": "CCL: Riesgo país en mínimos fortalece capacidad del Perú para enfrentar El Niño",
      "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-proinversion-presenta-ante-congreso-record-s10800-millones-adjudicados-2026-oxi-1099073.aspx",
-     "fecha": "2026-11-08T13:00:00.000Z"
+     "url": "https://andina.pe/agencia/noticia-ccl-riesgo-pais-minimos-fortalece-capacidad-del-peru-para-enfrentar-nino-1099082.aspx",
+     "fecha": "2026-11-08T16:00:00.000Z"
     }
    ],
    "revision": {

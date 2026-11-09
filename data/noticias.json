@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-09T06:25:01.399Z",
+  "actualizado": "2026-11-09T09:31:30.004Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -34,7 +34,7 @@
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 5
+      "items": 6
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 13
+      "items": 17
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,87 @@
     }
   },
   "noticias": [
+    {
+      "id": "gestion-019984200e",
+      "titulo": "Grupo Sandoval amplía su negocio de coworking en Lima Cargo City: ¿qué viene para su próxima fase?",
+      "url": "https://gestion.pe/economia/empresas/grupo-sandoval-evalua-ampliar-su-coworking-en-lima-cargo-city-y-llegar-al-aeropuerto-jorge-chavez-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-09T09:15:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-45f330ac10",
+      "titulo": "Gloria acelera su negocio de panetones: ¿qué pasa dentro de su planta y cuánto espera crecer?",
+      "url": "https://gestion.pe/economia/empresas/que-hay-detras-del-paneton-gloria-asi-prepara-su-negocio-para-navidad-y-busca-crecer-hasta-10-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-09T08:00:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-fc2d317c99",
+      "titulo": "El dividendo de Silicon Valley profundiza las diferencias en América Latina por el auge de la IA",
+      "url": "https://www.bloomberglinea.com/mercados/el-dividendo-de-silicon-valley-profundiza-las-diferencias-en-america-latina-por-el-auge-de-la-ia/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-09T08:00:00.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-3e3377e928",
+      "titulo": "Estados Unidos pone en marcha una iniciativa para interrumpir las rutas terrestres que utiliza Irán para transportar armas",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/estados-unidos-pone-en-marcha-una-iniciativa-para-interrumpir-las-rutas-terrestres-que-utiliza-iran-para-transportar-armas/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-09T07:15:16.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-4255a4b9bc",
+      "titulo": "Trump dice que su política de deportaciones probablemente perjudicó a los republicanos en las elecciones",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/trump-dice-que-su-politica-de-deportaciones-probablemente-perjudico-a-los-republicanos-en-las-elecciones/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-09T07:12:10.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-1709733e99",
+      "titulo": "El oro sube mientras el petróleo prolonga su caída y la investigación sobre Nvidia sacude los mercados",
+      "url": "https://www.bloomberglinea.com/mercados/el-oro-sube-mientras-el-petroleo-prolonga-su-caida-y-la-investigacion-sobre-nvidia-sacude-los-mercados/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-09T07:02:55.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-ad52d817c9",
+      "titulo": "inDrive, de la movilidad a la logística y dos nuevos servicios en la mira al 2027",
+      "url": "https://gestion.pe/economia/empresas/indrive-potenciara-logistica-para-pymes-y-explora-dos-nuevos-servicios-mas-alla-de-la-movillidad-para-el-2027-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-09T07:00:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-6a0ac7b0dd",
+      "titulo": "Bolsas asiáticas suben 1,9% y recuperan terreno tras desplome; Taiwán lidera las ganancias",
+      "url": "https://www.bloomberglinea.com/mercados/bolsas-asiaticas-bajo-riesgo-de-sufrir-presiones-por-la-investigacion-sobre-nvidia/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-09T06:53:10.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-871b35efc2",
+      "titulo": "El bono para afectados por el fenómeno de El Niño llegaría hasta los S/ 200, estima Elmer Cuba",
+      "url": "https://rpp.pe/politica/gobierno/el-bono-para-afectados-por-el-fenomeno-de-el-nino-llegaria-hasta-los-s-200-estima-elmer-cuba-noticia-1716747",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-09T06:14:17.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "gestion-e06711c6bc",
       "titulo": "MEF plantea reducir aportes a salud y pensiones para trabajadores de menores ingresos",
@@ -190,15 +271,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-019984200e",
-      "titulo": "Grupo Sandoval amplía su negocio de coworking en Lima Cargo City: ¿qué viene para su próxima fase?",
-      "url": "https://gestion.pe/economia/empresas/grupo-sandoval-evalua-ampliar-su-coworking-en-lima-cargo-city-y-llegar-al-aeropuerto-jorge-chavez-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-09T01:00:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "infobae-8887b20063",
       "titulo": "López Aliaga despotrica contra el ministro de Trabajo: “Es indecente (...) me dan asco los políticos como usted”",
       "url": "https://www.infobae.com/peru/2026/11/08/rafael-lopez-aliaga-despotrica-contra-el-ministro-juan-sheput-es-indecente-me-dan-asco-los-politicos-como-usted/",
@@ -224,15 +296,6 @@
       "fecha_iso": "2026-11-09T00:00:00.000Z",
       "categoria": "Otros",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "bloomberg_linea-6a0ac7b0dd",
-      "titulo": "Bolsas asiáticas, bajo riesgo de sufrir presiones por la investigación sobre Nvidia",
-      "url": "https://www.bloomberglinea.com/mercados/bolsas-asiaticas-bajo-riesgo-de-sufrir-presiones-por-la-investigacion-sobre-nvidia/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-08T23:39:11.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "infobae-8f2dfb7f67",
@@ -262,15 +325,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-ad52d817c9",
-      "titulo": "inDrive, de la movilidad a la logística y dos nuevos servicios en la mira al 2027",
-      "url": "https://gestion.pe/economia/empresas/indrive-potenciara-logistica-para-pymes-y-explora-dos-nuevos-servicios-mas-alla-de-la-movillidad-para-el-2027-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-08T21:45:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "rpp-9186424385",
       "titulo": "\"Blanco de una operación de inteligencia extranjera\": Nvidia investigará a su director ejecutivo por amorío con supuesta espía china",
       "url": "https://rpp.pe/mundo/estados-unidos/blanco-de-una-operacion-de-inteligencia-extranjera-nvidia-investigara-a-su-director-ejecutivo-por-amorio-con-supuesta-espia-china-noticia-1716690",
@@ -280,21 +334,21 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-5586262bed",
-      "titulo": "Cusco recibiría más de US$ 11 millones por CADE 2026: ¿está listo para el turismo de negocios?",
-      "url": "https://gestion.pe/economia/empresas/cade-2026-cusco-proyecta-un-movimiento-economico-de-s-38-millones-y-espera-elevar-la-ocupacion-hotelera-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-08T21:00:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-cc6e93fa81",
       "titulo": "DP World va por la fase 3 del Muelle Sur del Callao: plazos y la condición para invertir",
       "url": "https://gestion.pe/economia/empresas/puerto-del-callao-dp-world-alista-otra-ampliacion-del-muelle-sur-pero-pone-una-condicion-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-08T21:00:00.000Z",
       "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-5586262bed",
+      "titulo": "Cusco recibiría más de US$ 11 millones por CADE 2026: ¿está listo para el turismo de negocios?",
+      "url": "https://gestion.pe/economia/empresas/cade-2026-cusco-proyecta-un-movimiento-economico-de-s-38-millones-y-espera-elevar-la-ocupacion-hotelera-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-08T21:00:00.000Z",
+      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -343,21 +397,21 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "gestion-a546820866",
-      "titulo": "Metalmecánicas listas para el repunte: minería, El Niño y clientes de EE.UU las impulsan",
-      "url": "https://gestion.pe/economia/empresas/metalmecanicas-preven-boom-en-2027-por-mineria-reconstruccion-por-el-nino-y-demanda-de-eeuu-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-08T20:00:00.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-a91ad6910b",
       "titulo": "¿Una alternativa para elevar la productividad del agro peruano? Los cultivos en el radar",
       "url": "https://gestion.pe/economia/agricultura-de-peru-una-alternativa-para-elevar-la-productividad-del-agro-los-cultivos-en-el-radar-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-08T20:00:00.000Z",
       "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-a546820866",
+      "titulo": "Metalmecánicas listas para el repunte: minería, El Niño y clientes de EE.UU las impulsan",
+      "url": "https://gestion.pe/economia/empresas/metalmecanicas-preven-boom-en-2027-por-mineria-reconstruccion-por-el-nino-y-demanda-de-eeuu-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-08T20:00:00.000Z",
+      "categoria": "Minería y metales",
       "semaforo": "AMARILLO"
     },
     {
@@ -385,15 +439,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-08T18:45:00.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-45f330ac10",
-      "titulo": "Gloria acelera su negocio de panetones: ¿qué pasa dentro de su planta y cuánto espera crecer?",
-      "url": "https://gestion.pe/economia/empresas/que-hay-detras-del-paneton-gloria-asi-prepara-su-negocio-para-navidad-y-busca-crecer-hasta-10-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-08T18:30:00.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -757,15 +802,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "bloomberg_linea-3e3377e928",
-      "titulo": "Estados Unidos pone en marcha una iniciativa para interrumpir las rutas terrestres que utiliza Irán para transportar armas",
-      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/estados-unidos-pone-en-marcha-una-iniciativa-para-interrumpir-las-rutas-terrestres-que-utiliza-iran-para-transportar-armas/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-07T18:21:32.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-61689b95aa",
       "titulo": "¿Empresas en Perú empezarían a trasladar alza de combustibles a sus precios de venta?",
       "url": "https://gestion.pe/economia/glp-gasolina-y-otros-en-peru-empresas-empezarian-a-trasladar-alza-de-combustibles-al-precio-de-venta-noticia/",
@@ -951,51 +987,6 @@
       "url": "https://www.gob.pe/institucion/mef/noticias/1465332-mef-saluda-aprobacion-del-credito-suplementario-por-s-8228-millones-para-garantizar-la-continuidad-de-obras-y-servicios-esenciales",
       "fuente": "Ministerio de Economía y Finanzas",
       "fecha_iso": "2026-10-29T02:05:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-37900b23e9",
-      "titulo": "Censos Nacionales 2025: Disminuye la población menor de 15 años en la Región Lima",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1465128-censos-nacionales-2025-disminuye-la-poblacion-menor-de-15-anos-en-la-region-lima",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-10-28T19:31:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "mef-476e8448d5",
-      "titulo": "Contrataciones para atender la inminencia o la ocurrencia de situaciones de emergencia o desastre",
-      "url": "https://www.gob.pe/institucion/mef/noticias/1465089-contrataciones-para-atender-la-inminencia-o-la-ocurrencia-de-situaciones-de-emergencia-o-desastre",
-      "fuente": "Ministerio de Economía y Finanzas",
-      "fecha_iso": "2026-10-28T17:37:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-7e1824fb47",
-      "titulo": "Producción de arándanos en Ica, Piura, Lima, Áncash y La Libertad concentró el 81,6% del total nacional en agosto de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1464747-produccion-de-arandanos-en-ica-piura-lima-ancash-y-la-libertad-concentro-el-81-6-del-total-nacional-en-agosto-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-10-28T00:43:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "mef-2c3a795cce",
-      "titulo": "Ministro Elmer Cuba destacó las fortalezas de la economía peruana ante gremios empresariales de Estados Unidos reunidos por el inPerú",
-      "url": "https://www.gob.pe/institucion/mef/noticias/1464678-ministro-elmer-cuba-destaco-las-fortalezas-de-la-economia-peruana-ante-gremios-empresariales-de-estados-unidos-reunidos-por-el-inperu",
-      "fuente": "Ministerio de Economía y Finanzas",
-      "fecha_iso": "2026-10-27T22:25:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "mef-ca4b81577e",
-      "titulo": "Gobierno promueve al Perú como destino de inversiones internacionales en roadshow inPerú de Nueva York",
-      "url": "https://www.gob.pe/institucion/mef/noticias/1462927-gobierno-promueve-al-peru-como-destino-de-inversiones-internacionales-en-roadshow-inperu-de-nueva-york",
-      "fuente": "Ministerio de Economía y Finanzas",
-      "fecha_iso": "2026-10-26T23:10:00.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
     }
