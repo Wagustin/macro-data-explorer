@@ -266,6 +266,8 @@
             <h2 class="pd-plan-name">Boletín + tus empresas</h2>
             <p class="pd-plan-price"><span id="pdBolAmount" class="pd-plan-amount font-mono tnum">—</span><span id="pdBolPer" class="pd-plan-per"></span></p>
             <p class="pd-plan-desc">Para quien sigue el mercado cada mañana: el correo completo con sus empresas. Es el correo gratis más el resto del mercado y tu sección personal.</p>
+            <p class="pd-plan-trial"><strong>Prueba de 7 días gratis</strong> · se pide tarjeta</p>
+            <p id="pdBolTrial" class="pd-plan-trial-note">Se pide tarjeta. Si no cancelas antes del día 8, se cobra US$ 1.99 al mes (o US$ 15 al año).</p>
           </div>
           <ul class="pd-perks">
             <li><span>Todo lo del plan Gratis</span></li>
@@ -428,6 +430,11 @@
         var bolPer = bolPrice ? (interval === "year" ? "al año" : "al mes") : (billing.enabled ? "" : "muy pronto");
         if (interval === "year" && bolYear) { try { bolPer = "al año · " + A.formatMoney(Math.round(bolYear.amount / 12), bolYear.currency) + " al mes"; } catch (e) {} }
         document.getElementById("pdBolPer").textContent = bolPer;
+        // The 7-day trial disclosure stays visible next to the price.
+        // It is the same sentence before and after the switch so switching
+        // the period never hides it.
+        document.getElementById("pdBolTrial").textContent =
+          "Se pide tarjeta. Si no cancelas antes del día 8, se cobra US$ 1.99 al mes (o US$ 15 al año).";
         var bolCta = document.getElementById("pdBolCta");
         if (user && (user.plan === "boletin" || user.plan === "pro")) {
           bolCta.disabled = user.plan === "pro";
@@ -436,7 +443,17 @@
         } else if (!billing.enabled || !bolPrice) {
           bolCta.disabled = true; bolCta.textContent = "Disponible muy pronto"; bolCta.dataset.action = "";
         } else {
-          bolCta.disabled = false; bolCta.textContent = user ? "Suscribirme al Boletín" : "Crear cuenta y suscribirme"; bolCta.dataset.action = "checkout";
+          // La prueba gratuita de 7 días con tarjeta es solo del plan Boletín,
+          // y solo para quien aún no la usó. Sin eligibilidad se mantiene el
+          // texto de suscripción pago. publicUser todavía no expone esa
+          // elegibilidad, así que mientras tanto se mantiene visible el
+          // botón de prueba y Stripe decide el corte real al pagar.
+          var trialUsed = user && (user.trialUsed === true || (user.trialPrice && user.trialPrice.trialUsed === true));
+          bolCta.disabled = false;
+          bolCta.textContent = trialUsed
+            ? (user ? "Suscribirme al Boletín" : "Crear cuenta y suscribirme")
+            : (user ? "Probar 7 días gratis" : "Crear cuenta y probar 7 días gratis");
+          bolCta.dataset.action = "checkout";
         }
 
         var freeCta = document.getElementById("pdFreeCta");

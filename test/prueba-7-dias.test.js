@@ -407,6 +407,51 @@ test("account page shows the free trial notice with the amount", async () => {
   assert.match(html, /Puedes cancelar antes\./);
 });
 
+test("cuenta muestra US$ 15 al año para la prueba anual", async () => {
+  const fs = await import("node:fs");
+  const html = fs.readFileSync(new URL("../cuenta.html", import.meta.url), "utf8");
+  assert.match(html, /trialInterval === "year"/);
+  assert.match(html, /US\$ 15 al año/);
+});
+
+test("precios y boletin muestran la divulgación de la prueba; Pro no promete prueba", async () => {
+  const fs = await import("node:fs");
+  const precios = fs.readFileSync(new URL("../precios.html", import.meta.url), "utf8");
+  const boletin = fs.readFileSync(new URL("../boletin.html", import.meta.url), "utf8");
+  const terms = fs.readFileSync(new URL("../terms.html", import.meta.url), "utf8");
+  const disclosure = /Se pide tarjeta\. Si no cancelas antes del día 8, se cobra US\$ 1\.99 al mes \(o US\$ 15 al año\)\./;
+  assert.match(precios, disclosure);
+  assert.match(precios, /Probar 7 días gratis/);
+  assert.match(boletin, disclosure);
+  assert.match(boletin, /Prueba de 7 días gratis/);
+  assert.match(terms, /Prueba gratuita del plan Boletín/);
+  assert.match(terms, /una sola vez por cuenta y por tarjeta/);
+  assert.match(terms, /3 días antes/);
+  assert.match(terms, /9 de noviembre de 2026/);
+  // La tarjeta Pro no promete prueba: solo la copia del plan Boletín la lleva.
+  const proCard = precios.slice(precios.indexOf('<h2 class="pd-plan-name">Pro</h2>'));
+  assert.doesNotMatch(proCard.slice(0, proCard.indexOf("</article>")), /Probar 7 días|prueba gratuita|Prueba de 7 días/);
+});
+
+test("publicUser expone trialInterval para la prueba del Boletín", async () => {
+  const users = await import("../api/_lib/users.js");
+  const base = {
+    id: "u1",
+    email: "trial@example.com",
+    name: "Ana",
+    plan: "boletin",
+    subscription_status: "trialing",
+    current_period_end: "2026-11-16T00:00:00.000Z",
+    cancel_at_period_end: false,
+    stripe_customer_id: "cus_x",
+    trial_hasta: "2026-11-16T00:00:00.000Z"
+  };
+  assert.equal(users.publicUser({ ...base, trial_interval: "year" }).trialInterval, "year");
+  assert.equal(users.publicUser({ ...base, trial_interval: "month" }).trialInterval, "month");
+  assert.equal(users.publicUser({ ...base, trial_interval: undefined }).trialInterval, "month");
+  assert.equal(users.publicUser({ ...base, subscription_status: "active" }).trialInterval, null);
+});
+
 test("migration 0014 is idempotent and registers the trial tables", async () => {
   const fs = await import("node:fs");
   const sql = fs.readFileSync(new URL("../supabase/migrations/0014_prueba_7_dias.sql", import.meta.url), "utf8");

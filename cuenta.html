@@ -404,7 +404,10 @@
         var copy = "";
         var trialCopy = "";
         if (isPro && u.subscriptionStatus === "trialing" && u.currentPeriodEnd) {
-          var next = u.plan === "boletin" ? (u.trialPrice ? u.trialPrice.monthly : "US$ 1.99") : "";
+          var yearlyTrial = u.trialInterval === "year" || (u.trialPrice && u.trialPrice.trialInterval === "year");
+          var next = yearlyTrial
+            ? "US$ 15 al año"
+            : (u.plan === "boletin" ? (u.trialPrice ? u.trialPrice.monthly : "US$ 1.99") : "");
           trialCopy = "Estás en prueba gratuita hasta el " + fmtDate(u.trialUntil || u.currentPeriodEnd) + ". Después se cobrará " + next + ". Puedes cancelar antes.";
         }
         if (trialCopy) copy = trialCopy;
