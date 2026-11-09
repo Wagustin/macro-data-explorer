@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-09T01:01:41.775Z",
+ "actualizado": "2026-11-09T04:01:44.423Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "items": {
   "bloomberg_linea-fcc6bfe751": {
@@ -20,18 +20,6 @@
    "sentimiento": "NEGATIVO",
    "empresas": []
   },
-  "el_comercio-649b07b1ff": {
-   "relevancia": "BAJA",
-   "tema": "Bolsa y empresas",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
-  "gestion-9371accc3d": {
-   "relevancia": "MEDIA",
-   "tema": "Bolsa y empresas",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
   "la_republica-28abe26dfb": {
    "relevancia": "BAJA",
    "tema": "Economía y fiscal",
@@ -44,19 +32,7 @@
    "sentimiento": "NEUTRO",
    "empresas": []
   },
-  "el_comercio-aa60645a6a": {
-   "relevancia": "BAJA",
-   "tema": "Economía y fiscal",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
   "bloomberg_linea-d420849f0d": {
-   "relevancia": "ALTA",
-   "tema": "Mundo",
-   "sentimiento": "NEGATIVO",
-   "empresas": []
-  },
-  "el_comercio-a8b791010a": {
    "relevancia": "ALTA",
    "tema": "Mundo",
    "sentimiento": "NEGATIVO",
@@ -67,26 +43,6 @@
    "tema": "Mundo",
    "sentimiento": "NEGATIVO",
    "empresas": []
-  },
-  "el_comercio-d40658adfd": {
-   "relevancia": "ALTA",
-   "tema": "Dólar y BCRP",
-   "sentimiento": "POSITIVO",
-   "empresas": []
-  },
-  "el_comercio-297ab9dffb": {
-   "relevancia": "ALTA",
-   "tema": "Mundo",
-   "sentimiento": "NEGATIVO",
-   "empresas": []
-  },
-  "el_comercio-252dd48a68": {
-   "relevancia": "ALTA",
-   "tema": "Energía",
-   "sentimiento": "POSITIVO",
-   "empresas": [
-    "PETROBC1"
-   ]
   },
   "gestion-95d527801b": {
    "relevancia": "BAJA",
@@ -109,12 +65,6 @@
   "el_comercio-30684b4772": {
    "relevancia": "ALTA",
    "tema": "Dólar y BCRP",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
-  "el_comercio-4a03458b1b": {
-   "relevancia": "BAJA",
-   "tema": "Economía y fiscal",
    "sentimiento": "NEUTRO",
    "empresas": []
   },
@@ -301,12 +251,6 @@
   "infobae-ec24328f43": {
    "relevancia": "BAJA",
    "tema": "Energía",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
-  "infobae-eb919e8427": {
-   "relevancia": "ALTA",
-   "tema": "Minería y metales",
    "sentimiento": "NEUTRO",
    "empresas": []
   },
@@ -619,6 +563,66 @@
   },
   "mef-d2ce501338": {
    "relevancia": "ALTA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "POSITIVO",
+   "empresas": []
+  },
+  "gestion-e06711c6bc": {
+   "relevancia": "ALTA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "infobae-1ffab30c55": {
+   "relevancia": "NINGUNA",
+   "tema": "Mundo",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "infobae-d4b95204d4": {
+   "relevancia": "MEDIA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "el_comercio-300ccf5091": {
+   "relevancia": "ALTA",
+   "tema": "Dólar y BCRP",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "rpp-e2111acb5c": {
+   "relevancia": "ALTA",
+   "tema": "Mundo",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "mef-e86a384f2a": {
+   "relevancia": "ALTA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "POSITIVO",
+   "empresas": []
+  },
+  "inei-37900b23e9": {
+   "relevancia": "BAJA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "mef-476e8448d5": {
+   "relevancia": "BAJA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "inei-7e1824fb47": {
+   "relevancia": "MEDIA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "POSITIVO",
+   "empresas": []
+  },
+  "mef-2c3a795cce": {
+   "relevancia": "MEDIA",
    "tema": "Economía y fiscal",
    "sentimiento": "POSITIVO",
    "empresas": []
