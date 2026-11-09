@@ -228,7 +228,7 @@
           window.location.href = data.url;
           return { success: true };
         }
-        return { success: false, error: data.error || "No se pudo iniciar el pago." };
+        return { success: false, error: data.error || "No se pudo iniciar el pago.", detalle: data.detalle };
       } catch (e) {
         return { success: false, error: "Error de conexión. Intenta de nuevo." };
       }
