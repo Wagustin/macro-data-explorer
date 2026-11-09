@@ -2961,8 +2961,21 @@ html.dark .pd-skeleton {
 .pd-bell-acciones .pd-btn { padding: 7px 12px; font-size: 13px; }
 .pd-bell-status { margin: 8px 0 0; font-family: var(--pd-font-ui); font-size: 12px; line-height: 1.4; color: var(--pd-ink-soft); }
 .pd-bell-status a { color: var(--pd-ink); text-decoration: underline; }
-@media (max-width: 479px) {
-  .pd-bell-panel { width: min(288px, calc(100vw - 40px)); }
+/* On narrow screens the panel is a sheet fixed above the bottom bar: anchored to the bell it could
+   open off the left edge (the bell sits near it in lists and company pages) */
+@media (max-width: 719px) {
+  .pd-bell-panel {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    top: auto;
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+    width: auto;
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+    z-index: 70;
+    box-shadow: 0 -6px 24px rgba(0, 0, 0, .14);
+  }
 }
 
 /* Tira «Por dónde empezar» (portada) */
