@@ -6,7 +6,7 @@
  */
 
 import { PLANS } from "./_lib/plans.js";
-import { updateUser, findUserById, findUserByEmail } from "./_lib/users.js";
+import { updateUser, findUserById, findUserByEmail, trialUsage } from "./_lib/users.js";
 import { getAuthUser, sendJson, securityHeaders, readJsonBody } from "./_lib/session.js";
 import { stripe, STRIPE_ENABLED, PRICE_IDS, BOLETIN_PRICE_IDS } from "./_lib/stripe.js";
 import { handleRateLimit } from "./_lib/ratelimit.js";
@@ -74,7 +74,7 @@ export default async function handler(req, res) {
   // The session only carries id, email, name and plan: load the billing fields (Stripe customer) from the DB
   try {
     const dbUser = (await findUserById(user.id)) || (await findUserByEmail(user.email));
-    if (dbUser) user = { ...user, dbId: dbUser.id, stripe_customer_id: dbUser.stripe_customer_id || null };
+    if (dbUser) user = { ...user, dbId: dbUser.id, stripe_customer_id: dbUser.stripe_customer_id || null, stripe_subscription_id: dbUser.stripe_subscription_id || null };
   } catch (e) {}
 
   try {
@@ -91,7 +91,28 @@ export default async function handler(req, res) {
       const ids = wanted === "boletin" ? BOLETIN_PRICE_IDS : PRICE_IDS;
       const interval = body.interval === "year" && ids.year ? "year" : "month";
       const customerId = await ensureCustomer(user);
-      const trialDays = Number(process.env.STRIPE_TRIAL_DAYS || 0);
+      // 7-day free trial with a card on file, only for Boletín and only once per
+      // account. A failed trial_usado read offers no trial: better not to give
+      // away a trial than to give it away without a limit.
+      let trial = null;
+      if (wanted === "boletin") {
+        try {
+          const usage = await trialUsage(user.dbId || user.id);
+          if (usage && usage.used === false && !user.stripe_subscription_id) {
+            trial = {
+              trial_period_days: 7,
+              custom_text: {
+                submit: {
+                  message: "Pruebas el plan Boletín 7 días gratis. Hoy no se cobra nada. Si no cancelas antes del día 8, se cobrará US$ 1.99 al mes (o US$ 15 al año) hasta que canceles. Cancela cuando quieras desde Mi cuenta."
+                }
+              }
+            };
+          }
+        } catch (e) {
+          console.error("[billing] trial check failed:", e.message);
+        }
+      }
+      const legacyTrialDays = Number(process.env.STRIPE_TRIAL_DAYS || 0);
       const session = await stripe("POST", "/checkout/sessions", {
         mode: "subscription",
         customer: customerId,
@@ -100,9 +121,16 @@ export default async function handler(req, res) {
         allow_promotion_codes: "true",
         billing_address_collection: "auto",
         locale: "es",
-        subscription_data: {
+        // payment_method_collection is a Checkout Session field in Stripe;
+        // it must be set alongside the trial so the card is saved for the charge at day 8.
+        payment_method_collection: trial ? "always" : undefined,
+        subscription_data: trial ? {
           metadata: { user_id: user.id, plan: wanted },
-          trial_period_days: trialDays > 0 ? trialDays : undefined
+          trial_period_days: trial.trial_period_days,
+          custom_text: trial.custom_text
+        } : {
+          metadata: { user_id: user.id, plan: wanted },
+          ...(legacyTrialDays > 0 ? { trial_period_days: legacyTrialDays } : {})
         },
         metadata: { user_id: user.id, plan: wanted },
         success_url: `${appUrl(req)}/cuenta?checkout=success`,

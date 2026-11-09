@@ -16,6 +16,10 @@ on:
       mode:
         description: "send = enviar · dry = preparar sin enviar · models = listar modelos NIM · probe = probar todos · gemini = probar solo el respaldo de Gemini, sin enviar"
         default: send
+      preview_path:
+        description: "Ruta del archivo de vista previa a adjuntar (por defecto boletin-preview.html)"
+        type: string
+        default: "boletin-preview.html"
 
 permissions:
   contents: write
@@ -43,12 +47,14 @@ jobs:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           MODE: ${{ inputs.mode || 'send' }}
           FORCE: ${{ inputs.force }}
-        run: node scripts/boletin.js $([ "$MODE" = "dry" ] || [ "$MODE" = "gemini" ] && echo --dry-run) $([ "$MODE" = "models" ] && echo --list-models) $([ "$MODE" = "probe" ] && echo --probe)
+        run: node scripts/boletin.js $([ "$MODE" = "dry" ] || [ "$MODE" = "gemini" ] && echo --dry-run) $([ "$MODE" = "models" ] && echo --list-models) $([ "$MODE" = "probe" ] && echo --probe) --preview-path="${{ inputs.preview_path || 'boletin-preview.html' }}"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
+          # Preview artifact: honor an explicit --preview-path; otherwise keep
+          # the historical boletin-preview.html name inside the runner only.
           name: boletin-preview
-          path: boletin-preview.html
+          path: ${{ inputs.preview_path || 'boletin-preview.html' }}
           retention-days: 7
       - name: Guardar el aviso de envío de hoy
         if: success()

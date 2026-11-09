@@ -190,6 +190,9 @@ export function extractToken(req) {
 const userProfileCache = new Map();
 const USER_CACHE_TTL_MS = 5 * 60 * 1000;
 
+/** Test-only hook: clears the cached user profiles. */
+export function _clearUserCache() { userProfileCache.clear(); }
+
 /**
  * Resolves the signed-in user from the Authorization header using Web Crypto.
  * Ensures venturasaldanaa@gmail.com is permanently Pro.
