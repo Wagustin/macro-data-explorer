@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-10T02:02:03.510Z",
+ "actualizado": "2026-11-10T03:34:31.610Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "items": {
   "la_republica-28abe26dfb": {
@@ -154,12 +154,6 @@
    "sentimiento": "NEUTRO",
    "empresas": []
   },
-  "andina-a09428b1cd": {
-   "relevancia": "ALTA",
-   "tema": "Mundo",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
   "el_comercio-4a7b405bda": {
    "relevancia": "ALTA",
    "tema": "Mundo",
@@ -172,37 +166,9 @@
    "sentimiento": "NEUTRO",
    "empresas": []
   },
-  "andina-609383f3bf": {
-   "relevancia": "ALTA",
-   "tema": "Energía",
-   "sentimiento": "NEGATIVO",
-   "empresas": [
-    "PETROBC1"
-   ]
-  },
   "gestion-24d6c83fd1": {
    "relevancia": "BAJA",
    "tema": "Bolsa y empresas",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
-  "infobae-4d5e2aa487": {
-   "relevancia": "BAJA",
-   "tema": "Bolsa y empresas",
-   "sentimiento": "NEUTRO",
-   "empresas": [
-    "BVLC1"
-   ]
-  },
-  "andina-de57a4dd8d": {
-   "relevancia": "BAJA",
-   "tema": "Energía",
-   "sentimiento": "NEGATIVO",
-   "empresas": []
-  },
-  "infobae-5c78b4e31d": {
-   "relevancia": "ALTA",
-   "tema": "Mundo",
    "sentimiento": "NEUTRO",
    "empresas": []
   },
@@ -219,20 +185,6 @@
    "empresas": [
     "BVLC1"
    ]
-  },
-  "infobae-a16442e9c6": {
-   "relevancia": "BAJA",
-   "tema": "Economía y fiscal",
-   "sentimiento": "NEUTRO",
-   "empresas": [
-    "ELCOMEI1"
-   ]
-  },
-  "andina-1edad3029a": {
-   "relevancia": "NINGUNA",
-   "tema": "Dólar y BCRP",
-   "sentimiento": "NEUTRO",
-   "empresas": []
   },
   "el_comercio-5cc98d07ae": {
    "relevancia": "ALTA",
@@ -387,18 +339,6 @@
   "gestion-47aa80a52e": {
    "relevancia": "ALTA",
    "tema": "Minería y metales",
-   "sentimiento": "POSITIVO",
-   "empresas": []
-  },
-  "infobae-22917816bd": {
-   "relevancia": "BAJA",
-   "tema": "Bolsa y empresas",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
-  "infobae-4a35158698": {
-   "relevancia": "ALTA",
-   "tema": "Economía y fiscal",
    "sentimiento": "POSITIVO",
    "empresas": []
   },
@@ -683,6 +623,36 @@
    "tema": "Mundo",
    "sentimiento": "NEUTRO",
    "empresas": []
+  },
+  "andina-c289e5187d": {
+   "relevancia": "BAJA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "andina-467082dc0f": {
+   "relevancia": "BAJA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "POSITIVO",
+   "empresas": []
+  },
+  "andina-0b1d37cd32": {
+   "relevancia": "MEDIA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "POSITIVO",
+   "empresas": []
+  },
+  "andina-257e6b801b": {
+   "relevancia": "BAJA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "rpp-33cab3e469": {
+   "relevancia": "BAJA",
+   "tema": "Mundo",
+   "sentimiento": "NEUTRO",
+   "empresas": []
   }
  },
  "descartados": [
@@ -918,6 +888,8 @@
   "rpp-f9a4acd056",
   "la_republica-bb4f5497fe",
   "andina-05b4447fda",
-  "infobae-5c4b53ae55"
+  "infobae-5c4b53ae55",
+  "infobae-81abe144a5",
+  "andina-a7fe9d26f7"
  ]
 }
