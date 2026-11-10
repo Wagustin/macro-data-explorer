@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { CATALOG } from "../api/search.js";
+import { SIMBOLOS_CURADOS } from "../api/search.js";
 import { buildIssuerStatuses } from "../api/_lib/empresas-estado.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -40,7 +40,9 @@ for (let offset = 0; offset < symbols.length; offset += 30) {
   await fetchRows(symbols.slice(offset, offset + 30));
 }
 
-const projected = new Set(CATALOG.filter((item) => item.symbol.endsWith(".LM")).map((item) => item.symbol));
+// Solo la lista curada tiene proyección. El catálogo completo incluye además todas las emisoras
+// (para el buscador), y contarlas aquí marcaría «con proyección» a empresas que no la tienen.
+const projected = new Set([...SIMBOLOS_CURADOS].filter((symbol) => symbol.endsWith(".LM")));
 const output = {
   actualizado: new Date().toISOString(),
   emisores: buildIssuerStatuses(emisores, rows, projected),

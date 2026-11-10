@@ -1,0 +1,29 @@
+name: Exportar cotizaciones (investigación)
+
+# Manual. Deja los cierres diarios de la SMV como artefacto (un día de retención) para probar
+# mejoras del motor fuera de producción. No escribe en el repositorio ni en la base de datos.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exportar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node research/v8/export-cotizaciones.mjs cotizaciones_smv.csv
+      - run: gzip -9 cotizaciones_smv.csv
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cotizaciones-smv
+          path: cotizaciones_smv.csv.gz
+          retention-days: 1

@@ -1,11 +1,11 @@
 {
- "actualizado": "2026-11-10T03:39:13.169Z",
+ "actualizado": "2026-11-10T09:39:14.045Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "MEF completa emisión récord de bonos sostenibles por 4.500 millones",
-   "nota": "El Ministerio de Economía y Finanzas colocó bonos soberanos sostenibles por 4.500 millones de dólares. Es la emisión en dólares más alta realizada por un país de la región.",
+   "titulo": "MEF completa emisión récord de bonos sostenibles por US$4.500 millones",
+   "nota": "El Ministerio de Economía y Finanzas finalizó la colocación de bonos sostenibles por US$4.500 millones. Se trata de la emisión en dólares más alta realizada por un país de la región.",
    "tema": "Dólar y BCRP",
    "empresas": [
     "BVN"
@@ -25,27 +25,7 @@
    }
   },
   {
-   "titulo": "Empresas aceleran financiamiento con bonos en soles y dólares",
-   "nota": "Las compañías aumentan la colocación de bonos denominados en ambas monedas. El titular señala que existe un incentivo actual para esta mayor actividad de emisión.",
-   "tema": "Bolsa y empresas",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Empresas aceleran financiamiento con bonos en soles y dólares: ¿qué las incentiva hoy?",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/empresas/empresas-aceleran-financiamiento-con-bonos-en-soles-y-dolares-que-las-incentiva-hoy-noticia/",
-     "fecha": "2026-11-10T03:00:00.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "Holcim lanza OPA sobre el 49,99% de Cementos Pacasmayo",
-   "nota": "El grupo cementero Holcim presentó una oferta pública de adquisición para comprar casi la mitad de Cementos Pacasmayo. La operación movería la estructura accionaria de una de las principales cementeras del país.",
+   "titulo": "Holcim lanza OPA para adquirir el 49,99% de Cementos Pacasmayo",
    "tema": "Bolsa y empresas",
    "empresas": [
     "CPAC"
@@ -60,13 +40,51 @@
    ],
    "revision": {
     "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": false,
+    "motivo": "La nota añade una causa no presente en el titular: afirma que la operación busca tomar una participación mayoritaria, cuando el 49,99% no implica control mayoritario."
+   }
+  },
+  {
+   "titulo": "C3 Metals detecta nuevos blancos de cobre y oro en Cusco",
+   "nota": "La compañía C3 Metals identificó nuevos objetivos de mineralización en su proyecto Khaleesi. El hallazgo amplía el potencial exploratorio de la zona.",
+   "tema": "Minería y metales",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "C3 Metals identifica nuevos objetivos de cobre y oro en proyecto Khaleesi, en Cusco",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/empresas/minera-canadiense-c3-metals-identifica-nuevos-objetivos-de-cobre-y-oro-en-proyecto-khaleesi-en-cusco-noticia/",
+     "fecha": "2026-11-10T01:30:00.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
     "ok": true,
     "motivo": ""
    }
   },
   {
-   "titulo": "MEF inyectará 18.000 millones ante impacto de El Niño",
-   "nota": "El Ministerio de Economía anunció una inyección fiscal de 18.000 millones de soles para mitigar los efectos del fenómeno El Niño en la economía. El monto podría ampliarse según la evolución del evento climático.",
+   "titulo": "Perupetro negocia nuevos lotes de gas natural offshore",
+   "nota": "Perupetro negocia nuevos lotes de gas natural frente a las costas de Lambayeque y Tumbes.",
+   "tema": "Energía",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Perupetro negocia nuevos lotes offshore de gas natural frente a Lambayeque y Tumbes",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/perupetro-negocia-nuevos-lotes-offshore-de-gas-natural-frente-a-lambayeque-y-tumbes-noticia/",
+     "fecha": "2026-11-09T23:00:00.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "MEF prevé inyectar 18 mil millones ante El Niño",
+   "nota": "El Ministerio de Economía anunció una inyección de 18 mil millones de soles para enfrentar el fenómeno. El monto podría aumentar según la evolución de los eventos climáticos.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
@@ -84,41 +102,16 @@
    }
   },
   {
-   "titulo": "ProInversión proyecta 17.800 millones en APP y OxI para 2027",
-   "nota": "La agencia de promoción de la inversión privada estima que los proyectos bajo modalidad de asociaciones público-privadas y obras por impuestos superarán los 17.800 millones de soles el próximo año. El trimestre actual registra las mayores adjudicaciones en 18 años.",
-   "tema": "Economía y fiscal",
+   "titulo": "EE.UU. evalúa cuatro proyectos de inversión en Perú",
+   "nota": "Estados Unidos alista inversiones en Perú y ya evalúa cuatro proyectos concretos, mientras avanzan conversaciones para reducir aranceles bilaterales. El acercamiento comercial podría dinamizar flujos de capital hacia sectores estratégicos.",
+   "tema": "Mundo",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "ProInversión: inversiones superarán los S/ 17,800 millones en 2027 mediante APP y OxI",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-proinversion-inversiones-superaran-los-s-17800-millones-2027-mediante-app-y-oxi-1099227.aspx",
-     "fecha": "2026-11-09T21:00:00.000Z"
-    },
-    {
-     "titulo": "Proinversión sobre Obras por Impuestos: “Es el trimestre de las mayores adjudicaciones en 18 años”",
+     "titulo": "Estados Unidos alista inversiones en Perú y ya evalúa cuatro proyectos: ¿cómo van las conversaciones para reducir aranceles?",
      "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/proinversion-sobre-obras-por-impuestos-es-el-trimestre-de-las-mayores-adjudicaciones-en-18-anos-noticia/",
-     "fecha": "2026-11-09T20:53:58.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "C3 Metals halla nuevos objetivos de cobre y oro en Cusco",
-   "nota": "La minera C3 Metals identificó nuevas zonas de mineralización de cobre y oro en su proyecto Khaleesi, ubicado en la región Cusco. Los resultados amplían el potencial exploratorio del yacimiento.",
-   "tema": "Minería y metales",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "C3 Metals identifica nuevos objetivos de cobre y oro en proyecto Khaleesi, en Cusco",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/empresas/minera-canadiense-c3-metals-identifica-nuevos-objetivos-de-cobre-y-oro-en-proyecto-khaleesi-en-cusco-noticia/",
-     "fecha": "2026-11-10T01:30:00.000Z"
+     "url": "https://elcomercio.pe/economia/estados-unidos-alista-inversiones-en-peru-evalua-cuatro-proyectos-y-esta-cerca-de-cerrar-uno-noticia/",
+     "fecha": "2026-11-09T22:26:35.000Z"
     }
    ],
    "revision": {
