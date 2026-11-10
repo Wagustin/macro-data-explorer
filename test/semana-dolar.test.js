@@ -91,6 +91,9 @@ test("las cifras visibles de la pagina salen de la nota, no estan escritas a man
       nota.bcrp.intervencion.total,
       nota.bcrp.swaps_netos.total,
       ...(nota.rango_publicado ? [nota.rango_publicado.p10, nota.rango_publicado.p50, nota.rango_publicado.p90] : []),
+      ...(nota.comparacion_semana_anterior?.rango
+        ? [nota.comparacion_semana_anterior.rango.p10, nota.comparacion_semana_anterior.rango.p25, nota.comparacion_semana_anterior.rango.p50, nota.comparacion_semana_anterior.rango.p75, nota.comparacion_semana_anterior.rango.p90]
+        : []),
     ]);
     const permitidos = new Set([...valores].map((valor) => valor.toFixed(4)));
     for (const coincide of textoVisible(html).matchAll(/S\/ (\d+\.\d{4})/g)) {
