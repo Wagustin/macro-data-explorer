@@ -53,9 +53,9 @@ const PREVIEW = Boolean(process.env.PREVIEW_EMPRESAS);
 const PREVIEW_PLAN = (process.env.PREVIEW_PLAN || "boletin").toLowerCase() === "gratis" ? "gratis" : "boletin";
 
 const C = { paper: "#F5F1E8", card: "#FBF9F4", ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", peru: "#D91023" };
-const MONO_F = "IBM Plex Mono,Menlo,Consolas,monospace";
-const UI_F = "Libre Franklin,Helvetica,Arial,sans-serif";
-const SERIF_F = "'Source Serif 4',Georgia,'Times New Roman',serif";
+const MONO_F = "'IBM Plex Mono',monospace";
+const UI_F = "'Libre Franklin',Arial,sans-serif";
+const SERIF_F = "'Source Serif 4',Georgia,serif";
 const NUM = ' style="font-variant-numeric:tabular-nums"';
 
 // Remove whitespace between tags and collapse repeated spaces outside text nodes.
@@ -92,72 +92,28 @@ function compactar(html) {
 
 // Table-based range bar (works in Gmail, Outlook, Yahoo — no SVG)
 function barraRango({ min, max, centro, ultimo, prefijo = "S/", fechaUltimo, decimales = 3 }) {
-  // Scale: lo = min(min, ultimo) - 15% of range, hi = max(max, ultimo) + 15% of range
   const range = max - min;
   const lo = Math.min(min, ultimo) - range * 0.15;
   const hi = Math.max(max, ultimo) + range * 0.15;
   const total = hi - lo;
 
-  // Track: three cells with integer percentages summing to 100
-  // Band goes from min to max, so leftPct uses min, rightPct uses max
   const leftPct = Math.round(((min - lo) / total) * 100);
   const rightPct = Math.round(((hi - max) / total) * 100);
   const midPct = 100 - leftPct - rightPct;
-
-  // Last close position as percentage
   const ultimoPct = Math.round(((ultimo - lo) / total) * 100);
 
-  // Use same formatter as "Rango:" line for consistency
   const fmt = (v) => `${prefijo} ${Number(v).toLocaleString("es-PE", { minimumFractionDigits: decimales, maximumFractionDigits: decimales })}`;
-
-  // Band color: soft green #cfdccb, track #e4dfd6
   const bandColor = "#cfdccb";
   const trackColor = "#e4dfd6";
+  const ink = "#1B1916";
+  const paper = "#F5F1E8";
+  const soft = "#5E584E";
 
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-family:${MONO_F};font-size:12px;color:${C.ink};font-variant-numeric:tabular-nums">
-<tr>
-  <td colspan="3" style="padding:0 0 4px">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-      <tr>
-        <td width="${leftPct}%" style="font-size:0;line-height:0">&nbsp;</td>
-        <td width="${midPct}%" style="font-size:0;line-height:0">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-            <tr>
-              <td style="text-align:left;font-size:11px;white-space:nowrap">${esc(fmt(min))}</td>
-              <td style="text-align:right;font-size:11px;white-space:nowrap">${esc(fmt(max))}</td>
-            </tr>
-          </table>
-        </td>
-        <td width="${rightPct}%" style="font-size:0;line-height:0">&nbsp;</td>
-      </tr>
-    </table>
-  </td>
-</tr>
-<tr>
-  <td colspan="3" style="padding:0">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="height:8px;background:${trackColor}">
-      <tr>
-        <td width="${leftPct}%" style="background:${trackColor};height:8px;font-size:0;line-height:0">&nbsp;</td>
-        <td width="${midPct}%" style="background:${bandColor};height:8px;font-size:0;line-height:0">&nbsp;</td>
-        <td width="${rightPct}%" style="background:${trackColor};height:8px;font-size:0;line-height:0">&nbsp;</td>
-      </tr>
-    </table>
-  </td>
-</tr>
-<tr>
-  <td colspan="3" style="padding:4px 0 0">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="height:8px">
-      <tr>
-        <td width="${ultimoPct}%" style="background:${C.paper};height:8px;font-size:0;line-height:0">&nbsp;</td>
-        <td width="3" style="background:${C.ink};height:8px;font-size:0;line-height:0">&nbsp;</td>
-        <td style="background:${C.paper};height:8px;font-size:0;line-height:0">&nbsp;</td>
-      </tr>
-    </table>
-  </td>
-</tr>
-<tr>
-  <td colspan="3" style="font-family:${UI_F};font-size:12px;color:${C.soft};padding-top:2px">último cierre ${esc(fmt(ultimo))} (${esc(fechaUltimo)})</td>
-</tr>
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-family:${MONO_F};font-size:12px;color:${ink};font-variant-numeric:tabular-nums">
+<tr><td width="${leftPct}%" style="font-size:0;line-height:0;height:8px;background:${trackColor}">&nbsp;</td><td width="${midPct}%" style="font-size:0;line-height:0;height:8px;background:${bandColor}">&nbsp;</td><td width="${rightPct}%" style="font-size:0;line-height:0;height:8px;background:${trackColor}">&nbsp;</td></tr>
+<tr><td width="${leftPct}%" style="font-size:11px;padding-top:2px;text-align:left;white-space:nowrap">${esc(fmt(min))}</td><td width="${midPct}%" style="font-size:0;line-height:0;height:8px;background:${paper}">&nbsp;</td><td width="${rightPct}%" style="font-size:11px;padding-top:2px;text-align:right;white-space:nowrap">${esc(fmt(max))}</td></tr>
+<tr><td width="${ultimoPct}%" style="font-size:0;line-height:0;height:8px;background:${paper}">&nbsp;</td><td width="3" style="font-size:0;line-height:0;height:8px;background:${ink}">&nbsp;</td><td style="font-size:0;line-height:0;height:8px;background:${paper}">&nbsp;</td></tr>
+<tr><td colspan="3" style="font-family:${UI_F};font-size:12px;color:${soft};padding-top:2px">último cierre ${esc(fmt(ultimo))} (${esc(fechaUltimo)})</td></tr>
 </table>`;
 }
 
@@ -460,16 +416,13 @@ function lecturaDolarDeterminista(f, clasif, newsById) {
 
 function render(f, ai, dateLabel, lectura) {
   const C = { paper: "#F5F1E8", card: "#FBF9F4", ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", peru: "#D91023" };
-  const serif = "'Source Serif 4',Georgia,'Times New Roman',serif";
-  const ui = "'Libre Franklin',Helvetica,Arial,sans-serif";
-  const mono = "'IBM Plex Mono',Menlo,Consolas,monospace";
   const edition = Math.floor((Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()) - Date.UTC(2026, 9, 26)) / 864e5) + 1;
   
   const texto = (t, size = 15, lh = 1.5, clr = C.ink, weight = 400, mgb = 14) => 
-    t ? `<p style="margin:0 0 ${mgb}px;font-family:${serif};font-size:${size}px;line-height:${lh};color:${clr};font-weight:${weight}">${esc(t)}</p>` : "";
+    t ? `<p style="margin:0 0 ${mgb}px;font-family:${SERIF_F};font-size:${size}px;line-height:${lh};color:${clr};font-weight:${weight}">${esc(t)}</p>` : "";
   
   const tituloSeccion = (title, numero) => 
-    `<tr><td style="padding:24px 0 8px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${ui};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table></td></tr>`;
+    `<tr><td style="padding:24px 0 8px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table></td></tr>`;
   
   const regla = () => `<tr><td style="padding:0"><hr style="border:none;border-top:1px solid ${C.rule};margin:0"/></td></tr>`;
 
@@ -482,10 +435,10 @@ function render(f, ai, dateLabel, lectura) {
   const cierre = f.cierre;
   const dollarHeadline = cierre ? `<tr><td style="padding:16px 0 8px">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td style="font-family:${serif};font-size:24px;font-weight:600;color:${C.ink}">Dólar interbancario (USD/PEN)</td>
-      <td align="right" style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</td>
+      <td style="font-family:${SERIF_F};font-size:24px;font-weight:600;color:${C.ink}">Dólar interbancario (USD/PEN)</td>
+      <td align="right" style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</td>
     </tr></table>
-    <p style="margin:4px 0 0;font-family:${ui};font-size:13px;color:${C.soft}">Último cierre oficial (BCRP) · cierre del ${esc(formatCierreFecha(cierre.fecha))}${rangoManana ? ` · rango para ${esc(etiquetaManana.toLowerCase())}` : ''}</p>
+    <p style="margin:4px 0 0;font-family:${UI_F};font-size:13px;color:${C.soft}">Último cierre oficial (BCRP) · cierre del ${esc(formatCierreFecha(cierre.fecha))}${rangoManana ? ` · rango para ${esc(etiquetaManana.toLowerCase())}` : ''}</p>
   </td></tr>` : "";
 
   // Dollar reading for mañana/horizonte
@@ -494,22 +447,22 @@ function render(f, ai, dateLabel, lectura) {
   const vistos = new Set();
   const nuevos = (h, lado) => (h?.[lado] || []).filter((p) => !vistos.has(p.texto) && vistos.add(p.texto));
   
-  const labelAlAlza = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;margin:12px 0 4px">Podría presionar al dólar al alza</div>` : "";
-  const labelALaBaja = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;margin:12px 0 4px">Podría presionar al dólar a la baja</div>` : "";
+  const labelAlAlza = (puntos) => puntos.length ? `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin:12px 0 4px">Podría presionar al dólar al alza</div>` : "";
+  const labelALaBaja = (puntos) => puntos.length ? `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin:12px 0 4px">Podría presionar al dólar a la baja</div>` : "";
   
   const tituloInline = (title, numero) =>
-    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${ui};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table>`;
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table>`;
 
   const lecturaHorizonte = (h, titulo, rango, numero, conContexto = true) => {
     if (!h) return "";
-    const rangoTxt = rango ? `<div style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:14px;margin:4px 0 8px">Rango: S/ ${fmt(rango.p10, 3)} – S/ ${fmt(rango.p90, 3)} <span style="color:${C.soft}">(centro S/ ${fmt(rango.p50, 3)}, 8 de cada 10 veces)</span></div>` : "";
+    const rangoTxt = rango ? `<div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:14px;margin:4px 0 8px">Rango: S/ ${fmt(rango.p10, 3)} – S/ ${fmt(rango.p90, 3)} <span style="color:${C.soft}">(centro S/ ${fmt(rango.p50, 3)}, 8 de cada 10 veces)</span></div>` : "";
     const resumenHtml = h.resumen && !h.determinista ? `<div style="margin:8px 0">${esc(h.resumen)}</div>` : "";
     const alAlzaPoints = nuevos(h, "al_alza").map(p => ({...p, tipo: 'al_alza'}));
     const aLaBajaPoints = nuevos(h, "a_la_baja").map(p => ({...p, tipo: 'a_la_baja'}));
     const alAlza = labelAlAlza(alAlzaPoints) + alAlzaPoints.map(punto).join("");
     const aLaBaja = labelALaBaja(aLaBajaPoints) + aLaBajaPoints.map(punto).join("");
     const contexto = conContexto ? nuevos(h, "contexto").map(p => ({...p, tipo: 'contexto'})).map(punto).join("") : "";
-    return `<tr><td style="padding:16px 0 8px;font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink}">
+    return `<tr><td style="padding:16px 0 8px;font-family:${SERIF_F};font-size:15px;line-height:1.5;color:${C.ink}">
       <div style="margin:0 0 8px">${tituloInline(titulo, numero)}</div>
       ${rangoTxt}${resumenHtml}${alAlza}${aLaBaja}${contexto}
     </td></tr>`;
@@ -548,12 +501,12 @@ function render(f, ai, dateLabel, lectura) {
     return `<tr><td style="padding:12px 0">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
         <td style="vertical-align:top;padding-right:16px;width:1px;white-space:nowrap">
-          <div style="font-family:${ui};font-size:14px;font-weight:600;color:${C.ink};margin-bottom:2px">${esc(m.name)}</div>
-          <div style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:13px;color:${C.soft}">${esc(m.unit)}</div>
+          <div style="font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};margin-bottom:2px">${esc(m.name)}</div>
+          <div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:13px;color:${C.soft}">${esc(m.unit)}</div>
         </td>
         <td style="vertical-align:top;text-align:right">
-          <div style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:20px;color:${C.ink};white-space:nowrap">${fmt(m.value, m.dec)}</div>
-          <div style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:13px;color:${pctColor};margin-top:2px">${pctStr} · ${esc(shortDate(m.date))}</div>
+          <div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:20px;color:${C.ink};white-space:nowrap">${fmt(m.value, m.dec)}</div>
+          <div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:13px;color:${pctColor};margin-top:2px">${pctStr} · ${esc(shortDate(m.date))}</div>
         </td>
       </tr></table>
     </td></tr>`;
@@ -561,23 +514,23 @@ function render(f, ai, dateLabel, lectura) {
 
   // SMV facts
   const smv = f.smvFacts.map((h) => `<tr><td style="padding:16px 0">
-    <div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin-bottom:4px">${esc(h.empresa)}</div>
-    <a href="${esc(h.url_oficial)}" style="font-family:${serif};font-size:15px;line-height:1.45;color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(h.titulo || h.tipo)}</a>
-    <div style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:11px;color:${C.soft};margin-top:4px">${esc(formatSMVFecha(h.fecha))}</div>
+    <div style="font-family:${UI_F};font-size:13px;font-weight:600;color:${C.ink};margin-bottom:4px">${esc(h.empresa)}</div>
+    <a href="${esc(h.url_oficial)}" style="font-family:${SERIF_F};font-size:15px;line-height:1.45;color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(h.titulo || h.tipo)}</a>
+    <div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:11px;color:${C.soft};margin-top:4px">${esc(formatSMVFecha(h.fecha))}</div>
   </td></tr>`).join(regla());
 
   // Headlines
   const news = f.headlines.map((n) => `<tr><td style="padding:16px 0">
-    <a href="${esc(n.url)}" style="font-family:${serif};font-size:15px;line-height:1.45;color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(n.title)}</a>
-    <div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:4px">${esc(n.source)}</div>
+    <a href="${esc(n.url)}" style="font-family:${SERIF_F};font-size:15px;line-height:1.45;color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(n.title)}</a>
+    <div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:4px">${esc(n.source)}</div>
   </td></tr>`).join(regla());
 
   // All stories (paid)
   const historiaHtml = (h) => `<tr><td style="padding:20px 0">
-    <div style="font-family:${ui};font-size:11px;color:${C.soft};text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">${esc(h.tema)}</div>
-    <div style="font-family:${serif};font-size:18px;font-weight:600;line-height:1.3;color:${C.ink};margin-bottom:8px">${esc(h.titulo)}</div>
-    ${h.nota ? `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink}">${esc(h.nota)}</div>` : ""}
-    <div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:8px">${(h.fuentes || []).filter((x, i, a) => a.findIndex((y) => y.fuente === x.fuente) === i).map((x) => `<a href="${esc(x.url)}" style="color:${C.soft}">${esc(x.fuente)}</a>`).join(" · ")}</div>
+    <div style="font-family:${UI_F};font-size:11px;color:${C.soft};text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">${esc(h.tema)}</div>
+    <div style="font-family:${SERIF_F};font-size:18px;font-weight:600;line-height:1.3;color:${C.ink};margin-bottom:8px">${esc(h.titulo)}</div>
+    ${h.nota ? `<div style="font-family:${SERIF_F};font-size:15px;line-height:1.5;color:${C.ink}">${esc(h.nota)}</div>` : ""}
+    <div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:8px">${(h.fuentes || []).filter((x, i, a) => a.findIndex((y) => y.fuente === x.fuente) === i).map((x) => `<a href="${esc(x.url)}" style="color:${C.soft}">${esc(x.fuente)}</a>`).join(" · ")}</div>
   </td></tr>`;
 
   const preheader = esc(entradillaDeterminista(f) || `Dólar, cobre, oro y petróleo; hechos de importancia de la SMV y titulares del ${dateLabel}.`);
@@ -591,10 +544,10 @@ function render(f, ai, dateLabel, lectura) {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px">
   <tr><td style="padding:28px 0 12px;border-bottom:4px double ${C.ink}">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td style="font-family:${serif};font-size:32px;font-style:italic;font-weight:600;color:${C.ink};white-space:nowrap">PerData${flagHtml(C)}</td>
-      <td align="right" style="font-family:${ui};font-size:12px;line-height:1.5;color:${C.soft}">Boletín diario<br>Edición ${edition > 0 ? edition : 1}</td>
+      <td style="font-family:${SERIF_F};font-size:32px;font-style:italic;font-weight:600;color:${C.ink};white-space:nowrap">PerData${flagHtml(C)}</td>
+      <td align="right" style="font-family:${UI_F};font-size:12px;line-height:1.5;color:${C.soft}">Boletín diario<br>Edición ${edition > 0 ? edition : 1}</td>
     </tr></table>
-    <div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:6px">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
+    <div style="font-family:${UI_F};font-size:13px;color:${C.soft};margin-top:6px">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
   </td></tr>
   
   ${dollarHeadline}
@@ -602,26 +555,26 @@ function render(f, ai, dateLabel, lectura) {
   ${fc}
   {{PERSONAL}}
   
-  ${f.historiasTodas?.length ? tituloSeccion("Lo importante de hoy", 0) + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${f.historiasTodas.map(historiaHtml).join(regla())}</table><div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:16px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
+  ${f.historiasTodas?.length ? tituloSeccion("Lo importante de hoy", 0) + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${f.historiasTodas.map(historiaHtml).join(regla())}</table><div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:16px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
   
   ${tituloSeccion("Mercados", 0)}
   ${ai?.mercados ? `<tr><td style="padding:12px 0 16px">${texto(ai.mercados, 15, 1.5, C.ink, 400, 0)}</td></tr>` : ""}
   ${metales.length ? `<tr><td style="padding:8px 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${mercadoCards}</table></td></tr>` : ""}
-  <tr><td style="padding:12px 0 0"><div style="font-family:${ui};font-size:11px;color:${C.soft}">Fuente: BCRP${f.markets.some((m) => m.name.includes("Brent")) ? " y EIA" : ""}. Variación frente al dato anterior.</div></td></tr>
+  <tr><td style="padding:12px 0 0"><div style="font-family:${UI_F};font-size:11px;color:${C.soft}">Fuente: BCRP${f.markets.some((m) => m.name.includes("Brent")) ? " y EIA" : ""}. Variación frente al dato anterior.</div></td></tr>
   
-  ${f.smvFacts.length ? tituloSeccion("Hechos de importancia", 0) + (ai?.empresas ? `<tr><td style="padding:12px 0 16px">${texto(ai.empresas, 15, 1.5, C.ink, 400, 0)}</td></tr>` : "") + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${smv}</table><div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:12px">Fuente: Superintendencia del Mercado de Valores (SMV).</div></td></tr>` : ""}
+  ${f.smvFacts.length ? tituloSeccion("Hechos de importancia", 0) + (ai?.empresas ? `<tr><td style="padding:12px 0 16px">${texto(ai.empresas, 15, 1.5, C.ink, 400, 0)}</td></tr>` : "") + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${smv}</table><div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:12px">Fuente: Superintendencia del Mercado de Valores (SMV).</div></td></tr>` : ""}
   
   ${f.headlines.length ? tituloSeccion("Titulares", 0) + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${news}</table></td></tr>` : ""}
   
   <tr><td align="center" style="padding:32px 0 8px">
-    <a href="${SITE}/explorer" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${ui};font-size:15px;font-weight:600;text-decoration:none;padding:13px 26px;border-radius:4px">Abrir la terminal</a>
+    <a href="${SITE}/explorer" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${UI_F};font-size:15px;font-weight:600;text-decoration:none;padding:13px 26px;border-radius:4px">Abrir la terminal</a>
   </td></tr>
 
-  <tr><td style="padding:16px 0 8px;font-family:${ui};font-size:13px;color:${C.soft};text-align:center">
+  <tr><td style="padding:16px 0 8px;font-family:${UI_F};font-size:13px;color:${C.soft};text-align:center">
     ¿Te sirvió? Reenvía este correo. Quien lo reciba puede suscribirse gratis en <a href="${SITE}/boletin?utm_source=correo&amp;utm_medium=reenvio" style="color:${C.ink};text-decoration:underline">perdata.site/boletin</a>
   </td></tr>
   
-  <tr><td style="padding:24px 0 36px;border-top:1px solid ${C.rule};font-family:${ui};font-size:12px;line-height:1.6;color:${C.soft}">
+  <tr><td style="padding:24px 0 36px;border-top:1px solid ${C.rule};font-family:${UI_F};font-size:12px;line-height:1.6;color:${C.soft}">
     El rango es estadístico; los factores son contexto, no una predicción de dirección.<br>
     ${ai ? "La interpretación la redacta un modelo de IA a partir de los datos de este correo; las cifras se comprueban contra la fuente.<br>" : ""}
     Información con fines informativos; no es una recomendación de inversión.<br>
@@ -633,16 +586,13 @@ function render(f, ai, dateLabel, lectura) {
 
 function renderGratis(f, dateLabel, lectura) {
   const C = { paper: "#F5F1E8", card: "#FBF9F4", ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", peru: "#D91023" };
-  const serif = "'Source Serif 4',Georgia,'Times New Roman',serif";
-  const ui = "'Libre Franklin',Helvetica,Arial,sans-serif";
-  const mono = "'IBM Plex Mono',Menlo,Consolas,monospace";
   const edition = Math.floor((Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()) - Date.UTC(2026, 9, 26)) / 864e5) + 1;
   
   const texto = (t, size = 15, lh = 1.5, clr = C.ink, weight = 400, mgb = 14) => 
-    t ? `<p style="margin:0 0 ${mgb}px;font-family:${serif};font-size:${size}px;line-height:${lh};color:${clr};font-weight:${weight}">${esc(t)}</p>` : "";
+    t ? `<p style="margin:0 0 ${mgb}px;font-family:${SERIF_F};font-size:${size}px;line-height:${lh};color:${clr};font-weight:${weight}">${esc(t)}</p>` : "";
   
   const tituloSeccion = (title, numero) => 
-    `<tr><td style="padding:24px 0 8px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${ui};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table></td></tr>`;
+    `<tr><td style="padding:24px 0 8px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table></td></tr>`;
   
   const regla = () => `<tr><td style="padding:0"><hr style="border:none;border-top:1px solid ${C.rule};margin:0"/></td></tr>`;
 
@@ -655,10 +605,10 @@ function renderGratis(f, dateLabel, lectura) {
   const cierre = f.cierre;
   const dollarHeadline = cierre ? `<tr><td style="padding:16px 0 8px">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td style="font-family:${serif};font-size:24px;font-weight:600;color:${C.ink}">Dólar interbancario (USD/PEN)</td>
-      <td align="right" style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</td>
+      <td style="font-family:${SERIF_F};font-size:24px;font-weight:600;color:${C.ink}">Dólar interbancario (USD/PEN)</td>
+      <td align="right" style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</td>
     </tr></table>
-    <p style="margin:4px 0 0;font-family:${ui};font-size:13px;color:${C.soft}">Último cierre oficial (BCRP) · cierre del ${esc(formatCierreFecha(cierre.fecha))}${rangoManana ? ` · rango para ${esc(etiquetaManana.toLowerCase())}` : ''}</p>
+    <p style="margin:4px 0 0;font-family:${UI_F};font-size:13px;color:${C.soft}">Último cierre oficial (BCRP) · cierre del ${esc(formatCierreFecha(cierre.fecha))}${rangoManana ? ` · rango para ${esc(etiquetaManana.toLowerCase())}` : ''}</p>
   </td></tr>` : "";
 
   // Dollar reading for mañana/horizonte (only mañana for free)
@@ -667,21 +617,21 @@ function renderGratis(f, dateLabel, lectura) {
   const vistos = new Set();
   const nuevos = (h, lado) => (h?.[lado] || []).filter((p) => !vistos.has(p.texto) && vistos.add(p.texto));
   
-  const labelAlAlza = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;margin:12px 0 4px">Podría presionar al dólar al alza</div>` : "";
-  const labelALaBaja = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;margin:12px 0 4px">Podría presionar al dólar a la baja</div>` : "";
-  const labelContexto = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;margin:12px 0 4px">Contexto</div>` : "";
+  const labelAlAlza = (puntos) => puntos.length ? `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin:12px 0 4px">Podría presionar al dólar al alza</div>` : "";
+  const labelALaBaja = (puntos) => puntos.length ? `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin:12px 0 4px">Podría presionar al dólar a la baja</div>` : "";
+  const labelContexto = (puntos) => puntos.length ? `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin:12px 0 4px">Contexto</div>` : "";
   
   const mananaLec = lectura?.horizontes?.manana || lectura?.manana || null;
   const rangoMananaLec = f.daily?.manana;
-  const rangoTxt = rangoMananaLec ? `<div style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:14px;margin:4px 0 8px">Rango: S/ ${fmt(rangoMananaLec.p10, 3)} – S/ ${fmt(rangoMananaLec.p90, 3)} <span style="color:${C.soft}">(centro S/ ${fmt(rangoMananaLec.p50, 3)}, 8 de cada 10 veces)</span></div>` : "";
+  const rangoTxt = rangoMananaLec ? `<div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:14px;margin:4px 0 8px">Rango: S/ ${fmt(rangoMananaLec.p10, 3)} – S/ ${fmt(rangoMananaLec.p90, 3)} <span style="color:${C.soft}">(centro S/ ${fmt(rangoMananaLec.p50, 3)}, 8 de cada 10 veces)</span></div>` : "";
   const tituloInline = (title, numero) =>
-    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${ui};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table>`;
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table>`;
 
   const alAlzaPoints = nuevos(mananaLec, "al_alza").map(p => ({...p, tipo: 'al_alza'}));
   const aLaBajaPoints = nuevos(mananaLec, "a_la_baja").map(p => ({...p, tipo: 'a_la_baja'}));
   const contextoPoints = nuevos(mananaLec, "contexto").map(p => ({...p, tipo: 'contexto'}));
   
-  const presionaHtml = mananaLec ? `<tr><td style="padding:16px 0 8px;font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink}">
+  const presionaHtml = mananaLec ? `<tr><td style="padding:16px 0 8px;font-family:${SERIF_F};font-size:15px;line-height:1.5;color:${C.ink}">
       <div style="margin:0 0 8px">${tituloInline("Qué podría presionar al dólar", 0)}</div>
       ${rangoTxt}
       ${mananaLec.resumen && !mananaLec.determinista ? `<div style="margin:8px 0">${esc(mananaLec.resumen)}</div>` : ""}
@@ -692,23 +642,23 @@ function renderGratis(f, dateLabel, lectura) {
 
   // Top 3 stories
   const historiaHtml = (h) => `<tr><td style="padding:20px 0">
-    <div style="font-family:${ui};font-size:11px;color:${C.soft};text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">${esc(h.tema)}</div>
-    <div style="font-family:${serif};font-size:18px;font-weight:600;line-height:1.3;color:${C.ink};margin-bottom:8px">${esc(h.titulo)}</div>
-    ${h.nota ? `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink}">${esc(h.nota)}</div>` : ""}
-    <div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:8px">${(h.fuentes || []).filter((x, i, a) => a.findIndex((y) => y.fuente === x.fuente) === i).map((x) => `<a href="${esc(x.url)}" style="color:${C.soft}">${esc(x.fuente)}</a>`).join(" · ")}</div>
+    <div style="font-family:${UI_F};font-size:11px;color:${C.soft};text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">${esc(h.tema)}</div>
+    <div style="font-family:${SERIF_F};font-size:18px;font-weight:600;line-height:1.3;color:${C.ink};margin-bottom:8px">${esc(h.titulo)}</div>
+    ${h.nota ? `<div style="font-family:${SERIF_F};font-size:15px;line-height:1.5;color:${C.ink}">${esc(h.nota)}</div>` : ""}
+    <div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:8px">${(h.fuentes || []).filter((x, i, a) => a.findIndex((y) => y.fuente === x.fuente) === i).map((x) => `<a href="${esc(x.url)}" style="color:${C.soft}">${esc(x.fuente)}</a>`).join(" · ")}</div>
   </td></tr>`;
 
   // Plan Boletín invitation - 3 bullets
   const plan = `<!-- plan-boletin -->
   <tr><td style="padding:24px 0 0">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.card};border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule}"><tr><td style="padding:20px 4px">
-      <div style="font-family:${ui};font-size:14px;line-height:1.55;color:${C.ink};margin-bottom:12px">Con el plan Boletín (US$&nbsp;1.99 al mes, 7 días de prueba con tarjeta) recibes:</div>
-      <ul style="margin:0;padding-left:20px;font-family:${serif};font-size:15px;line-height:1.6;color:${C.ink}">
+      <div style="font-family:${UI_F};font-size:14px;line-height:1.55;color:${C.ink};margin-bottom:12px">Con el plan Boletín (US$&nbsp;1.99 al mes, 7 días de prueba con tarjeta) recibes:</div>
+      <ul style="margin:0;padding-left:20px;font-family:${SERIF_F};font-size:15px;line-height:1.6;color:${C.ink}">
         <li style="margin-bottom:8px">Dólar a una semana y a un mes, cada uno con su rango y lectura</li>
         <li style="margin-bottom:8px">Cobre, oro y petróleo con variación y gráficos</li>
         <li>Tus empresas (hasta 15) con precio, proyección, hechos y noticias</li>
       </ul>
-      <div style="margin-top:16px"><a href="${SITE}/precios" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${ui};font-size:14px;font-weight:600;text-decoration:none;padding:12px 24px;border-radius:4px">Ver los planes</a></div>
+      <div style="margin-top:16px"><a href="${SITE}/precios" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${UI_F};font-size:14px;font-weight:600;text-decoration:none;padding:12px 24px;border-radius:4px">Ver los planes</a></div>
     </td></tr></table>
   </td></tr>
   <!-- /plan-boletin -->`;
@@ -724,10 +674,10 @@ function renderGratis(f, dateLabel, lectura) {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px">
   <tr><td style="padding:28px 0 12px;border-bottom:4px double ${C.ink}">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td style="font-family:${serif};font-size:32px;font-style:italic;font-weight:600;color:${C.ink};white-space:nowrap">PerData${flagHtml(C)}</td>
-      <td align="right" style="font-family:${ui};font-size:12px;line-height:1.5;color:${C.soft}">Boletín diario<br>Edición ${edition > 0 ? edition : 1}</td>
+      <td style="font-family:${SERIF_F};font-size:32px;font-style:italic;font-weight:600;color:${C.ink};white-space:nowrap">PerData${flagHtml(C)}</td>
+      <td align="right" style="font-family:${UI_F};font-size:12px;line-height:1.5;color:${C.soft}">Boletín diario<br>Edición ${edition > 0 ? edition : 1}</td>
     </tr></table>
-    <div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:6px">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
+    <div style="font-family:${UI_F};font-size:13px;color:${C.soft};margin-top:6px">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
   </td></tr>
   
   ${dollarHeadline}
@@ -735,15 +685,15 @@ function renderGratis(f, dateLabel, lectura) {
   ${presionaHtml}
   {{PERSONAL}}
   
-  ${f.historiasTop3?.length ? tituloSeccion("Lo importante de hoy", 0) + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${f.historiasTop3.map(historiaHtml).join(regla())}</table><div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:16px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
+  ${f.historiasTop3?.length ? tituloSeccion("Lo importante de hoy", 0) + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${f.historiasTop3.map(historiaHtml).join(regla())}</table><div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:16px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
   
   ${plan}
   
-  <tr><td style="padding:16px 0 8px;font-family:${ui};font-size:13px;color:${C.soft};text-align:center">
+  <tr><td style="padding:16px 0 8px;font-family:${UI_F};font-size:13px;color:${C.soft};text-align:center">
     ¿Te sirvió? Reenvía este correo. Quien lo reciba puede suscribirse gratis en <a href="${SITE}/boletin?utm_source=correo&amp;utm_medium=reenvio" style="color:${C.ink};text-decoration:underline">perdata.site/boletin</a>
   </td></tr>
   
-  <tr><td style="padding:24px 0 36px;border-top:1px solid ${C.rule};font-family:${ui};font-size:12px;line-height:1.6;color:${C.soft}">
+  <tr><td style="padding:24px 0 36px;border-top:1px solid ${C.rule};font-family:${UI_F};font-size:12px;line-height:1.6;color:${C.soft}">
     El rango es estadístico; los factores son contexto, no una predicción de dirección.<br>
     Información con fines informativos; no es una recomendación de inversión.<br>
     <a href="${SITE}" style="color:${C.ink}">perdata.site</a> · Equipo de PerData<br>
@@ -868,12 +818,9 @@ function macroEmpresa(f) {
 
 function renderPersonal(cards, lecturas) {
   const C = { ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", card: "#FBF9F4" };
-  const serif = "'Source Serif 4',Georgia,'Times New Roman',serif";
-  const ui = "'Libre Franklin',Helvetica,Arial,sans-serif";
-  const mono = "'IBM Plex Mono',Menlo,Consolas,monospace";
   
   const texto = (t, size = 15, lh = 1.5, clr = C.ink, weight = 400, mgb = 14) => 
-    t ? `<p style="margin:0 0 ${mgb}px;font-family:${serif};font-size:${size}px;line-height:${lh};color:${clr};font-weight:${weight}">${esc(t)}</p>` : "";
+    t ? `<p style="margin:0 0 ${mgb}px;font-family:${SERIF_F};font-size:${size}px;line-height:${lh};color:${clr};font-weight:${weight}">${esc(t)}</p>` : "";
   
   const punto = (p) => `<div style="margin:0 0 8px;padding-left:12px;border-left:2px solid ${p.tipo === 'al_alza' ? C.pos : p.tipo === 'a_la_baja' ? C.neg : C.soft};opacity:${p.tipo === 'contexto' ? '0.7' : '1'}">${esc(p.texto)}</div>`;
   
@@ -888,24 +835,24 @@ function renderPersonal(cards, lecturas) {
       : "";
     
     const fc = c.forecast ? `
-      <div style="font-family:${ui};font-size:13px;color:${C.soft};margin:8px 0 0">
+      <div style="font-family:${UI_F};font-size:13px;color:${C.soft};margin:8px 0 0">
         Proyección al ${esc(shortDay(c.forecast.date))}: ${c.currency} ${fmt(c.forecast.p50)}
         ${c.forecast.p10 ? ` (${fmt(c.forecast.p10)} — ${fmt(c.forecast.p90)}, 8 de cada 10 veces)` : ''}
       </div>` : "";
     
-    const item = (html) => `<tr><td valign="top" style="width:16px;padding:5px 0 0;font-family:${ui};font-size:13px;color:${C.soft}">–</td><td style="padding:5px 0 0;font-family:${ui};font-size:13px;line-height:1.45">${html}</td></tr>`;
+    const item = (html) => `<tr><td valign="top" style="width:16px;padding:5px 0 0;font-family:${UI_F};font-size:13px;color:${C.soft}">–</td><td style="padding:5px 0 0;font-family:${UI_F};font-size:13px;line-height:1.45">${html}</td></tr>`;
     const smv = c.smv.map((h) => item(`<span style="color:${C.soft}">SMV, ${esc(shortDay(h.fecha))}:</span> <a href="${esc(h.url_oficial)}" style="color:${C.ink}">${esc(h.titulo)}</a>`)).join("");
     const news = c.news.map((n) => item(`<a href="${esc(n.url)}" style="color:${C.ink}">${esc(n.titulo)}</a> <span style="color:${C.soft}">· ${esc(n.fuente)}</span>`)).join("");
-    const quiet = !c.smv.length && !c.news.length ? `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">Sin hechos de importancia ni noticias en los últimos días.</div>` : "";
-    const sentiment = c.sentiment ? `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">${esc(c.sentiment)}</div>` : (quiet ? "" : `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">Sin noticias recientes de esta empresa.</div>`);
+    const quiet = !c.smv.length && !c.news.length ? `<div style="margin-top:6px;font-family:${UI_F};font-size:13px;color:${C.soft}">Sin hechos de importancia ni noticias en los últimos días.</div>` : "";
+    const sentiment = c.sentiment ? `<div style="margin-top:6px;font-family:${UI_F};font-size:13px;color:${C.soft}">${esc(c.sentiment)}</div>` : (quiet ? "" : `<div style="margin-top:6px;font-family:${UI_F};font-size:13px;color:${C.soft}">Sin noticias recientes de esta empresa.</div>`);
     
     // Company reading
     const l = lecturas?.[c.nemo];
     const bloqueLectura = (lista, label, tipo) => (lista || []).length
-      ? `<div style="font-family:${ui};font-size:12px;font-weight:600;margin:12px 0 4px">${label}</div>${lista.map(p => ({...p, tipo})).map(punto).join("")}` : "";
+      ? `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin:12px 0 4px">${label}</div>${lista.map(p => ({...p, tipo})).map(punto).join("")}` : "";
     
-    const lecturaHtml = l ? `<div style="margin-top:12px;padding-top:10px;border-top:1px dashed ${C.rule};font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink}">
-        <div style="font-family:${ui};font-size:12px;font-weight:600;margin-bottom:8px">Lectura de ${esc(c.name)}</div>
+    const lecturaHtml = l ? `<div style="margin-top:12px;padding-top:10px;border-top:1px dashed ${C.rule};font-family:${SERIF_F};font-size:15px;line-height:1.5;color:${C.ink}">
+        <div style="font-family:${UI_F};font-size:12px;font-weight:600;margin-bottom:8px">Lectura de ${esc(c.name)}</div>
         ${l.resumen && l.resumen !== l.que_hay?.[0]?.texto && !(l.que_hay?.[0]?.texto || "").startsWith(l.resumen.replace(/\.$/, "")) ? `<div style="margin-bottom:8px">${esc(l.resumen)}</div>` : ""}
         ${bloqueLectura(l.que_hay, "Qué hay", "contexto")}
         ${bloqueLectura(l.podria_mover?.al_alza, "Podría mover al alza", "al_alza")}
@@ -915,8 +862,8 @@ function renderPersonal(cards, lecturas) {
     
     return `<tr><td style="padding:20px 0">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-        <td style="font-family:${ui};font-size:15px;font-weight:600;color:${C.ink};vertical-align:top">${esc(c.name)} <span style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:11px;font-weight:400;color:${C.soft}">${esc(c.nemo)}</span></td>
-        <td align="right" style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:15px;color:${C.ink};white-space:nowrap;vertical-align:top">${c.price != null ? `${c.currency} ${fmt(c.price)}` : `<a href="${SITE}/empresa/${encodeURIComponent(c.nemo)}" style="color:${C.soft};font-family:${ui};font-size:12px">Ver ficha</a>`}<br><span style="font-size:13px">${ch}</span>${c.price != null ? `<br><span style="font-size:11px;color:${C.soft}">${c.priceDate ? `cierre del ${esc(shortDay(c.priceDate))}` : "último cierre disponible"}</span>` : ""}</td>
+        <td style="font-family:${UI_F};font-size:15px;font-weight:600;color:${C.ink};vertical-align:top">${esc(c.name)} <span style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:11px;font-weight:400;color:${C.soft}">${esc(c.nemo)}</span></td>
+        <td align="right" style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:15px;color:${C.ink};white-space:nowrap;vertical-align:top">${c.price != null ? `${c.currency} ${fmt(c.price)}` : `<a href="${SITE}/empresa/${encodeURIComponent(c.nemo)}" style="color:${C.soft};font-family:${UI_F};font-size:12px">Ver ficha</a>`}<br><span style="font-size:13px">${ch}</span>${c.price != null ? `<br><span style="font-size:11px;color:${C.soft}">${c.priceDate ? `cierre del ${esc(shortDay(c.priceDate))}` : "último cierre disponible"}</span>` : ""}</td>
       </tr></table>
       ${rangeBarHtml}
       ${fc}
@@ -924,9 +871,9 @@ function renderPersonal(cards, lecturas) {
     </td></tr>`;
   }).join(regla());
   
-  return `<tr><td style="padding:24px 0 8px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${ui};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">Tus empresas</td></tr></table></td></tr>
+  return `<tr><td style="padding:24px 0 8px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">Tus empresas</td></tr></table></td></tr>
   <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${body}</table>
-  <div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:16px">Precios: datos de mercado de cierre. Hechos: SMV. La proyección es estadística y no incorpora las noticias.</div></td></tr>`;
+  <div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:16px">Precios: datos de mercado de cierre. Hechos: SMV. La proyección es estadística y no incorpora las noticias.</div></td></tr>`;
 }
 
 const f = await facts();
@@ -934,8 +881,7 @@ const ai = await interpret(f);
 const lima = new Date(Date.now() - 5 * 36e5);
 const dateLabel = lima.toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 
-// Charts are inline SVG inside the renderers, so the send needs no attachments.
-const upsell = `<tr><td style="padding:24px 0 0;font-family:'Libre Franklin',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#5E584E">Elegiste empresas para seguir. La sección «Tus empresas» (precio, proyección, hechos y noticias de cada una) llega con el plan Boletín.</td></tr>`;
+const upsell = `<tr><td style="padding:24px 0 0;font-family:${UI_F};font-size:14px;line-height:1.5;color:#5E584E">Elegiste empresas para seguir. La sección «Tus empresas» (precio, proyección, hechos y noticias de cada una) llega con el plan Boletín.</td></tr>`;
 const fill = (html, personal, baja = `${SITE}/boletin`, prefs = `${SITE}/boletin`) => html
   .replace("{{BAJA}}", () => baja)
   .replace("{{EMPRESAS}}", () => prefs)
@@ -1126,7 +1072,7 @@ if (!DRY && !PREVIEW) {
     const prefs = token ? `${SITE}/boletin?t=${token}#empresas` : `${SITE}/boletin`;
     const mine = (empresas || []).map((n) => cards[n]).filter(Boolean);
     // Free version: no «Tus empresas» section, only the note about the plan
-    const personal = plan === "gratis" ? ((empresas || []).length ? upsell : "") : (mine.length ? renderPersonal(mine, lecturas) : `<tr><td style="padding:24px 0 0;font-family:'Libre Franklin',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#5E584E">Aún no elegiste empresas. Elige hasta 15 en <a href="${SITE}/cuenta" style="color:#1B1916">/cuenta</a> y cada mañana llegará tu sección «Tus empresas».</td></tr>`);
+    const personal = plan === "gratis" ? ((empresas || []).length ? upsell : "") : (mine.length ? renderPersonal(mine, lecturas) : `<tr><td style="padding:24px 0 0;font-family:${UI_F};font-size:14px;line-height:1.5;color:#5E584E">Aún no elegiste empresas. Elige hasta 15 en <a href="${SITE}/cuenta" style="color:#1B1916">/cuenta</a> y cada mañana llegará tu sección «Tus empresas».</td></tr>`);
     const baseHtml = plan === "gratis" ? htmlGratis : htmlCompleto;
     const msg = { 
       from: FROM, 
