@@ -377,34 +377,34 @@
           }
 
           function render(data) {
-            if (!data || !data.horizontes) {
+            if (!data || !data.horizontes || !data.prueba_historica) {
               container.innerHTML = '<p class="text-ink-soft text-sm">Formato de datos inesperado.</p>';
               return;
             }
 
-            const labels = { dia: "Mañana (1 día hábil)", semana: "Próxima semana (5 días hábiles)", mes: "Próximo mes (~22 días hábiles)" };
-            const order = ["dia", "semana", "mes"];
+            const labels = { h1: "Mañana (h1: 1 día hábil)", h5: "Próxima semana (h5: 5 días hábiles)", h6: "6 días hábiles (h6)", h8: "8 días hábiles (h8)" };
+            const order = ["h1", "h5", "h6", "h8"];
 
-            let html = "";
+            let html = '<div class="space-y-8">';
+
+            // Part (a): Pronósticos publicados
+            html += '<div class="space-y-6">';
+            html += '<h3 class="text-lg font-semibold text-ink">Pronósticos publicados</h3>';
+
             for (const key of order) {
               const h = data.horizontes[key];
               if (!h) continue;
 
               html += '<div class="space-y-3">';
-              html += '<h3 class="text-lg font-semibold text-ink">' + labels[key] + '</h3>';
+              html += '<h4 class="text-base font-medium text-ink">' + labels[key] + '</h4>';
 
               if (h.n === 0) {
                 html += '<p class="text-ink-soft text-sm">Todavía no hay casos evaluados para este horizonte.</p>';
               } else if (h.n < 20) {
-                html += '<p class="text-ink-soft text-sm">Todavía hay pocos casos (' + h.n + '). El porcentaje no es representativo.</p>';
+                html += '<p class="text-ink-soft text-sm">Todavía hay pocos casos (' + h.n + '); el porcentaje se mostrará a partir de 20.</p>';
               } else {
                 html += '<p class="text-ink-soft text-sm">';
-                html += h.n + ' cierres evaluados desde ' + h.desde + '. ';
-                html += h.dentro + ' de ' + h.n + ' cayeron dentro del rango (' + h.cobertura.toFixed(1) + ' %); el rango promete 80 %.';
-                if (h.error_medio_centro !== null) {
-                  html += ' Error medio del centro (P50): S/ ' + h.error_medio_centro.toFixed(4) + '.';
-                  html += ' Error medio del paseo aleatorio (último cierre): S/ ' + h.error_medio_paseo_aleatorio.toFixed(4) + '.';
-                }
+                html += h.dentro + ' de ' + h.n + ' cierres cayeron dentro del rango (' + h.cobertura.toFixed(1) + ' %); el rango promete 80 %.';
                 html += '</p>';
               }
 
@@ -445,8 +445,46 @@
               }
               html += '</div>';
             }
+            html += '</div>';
 
-            html += '<p class="text-ink-soft text-xs mt-4">Actualizado: ' + (data.actualizado || "—") + '. Fuente: BCRP (cierres oficiales) y tabla forecast_history de Supabase (pronósticos publicados).</p>';
+            // Part (b): Prueba histórica
+            const ph = data.prueba_historica;
+            html += '<div class="space-y-4 border-t border-rule pt-6">';
+            html += '<h3 class="text-lg font-semibold text-ink">Prueba histórica (no son pronósticos publicados)</h3>';
+            html += '<p class="text-ink-soft text-sm">';
+            html += 'Entre enero de 2019 y noviembre de 2026, recalculando el modelo solo con la historia previa a cada día, el rango de 80 % contuvo el cierre real ';
+            html += ph.cobertura_fuera_muestra + ' % de las veces (' + ph.cortes.toLocaleString() + ' días).';
+            html += '</p>';
+
+            if (ph.por_anio && ph.por_anio.length > 0) {
+              html += '<div class="overflow-x-auto">';
+              html += '<table class="w-full text-left text-sm border border-rule">';
+              html += '<thead class="bg-paper border-b border-rule font-mono text-xs text-ink uppercase">';
+              html += '<tr>';
+              html += '<th class="py-2.5 px-4 font-semibold">Año</th>';
+              html += '<th class="py-2.5 px-4 font-semibold">Días</th>';
+              html += '<th class="py-2.5 px-4 font-semibold">Cobertura 80 %</th>';
+              html += '<th class="py-2.5 px-4 font-semibold">Ancho medio (%)</th>';
+              html += '</tr>';
+              html += '</thead>';
+              html += '<tbody class="divide-y divide-rule font-mono tnum text-ink">';
+              for (const row of ph.por_anio) {
+                html += '<tr>';
+                html += '<td class="py-2.5 px-4 font-sans">' + row.anio + '</td>';
+                html += '<td class="py-2.5 px-4">' + row.n.toLocaleString() + '</td>';
+                html += '<td class="py-2.5 px-4">' + row.cobertura.toFixed(2) + ' %</td>';
+                html += '<td class="py-2.5 px-4">' + row.ancho_pct.toFixed(3) + '</td>';
+                html += '</tr>';
+              }
+              html += '</tbody>';
+              html += '</table>';
+              html += '</div>';
+            }
+            html += '</div>';
+
+            html += '</div>';
+
+            html += '<p class="text-ink-soft text-xs mt-4">Actualizado: ' + (data.actualizado || "—") + '. Fuente: BCRP (cierres oficiales) y data/daily-forecasts.json (pronósticos publicados).</p>';
             container.innerHTML = html;
           }
 

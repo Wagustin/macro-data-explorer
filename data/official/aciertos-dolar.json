@@ -1,0 +1,122 @@
+{
+  "actualizado": "2026-11-09",
+  "horizontes": {
+    "h1": {
+      "desde": "2026-11-04",
+      "n": 2,
+      "dentro": 1,
+      "cobertura": 50,
+      "error_medio_centro": 0.0095,
+      "error_medio_paseo_aleatorio": 0.0095,
+      "casos": [
+        {
+          "fecha_emision": "2026-11-05",
+          "fecha_objetivo": "2026-11-06",
+          "p10": 3.4409,
+          "p50": 3.452,
+          "p90": 3.4624,
+          "cierre": 3.433,
+          "dentro": false
+        },
+        {
+          "fecha_emision": "2026-11-04",
+          "fecha_objetivo": "2026-11-05",
+          "p10": 3.4406,
+          "p50": 3.452,
+          "p90": 3.4627,
+          "cierre": 3.452,
+          "dentro": true
+        }
+      ]
+    },
+    "h5": {
+      "desde": null,
+      "n": 0,
+      "dentro": 0,
+      "cobertura": null,
+      "error_medio_centro": null,
+      "error_medio_paseo_aleatorio": null,
+      "casos": []
+    },
+    "h6": {
+      "desde": null,
+      "n": 0,
+      "dentro": 0,
+      "cobertura": null,
+      "error_medio_centro": null,
+      "error_medio_paseo_aleatorio": null,
+      "casos": []
+    },
+    "h8": {
+      "desde": null,
+      "n": 0,
+      "dentro": 0,
+      "cobertura": null,
+      "error_medio_centro": null,
+      "error_medio_paseo_aleatorio": null,
+      "casos": []
+    }
+  },
+  "prueba_historica": {
+    "asset": "USD/PEN",
+    "horizonte": "1 día hábil (siguiente cierre)",
+    "periodo": "2019-01-02–2026-11-05",
+    "metodo": "FHS + EWMA(0.94), P50 = paseo aleatorio, K recalibrado con historia hasta cada corte",
+    "k_recalculo_dias_habiles": 5,
+    "min_cortes_calibracion": 60,
+    "cortes": 1958,
+    "cortes_estables": 1898,
+    "cobertura_fuera_muestra": 80.59,
+    "ancho_medio_pct_fuera_muestra": 0.897,
+    "por_anio": [
+      {
+        "anio": 2019,
+        "n": 249,
+        "cobertura": 79.12,
+        "ancho_pct": 0.608
+      },
+      {
+        "anio": 2020,
+        "n": 254,
+        "cobertura": 82.68,
+        "ancho_pct": 0.965
+      },
+      {
+        "anio": 2021,
+        "n": 251,
+        "cobertura": 82.87,
+        "ancho_pct": 1.176
+      },
+      {
+        "anio": 2022,
+        "n": 251,
+        "cobertura": 78.09,
+        "ancho_pct": 1.146
+      },
+      {
+        "anio": 2023,
+        "n": 250,
+        "cobertura": 80,
+        "ancho_pct": 0.773
+      },
+      {
+        "anio": 2024,
+        "n": 246,
+        "cobertura": 78.46,
+        "ancho_pct": 0.855
+      },
+      {
+        "anio": 2025,
+        "n": 248,
+        "cobertura": 80.65,
+        "ancho_pct": 0.698
+      },
+      {
+        "anio": 2026,
+        "n": 209,
+        "cobertura": 83.25,
+        "ancho_pct": 0.961
+      }
+    ]
+  }
+}
