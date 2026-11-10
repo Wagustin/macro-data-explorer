@@ -169,6 +169,8 @@ test("renderHistorial part (b) includes backtest_motor paragraph", () => {
   const aciertos = makeAciertos();
   const html = renderHistorial(aciertos);
   assert.ok(html.includes("Hasta el 9 de noviembre de 2026 el rango del día siguiente partía de un cierre de dos días hábiles atrás"));
+  assert.ok(html.includes("que SUNAT difunde de madrugada"));
+  assert.ok(!html.includes("SUNAT pública"));
   assert.ok(html.includes("81.2 %"));
   assert.ok(html.includes("desde 2024"));
   assert.ok(!html.includes("1 957"));

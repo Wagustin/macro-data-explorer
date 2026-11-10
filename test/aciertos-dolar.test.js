@@ -179,14 +179,69 @@ test("evaluatePublishedForecasts returns null stats when no valid forecasts", ()
   }
 });
 
-test("evaluatePublishedForecasts sorts cases by fecha_publicacion descending (most recent first)", () => {
+test("evaluatePublishedForecasts sorts cases by fecha_objetivo descending (most recent first)", () => {
   const result = evaluatePublishedForecasts(MOCK_PRONOSTICOS, MOCK_OFFICIAL_SERIE);
   const mananaCases = result.horizontes.manana.casos;
 
-  // Should be sorted newest first
-  assert.equal(mananaCases[0].fecha_publicacion, "2025-01-06");
-  assert.equal(mananaCases[1].fecha_publicacion, "2025-01-03");
-  assert.equal(mananaCases[2].fecha_publicacion, "2025-01-02");
+  // Should be sorted by closing day, newest first
+  assert.deepEqual(
+    mananaCases.map((c) => c.fecha_objetivo),
+    ["2025-01-08", "2025-01-07", "2025-01-06"]
+  );
+});
+
+test("evaluatePublishedForecasts sorts by fecha_objetivo when fecha_publicacion ties and takes the earliest publication as desde", () => {
+  // Two ranges published the same day, for different closing days
+  const pronosticos = [
+    {
+      tipo: "manana",
+      fecha_publicacion: "2025-01-03",
+      fecha_base: "2025-01-03",
+      cierre_base: 3.71,
+      horizonte_dias_habiles: 2,
+      fecha_objetivo: "2025-01-06",
+      p10: 3.68,
+      p50: 3.70,
+      p90: 3.75,
+    },
+    {
+      tipo: "manana",
+      fecha_publicacion: "2025-01-03",
+      fecha_base: "2025-01-03",
+      cierre_base: 3.71,
+      horizonte_dias_habiles: 3,
+      fecha_objetivo: "2025-01-07",
+      p10: 3.69,
+      p50: 3.71,
+      p90: 3.76,
+    },
+    // Published earlier, but it closes later
+    {
+      tipo: "manana",
+      fecha_publicacion: "2025-01-02",
+      fecha_base: "2025-01-02",
+      cierre_base: 3.70,
+      horizonte_dias_habiles: 5,
+      fecha_objetivo: "2025-01-08",
+      p10: 3.67,
+      p50: 3.69,
+      p90: 3.74,
+    },
+  ];
+  const officialSerie = [
+    ["2025-01-06", 3.72],
+    ["2025-01-07", 3.73],
+    ["2025-01-08", 3.74],
+  ];
+  const result = evaluatePublishedForecasts(pronosticos, officialSerie);
+  const manana = result.horizontes.manana;
+
+  assert.deepEqual(
+    manana.casos.map((c) => c.fecha_objetivo),
+    ["2025-01-08", "2025-01-07", "2025-01-06"]
+  );
+  // desde is the earliest publication date, not the one of the last case
+  assert.equal(manana.desde, "2025-01-02");
 });
 
 test("evaluatePublishedForecasts limits cases to 60 most recent", () => {
@@ -213,7 +268,7 @@ test("evaluatePublishedForecasts limits cases to 60 most recent", () => {
   const result = evaluatePublishedForecasts(manyPronosticos, MOCK_OFFICIAL_SERIE);
   // Should have at most 60 cases
   assert.ok(result.horizontes.manana.casos.length <= 60);
-  // Should be the 60 most recent (highest fecha_publicacion)
+  // Should be the 60 most recent (latest fecha_objetivo)
   if (result.horizontes.manana.casos.length === 60) {
     assert.equal(result.horizontes.manana.casos[0].fecha_publicacion, "2025-01-31");
   }

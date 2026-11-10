@@ -203,7 +203,7 @@ export function renderHistorial(aciertos) {
     const y = semanaBT ? Number(semanaBT.cobertura_80_k_expansivo.toFixed(1)) : 's/d';
 
     html += '<p class="text-ink-soft text-sm mt-4">';
-    html += `Hasta el 9 de noviembre de 2026 el rango del día siguiente partía de un cierre de dos días hábiles atrás, porque el BCRP lo difunde con un día de retraso. Desde el 10 de noviembre parte del cierre del día hábil anterior, que SUNAT publica de madrugada, y por eso es más angosto. Cada rango queda registrado antes de las 9:00 a. m. del día que anuncia y no se cambia después. En la prueba del propio motor sobre los cierres desde 2024, el rango de un día acertó ${x} % de las veces; el de la semana, ${y} %.`;
+    html += `Hasta el 9 de noviembre de 2026 el rango del día siguiente partía de un cierre de dos días hábiles atrás, porque el BCRP lo difunde con un día de retraso. Desde el 10 de noviembre parte del cierre del día hábil anterior, que SUNAT difunde de madrugada, y por eso es más angosto. Cada rango queda registrado antes de las 9:00 a. m. del día que anuncia y no se cambia después. En la prueba del propio motor sobre los cierres desde 2024, el rango de un día acertó ${x} % de las veces; el de la semana, ${y} %.`;
     html += '</p>';
   }
 

@@ -75,11 +75,16 @@ export function evaluatePublishedForecasts(pronosticos, officialSerie) {
       });
     }
 
-    cases.sort((a, b) => b.fecha_publicacion.localeCompare(a.fecha_publicacion));
+    // The history is shown by closing day: from the most recent close to the oldest one
+    cases.sort((a, b) => b.fecha_objetivo.localeCompare(a.fecha_objetivo));
     const last60 = cases.slice(0, 60);
+    // "desde" is the earliest publication date of all the evaluated cases
+    const desde = cases.length > 0
+      ? cases.reduce((min, c) => (c.fecha_publicacion < min ? c.fecha_publicacion : min), cases[0].fecha_publicacion)
+      : null;
 
     result[tipo] = {
-      desde: cases.length > 0 ? cases[cases.length - 1].fecha_publicacion : null,
+      desde,
       n,
       dentro,
       cobertura: n > 0 ? Number(((dentro / n) * 100).toFixed(1)) : null,
