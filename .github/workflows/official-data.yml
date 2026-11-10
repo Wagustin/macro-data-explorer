@@ -24,7 +24,9 @@ jobs:
       - run: pip install xlrd==2.0.1 openpyxl==3.1.5
       - name: Descargar datos oficiales
         run: python scripts/fetch_official.py
+      # Dato de investigación (no lo usa el motor): si la fuente no responde, el motor corre igual.
       - name: Descargar índices EPU
+        continue-on-error: true
         run: python scripts/fetch_epu.py
       - name: PerData Engine diario
         run: node scripts/engine-daily.js
