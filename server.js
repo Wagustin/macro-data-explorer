@@ -155,13 +155,6 @@ const server = http.createServer(async (req, res) => {
       return fs.createReadStream(jsonPath).pipe(res);
     }
   }
-  if (pathname === "/data/official/aciertos-dolar.json") {
-    const jsonPath = path.join(process.cwd(), "data", "official", "aciertos-dolar.json");
-    if (fs.existsSync(jsonPath)) {
-      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
-      return fs.createReadStream(jsonPath).pipe(res);
-    }
-  }
 
   // Digest assets are public only by a tightly validated basename.
   const digestAsset = /^\/data\/resumenes\/(index|\d{4}-\d{2}-\d{2})\.json$/.exec(pathname);

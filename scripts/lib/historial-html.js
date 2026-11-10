@@ -205,7 +205,7 @@ export function renderHistorial(aciertos) {
     const m = semanaBT ? milesConEspacio(semanaBT.cortes_evaluados) : 's/d';
 
     html += '<p class="text-ink-soft text-sm mt-4">';
-    html += `El rango que publicamos para el día siguiente suele estar a dos días hábiles del último cierre oficial, porque el BCRP publica con un día de retraso. Para esa distancia la misma prueba, hecha por el propio motor, da ${x}% en ${n} días; para la semana, ${y}% en ${m} días.`;
+    html += `El rango que publicamos para el día siguiente suele estar a dos días hábiles del último cierre oficial, porque el BCRP difunde el cierre con un día de retraso. Para esa distancia la misma prueba, hecha por el propio motor, da ${x}% en ${n} días; para la semana, ${y}% en ${m} días.`;
     html += '</p>';
   }
 
