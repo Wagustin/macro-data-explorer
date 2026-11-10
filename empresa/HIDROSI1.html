@@ -335,16 +335,17 @@ html.dark .ui-switch {
           <span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
         </a>
 
-        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft" aria-label="Navegación principal">
           <a href="/dolar" class="hover:text-ink transition no-underline">Dólar</a>
           <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a>
-          <a href="/empresas" class="text-ink font-semibold transition no-underline">Empresas</a>
+          <a href="/empresas" class="hover:text-ink transition no-underline">Empresas</a>
           <a href="/mercado" class="hover:text-ink transition no-underline">Mercado</a>
           <a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a>
           <a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a>
           <a href="/guia" class="hover:text-ink transition no-underline">Guía</a>
-          <a href="/boletin" class="hover:text-ink transition no-underline">Boletín</a><a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
-        </nav>
+          <a href="/boletin" class="hover:text-ink transition no-underline">Boletín</a>
+          <a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
+</nav>
       </div>
 
       <div class="flex items-center space-x-2 sm:space-x-3">
@@ -365,16 +366,17 @@ html.dark .ui-switch {
 
     <!-- Mobile Drawer -->
     <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors">
-      <nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft">
-        <a href="/dolar" class="hover:text-ink py-1 transition no-underline">Dólar</a>
-          <a href="/explorer" class="hover:text-ink py-1 transition no-underline">Terminal</a>
-        <a href="/empresas" class="text-ink font-semibold py-1 transition no-underline">Empresas</a>
-        <a href="/mercado" class="hover:text-ink py-1 transition no-underline">Mercado</a>
-        <a href="/noticias" class="hover:text-ink py-1 transition no-underline">Noticias</a>
-        <a href="/metodologia" class="hover:text-ink py-1 transition no-underline">Metodología</a>
-        <a href="/guia" class="hover:text-ink py-1 transition no-underline">Guía</a>
-        <a href="/boletin" class="hover:text-ink py-1 transition no-underline">Boletín</a><a href="/precios" class="hover:text-ink py-1 transition no-underline">Precios</a>
-      </nav>
+      <nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft" aria-label="Menú móvil">
+        <a href="/dolar" class="hover:text-ink py-1 no-underline">Dólar</a>
+        <a href="/explorer" class="hover:text-ink py-1 no-underline">Terminal</a>
+        <a href="/empresas" class="hover:text-ink py-1 no-underline">Empresas</a>
+        <a href="/mercado" class="hover:text-ink py-1 no-underline">Mercado</a>
+        <a href="/noticias" class="hover:text-ink py-1 no-underline">Noticias</a>
+        <a href="/metodologia" class="hover:text-ink py-1 no-underline">Metodología</a>
+        <a href="/guia" class="hover:text-ink py-1 no-underline">Guía</a>
+        <a href="/boletin" class="hover:text-ink py-1 no-underline">Boletín</a>
+        <a href="/precios" class="hover:text-ink py-1 no-underline">Precios</a>
+</nav>
     </div>
   </header>
 
@@ -442,7 +444,7 @@ html.dark .ui-switch {
           </div>
         </div>
 
-        <div class="section" id="issuerStatusSection" aria-live="polite"><p class="issuer-status" id="issuerStatusText">Sin operaciones recientes · último precio S/ 1.58</p></div>
+        <div class="section" id="issuerStatusSection" aria-live="polite"><p class="issuer-status" id="issuerStatusText">Sus acciones no se negocian activamente en bolsa</p></div>
 
         <!-- 90-Day Chart Section -->
         <div class="chart-section" id="chartSection">
