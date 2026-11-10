@@ -80,7 +80,8 @@ test("correo pagado: dólar x3 con lectura, metales, SMV, todas las noticias y T
   // (1) Dólar mañana, semana y mes con rango y su lectura
   // Use formatFechaObjetivo to get the actual label for "manana" horizon
   const daily = JSON.parse(read("data/daily-forecasts.json"));
-  const todayLima = daily.referencia_lima.hoy;
+  // Same clock as scripts/boletin.js: the label depends on today's date in Lima, not on when the forecast was generated.
+  const todayLima = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Lima" }).format(new Date());
   const mananaFecha = daily.simbolos.PEN.manana.fecha_objetivo;
   const dt = new Date(`${mananaFecha}T12:00:00Z`);
   const hdt = new Date(`${todayLima}T12:00:00Z`);
