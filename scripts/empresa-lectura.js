@@ -205,7 +205,9 @@ function promptLectura(datos, hechos) {
   const lista = hechos.map((h) => `${h.id}|${h.fuente}|${h.texto}`).join("\n");
   const nombre = d.nombre || d.nemo || "la empresa";
   const sector = d.sector ? ` Sector registrado en PerData: ${d.sector}. Solo puedes describir su actividad con ese sector y con los hechos de abajo; no inventes qué produce ni a qué se dedica.` : " No hay sector registrado en PerData: no inventes qué produce ni a qué se dedica, solo usa los hechos de abajo.";
-  const metalPrincipal = d.metal_principal ? ` Metal principal de la minera: ${d.metal_principal}.` : "";
+  const metalPrincipal = d.metal_principal
+    ? ` Metal principal de la minera: ${d.metal_principal}; solo ese metal puede llevar dirección.`
+    : " No hay metal principal registrado para esta empresa: ni el cobre ni el oro llevan dirección.";
   return `Eres el redactor del boletín de PerData, un medio económico del Perú. Escribes la lectura de ${nombre} (nemónico ${d.nemo || "sin nemónico"}): qué hay hoy de la empresa y qué podría mover su acción, sin afirmar la dirección.
 Hechos disponibles (formato: id|fuente|hecho):
 ${lista}
