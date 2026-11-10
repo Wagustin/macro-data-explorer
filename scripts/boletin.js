@@ -4,34 +4,36 @@
 // 2. NVIDIA NIM writes short plain-Spanish blocks using ONLY those facts; any sentence with a
 //    number that is not in the facts is dropped, and if NIM fails the email goes out without it.
 // 3. Renders an editorial HTML email and sends it with Resend. Two versions:
-//    - Gratis (Mon-Sat 06:00 Lima): dollar for the next business day with its range, the previous
-//      close, the 3 best digest stories already redacted (double-checked by news-digest.js), the
-//      «Qué podría presionar al dólar» reading for the `manana` horizon from
-//      scripts/dolar-lectura.js (lecturaDolar), a one-line transparency note and a brief
-//      invitation to the Boletín plan (US$ 1.99/month, 7-day trial with card), without promising
-//      anything the paid email does not bring.
-//    - Pagado (Boletín y Pro): dollar for tomorrow, week and month, each with its range and its
-//      reading (lecturaDolar), copper, gold and oil with variation and date, the SMV facts of the
-//      day, ALL the digest stories (the full digest as today), «Tus empresas» (≤15 from the
-//      seguimiento table) with price, variation, range, SMV facts, news and the company reading
-//      from scripts/empresa-lectura.js (lecturasEmpresas, only the news that companyCard already
-//      filtered by real mention), and the transparency note plus the existing unsubscribe /
-//      preferences links ({{BAJA}}, {{EMPRESAS}}). Without chosen companies: an invitation to
-//      choose them in /cuenta.
+//    - Gratis (Mon-Sat 06:00 Lima): the dollar close with a PNG chart (30 closes + tomorrow's
+//      fan), a one-row range table (central p25-p75 and wide p10-p90), the 3 best digest
+//      stories already redacted (double-checked by news-digest.js), the «Qué podría presionar
+//      al dólar» reading from scripts/dolar-lectura.js (lecturaDolar), a transparency note and a
+//      brief invitation to the Boletín plan (US$ 1.99/month, 7-day trial with card).
+//    - Pagado (Boletín y Pro): the same dollar block with the week and month rows added to the
+//      table and the chart fan, the 4 best digest stories, a 4-row markets table (copper, gold,
+//      WTI, Brent), the 3 latest SMV facts, and «Tus empresas» (≤15 from the seguimiento table):
+//      price, variation, a PNG chart (60 closes + 1-month fan), one projection line, up to 2
+//      SMV/news lines and the directional points of the company reading from
+//      scripts/empresa-lectura.js (lecturasEmpresas), plus a «Ver ficha» link. Footer with the
+//      unsubscribe / preferences links ({{BAJA}}, {{EMPRESAS}}).
+//    Charts are PNGs built in pure JS (scripts/lib/png.js + scripts/lib/grafico-correo.js), no
+//    dependencies. Renderers take an `img` param ({ base } or null): previews write the PNGs
+//    next to the HTML (<ruta-sin-ext>-img/) and pass that relative folder as base; the real
+//    send passes BOLETIN_IMG_BASE, or null when it is not set (the email then has no <img>).
 //    Fallbacks: if lecturaDolar/lecturasEmpresas fail or take too long (> 90 s total) the email
 //    still goes out with the deterministic version or without that section, never crashing the
-//    send. The console records which sections used LLM and which were deterministic. The free
-//    user never receives paid sections.
+//    send. The free user never receives paid sections.
 // Env: RESEND_API_KEY, BOLETIN_TO (comma list), SUPABASE_URL + SUPABASE_SERVICE_KEY (subscribers),
-//      NVIDIA_API_KEY and GEMINI_API_KEY (optional), NIM_MODEL (optional)
+//      NVIDIA_API_KEY and GEMINI_API_KEY (optional), NIM_MODEL (optional), BOLETIN_IMG_BASE (optional)
 // Usage: node scripts/boletin.js [--dry-run] (writes the preview, sends nothing)
 // Preview: PREVIEW_PLAN=gratis|boletin (default boletin), PREVIEW_EMPRESAS="ALICORC1" (sample
 //          personal section), BOLETIN_PREVIEW_PATH=path/to/preview.html
 import fs from "fs";
 import path from "path";
 import { smvRows } from "../api/_lib/smv.js";
+import { graficoRango } from "./lib/grafico-correo.js";
 import { mencionaEmpresa } from "./empresa-mencion.js";
-import { formatFechaObjetivo, formatSemanaFecha, formatCierreFecha } from "../api/diario.js";
+import { formatCierreFecha } from "../api/diario.js";
 import { lecturaDolar, hechosDolar } from "./dolar-lectura.js";
 import { lecturasEmpresas } from "./empresa-lectura.js";
 
@@ -145,75 +147,206 @@ function compactar(html) {
   });
 }
 
-// Table-based range bar (works in Gmail, Outlook, Yahoo — no SVG)
-function barraRango({ min, max, centro, ultimo, prefijo = "S/", fechaUltimo, decimales = 3 }) {
-  // Scale: lo = min(min, ultimo) - 15% of range, hi = max(max, ultimo) + 15% of range
-  const range = max - min;
-  const lo = Math.min(min, ultimo) - range * 0.15;
-  const hi = Math.max(max, ultimo) + range * 0.15;
-  const total = hi - lo;
+// ---------------------------------------------------------------------------
+// Helpers del rediseño v9: gráficos PNG, tabla de rangos y lecturas unificadas.
+// ---------------------------------------------------------------------------
+const DIAS_ES = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
+const MESES_CORTOS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
-  // Track: three cells with integer percentages summing to 100
-  // Band goes from min to max, so leftPct uses min, rightPct uses max
-  const leftPct = Math.round(((min - lo) / total) * 100);
-  const rightPct = Math.round(((hi - max) / total) * 100);
-  const midPct = 100 - leftPct - rightPct;
+// Carpeta (relativa al HTML) donde se escriben los PNG de la vista previa.
+const carpetaImagen = (rutaHtml) => {
+  const base = String(rutaHtml || "").replace(/\.html?$/i, "");
+  return base.split(/[\\/]/).pop() + "-img";
+};
 
-  // Last close position as percentage
-  const ultimoPct = Math.round(((ultimo - lo) / total) * 100);
+// Etiqueta <img>: sin imágenes cuando no hay dónde alojarlas (envío real).
+const imgTag = (img, archivo, ancho, alto, alt) => {
+  const base = img?.base;
+  if (!base) return "";
+  return `<img src="${esc(`${base}/${archivo}`)}" width="${ancho}" height="${alto}" alt="${esc(alt)}" style="display:block;width:100%;max-width:${ancho}px;height:auto;border:0">`;
+};
 
-  // Use same formatter as "Rango:" line for consistency
-  const fmt = (v) => `${prefijo} ${Number(v).toLocaleString("es-PE", { minimumFractionDigits: decimales, maximumFractionDigits: decimales })}`;
+const escribirImagen = (dir, archivo, bytes) => {
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, archivo), bytes);
+};
 
-  // Band color: soft green #cfdccb, track #e4dfd6
-  const bandColor = "#cfdccb";
-  const trackColor = "#e4dfd6";
+// "2026-11-10" -> "10 nov"
+const fechaCorta = (fecha) => {
+  const d = new Date(`${String(fecha || "").slice(0, 10)}T12:00:00Z`);
+  if (isNaN(d.getTime())) return String(fecha || "");
+  return `${d.getUTCDate()} ${MESES_CORTOS[d.getUTCMonth()]}`;
+};
 
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-family:${MONO_F};font-size:12px;color:${C.ink};font-variant-numeric:tabular-nums">
-<tr>
-  <td colspan="3" style="padding:0 0 4px">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-      <tr>
-        <td width="${leftPct}%" style="font-size:0;line-height:0">&nbsp;</td>
-        <td width="${midPct}%" style="font-size:0;line-height:0">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-            <tr>
-              <td style="text-align:left;font-size:11px;white-space:nowrap">${esc(fmt(min))}</td>
-              <td style="text-align:right;font-size:11px;white-space:nowrap">${esc(fmt(max))}</td>
-            </tr>
-          </table>
-        </td>
-        <td width="${rightPct}%" style="font-size:0;line-height:0">&nbsp;</td>
-      </tr>
-    </table>
-  </td>
-</tr>
-<tr>
-  <td colspan="3" style="padding:0">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="height:8px;background:${trackColor}">
-      <tr>
-        <td width="${leftPct}%" style="background:${trackColor};height:8px;font-size:0;line-height:0">&nbsp;</td>
-        <td width="${midPct}%" style="background:${bandColor};height:8px;font-size:0;line-height:0">&nbsp;</td>
-        <td width="${rightPct}%" style="background:${trackColor};height:8px;font-size:0;line-height:0">&nbsp;</td>
-      </tr>
-    </table>
-  </td>
-</tr>
-<tr>
-  <td colspan="3" style="padding:4px 0 0">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="height:8px">
-      <tr>
-        <td width="${ultimoPct}%" style="background:${C.paper};height:8px;font-size:0;line-height:0">&nbsp;</td>
-        <td width="3" style="background:${C.ink};height:8px;font-size:0;line-height:0">&nbsp;</td>
-        <td style="background:${C.paper};height:8px;font-size:0;line-height:0">&nbsp;</td>
-      </tr>
-    </table>
-  </td>
-</tr>
-<tr>
-  <td colspan="3" style="font-family:${UI_F};font-size:12px;color:${C.soft};padding-top:2px">último cierre ${esc(fmt(ultimo))} (${esc(fechaUltimo)})</td>
-</tr>
-</table>`;
+// "2026-11-10" -> "mar 10 nov"
+const diaCorta = (fecha) => {
+  const d = new Date(`${String(fecha || "").slice(0, 10)}T12:00:00Z`);
+  if (isNaN(d.getTime())) return String(fecha || "");
+  return `${DIAS_ES[d.getUTCDay()]} ${d.getUTCDate()} ${MESES_CORTOS[d.getUTCMonth()]}`;
+};
+
+// Etiqueta del primer horizonte: «Hoy, mar 10 nov» / «Mañana, mar 11 nov».
+const etiquetaHoy = (fecha, hoy) => {
+  const d = diaCorta(fecha);
+  const a = new Date(`${String(fecha || "").slice(0, 10)}T12:00:00Z`);
+  const b = new Date(`${String(hoy || "").slice(0, 10)}T12:00:00Z`);
+  if (isNaN(a.getTime()) || isNaN(b.getTime())) return d;
+  const diff = Math.round((a - b) / 864e5);
+  if (diff === 0) return `Hoy, ${d}`;
+  if (diff === 1) return `Mañana, ${d}`;
+  return d.charAt(0).toUpperCase() + d.slice(1);
+};
+
+// "3.423 – 3.442" (guion largo, cifras tabulares)
+const rangoTexto = (a, b, dec = 3) => (a == null || b == null) ? "—" : `${fmt(a, dec)} – ${fmt(b, dec)}`;
+
+// Días hábiles entre dos fechas (desde exclusive, hasta inclusive).
+function diasHabilesHasta(desde, hasta) {
+  const d0 = new Date(`${String(desde || "").slice(0, 10)}T12:00:00Z`);
+  const d1 = new Date(`${String(hasta || "").slice(0, 10)}T12:00:00Z`);
+  if (isNaN(d0.getTime()) || isNaN(d1.getTime())) return 1;
+  const paso = d1 > d0 ? 1 : -1;
+  let n = 0;
+  const cur = new Date(d0.getTime());
+  while (cur.getTime() !== d1.getTime()) {
+    cur.setUTCDate(cur.getUTCDate() + paso);
+    const wd = cur.getUTCDay();
+    if (wd !== 0 && wd !== 6) n += paso;
+  }
+  return Math.max(1, n);
+}
+
+// Primera frase de un texto largo (para el resumen de cada historia).
+const primeraFrase = (t) => {
+  const x = String(t || "").trim();
+  const m = x.match(/^[\s\S]*?[.!?](?=\s|$)/);
+  return (m ? m[0] : x).trim();
+};
+
+// Recorta a N caracteres con «…».
+const recortar = (t, max) => {
+  const x = String(t || "").trim();
+  return x.length > max ? `${x.slice(0, max - 1).trimEnd()}…` : x;
+};
+
+// Normaliza una serie de cierres a [{fecha, valor}].
+const cierresDeSerie = (lista, campoFecha = "fecha", campoValor = "valor") => (Array.isArray(lista) ? lista : [])
+  .map((p) => ({ fecha: String(p?.[campoFecha] ?? "").slice(0, 10), valor: Number(p?.[campoValor]) }))
+  .filter((p) => p.fecha && Number.isFinite(p.valor));
+
+// Filas de la tabla de rangos del dólar (central p25–p75, amplio p10–p90).
+function filasRangosDolar(f) {
+  const filas = [];
+  const manana = f.daily?.manana;
+  if (manana) filas.push({
+    clave: "manana", etiqueta: etiquetaHoy(manana.fecha_objetivo, f.todayLima),
+    central: [manana.p25, manana.p75], amplio: [manana.p10, manana.p90],
+  });
+  const semana = f.daily?.semana;
+  if (semana) filas.push({
+    clave: "semana", etiqueta: `Semana, ${diaCorta(semana.fecha_objetivo)}`,
+    central: [semana.p25, semana.p75], amplio: [semana.p10, semana.p90],
+  });
+  const mes = f.forecast;
+  if (mes?.horizon) filas.push({
+    clave: "mes", etiqueta: `Mes, ${fechaCorta(mes.horizon)}`,
+    central: [mes.p25, mes.p75], amplio: [mes.p10, mes.p90],
+  });
+  return filas;
+}
+
+// Tabla compacta de rangos: cabe a 390 px (letra 13 px, cifras tabulares).
+function tablaRangos(f, soloHoy = false) {
+  const filas = filasRangosDolar(f);
+  const lista = soloHoy ? filas.slice(0, 1) : filas;
+  if (!lista.length) return "";
+  const celda = (txt, extra = "") => `<td style="padding:6px 0;font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:13px;${extra}">${txt}</td>`;
+  const cuerpo = lista.map((r) => `<tr>
+      <td style="padding:6px 8px 6px 0;font-family:${UI_F};font-size:13px;color:${C.ink};white-space:nowrap">${esc(r.etiqueta)}</td>
+      ${celda(esc(rangoTexto(r.central[0], r.central[1], 3)), `color:${C.ink};text-align:right;white-space:nowrap`)}
+      ${celda(esc(rangoTexto(r.amplio[0], r.amplio[1], 3)), `color:${C.soft};text-align:right;white-space:nowrap`)}
+    </tr>`).join("");
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-variant-numeric:tabular-nums">
+    <tr>
+      <td style="padding:0 0 4px 0;font-family:${UI_F};font-size:11px;color:${C.soft}"></td>
+      <td colspan="2" align="right" style="padding:0 0 4px 0;font-family:${UI_F};font-size:11px;color:${C.soft}">S/</td>
+    </tr>
+    <tr>
+      <td style="padding:0 8px 4px 0;font-family:${UI_F};font-size:12px;color:${C.soft}"></td>
+      <td style="padding:0 8px 4px 0;font-family:${UI_F};font-size:12px;font-weight:600;color:${C.ink};text-align:right">Rango central (1 de cada 2 veces)</td>
+      <td style="padding:0 0 4px 0;font-family:${UI_F};font-size:12px;font-weight:600;color:${C.soft};text-align:right">Rango amplio (8 de cada 10 veces)</td>
+    </tr>
+    ${cuerpo}
+  </table>`;
+}
+
+// Bloque completo del dólar: cabecera + gráfico + tabla + nota + lectura.
+function bloqueTablaRangos(f, soloHoy = false) {
+  const tabla = tablaRangos(f, soloHoy);
+  if (!tabla) return "";
+  return `<tr><td style="padding:12px 0 4px">
+    ${tabla}
+    <div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:8px">El rango es estadístico: no dice hacia dónde irá el dólar.</div>
+  </td></tr>`;
+}
+
+// Lectura unificada del dólar: 1 punto al alza, 1 a la baja y 2 de contexto.
+function puntosLecturaDolar(lectura, soloManana = false) {
+  const horizontes = lectura?.horizontes || lectura || {};
+  const claves = soloManana ? ["manana"] : ["manana", "semana", "mes"];
+  const vistos = new Set();
+  const toma = (arr) => (Array.isArray(arr) ? arr : []).filter((p) => p && p.texto && !vistos.has(p.texto) && vistos.add(p.texto));
+  const alAlza = [];
+  const aLaBaja = [];
+  const contexto = [];
+  for (const k of claves) {
+    const h = horizontes[k];
+    if (!h) continue;
+    for (const p of toma(h.al_alza)) if (alAlza.length < 1) alAlza.push(p);
+    for (const p of toma(h.a_la_baja)) if (aLaBaja.length < 1) aLaBaja.push(p);
+    for (const p of toma(h.contexto)) if (contexto.length < 2) contexto.push(p);
+  }
+  return { alAlza, aLaBaja, contexto };
+}
+
+// Bloque «Qué podría presionar al dólar» (una sola vez en el correo).
+function bloquePresionDolar(lectura, soloManana = false) {
+  const { alAlza, aLaBaja, contexto } = puntosLecturaDolar(lectura, soloManana);
+  if (!alAlza.length && !aLaBaja.length && !contexto.length) return "";
+  const punto = (p, tipo) => `<div style="margin:0 0 6px;padding-left:12px;border-left:2px solid ${tipo === "al_alza" ? C.pos : tipo === "a_la_baja" ? C.neg : C.soft};opacity:${tipo === "contexto" ? "0.7" : "1"};font-family:${SERIF_F};font-size:15px;line-height:1.5;color:${C.ink}">${esc(p.texto)}</div>`;
+  const etiqueta = (txt) => `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin:10px 0 4px">${txt}</div>`;
+  const partes = [];
+  if (alAlza.length) partes.push(etiqueta("Podría presionar al dólar al alza"), alAlza.map((p) => punto(p, "al_alza")).join(""));
+  if (aLaBaja.length) partes.push(etiqueta("Podría presionar al dólar a la baja"), aLaBaja.map((p) => punto(p, "a_la_baja")).join(""));
+  if (contexto.length) partes.push(etiqueta("Contexto"), contexto.map((p) => punto(p, "contexto")).join(""));
+  return `<tr><td style="padding:12px 0 8px">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">Qué podría presionar al dólar</td></tr></table>
+    ${partes.join("")}
+  </td></tr>`;
+}
+
+// Gráfico del dólar: 30 cierres + abanico (hoy/mañana, semana y mes; en el
+// gratis solo el de mañana, para no filtrar los rangos del plan de pago).
+function pngDolar(f, soloManana = false) {
+  const serie = cierresDeSerie((f.penSerie30 || []).map((p) => ({ fecha: p[0], valor: p[1] })));
+  const fuente = soloManana ? (f.bandasDolar || []).filter((b) => b.clave === "manana") : (f.bandasDolar || []);
+  const bandas = fuente.map((b) => ({ pasos: b.pasos, p10: b.p10, p25: b.p25, p75: b.p75, p90: b.p90 }));
+  return graficoRango({ serie, bandas, ancho: 560, alto: 150 });
+}
+
+// Gráfico de una empresa: 60 cierres + abanico a un mes.
+function pngEmpresa(c) {
+  const serie = cierresDeSerie(c.serie || []);
+  const fc = c.forecast;
+  const bandas = [];
+  if (fc && serie.length) {
+    const ultimo = serie[serie.length - 1];
+    bandas.push({
+      pasos: diasHabilesHasta(ultimo.fecha, fc.date),
+      p10: fc.p10, p25: fc.p25, p75: fc.p75, p90: fc.p90,
+    });
+  }
+  return graficoRango({ serie, bandas, ancho: 560, alto: 110 });
 }
 
 const SITE = "https://perdata.site";
@@ -321,6 +454,7 @@ async function facts() {
   // demos; when the network fails the month horizon already comes with a deterministic reading.
   const forecast = fx && fx.quantiles ? {
     horizon: fx.horizonDate, p50: fx.predictedPrice, p10: fx.quantiles.p10 ?? fx.quantiles.P10,
+    p25: fx.quantiles.p25 ?? fx.quantiles.P25, p75: fx.quantiles.p75 ?? fx.quantiles.P75,
     p90: fx.quantiles.p90 ?? fx.quantiles.P90, probRise: fx.probabilityOfRise, model: fx.architecture?.split(" (")[0],
   } : null;
 
@@ -341,7 +475,25 @@ async function facts() {
   const historiasTop3 = historiasTodas.slice(0, 3);
   const stories = historiasTodas.slice(0, 5);
   const used = new Set(stories.flatMap((h) => (h.fuentes || []).map((x) => x.url)));
-  return { markets, smvFacts: uniqueFacts.slice(0, 8), headlines: headlines.filter((h) => !used.has(h.url)).slice(0, 6), forecast, stories, historiasTodas, historiasTop3, daily: penDaily, dailyVigente, cierre, todayLima, bcrp, ctx };
+
+  // Últimos 30 cierres del dólar y abanicos (hoy/mañana, semana y mes) para el gráfico.
+  const penSerie30 = (s.PEN?.serie || []).slice(-30);
+  const basePasos = cierre?.fecha || todayLima;
+  const bandasDolar = [];
+  if (penDaily?.manana) bandasDolar.push({
+    clave: "manana", pasos: diasHabilesHasta(basePasos, penDaily.manana.fecha_objetivo),
+    p10: penDaily.manana.p10, p25: penDaily.manana.p25, p75: penDaily.manana.p75, p90: penDaily.manana.p90,
+  });
+  if (penDaily?.semana) bandasDolar.push({
+    clave: "semana", pasos: diasHabilesHasta(basePasos, penDaily.semana.fecha_objetivo),
+    p10: penDaily.semana.p10, p25: penDaily.semana.p25, p75: penDaily.semana.p75, p90: penDaily.semana.p90,
+  });
+  if (forecast?.horizon) bandasDolar.push({
+    clave: "mes", pasos: diasHabilesHasta(basePasos, forecast.horizon),
+    p10: forecast.p10, p25: forecast.p25, p75: forecast.p75, p90: forecast.p90,
+  });
+
+  return { markets, smvFacts: uniqueFacts.slice(0, 8), headlines: headlines.filter((h) => !used.has(h.url)).slice(0, 6), forecast, stories, historiasTodas, historiasTop3, daily: penDaily, dailyVigente, cierre, todayLima, bcrp, ctx, penSerie30, bandasDolar };
 }
 
 // Headline from the data only: no model, no claims about trends or records
@@ -513,7 +665,7 @@ function lecturaDolarDeterminista(f, clasif, newsById) {
   } catch { return null; }
 }
 
-function render(f, ai, dateLabel, lectura) {
+function render(f, ai, dateLabel, lectura, img) {
   const C = { paper: "#F5F1E8", card: "#FBF9F4", ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", peru: "#D91023" };
   const edition = Math.floor((Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()) - Date.UTC(2026, 9, 26)) / 864e5) + 1;
   
@@ -525,111 +677,51 @@ function render(f, ai, dateLabel, lectura) {
   
   const regla = () => `<tr><td style="padding:0"><hr style="border:none;border-top:1px solid ${C.rule};margin:0"/></td></tr>`;
 
-  // Dollar range bar (replaces SVG line chart)
-  const rangoManana = f.daily?.manana;
-  const etiquetaManana = rangoManana ? formatFechaObjetivo(rangoManana.fecha_objetivo, f.todayLima) : "";
-  const dollarBarHtml = rangoManana && f.cierre?.valor != null ? `<tr><td style="padding:16px 0 8px">${barraRango({ min: rangoManana.p10, max: rangoManana.p90, centro: rangoManana.p50, ultimo: f.cierre.valor, prefijo: "S/", fechaUltimo: formatCierreFecha(f.cierre.fecha), decimales: 3 })}</td></tr>` : "";
-
-  // Dollar headline with close - fix subtitle: "Rango Mañana" -> "rango para mañana"
+  // Bloque del dólar: cabecera, gráfico PNG, tabla de rangos y lectura unificada.
   const cierre = f.cierre;
   const dollarHeadline = cierre ? `<tr><td style="padding:16px 0 8px">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td style="font-family:${SERIF_F};font-size:24px;font-weight:600;color:${C.ink}">Dólar interbancario (USD/PEN)</td>
+      <td style="font-family:${SERIF_F};font-size:24px;font-weight:600;color:${C.ink}">Dólar</td>
       <td align="right" style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</td>
     </tr></table>
-    <p style="margin:4px 0 0;font-family:${UI_F};font-size:13px;color:${C.soft}">Último cierre oficial (BCRP) · cierre del ${esc(formatCierreFecha(cierre.fecha))}${rangoManana ? ` · rango para ${esc(etiquetaManana.toLowerCase())}` : ''}</p>
+    <p style="margin:4px 0 0;font-family:${UI_F};font-size:13px;color:${C.soft}">Tipo de cambio venta del sistema bancario (SBS), publicado por el BCRP · cierre del ${esc(formatCierreFecha(cierre.fecha))}</p>
   </td></tr>` : "";
 
-  // Dollar reading for mañana/horizonte
-  const punto = (p) => `<div style="margin:0 0 8px;padding-left:12px;border-left:2px solid ${p.tipo === 'al_alza' ? C.pos : p.tipo === 'a_la_baja' ? C.neg : C.soft};opacity:${p.tipo === 'contexto' ? '0.7' : '1'}">${esc(p.texto)}</div>`;
-  
-  const vistos = new Set();
-  const nuevos = (h, lado) => (h?.[lado] || []).filter((p) => !vistos.has(p.texto) && vistos.add(p.texto));
-  
-  const labelAlAlza = (puntos) => puntos.length ? `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin:12px 0 4px">Podría presionar al dólar al alza</div>` : "";
-  const labelALaBaja = (puntos) => puntos.length ? `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin:12px 0 4px">Podría presionar al dólar a la baja</div>` : "";
-  
-  const tituloInline = (title, numero) =>
-    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table>`;
+  const dollarImg = imgTag(img, "dolar.png", 560, 150, "Dólar: últimos 30 cierres y rango proyectado");
+  const dollarGraphHtml = dollarImg ? `<tr><td style="padding:4px 0 0">${dollarImg}</td></tr>` : "";
 
-  const lecturaHorizonte = (h, titulo, rango, numero, conContexto = true) => {
-    if (!h) return "";
-    const rangoTxt = rango ? `<div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:14px;margin:4px 0 8px">Rango: S/ ${fmt(rango.p10, 3)} – S/ ${fmt(rango.p90, 3)} <span style="color:${C.soft}">(centro S/ ${fmt(rango.p50, 3)}, 8 de cada 10 veces)</span></div>` : "";
-    const resumenHtml = h.resumen && !h.determinista ? `<div style="margin:8px 0">${esc(h.resumen)}</div>` : "";
-    const alAlzaPoints = nuevos(h, "al_alza").map(p => ({...p, tipo: 'al_alza'}));
-    const aLaBajaPoints = nuevos(h, "a_la_baja").map(p => ({...p, tipo: 'a_la_baja'}));
-    const alAlza = labelAlAlza(alAlzaPoints) + alAlzaPoints.map(punto).join("");
-    const aLaBaja = labelALaBaja(aLaBajaPoints) + aLaBajaPoints.map(punto).join("");
-    const contexto = conContexto ? nuevos(h, "contexto").map(p => ({...p, tipo: 'contexto'})).map(punto).join("") : "";
-    return `<tr><td style="padding:16px 0 8px;font-family:${SERIF_F};font-size:15px;line-height:1.5;color:${C.ink}">
-      <div style="margin:0 0 8px">${tituloInline(titulo, numero)}</div>
-      ${rangoTxt}${resumenHtml}${alAlza}${aLaBaja}${contexto}
-    </td></tr>`;
-  };
-  
-  const lect = lectura?.horizontes || {};
-  const dolarRows = [];
-  let horizonteNum = 1;
-  if (f.dailyVigente && f.daily) {
-    if (f.daily.manana) dolarRows.push({ key: "manana", titulo: formatFechaObjetivo(f.daily.manana.fecha_objetivo, f.todayLima), rango: f.daily.manana, num: horizonteNum++ });
-    if (f.daily.semana) dolarRows.push({ key: "semana", titulo: `Próxima semana, ${formatSemanaFecha(f.daily.semana.fecha_objetivo)}`, rango: f.daily.semana, num: horizonteNum++ });
-  }
-  if (f.forecast) {
-    const mesFecha = f.forecast.horizon;
-    const mesDt = new Date(`${mesFecha}T12:00:00Z`);
-    const mesLabel = `${mesDt.getUTCDate()} ${MONTHS_ES[mesDt.getUTCMonth()].slice(0, 3)}`;
-    dolarRows.push({ key: "mes", titulo: `Próximo mes, ${mesLabel}`, rango: f.forecast, num: horizonteNum++ });
-  }
-  
-  const fc = dolarRows.length ? 
-    dolarRows.map(r => lecturaHorizonte(lect[r.key], r.titulo, r.rango, r.num, r.num === 1)).join(regla()) 
-    : "";
+  // Tabla de rangos (central 1 de cada 2, amplio 8 de cada 10) y lectura única.
+  const tablaHtml = bloqueTablaRangos(f, false);
+  const lecturaHtml = bloquePresionDolar(lectura, false);
 
-  // Markets (copper, gold, oil) — clean two-column rows, no SVG
+  // Mercados: una sola tabla de 4 filas (cobre, oro, WTI, Brent).
   const metales = f.markets.filter((m) => ["Cobre", "Oro", "Petróleo WTI", "Petróleo Brent"].includes(m.name));
-  const shortDate = (iso) => new Date(`${String(iso).slice(0, 10)}T12:00:00Z`).toLocaleDateString("es-PE", { day: "numeric", month: "short", timeZone: "UTC" }).replace(/\./g, "");
   const fmtPct = (v) => {
     const s = v >= 0 ? `+${v.toFixed(2)}` : v.toFixed(2);
     return `${s} %`;
   };
 
   const mercadoCards = metales.map((m) => {
-    const up = m.change >= 0;
-    const pctColor = up ? C.pos : C.neg;
-    const pctStr = fmtPct(m.change);
-    return `<tr><td style="padding:12px 0">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-        <td style="vertical-align:top;padding-right:16px;width:1px;white-space:nowrap">
-          <div style="font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};margin-bottom:2px">${esc(m.name)}</div>
-          <div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:13px;color:${C.soft}">${esc(m.unit)}</div>
-        </td>
-        <td style="vertical-align:top;text-align:right">
-          <div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:20px;color:${C.ink};white-space:nowrap">${fmt(m.value, m.dec)}</div>
-          <div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:13px;color:${pctColor};margin-top:2px">${pctStr} · ${esc(shortDate(m.date))}</div>
-        </td>
-      </tr></table>
-    </td></tr>`;
-  }).join(regla());
+    const pctColor = m.change >= 0 ? C.pos : C.neg;
+    return `<tr>
+      <td style="padding:8px 8px 8px 0;font-family:${UI_F};font-size:14px;color:${C.ink};white-space:nowrap">${esc(m.name)}</td>
+      <td align="right" style="padding:8px 8px 8px 0;font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:14px;color:${C.ink};white-space:nowrap">${esc(m.unit)} ${fmt(m.value, m.dec)}</td>
+      <td align="right" style="padding:8px 0;font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:13px;color:${pctColor};white-space:nowrap">${fmtPct(m.change)}</td>
+    </tr>`;
+  }).join("");
 
-  // SMV facts
-  const smv = f.smvFacts.map((h) => `<tr><td style="padding:16px 0">
-    <div style="font-family:${UI_F};font-size:13px;font-weight:600;color:${C.ink};margin-bottom:4px">${esc(h.empresa)}</div>
-    <a href="${esc(h.url_oficial)}" style="font-family:${SERIF_F};font-size:15px;line-height:1.45;color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(h.titulo || h.tipo)}</a>
-    <div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:11px;color:${C.soft};margin-top:4px">${esc(formatSMVFecha(h.fecha))}</div>
-  </td></tr>`).join(regla());
+  // Hechos de importancia de la SMV (máximo 3, una línea cada uno).
+  const smv = f.smvFacts.slice(0, 3).map((h) => `<tr><td style="padding:8px 0;font-family:${UI_F};font-size:13px;line-height:1.45;color:${C.ink}">
+    <span style="font-weight:600">${esc(h.empresa)}:</span>
+    <a href="${esc(h.url_oficial)}" style="color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(h.titulo || h.tipo)}</a>
+    <span style="font-family:${MONO_F};font-size:11px;color:${C.soft}"> · ${esc(formatSMVFecha(h.fecha))}</span>
+  </td></tr>`).join("");
 
-  // Headlines
-  const news = f.headlines.map((n) => `<tr><td style="padding:16px 0">
-    <a href="${esc(n.url)}" style="font-family:${SERIF_F};font-size:15px;line-height:1.45;color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(n.title)}</a>
-    <div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:4px">${esc(n.source)}</div>
-  </td></tr>`).join(regla());
-
-  // All stories (paid)
-  const historiaHtml = (h) => `<tr><td style="padding:20px 0">
-    <div style="font-family:${UI_F};font-size:11px;color:${C.soft};text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">${esc(h.tema)}</div>
-    <div style="font-family:${SERIF_F};font-size:18px;font-weight:600;line-height:1.3;color:${C.ink};margin-bottom:8px">${esc(h.titulo)}</div>
-    ${h.nota ? `<div style="font-family:${SERIF_F};font-size:15px;line-height:1.5;color:${C.ink}">${esc(h.nota)}</div>` : ""}
-    <div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:8px">${(h.fuentes || []).filter((x, i, a) => a.findIndex((y) => y.fuente === x.fuente) === i).map((x) => `<a href="${esc(x.url)}" style="color:${C.soft}">${esc(x.fuente)}</a>`).join(" · ")}</div>
+  // Historias: título + primera frase + fuente (máximo 4 en el pagado).
+  const historiaHtml = (h) => `<tr><td style="padding:16px 0">
+    <div style="font-family:${SERIF_F};font-size:17px;font-weight:600;line-height:1.3;color:${C.ink};margin-bottom:4px">${esc(h.titulo)}</div>
+    ${h.nota ? `<div style="font-family:${SERIF_F};font-size:15px;line-height:1.45;color:${C.ink}">${esc(primeraFrase(h.nota))}</div>` : ""}
+    <div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:6px">${(h.fuentes || []).filter((x, i, a) => a.findIndex((y) => y.fuente === x.fuente) === i).map((x) => `<a href="${esc(x.url)}" style="color:${C.soft}">${esc(x.fuente)}</a>`).join(" · ")}</div>
   </td></tr>`;
 
   const preheader = esc(entradillaDeterminista(f) || `Dólar, cobre, oro y petróleo; hechos de importancia de la SMV y titulares del ${dateLabel}.`);
@@ -650,20 +742,18 @@ function render(f, ai, dateLabel, lectura) {
   </td></tr>
   
   ${dollarHeadline}
-  ${dollarBarHtml}
-  ${fc}
+  ${dollarGraphHtml}
+  ${tablaHtml}
+  ${lecturaHtml}
   {{PERSONAL}}
   
-  ${f.historiasTodas?.length ? tituloSeccion("Lo importante de hoy", 0) + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${f.historiasTodas.map(historiaHtml).join(regla())}</table><div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:16px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
+  ${f.historiasTodas?.length ? tituloSeccion("Lo importante de hoy", 0) + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${f.historiasTodas.slice(0, 4).map(historiaHtml).join(regla())}</table><div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:16px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
   
   ${tituloSeccion("Mercados", 0)}
-  ${ai?.mercados ? `<tr><td style="padding:12px 0 16px">${texto(ai.mercados, 15, 1.5, C.ink, 400, 0)}</td></tr>` : ""}
   ${metales.length ? `<tr><td style="padding:8px 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${mercadoCards}</table></td></tr>` : ""}
   <tr><td style="padding:12px 0 0"><div style="font-family:${UI_F};font-size:11px;color:${C.soft}">Fuente: BCRP${f.markets.some((m) => m.name.includes("Brent")) ? " y EIA" : ""}. Variación frente al dato anterior.</div></td></tr>
   
-  ${f.smvFacts.length ? tituloSeccion("Hechos de importancia", 0) + (ai?.empresas ? `<tr><td style="padding:12px 0 16px">${texto(ai.empresas, 15, 1.5, C.ink, 400, 0)}</td></tr>` : "") + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${smv}</table><div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:12px">Fuente: Superintendencia del Mercado de Valores (SMV).</div></td></tr>` : ""}
-  
-  ${f.headlines.length ? tituloSeccion("Titulares", 0) + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${news}</table></td></tr>` : ""}
+  ${f.smvFacts.length ? tituloSeccion("Hechos de importancia", 0) + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${smv}</table><div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:12px">Fuente: Superintendencia del Mercado de Valores (SMV).</div></td></tr>` : ""}
   
   <tr><td align="center" style="padding:32px 0 8px">
     <a href="${SITE}/explorer" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${UI_F};font-size:15px;font-weight:600;text-decoration:none;padding:13px 26px;border-radius:4px">Abrir la terminal</a>
@@ -683,7 +773,7 @@ function render(f, ai, dateLabel, lectura) {
 </table></td></tr></table></body></html>`;
 }
 
-function renderGratis(f, dateLabel, lectura) {
+function renderGratis(f, dateLabel, lectura, img) {
   const C = { paper: "#F5F1E8", card: "#FBF9F4", ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", peru: "#D91023" };
   const edition = Math.floor((Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()) - Date.UTC(2026, 9, 26)) / 864e5) + 1;
   
@@ -695,56 +785,26 @@ function renderGratis(f, dateLabel, lectura) {
   
   const regla = () => `<tr><td style="padding:0"><hr style="border:none;border-top:1px solid ${C.rule};margin:0"/></td></tr>`;
 
-  // Dollar range bar (replaces SVG line chart)
-  const rangoManana = f.daily?.manana;
-  const etiquetaManana = rangoManana ? formatFechaObjetivo(rangoManana.fecha_objetivo, f.todayLima) : "";
-  const dollarBarHtml = rangoManana && f.cierre?.valor != null ? `<tr><td style="padding:16px 0 8px">${barraRango({ min: rangoManana.p10, max: rangoManana.p90, centro: rangoManana.p50, ultimo: f.cierre.valor, prefijo: "S/", fechaUltimo: formatCierreFecha(f.cierre.fecha), decimales: 3 })}</td></tr>` : "";
-
-  // Dollar headline with close - fix subtitle: "Rango Mañana" -> "rango para mañana"
+  // Bloque del dólar (gratis): cabecera, gráfico PNG, tabla de un horizonte y lectura.
   const cierre = f.cierre;
   const dollarHeadline = cierre ? `<tr><td style="padding:16px 0 8px">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td style="font-family:${SERIF_F};font-size:24px;font-weight:600;color:${C.ink}">Dólar interbancario (USD/PEN)</td>
+      <td style="font-family:${SERIF_F};font-size:24px;font-weight:600;color:${C.ink}">Dólar</td>
       <td align="right" style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</td>
     </tr></table>
-    <p style="margin:4px 0 0;font-family:${UI_F};font-size:13px;color:${C.soft}">Último cierre oficial (BCRP) · cierre del ${esc(formatCierreFecha(cierre.fecha))}${rangoManana ? ` · rango para ${esc(etiquetaManana.toLowerCase())}` : ''}</p>
+    <p style="margin:4px 0 0;font-family:${UI_F};font-size:13px;color:${C.soft}">Tipo de cambio venta del sistema bancario (SBS), publicado por el BCRP · cierre del ${esc(formatCierreFecha(cierre.fecha))}</p>
   </td></tr>` : "";
 
-  // Dollar reading for mañana/horizonte (only mañana for free)
-  const punto = (p) => `<div style="margin:0 0 8px;padding-left:12px;border-left:2px solid ${p.tipo === 'al_alza' ? C.pos : p.tipo === 'a_la_baja' ? C.neg : C.soft};opacity:${p.tipo === 'contexto' ? '0.7' : '1'}">${esc(p.texto)}</div>`;
-  
-  const vistos = new Set();
-  const nuevos = (h, lado) => (h?.[lado] || []).filter((p) => !vistos.has(p.texto) && vistos.add(p.texto));
-  
-  const labelAlAlza = (puntos) => puntos.length ? `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin:12px 0 4px">Podría presionar al dólar al alza</div>` : "";
-  const labelALaBaja = (puntos) => puntos.length ? `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin:12px 0 4px">Podría presionar al dólar a la baja</div>` : "";
-  const labelContexto = (puntos) => puntos.length ? `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin:12px 0 4px">Contexto</div>` : "";
-  
-  const mananaLec = lectura?.horizontes?.manana || lectura?.manana || null;
-  const rangoMananaLec = f.daily?.manana;
-  const rangoTxt = rangoMananaLec ? `<div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:14px;margin:4px 0 8px">Rango: S/ ${fmt(rangoMananaLec.p10, 3)} – S/ ${fmt(rangoMananaLec.p90, 3)} <span style="color:${C.soft}">(centro S/ ${fmt(rangoMananaLec.p50, 3)}, 8 de cada 10 veces)</span></div>` : "";
-  const tituloInline = (title, numero) =>
-    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table>`;
-
-  const alAlzaPoints = nuevos(mananaLec, "al_alza").map(p => ({...p, tipo: 'al_alza'}));
-  const aLaBajaPoints = nuevos(mananaLec, "a_la_baja").map(p => ({...p, tipo: 'a_la_baja'}));
-  const contextoPoints = nuevos(mananaLec, "contexto").map(p => ({...p, tipo: 'contexto'}));
-  
-  const presionaHtml = mananaLec ? `<tr><td style="padding:16px 0 8px;font-family:${SERIF_F};font-size:15px;line-height:1.5;color:${C.ink}">
-      <div style="margin:0 0 8px">${tituloInline("Qué podría presionar al dólar", 0)}</div>
-      ${rangoTxt}
-      ${mananaLec.resumen && !mananaLec.determinista ? `<div style="margin:8px 0">${esc(mananaLec.resumen)}</div>` : ""}
-      ${labelAlAlza(alAlzaPoints)}${alAlzaPoints.map(punto).join("")}
-      ${labelALaBaja(aLaBajaPoints)}${aLaBajaPoints.map(punto).join("")}
-      ${labelContexto(contextoPoints)}${contextoPoints.map(punto).join("")}
-    </td></tr>` : "";
+  const dollarImg = imgTag(img, "dolar.png", 560, 150, "Dólar: últimos 30 cierres y rango proyectado");
+  const dollarGraphHtml = dollarImg ? `<tr><td style="padding:4px 0 0">${dollarImg}</td></tr>` : "";
+  const tablaHtml = bloqueTablaRangos(f, true);
+  const presionaHtml = bloquePresionDolar(lectura, true);
 
   // Top 3 stories
-  const historiaHtml = (h) => `<tr><td style="padding:20px 0">
-    <div style="font-family:${UI_F};font-size:11px;color:${C.soft};text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">${esc(h.tema)}</div>
-    <div style="font-family:${SERIF_F};font-size:18px;font-weight:600;line-height:1.3;color:${C.ink};margin-bottom:8px">${esc(h.titulo)}</div>
-    ${h.nota ? `<div style="font-family:${SERIF_F};font-size:15px;line-height:1.5;color:${C.ink}">${esc(h.nota)}</div>` : ""}
-    <div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:8px">${(h.fuentes || []).filter((x, i, a) => a.findIndex((y) => y.fuente === x.fuente) === i).map((x) => `<a href="${esc(x.url)}" style="color:${C.soft}">${esc(x.fuente)}</a>`).join(" · ")}</div>
+  const historiaHtml = (h) => `<tr><td style="padding:16px 0">
+    <div style="font-family:${SERIF_F};font-size:17px;font-weight:600;line-height:1.3;color:${C.ink};margin-bottom:4px">${esc(h.titulo)}</div>
+    ${h.nota ? `<div style="font-family:${SERIF_F};font-size:15px;line-height:1.45;color:${C.ink}">${esc(primeraFrase(h.nota))}</div>` : ""}
+    <div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:6px">${(h.fuentes || []).filter((x, i, a) => a.findIndex((y) => y.fuente === x.fuente) === i).map((x) => `<a href="${esc(x.url)}" style="color:${C.soft}">${esc(x.fuente)}</a>`).join(" · ")}</div>
   </td></tr>`;
 
   // Plan Boletín invitation - 3 bullets
@@ -762,7 +822,7 @@ function renderGratis(f, dateLabel, lectura) {
   </td></tr>
   <!-- /plan-boletin -->`;
 
-  const preheader = esc(`Cierre oficial del dólar y rango probable (${etiquetaManana ? etiquetaManana.charAt(0).toLowerCase() + etiquetaManana.slice(1) : "del próximo día hábil"}).`);
+  const preheader = esc("Cierre oficial del dólar (sistema bancario SBS) y rango probable para el próximo día hábil.");
 
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light only">
@@ -780,7 +840,8 @@ function renderGratis(f, dateLabel, lectura) {
   </td></tr>
   
   ${dollarHeadline}
-  ${dollarBarHtml}
+  ${dollarGraphHtml}
+  ${tablaHtml}
   ${presionaHtml}
   {{PERSONAL}}
   
@@ -829,7 +890,7 @@ async function companyCard(nemo, smvAll, clasif, newsById) {
   const card = {
     nemo, name: prettyName(e.razonSocial), sector: e.sector || null, simbolo_proyeccion,
     price: null, change: null, currency: st.moneda || v?.moneda || "S/", forecast: null,
-    smv: [], news: [], sentiment: null,
+    smv: [], news: [], serie: [],
   };
   // Lima prices: data/empresas-estado.json (the table /empresas and the module
   // demos read) with the SMV table as the live fallback. The figure shown is
@@ -839,33 +900,68 @@ async function companyCard(nemo, smvAll, clasif, newsById) {
     card.priceDate = st.ultima_fecha;
     card.priceSource = "empresas-estado";
   }
+  // Cierres para el gráfico (60): la tabla de la SMV para las de Lima y el
+  // endpoint público /api/historical para el resto. Si la consulta falla, la
+  // empresa sale sin imagen (pero con precio y noticias).
   if (lima) {
     try {
-      const rows = await smvRows(nemo, "2000-01-01", { limit: 2 });
+      const rows = await smvRows(nemo, "2000-01-01", { limit: 60 });
       if (rows.length) {
-        card.price = Number(rows[0].cierre);
-        card.currency = "S/";
-        card.priceDate = rows[0].fecha;
-        card.priceSource = "smv";
-        if (rows[1] && Number(rows[1].cierre) !== 0) card.change = pct(Number(rows[0].cierre), Number(rows[1].cierre));
+        card.serie = rows.map((r) => ({ fecha: String(r.fecha).slice(0, 10), valor: Number(r.cierre) }))
+          .filter((p) => p.fecha && Number.isFinite(p.valor))
+          .sort((a, b) => a.fecha.localeCompare(b.fecha));
+        const last = card.serie[card.serie.length - 1];
+        const prev = card.serie[card.serie.length - 2];
+        if (last) {
+          card.price = last.valor;
+          card.currency = "S/";
+          card.priceDate = last.fecha;
+          card.priceSource = "smv";
+          if (prev && prev.valor) card.change = pct(last.valor, prev.valor);
+        }
       }
     } catch (e2) {
       console.error(`SMV ${nemo}: ${e2.message}`);
     }
-  } else if (simbolo_proyeccion) {
-    const h = await getJson(`${SITE}/api/historical?symbol=${encodeURIComponent(simbolo_proyeccion)}&range=1y`).catch(() => null);
-    if (h?.live?.price) { card.price = h.live.price; card.change = h.live.changePct ?? null; card.priceDate = h.live.time; }
-    else if (h?.series?.length) { card.price = h.series[h.series.length - 1].close; card.priceDate = h.series[h.series.length - 1].date; }
-    card.currency = h?.currency === "USD" ? "US$" : "S/";
-    const fc = await getJson(`${SITE}/api/forecast?symbol=${encodeURIComponent(simbolo_proyeccion)}&horizon=1`).catch(() => null);
-    if (fc?.quantiles) card.forecast = { p50: fc.predictedPrice, p10: fc.quantiles.p10 ?? fc.quantiles.P10, p90: fc.quantiles.p90 ?? fc.quantiles.P90, date: fc.horizonDate, prob: fc.probabilityOfRise };
   }
-  // Lima securities get their projection range from the same public endpoint.
+  if (!card.serie.length && simbolo_proyeccion) {
+    const rango = /\.LM$/i.test(simbolo_proyeccion) ? "3mo" : "1y";
+    const h = await getJson(`${SITE}/api/historical?symbol=${encodeURIComponent(simbolo_proyeccion)}&range=${rango}&interval=1d`).catch(() => null);
+    card.serie = (h?.series || []).map((p) => ({ fecha: String(p.date).slice(0, 10), valor: Number(p.close) }))
+      .filter((p) => p.fecha && Number.isFinite(p.valor));
+    if (h?.live?.price && card.price == null) {
+      card.price = h.live.price;
+      card.change = h.live.changePct ?? null;
+      card.priceDate = h.live.time;
+    }
+    if (h?.currency && !st.moneda) card.currency = h.currency === "USD" ? "US$" : "S/";
+  }
+  // The projection (with p25/p75 for the central range) comes from the same
+  // public endpoint for every security with a projection symbol.
+  if (simbolo_proyeccion) {
+    const fc = await getJson(`${SITE}/api/forecast?symbol=${encodeURIComponent(simbolo_proyeccion)}&horizon=1`).catch(() => null);
+    if (fc?.quantiles) card.forecast = {
+      p50: fc.predictedPrice, p10: fc.quantiles.p10 ?? fc.quantiles.P10, p25: fc.quantiles.p25 ?? fc.quantiles.P25,
+      p75: fc.quantiles.p75 ?? fc.quantiles.P75, p90: fc.quantiles.p90 ?? fc.quantiles.P90,
+      date: fc.horizonDate, prob: fc.probabilityOfRise,
+    };
+  }
+  // The series ends at the close that is shown (nothing later) and the
+  // variation is derived from it when the source did not give one.
+  if (card.priceDate) {
+    const limite = String(card.priceDate).slice(0, 10);
+    card.serie = card.serie.filter((p) => p.fecha <= limite);
+  }
+  if (card.change == null && card.serie.length >= 2) {
+    const last = card.serie[card.serie.length - 1];
+    const prev = card.serie[card.serie.length - 2];
+    if (prev.valor) card.change = pct(last.valor, prev.valor);
+  }
   if (card.price == null && st.ultimo_cierre != null) { card.price = Number(st.ultimo_cierre); card.priceDate = st.ultima_fecha; }
-  if (lima && simbolo_proyeccion && !card.forecast) {
-    const fc = await getJson(`${SITE}/api/forecast?symbol=${encodeURIComponent(simbolo_proyeccion)}&horizon=1`).catch(() => null);
-    if (fc?.quantiles) card.forecast = { p50: fc.predictedPrice, p10: fc.quantiles.p10 ?? fc.quantiles.P10, p90: fc.quantiles.p90 ?? fc.quantiles.P90, date: fc.horizonDate, prob: fc.probabilityOfRise };
-  }
+  // Gráfico: sin proyección o con menos de 10 cierres la empresa sale sin imagen.
+  card.grafico = (card.forecast && card.serie.length >= 10)
+    ? { archivo: `${nemo}.png`, ancho: 560, alto: 110, alt: `${card.name}: últimos cierres y rango proyectado a un mes` }
+    : null;
   const since = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10);
   for (const n of nemos) for (const h of smvAll[n] || []) if (h.fecha >= since) card.smv.push({ ...h, titulo: sentence(h.titulo) || sentence(h.tipo) });
   const seen = new Set();
@@ -882,18 +978,9 @@ async function companyCard(nemo, smvAll, clasif, newsById) {
   }
   card.news.sort((a, b) => String(b.fecha_iso).localeCompare(String(a.fecha_iso)));
   card.news = card.news.slice(0, 3);
-  if (card.news.length) {
-    const counts = { POSITIVO: 0, NEGATIVO: 0, NEUTRO: 0 };
-    for (const n of card.news) if (counts[n.sentimiento] != null) counts[n.sentimiento]++;
-    const parts = [["POSITIVO", "positiva"], ["NEGATIVO", "negativa"], ["NEUTRO", "neutra"]]
-      .filter(([key]) => counts[key]).map(([key, label]) => `${counts[key]} ${label}${counts[key] === 1 ? "" : "s"}`);
-    card.sentiment = `Tono de las noticias: ${parts.join(", ")}.`;
-  }
   return card;
 }
 const numOk = (v) => v !== null && v !== undefined && v !== "" && Number.isFinite(Number(v));
-
-const shortDay = (iso) => new Date(`${String(iso).slice(0, 10)}T12:00:00Z`).toLocaleDateString("es-PE", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).replace(/\./g, "");
 
 function macroEmpresa(f) {
   const macroDeSerie = (serie) => {
@@ -915,58 +1002,57 @@ function macroEmpresa(f) {
   return macro;
 }
 
-function renderPersonal(cards, lecturas) {
+function renderPersonal(cards, lecturas, img) {
   const C = { ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", card: "#FBF9F4" };
-  
-  const texto = (t, size = 15, lh = 1.5, clr = C.ink, weight = 400, mgb = 14) => 
-    t ? `<p style="margin:0 0 ${mgb}px;font-family:${SERIF_F};font-size:${size}px;line-height:${lh};color:${clr};font-weight:${weight}">${esc(t)}</p>` : "";
-  
-  const punto = (p) => `<div style="margin:0 0 8px;padding-left:12px;border-left:2px solid ${p.tipo === 'al_alza' ? C.pos : p.tipo === 'a_la_baja' ? C.neg : C.soft};opacity:${p.tipo === 'contexto' ? '0.7' : '1'}">${esc(p.texto)}</div>`;
-  
+
+  const punto = (p, tipo) => `<div style="margin:0 0 6px;padding-left:10px;border-left:2px solid ${tipo === "al_alza" ? C.pos : C.neg};font-family:${SERIF_F};font-size:14px;line-height:1.45;color:${C.ink}">${esc(p.texto)}</div>`;
+
   const regla = () => `<tr><td style="padding:0"><hr style="border:none;border-top:1px solid ${C.rule};margin:0"/></td></tr>`;
 
   const body = cards.map((c) => {
     const ch = c.change == null ? "" : `<span style="color:${c.change >= 0 ? C.pos : C.neg}">${c.change >= 0 ? "▲" : "▼"} ${fmt(Math.abs(c.change))}%</span>`;
-    
-    // Range bar (table-based, works in Gmail/Outlook/Yahoo)
-    const rangeBarHtml = (c.forecast && c.forecast.p10 != null && c.forecast.p50 != null && c.forecast.p90 != null && c.price != null)
-      ? `<div style="margin:8px 0 0">${barraRango({ min: c.forecast.p10, max: c.forecast.p90, centro: c.forecast.p50, ultimo: c.price, prefijo: c.currency, fechaUltimo: c.priceDate ? shortDay(c.priceDate) : "", decimales: 2 })}</div>`
+    const fc = c.forecast;
+
+    // Gráfico: 60 cierres + abanico a un mes (alto 110). Sin proyección o con
+    // menos de 10 cierres la empresa sale sin imagen.
+    const grafico = c.grafico ? imgTag(img, c.grafico.archivo, c.grafico.ancho, c.grafico.alto, c.grafico.alt) : "";
+    const graficoHtml = grafico ? `<div style="margin:8px 0 0">${grafico}</div>` : "";
+
+    // Una línea en mono con el rango central y el amplio.
+    const rangoHtml = fc && fc.p25 != null && fc.p75 != null
+      ? `<div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:12px;color:${C.ink};margin:8px 0 0">Al ${esc(fechaCorta(fc.date))}: ${esc(rangoTexto(fc.p25, fc.p75, 2))} (1 de cada 2) · <span style="color:${C.soft}">${esc(rangoTexto(fc.p10, fc.p90, 2))} (8 de cada 10)</span></div>`
       : "";
-    
-    const fc = c.forecast ? `
-      <div style="font-family:${UI_F};font-size:13px;color:${C.soft};margin:8px 0 0">
-        Proyección al ${esc(shortDay(c.forecast.date))}: ${c.currency} ${fmt(c.forecast.p50)}
-        ${c.forecast.p10 ? ` (${fmt(c.forecast.p10)} — ${fmt(c.forecast.p90)}, 8 de cada 10 veces)` : ''}
-      </div>` : "";
-    
-    const item = (html) => `<tr><td valign="top" style="width:16px;padding:5px 0 0;font-family:${UI_F};font-size:13px;color:${C.soft}">–</td><td style="padding:5px 0 0;font-family:${UI_F};font-size:13px;line-height:1.45">${html}</td></tr>`;
-    const smv = c.smv.map((h) => item(`<span style="color:${C.soft}">SMV, ${esc(shortDay(h.fecha))}:</span> <a href="${esc(h.url_oficial)}" style="color:${C.ink}">${esc(h.titulo)}</a>`)).join("");
-    const news = c.news.map((n) => item(`<a href="${esc(n.url)}" style="color:${C.ink}">${esc(n.titulo)}</a> <span style="color:${C.soft}">· ${esc(n.fuente)}</span>`)).join("");
-    const quiet = !c.smv.length && !c.news.length ? `<div style="margin-top:6px;font-family:${UI_F};font-size:13px;color:${C.soft}">Sin hechos de importancia ni noticias en los últimos días.</div>` : "";
-    const sentiment = c.sentiment ? `<div style="margin-top:6px;font-family:${UI_F};font-size:13px;color:${C.soft}">${esc(c.sentiment)}</div>` : (quiet ? "" : `<div style="margin-top:6px;font-family:${UI_F};font-size:13px;color:${C.soft}">Sin noticias recientes de esta empresa.</div>`);
-    
-    // Company reading
+
+    // Hechos SMV y noticias: máximo 2 en total, una línea cada uno.
+    const lineas = [
+      ...c.smv.map((h) => `<span style="color:${C.soft}">SMV</span> <a href="${esc(h.url_oficial)}" style="color:${C.ink}">${esc(recortar(h.titulo, 110))}</a>`),
+      ...c.news.map((n) => `<a href="${esc(n.url)}" style="color:${C.ink}">${esc(recortar(n.titulo, 110))}</a> <span style="color:${C.soft}">· ${esc(n.fuente)}</span>`),
+    ].slice(0, 2);
+    const hechosHtml = lineas.length
+      ? `<div style="margin-top:8px;font-family:${UI_F};font-size:13px;line-height:1.45;color:${C.ink}">${lineas.join("<br>")}</div>`
+      : "";
+
+    // Lectura: solo los puntos con dirección (1 por lado). Sin «Qué hay» ni «Contexto».
     const l = lecturas?.[c.nemo];
-    const bloqueLectura = (lista, label, tipo) => (lista || []).length
-      ? `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin:12px 0 4px">${label}</div>${lista.map(p => ({...p, tipo})).map(punto).join("")}` : "";
-    
-    const lecturaHtml = l ? `<div style="margin-top:12px;padding-top:10px;border-top:1px dashed ${C.rule};font-family:${SERIF_F};font-size:15px;line-height:1.5;color:${C.ink}">
-        <div style="font-family:${UI_F};font-size:12px;font-weight:600;margin-bottom:8px">Lectura de ${esc(c.name)}</div>
-        ${l.resumen && l.resumen !== l.que_hay?.[0]?.texto && !(l.que_hay?.[0]?.texto || "").startsWith(l.resumen.replace(/\.$/, "")) ? `<div style="margin-bottom:8px">${esc(l.resumen)}</div>` : ""}
-        ${bloqueLectura(l.que_hay, "Qué hay", "contexto")}
-        ${bloqueLectura(l.podria_mover?.al_alza, "Podría mover al alza", "al_alza")}
-        ${bloqueLectura(l.podria_mover?.a_la_baja, "Podría mover a la baja", "a_la_baja")}
-        ${bloqueLectura(l.contexto, "Contexto", "contexto")}
-      </div>` : "";
-    
-    return `<tr><td style="padding:20px 0">
+    const alAlza = (l?.podria_mover?.al_alza || []).slice(0, 1);
+    const aLaBaja = (l?.podria_mover?.a_la_baja || []).slice(0, 1);
+    const lecturaHtml = (alAlza.length || aLaBaja.length)
+      ? `<div style="margin-top:10px;padding-top:8px;border-top:1px dashed ${C.rule}">
+          ${alAlza.length ? `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin-bottom:4px">Podría mover al alza</div>${alAlza.map((p) => punto(p, "al_alza")).join("")}` : ""}
+          ${aLaBaja.length ? `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin-bottom:4px">Podría mover a la baja</div>${aLaBaja.map((p) => punto(p, "a_la_baja")).join("")}` : ""}
+        </div>`
+      : "";
+
+    return `<tr><td style="padding:18px 0">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
         <td style="font-family:${UI_F};font-size:15px;font-weight:600;color:${C.ink};vertical-align:top">${esc(c.name)} <span style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:11px;font-weight:400;color:${C.soft}">${esc(c.nemo)}</span></td>
-        <td align="right" style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:15px;color:${C.ink};white-space:nowrap;vertical-align:top">${c.price != null ? `${c.currency} ${fmt(c.price)}` : `<a href="${SITE}/empresa/${encodeURIComponent(c.nemo)}" style="color:${C.soft};font-family:${UI_F};font-size:12px">Ver ficha</a>`}<br><span style="font-size:13px">${ch}</span>${c.price != null ? `<br><span style="font-size:11px;color:${C.soft}">${c.priceDate ? `cierre del ${esc(shortDay(c.priceDate))}` : "último cierre disponible"}</span>` : ""}</td>
+        <td align="right" style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:15px;color:${C.ink};white-space:nowrap;vertical-align:top">${c.price != null ? `${esc(c.currency)} ${fmt(c.price)}` : ""}${ch ? `<br><span style="font-size:13px">${ch}</span>` : ""}</td>
       </tr></table>
-      ${rangeBarHtml}
-      ${fc}
-      ${sentiment}${smv || news ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px">${smv}${news}</table>` : ""}${quiet}${lecturaHtml}
+      ${graficoHtml}
+      ${rangoHtml}
+      ${hechosHtml}
+      ${lecturaHtml}
+      <div style="margin-top:8px"><a href="${SITE}/empresa/${encodeURIComponent(c.nemo)}" style="font-family:${UI_F};font-size:12px;color:${C.soft};text-decoration:underline">Ver ficha</a></div>
     </td></tr>`;
   }).join(regla());
   
@@ -989,13 +1075,13 @@ const fill = (html, personal, baja = `${SITE}/boletin`, prefs = `${SITE}/boletin
 // Gmail clips messages above ~102 KB and hides the footer, where the unsubscribe link lives.
 // If a subscriber's email would get there, drop company readings from the last company up until it fits.
 const LIMITE_BYTES = Number(process.env.BOLETIN_LIMITE_BYTES) || 98000;
-function armarPagado(base, cards, lecturas, baja, prefs) {
+function armarPagado(base, cards, lecturas, baja, prefs, img) {
   const lec = { ...lecturas };
-  let html = compactar(fill(base, renderPersonal(cards, lec), baja, prefs));
+  let html = compactar(fill(base, renderPersonal(cards, lec, img), baja, prefs));
   for (let i = cards.length - 1; i >= 0 && Buffer.byteLength(html) > LIMITE_BYTES; i--) {
     if (!lec[cards[i].nemo]) continue;
     delete lec[cards[i].nemo];
-    html = compactar(fill(base, renderPersonal(cards, lec), baja, prefs));
+    html = compactar(fill(base, renderPersonal(cards, lec, img), baja, prefs));
   }
   return html;
 }
@@ -1021,6 +1107,17 @@ if (!Object.keys(clasif).length || !Object.keys(newsById).length) {
 // «Tus empresas».
 const lecturaDeadline = Date.now() + 90 * 1000;
 const { dolar: lecturaDolarOut } = await lecturaDolarSegura(f, clasif, newsById, lecturaDeadline);
+
+// Vista previa local: los PNG se escriben junto al HTML y se referencian con
+// una ruta relativa («<archivo>-img/»). En el envío real las imágenes solo
+// aparecen si existe BOLETIN_IMG_BASE (si no, el correo va sin <img>).
+const cliPreviewPath = process.argv.find((a) => a.startsWith("--preview-path="))?.slice("--preview-path=".length);
+const previewPath = process.env.BOLETIN_PREVIEW_PATH || cliPreviewPath || path.join(ROOT, "..", "handoff", "qa", PREVIEW_PLAN === "gratis" ? "correo-gratis.html" : "correo-pagado.html");
+fs.mkdirSync(path.dirname(path.resolve(previewPath)), { recursive: true });
+const imgPreview = {
+  dir: path.join(path.dirname(path.resolve(previewPath)), carpetaImagen(previewPath)),
+  base: carpetaImagen(previewPath),
+};
 
 let previewPersonal = "";
 let lecturasPreview = {};
@@ -1062,20 +1159,43 @@ if (process.env.PREVIEW_EMPRESAS) {
       console.log(`Lecturas de empresa no disponibles: ${e.message} (se envía sin la sección)`);
     }
   }
-  previewPersonal = PREVIEW_PLAN === "gratis" ? upsell : renderPersonal(cards, lecturasPreview);
+  previewPersonal = PREVIEW_PLAN === "gratis" ? upsell : renderPersonal(cards, lecturasPreview, imgPreview);
   previewCards = cards;
 }
 
-const htmlCompleto = compactar(render(f, ai, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null));
-const htmlGratis = compactar(renderGratis(f, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null));
-const cliPreviewPath = process.argv.find((a) => a.startsWith("--preview-path="))?.slice("--preview-path=".length);
-const previewPath = process.env.BOLETIN_PREVIEW_PATH || cliPreviewPath || path.join(ROOT, "..", "handoff", "qa", process.env.PREVIEW_PLAN === "gratis" ? "correo-gratis.html" : "correo-pagado.html");
-fs.mkdirSync(path.dirname(path.resolve(previewPath)), { recursive: true });
+// Gráficos de la vista previa: un PNG del dólar y uno por empresa con imagen.
+try {
+  escribirImagen(imgPreview.dir, "dolar.png", pngDolar(f, PREVIEW_PLAN === "gratis"));
+  if (PREVIEW_PLAN !== "gratis") for (const c of previewCards || []) if (c.grafico) escribirImagen(imgPreview.dir, c.grafico.archivo, pngEmpresa(c));
+} catch (e) {
+  console.error(`Gráficos de la vista previa: ${e.message}`);
+}
+
+const htmlCompleto = compactar(render(f, ai, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null, imgPreview));
+const htmlGratis = compactar(renderGratis(f, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null, imgPreview));
 const previewHtml = PREVIEW_PLAN !== "gratis" && previewCards
-  ? armarPagado(htmlCompleto, previewCards, lecturasPreview, undefined, undefined)
+  ? armarPagado(htmlCompleto, previewCards, lecturasPreview, undefined, undefined, imgPreview)
   : compactar(fill(PREVIEW_PLAN === "gratis" ? htmlGratis : htmlCompleto, previewPersonal));
 fs.writeFileSync(previewPath, previewHtml);
 console.log(`Vista previa: ${PREVIEW_PLAN} · mercados: ${f.markets.length} · SMV: ${f.smvFacts.length} · titulares: ${f.headlines.length} · historias: ${f.historiasTodas?.length || 0} · IA: ${ai ? "sí" : "no"}`);
+
+// HTML del envío real: las imágenes solo van si hay dónde alojarlas.
+const imgEnv = process.env.BOLETIN_IMG_BASE ? { base: process.env.BOLETIN_IMG_BASE } : null;
+const htmlCompletoEnv = compactar(render(f, ai, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null, imgEnv));
+const htmlGratisEnv = compactar(renderGratis(f, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null, imgEnv));
+
+// Vista previa del HTML de envío (sin enviar nada): comprueba, entre otras
+// cosas, que sin BOLETIN_IMG_BASE el correo no lleva ninguna etiqueta <img>.
+if (process.env.BOLETIN_PREVIEW_SEND === "1") {
+  const sendPath = process.env.BOLETIN_PREVIEW_SEND_PATH || previewPath.replace(/\.html?$/i, "-envio.html");
+  const personalEnv = PREVIEW_PLAN === "gratis" ? upsell : (previewCards?.length ? renderPersonal(previewCards, lecturasPreview, imgEnv) : "");
+  const htmlEnv = PREVIEW_PLAN !== "gratis" && previewCards
+    ? armarPagado(htmlCompletoEnv, previewCards, lecturasPreview, undefined, undefined, imgEnv)
+    : compactar(fill(PREVIEW_PLAN === "gratis" ? htmlGratisEnv : htmlCompletoEnv, personalEnv));
+  fs.writeFileSync(sendPath, htmlEnv);
+  console.log(`Vista previa del envío: ${sendPath} · imágenes: ${imgEnv ? "sí" : "no"}`);
+  process.exit(0);
+}
 
 async function seguimientoDe(email) {
   const base = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
@@ -1189,13 +1309,13 @@ if (!DRY && !PREVIEW) {
     const prefs = token ? `${SITE}/boletin?t=${token}#empresas` : `${SITE}/boletin`;
     const mine = (empresas || []).map((n) => cards[n]).filter(Boolean);
     // Free version: no «Tus empresas» section, only the note about the plan
-    const personal = plan === "gratis" ? ((empresas || []).length ? upsell : "") : (mine.length ? renderPersonal(mine, lecturas) : `<tr><td style="padding:24px 0 0;font-family:${UI_F};font-size:14px;line-height:1.5;color:#5E584E">Aún no elegiste empresas. Elige hasta 15 en <a href="${SITE}/cuenta" style="color:#1B1916">/cuenta</a> y cada mañana llegará tu sección «Tus empresas».</td></tr>`);
-    const baseHtml = plan === "gratis" ? htmlGratis : htmlCompleto;
+    const personal = plan === "gratis" ? ((empresas || []).length ? upsell : "") : (mine.length ? renderPersonal(mine, lecturas, imgEnv) : `<tr><td style="padding:24px 0 0;font-family:${UI_F};font-size:14px;line-height:1.5;color:#5E584E">Aún no elegiste empresas. Elige hasta 15 en <a href="${SITE}/cuenta" style="color:#1B1916">/cuenta</a> y cada mañana llegará tu sección «Tus empresas».</td></tr>`);
+    const baseHtml = plan === "gratis" ? htmlGratisEnv : htmlCompletoEnv;
     const msg = { 
       from: FROM, 
       to: [email], 
       subject: `PerData · ${dateLabel}`, 
-      html: plan !== "gratis" && mine.length ? armarPagado(baseHtml, mine, lecturas, baja, prefs) : compactar(fill(baseHtml, personal, baja, prefs)),
+      html: plan !== "gratis" && mine.length ? armarPagado(baseHtml, mine, lecturas, baja, prefs, imgEnv) : compactar(fill(baseHtml, personal, baja, prefs)),
     };
     
     if (token) msg.headers = { "List-Unsubscribe": `<${baja}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" };
@@ -1218,7 +1338,7 @@ if (!DRY && !PREVIEW) {
 // Self-contained smoke used in tests: no fetch, same renderers as the previews.
 export function renderForTests(f, dateLabel, opts = {}) {
   return {
-    gratis: renderGratis(f, dateLabel, opts.lecturaDolar),
-    pagado: render(f, null, dateLabel, opts.lecturaDolar),
+    gratis: renderGratis(f, dateLabel, opts.lecturaDolar, opts.img),
+    pagado: render(f, null, dateLabel, opts.lecturaDolar, opts.img),
   };
 }
