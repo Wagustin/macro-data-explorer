@@ -143,3 +143,98 @@ test("fallback sin lecturas: los correos salen igual, sin la sección de presió
   const html = fs.readFileSync(out, "utf8");
   assert.match(html, /Dólar interbancario/);
 });
+
+function findAllPositions(html, needle) {
+  const positions = [];
+  let pos = html.indexOf(needle);
+  while (pos !== -1) {
+    positions.push(pos);
+    pos = html.indexOf(needle, pos + 1);
+  }
+  return positions;
+}
+
+function assertDomOrder(html, sections, label) {
+  // Find first occurrence of each section marker
+  const positions = sections.map((s) => {
+    const idx = html.indexOf(s);
+    assert.ok(idx !== -1, `${label}: sección "${s}" no encontrada`);
+    return { section: s, index: idx };
+  });
+  // Verify order
+  for (let i = 1; i < positions.length; i++) {
+    assert.ok(
+      positions[i - 1].index < positions[i].index,
+      `${label}: orden incorrecto - "${positions[i - 1].section}" debe ir antes que "${positions[i].section}"`
+    );
+  }
+}
+
+test("correo gratis: orden DOM correcto de secciones", () => {
+  const html = vistaPrevia("gratis");
+  // Expected order: header → dólar cierre → gráfico → qué podría presionar → personal/upsell → lo importante → plan → forward → legal
+  assertDomOrder(html, [
+    "Boletín diario",
+    "Dólar interbancario",
+    "<!-- grafico-dolar -->",
+    "Qué podría presionar al dólar",
+    "Elegiste empresas para seguir",
+    "Lo importante de hoy",
+    "<!-- plan-boletin -->",
+    "Reenvía este correo",
+    "El rango es estadístico",
+  ], "gratis");
+});
+
+test("correo pagado: orden DOM correcto de secciones", () => {
+  const html = vistaPrevia("boletin");
+  // Expected order: header → dólar cierre → gráfico → lecturas (mañana/semana/mes) → personal → lo importante → mercados → hechos → titulares → forward → legal
+  assertDomOrder(html, [
+    "Boletín diario",
+    "Dólar interbancario",
+    "<!-- grafico-dolar -->",
+    "1. Para el cierre de hoy",
+    "2. Próxima semana",
+    "3. Próximo mes",
+    "Tus empresas",
+    "Lo importante de hoy",
+    "Mercados",
+    "Hechos de importancia",
+    "Titulares",
+    "Reenvía este correo",
+    "El rango es estadístico",
+  ], "pagado");
+});
+
+test("correos: la cabecera precede a toda lectura y cada título de sección lleva cuerpo", () => {
+  for (const plan of ["gratis", "boletin"]) {
+    const html = vistaPrevia(plan);
+    // El índice de «Boletín diario» es menor que el de «Podría presionar al dólar»
+    const cabecera = html.indexOf("Boletín diario");
+    assert.ok(cabecera !== -1, `${plan}: sin cabecera «Boletín diario»`);
+    const presionar = html.indexOf("Podría presionar al dólar");
+    assert.ok(presionar !== -1, `${plan}: sin «Podría presionar al dólar»`);
+    assert.ok(cabecera < presionar, `${plan}: la lectura del dólar sale antes que la cabecera`);
+    // Ningún texto de lectura aparece antes de la cabecera
+    for (const lectura of ["Rango: S/", "Podría presionar al dólar al alza", ">Contexto<", "Lo importante de hoy"]) {
+      const i = html.indexOf(lectura);
+      if (i === -1) continue;
+      assert.ok(i > cabecera, `${plan}: «${lectura}» aparece antes de la cabecera`);
+    }
+    // Cada título de sección (borde izquierdo) va seguido de contenido antes
+    // del siguiente título: no hay dos títulos seguidos sin cuerpo.
+    const tituloRe = /border-left:3px solid #1B1916/g;
+    const titulos = [];
+    let m;
+    while ((m = tituloRe.exec(html))) titulos.push(m.index);
+    assert.ok(titulos.length >= 2, `${plan}: se esperaban varios títulos de sección`);
+    const sinTags = (s) => s.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+    for (let i = 0; i < titulos.length; i++) {
+      const finTitulo = html.indexOf("</td>", titulos[i]);
+      assert.ok(finTitulo !== -1, `${plan}: título de sección sin cierre`);
+      const siguiente = titulos[i + 1] ?? html.indexOf("El rango es estadístico");
+      const cuerpo = sinTags(html.slice(finTitulo + 5, siguiente === -1 ? html.length : siguiente));
+      assert.ok(cuerpo.length > 0, `${plan}: el título de sección #${i + 1} queda sin contenido debajo`);
+    }
+  }
+});
