@@ -1,14 +1,24 @@
 {
-  "actualizado": "2026-11-09",
+  "actualizado": "2026-11-10",
   "horizontes": {
     "manana": {
-      "desde": "2026-11-03",
-      "n": 3,
+      "desde": "2026-11-04",
+      "n": 4,
       "dentro": 2,
-      "cobertura": 66.7,
-      "error_medio_centro": 0.0157,
-      "error_medio_paseo_aleatorio": 0.0157,
+      "cobertura": 50,
+      "error_medio_centro": 0.0203,
+      "error_medio_paseo_aleatorio": 0.0203,
       "casos": [
+        {
+          "fecha_publicacion": "2026-11-06",
+          "fecha_base": "2026-11-05",
+          "fecha_objetivo": "2026-11-09",
+          "p10": 3.435,
+          "p50": 3.452,
+          "p90": 3.468,
+          "cierre": 3.418,
+          "dentro": false
+        },
         {
           "fecha_publicacion": "2026-11-05",
           "fecha_base": "2026-11-04",
@@ -22,20 +32,20 @@
         {
           "fecha_publicacion": "2026-11-04",
           "fecha_base": "2026-11-02",
-          "fecha_objetivo": "2026-11-05",
-          "p10": 3.443,
-          "p50": 3.466,
-          "p90": 3.487,
-          "cierre": 3.452,
-          "dentro": true
-        },
-        {
-          "fecha_publicacion": "2026-11-03",
-          "fecha_base": "2026-11-02",
           "fecha_objetivo": "2026-11-04",
           "p10": 3.449,
           "p50": 3.466,
           "p90": 3.482,
+          "cierre": 3.452,
+          "dentro": true
+        },
+        {
+          "fecha_publicacion": "2026-11-04",
+          "fecha_base": "2026-11-02",
+          "fecha_objetivo": "2026-11-05",
+          "p10": 3.443,
+          "p50": 3.466,
+          "p90": 3.487,
           "cierre": 3.452,
           "dentro": true
         }
@@ -115,12 +125,12 @@
   },
   "backtest_motor": {
     "manana": {
-      "cobertura_80_k_expansivo": 81.2,
-      "cortes_evaluados": 1957
+      "cobertura_80_k_expansivo": 80.4,
+      "cortes_evaluados": 1959
     },
     "semana": {
-      "cobertura_80_k_expansivo": 84.67,
-      "cortes_evaluados": 1953
+      "cobertura_80_k_expansivo": 83.43,
+      "cortes_evaluados": 1955
     }
   }
 }

@@ -137,13 +137,55 @@ export function evaluatePublishedForecasts(pronosticos, officialSerie) {
   };
 }
 
+// Fields that define a published range: if any of them changes, the entry is replaced
+const CAMPOS_RANGO = [
+  "fecha_base",
+  "cierre_base",
+  "horizonte_dias_habiles",
+  "p10",
+  "p50",
+  "p90",
+];
+
+/**
+ * Lima date (UTC-5) of a given instant, as YYYY-MM-DD.
+ * @param {Date} fecha - Instant to convert
+ * @returns {string} Lima date like "2026-11-10"
+ */
+export function fechaLima(fecha) {
+  return new Date(fecha.getTime() - 5 * 60 * 60 * 1000).toISOString().slice(0, 10);
+}
+
+/**
+ * Instant of registration in UTC, as YYYY-MM-DDTHH:MM:SSZ (without milliseconds).
+ * @param {Date} fecha - Instant to format
+ * @returns {string} UTC timestamp like "2026-11-10T11:50:29Z"
+ */
+export function registradoUtc(fecha) {
+  return fecha.toISOString().replace(/\.\d{3}Z$/, "Z");
+}
+
+/**
+ * Opening of the target day: 09:00 in Lima (14:00 UTC). From that moment the entry is frozen.
+ * @param {string} fechaObjetivo - Target date as YYYY-MM-DD
+ * @returns {Date} Opening instant
+ */
+function aperturaDiaObjetivo(fechaObjetivo) {
+  return new Date(`${fechaObjetivo}T14:00:00Z`);
+}
+
 /**
  * Builds the pronosticos-dolar.json from the latest daily-forecasts.json.
- * Only adds new entries (unique key: tipo + fecha_objetivo).
+ * Rule: for every key tipo|fecha_objetivo the book keeps the last version registered BEFORE
+ * 09:00 in Lima (14:00 UTC) of the target day. From that moment the entry is frozen: it is
+ * neither added nor changed.
  * Handles both old format (horizonte, fecha_base) and new format (tipo, fecha_publicacion).
+ * @param {Object} dailyForecasts - Content of data/daily-forecasts.json
+ * @param {Array<Object>} existingPronosticos - Current book
+ * @param {Object} opciones - { ahora }: instant of the run (defaults to now)
  * @returns {Array<Object>} The updated pronosticos array
  */
-export function buildPronosticosFromDaily(dailyForecasts, existingPronosticos = []) {
+export function buildPronosticosFromDaily(dailyForecasts, existingPronosticos = [], { ahora = new Date() } = {}) {
   // Normalize existing entries to new format
   const normalizedExisting = existingPronosticos.map((p) => {
     if (p.tipo && p.fecha_publicacion) {
@@ -164,66 +206,54 @@ export function buildPronosticosFromDaily(dailyForecasts, existingPronosticos = 
     };
   });
 
-  const existingKeys = new Set(
-    normalizedExisting.map((p) => `${p.tipo}|${p.fecha_objetivo}`)
-  );
-
   const pen = dailyForecasts.simbolos?.PEN;
-  if (!pen) return normalizedExisting;
 
-  const fechaPublicacion = dailyForecasts.referencia_lima?.hoy;
-  const fechaBase = pen.fecha_ultimo_cierre;
-  const cierreBase = pen.ultimo_cierre;
+  const momento = ahora instanceof Date ? ahora : new Date(ahora);
+  const fechaPublicacion = fechaLima(momento);
+  const registro = registradoUtc(momento);
 
-  const newEntries = [];
+  for (const tipo of ["manana", "semana"]) {
+    const bloque = pen?.[tipo];
+    if (!bloque) continue;
 
-  // Process "manana" block
-  if (pen.manana) {
-    const m = pen.manana;
-    const compositeKey = `manana|${m.fecha_objetivo}`;
-    if (!existingKeys.has(compositeKey)) {
-      newEntries.push({
-        tipo: "manana",
-        fecha_publicacion: fechaPublicacion,
-        fecha_base: fechaBase,
-        cierre_base: Number(cierreBase.toFixed(4)),
-        horizonte_dias_habiles: m.horizonte_dias_habiles,
-        fecha_objetivo: m.fecha_objetivo,
-        p10: Number(m.p10.toFixed(4)),
-        p50: Number(m.p50.toFixed(4)),
-        p90: Number(m.p90.toFixed(4)),
-      });
+    // The target day already started: the entry stays frozen, nothing is added or changed
+    if (momento >= aperturaDiaObjetivo(bloque.fecha_objetivo)) continue;
+
+    const nueva = {
+      tipo,
+      fecha_publicacion: fechaPublicacion,
+      fecha_base: pen.fecha_ultimo_cierre,
+      cierre_base: Number(pen.ultimo_cierre.toFixed(4)),
+      horizonte_dias_habiles: bloque.horizonte_dias_habiles,
+      fecha_objetivo: bloque.fecha_objetivo,
+      p10: Number(bloque.p10.toFixed(4)),
+      p50: Number(bloque.p50.toFixed(4)),
+      p90: Number(bloque.p90.toFixed(4)),
+      registrado_utc: registro,
+    };
+
+    const indice = normalizedExisting.findIndex(
+      (p) => p.tipo === tipo && p.fecha_objetivo === bloque.fecha_objetivo
+    );
+
+    if (indice === -1) {
+      normalizedExisting.push(nueva);
+      continue;
     }
+
+    // Same key: replace only if the published values changed, otherwise leave the entry as is
+    const previa = normalizedExisting[indice];
+    const cambio = CAMPOS_RANGO.some((campo) => previa[campo] !== nueva[campo]);
+    if (cambio) normalizedExisting[indice] = nueva;
   }
 
-  // Process "semana" block
-  if (pen.semana) {
-    const s = pen.semana;
-    const compositeKey = `semana|${s.fecha_objetivo}`;
-    if (!existingKeys.has(compositeKey)) {
-      newEntries.push({
-        tipo: "semana",
-        fecha_publicacion: fechaPublicacion,
-        fecha_base: fechaBase,
-        cierre_base: Number(cierreBase.toFixed(4)),
-        horizonte_dias_habiles: s.horizonte_dias_habiles,
-        fecha_objetivo: s.fecha_objetivo,
-        p10: Number(s.p10.toFixed(4)),
-        p50: Number(s.p50.toFixed(4)),
-        p90: Number(s.p90.toFixed(4)),
-      });
-    }
-  }
-
-  // Append new entries to existing, sorted by fecha_publicacion then tipo (manana before semana)
-  const all = [...normalizedExisting, ...newEntries].sort((a, b) => {
-    const dateCmp = a.fecha_publicacion.localeCompare(b.fecha_publicacion);
+  // Book order: by fecha_objetivo ascending and, on the same date, manana before semana
+  const tipoOrder = { manana: 1, semana: 2 };
+  return normalizedExisting.sort((a, b) => {
+    const dateCmp = (a.fecha_objetivo || "").localeCompare(b.fecha_objetivo || "");
     if (dateCmp !== 0) return dateCmp;
-    const tipoOrder = { manana: 1, semana: 2 };
     return (tipoOrder[a.tipo] || 99) - (tipoOrder[b.tipo] || 99);
   });
-
-  return all;
 }
 
 async function main() {
@@ -240,12 +270,18 @@ async function main() {
     existingPronosticos = JSON.parse(fs.readFileSync(PRONOSTICOS_PATH, "utf8"));
   }
 
-  // Build updated pronosticos
-  const updatedPronosticos = buildPronosticosFromDaily(dailyForecasts, existingPronosticos);
+  // Build updated pronosticos (the run instant decides what can still be registered)
+  const updatedPronosticos = buildPronosticosFromDaily(dailyForecasts, existingPronosticos, {
+    ahora: new Date(),
+  });
 
   // Save pronosticos-dolar.json
+  const clavesAntes = new Set(existingPronosticos.map((p) => `${p.tipo}|${p.fecha_objetivo}`));
+  const nuevas = updatedPronosticos.filter(
+    (p) => !clavesAntes.has(`${p.tipo}|${p.fecha_objetivo}`)
+  ).length;
   fs.writeFileSync(PRONOSTICOS_PATH, `${JSON.stringify(updatedPronosticos, null, 2)}\n`);
-  console.log(`Pronósticos dólar guardados en ${PRONOSTICOS_PATH} (${updatedPronosticos.length} entradas, ${updatedPronosticos.length - existingPronosticos.length} nuevas)`);
+  console.log(`Pronósticos dólar guardados en ${PRONOSTICOS_PATH} (${updatedPronosticos.length} entradas, ${nuevas} nuevas)`);
 
   // Load BCRP official series
   if (!fs.existsSync(BCRP_PATH)) {

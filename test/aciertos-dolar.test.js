@@ -324,7 +324,9 @@ test("buildPronosticosFromDaily adds new entries from daily-forecasts.json", () 
   };
 
   const existing = [];
-  const result = buildPronosticosFromDaily(dailyForecasts, existing);
+  const result = buildPronosticosFromDaily(dailyForecasts, existing, {
+    ahora: new Date("2025-01-02T12:00:00Z"),
+  });
 
   assert.equal(result.length, 2); // manana, semana
   assert.equal(result[0].fecha_publicacion, "2025-01-02");
@@ -339,7 +341,7 @@ test("buildPronosticosFromDaily adds new entries from daily-forecasts.json", () 
   assert.equal(result[1].p90, 3.80);
 });
 
-test("buildPronosticosFromDaily does not overwrite existing entries (unique key: tipo + fecha_objetivo)", () => {
+test("buildPronosticosFromDaily keeps an existing entry when values are identical", () => {
   const dailyForecasts = {
     referencia_lima: { hoy: "2025-01-02" },
     simbolos: {
@@ -380,7 +382,9 @@ test("buildPronosticosFromDaily does not overwrite existing entries (unique key:
     },
   ];
 
-  const result = buildPronosticosFromDaily(dailyForecasts, existing);
+  const result = buildPronosticosFromDaily(dailyForecasts, existing, {
+    ahora: new Date("2025-01-02T12:00:00Z"),
+  });
 
   // Should still have only 2 entries (existing manana + new semana), not 3
   assert.equal(result.length, 2);
@@ -433,16 +437,22 @@ test("buildPronosticosFromDaily preserves existing entries and adds new ones sor
     },
   ];
 
-  const result = buildPronosticosFromDaily(dailyForecasts, existing);
+  const result = buildPronosticosFromDaily(dailyForecasts, existing, {
+    ahora: new Date("2025-01-02T12:00:00Z"),
+  });
 
   assert.equal(result.length, 3);
-  // Sorted by fecha_publicacion then tipo (manana before semana)
-  assert.equal(result[0].fecha_publicacion, "2025-01-02");
+  // Sorted by fecha_objetivo then tipo (manana before semana)
+  assert.equal(result[0].fecha_objetivo, "2025-01-06");
   assert.equal(result[0].tipo, "manana");
-  assert.equal(result[1].fecha_publicacion, "2025-01-03");
+  assert.equal(result[1].fecha_objetivo, "2025-01-07");
   assert.equal(result[1].tipo, "manana");
-  assert.equal(result[2].fecha_publicacion, "2025-01-03");
+  assert.equal(result[2].fecha_objetivo, "2025-01-14");
   assert.equal(result[2].tipo, "semana");
+  // fecha_publicacion is now the Lima date of the run, not the reference date
+  assert.equal(result[0].fecha_publicacion, "2025-01-02");
+  assert.equal(result[1].fecha_publicacion, "2025-01-02");
+  assert.equal(result[2].fecha_publicacion, "2025-01-02");
 });
 
 test("buildPronosticosFromDaily ignores h1, h2, h3, h4, h5, h6, h7, h8 from pronosticos", () => {
@@ -483,10 +493,262 @@ test("buildPronosticosFromDaily ignores h1, h2, h3, h4, h5, h6, h7, h8 from pron
   };
 
   const existing = [];
-  const result = buildPronosticosFromDaily(dailyForecasts, existing);
+  const result = buildPronosticosFromDaily(dailyForecasts, existing, {
+    ahora: new Date("2025-01-02T12:00:00Z"),
+  });
 
   // Only manana and semana should be included (from the top-level blocks, not pronosticos)
   assert.equal(result.length, 2);
   const tipos = result.map((p) => p.tipo).sort();
   assert.deepEqual(tipos, ["manana", "semana"]);
+});
+
+// ---- New rule: the last version registered before 09:00 in Lima (14:00 UTC) of the target day ----
+
+// Builds a daily-forecasts.json with the given manana/semana blocks
+function mockDaily({ fechaBase, cierreBase, manana, semana }) {
+  return {
+    referencia_lima: { hoy: "2025-01-02" },
+    simbolos: {
+      PEN: {
+        fecha_ultimo_cierre: fechaBase,
+        ultimo_cierre: cierreBase,
+        manana,
+        semana,
+      },
+    },
+  };
+}
+
+// Builds an entry of the published book
+function mockEntrada({ tipo, fechaObjetivo, fechaBase, cierreBase, horizonte, p10, p50, p90 }) {
+  return {
+    tipo,
+    fecha_publicacion: "2025-01-02",
+    fecha_base: fechaBase,
+    cierre_base: cierreBase,
+    horizonte_dias_habiles: horizonte,
+    fecha_objetivo: fechaObjetivo,
+    p10,
+    p50,
+    p90,
+    registrado_utc: "2025-01-02T12:00:00Z",
+  };
+}
+
+test("buildPronosticosFromDaily replaces the entry when the values changed before the opening", () => {
+  const dailyForecasts = mockDaily({
+    fechaBase: "2025-01-03",
+    cierreBase: 3.71,
+    manana: {
+      horizonte: "h2",
+      fecha_objetivo: "2025-01-06",
+      horizonte_dias_habiles: 2,
+      p10: 3.69,
+      p50: 3.71,
+      p90: 3.76,
+    },
+  });
+
+  const existing = [
+    mockEntrada({
+      tipo: "manana",
+      fechaObjetivo: "2025-01-06",
+      fechaBase: "2025-01-02",
+      cierreBase: 3.70,
+      horizonte: 2,
+      p10: 3.68,
+      p50: 3.70,
+      p90: 3.75,
+    }),
+  ];
+
+  const result = buildPronosticosFromDaily(dailyForecasts, existing, {
+    ahora: new Date("2025-01-03T12:00:00Z"),
+  });
+
+  assert.equal(result.length, 1);
+  const manana = result[0];
+  assert.equal(manana.p10, 3.69);
+  assert.equal(manana.p90, 3.76);
+  assert.equal(manana.cierre_base, 3.71);
+  assert.equal(manana.fecha_base, "2025-01-03");
+  // fecha_publicacion is the Lima date of the run
+  assert.equal(manana.fecha_publicacion, "2025-01-03");
+  // registrado_utc is the run instant in UTC, without milliseconds
+  assert.equal(manana.registrado_utc, "2025-01-03T12:00:00Z");
+});
+
+test("buildPronosticosFromDaily does not add an entry once the target day started", () => {
+  const dailyForecasts = mockDaily({
+    fechaBase: "2025-01-03",
+    cierreBase: 3.71,
+    manana: {
+      horizonte: "h2",
+      fecha_objetivo: "2025-01-06",
+      horizonte_dias_habiles: 2,
+      p10: 3.69,
+      p50: 3.71,
+      p90: 3.76,
+    },
+  });
+
+  // Exactly at the opening (14:00:00 UTC) the entry is already frozen
+  const exacta = buildPronosticosFromDaily(dailyForecasts, [], {
+    ahora: new Date("2025-01-06T14:00:00Z"),
+  });
+  assert.equal(exacta.length, 0);
+
+  // And also after it
+  const despues = buildPronosticosFromDaily(dailyForecasts, [], {
+    ahora: new Date("2025-01-06T18:30:00Z"),
+  });
+  assert.equal(despues.length, 0);
+});
+
+test("buildPronosticosFromDaily does not replace an existing entry once the target day started", () => {
+  const dailyForecasts = mockDaily({
+    fechaBase: "2025-01-03",
+    cierreBase: 3.71,
+    manana: {
+      horizonte: "h2",
+      fecha_objetivo: "2025-01-06",
+      horizonte_dias_habiles: 2,
+      p10: 3.69,
+      p50: 3.71,
+      p90: 3.76,
+    },
+  });
+
+  const existing = [
+    mockEntrada({
+      tipo: "manana",
+      fechaObjetivo: "2025-01-06",
+      fechaBase: "2025-01-02",
+      cierreBase: 3.70,
+      horizonte: 2,
+      p10: 3.68,
+      p50: 3.70,
+      p90: 3.75,
+    }),
+  ];
+
+  const result = buildPronosticosFromDaily(dailyForecasts, existing, {
+    ahora: new Date("2025-01-06T15:00:00Z"),
+  });
+
+  assert.equal(result.length, 1);
+  const manana = result[0];
+  // The old entry stays exactly as it was
+  assert.equal(manana.p10, 3.68);
+  assert.equal(manana.p50, 3.70);
+  assert.equal(manana.p90, 3.75);
+  assert.equal(manana.fecha_publicacion, "2025-01-02");
+  assert.equal(manana.registrado_utc, "2025-01-02T12:00:00Z");
+});
+
+test("buildPronosticosFromDaily uses the Lima date for fecha_publicacion", () => {
+  const dailyForecasts = mockDaily({
+    fechaBase: "2025-01-02",
+    cierreBase: 3.70,
+    manana: {
+      horizonte: "h2",
+      fecha_objetivo: "2025-01-06",
+      horizonte_dias_habiles: 2,
+      p10: 3.68,
+      p50: 3.70,
+      p90: 3.75,
+    },
+  });
+
+  // 03:00 UTC is still the previous day in Lima (UTC-5)
+  const result = buildPronosticosFromDaily(dailyForecasts, [], {
+    ahora: new Date("2025-01-03T03:00:00Z"),
+  });
+
+  assert.equal(result.length, 1);
+  assert.equal(result[0].fecha_publicacion, "2025-01-02");
+  assert.equal(result[0].registrado_utc, "2025-01-03T03:00:00Z");
+});
+
+test("buildPronosticosFromDaily sorts the book by fecha_objetivo and then manana before semana", () => {
+  const dailyForecasts = mockDaily({
+    fechaBase: "2025-01-02",
+    cierreBase: 3.70,
+    manana: {
+      horizonte: "h2",
+      fecha_objetivo: "2025-01-20",
+      horizonte_dias_habiles: 2,
+      p10: 3.68,
+      p50: 3.70,
+      p90: 3.75,
+    },
+    semana: {
+      horizonte: "h6",
+      fecha_objetivo: "2025-01-27",
+      horizonte_dias_habiles: 6,
+      p10: 3.65,
+      p50: 3.70,
+      p90: 3.80,
+    },
+  });
+
+  const existing = [
+    mockEntrada({
+      tipo: "semana",
+      fechaObjetivo: "2025-01-13",
+      fechaBase: "2025-01-02",
+      cierreBase: 3.70,
+      horizonte: 6,
+      p10: 3.65,
+      p50: 3.70,
+      p90: 3.80,
+    }),
+    mockEntrada({
+      tipo: "manana",
+      fechaObjetivo: "2025-01-13",
+      fechaBase: "2025-01-02",
+      cierreBase: 3.70,
+      horizonte: 2,
+      p10: 3.68,
+      p50: 3.70,
+      p90: 3.75,
+    }),
+    mockEntrada({
+      tipo: "semana",
+      fechaObjetivo: "2025-01-06",
+      fechaBase: "2025-01-02",
+      cierreBase: 3.70,
+      horizonte: 6,
+      p10: 3.65,
+      p50: 3.70,
+      p90: 3.80,
+    }),
+    mockEntrada({
+      tipo: "manana",
+      fechaObjetivo: "2025-01-06",
+      fechaBase: "2025-01-02",
+      cierreBase: 3.70,
+      horizonte: 2,
+      p10: 3.68,
+      p50: 3.70,
+      p90: 3.75,
+    }),
+  ];
+
+  const result = buildPronosticosFromDaily(dailyForecasts, existing, {
+    ahora: new Date("2025-01-02T12:00:00Z"),
+  });
+
+  assert.deepEqual(
+    result.map((p) => `${p.fecha_objetivo}|${p.tipo}`),
+    [
+      "2025-01-06|manana",
+      "2025-01-06|semana",
+      "2025-01-13|manana",
+      "2025-01-13|semana",
+      "2025-01-20|manana",
+      "2025-01-27|semana",
+    ]
+  );
 });

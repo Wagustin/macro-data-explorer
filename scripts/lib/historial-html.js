@@ -67,7 +67,7 @@ export function renderHistorial(aciertos) {
 
   // Part (a): Rangos publicados
   html += '<div class="space-y-6">';
-  html += '<h3 class="text-lg font-semibold text-ink">Rangos publicados desde el 3 de noviembre de 2026</h3>';
+  html += '<h3 class="text-lg font-semibold text-ink">Rangos publicados desde el 4 de noviembre de 2026</h3>';
 
   // --- Rango para el día siguiente ---
   html += '<div class="space-y-3">';
@@ -203,12 +203,12 @@ export function renderHistorial(aciertos) {
     const y = semanaBT ? Number(semanaBT.cobertura_80_k_expansivo.toFixed(1)) : 's/d';
 
     html += '<p class="text-ink-soft text-sm mt-4">';
-    html += `El rango que publicamos para el día siguiente suele estar a dos días hábiles del último cierre oficial, porque el BCRP difunde el cierre con un día de retraso. Para esa distancia, la prueba del propio motor sobre los cierres desde 2024 da ${x}%; para la semana, ${y}%.`;
+    html += `Hasta el 9 de noviembre de 2026 el rango del día siguiente partía de un cierre de dos días hábiles atrás, porque el BCRP lo difunde con un día de retraso. Desde el 10 de noviembre parte del cierre del día hábil anterior, que SUNAT publica de madrugada, y por eso es más angosto. Cada rango queda registrado antes de las 9:00 a. m. del día que anuncia y no se cambia después. En la prueba del propio motor sobre los cierres desde 2024, el rango de un día acertó ${x} % de las veces; el de la semana, ${y} %.`;
     html += '</p>';
   }
 
   // Pie
-  html += `<p class="text-ink-soft text-xs mt-4">Actualizado el ${actualizadoCorta} de ${actualizadoAnio}. Cierres oficiales: BCRP.</p>`;
+  html += `<p class="text-ink-soft text-xs mt-4">Actualizado el ${actualizadoCorta} de ${actualizadoAnio}. Cierres: tipo de cambio venta SBS, publicado por el BCRP y por SUNAT.</p>`;
 
   html += '</div>';
 

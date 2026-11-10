@@ -32,6 +32,9 @@ jobs:
       - name: PerData Engine diario
         if: steps.cierre.outputs.aplicado == 'true'
         run: node scripts/engine-daily.js
+      - name: Evaluar aciertos del dólar (pronósticos publicados)
+        if: steps.cierre.outputs.aplicado == 'true'
+        run: node scripts/aciertos-dolar.js
       - name: Generar página de dólar estática
         if: steps.cierre.outputs.aplicado == 'true'
         run: node scripts/build-dolar-html.js
@@ -40,7 +43,7 @@ jobs:
         run: |
           git config user.name "perdata-bot"
           git config user.email "perdata-bot@users.noreply.github.com"
-          git add data/official/bcrp-daily.json data/daily-forecasts.json dolar.html
+          git add data/official/bcrp-daily.json data/daily-forecasts.json data/official/pronosticos-dolar.json data/official/aciertos-dolar.json dolar.html
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else

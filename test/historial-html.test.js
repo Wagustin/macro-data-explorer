@@ -102,7 +102,7 @@ test("renderHistorial returns HTML string", () => {
 test("renderHistorial includes header with correct h2 and paragraph", () => {
   const aciertos = makeAciertos();
   const html = renderHistorial(aciertos);
-  assert.ok(html.includes("Rangos publicados desde el 3 de noviembre de 2026"));
+  assert.ok(html.includes("Rangos publicados desde el 4 de noviembre de 2026"));
   assert.ok(html.includes("Prueba histórica (no son rangos publicados)"));
 });
 
@@ -110,7 +110,7 @@ test("renderHistorial part (a) with n=3 shows no percentage sign", () => {
   const aciertos = makeAciertos();
   const html = renderHistorial(aciertos);
   // Part (a) for manana with n=3 should NOT contain "%"
-  const partAStart = html.indexOf("Rangos publicados desde el 3 de noviembre de 2026");
+  const partAStart = html.indexOf("Rangos publicados desde el 4 de noviembre de 2026");
   const partBStart = html.indexOf("Prueba histórica (no son rangos publicados)");
   const partA = html.slice(partAStart, partBStart);
   assert.ok(!partA.includes("%"), "Part (a) should not contain % when n < 20");
@@ -168,11 +168,11 @@ test("renderHistorial part (b) yearly table has correct columns", () => {
 test("renderHistorial part (b) includes backtest_motor paragraph", () => {
   const aciertos = makeAciertos();
   const html = renderHistorial(aciertos);
-  assert.ok(html.includes("El rango que publicamos para el día siguiente suele estar a dos días hábiles"));
-  assert.ok(html.includes("81.2%"));
+  assert.ok(html.includes("Hasta el 9 de noviembre de 2026 el rango del día siguiente partía de un cierre de dos días hábiles atrás"));
+  assert.ok(html.includes("81.2 %"));
   assert.ok(html.includes("desde 2024"));
   assert.ok(!html.includes("1 957"));
-  assert.ok(html.includes("84.7%"));
+  assert.ok(html.includes("84.7 %"));
   assert.ok(!html.includes("1 953"));
 });
 
@@ -180,7 +180,7 @@ test("renderHistorial includes footer with update date", () => {
   const aciertos = makeAciertos();
   const html = renderHistorial(aciertos);
   assert.ok(html.includes("Actualizado el 9 nov de 2026"));
-  assert.ok(html.includes("Cierres oficiales: BCRP"));
+  assert.ok(html.includes("Cierres: tipo de cambio venta SBS, publicado por el BCRP y por SUNAT"));
 });
 
 test("renderHistorial handles missing aciertos gracefully", () => {
@@ -212,7 +212,7 @@ test("renderHistorial part (a) with n>=20 shows percentage", () => {
     },
   });
   const html = renderHistorial(aciertos);
-  const partAStart = html.indexOf("Rangos publicados desde el 3 de noviembre de 2026");
+  const partAStart = html.indexOf("Rangos publicados desde el 4 de noviembre de 2026");
   const partBStart = html.indexOf("Prueba histórica (no son rangos publicados)");
   const partA = html.slice(partAStart, partBStart);
   assert.ok(partA.includes("20 de 25 cierres cayeron dentro del rango publicado (80.00%)"));
