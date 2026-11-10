@@ -41,136 +41,63 @@ const DRY = process.argv.includes("--dry-run");
 const PREVIEW = Boolean(process.env.PREVIEW_EMPRESAS);
 const PREVIEW_PLAN = (process.env.PREVIEW_PLAN || "boletin").toLowerCase() === "gratis" ? "gratis" : "boletin";
 
-// ---------------------------------------------------------------------------
-// Charts as inline SVG. The boletin.yml workflow runs `node scripts/boletin.js`
-// without npm ci, so nothing here may come from node_modules: the graphs go
-// straight into the email HTML. The dollar chart is authored at 600 px wide —
-// the width the email displays it at — so its 11-12 px labels stay legible on
-// a 390 px phone.
-// ---------------------------------------------------------------------------
-const CHART_WIDTH = 600;  // px, the width the email shows the chart at
-const CHART_HEIGHT = 180;
-const SPARK_WIDTH = 120;  // px
-const SPARK_HEIGHT = 40;
-
 const C = { paper: "#F5F1E8", card: "#FBF9F4", ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", peru: "#D91023" };
 const MONO_F = "IBM Plex Mono,Menlo,Consolas,monospace";
 const UI_F = "Libre Franklin,Helvetica,Arial,sans-serif";
 const NUM = ' style="font-variant-numeric:tabular-nums"';
 
-function generateDolarChart(series, rango) {
-  // series: [[date, value], ...] - last ~30 points
-  // rango: { p10, p50, p90 } of the next close: band at the end of the series,
-  // its labels inside the viewBox (11-12 px at the 600 px display width)
-  if (!series || series.length < 2) return null;
+// Table-based range bar (works in Gmail, Outlook, Yahoo — no SVG)
+function barraRango({ min, max, centro, ultimo, prefijo = "S/" }) {
+  // Scale: lo = min(min, ultimo) - 15% of range, hi = max(max, ultimo) + 15% of range
+  const range = max - min;
+  const lo = Math.min(min, ultimo) - range * 0.15;
+  const hi = Math.max(max, ultimo) + range * 0.15;
+  const total = hi - lo;
 
-  const data = series.slice(-30);
-  const values = data.map(([, v]) => v);
-  const lo = rango?.p10 != null ? Math.min(...values, rango.p10) : Math.min(...values);
-  const hi = rango?.p90 != null ? Math.max(...values, rango.p90, rango.p50 ?? -Infinity) : Math.max(...values);
-  const pad = (hi - lo) * 0.12 || 0.01;
-  const yMin = lo - pad;
-  const yMax = hi + pad;
+  // Track: three cells with integer percentages summing to 100
+  const leftPct = Math.round(((centro - lo) / total) * 100);
+  const rightPct = Math.round(((hi - max) / total) * 100);
+  const midPct = 100 - leftPct - rightPct;
 
-  // Right strip reserved for the range band and its labels
-  const padL = 6, padR = 148, padT = 16, padB = 24;
-  const plotW = CHART_WIDTH - padL - padR;
-  const xStep = plotW / (data.length - 1);
-  const yScale = (v) => padT + (1 - (v - yMin) / (yMax - yMin)) * (CHART_HEIGHT - padT - padB);
+  // Last close position as percentage
+  const ultimoPct = Math.round(((ultimo - lo) / total) * 100);
 
-  const points = data.map((_, i) => `${(padL + i * xStep).toFixed(1)},${yScale(values[i]).toFixed(1)}`).join(" ");
+  const fmtPrefijo = (v) => `${prefijo} ${v.toFixed(prefijo === "US$" ? 2 : 3)}`;
 
-  let rangeBand = "";
-  let rangeLabels = "";
-  if (rango && rango.p10 != null && rango.p90 != null) {
-    const yP10 = yScale(rango.p10);
-    const yP90 = yScale(rango.p90);
-    const yP50 = yScale(rango.p50);
-    const bandX = CHART_WIDTH - padR + 16;
-    const bandW = 26;
-    const labX = bandX + bandW + 8;
-
-    rangeBand = `
-      <rect x="${bandX}" y="${yP90}" width="${bandW}" height="${Math.max(2, yP10 - yP90)}" fill="${C.pos}" fill-opacity="0.14" rx="2"/>
-      <line x1="${bandX}" y1="${yP50}" x2="${bandX + bandW}" y2="${yP50}" stroke="${C.pos}" stroke-width="1.5" stroke-dasharray="3,3"/>
-    `;
-    rangeLabels = `
-      <text x="${labX}" y="${yP10 + 4}" font-family="${MONO_F}" font-size="12" fill="${C.soft}" text-anchor="start"${NUM}>${rango.p10.toFixed(3)}</text>
-      <text x="${labX}" y="${yP50 + 4}" font-family="${MONO_F}" font-size="12" fill="${C.ink}" text-anchor="start" font-weight="600"${NUM}>${rango.p50.toFixed(3)}</text>
-      <text x="${labX}" y="${yP90 + 4}" font-family="${MONO_F}" font-size="12" fill="${C.soft}" text-anchor="start"${NUM}>${rango.p90.toFixed(3)}</text>
-    `;
-  }
-
-  // Last close label, anchored left of the last point so it never clips
-  const lastIdx = data.length - 1;
-  const lastVal = values[lastIdx];
-  const lastX = padL + lastIdx * xStep;
-  const lastY = yScale(lastVal);
-  const lastDate = data[lastIdx][0];
-
-  return `<svg width="${CHART_WIDTH}" height="${CHART_HEIGHT}" viewBox="0 0 ${CHART_WIDTH} ${CHART_HEIGHT}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gráfico del dólar: serie de los últimos 30 cierres con banda de rango p10–p90 del siguiente cierre y su centro" style="max-width:100%;height:auto;display:block">
-    <rect width="100%" height="100%" fill="${C.paper}"/>
-    ${rangeBand}
-    <polyline fill="none" stroke="${C.ink}" stroke-width="1.5" points="${points}"/>
-    <circle cx="${lastX}" cy="${lastY}" r="3" fill="${C.ink}"/>
-    <text x="${lastX - 8}" y="${Math.max(13, lastY - 8)}" font-family="${MONO_F}" font-size="12" fill="${C.ink}" text-anchor="end" font-weight="600"${NUM}>${lastVal.toFixed(3)}</text>
-    <text x="${lastX - 8}" y="${Math.min(CHART_HEIGHT - 6, lastY + 20)}" font-family="${UI_F}" font-size="11" fill="${C.soft}" text-anchor="end">${lastDate}</text>
-    ${rangeLabels}
-  </svg>`;
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-family:${MONO_F};font-size:12px;color:${C.ink};font-variant-numeric:tabular-nums">
+<tr>
+  <td style="text-align:left;padding:0 0 4px">${esc(fmtPrefijo(min))}</td>
+  <td style="text-align:center;padding:0 0 4px">centro ${esc(fmtPrefijo(centro))}</td>
+  <td style="text-align:right;padding:0 0 4px">${esc(fmtPrefijo(max))}</td>
+</tr>
+<tr>
+  <td colspan="3" style="padding:0">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="height:8px;background:${C.rule}">
+      <tr>
+        <td width="${leftPct}%" style="background:${C.rule}"></td>
+        <td width="${midPct}%" style="background:${C.pos}"></td>
+        <td width="${rightPct}%" style="background:${C.rule}"></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+  <td colspan="3" style="padding:4px 0 0">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="height:10px">
+      <tr>
+        <td width="${ultimoPct}%" style="background:${C.paper}"></td>
+        <td width="2" style="background:${C.ink}"></td>
+        <td width="${100 - ultimoPct}%" style="background:${C.paper}"></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+  <td colspan="3" style="font-family:${UI_F};font-size:12px;color:${C.soft};padding-top:2px">último cierre ${esc(fmtPrefijo(ultimo))} (${esc(formatCierreFecha(new Date().toISOString().slice(0, 10)))})</td>
+</tr>
+</table>`;
 }
 
-function generateSparkline(series) {
-  // series: [[date, value], ...] - last 30 points for a mini chart
-  if (!series || series.length < 2) return null;
-
-  const data = series.slice(-30);
-  const values = data.map(([, v]) => v);
-  const minVal = Math.min(...values);
-  const maxVal = Math.max(...values);
-  const pad = (maxVal - minVal) * 0.12 || 0.01;
-  const yMin = minVal - pad;
-  const yMax = maxVal + pad;
-
-  const xStep = (SPARK_WIDTH - 4) / (data.length - 1);
-  const yScale = (v) => 3 + (1 - (v - yMin) / (yMax - yMin)) * (SPARK_HEIGHT - 6);
-
-  const points = data.map((_, i) => `${(2 + i * xStep).toFixed(1)},${yScale(values[i]).toFixed(1)}`).join(" ");
-  const up = values[values.length - 1] >= values[0];
-  const strokeColor = up ? C.pos : C.neg;
-
-  return `<svg width="${SPARK_WIDTH}" height="${SPARK_HEIGHT}" viewBox="0 0 ${SPARK_WIDTH} ${SPARK_HEIGHT}" xmlns="http://www.w3.org/2000/svg" role="img" style="max-width:100%;height:auto;display:block">
-    <rect width="100%" height="100%" fill="${C.paper}"/>
-    <polyline fill="none" stroke="${strokeColor}" stroke-width="1.5" points="${points}"/>
-  </svg>`;
-}
-
-function generateRangeBar(p10, price, p90) {
-  // Horizontal range bar: p10 — price — p90, as inline SVG
-  const BAR_WIDTH = 300;
-  const BAR_HEIGHT = 26;
-  const pad = 16;
-
-  if (p10 == null || price == null || p90 == null) return null;
-
-  const minVal = Math.min(p10, price, p90);
-  const maxVal = Math.max(p10, price, p90);
-  const range = maxVal - minVal || 0.01;
-
-  const xScale = (v) => pad + ((v - minVal) / range) * (BAR_WIDTH - 2 * pad);
-  const xP10 = xScale(p10);
-  const xPrice = xScale(price);
-  const xP90 = xScale(p90);
-
-  return `<svg width="${BAR_WIDTH}" height="${BAR_HEIGHT}" viewBox="0 0 ${BAR_WIDTH} ${BAR_HEIGHT}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Rango de proyección: p10 — precio — p90" style="max-width:100%;height:auto;display:block">
-    <rect width="100%" height="100%" fill="${C.paper}"/>
-    <line x1="${xP10}" y1="${BAR_HEIGHT/2}" x2="${xP90}" y2="${BAR_HEIGHT/2}" stroke="${C.rule}" stroke-width="2"/>
-    <circle cx="${xP10}" cy="${BAR_HEIGHT/2}" r="3" fill="${C.soft}"/>
-    <circle cx="${xP90}" cy="${BAR_HEIGHT/2}" r="3" fill="${C.soft}"/>
-    <circle cx="${xPrice}" cy="${BAR_HEIGHT/2}" r="4" fill="${C.ink}"/>
-    <text x="${xP10}" y="${BAR_HEIGHT/2 - 7}" font-family="${MONO_F}" font-size="10" fill="${C.soft}" text-anchor="middle"${NUM}>${p10.toFixed(2)}</text>
-    <text x="${xP90}" y="${BAR_HEIGHT/2 - 7}" font-family="${MONO_F}" font-size="10" fill="${C.soft}" text-anchor="middle"${NUM}>${p90.toFixed(2)}</text>
-  </svg>`;
-}
 const SITE = "https://perdata.site";
 const RAW = "https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data";
 const FROM = process.env.BOLETIN_FROM || "PerData <boletin@perdata.site>";
@@ -483,20 +410,19 @@ function render(f, ai, dateLabel, lectura) {
   
   const regla = () => `<tr><td style="padding:0"><hr style="border:none;border-top:1px solid ${C.rule};margin:0"/></td></tr>`;
 
-  // Dollar chart - inline SVG (no attachment, no native dependency)
-  const dolarChartSvg = generateDolarChart(f.bcrp?.series?.PEN?.serie, f.daily?.manana);
-  const dolarChartHtml = dolarChartSvg ? `<tr><td style="padding:16px 0 8px" align="center"><!-- grafico-dolar -->${dolarChartSvg}</td></tr>` : "";
-
-  // Dollar headline with close
-  const cierre = f.cierre;
+  // Dollar range bar (replaces SVG line chart)
   const rangoManana = f.daily?.manana;
   const etiquetaManana = rangoManana ? formatFechaObjetivo(rangoManana.fecha_objetivo, f.todayLima) : "";
+  const dollarBarHtml = rangoManana ? `<tr><td style="padding:16px 0 8px">${barraRango({ min: rangoManana.p10, max: rangoManana.p90, centro: rangoManana.p50, ultimo: f.cierre?.valor, prefijo: "S/" })}</td></tr>` : "";
+
+  // Dollar headline with close - fix subtitle: "Rango Mañana" -> "rango para mañana"
+  const cierre = f.cierre;
   const dollarHeadline = cierre ? `<tr><td style="padding:16px 0 8px">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
       <td style="font-family:${serif};font-size:24px;font-weight:600;color:${C.ink}">Dólar interbancario (USD/PEN)</td>
       <td align="right" style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</td>
     </tr></table>
-    <p style="margin:4px 0 0;font-family:${ui};font-size:13px;color:${C.soft}">Último cierre oficial (BCRP) · cierre del ${esc(formatCierreFecha(cierre.fecha))}${rangoManana ? ` · Rango ${esc(etiquetaManana)}` : ''}</p>
+    <p style="margin:4px 0 0;font-family:${ui};font-size:13px;color:${C.soft}">Último cierre oficial (BCRP) · cierre del ${esc(formatCierreFecha(cierre.fecha))}${rangoManana ? ` · rango para ${esc(etiquetaManana.toLowerCase())}` : ''}</p>
   </td></tr>` : "";
 
   // Dollar reading for mañana/horizonte
@@ -544,25 +470,27 @@ function render(f, ai, dateLabel, lectura) {
     dolarRows.map(r => lecturaHorizonte(lect[r.key], r.titulo, r.rango, r.num, r.num === 1)).join(regla()) 
     : "";
 
-  // Markets with sparklines (copper, gold, oil)
+  // Markets (copper, gold, oil) — clean two-column rows, no SVG
   const metales = f.markets.filter((m) => ["Cobre", "Oro", "Petróleo WTI", "Petróleo Brent"].includes(m.name));
-  const sparkSvg = {
-    "Cobre": generateSparkline(f.bcrp?.series?.COBRE?.serie),
-    "Oro": generateSparkline(f.bcrp?.series?.ORO?.serie),
-    "Petróleo WTI": generateSparkline(f.bcrp?.series?.WTI?.serie),
+  const shortDate = (iso) => new Date(`${String(iso).slice(0, 10)}T12:00:00Z`).toLocaleDateString("es-PE", { day: "numeric", month: "short", timeZone: "UTC" }).replace(/\./g, "");
+  const fmtPct = (v) => {
+    const s = v >= 0 ? `+${v.toFixed(2)}` : v.toFixed(2);
+    return `${s} %`;
   };
 
   const mercadoCards = metales.map((m) => {
     const up = m.change >= 0;
-    return `<tr><td style="padding:16px 0">
+    const pctColor = up ? C.pos : C.neg;
+    const pctStr = fmtPct(m.change);
+    return `<tr><td style="padding:12px 0">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-        <td width="140" style="vertical-align:middle;padding-right:16px">
-          ${sparkSvg[m.name] || sparkSvg["Petróleo WTI"] || ""}
+        <td style="vertical-align:top;padding-right:16px;width:1px;white-space:nowrap">
+          <div style="font-family:${ui};font-size:14px;font-weight:600;color:${C.ink};margin-bottom:2px">${esc(m.name)}</div>
+          <div style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:13px;color:${C.soft}">${esc(m.unit)}</div>
         </td>
-        <td style="vertical-align:middle">
-          <div style="font-family:${ui};font-size:14px;font-weight:600;color:${C.ink};margin-bottom:2px">${esc(m.name)} <span style="font-weight:400;font-size:12px;color:${C.soft}">${esc(m.unit)}</span></div>
+        <td style="vertical-align:top;text-align:right">
           <div style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:20px;color:${C.ink};white-space:nowrap">${fmt(m.value, m.dec)}</div>
-          <div style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:13px;color:${up ? C.pos : C.neg};margin-top:2px">${up ? "▲" : "▼"} ${fmt(Math.abs(m.change))}% · ${esc(m.date)}</div>
+          <div style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:13px;color:${pctColor};margin-top:2px">${pctStr} · ${esc(shortDate(m.date))}</div>
         </td>
       </tr></table>
     </td></tr>`;
@@ -607,7 +535,7 @@ function render(f, ai, dateLabel, lectura) {
   </td></tr>
   
   ${dollarHeadline}
-  ${dolarChartHtml}
+  ${dollarBarHtml}
   ${fc}
   {{PERSONAL}}
   
@@ -655,20 +583,19 @@ function renderGratis(f, dateLabel, lectura) {
   
   const regla = () => `<tr><td style="padding:0"><hr style="border:none;border-top:1px solid ${C.rule};margin:0"/></td></tr>`;
 
-  // Dollar chart - inline SVG (no attachment, no native dependency)
-  const dolarChartSvg = generateDolarChart(f.bcrp?.series?.PEN?.serie, f.daily?.manana);
-  const dolarChartHtml = dolarChartSvg ? `<tr><td style="padding:16px 0 8px" align="center"><!-- grafico-dolar -->${dolarChartSvg}</td></tr>` : "";
-
-  // Dollar headline with close
-  const cierre = f.cierre;
+  // Dollar range bar (replaces SVG line chart)
   const rangoManana = f.daily?.manana;
   const etiquetaManana = rangoManana ? formatFechaObjetivo(rangoManana.fecha_objetivo, f.todayLima) : "";
+  const dollarBarHtml = rangoManana ? `<tr><td style="padding:16px 0 8px">${barraRango({ min: rangoManana.p10, max: rangoManana.p90, centro: rangoManana.p50, ultimo: f.cierre?.valor, prefijo: "S/" })}</td></tr>` : "";
+
+  // Dollar headline with close - fix subtitle: "Rango Mañana" -> "rango para mañana"
+  const cierre = f.cierre;
   const dollarHeadline = cierre ? `<tr><td style="padding:16px 0 8px">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
       <td style="font-family:${serif};font-size:24px;font-weight:600;color:${C.ink}">Dólar interbancario (USD/PEN)</td>
       <td align="right" style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</td>
     </tr></table>
-    <p style="margin:4px 0 0;font-family:${ui};font-size:13px;color:${C.soft}">Último cierre oficial (BCRP) · cierre del ${esc(formatCierreFecha(cierre.fecha))}${rangoManana ? ` · Rango ${esc(etiquetaManana)}` : ''}</p>
+    <p style="margin:4px 0 0;font-family:${ui};font-size:13px;color:${C.soft}">Último cierre oficial (BCRP) · cierre del ${esc(formatCierreFecha(cierre.fecha))}${rangoManana ? ` · rango para ${esc(etiquetaManana.toLowerCase())}` : ''}</p>
   </td></tr>` : "";
 
   // Dollar reading for mañana/horizonte (only mañana for free)
@@ -741,7 +668,7 @@ function renderGratis(f, dateLabel, lectura) {
   </td></tr>
   
   ${dollarHeadline}
-  ${dolarChartHtml}
+  ${dollarBarHtml}
   ${presionaHtml}
   {{PERSONAL}}
   
@@ -892,21 +819,15 @@ function renderPersonal(cards, lecturas) {
   const body = cards.map((c) => {
     const ch = c.change == null ? "" : `<span style="color:${c.change >= 0 ? C.pos : C.neg}">${c.change >= 0 ? "▲" : "▼"} ${fmt(Math.abs(c.change))}%</span>`;
     
-    // Range bar (inline SVG)
-    const rangeBarSvg = c.forecast && c.forecast.p10 != null && c.forecast.p50 != null && c.forecast.p90 != null
-      ? generateRangeBar(c.forecast.p10, c.forecast.p50, c.forecast.p90)
-      : null;
+    // Range bar (table-based, works in Gmail/Outlook/Yahoo)
+    const rangeBarHtml = (c.forecast && c.forecast.p10 != null && c.forecast.p50 != null && c.forecast.p90 != null && c.price != null)
+      ? `<div style="margin:8px 0 0">${barraRango({ min: c.forecast.p10, max: c.forecast.p90, centro: c.forecast.p50, ultimo: c.price, prefijo: c.currency })}</div>`
+      : "";
     
     const fc = c.forecast ? `
       <div style="font-family:${ui};font-size:13px;color:${C.soft};margin:8px 0 0">
         Proyección al ${esc(c.forecast.date)}: ${c.currency} ${fmt(c.forecast.p50)}
         ${c.forecast.p10 ? ` (${fmt(c.forecast.p10)} — ${fmt(c.forecast.p90)}, 8 de cada 10 veces)` : ''}
-      </div>` : "";
-    
-    // Range bar image
-    const rangeBarHtml = rangeBarSvg ? `
-      <div style="margin:8px 0 0" align="center">
-        ${rangeBarSvg}
       </div>` : "";
     
     const item = (html) => `<tr><td valign="top" style="width:16px;padding:5px 0 0;font-family:${ui};font-size:13px;color:${C.soft}">–</td><td style="padding:5px 0 0;font-family:${ui};font-size:13px;line-height:1.45">${html}</td></tr>`;

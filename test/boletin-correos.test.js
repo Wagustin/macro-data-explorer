@@ -191,11 +191,11 @@ function assertDomOrder(html, sections, label) {
 
 test("correo gratis: orden DOM correcto de secciones", () => {
   const html = vistaPrevia("gratis");
-  // Expected order: header → dólar cierre → gráfico → qué podría presionar → personal/upsell → lo importante → plan → forward → legal
+  // Expected order: header → dólar cierre → rango para mañana → qué podría presionar → personal/upsell → lo importante → plan → forward → legal
   assertDomOrder(html, [
     "Boletín diario",
     "Dólar interbancario",
-    "<!-- grafico-dolar -->",
+    "rango para",
     "Qué podría presionar al dólar",
     "Elegiste empresas para seguir",
     "Lo importante de hoy",
@@ -207,12 +207,12 @@ test("correo gratis: orden DOM correcto de secciones", () => {
 
 test("correo pagado: orden DOM correcto de secciones", () => {
   const html = vistaPrevia("boletin");
-  // Expected order: header → dólar cierre → gráfico → lecturas (mañana/semana/mes) → personal → lo importante → mercados → hechos → titulares → forward → legal
+  // Expected order: header → dólar cierre → rango para mañana → lecturas (mañana/semana/mes) → personal → lo importante → mercados → hechos → titulares → forward → legal
   // Search by numbered prefix since the title includes the date (e.g., "1. Mañana, martes 10 nov")
   assertDomOrder(html, [
     "Boletín diario",
     "Dólar interbancario",
-    "<!-- grafico-dolar -->",
+    "rango para",
     "1. ",
     "2. Próxima semana",
     "3. Próximo mes",
