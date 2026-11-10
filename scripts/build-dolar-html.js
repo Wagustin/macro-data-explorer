@@ -4,6 +4,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { renderHistorial } from './lib/historial-html.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -68,7 +69,16 @@ const mesAnchoPct = Math.abs((mesP90 - mesP10) / mesP50) * 100;
 const mesCobertura = Number(calibracionMensual.coverage80) || null;
 const mesN = calibracionMensual.n;
 
-// 1c. bcrp-daily.json -> ultimos 20 cierres oficiales y resumen 2026
+// 1c. aciertos-dolar.json -> historial de aciertos
+const aciertosPath = path.join(dataDir, 'official', 'aciertos-dolar.json');
+let aciertos = null;
+if (fs.existsSync(aciertosPath)) {
+  aciertos = JSON.parse(fs.readFileSync(aciertosPath, 'utf8'));
+} else {
+  console.warn('Aviso: aciertos-dolar.json no encontrado, historial no se incluirá.');
+}
+
+// 1d. bcrp-daily.json -> ultimos 20 cierres oficiales y resumen 2026
 const bcrpDaily = JSON.parse(
   fs.readFileSync(path.join(dataDir, 'official', 'bcrp-daily.json'), 'utf8')
 );
@@ -692,6 +702,14 @@ let htmlGenerado = `<!DOCTYPE html>
     </section>
 
     ${textoExplicativo}
+
+    <section id="historial" class="mt-12 space-y-4 border-t border-rule pt-8" aria-label="Historial de aciertos">
+      <h2 class="pd-section-title">Historial público: cuántas veces acertó el rango</h2>
+      <p class="pd-page-lede">
+        Cada día publicamos un rango para el siguiente cierre del dólar y otro para la semana. Aquí está cada uno comparado con el cierre oficial del BCRP, incluidos los que fallaron.
+      </p>
+      ${aciertos ? renderHistorial(aciertos) : '<p class="text-ink-soft text-sm">Historial no disponible.</p>'}
+    </section>
 
     ${bloqueBoletin}
   </main>
