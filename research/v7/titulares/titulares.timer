@@ -1,0 +1,24 @@
+# titulares.timer — systemd user timer to run titulares downloader every 15 minutes
+# Instalación (sin sudo):
+#   mkdir -p ~/.config/systemd/user
+#   cp titulares.service titulares.timer ~/.config/systemd/user/
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now titulares.timer
+#
+# Ver estado:  systemctl --user status titulares.timer
+# Ver próximos: systemctl --user list-timers titulares.timer
+# Pausar:      systemctl --user stop titulares.timer
+# Reanudar:    systemctl --user start titulares.timer
+
+[Unit]
+Description=Run PerData GDELT Titulares Downloader every 15 minutes
+Requires=titulares.service
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=15min
+Persistent=true
+RandomizedDelaySec=2min
+
+[Install]
+WantedBy=timers.target

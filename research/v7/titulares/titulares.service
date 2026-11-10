@@ -1,0 +1,38 @@
+# titulares.service — systemd user service for GDELT titulares downloader
+# Instalación (sin sudo):
+#   mkdir -p ~/.config/systemd/user
+#   cp titulares.service titulares.timer ~/.config/systemd/user/
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now titulares.timer
+#
+# Ver estado:  systemctl --user status titulares.timer
+# Ver logs:    journalctl --user -u titulares -f
+# Pausar:      systemctl --user stop titulares.timer
+# Reanudar:    systemctl --user start titulares.timer
+# Detener todo: systemctl --user stop titulares.service titulares.timer
+# Desinstalar: systemctl --user disable --now titulares.timer; rm ~/.config/systemd/user/titulares.*
+
+[Unit]
+Description=PerData GDELT Titulares Downloader
+Documentation=https://perdata.site
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/wagustin/kathy_workspace/wt-v7-titulares/research/v7/titulares
+ExecStart=/home/wagustin/kathy_workspace/wt-v7-titulares/research/v7/titulares/run.sh
+Environment=TITULARES_DATA_DIR=/home/wagustin/v7/data/titulares
+Environment=GDELT_PAUSA_S=6
+# Restart on failure (but not on success - timer handles re-run)
+Restart=on-failure
+RestartSec=60
+# Log to journal
+StandardOutput=journal
+StandardError=journal
+
+# Resource limits
+Nice=19
+IOSchedulingClass=3
+MemoryMax=512M
+CPUWeight=10

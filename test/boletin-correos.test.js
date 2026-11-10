@@ -53,7 +53,8 @@ test("correo gratis: dólar mañana con rango y cierre, top 3, qué podría pres
   // (3) Qué podría presionar al dólar (manana): al alza / a la baja / contexto con resumen
   assert.match(html, /Qué podría presionar al dólar/);
   assert.match(html, /al alza|Contexto/);
-  assert.ok(/S\/\s*3\.435/.test(html), "la lectura cita el rango de mañana de data/");
+  // La lectura cita el rango de mañana (p10 y p90) de data/daily-forecasts.json
+  assert.ok(html.includes(fmt3(pen.manana.p10)) && html.includes(fmt3(pen.manana.p90)), "la lectura cita el rango de mañana de data/");
 
   // (4) Nota de transparencia e invitación al plan Boletín (con prueba con tarjeta)
   assert.match(html, /El rango es estadístico; los factores son contexto, no una predicción de dirección/);
@@ -77,7 +78,25 @@ test("correo pagado: dólar x3 con lectura, metales, SMV, todas las noticias y T
   const buenas = (digest.historias || []).filter((h) => h.nota && h.revision?.ok !== false);
 
   // (1) Dólar mañana, semana y mes con rango y su lectura
-  for (const frase of ["Para el cierre de hoy", "Próxima semana", "Próximo mes"]) {
+  // Use formatFechaObjetivo to get the actual label for "manana" horizon
+  const daily = JSON.parse(read("data/daily-forecasts.json"));
+  const todayLima = daily.referencia_lima.hoy;
+  const mananaFecha = daily.simbolos.PEN.manana.fecha_objetivo;
+  const dt = new Date(`${mananaFecha}T12:00:00Z`);
+  const hdt = new Date(`${todayLima}T12:00:00Z`);
+  const diffDays = Math.round((dt - hdt) / (86400 * 1000));
+  const MONTHS_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+  const WEEKDAYS_ES = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+  const day = dt.getUTCDate();
+  const month = MONTHS_ES[dt.getUTCMonth()];
+  const weekday = WEEKDAYS_ES[dt.getUTCDay()];
+  const dateFormatted = `${day} ${month}`;
+  const etiquetaManana = diffDays === 0
+    ? `Para el cierre de hoy, ${weekday} ${dateFormatted}`
+    : diffDays === 1
+    ? `Mañana, ${weekday} ${dateFormatted}`
+    : `El ${weekday} ${dateFormatted}`;
+  for (const frase of [etiquetaManana, "Próxima semana", "Próximo mes"]) {
     assert.ok(html.includes(frase), `el pagado trae la lectura «${frase}»`);
   }
   assert.match(html, /Podría presionar al dólar al alza/);

@@ -1,0 +1,48 @@
+name: V7 harness walk-forward
+
+# Measuring rod for every V7 model (USD/PEN first). Light reference models
+# (random walk, drift, daily-engine FHS replica, ETS, ARIMA) run locally in
+# ~minutes, but the same job is the launch pad for heavy walk-forwards
+# (TimesFM/Chronos/LightGBM): per CONVENCIONES.md heavy compute goes here,
+# not on Agustin's server. Manual launch only; results are small
+# JSON/Markdown in research/v7/resultados/.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  harness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        timeout-minutes: 5
+
+      - uses: actions/setup-python@v5
+        timeout-minutes: 5
+        with:
+          python-version: "3.12"
+
+      - name: Install harness dependencies
+        timeout-minutes: 5
+        run: pip install pandas statsmodels scipy
+
+      - name: Harness tests
+        timeout-minutes: 10
+        run: python -m unittest research.v7.harness.test_harness -v
+
+      - name: Walk-forward baselines (dollar 2019-2026)
+        timeout-minutes: 30
+        run: python -m research.v7.harness.baselines
+
+      - name: Upload harness results
+        if: always()
+        timeout-minutes: 5
+        uses: actions/upload-artifact@v4
+        with:
+          name: harness-resultados
+          path: research/v7/resultados/
+          if-no-files-found: error
