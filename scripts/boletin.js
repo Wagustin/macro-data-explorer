@@ -55,7 +55,40 @@ const PREVIEW_PLAN = (process.env.PREVIEW_PLAN || "boletin").toLowerCase() === "
 const C = { paper: "#F5F1E8", card: "#FBF9F4", ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", peru: "#D91023" };
 const MONO_F = "IBM Plex Mono,Menlo,Consolas,monospace";
 const UI_F = "Libre Franklin,Helvetica,Arial,sans-serif";
+const SERIF_F = "'Source Serif 4',Georgia,'Times New Roman',serif";
 const NUM = ' style="font-variant-numeric:tabular-nums"';
+
+// Remove whitespace between tags and collapse repeated spaces outside text nodes.
+// Keeps a single space where a newline existed inside text content.
+function compactar(html) {
+  let out = "";
+  let inTag = false;
+  let inText = false;
+  let textBuf = "";
+  for (let i = 0; i < html.length; i++) {
+    const ch = html[i];
+    if (ch === "<") {
+      if (inText) {
+        out += textBuf.replace(/\s+/g, " ").trim();
+        textBuf = "";
+        inText = false;
+      }
+      out += ch;
+      inTag = true;
+    } else if (ch === ">") {
+      out += ch;
+      inTag = false;
+      inText = true;
+    } else if (inTag) {
+      out += ch;
+    } else {
+      textBuf += ch;
+    }
+  }
+  if (inText) out += textBuf.replace(/\s+/g, " ").trim();
+  // Collapse whitespace between tags: >\s+<  →  ><
+  return out.replace(/>\s+</g, "><");
+}
 
 // Table-based range bar (works in Gmail, Outlook, Yahoo — no SVG)
 function barraRango({ min, max, centro, ultimo, prefijo = "S/", fechaUltimo, decimales = 3 }) {
@@ -972,12 +1005,13 @@ if (process.env.PREVIEW_EMPRESAS) {
   previewPersonal = PREVIEW_PLAN === "gratis" ? upsell : renderPersonal(cards, lecturasPreview);
 }
 
-const htmlCompleto = render(f, ai, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null);
-const htmlGratis = renderGratis(f, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null);
+const htmlCompleto = compactar(render(f, ai, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null));
+const htmlGratis = compactar(renderGratis(f, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null));
 const cliPreviewPath = process.argv.find((a) => a.startsWith("--preview-path="))?.slice("--preview-path=".length);
 const previewPath = process.env.BOLETIN_PREVIEW_PATH || cliPreviewPath || path.join(ROOT, "..", "handoff", "qa", process.env.PREVIEW_PLAN === "gratis" ? "correo-gratis.html" : "correo-pagado.html");
 fs.mkdirSync(path.dirname(path.resolve(previewPath)), { recursive: true });
-fs.writeFileSync(previewPath, fill(PREVIEW_PLAN === "gratis" ? htmlGratis : htmlCompleto, previewPersonal));
+const previewHtml = compactar(fill(PREVIEW_PLAN === "gratis" ? htmlGratis : htmlCompleto, previewPersonal));
+fs.writeFileSync(previewPath, previewHtml);
 console.log(`Vista previa: ${PREVIEW_PLAN} · mercados: ${f.markets.length} · SMV: ${f.smvFacts.length} · titulares: ${f.headlines.length} · historias: ${f.historiasTodas?.length || 0} · IA: ${ai ? "sí" : "no"}`);
 
 async function seguimientoDe(email) {
@@ -1098,7 +1132,7 @@ if (!DRY && !PREVIEW) {
       from: FROM, 
       to: [email], 
       subject: `PerData · ${dateLabel}`, 
-      html: fill(baseHtml, personal, baja, prefs) 
+      html: compactar(fill(baseHtml, personal, baja, prefs)) 
     };
     
     if (token) msg.headers = { "List-Unsubscribe": `<${baja}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" };
