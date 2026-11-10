@@ -1,0 +1,55 @@
+name: Torneo del motor
+
+# Varios motores predicen día por día el rango de dólar y metales, aprendiendo solo con datos anteriores
+# a cada día (research/torneo/torneo.py). Práctica 2021-2024, examen 2025, confirmación 2026.
+# Solo guarda números: data/torneo/marcador.json e informe.md.
+on:
+  schedule:
+    - cron: "17 9 * * 0"   # domingos 04:17 en Lima
+  workflow_dispatch:
+    inputs:
+      rapido:
+        description: "Prueba corta (solo dólar a 5 días, no guarda nada)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: torneo
+  cancel-in-progress: false
+
+jobs:
+  torneo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -q numpy lightgbm
+      - name: Comprobar que ningún motor ve el futuro
+        run: python research/torneo/torneo.py --autoprueba
+      - name: Correr el torneo
+        run: python research/torneo/torneo.py ${{ inputs.rapido && '--rapido --salida /tmp/torneo' || '' }} --predicciones /tmp/predicciones
+      - uses: actions/upload-artifact@v4
+        with:
+          name: predicciones
+          path: /tmp/predicciones/predicciones.csv
+          retention-days: 30
+      - name: Guardar el marcador
+        if: ${{ !inputs.rapido }}
+        run: |
+          git config user.name "perdata-bot"
+          git config user.email "perdata-bot@users.noreply.github.com"
+          git add data/torneo/marcador.json data/torneo/informe.md
+          git diff --cached --quiet || (
+            git commit -m "data(torneo): marcador $(date -u +%F)" &&
+            for i in 1 2 3 4; do
+              git pull --rebase -q origin main && git push -q origin HEAD:main && break
+              [ "$i" -eq 4 ] && exit 1
+              sleep $((i*5))
+            done
+          )
