@@ -170,6 +170,10 @@ const EMISORAS = (() => {
 // añadidas sólo amplían la búsqueda, no la cobertura declarada.
 const TRADABLE_CURADO = CATALOG.filter((c) => c.category !== "unlisted").length;
 
+// Símbolos de la lista curada, antes de añadir las emisoras de búsqueda: solo estos tienen
+// proyección en el lote diario. Lo usa el cálculo de estado de los emisores.
+export const SIMBOLOS_CURADOS = new Set(CATALOG.map((c) => c.symbol));
+
 for (const extra of EMISORAS) CATALOG.push(extra);
 
 export default async function handler(req, res) {
