@@ -20,11 +20,15 @@
 //    dependencies. Renderers take an `img` param ({ base } or null): previews write the PNGs
 //    next to the HTML (<ruta-sin-ext>-img/) and pass that relative folder as base; the real
 //    send passes BOLETIN_IMG_BASE, or null when it is not set (the email then has no <img>).
+//    Without BOLETIN_IMG_BASE but with BOLETIN_IMG_CMD the PNGs of the day are published first
+//    (scripts/publicar-imagenes-correo.sh, through scripts/lib/imagenes-correo.js) and the email
+//    points to them; if that fails the email goes out without images, never breaking the send.
 //    Fallbacks: if lecturaDolar/lecturasEmpresas fail or take too long (> 90 s total) the email
 //    still goes out with the deterministic version or without that section, never crashing the
 //    send. The free user never receives paid sections.
 // Env: RESEND_API_KEY, BOLETIN_TO (comma list), SUPABASE_URL + SUPABASE_SERVICE_KEY (subscribers),
-//      NVIDIA_API_KEY and GEMINI_API_KEY (optional), NIM_MODEL (optional), BOLETIN_IMG_BASE (optional)
+//      NVIDIA_API_KEY and GEMINI_API_KEY (optional), NIM_MODEL (optional), BOLETIN_IMG_BASE (optional),
+//      BOLETIN_IMG_CMD + BOLETIN_IMG_DIR (optional, publish the PNGs before sending)
 // Usage: node scripts/boletin.js [--dry-run] (writes the preview, sends nothing)
 // Preview: PREVIEW_PLAN=gratis|boletin (default boletin), PREVIEW_EMPRESAS="ALICORC1" (sample
 //          personal section), BOLETIN_PREVIEW_PATH=path/to/preview.html
@@ -37,6 +41,7 @@ import { mencionaEmpresa } from "./empresa-mencion.js";
 import { formatCierreFecha } from "../api/diario.js";
 import { lecturaDolar, hechosDolar } from "./dolar-lectura.js";
 import { lecturasEmpresas } from "./empresa-lectura.js";
+import { publicarImagenes } from "./lib/imagenes-correo.js";
 
 const MONTHS_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
@@ -160,10 +165,12 @@ const carpetaImagen = (rutaHtml) => {
   return base.split(/[\\/]/).pop() + "-img";
 };
 
-// Etiqueta <img>: sin imágenes cuando no hay dónde alojarlas (envío real).
+// Etiqueta <img>: sin imágenes cuando no hay dónde alojarlas (envío real) y
+// sin referenciar ningún archivo que no se haya publicado.
 const imgTag = (img, archivo, ancho, alto, alt) => {
   const base = img?.base;
   if (!base) return "";
+  if (img.archivos && !img.archivos.has(archivo)) return "";
   return `<img src="${esc(`${base}/${archivo}`)}" width="${ancho}" height="${alto}" alt="${esc(alt)}" style="display:block;width:100%;max-width:${ancho}px;height:auto;border:0">`;
 };
 
@@ -797,7 +804,7 @@ function renderGratis(f, dateLabel, lectura, img) {
     <p style="margin:4px 0 0;font-family:${UI_F};font-size:13px;color:${C.soft}">Tipo de cambio venta del sistema bancario (SBS), publicado por ${cierre.fuente === "SUNAT" ? "SUNAT" : "el BCRP"} · cierre del ${esc(formatCierreFecha(cierre.fecha))}</p>
   </td></tr>` : "";
 
-  const dollarImg = imgTag(img, "dolar.png", 560, 150, "Dólar: últimos 30 cierres y rango proyectado");
+  const dollarImg = imgTag(img, "dolar-hoy.png", 560, 150, "Dólar: últimos 30 cierres y rango proyectado");
   const dollarGraphHtml = dollarImg ? `<tr><td style="padding:4px 0 0">${dollarImg}</td></tr>` : "";
   const tablaHtml = bloqueTablaRangos(f, true);
   const presionaHtml = bloquePresionDolar(lectura, true);
@@ -1201,10 +1208,14 @@ if (process.env.PREVIEW_EMPRESAS) {
   previewCards = cards;
 }
 
-// Gráficos de la vista previa: un PNG del dólar y uno por empresa con imagen.
+// Gráficos de la vista previa: el del dólar (el gratis solo lleva el de hoy) y
+// uno por empresa con imagen.
 try {
-  escribirImagen(imgPreview.dir, "dolar.png", pngDolar(f, PREVIEW_PLAN === "gratis"));
-  if (PREVIEW_PLAN !== "gratis") for (const c of previewCards || []) if (c.grafico) escribirImagen(imgPreview.dir, c.grafico.archivo, pngEmpresa(c));
+  if (PREVIEW_PLAN === "gratis") escribirImagen(imgPreview.dir, "dolar-hoy.png", pngDolar(f, true));
+  else {
+    escribirImagen(imgPreview.dir, "dolar.png", pngDolar(f, false));
+    for (const c of previewCards || []) if (c.grafico) escribirImagen(imgPreview.dir, c.grafico.archivo, pngEmpresa(c));
+  }
 } catch (e) {
   console.error(`Gráficos de la vista previa: ${e.message}`);
 }
@@ -1235,6 +1246,35 @@ if (process.env.BOLETIN_PREVIEW_SEND === "1") {
   process.exit(0);
 }
 
+// Publica los PNG del día (el dólar completo, el de hoy y uno por empresa con
+// gráfico). Si un PNG no se puede dibujar, ese archivo no se publica y el
+// correo sigue como si nada.
+async function publicarGraficos(fecha, listaCards) {
+  const archivos = new Map();
+  const agrega = (nombre, dibuja) => {
+    try {
+      const bytes = dibuja();
+      if (bytes) archivos.set(nombre, Buffer.from(bytes));
+    } catch (e) {
+      console.error(`Gráfico ${nombre}: ${e.message}`);
+    }
+  };
+  agrega("dolar.png", () => pngDolar(f, false));
+  agrega("dolar-hoy.png", () => pngDolar(f, true));
+  for (const c of listaCards || []) if (c?.grafico) agrega(c.grafico.archivo, () => pngEmpresa(c));
+  return publicarImagenes({ archivos, fecha, cmd: process.env.BOLETIN_IMG_CMD, dir: process.env.BOLETIN_IMG_DIR });
+}
+
+// La fecha del boletín en Lima (la misma que usa el archivo «ya enviado»).
+const today = new Date(Date.now() - 5 * 36e5).toISOString().slice(0, 10);
+
+// Corrida de prueba (--dry-run sin vista previa): publica los PNG del dólar
+// para comprobar el alojamiento, sin enviar nada.
+if (DRY && !PREVIEW && process.env.BOLETIN_IMG_CMD) {
+  const imgPrueba = await publicarGraficos(today, []);
+  console.log(imgPrueba ? `Imágenes del correo: ${imgPrueba.archivos.size} en ${imgPrueba.base}` : "Imágenes del correo: ninguna");
+}
+
 async function seguimientoDe(email) {
   const base = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
   const key = process.env.SUPABASE_SERVICE_KEY || "";
@@ -1262,7 +1302,6 @@ async function seguimientoDe(email) {
 
 if (!DRY && !PREVIEW) {
   if (!process.env.RESEND_API_KEY) throw new Error("Falta RESEND_API_KEY");
-  const today = new Date(Date.now() - 5 * 36e5).toISOString().slice(0, 10);
   const LAST = new URL("../data/boletin-last.json", import.meta.url);
   if (process.env.FORCE !== "true" && fs.existsSync(LAST)) {
     const last = JSON.parse(fs.readFileSync(LAST, "utf8"));
@@ -1342,18 +1381,29 @@ if (!DRY && !PREVIEW) {
     }
   }
 
+  // Imágenes del envío: manda la base ya configurada; si no hay, se publican
+  // los PNG del día y el correo los referencia. Si algo falla, el correo sale
+  // sin imágenes (el envío nunca se rompe).
+  let imgEnvSend = null;
+  if (process.env.BOLETIN_IMG_BASE) imgEnvSend = { base: process.env.BOLETIN_IMG_BASE };
+  else if (process.env.BOLETIN_IMG_CMD) imgEnvSend = await publicarGraficos(today, paidCards);
+  const htmlCompletoSend = compactar(render(f, ai, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null, imgEnvSend));
+  const htmlGratisSend = compactar(renderGratis(f, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null, imgEnvSend));
+  const nImagenes = imgEnvSend?.archivos?.size ?? (2 + paidCards.filter((c) => c.grafico).length);
+  console.log(imgEnvSend ? `Imágenes del correo: ${nImagenes} en ${imgEnvSend.base}` : "Imágenes del correo: ninguna");
+
   const emails = list.map(({ email, token, empresas, plan }) => {
     const baja = token ? `${SITE}/api/boletin?accion=baja&t=${token}` : `${SITE}/boletin`;
     const prefs = token ? `${SITE}/boletin?t=${token}#empresas` : `${SITE}/boletin`;
     const mine = (empresas || []).map((n) => cards[n]).filter(Boolean);
     // Free version: no «Tus empresas» section, only the note about the plan
-    const personal = plan === "gratis" ? ((empresas || []).length ? upsell : "") : (mine.length ? renderPersonal(mine, lecturas, imgEnv) : `<tr><td style="padding:24px 0 0;font-family:${UI_F};font-size:14px;line-height:1.5;color:#5E584E">Aún no elegiste empresas. Elige hasta 15 en <a href="${SITE}/cuenta" style="color:#1B1916">/cuenta</a> y cada mañana llegará tu sección «Tus empresas».</td></tr>`);
-    const baseHtml = plan === "gratis" ? htmlGratisEnv : htmlCompletoEnv;
+    const personal = plan === "gratis" ? ((empresas || []).length ? upsell : "") : (mine.length ? renderPersonal(mine, lecturas, imgEnvSend) : `<tr><td style="padding:24px 0 0;font-family:${UI_F};font-size:14px;line-height:1.5;color:#5E584E">Aún no elegiste empresas. Elige hasta 15 en <a href="${SITE}/cuenta" style="color:#1B1916">/cuenta</a> y cada mañana llegará tu sección «Tus empresas».</td></tr>`);
+    const baseHtml = plan === "gratis" ? htmlGratisSend : htmlCompletoSend;
     const msg = { 
       from: FROM, 
       to: [email], 
       subject: `PerData · ${dateLabel}`, 
-      html: plan !== "gratis" && mine.length ? armarPagado(baseHtml, mine, lecturas, baja, prefs, imgEnv) : compactar(fill(baseHtml, personal, baja, prefs)),
+      html: plan !== "gratis" && mine.length ? armarPagado(baseHtml, mine, lecturas, baja, prefs, imgEnvSend) : compactar(fill(baseHtml, personal, baja, prefs)),
     };
     
     if (token) msg.headers = { "List-Unsubscribe": `<${baja}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" };

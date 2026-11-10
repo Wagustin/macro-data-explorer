@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
@@ -324,4 +325,22 @@ test("correo pagado: si pasaría el límite de tamaño, quita lecturas de empres
   assert.ok(lecturas(recortado) < lecturas(normal), "debe quitar al menos una lectura");
   assert.ok(lecturas(recortado) >= lecturas(normal) - 2, "debe quitar solo las lecturas necesarias (una empresa: uno o dos títulos)");
   assert.ok(recortado.includes("Darme de baja"), "el pie con la baja debe seguir");
+});
+
+test("envío real: solo se referencian los PNG publicados (el gratis usa «dolar-hoy.png»)", async () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "boletin-render-"));
+  process.env.BOLETIN_PREVIEW_PATH = path.join(tmp, "preview.html");
+  process.argv.push("--dry-run");
+  const { renderForTests } = await import("../scripts/boletin.js");
+  const facts = {
+    cierre: { valor: 3.42, fecha: "2026-11-10", fuente: "BCRP" },
+    markets: [], smvFacts: [], historiasTodas: [], historiasTop3: [],
+    daily: null, forecast: null, bcrp: { series: {} },
+  };
+  // Solo se publicó «dolar.png»: el pago lo lleva y el gratis (que usa
+  // «dolar-hoy.png») no lleva ninguna imagen.
+  const img = { base: "https://x.invalid/b", archivos: new Set(["dolar.png"]) };
+  const { pagado, gratis } = renderForTests(facts, "martes, 10 de noviembre de 2026", { img });
+  assert.match(pagado, /<img src="https:\/\/x\.invalid\/b\/dolar\.png"/);
+  assert.ok(!/<img/i.test(gratis), "el gratis no lleva ninguna imagen");
 });
