@@ -177,6 +177,22 @@
       font-weight: 600;
       margin-bottom: 12px;
     }
+    /* Rango esperado: tabla de dos columnas que se apila en pantallas angostas */
+    .rango-tabla { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .rango-tabla th, .rango-tabla td { padding: 10px 0; border-bottom: 1px solid var(--pd-rule); text-align: left; vertical-align: top; }
+    .rango-tabla th { width: 36%; padding-right: 12px; color: var(--pd-ink-soft); font-weight: 500; }
+    .rango-tabla tr:last-child th, .rango-tabla tr:last-child td { border-bottom: none; }
+    .rango-linea { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; margin: 0 0 4px; }
+    .rango-linea:last-child { margin-bottom: 0; }
+    .rango-nota { color: var(--pd-ink-soft); font-size: 12px; }
+    .rango-motivo { margin: 0; color: var(--pd-ink-soft); line-height: 1.5; }
+    .rango-pie { margin: 14px 0 0; font-size: 12px; color: var(--pd-ink-soft); line-height: 1.5; }
+    .rango-tabla .mono, .rango-pie .mono { font-variant-numeric: tabular-nums; }
+    @media (max-width: 520px) {
+      .rango-tabla, .rango-tabla tbody, .rango-tabla tr, .rango-tabla th, .rango-tabla td { display: block; width: auto; }
+      .rango-tabla th { padding: 12px 0 2px; border-bottom: none; }
+      .rango-tabla td { padding: 0 0 12px; }
+    }
     .link-smv {
       display: inline-block;
       font-size: 12px;
@@ -448,6 +464,22 @@ html.dark .ui-switch {
         </div>
 
         <div class="section" id="issuerStatusSection" aria-live="polite"><p class="issuer-status" id="issuerStatusText">Cotiza poco · último cierre S/ 29.00 (22 de octubre de 2026)</p></div>
+
+        <!-- Rango esperado de PerData Engine (se rellena al compilar la ficha) -->
+        <div class="section" id="rangoSection"><h2 class="section-title">Rango esperado de PerData Engine</h2>
+<table class="rango-tabla">
+  <tbody>
+    <tr>
+      <th scope="row">Esta semana</th>
+      <td><p class="rango-motivo">Sin rango publicado: en la prueba acertó 71 de cada 100 veces y exigimos entre 74 y 86, así que preferimos no mostrarlo.</p></td>
+    </tr>
+    <tr>
+      <th scope="row">Este mes</th>
+      <td><p class="rango-motivo">Sin rango publicado: en la prueba acertó 71 de cada 100 veces y exigimos entre 74 y 86, así que preferimos no mostrarlo.</p></td>
+    </tr>
+  </tbody>
+</table>
+<p class="rango-pie">Es un rango estadístico, no una recomendación de compra o venta.</p></div>
 
         <!-- 90-Day Chart Section -->
         <div class="chart-section" id="chartSection">
