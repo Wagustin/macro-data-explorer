@@ -1,0 +1,25 @@
+{
+  "asset": "USD/PEN",
+  "horizon": "1 día hábil",
+  "period": "2019-2026",
+  "method": "FHS + EWMA(0.94), P50 = random walk",
+  "cuts": 1958,
+  "K_full": 1.0182,
+  "coverage80_full": 80.03,
+  "coverage50_full": 51.53,
+  "mae_rw_full": 0.01,
+  "mae_drift_full": 0.0101,
+  "width80_full": 0.88,
+  "oos": {
+    "cobertura_80": 80.03,
+    "cobertura_50": 51.53,
+    "ancho_medio_pct": 0.88,
+    "mae_p50": 0.01,
+    "factor_k": 1.0182
+  },
+  "expansivo": {
+    "cobertura_80": 80.49,
+    "cobertura_50": 52.5,
+    "ancho_medio_pct": 0.9
+  }
+}

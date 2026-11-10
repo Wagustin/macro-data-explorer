@@ -1,0 +1,223 @@
+{
+  "asset": "USD/PEN",
+  "horizonte": "1 día hábil (siguiente cierre)",
+  "periodo": "2019-01-02–2026-11-05",
+  "metodo": "FHS + EWMA(0.94), P50 = paseo aleatorio, K recalibrado con historia hasta cada corte",
+  "k_recalculo_dias_habiles": 5,
+  "min_cortes_calibracion": 60,
+  "cortes": 1958,
+  "cortes_estables": 1898,
+  "k_por_ano": {
+    "2019": {
+      "k_inicial": 0,
+      "k_final": 1.0732
+    },
+    "2020": {
+      "k_inicial": 1.0732,
+      "k_final": 1.0252
+    },
+    "2021": {
+      "k_inicial": 1.0252,
+      "k_final": 1.0066
+    },
+    "2022": {
+      "k_inicial": 1.0066,
+      "k_final": 1.0203
+    },
+    "2023": {
+      "k_inicial": 1.0183,
+      "k_final": 1.0183
+    },
+    "2024": {
+      "k_inicial": 1.0183,
+      "k_final": 1.0234
+    },
+    "2025": {
+      "k_inicial": 1.0234,
+      "k_final": 1.0236
+    },
+    "2026": {
+      "k_inicial": 1.0236,
+      "k_final": 1.018
+    }
+  },
+  "fhs": {
+    "global": {
+      "n": 1958,
+      "cobertura": 80.59,
+      "ancho_pct": 0.8971,
+      "ancho_soles": 0.0329,
+      "winkler": 0.1004,
+      "winkler_n": 1958
+    },
+    "estable": {
+      "n": 1898,
+      "cobertura": 80.61,
+      "ancho_pct": 0.9086,
+      "ancho_soles": 0.0334,
+      "winkler": 0.101,
+      "winkler_n": 1898
+    },
+    "por_anio": [
+      {
+        "anio": "2019",
+        "n": 249,
+        "cobertura": 79.12,
+        "ancho_pct": 0.6077,
+        "ancho_soles": 0.0203,
+        "winkler": 0.0829,
+        "winkler_n": 249,
+        "rw_cobertura": 75.1,
+        "rw_ancho_pct": 0.4969,
+        "rw_winkler": 0.0774
+      },
+      {
+        "anio": "2020",
+        "n": 254,
+        "cobertura": 82.68,
+        "ancho_pct": 0.9651,
+        "ancho_soles": 0.0337,
+        "winkler": 0.1032,
+        "winkler_n": 254,
+        "rw_cobertura": 74.02,
+        "rw_ancho_pct": 0.8205,
+        "rw_winkler": 0.0992
+      },
+      {
+        "anio": "2021",
+        "n": 251,
+        "cobertura": 82.87,
+        "ancho_pct": 1.1759,
+        "ancho_soles": 0.046,
+        "winkler": 0.116,
+        "winkler_n": 251,
+        "rw_cobertura": 78.09,
+        "rw_ancho_pct": 0.8733,
+        "rw_winkler": 0.1075
+      },
+      {
+        "anio": "2022",
+        "n": 251,
+        "cobertura": 78.09,
+        "ancho_pct": 1.146,
+        "ancho_soles": 0.0438,
+        "winkler": 0.1124,
+        "winkler_n": 251,
+        "rw_cobertura": 78.88,
+        "rw_ancho_pct": 1.2001,
+        "rw_winkler": 0.1153
+      },
+      {
+        "anio": "2023",
+        "n": 250,
+        "cobertura": 80,
+        "ancho_pct": 0.7726,
+        "ancho_soles": 0.029,
+        "winkler": 0.0944,
+        "winkler_n": 250,
+        "rw_cobertura": 84.4,
+        "rw_ancho_pct": 0.9119,
+        "rw_winkler": 0.1001
+      },
+      {
+        "anio": "2024",
+        "n": 246,
+        "cobertura": 78.46,
+        "ancho_pct": 0.8549,
+        "ancho_soles": 0.0321,
+        "winkler": 0.0975,
+        "winkler_n": 246,
+        "rw_cobertura": 78.46,
+        "rw_ancho_pct": 0.8154,
+        "rw_winkler": 0.0961
+      },
+      {
+        "anio": "2025",
+        "n": 248,
+        "cobertura": 80.65,
+        "ancho_pct": 0.6976,
+        "ancho_soles": 0.025,
+        "winkler": 0.0873,
+        "winkler_n": 248,
+        "rw_cobertura": 81.85,
+        "rw_ancho_pct": 0.7746,
+        "rw_winkler": 0.0908
+      },
+      {
+        "anio": "2026",
+        "n": 209,
+        "cobertura": 83.25,
+        "ancho_pct": 0.9605,
+        "ancho_soles": 0.0328,
+        "winkler": 0.1048,
+        "winkler_n": 209,
+        "rw_cobertura": 77.99,
+        "rw_ancho_pct": 0.7306,
+        "rw_winkler": 0.0962
+      }
+    ],
+    "por_tercil": [
+      {
+        "tercil": 1,
+        "vol20_min": 1.42,
+        "vol20_max": 4.07,
+        "n": 646,
+        "cobertura": 78.79,
+        "ancho_pct": 0.5958,
+        "ancho_soles": 0.0213,
+        "winkler": 0.0833,
+        "winkler_n": 646,
+        "rw_cobertura": 84.67,
+        "rw_ancho_pct": 0.7298,
+        "rw_winkler": 0.0896
+      },
+      {
+        "tercil": 2,
+        "vol20_min": 4.07,
+        "vol20_max": 5.94,
+        "n": 666,
+        "cobertura": 78.98,
+        "ancho_pct": 0.7946,
+        "ancho_soles": 0.029,
+        "winkler": 0.0952,
+        "winkler_n": 666,
+        "rw_cobertura": 80.63,
+        "rw_ancho_pct": 0.8352,
+        "rw_winkler": 0.0971
+      },
+      {
+        "tercil": 3,
+        "vol20_min": 5.94,
+        "vol20_max": 15.26,
+        "n": 646,
+        "cobertura": 84.06,
+        "ancho_pct": 1.304,
+        "ancho_soles": 0.0484,
+        "winkler": 0.1194,
+        "winkler_n": 646,
+        "rw_cobertura": 70.43,
+        "rw_ancho_pct": 0.926,
+        "rw_winkler": 0.1079
+      }
+    ]
+  },
+  "paseo_aleatorio": {
+    "global": {
+      "n": 1958,
+      "cobertura": 78.6,
+      "ancho_pct": 0.8304,
+      "ancho_soles": 0.0305,
+      "winkler": 0.0985,
+      "winkler_n": 1958
+    },
+    "estable": {
+      "n": 1898,
+      "cobertura": 78.5,
+      "ancho_pct": 0.8417,
+      "ancho_soles": 0.031,
+      "winkler": 0.0992,
+      "winkler_n": 1898
+    }
+  },
+  "cortes_csv": "/home/wagustin/v7/resultados/motor-diario-real.csv"
+}
