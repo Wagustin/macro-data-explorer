@@ -25,12 +25,12 @@ INICIO_PREDICCION = "2018-01-01"   # desde aquí predicen los modelos que aprend
 VENTANA, MIN_K, PRIMERA_FILA = 756, 250, 300
 PROGRAMADOS = ("fomc", "bcrp_tasa", "elecciones_pe_1v", "elecciones_pe_2v")
 REJILLA = [
-    dict(num_leaves=4, min_child_samples=60, n_estimators=150, learning_rate=0.05),
-    dict(num_leaves=8, min_child_samples=40, n_estimators=300, learning_rate=0.05),
-    dict(num_leaves=4, min_child_samples=100, n_estimators=400, learning_rate=0.03),
-    dict(num_leaves=16, min_child_samples=80, n_estimators=200, learning_rate=0.05),
+    dict(num_leaves=4, min_data_in_leaf=60, n_estimators=150, learning_rate=0.05),
+    dict(num_leaves=8, min_data_in_leaf=40, n_estimators=300, learning_rate=0.05),
+    dict(num_leaves=4, min_data_in_leaf=100, n_estimators=400, learning_rate=0.03),
+    dict(num_leaves=16, min_data_in_leaf=80, n_estimators=200, learning_rate=0.05),
 ]
-FIJOS = dict(subsample=0.8, subsample_freq=1, colsample_bytree=0.8, reg_lambda=1.0, random_state=7, n_jobs=1, verbose=-1)
+FIJOS = dict(bagging_fraction=0.8, bagging_freq=1, feature_fraction=0.8, lambda_l2=1.0, seed=7, num_threads=1, verbose=-1)
 
 try:
     import lightgbm as lgb
@@ -145,8 +145,10 @@ def aprender(X, t, h, a0, a1, cadencia, params, alfas):
             continue
         b = min(a1, a + cadencia)
         for k, alfa in enumerate(alfas):
-            m = lgb.LGBMRegressor(objective="regression" if alfa is None else "quantile", alpha=alfa or 0.5, **params, **FIJOS)
-            m.fit(X[filas], t[filas]); out[a:b, k] = m.predict(X[a:b])
+            ajustes = {k_: v for k_, v in params.items() if k_ != "n_estimators"}
+            m = lgb.train(dict(objective="regression" if alfa is None else "quantile", alpha=alfa or 0.5, **ajustes, **FIJOS),
+                          lgb.Dataset(X[filas], t[filas]), num_boost_round=params["n_estimators"])
+            out[a:b, k] = m.predict(X[a:b])
     return out
 
 
