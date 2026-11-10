@@ -200,12 +200,10 @@ export function renderHistorial(aciertos) {
     const mananaBT = backtest_motor.manana;
     const semanaBT = backtest_motor.semana;
     const x = mananaBT ? Number(mananaBT.cobertura_80_k_expansivo.toFixed(1)) : 's/d';
-    const n = mananaBT ? milesConEspacio(mananaBT.cortes_evaluados) : 's/d';
     const y = semanaBT ? Number(semanaBT.cobertura_80_k_expansivo.toFixed(1)) : 's/d';
-    const m = semanaBT ? milesConEspacio(semanaBT.cortes_evaluados) : 's/d';
 
     html += '<p class="text-ink-soft text-sm mt-4">';
-    html += `El rango que publicamos para el día siguiente suele estar a dos días hábiles del último cierre oficial, porque el BCRP difunde el cierre con un día de retraso. Para esa distancia la misma prueba, hecha por el propio motor, da ${x}% en ${n} días; para la semana, ${y}% en ${m} días.`;
+    html += `El rango que publicamos para el día siguiente suele estar a dos días hábiles del último cierre oficial, porque el BCRP difunde el cierre con un día de retraso. Para esa distancia, la prueba del propio motor sobre los cierres desde 2024 da ${x}%; para la semana, ${y}%.`;
     html += '</p>';
   }
 
