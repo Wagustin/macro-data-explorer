@@ -489,27 +489,27 @@ function render(f, ai, dateLabel, lectura) {
   </td></tr>` : "";
 
   // Dollar reading for mañana/horizonte
-  const punto = (p) => `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink};margin:0 0 8px;padding-left:12px;border-left:2px solid ${p.tipo === 'al_alza' ? C.pos : p.tipo === 'a_la_baja' ? C.neg : C.soft};opacity:${p.tipo === 'contexto' ? '0.7' : '1'}">${esc(p.texto)}</div>`;
+  const punto = (p) => `<div style="margin:0 0 8px;padding-left:12px;border-left:2px solid ${p.tipo === 'al_alza' ? C.pos : p.tipo === 'a_la_baja' ? C.neg : C.soft};opacity:${p.tipo === 'contexto' ? '0.7' : '1'}">${esc(p.texto)}</div>`;
   
   const vistos = new Set();
   const nuevos = (h, lado) => (h?.[lado] || []).filter((p) => !vistos.has(p.texto) && vistos.add(p.texto));
   
-  const labelAlAlza = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink};margin:12px 0 4px">Podría presionar al dólar al alza</div>` : "";
-  const labelALaBaja = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink};margin:12px 0 4px">Podría presionar al dólar a la baja</div>` : "";
+  const labelAlAlza = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;margin:12px 0 4px">Podría presionar al dólar al alza</div>` : "";
+  const labelALaBaja = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;margin:12px 0 4px">Podría presionar al dólar a la baja</div>` : "";
   
   const tituloInline = (title, numero) =>
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${ui};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table>`;
 
   const lecturaHorizonte = (h, titulo, rango, numero, conContexto = true) => {
     if (!h) return "";
-    const rangoTxt = rango ? `<div style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:14px;color:${C.ink};margin:4px 0 8px">Rango: S/ ${fmt(rango.p10, 3)} – S/ ${fmt(rango.p90, 3)} <span style="color:${C.soft}">(centro S/ ${fmt(rango.p50, 3)}, 8 de cada 10 veces)</span></div>` : "";
-    const resumenHtml = h.resumen && !h.determinista ? `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink};margin:8px 0">${esc(h.resumen)}</div>` : "";
+    const rangoTxt = rango ? `<div style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:14px;margin:4px 0 8px">Rango: S/ ${fmt(rango.p10, 3)} – S/ ${fmt(rango.p90, 3)} <span style="color:${C.soft}">(centro S/ ${fmt(rango.p50, 3)}, 8 de cada 10 veces)</span></div>` : "";
+    const resumenHtml = h.resumen && !h.determinista ? `<div style="margin:8px 0">${esc(h.resumen)}</div>` : "";
     const alAlzaPoints = nuevos(h, "al_alza").map(p => ({...p, tipo: 'al_alza'}));
     const aLaBajaPoints = nuevos(h, "a_la_baja").map(p => ({...p, tipo: 'a_la_baja'}));
     const alAlza = labelAlAlza(alAlzaPoints) + alAlzaPoints.map(punto).join("");
     const aLaBaja = labelALaBaja(aLaBajaPoints) + aLaBajaPoints.map(punto).join("");
     const contexto = conContexto ? nuevos(h, "contexto").map(p => ({...p, tipo: 'contexto'})).map(punto).join("") : "";
-    return `<tr><td style="padding:16px 0 8px">
+    return `<tr><td style="padding:16px 0 8px;font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink}">
       <div style="margin:0 0 8px">${tituloInline(titulo, numero)}</div>
       ${rangoTxt}${resumenHtml}${alAlza}${aLaBaja}${contexto}
     </td></tr>`;
@@ -662,18 +662,18 @@ function renderGratis(f, dateLabel, lectura) {
   </td></tr>` : "";
 
   // Dollar reading for mañana/horizonte (only mañana for free)
-  const punto = (p) => `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink};margin:0 0 8px;padding-left:12px;border-left:2px solid ${p.tipo === 'al_alza' ? C.pos : p.tipo === 'a_la_baja' ? C.neg : C.soft};opacity:${p.tipo === 'contexto' ? '0.7' : '1'}">${esc(p.texto)}</div>`;
+  const punto = (p) => `<div style="margin:0 0 8px;padding-left:12px;border-left:2px solid ${p.tipo === 'al_alza' ? C.pos : p.tipo === 'a_la_baja' ? C.neg : C.soft};opacity:${p.tipo === 'contexto' ? '0.7' : '1'}">${esc(p.texto)}</div>`;
   
   const vistos = new Set();
   const nuevos = (h, lado) => (h?.[lado] || []).filter((p) => !vistos.has(p.texto) && vistos.add(p.texto));
   
-  const labelAlAlza = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink};margin:12px 0 4px">Podría presionar al dólar al alza</div>` : "";
-  const labelALaBaja = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink};margin:12px 0 4px">Podría presionar al dólar a la baja</div>` : "";
-  const labelContexto = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink};margin:12px 0 4px">Contexto</div>` : "";
+  const labelAlAlza = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;margin:12px 0 4px">Podría presionar al dólar al alza</div>` : "";
+  const labelALaBaja = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;margin:12px 0 4px">Podría presionar al dólar a la baja</div>` : "";
+  const labelContexto = (puntos) => puntos.length ? `<div style="font-family:${ui};font-size:12px;font-weight:600;margin:12px 0 4px">Contexto</div>` : "";
   
   const mananaLec = lectura?.horizontes?.manana || lectura?.manana || null;
   const rangoMananaLec = f.daily?.manana;
-  const rangoTxt = rangoMananaLec ? `<div style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:14px;color:${C.ink};margin:4px 0 8px">Rango: S/ ${fmt(rangoMananaLec.p10, 3)} – S/ ${fmt(rangoMananaLec.p90, 3)} <span style="color:${C.soft}">(centro S/ ${fmt(rangoMananaLec.p50, 3)}, 8 de cada 10 veces)</span></div>` : "";
+  const rangoTxt = rangoMananaLec ? `<div style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:14px;margin:4px 0 8px">Rango: S/ ${fmt(rangoMananaLec.p10, 3)} – S/ ${fmt(rangoMananaLec.p90, 3)} <span style="color:${C.soft}">(centro S/ ${fmt(rangoMananaLec.p50, 3)}, 8 de cada 10 veces)</span></div>` : "";
   const tituloInline = (title, numero) =>
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${ui};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table>`;
 
@@ -681,10 +681,10 @@ function renderGratis(f, dateLabel, lectura) {
   const aLaBajaPoints = nuevos(mananaLec, "a_la_baja").map(p => ({...p, tipo: 'a_la_baja'}));
   const contextoPoints = nuevos(mananaLec, "contexto").map(p => ({...p, tipo: 'contexto'}));
   
-  const presionaHtml = mananaLec ? `<tr><td style="padding:16px 0 8px">
+  const presionaHtml = mananaLec ? `<tr><td style="padding:16px 0 8px;font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink}">
       <div style="margin:0 0 8px">${tituloInline("Qué podría presionar al dólar", 0)}</div>
       ${rangoTxt}
-      ${mananaLec.resumen && !mananaLec.determinista ? `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink};margin:8px 0">${esc(mananaLec.resumen)}</div>` : ""}
+      ${mananaLec.resumen && !mananaLec.determinista ? `<div style="margin:8px 0">${esc(mananaLec.resumen)}</div>` : ""}
       ${labelAlAlza(alAlzaPoints)}${alAlzaPoints.map(punto).join("")}
       ${labelALaBaja(aLaBajaPoints)}${aLaBajaPoints.map(punto).join("")}
       ${labelContexto(contextoPoints)}${contextoPoints.map(punto).join("")}
@@ -875,7 +875,7 @@ function renderPersonal(cards, lecturas) {
   const texto = (t, size = 15, lh = 1.5, clr = C.ink, weight = 400, mgb = 14) => 
     t ? `<p style="margin:0 0 ${mgb}px;font-family:${serif};font-size:${size}px;line-height:${lh};color:${clr};font-weight:${weight}">${esc(t)}</p>` : "";
   
-  const punto = (p) => `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink};margin:0 0 8px;padding-left:12px;border-left:2px solid ${p.tipo === 'al_alza' ? C.pos : p.tipo === 'a_la_baja' ? C.neg : C.soft};opacity:${p.tipo === 'contexto' ? '0.7' : '1'}">${esc(p.texto)}</div>`;
+  const punto = (p) => `<div style="margin:0 0 8px;padding-left:12px;border-left:2px solid ${p.tipo === 'al_alza' ? C.pos : p.tipo === 'a_la_baja' ? C.neg : C.soft};opacity:${p.tipo === 'contexto' ? '0.7' : '1'}">${esc(p.texto)}</div>`;
   
   const regla = () => `<tr><td style="padding:0"><hr style="border:none;border-top:1px solid ${C.rule};margin:0"/></td></tr>`;
 
@@ -902,11 +902,11 @@ function renderPersonal(cards, lecturas) {
     // Company reading
     const l = lecturas?.[c.nemo];
     const bloqueLectura = (lista, label, tipo) => (lista || []).length
-      ? `<div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink};margin:12px 0 4px">${label}</div>${lista.map(p => ({...p, tipo})).map(punto).join("")}` : "";
+      ? `<div style="font-family:${ui};font-size:12px;font-weight:600;margin:12px 0 4px">${label}</div>${lista.map(p => ({...p, tipo})).map(punto).join("")}` : "";
     
-    const lecturaHtml = l ? `<div style="margin-top:12px;padding-top:10px;border-top:1px dashed ${C.rule}">
-        <div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink};margin-bottom:8px">Lectura de ${esc(c.name)}</div>
-        ${l.resumen && l.resumen !== l.que_hay?.[0]?.texto && !(l.que_hay?.[0]?.texto || "").startsWith(l.resumen.replace(/\.$/, "")) ? `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink};margin-bottom:8px">${esc(l.resumen)}</div>` : ""}
+    const lecturaHtml = l ? `<div style="margin-top:12px;padding-top:10px;border-top:1px dashed ${C.rule};font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink}">
+        <div style="font-family:${ui};font-size:12px;font-weight:600;margin-bottom:8px">Lectura de ${esc(c.name)}</div>
+        ${l.resumen && l.resumen !== l.que_hay?.[0]?.texto && !(l.que_hay?.[0]?.texto || "").startsWith(l.resumen.replace(/\.$/, "")) ? `<div style="margin-bottom:8px">${esc(l.resumen)}</div>` : ""}
         ${bloqueLectura(l.que_hay, "Qué hay", "contexto")}
         ${bloqueLectura(l.podria_mover?.al_alza, "Podría mover al alza", "al_alza")}
         ${bloqueLectura(l.podria_mover?.a_la_baja, "Podría mover a la baja", "a_la_baja")}
