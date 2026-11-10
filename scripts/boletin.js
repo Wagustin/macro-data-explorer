@@ -37,6 +37,17 @@ import { lecturasEmpresas } from "./empresa-lectura.js";
 
 const MONTHS_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
+function formatSMVFecha(fechaStr) {
+  // Convert "2026-11-09 14:36" -> "9 nov, 14:36"
+  const dt = new Date(`${String(fechaStr).slice(0, 10)}T${String(fechaStr).slice(11, 16)}:00Z`);
+  if (isNaN(dt.getTime())) return String(fechaStr);
+  const day = dt.getUTCDate();
+  const month = MONTHS_ES[dt.getUTCMonth()];
+  const hour = String(dt.getUTCHours()).padStart(2, "0");
+  const min = String(dt.getUTCMinutes()).padStart(2, "0");
+  return `${day} ${month}, ${hour}:${min}`;
+}
+
 const DRY = process.argv.includes("--dry-run");
 const PREVIEW = Boolean(process.env.PREVIEW_EMPRESAS);
 const PREVIEW_PLAN = (process.env.PREVIEW_PLAN || "boletin").toLowerCase() === "gratis" ? "gratis" : "boletin";
@@ -47,7 +58,7 @@ const UI_F = "Libre Franklin,Helvetica,Arial,sans-serif";
 const NUM = ' style="font-variant-numeric:tabular-nums"';
 
 // Table-based range bar (works in Gmail, Outlook, Yahoo — no SVG)
-function barraRango({ min, max, centro, ultimo, prefijo = "S/" }) {
+function barraRango({ min, max, centro, ultimo, prefijo = "S/", fechaUltimo, decimales = 3 }) {
   // Scale: lo = min(min, ultimo) - 15% of range, hi = max(max, ultimo) + 15% of range
   const range = max - min;
   const lo = Math.min(min, ultimo) - range * 0.15;
@@ -55,45 +66,64 @@ function barraRango({ min, max, centro, ultimo, prefijo = "S/" }) {
   const total = hi - lo;
 
   // Track: three cells with integer percentages summing to 100
-  const leftPct = Math.round(((centro - lo) / total) * 100);
+  // Band goes from min to max, so leftPct uses min, rightPct uses max
+  const leftPct = Math.round(((min - lo) / total) * 100);
   const rightPct = Math.round(((hi - max) / total) * 100);
   const midPct = 100 - leftPct - rightPct;
 
   // Last close position as percentage
   const ultimoPct = Math.round(((ultimo - lo) / total) * 100);
 
-  const fmtPrefijo = (v) => `${prefijo} ${v.toFixed(prefijo === "US$" ? 2 : 3)}`;
+  // Use same formatter as "Rango:" line for consistency
+  const fmt = (v) => `${prefijo} ${Number(v).toLocaleString("es-PE", { minimumFractionDigits: decimales, maximumFractionDigits: decimales })}`;
+
+  // Band color: soft green #cfdccb, track #e4dfd6
+  const bandColor = "#cfdccb";
+  const trackColor = "#e4dfd6";
 
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-family:${MONO_F};font-size:12px;color:${C.ink};font-variant-numeric:tabular-nums">
 <tr>
-  <td style="text-align:left;padding:0 0 4px">${esc(fmtPrefijo(min))}</td>
-  <td style="text-align:center;padding:0 0 4px">centro ${esc(fmtPrefijo(centro))}</td>
-  <td style="text-align:right;padding:0 0 4px">${esc(fmtPrefijo(max))}</td>
+  <td colspan="3" style="padding:0 0 4px">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td width="${leftPct}%" style="font-size:0;line-height:0">&nbsp;</td>
+        <td width="${midPct}%" style="font-size:0;line-height:0">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="text-align:left;font-size:11px;white-space:nowrap">${esc(fmt(min))}</td>
+              <td style="text-align:right;font-size:11px;white-space:nowrap">${esc(fmt(max))}</td>
+            </tr>
+          </table>
+        </td>
+        <td width="${rightPct}%" style="font-size:0;line-height:0">&nbsp;</td>
+      </tr>
+    </table>
+  </td>
 </tr>
 <tr>
   <td colspan="3" style="padding:0">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="height:8px;background:${C.rule}">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="height:8px;background:${trackColor}">
       <tr>
-        <td width="${leftPct}%" style="background:${C.rule}"></td>
-        <td width="${midPct}%" style="background:${C.pos}"></td>
-        <td width="${rightPct}%" style="background:${C.rule}"></td>
+        <td width="${leftPct}%" style="background:${trackColor};height:8px;font-size:0;line-height:0">&nbsp;</td>
+        <td width="${midPct}%" style="background:${bandColor};height:8px;font-size:0;line-height:0">&nbsp;</td>
+        <td width="${rightPct}%" style="background:${trackColor};height:8px;font-size:0;line-height:0">&nbsp;</td>
       </tr>
     </table>
   </td>
 </tr>
 <tr>
   <td colspan="3" style="padding:4px 0 0">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="height:10px">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="height:8px">
       <tr>
-        <td width="${ultimoPct}%" style="background:${C.paper}"></td>
-        <td width="2" style="background:${C.ink}"></td>
-        <td width="${100 - ultimoPct}%" style="background:${C.paper}"></td>
+        <td width="${ultimoPct}%" style="background:${C.paper};height:8px;font-size:0;line-height:0">&nbsp;</td>
+        <td width="3" style="background:${C.ink};height:8px;font-size:0;line-height:0">&nbsp;</td>
+        <td style="background:${C.paper};height:8px;font-size:0;line-height:0">&nbsp;</td>
       </tr>
     </table>
   </td>
 </tr>
 <tr>
-  <td colspan="3" style="font-family:${UI_F};font-size:12px;color:${C.soft};padding-top:2px">último cierre ${esc(fmtPrefijo(ultimo))} (${esc(formatCierreFecha(new Date().toISOString().slice(0, 10)))})</td>
+  <td colspan="3" style="font-family:${UI_F};font-size:12px;color:${C.soft};padding-top:2px">último cierre ${esc(fmt(ultimo))} (${esc(fechaUltimo)})</td>
 </tr>
 </table>`;
 }
@@ -413,7 +443,7 @@ function render(f, ai, dateLabel, lectura) {
   // Dollar range bar (replaces SVG line chart)
   const rangoManana = f.daily?.manana;
   const etiquetaManana = rangoManana ? formatFechaObjetivo(rangoManana.fecha_objetivo, f.todayLima) : "";
-  const dollarBarHtml = rangoManana ? `<tr><td style="padding:16px 0 8px">${barraRango({ min: rangoManana.p10, max: rangoManana.p90, centro: rangoManana.p50, ultimo: f.cierre?.valor, prefijo: "S/" })}</td></tr>` : "";
+  const dollarBarHtml = rangoManana && f.cierre?.valor != null ? `<tr><td style="padding:16px 0 8px">${barraRango({ min: rangoManana.p10, max: rangoManana.p90, centro: rangoManana.p50, ultimo: f.cierre.valor, prefijo: "S/", fechaUltimo: formatCierreFecha(f.cierre.fecha), decimales: 3 })}</td></tr>` : "";
 
   // Dollar headline with close - fix subtitle: "Rango Mañana" -> "rango para mañana"
   const cierre = f.cierre;
@@ -500,7 +530,7 @@ function render(f, ai, dateLabel, lectura) {
   const smv = f.smvFacts.map((h) => `<tr><td style="padding:16px 0">
     <div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin-bottom:4px">${esc(h.empresa)}</div>
     <a href="${esc(h.url_oficial)}" style="font-family:${serif};font-size:15px;line-height:1.45;color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(h.titulo || h.tipo)}</a>
-    <div style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:11px;color:${C.soft};margin-top:4px">${esc(h.fecha)}</div>
+    <div style="font-family:${mono};font-variant-numeric:tabular-nums;font-size:11px;color:${C.soft};margin-top:4px">${esc(formatSMVFecha(h.fecha))}</div>
   </td></tr>`).join(regla());
 
   // Headlines
@@ -586,7 +616,7 @@ function renderGratis(f, dateLabel, lectura) {
   // Dollar range bar (replaces SVG line chart)
   const rangoManana = f.daily?.manana;
   const etiquetaManana = rangoManana ? formatFechaObjetivo(rangoManana.fecha_objetivo, f.todayLima) : "";
-  const dollarBarHtml = rangoManana ? `<tr><td style="padding:16px 0 8px">${barraRango({ min: rangoManana.p10, max: rangoManana.p90, centro: rangoManana.p50, ultimo: f.cierre?.valor, prefijo: "S/" })}</td></tr>` : "";
+  const dollarBarHtml = rangoManana && f.cierre?.valor != null ? `<tr><td style="padding:16px 0 8px">${barraRango({ min: rangoManana.p10, max: rangoManana.p90, centro: rangoManana.p50, ultimo: f.cierre.valor, prefijo: "S/", fechaUltimo: formatCierreFecha(f.cierre.fecha), decimales: 3 })}</td></tr>` : "";
 
   // Dollar headline with close - fix subtitle: "Rango Mañana" -> "rango para mañana"
   const cierre = f.cierre;
@@ -821,12 +851,12 @@ function renderPersonal(cards, lecturas) {
     
     // Range bar (table-based, works in Gmail/Outlook/Yahoo)
     const rangeBarHtml = (c.forecast && c.forecast.p10 != null && c.forecast.p50 != null && c.forecast.p90 != null && c.price != null)
-      ? `<div style="margin:8px 0 0">${barraRango({ min: c.forecast.p10, max: c.forecast.p90, centro: c.forecast.p50, ultimo: c.price, prefijo: c.currency })}</div>`
+      ? `<div style="margin:8px 0 0">${barraRango({ min: c.forecast.p10, max: c.forecast.p90, centro: c.forecast.p50, ultimo: c.price, prefijo: c.currency, fechaUltimo: c.priceDate ? shortDay(c.priceDate) : "", decimales: 2 })}</div>`
       : "";
     
     const fc = c.forecast ? `
       <div style="font-family:${ui};font-size:13px;color:${C.soft};margin:8px 0 0">
-        Proyección al ${esc(c.forecast.date)}: ${c.currency} ${fmt(c.forecast.p50)}
+        Proyección al ${esc(shortDay(c.forecast.date))}: ${c.currency} ${fmt(c.forecast.p50)}
         ${c.forecast.p10 ? ` (${fmt(c.forecast.p10)} — ${fmt(c.forecast.p90)}, 8 de cada 10 veces)` : ''}
       </div>` : "";
     
