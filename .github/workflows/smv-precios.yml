@@ -45,7 +45,7 @@ jobs:
           git config user.name "perdata-bot"
           git config user.email "perdata-bot@users.noreply.github.com"
           git add data/empresas-estado.json empresas.html empresa
-          git add --ignore-missing data/acciones-rangos.json
+          if [ -f data/acciones-rangos.json ]; then git add data/acciones-rangos.json; fi
           git diff --cached --quiet || (
             git commit -m "data(smv): estado de emisores $(date -u +%F)" &&
             for i in 1 2 3 4; do

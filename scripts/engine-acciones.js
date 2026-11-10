@@ -610,7 +610,7 @@ async function leerSupabase() {
     }
     const page = await r.json();
     for (const q of page) {
-      const c = q.cierre;
+      const c = Number(q.cierre);
       if (Number.isFinite(c) && c > 0) {
         filas.push({ nemonico: q.nemonico, fecha: q.fecha, cierre: c });
       }
