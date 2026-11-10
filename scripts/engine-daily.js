@@ -75,8 +75,12 @@ export function addBusinessDays(dateStr, n, holidays = PERU_HOLIDAYS) {
 
 /**
  * Obtiene la fecha actual en la zona horaria de Lima (UTC-5) en formato YYYY-MM-DD.
+ * Respeta la variable de entorno ENGINE_HOY=AAAA-MM-DD si está definida.
  */
 export function getTodayInLima() {
+  if (process.env.ENGINE_HOY) {
+    return process.env.ENGINE_HOY;
+  }
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/Lima",
     year: "numeric",
@@ -406,11 +410,16 @@ export function generateDailyForecasts(bcrpData, options = {}) {
     const lastDate = lastRow[0];
     const lastClose = lastRow[1];
 
+    const provisional = item.provisional;
+    const fuenteUltimoCierre =
+      provisional && provisional.fecha === lastDate ? "SUNAT" : "BCRP";
+
     const symEntry = {
       codigo: item.codigo,
       unidad: item.unidad,
       fecha_ultimo_cierre: lastDate,
       ultimo_cierre: lastClose,
+      fuente_ultimo_cierre: fuenteUltimoCierre,
       pronosticos: {},
     };
 

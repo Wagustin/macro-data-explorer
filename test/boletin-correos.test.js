@@ -37,7 +37,7 @@ test("correo gratis: dólar mañana con rango y cierre, top 3, qué podría pres
   const fmt3 = (v) => Number(v).toLocaleString("es-PE", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
 
   // (1) Dólar mañana con su rango y el cierre anterior
-  assert.match(html, /Último cierre oficial \(BCRP\)/);
+  assert.match(html, /Último cierre oficial \(BCRP\)|Último cierre \(SBS, publicado por SUNAT\)/);
   assert.ok(html.includes(fmt3(pen.ultimo_cierre)), "el gratis trae el cierre de data/daily-forecasts.json");
   assert.ok(html.includes(fmt3(pen.manana.p10)) && html.includes(fmt3(pen.manana.p90)), "el gratis trae el rango mañana de data/");
 
@@ -80,7 +80,8 @@ test("correo pagado: dólar x3 con lectura, metales, SMV, todas las noticias y T
   // (1) Dólar mañana, semana y mes con rango y su lectura
   // Use formatFechaObjetivo to get the actual label for "manana" horizon
   const daily = JSON.parse(read("data/daily-forecasts.json"));
-  const todayLima = daily.referencia_lima.hoy;
+  // Same clock as scripts/boletin.js: the label depends on today's date in Lima, not on when the forecast was generated.
+  const todayLima = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Lima" }).format(new Date());
   const mananaFecha = daily.simbolos.PEN.manana.fecha_objetivo;
   const dt = new Date(`${mananaFecha}T12:00:00Z`);
   const hdt = new Date(`${todayLima}T12:00:00Z`);

@@ -152,9 +152,10 @@ async function facts() {
   const dailyVigente = Boolean(penDaily?.manana?.fecha_objetivo && penDaily.manana.fecha_objetivo >= todayLima);
   const penSerie = s.PEN?.serie || [];
   const penUltimo = penSerie.length ? { fecha: penSerie[penSerie.length - 1][0], valor: penSerie[penSerie.length - 1][1] } : null;
+  const fuenteCierre = penDaily?.fuente_ultimo_cierre || "BCRP";
   const cierre = penDaily?.ultimo_cierre != null
-    ? { valor: penDaily.ultimo_cierre, fecha: penDaily.fecha_ultimo_cierre, fuente: "BCRP" }
-    : (penUltimo ? { ...penUltimo, fuente: "BCRP" } : null);
+    ? { valor: penDaily.ultimo_cierre, fecha: penDaily.fecha_ultimo_cierre, fuente: fuenteCierre }
+    : (penUltimo ? { ...penUltimo, fuente: fuenteCierre } : null);
 
   const fresh = digest && Date.now() - Date.parse(digest.actualizado) < 30 * 36e5;
   // Paid: every publishable story of the digest (as today, with the double
@@ -455,7 +456,7 @@ function renderGratis(f, dateLabel, lectura) {
       <div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin-bottom:8px">Dólar interbancario (USD/PEN)</div>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
         ${cierre ? `<tr><td style="padding:8px 0;border-bottom:1px solid ${C.rule}">
-          <div style="font-family:${ui};font-size:12px;color:${C.soft}">Último cierre oficial (BCRP) · cierre del ${esc(formatCierreFecha(cierre.fecha))}</div>
+          <div style="font-family:${ui};font-size:12px;color:${C.soft}">${cierre.fuente === "SUNAT" ? "Último cierre (SBS, publicado por SUNAT)" : "Último cierre oficial (BCRP)"} · cierre del ${esc(formatCierreFecha(cierre.fecha))}</div>
           <div style="font-family:${mono};font-size:14px;color:${C.ink};margin-top:2px">S/ ${fmt(cierre.valor, 3)}</div>
         </td></tr>` : ""}
         ${rango ? `<tr><td style="padding:8px 0">
