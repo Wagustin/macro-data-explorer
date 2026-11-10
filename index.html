@@ -54,7 +54,7 @@
       diario: fetch('/api/diario?symbol=PEN').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       noticias: fetch('/api/news').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
     };
-    // Cifras del heroe: el dolar de hoy, el rango probable del siguiente cierre y el enlace
+    // Cifras del heroe: último cierre oficial, rango probable para el siguiente cierre y enlace
     // para compartir. Se pintan con el mismo dato diario que usa la tarjeta del heroe.
     window.__pdHeroCifras = function (d) {
       if (!d || !d.vigente || !d.manana) return;
@@ -68,6 +68,30 @@
       set('pdHeroRangoP90', p90);
       set('pdCardDailyP10', p10);
       set('pdCardDailyP90', p90);
+
+      // Etiqueta "Último cierre oficial · 6 nov" con la fecha real del dato
+      var hoyLabel = document.getElementById('pdHeroHoyLabel');
+      if (hoyLabel && d.fecha_ultimo_cierre) {
+        var pts = String(d.fecha_ultimo_cierre).split('-');
+        if (pts.length === 3) {
+          var dt = new Date(parseInt(pts[0], 10), parseInt(pts[1], 10) - 1, parseInt(pts[2], 10));
+          var dm = dt.toLocaleDateString('es-PE', { day: 'numeric', month: 'short' }).replace('.', '');
+          hoyLabel.textContent = 'Último cierre oficial · ' + dm;
+        }
+      }
+
+      // Etiqueta del rango: "¿A cuánto estará el dólar el martes 10 nov?" con la fecha del siguiente cierre
+      var rangoLabel = document.getElementById('pdHeroRangoLabel');
+      if (rangoLabel && d.manana.fecha_objetivo) {
+        var pts = String(d.manana.fecha_objetivo).split('-');
+        if (pts.length === 3) {
+          var dt = new Date(parseInt(pts[0], 10), parseInt(pts[1], 10) - 1, parseInt(pts[2], 10));
+          var wk = dt.toLocaleDateString('es-PE', { weekday: 'long' });
+          var dm = dt.toLocaleDateString('es-PE', { day: 'numeric', month: 'short' }).replace('.', '');
+          rangoLabel.textContent = '¿A cuánto estará el dólar el ' + wk + ' ' + dm + '?';
+        }
+      }
+
       var etiqueta = document.getElementById('pdCardDailyLabel');
       if (etiqueta && d.manana.fecha_objetivo) {
         var pts = String(d.manana.fecha_objetivo).split('-');
@@ -78,9 +102,21 @@
           etiqueta.textContent = 'PRÓXIMO CIERRE: ' + (wk + ' ' + dm).toUpperCase();
         }
       }
+
+      // WhatsApp con el nuevo formato
       var wa = document.getElementById('pdHeroWhatsApp');
-      if (wa) {
-        wa.href = 'https://wa.me/?text=' + encodeURIComponent('Dólar hoy S/ ' + hoy + '. Rango probable para el siguiente cierre: S/ ' + p10 + ' – S/ ' + p90 + '. perdata.site/dolar');
+      if (wa && d.fecha_ultimo_cierre && d.manana.fecha_objetivo) {
+        var ptsHoy = String(d.fecha_ultimo_cierre).split('-');
+        var ptsManana = String(d.manana.fecha_objetivo).split('-');
+        if (ptsHoy.length === 3 && ptsManana.length === 3) {
+          var dtHoy = new Date(parseInt(ptsHoy[0], 10), parseInt(ptsHoy[1], 10) - 1, parseInt(ptsHoy[2], 10));
+          var dtManana = new Date(parseInt(ptsManana[0], 10), parseInt(ptsManana[1], 10) - 1, parseInt(ptsManana[2], 10));
+          var dmHoy = dtHoy.toLocaleDateString('es-PE', { day: 'numeric', month: 'short' }).replace('.', '');
+          var wkManana = dtManana.toLocaleDateString('es-PE', { weekday: 'long' });
+          var dmManana = dtManana.toLocaleDateString('es-PE', { day: 'numeric', month: 'short' }).replace('.', '');
+          var waText = 'Dólar: último cierre oficial S/ ' + hoy + ' (' + dmHoy + '). Rango probable para el ' + wkManana + ' ' + dmManana + ': S/ ' + p10 + ' – S/ ' + p90 + '. perdata.site/dolar';
+          wa.href = 'https://wa.me/?text=' + encodeURIComponent(waText);
+        }
       }
     };
     function paintEarlyCard() {
@@ -89,8 +125,6 @@
       window.__pdEarly.diario.then(function (d) {
         if (d && d.vigente && d.manana) {
           window.__pdHeroCifras(d);
-          var qEl = document.getElementById('pdHeroQuestion');
-          if (qEl) qEl.textContent = d.pregunta || '¿A cuánto estará el dólar mañana?';
           var hHorizon = document.getElementById('pdCardHorizon');
           if (hHorizon) hHorizon.textContent = 'Horizonte: diario';
           var cDaily = document.getElementById('pdCardDaily');
@@ -827,15 +861,16 @@
             </h1>
             <div id="homeStatus" class="pd-home-status mono tnum" role="status" aria-live="polite">Cargando estado del mercado…</div>
 
-            <!-- CIFRAS DE HOY: el dólar de hoy y el rango probable del siguiente cierre -->
-            <div class="pdl-hero-data">
+            <!-- CIFRAS DE HOY: último cierre oficial y rango probable para el siguiente cierre -->
+            <div class="pdl-hero-data" data-hero-seq="2">
               <div class="pdl-hero-data-item">
-                <span class="pdl-label">Dólar hoy</span>
+                <span class="pdl-label" id="pdHeroHoyLabel">Último cierre oficial</span>
                 <span class="pdl-hero-num font-mono tnum">S/&nbsp;<span id="pdHeroDolarHoy">3.433</span></span>
               </div>
               <div class="pdl-hero-data-item">
-                <span class="pdl-label">Rango probable para el siguiente cierre</span>
+                <span class="pdl-label" id="pdHeroRangoLabel">¿A cuánto estará el dólar el siguiente cierre?</span>
                 <span class="pdl-hero-num font-mono tnum">S/&nbsp;<span id="pdHeroRangoP10">3.414</span> &ndash; <span id="pdHeroRangoP90">3.451</span></span>
+                <p class="pdl-hero-note" id="pdHeroRangoNote" style="margin-top: 6px;">8 de cada 10 veces el cierre cae dentro de este rango</p>
                 <a id="pdHeroWhatsApp" class="pdl-share" href="https://wa.me/?text=D%C3%B3lar%20hoy%20en%20perdata.site%2Fdolar" target="_blank" rel="noopener">Compartir por WhatsApp</a>
               </div>
             </div>
@@ -849,13 +884,6 @@
             <p class="pdl-hero-note">Lunes a sábado, 06:00. Gratis. Te das de baja con un clic.</p>
             <p id="homeBoletinMsg" class="pdl-boletin-msg" role="status">Te enviaremos un correo para confirmar.</p>
 
-            <div class="pdl-quote" data-hero-seq="2">
-              <p class="pdl-question" id="pdHeroQuestion">¿A cuánto estará el dólar el próximo mes?</p>
-              <p class="pd-hero-answer pdl-answer">
-                <span class="pd-skeleton" style="width: 85%; height: 20px; display: block; margin-bottom: 8px;"></span><span class="pd-skeleton" style="width: 55%; height: 20px; display: block;"></span>
-              </p>
-              <p id="pd-forecast-fallback" class="pdl-answer hidden">Abre la terminal para ver la proyección de hoy.</p>
-            </div>
             <form class="pd-hero-search" id="pdHeroSearch" role="search" action="/empresas" method="get" data-hero-seq="3">
               <div class="pd-hero-search-box">
                 <label class="sr-only" for="pdHeroQuery">Buscar una empresa o un activo</label>
