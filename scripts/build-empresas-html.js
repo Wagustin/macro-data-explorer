@@ -1100,6 +1100,13 @@ function buildFichas() {
 
       // Status
       fichaHtml = fichaHtml.replace(/<p class="issuer-status" id="issuerStatusText"><\/p>/, `<p class="issuer-status" id="issuerStatusText">${escapeHtml(statusMsg)}</p>`);
+      // El aviso «Con proyección PerData Engine» sobra: el botón de arriba ya dice lo mismo.
+      if (statusMsg === "Con proyección PerData Engine") {
+        fichaHtml = fichaHtml.replace(
+          '<div class="section" id="issuerStatusSection" aria-live="polite">',
+          '<div class="section hidden" id="issuerStatusSection" aria-live="polite">'
+        );
+      }
 
       // Rango esperado de PerData Engine: solo en los valores que ya muestran precio
       if (rangos && rangos.valores && hasPrice && Number.isFinite(close) && close > 0) {
@@ -1113,6 +1120,13 @@ function buildFichas() {
             '<div class="section hidden" id="rangoSection"></div>',
             () => `<div class="section" id="rangoSection">${rangoHtml}</div>`
           );
+          // Con rango a la vista no se contradice: el aviso «Sin proyección: …» se oculta.
+          if (rangoHtml.includes("rango-linea")) {
+            fichaHtml = fichaHtml.replace(
+              '<p id="proyeccionDisabled" class="text-xs text-ink-soft mt-2 text-center">',
+              '<p id="proyeccionDisabled" class="hidden text-xs text-ink-soft mt-2 text-center">'
+            );
+          }
         }
       }
 
