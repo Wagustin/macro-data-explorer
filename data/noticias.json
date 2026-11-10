@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-10T03:34:24.476Z",
+  "actualizado": "2026-11-10T06:31:52.463Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,17 +24,17 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 52
+      "items": 51
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 44
+      "items": 45
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 10
+      "items": 12
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 17
+      "items": 19
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -64,18 +64,117 @@
   },
   "noticias": [
     {
-      "id": "andina-c289e5187d",
-      "titulo": "Indecopi orientará a pasajeros sobre sus derechos ante visita del papa León XIV",
-      "url": "https://andina.pe/agencia/noticia-indecopi-orientara-a-pasajeros-sobre-sus-derechos-ante-visita-del-papa-leon-xiv-1099270.aspx",
+      "id": "gestion-6e051a3cb5",
+      "titulo": "Pandero Casa diversifica su portafolio y apunta a facturar US$ 100 millones: ¿cómo lo hará?",
+      "url": "https://gestion.pe/economia/empresas/pandero-casa-diversifica-su-portafolio-para-facturar-us-6-millones-cual-es-su-apuesta-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-10T06:00:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-cc6f82e9d9",
+      "titulo": "Gobierno establece sanciones a quienes faciliten billeteras digitales para extorsiones",
+      "url": "https://gestion.pe/peru/gobierno-de-keiko-fujimori-establece-sanciones-por-facilitar-billeteras-digitales-para-extorsiones-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-10T05:30:00.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-5eafdc6a3a",
+      "titulo": "Precio del dólar en Perú hoy, martes 10 de noviembre: cuál es el tipo de cambio del día",
+      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-hoy-martes-10-de-noviembre-a-cuanto-esta-el-dolar-y-tipo-de-cambio-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-10T04:56:08.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-a9bc02b8c8",
+      "titulo": "La Junta de Paz de Trump pide a Israel dejar entrar ayuda por las inundaciones en Gaza",
+      "url": "https://rpp.pe/mundo/medio-oriente/la-junta-de-paz-de-trump-pide-a-israel-dejar-entrar-ayuda-por-las-inundaciones-en-gaza-noticia-1716923",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-10T04:53:51.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-61689b95aa",
+      "titulo": "¿Empresas en Perú empezarían a trasladar alza de combustibles a sus precios de venta?",
+      "url": "https://gestion.pe/economia/glp-gasolina-y-otros-en-peru-empresas-empezarian-a-trasladar-alza-de-combustibles-al-precio-de-venta-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-10T04:30:00.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-ed998306ca",
+      "titulo": "Congreso de EE.UU. exige explicaciones a Nvidia por escándalo de Jensen Huang",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/congreso-de-eeuu-exige-explicaciones-a-nvidia-por-escandalo-de-jensen-huang/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-10T04:20:44.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-d2bea0d510",
+      "titulo": "Bonos de vivienda: MEF inyectará nuevos recursos este año y duplicará cantidad para 2027",
+      "url": "https://gestion.pe/economia/bonos-de-vivienda-mef-inyectara-nuevos-recursos-este-ano-y-duplicara-cantidad-para-2027-la-mirada-junto-al-fondo-mivivienda-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-10T04:16:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-ec6dffcd55",
+      "titulo": "Trump ve poco probables nuevos ataques contra Irán mientras Rubio cuestiona las exigencias de Teherán",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/trump-ve-poco-probables-nuevos-ataques-contra-iran-mientras-rubio-cuestiona-las-exigencias-de-teheran/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-10T04:01:14.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-fd4bddc69c",
+      "titulo": "Temu, Aliexpress y más: MEF definirá “pronto” ajustes a importaciones de bajo costo, ¿cuáles?",
+      "url": "https://gestion.pe/economia/temu-aliexpress-y-mas-mef-definira-pronto-ajustes-a-importaciones-de-bajo-que-cambiaria-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-10T04:01:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-f5d976a25d",
+      "titulo": "Ucayali: grifos en Pucallpa sin combustible tras huaico que impidió ingreso de camiones cisterna",
+      "url": "https://rpp.pe/peru/actualidad/ucayali-grifos-en-pucallpa-sin-combustible-tras-huaico-que-impidio-ingreso-de-camiones-cisterna-noticia-1716919",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-10T03:53:10.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-2bec911432",
+      "titulo": "Trump habló con el director de Nvidia: \"Me dijo que no tenía ni idea de que la persona en cuestión fuera un espía\"",
+      "url": "https://rpp.pe/mundo/actualidad/trump-defiende-al-ceo-de-nvidia-tras-investigacion-del-fbi-por-vinculo-con-presunta-espia-china-noticia-1716922",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-10T03:48:56.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-467082dc0f",
+      "titulo": "Impulsarán producción de 1.2 millones de kits escolares para beneficiar a 3,200 Mype",
+      "url": "https://andina.pe/agencia/noticia-impulsaran-produccion-12-millones-kits-escolares-para-beneficiar-a-3200-mype-1099276.aspx",
       "fuente": "Agencia Andina",
       "fecha_iso": "2026-11-10T03:30:00.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
     },
     {
-      "id": "andina-467082dc0f",
-      "titulo": "Impulsarán producción de 1.2 millones de kits escolares para beneficiar a 3,200 Mype",
-      "url": "https://andina.pe/agencia/noticia-impulsaran-produccion-12-millones-kits-escolares-para-beneficiar-a-3200-mype-1099276.aspx",
+      "id": "andina-c289e5187d",
+      "titulo": "Indecopi orientará a pasajeros sobre sus derechos ante visita del papa León XIV",
+      "url": "https://andina.pe/agencia/noticia-indecopi-orientara-a-pasajeros-sobre-sus-derechos-ante-visita-del-papa-leon-xiv-1099270.aspx",
       "fuente": "Agencia Andina",
       "fecha_iso": "2026-11-10T03:30:00.000Z",
       "categoria": "Economía y fiscal",
@@ -150,15 +249,6 @@
       "url": "https://gestion.pe/economia/empresas/empresas-que-fallas-en-su-modelo-de-prevencion-pueden-exponerlas-penalmente-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-10T02:52:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-6e051a3cb5",
-      "titulo": "Pandero Casa diversifica su portafolio y apunta a facturar US$ 100 millones: ¿cómo lo hará?",
-      "url": "https://gestion.pe/economia/empresas/pandero-casa-diversifica-su-portafolio-para-facturar-us-6-millones-cual-es-su-apuesta-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-10T02:45:00.000Z",
       "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
@@ -361,39 +451,12 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-61689b95aa",
-      "titulo": "¿Empresas en Perú empezarían a trasladar alza de combustibles a sus precios de venta?",
-      "url": "https://gestion.pe/economia/glp-gasolina-y-otros-en-peru-empresas-empezarian-a-trasladar-alza-de-combustibles-al-precio-de-venta-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-09T23:08:38.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-d2bea0d510",
-      "titulo": "Bonos de vivienda: MEF inyectará nuevos recursos este año y duplicará cantidad para 2027",
-      "url": "https://gestion.pe/economia/bonos-de-vivienda-mef-inyectara-nuevos-recursos-este-ano-y-duplicara-cantidad-para-2027-la-mirada-junto-al-fondo-mivivienda-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-09T23:07:50.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "rpp-2acb5c83c4",
       "titulo": "Unión Europea pide a Israel permitir el \"acceso total\" de ayuda para Gaza ante inundaciones",
       "url": "https://rpp.pe/mundo/medio-oriente/union-europea-pide-a-israel-permitir-el-acceso-total-de-ayuda-para-gaza-ante-inundaciones-noticia-1716876",
       "fuente": "RPP Noticias",
       "fecha_iso": "2026-11-09T23:02:56.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-fd4bddc69c",
-      "titulo": "Temu, Aliexpress y más: MEF definirá “pronto” ajustes a importaciones de bajo costo, ¿cuáles?",
-      "url": "https://gestion.pe/economia/temu-aliexpress-y-mas-mef-definira-pronto-ajustes-a-importaciones-de-bajo-que-cambiaria-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-09T23:01:40.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -667,15 +730,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "rpp-33cab3e469",
-      "titulo": "Francia señala a Irán como el autor de los ataques a los frigoríficos de la distribución",
-      "url": "https://rpp.pe/mundo/europa/francia-senala-a-iran-como-el-autor-de-los-ataques-a-los-frigorificos-de-la-distribucion-noticia-1716806",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-09T19:44:10.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-8bd8691711",
       "titulo": "Holcim lanza OPA para adquirir el 49,99% de Cementos Pacasmayo",
       "url": "https://elcomercio.pe/economia/peru/holcim-lanza-opa-para-adquirir-el-4999-de-cementos-pacasmayo-l-ultimas-noticia/",
@@ -709,15 +763,6 @@
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-09T19:14:31.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-cc6f82e9d9",
-      "titulo": "Gobierno establece sanciones a quienes faciliten billeteras digitales para extorsiones",
-      "url": "https://gestion.pe/peru/gobierno-de-keiko-fujimori-establece-sanciones-por-facilitar-billeteras-digitales-para-extorsiones-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-09T19:04:00.000Z",
-      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     },
     {
@@ -1015,15 +1060,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-09T14:34:35.000Z",
       "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-5cc98d07ae",
-      "titulo": "MEF evalúa reducir los aportes a salud y pensiones para los trabajadores de menores ingresos",
-      "url": "https://elcomercio.pe/economia/peru/mef-evalua-reducir-los-aportes-a-salud-y-pensiones-para-los-trabajadores-de-menores-ingresos-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-09T14:25:09.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     }
   ]

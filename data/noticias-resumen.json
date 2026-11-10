@@ -1,12 +1,12 @@
 {
- "actualizado": "2026-11-10T03:39:13.169Z",
+ "actualizado": "2026-11-10T06:37:45.658Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "MEF completa emisión récord de bonos sostenibles por 4.500 millones",
-   "nota": "El Ministerio de Economía y Finanzas colocó bonos soberanos sostenibles por 4.500 millones de dólares. Es la emisión en dólares más alta realizada por un país de la región.",
-   "tema": "Dólar y BCRP",
+   "titulo": "MEF completa emisión récord de bonos sostenibles por US$ 4.500 millones",
+   "nota": "El Ministerio de Economía y Finanzas finalizó la colocación de bonos sostenibles por US$ 4.500 millones. Se trata de la emisión en dólares más alta realizada por un país de la región.",
+   "tema": "Economía y fiscal",
    "empresas": [
     "BVN"
    ],
@@ -25,8 +25,7 @@
    }
   },
   {
-   "titulo": "Empresas aceleran financiamiento con bonos en soles y dólares",
-   "nota": "Las compañías aumentan la colocación de bonos denominados en ambas monedas. El titular señala que existe un incentivo actual para esta mayor actividad de emisión.",
+   "titulo": "Empresas aceleran financiamiento con bonos en soles y dólares: ¿qué las incentiva hoy?",
    "tema": "Bolsa y empresas",
    "empresas": [],
    "fuentes": [
@@ -39,13 +38,13 @@
    ],
    "revision": {
     "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
+    "ok": false,
+    "motivo": "La nota añade una causa no presente en el titular: «condiciones de mercado favorables y menor costo de fondeo»; el titular solo menciona que las empresas aceleran su financiamiento con bonos en soles y dólares y pregunta qué las incentiva."
    }
   },
   {
-   "titulo": "Holcim lanza OPA sobre el 49,99% de Cementos Pacasmayo",
-   "nota": "El grupo cementero Holcim presentó una oferta pública de adquisición para comprar casi la mitad de Cementos Pacasmayo. La operación movería la estructura accionaria de una de las principales cementeras del país.",
+   "titulo": "Holcim presenta oferta pública por el 49,99% de Cementos Pacasmayo",
+   "nota": "La empresa lanzó una oferta pública de adquisición para comprar casi la mitad de la cementera peruana. La operación busca adquirir el 49,99% de las acciones de la compañía.",
    "tema": "Bolsa y empresas",
    "empresas": [
     "CPAC"
@@ -65,52 +64,8 @@
    }
   },
   {
-   "titulo": "MEF inyectará 18.000 millones ante impacto de El Niño",
-   "nota": "El Ministerio de Economía anunció una inyección fiscal de 18.000 millones de soles para mitigar los efectos del fenómeno El Niño en la economía. El monto podría ampliarse según la evolución del evento climático.",
-   "tema": "Economía y fiscal",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "El Niño: respuesta del MEF será inyectar S/ 18 mil millones a economía, ¿monto podría crecer?",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/el-nino-respuesta-del-mef-sera-inyectar-s-18-mil-millones-a-la-economia-monto-podria-crecer-noticia/",
-     "fecha": "2026-11-09T19:03:24.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "ProInversión proyecta 17.800 millones en APP y OxI para 2027",
-   "nota": "La agencia de promoción de la inversión privada estima que los proyectos bajo modalidad de asociaciones público-privadas y obras por impuestos superarán los 17.800 millones de soles el próximo año. El trimestre actual registra las mayores adjudicaciones en 18 años.",
-   "tema": "Economía y fiscal",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "ProInversión: inversiones superarán los S/ 17,800 millones en 2027 mediante APP y OxI",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-proinversion-inversiones-superaran-los-s-17800-millones-2027-mediante-app-y-oxi-1099227.aspx",
-     "fecha": "2026-11-09T21:00:00.000Z"
-    },
-    {
-     "titulo": "Proinversión sobre Obras por Impuestos: “Es el trimestre de las mayores adjudicaciones en 18 años”",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/proinversion-sobre-obras-por-impuestos-es-el-trimestre-de-las-mayores-adjudicaciones-en-18-anos-noticia/",
-     "fecha": "2026-11-09T20:53:58.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "C3 Metals halla nuevos objetivos de cobre y oro en Cusco",
-   "nota": "La minera C3 Metals identificó nuevas zonas de mineralización de cobre y oro en su proyecto Khaleesi, ubicado en la región Cusco. Los resultados amplían el potencial exploratorio del yacimiento.",
+   "titulo": "C3 Metals identifica nuevos objetivos de cobre y oro en Cusco",
+   "nota": "La minera reportó nuevos blancos de exploración en su proyecto Khaleesi, ampliando el potencial de recursos en la región cusqueña.",
    "tema": "Minería y metales",
    "empresas": [],
    "fuentes": [
@@ -119,6 +74,44 @@
      "fuente": "Gestión",
      "url": "https://gestion.pe/economia/empresas/minera-canadiense-c3-metals-identifica-nuevos-objetivos-de-cobre-y-oro-en-proyecto-khaleesi-en-cusco-noticia/",
      "fecha": "2026-11-10T01:30:00.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Perupetro negocia nuevos lotes offshore de gas natural en el norte",
+   "nota": "La estatal negocia la adjudicación de áreas marinas frente a Lambayeque y Tumbes para ampliar la producción de gas natural.",
+   "tema": "Energía",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Perupetro negocia nuevos lotes offshore de gas natural frente a Lambayeque y Tumbes",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/perupetro-negocia-nuevos-lotes-offshore-de-gas-natural-frente-a-lambayeque-y-tumbes-noticia/",
+     "fecha": "2026-11-09T23:00:00.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Gobierno inyectará S/ 18.000 millones ante impacto de El Niño",
+   "nota": "El MEF anunció un paquete de S/ 18.000 millones para mitigar los efectos del fenómeno en la economía, monto que podría incrementarse según la evolución climática.",
+   "tema": "Economía y fiscal",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "El Niño: respuesta del MEF será inyectar S/ 18 mil millones a economía, ¿monto podría crecer?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/el-nino-respuesta-del-mef-sera-inyectar-s-18-mil-millones-a-la-economia-monto-podria-crecer-noticia/",
+     "fecha": "2026-11-09T19:03:24.000Z"
     }
    ],
    "revision": {
