@@ -37,7 +37,7 @@ test("correo gratis: dólar mañana con rango y cierre, top 3, qué podría pres
   const fmt3 = (v) => Number(v).toLocaleString("es-PE", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
 
   // (1) Dólar mañana con su rango y el cierre anterior
-  assert.match(html, /Último cierre oficial \(BCRP\)/);
+  assert.match(html, /Último cierre oficial \(BCRP\)|Último cierre \(SBS, publicado por SUNAT\)/);
   assert.ok(html.includes(fmt3(pen.ultimo_cierre)), "el gratis trae el cierre de data/daily-forecasts.json");
   assert.ok(html.includes(fmt3(pen.manana.p10)) && html.includes(fmt3(pen.manana.p90)), "el gratis trae el rango mañana de data/");
 

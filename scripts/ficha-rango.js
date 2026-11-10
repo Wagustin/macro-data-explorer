@@ -94,7 +94,11 @@ function rangoTexto(izq, der, moneda) {
   const b = numero(der);
   if (a === null || b === null) return "";
   const decimales = Math.min(a, b) < 1 ? 4 : 2;
-  return `${esc(moneda)} ${a.toFixed(decimales)} – ${b.toFixed(decimales)}`;
+  const desde = a.toFixed(decimales);
+  const hasta = b.toFixed(decimales);
+  // Acciones que casi no cambian de precio: los dos extremos coinciden y se muestra un solo precio.
+  if (desde === hasta) return `${esc(moneda)} ${desde}`;
+  return `${esc(moneda)} ${desde} – ${hasta}`;
 }
 
 // ---------- filas ----------
@@ -108,6 +112,17 @@ function filaRango(horizonte, h, moneda) {
   const central = rangoTexto(h.p25, h.p75, moneda);
   const amplio = rangoTexto(h.p10, h.p90, moneda);
   if (!central || !amplio) return filaMotivo(horizonte, h, null);
+  // Acción que casi no se mueve: los dos rangos son el mismo precio y basta una línea.
+  if (central === amplio) {
+    return [
+      "    <tr>",
+      `      <th scope="row">${esc(etiquetaFila(horizonte, h.fecha_objetivo, true))}</th>`,
+      "      <td>",
+      `        <p class="rango-linea"><span class="mono">${central}</span><span class="rango-nota">· sin cambio, 8 de cada 10 veces</span></p>`,
+      "      </td>",
+      "    </tr>",
+    ].join("\n");
+  }
   return [
     "    <tr>",
     `      <th scope="row">${esc(etiquetaFila(horizonte, h.fecha_objetivo, true))}</th>`,
@@ -125,14 +140,17 @@ function filaMotivo(horizonte, h, valor) {
   if (motivo === "historia_insuficiente") {
     const desde = valor ? mesYAnio(valor.primera_fecha) : null;
     texto = desde
-      ? `Aún sin rango: cotiza desde ${desde} y la prueba todavía es corta. Se publicará cuando haya al menos 100 semanas de prueba.`
-      : "Aún sin rango: la prueba todavía es corta. Se publicará cuando haya al menos 100 semanas de prueba.";
+      ? `Aún sin rango: cotiza desde ${desde} y la prueba todavía es corta. Se publicará cuando haya al menos 100 días de prueba.`
+      : "Aún sin rango: la prueba todavía es corta. Se publicará cuando haya al menos 100 días de prueba.";
   } else if (motivo === "cobertura_fuera_de_rango") {
     const cobertura = numero(h && h.validacion ? h.validacion.cobertura80 : null);
-    const aciertos = cobertura === null ? 0 : Math.round(cobertura);
+    const aciertos = cobertura === null ? null : Math.round(cobertura);
+    // Si el rango amplio sí pasó (74 a 86), lo que falló fue el rango central: no se cita una cifra que confunda.
     texto =
-      `Sin rango publicado: en la prueba acertó ${aciertos} de cada 100 veces y exigimos entre 74 y 86, ` +
-      "así que preferimos no mostrarlo.";
+      aciertos === null || (aciertos >= 74 && aciertos <= 86)
+        ? "Sin rango publicado: en la prueba no fue lo bastante confiable, así que preferimos no mostrarlo."
+        : `Sin rango publicado: en la prueba acertó ${aciertos} de cada 100 veces y exigimos entre 74 y 86, ` +
+          "así que preferimos no mostrarlo.";
   }
   return [
     "    <tr>",

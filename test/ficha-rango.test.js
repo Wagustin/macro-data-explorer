@@ -80,7 +80,7 @@ test("bloqueRango: historia insuficiente explica que la prueba es corta", () => 
   });
   const html = bloqueRango(conFecha, { moneda: "S/", hoy: HOY, ultimoDia: ULTIMO_DIA });
   assert.ok(html.includes("Aún sin rango: cotiza desde marzo de 2024 y la prueba todavía es corta."));
-  assert.ok(html.includes("Se publicará cuando haya al menos 100 semanas de prueba."));
+  assert.ok(html.includes("Se publicará cuando haya al menos 100 días de prueba."));
 
   const sinFecha = valor({
     semana: horizonte({ publicable: false, motivo: "historia_insuficiente" }),
@@ -92,11 +92,11 @@ test("bloqueRango: historia insuficiente explica que la prueba es corta", () => 
 
 test("bloqueRango: cobertura fuera de rango muestra los aciertos", () => {
   const v = valor({
-    semana: horizonte({ publicable: false, motivo: "cobertura_fuera_de_rango" }),
+    semana: horizonte({ publicable: false, motivo: "cobertura_fuera_de_rango", validacion: { cortes: 439, cobertura80: 72.67 } }),
     mes: horizonte({ publicable: false, motivo: "cobertura_fuera_de_rango", validacion: { cortes: 423, cobertura80: 68.79 } }),
   });
   const html = bloqueRango(v, { moneda: "S/", hoy: HOY, ultimoDia: ULTIMO_DIA });
-  assert.ok(html.includes("Sin rango publicado: en la prueba acertó 82 de cada 100 veces y exigimos entre 74 y 86, así que preferimos no mostrarlo."));
+  assert.ok(html.includes("Sin rango publicado: en la prueba acertó 73 de cada 100 veces y exigimos entre 74 y 86, así que preferimos no mostrarlo."));
   assert.ok(html.includes("acertó 69 de cada 100 veces"));
   assert.ok(!html.includes("rango amplio de la semana contuvo"), "sin rango publicable no hay pie de cobertura");
   assert.ok(html.includes("Es un rango estadístico, no una recomendación de compra o venta."));
@@ -160,4 +160,26 @@ test("bloqueRango: precios con dos decimales si son 1 o más y cuatro si son men
   assert.ok(html.includes('<span class="mono">S/ 0.3394 – 0.3500</span>'));
   assert.ok(html.includes('<span class="mono">S/ 0.3278 – 0.3684</span>'));
   assert.ok(html.includes('<span class="mono">S/ 13.13 – 13.81</span>'));
+});
+
+test("bloqueRango: si el rango amplio pasó y falló el central, no cita una cifra que confunda", () => {
+  const v = valor({
+    semana: horizonte({ publicable: false, motivo: "cobertura_fuera_de_rango", validacion: { cortes: 238, cobertura80: 79.4, cobertura50: 34.1 } }),
+  });
+  const html = bloqueRango(v, { moneda: "S/", hoy: HOY, ultimoDia: ULTIMO_DIA });
+  assert.ok(html.includes("Sin rango publicado: en la prueba no fue lo bastante confiable, así que preferimos no mostrarlo."));
+  assert.ok(!html.includes("acertó 79 de cada 100"));
+});
+
+test("bloqueRango: cuando los dos extremos coinciden muestra un solo precio", () => {
+  const v = valor({
+    semana: horizonte({ p10: 2.2, p25: 2.3, p50: 2.3, p75: 2.3, p90: 2.38 }),
+    mes: horizonte({ p10: 2.35, p25: 2.35, p50: 2.35, p75: 2.35, p90: 2.35 }),
+  });
+  const html = bloqueRango(v, { moneda: "S/", hoy: HOY, ultimoDia: ULTIMO_DIA });
+  assert.ok(html.includes('<span class="mono">S/ 2.30</span><span class="rango-nota">· la mitad de las veces</span>'));
+  assert.ok(html.includes('<span class="mono">S/ 2.20 – 2.38</span>'));
+  assert.ok(html.includes('<span class="mono">S/ 2.35</span><span class="rango-nota">· sin cambio, 8 de cada 10 veces</span>'));
+  assert.equal(html.split('<span class="mono">S/ 2.35</span>').length, 2, "una sola línea cuando los dos rangos coinciden");
+  assert.ok(!html.includes("2.30 – 2.30") && !html.includes("2.35 – 2.35"));
 });
