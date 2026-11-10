@@ -634,9 +634,9 @@ let htmlGenerado = `<!DOCTYPE html>
     ${textoExplicativo}
 
     <section id="historial" class="mt-12 space-y-4 border-t border-rule pt-8" aria-label="Historial de aciertos">
-      <h2 class="pd-section-title">Historial público de aciertos del dólar</h2>
+      <h2 class="pd-section-title">Historial público: cuántas veces acertó el rango</h2>
       <p class="pd-page-lede">
-        Cada día publicamos el rango para mañana, la próxima semana y el próximo mes. Aquí se muestra, sin filtros, cuántos de esos rangos contuvieron el cierre real del BCRP. El rango promete 80 % de cobertura; la tabla dice cuánto cumple de verdad.
+        Cada día publicamos un rango para el siguiente cierre del dólar y otro para la semana. Aquí está cada uno comparado con el cierre oficial del BCRP, incluidos los que fallaron.
       </p>
       ${aciertos ? renderHistorial(aciertos) : '<p class="text-ink-soft text-sm">Historial no disponible.</p>'}
     </section>

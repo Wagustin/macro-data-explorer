@@ -3,8 +3,46 @@
 // Input: aciertos object from data/official/aciertos-dolar.json
 // Output: HTML string for the historial section
 
-import { fileURLToPath } from "url";
-import path from "path";
+/**
+ * Formats a date as "6 nov" (day + short month name in Spanish).
+ * @param {string} iso - Date in ISO format (YYYY-MM-DD)
+ * @returns {string} Short date like "6 nov"
+ */
+function fechaCorta(iso) {
+  if (!iso || typeof iso !== 'string') return 's/d';
+  const partes = iso.split('-');
+  const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  if (partes.length === 3) return `${Number(partes[2])} ${meses[Number(partes[1]) - 1]}`;
+  return iso;
+}
+
+/**
+ * Formats a number with manual thin space for thousands (e.g., "1 958").
+ * @param {number} n - Number to format
+ * @returns {string} Formatted number
+ */
+function milesConEspacio(n) {
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
+/**
+ * Formats a price with 3 decimals and dot (e.g., "3.435").
+ * @param {number} n - Price
+ * @returns {string} Formatted price
+ */
+function precio3(n) {
+  return Number(n.toFixed(3));
+}
+
+/**
+ * Formats a percentage with dot and no space, preserving trailing zeros (e.g., "80.59%", "80.00%").
+ * @param {number} n - Percentage value
+ * @param {number} decimals - Number of decimals (default 2)
+ * @returns {string} Formatted percentage
+ */
+function pctStr(n, decimals = 2) {
+  return `${n.toFixed(decimals)}%`;
+}
 
 /**
  * Renders the historial section as static HTML.
@@ -17,86 +55,121 @@ export function renderHistorial(aciertos) {
   }
 
   const { horizontes, prueba_historica, backtest_motor, actualizado } = aciertos;
+  const manana = horizontes.manana || { n: 0, dentro: 0, cobertura: null, casos: [] };
+  const semana = horizontes.semana || { n: 0, dentro: 0, cobertura: null, casos: [] };
 
-  // Labels for display
-  const tipoLabels = {
-    manana: "Mañana (h2: 2 días hábiles)",
-    semana: "Próxima semana (h6: 6 días hábiles)",
-  };
-
-  const tipoOrder = ["manana", "semana"];
+  // Fecha de actualización para el pie
+  const actualizadoFecha = actualizado ? new Date(actualizado + 'T00:00:00') : new Date();
+  const actualizadoCorta = fechaCorta(actualizado);
+  const actualizadoAnio = actualizadoFecha.getFullYear();
 
   let html = '<div class="space-y-8">';
 
-  // Part (a): Pronósticos publicados
+  // Part (a): Rangos publicados
   html += '<div class="space-y-6">';
-  html += '<h3 class="text-lg font-semibold text-ink">Pronósticos publicados</h3>';
+  html += '<h3 class="text-lg font-semibold text-ink">Rangos publicados desde el 3 de noviembre de 2026</h3>';
 
-  for (const tipo of tipoOrder) {
-    const h = horizontes[tipo];
-    if (!h) continue;
+  // --- Rango para el día siguiente ---
+  html += '<div class="space-y-3">';
+  html += '<h4 class="text-base font-medium text-ink">Rango para el día siguiente</h4>';
 
-    html += '<div class="space-y-3">';
-    html += `<h4 class="text-base font-medium text-ink">${tipoLabels[tipo]}</h4>`;
-
-    if (h.n === 0) {
-      html += '<p class="text-ink-soft text-sm">Todavía no hay casos evaluados para este horizonte.</p>';
-    } else if (h.n < 20) {
-      html += `<p class="text-ink-soft text-sm">Todavía hay pocos casos (${h.n}); el porcentaje se mostrará a partir de 20.</p>`;
-    } else {
-      html += '<p class="text-ink-soft text-sm">';
-      html += `${h.dentro} de ${h.n} cierres cayeron dentro del rango (${h.cobertura.toFixed(1)} %); el rango promete 80 %.`;
-      html += '</p>';
-    }
-
-    if (h.casos && h.casos.length > 0) {
-      const showCount = Math.min(20, h.casos.length);
-      html += '<div class="overflow-x-auto">';
-      html += '<table class="w-full text-left text-sm border border-rule">';
-      html += '<thead class="bg-paper border-b border-rule font-mono text-xs text-ink uppercase">';
-      html += '<tr>';
-      html += '<th class="py-2.5 px-4 font-semibold">Fecha publicación</th>';
-      html += '<th class="py-2.5 px-4 font-semibold">Fecha base</th>';
-      html += '<th class="py-2.5 px-4 font-semibold">Fecha objetivo</th>';
-      html += '<th class="py-2.5 px-4 font-semibold">P10</th>';
-      html += '<th class="py-2.5 px-4 font-semibold">P50</th>';
-      html += '<th class="py-2.5 px-4 font-semibold">P90</th>';
-      html += '<th class="py-2.5 px-4 font-semibold">Cierre real</th>';
-      html += '<th class="py-2.5 px-4 font-semibold">Resultado</th>';
-      html += '</tr>';
-      html += '</thead>';
-      html += '<tbody class="divide-y divide-rule font-mono tnum text-ink">';
-      for (let i = 0; i < showCount; i++) {
-        const c = h.casos[i];
-        html += '<tr>';
-        html += `<td class="py-2.5 px-4 font-sans">${c.fecha_publicacion}</td>`;
-        html += `<td class="py-2.5 px-4 font-sans">${c.fecha_base}</td>`;
-        html += `<td class="py-2.5 px-4 font-sans">${c.fecha_objetivo}</td>`;
-        html += `<td class="py-2.5 px-4">S/ ${c.p10.toFixed(4)}</td>`;
-        html += `<td class="py-2.5 px-4">S/ ${c.p50.toFixed(4)}</td>`;
-        html += `<td class="py-2.5 px-4">S/ ${c.p90.toFixed(4)}</td>`;
-        html += `<td class="py-2.5 px-4">S/ ${c.cierre.toFixed(4)}</td>`;
-        html += `<td class="py-2.5 px-4 font-sans">${c.dentro ? "dentro" : "fuera"}</td>`;
-        html += '</tr>';
-      }
-      html += '</tbody>';
-      html += '</table>';
-      html += '</div>';
-      if (h.casos.length > showCount) {
-        html += `<p class="text-ink-soft text-xs mt-1">Mostrando los ${showCount} más recientes de ${h.casos.length} casos.</p>`;
-      }
-    }
-    html += '</div>';
+  if (manana.n === 0) {
+    html += '<p class="text-ink-soft text-sm">Aún no ha vencido ningún rango diario.</p>';
+  } else if (manana.n < 20) {
+    html += `<p class="text-ink-soft text-sm">${manana.dentro} de ${manana.n} cierres cayeron dentro del rango publicado. Todavía hay pocos casos (${manana.n}); el porcentaje se mostrará a partir de 20.</p>`;
+  } else {
+    html += `<p class="text-ink-soft text-sm">${manana.dentro} de ${manana.n} cierres cayeron dentro del rango publicado (${pctStr(manana.cobertura)}). El rango promete 8 de cada 10.</p>`;
   }
+
+  if (manana.casos && manana.casos.length > 0) {
+    const showCount = Math.min(20, manana.casos.length);
+    html += '<div class="overflow-x-auto">';
+    html += '<table class="w-full text-left text-sm border border-rule">';
+    html += '<thead class="bg-paper border-b border-rule font-mono text-xs text-ink uppercase">';
+    html += '<tr>';
+    html += '<th class="py-2 px-2 font-semibold">Cierre del</th>';
+    html += '<th class="py-2 px-2 font-semibold">Rango publicado</th>';
+    html += '<th class="py-2 px-2 font-semibold">Cierre real</th>';
+    html += '<th class="py-2 px-2 font-semibold">Resultado</th>';
+    html += '</tr>';
+    html += '</thead>';
+    html += '<tbody class="divide-y divide-rule font-mono tnum text-ink">';
+    for (let i = 0; i < showCount; i++) {
+      const c = manana.casos[i];
+      const p10 = precio3(c.p10);
+      const p90 = precio3(c.p90);
+      const cierre = precio3(c.cierre);
+      html += '<tr>';
+      html += `<td class="py-2 px-2 font-sans">${fechaCorta(c.fecha_objetivo)}</td>`;
+      html += `<td class="py-2 px-2">${p10} – ${p90}</td>`;
+      html += `<td class="py-2 px-2">${cierre}</td>`;
+      html += `<td class="py-2 px-2 font-sans">${c.dentro ? 'dentro' : 'fuera'}</td>`;
+      html += '</tr>';
+    }
+    html += '</tbody>';
+    html += '</table>';
+    html += '</div>';
+    html += '<p class="text-ink-soft text-xs mt-1">en soles por dólar</p>';
+    if (manana.casos.length > showCount) {
+      html += `<p class="text-ink-soft text-xs mt-1">Mostrando los ${showCount} más recientes de ${manana.casos.length} casos.</p>`;
+    }
+  }
+  html += '</div>';
+
+  // --- Rango para la semana ---
+  html += '<div class="space-y-3">';
+  html += '<h4 class="text-base font-medium text-ink">Rango para la semana</h4>';
+
+  if (semana.n === 0) {
+    html += '<p class="text-ink-soft text-sm">Aún no ha vencido ningún rango semanal.</p>';
+  } else if (semana.n < 20) {
+    html += `<p class="text-ink-soft text-sm">${semana.dentro} de ${semana.n} cierres cayeron dentro del rango publicado. Todavía hay pocos casos (${semana.n}); el porcentaje se mostrará a partir de 20.</p>`;
+  } else {
+    html += `<p class="text-ink-soft text-sm">${semana.dentro} de ${semana.n} cierres cayeron dentro del rango publicado (${pctStr(semana.cobertura)}). El rango promete 8 de cada 10.</p>`;
+  }
+
+  if (semana.casos && semana.casos.length > 0) {
+    const showCount = Math.min(20, semana.casos.length);
+    html += '<div class="overflow-x-auto">';
+    html += '<table class="w-full text-left text-sm border border-rule">';
+    html += '<thead class="bg-paper border-b border-rule font-mono text-xs text-ink uppercase">';
+    html += '<tr>';
+    html += '<th class="py-2 px-2 font-semibold">Cierre del</th>';
+    html += '<th class="py-2 px-2 font-semibold">Rango publicado</th>';
+    html += '<th class="py-2 px-2 font-semibold">Cierre real</th>';
+    html += '<th class="py-2 px-2 font-semibold">Resultado</th>';
+    html += '</tr>';
+    html += '</thead>';
+    html += '<tbody class="divide-y divide-rule font-mono tnum text-ink">';
+    for (let i = 0; i < showCount; i++) {
+      const c = semana.casos[i];
+      const p10 = precio3(c.p10);
+      const p90 = precio3(c.p90);
+      const cierre = precio3(c.cierre);
+      html += '<tr>';
+      html += `<td class="py-2 px-2 font-sans">${fechaCorta(c.fecha_objetivo)}</td>`;
+      html += `<td class="py-2 px-2">${p10} – ${p90}</td>`;
+      html += `<td class="py-2 px-2">${cierre}</td>`;
+      html += `<td class="py-2 px-2 font-sans">${c.dentro ? 'dentro' : 'fuera'}</td>`;
+      html += '</tr>';
+    }
+    html += '</tbody>';
+    html += '</table>';
+    html += '</div>';
+    html += '<p class="text-ink-soft text-xs mt-1">en soles por dólar</p>';
+    if (semana.casos.length > showCount) {
+      html += `<p class="text-ink-soft text-xs mt-1">Mostrando los ${showCount} más recientes de ${semana.casos.length} casos.</p>`;
+    }
+  }
+  html += '</div>';
   html += '</div>';
 
   // Part (b): Prueba histórica
   const ph = prueba_historica;
   html += '<div class="space-y-4 border-t border-rule pt-6">';
-  html += '<h3 class="text-lg font-semibold text-ink">Prueba histórica (no son pronósticos publicados)</h3>';
+  html += '<h3 class="text-lg font-semibold text-ink">Prueba histórica (no son rangos publicados)</h3>';
   html += '<p class="text-ink-soft text-sm">';
-  html += `Entre enero de 2019 y noviembre de 2026, recalculando el modelo solo con la historia previa a cada día, el rango de 80 % contuvo el cierre real `;
-  html += `${ph.cobertura_fuera_muestra} % de las veces (${ph.cortes.toLocaleString()} días).`;
+  html += `Entre enero de 2019 y noviembre de 2026, recalculando el modelo solo con la historia anterior a cada día, el rango a un día hábil del último cierre conocido contuvo el cierre real ${pctStr(ph.cobertura_fuera_muestra)} de las veces (${milesConEspacio(ph.cortes)} días).`;
   html += '</p>';
 
   if (ph.por_anio && ph.por_anio.length > 0) {
@@ -104,19 +177,17 @@ export function renderHistorial(aciertos) {
     html += '<table class="w-full text-left text-sm border border-rule">';
     html += '<thead class="bg-paper border-b border-rule font-mono text-xs text-ink uppercase">';
     html += '<tr>';
-    html += '<th class="py-2.5 px-4 font-semibold">Año</th>';
-    html += '<th class="py-2.5 px-4 font-semibold">Días</th>';
-    html += '<th class="py-2.5 px-4 font-semibold">Cobertura 80 %</th>';
-    html += '<th class="py-2.5 px-4 font-semibold">Ancho medio (%)</th>';
+    html += '<th class="py-2 px-2 font-semibold">Año</th>';
+    html += '<th class="py-2 px-2 font-semibold">Días</th>';
+    html += '<th class="py-2 px-2 font-semibold">Dentro del rango</th>';
     html += '</tr>';
     html += '</thead>';
     html += '<tbody class="divide-y divide-rule font-mono tnum text-ink">';
     for (const row of ph.por_anio) {
       html += '<tr>';
-      html += `<td class="py-2.5 px-4 font-sans">${row.anio}</td>`;
-      html += `<td class="py-2.5 px-4">${row.n.toLocaleString()}</td>`;
-      html += `<td class="py-2.5 px-4">${row.cobertura.toFixed(2)} %</td>`;
-      html += `<td class="py-2.5 px-4">${row.ancho_pct.toFixed(3)}</td>`;
+      html += `<td class="py-2 px-2 font-sans">${row.anio}</td>`;
+      html += `<td class="py-2 px-2">${milesConEspacio(row.n)}</td>`;
+      html += `<td class="py-2 px-2">${pctStr(row.cobertura, 2)}</td>`;
       html += '</tr>';
     }
     html += '</tbody>';
@@ -124,29 +195,24 @@ export function renderHistorial(aciertos) {
     html += '</div>';
   }
 
-  // Part (c): Backtest del motor actual
+  // Párrafo final con backtest_motor
   if (backtest_motor && (backtest_motor.manana || backtest_motor.semana)) {
-    html += '<div class="space-y-3 border-t border-rule pt-6">';
-    html += '<h3 class="text-lg font-semibold text-ink">Backtest del motor actual (daily-forecasts.json)</h3>';
+    const mananaBT = backtest_motor.manana;
+    const semanaBT = backtest_motor.semana;
+    const x = mananaBT ? Number(mananaBT.cobertura_80_k_expansivo.toFixed(1)) : 's/d';
+    const n = mananaBT ? milesConEspacio(mananaBT.cortes_evaluados) : 's/d';
+    const y = semanaBT ? Number(semanaBT.cobertura_80_k_expansivo.toFixed(1)) : 's/d';
+    const m = semanaBT ? milesConEspacio(semanaBT.cortes_evaluados) : 's/d';
 
-    if (backtest_motor.manana) {
-      const m = backtest_motor.manana;
-      html += '<p class="text-ink-soft text-sm">';
-      html += `Mañana (h2): cobertura expansiva k = ${m.cobertura_80_k_expansivo.toFixed(2)} % sobre ${m.cortes_evaluados.toLocaleString()} cortes.`;
-      html += '</p>';
-    }
-    if (backtest_motor.semana) {
-      const s = backtest_motor.semana;
-      html += '<p class="text-ink-soft text-sm">';
-      html += `Próxima semana (h6): cobertura expansiva k = ${s.cobertura_80_k_expansivo.toFixed(2)} % sobre ${s.cortes_evaluados.toLocaleString()} cortes.`;
-      html += '</p>';
-    }
-    html += '</div>';
+    html += '<p class="text-ink-soft text-sm mt-4">';
+    html += `El rango que publicamos para el día siguiente suele estar a dos días hábiles del último cierre oficial, porque el BCRP publica con un día de retraso. Para esa distancia la misma prueba, hecha por el propio motor, da ${x}% en ${n} días; para la semana, ${y}% en ${m} días.`;
+    html += '</p>';
   }
 
-  html += '</div>';
+  // Pie
+  html += `<p class="text-ink-soft text-xs mt-4">Actualizado el ${actualizadoCorta} de ${actualizadoAnio}. Cierres oficiales: BCRP.</p>`;
 
-  html += `<p class="text-ink-soft text-xs mt-4">Actualizado: ${actualizado || "—"}. Fuente: BCRP (cierres oficiales) y data/daily-forecasts.json (pronósticos publicados).</p>`;
+  html += '</div>';
 
   return html;
 }

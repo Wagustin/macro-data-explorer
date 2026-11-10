@@ -49,9 +49,9 @@ export function evaluatePublishedForecasts(pronosticos, officialSerie) {
       }
 
       n++;
-      const p10 = Number(p.p10);
+      const p10 = Number(p.p10.toFixed(3));
       const p50 = Number(p.p50);
-      const p90 = Number(p.p90);
+      const p90 = Number(p.p90.toFixed(3));
       const cierreBase = Number(p.cierre_base);
 
       const estaDentro = actualClose >= p10 && actualClose <= p90;

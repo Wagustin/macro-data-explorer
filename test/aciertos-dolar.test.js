@@ -238,6 +238,60 @@ test("evaluatePublishedForecasts includes backtest_motor block", () => {
   // but the structure should exist (may be empty if file not found in test)
 });
 
+test("evaluatePublishedForecasts uses 3-decimal rounding for dentro decision", () => {
+  // Test case from brief: p10 = 3.4142, cierre = 3.414 -> dentro
+  // 3.4142 rounded to 3 decimals = 3.414, so 3.414 >= 3.414 is true
+  const pronosticos = [
+    {
+      tipo: "manana",
+      fecha_publicacion: "2025-01-02",
+      fecha_base: "2025-01-02",
+      cierre_base: 3.70,
+      horizonte_dias_habiles: 2,
+      fecha_objetivo: "2025-01-06",
+      p10: 3.4142,
+      p50: 3.70,
+      p90: 3.75,
+    },
+  ];
+  const officialSerie = [["2025-01-06", 3.414]];
+  const result = evaluatePublishedForecasts(pronosticos, officialSerie);
+  const manana = result.horizontes.manana;
+
+  assert.equal(manana.n, 1);
+  assert.equal(manana.dentro, 1);
+  assert.equal(manana.cobertura, 100.0);
+  assert.equal(manana.casos[0].p10, 3.414);
+  assert.equal(manana.casos[0].p90, 3.75);
+  assert.equal(manana.casos[0].dentro, true);
+});
+
+test("evaluatePublishedForecasts uses 3-decimal rounding for p90 boundary", () => {
+  // p90 = 3.4146 rounded to 3 decimals = 3.415, cierre = 3.415 -> dentro
+  // Need valid range: p10 < p90
+  const pronosticos = [
+    {
+      tipo: "manana",
+      fecha_publicacion: "2025-01-02",
+      fecha_base: "2025-01-02",
+      cierre_base: 3.70,
+      horizonte_dias_habiles: 2,
+      fecha_objetivo: "2025-01-06",
+      p10: 3.414,
+      p50: 3.70,
+      p90: 3.4146,
+    },
+  ];
+  const officialSerie = [["2025-01-06", 3.415]];
+  const result = evaluatePublishedForecasts(pronosticos, officialSerie);
+  const manana = result.horizontes.manana;
+
+  assert.equal(manana.n, 1);
+  assert.equal(manana.dentro, 1);
+  assert.equal(manana.casos[0].p90, 3.415);
+  assert.equal(manana.casos[0].dentro, true);
+});
+
 test("buildPronosticosFromDaily adds new entries from daily-forecasts.json", () => {
   const dailyForecasts = {
     referencia_lima: { hoy: "2025-01-02" },

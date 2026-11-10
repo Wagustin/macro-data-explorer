@@ -10,7 +10,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DAILY_FORECASTS_PATH = path.join(ROOT, "data", "daily-forecasts.json");
 const PRONOSTICOS_PATH = path.join(ROOT, "data", "official", "pronosticos-dolar.json");
 
-const START_DATE = "2026-11-04"; // Start from this date (inclusive)
+const START_DATE = "2026-11-03"; // Start from this date (inclusive)
 
 function getGitLogCommits() {
   try {
