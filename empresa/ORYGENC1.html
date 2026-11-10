@@ -177,6 +177,22 @@
       font-weight: 600;
       margin-bottom: 12px;
     }
+    /* Rango esperado: tabla de dos columnas que se apila en pantallas angostas */
+    .rango-tabla { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .rango-tabla th, .rango-tabla td { padding: 10px 0; border-bottom: 1px solid var(--pd-rule); text-align: left; vertical-align: top; }
+    .rango-tabla th { width: 36%; padding-right: 12px; color: var(--pd-ink-soft); font-weight: 500; }
+    .rango-tabla tr:last-child th, .rango-tabla tr:last-child td { border-bottom: none; }
+    .rango-linea { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; margin: 0 0 4px; }
+    .rango-linea:last-child { margin-bottom: 0; }
+    .rango-nota { color: var(--pd-ink-soft); font-size: 12px; }
+    .rango-motivo { margin: 0; color: var(--pd-ink-soft); line-height: 1.5; }
+    .rango-pie { margin: 14px 0 0; font-size: 12px; color: var(--pd-ink-soft); line-height: 1.5; }
+    .rango-tabla .mono, .rango-pie .mono { font-variant-numeric: tabular-nums; }
+    @media (max-width: 520px) {
+      .rango-tabla, .rango-tabla tbody, .rango-tabla tr, .rango-tabla th, .rango-tabla td { display: block; width: auto; }
+      .rango-tabla th { padding: 12px 0 2px; border-bottom: none; }
+      .rango-tabla td { padding: 0 0 12px; }
+    }
     .link-smv {
       display: inline-block;
       font-size: 12px;
@@ -422,7 +438,7 @@ html.dark .ui-switch {
             <span class="price-main" id="priceMain">S/ 2.35</span>
             <span class="price-var none" id="priceVar"><span class="pd-skeleton" style="width: 50px; height: 18px; display: inline-block;"></span></span>
           </div>
-          <p class="price-date" id="priceDate">Cierre del 6 de noviembre de 2026</p>
+          <p class="price-date" id="priceDate">Cierre del 9 de noviembre de 2026</p>
 
           <!-- Secondary price row when an issuer has multiple share classes -->
           <div id="price2ndBlock" class="hidden price-2nd">
@@ -447,7 +463,23 @@ html.dark .ui-switch {
           </div>
         </div>
 
-        <div class="section" id="issuerStatusSection" aria-live="polite"><p class="issuer-status" id="issuerStatusText">Cotiza poco · último cierre S/ 2.35 (6 de noviembre de 2026)</p></div>
+        <div class="section" id="issuerStatusSection" aria-live="polite"><p class="issuer-status" id="issuerStatusText">Cotiza poco · último cierre S/ 2.35 (9 de noviembre de 2026)</p></div>
+
+        <!-- Rango esperado de PerData Engine (se rellena al compilar la ficha) -->
+        <div class="section" id="rangoSection"><h2 class="section-title">Rango esperado de PerData Engine</h2>
+<table class="rango-tabla">
+  <tbody>
+    <tr>
+      <th scope="row">Esta semana</th>
+      <td><p class="rango-motivo">Aún sin rango: la prueba todavía es corta. Se publicará cuando haya al menos 100 días de prueba.</p></td>
+    </tr>
+    <tr>
+      <th scope="row">Este mes</th>
+      <td><p class="rango-motivo">Aún sin rango: la prueba todavía es corta. Se publicará cuando haya al menos 100 días de prueba.</p></td>
+    </tr>
+  </tbody>
+</table>
+<p class="rango-pie">Es un rango estadístico, no una recomendación de compra o venta.</p></div>
 
         <!-- 90-Day Chart Section -->
         <div class="chart-section" id="chartSection">
@@ -539,7 +571,7 @@ html.dark .ui-switch {
             <p class="mb-3">En el ámbito de renta variable, el emisor tiene inscritos en la BVL los siguientes instrumentos: ORYGENC1 (S/, segmento RV1, valor principal de seguimiento). El capital social negociable en rueda de bolsa está centralizado en el nemónico ORYGENC1, a través del cual los inversionistas institucionales y particulares ejecutan sus posturas de compra y venta en moneda S/.</p>
             <p class="mb-3">En cuanto a su estructura de control societario, el registro de la SMV identifica a los siguientes accionistas con participaciones superiores al 4% del capital social: NIAGARA ENERGY S.A.C. (de PERU, con 92.35% de participación, declarada desde 2024-05-09). En conjunto, estos accionistas representativos acumulan el 92.35% del capital con derecho a voto reportado en la plataforma de datos abiertos de la Superintendencia del Mercado de Valores (SMV), bajo licencia ODC-BY.</p>
             <p class="mb-3">Durante el ciclo de seguimiento reciente no se han registrado nuevos hechos de importancia específicos para los nemónicos de esta firma en el registro automatizado de la SMV, manteniéndose vigentes las comunicaciones institucionales ordinarias y estados financieros depositados formalmente ante el regulador bursátil.</p>
-            <p class="mb-3">En los últimos 12 meses, la acción ORYGENC1 computó un total de 226 operaciones en rueda de bolsa, marcando su último cierre oficial de negociación en S/ 2.35 con fecha 2026-11-06.</p>
+            <p class="mb-3">En los últimos 12 meses, la acción ORYGENC1 computó un total de 227 operaciones en rueda de bolsa, marcando su último cierre oficial de negociación en S/ 2.35 con fecha 2026-11-09.</p>
             <p class="mb-3">Actualmente esta empresa no dispone de estimación de proyección algorítmica en PerData Engine debido a que no cumple con el umbral mínimo de liquidez continua e historial diario ininterrumpido requerido para calibrar los modelos predictivos del sistema.</p></div>
         </div>
 
