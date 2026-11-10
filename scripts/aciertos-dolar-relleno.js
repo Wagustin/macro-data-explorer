@@ -12,8 +12,6 @@ const PRONOSTICOS_PATH = path.join(ROOT, "data", "official", "pronosticos-dolar.
 
 const START_DATE = "2026-11-04"; // Start from this date (inclusive)
 
-const HORIZONS_OF_INTEREST = ["h1", "h5", "h6", "h8"];
-
 function getGitLogCommits() {
   try {
     const output = execSync("git log --format=%H -- data/daily-forecasts.json", {
@@ -44,24 +42,41 @@ function extractPronosticosFromDaily(dailyForecasts) {
   const pen = dailyForecasts?.simbolos?.PEN;
   if (!pen) return [];
 
+  const fechaPublicacion = dailyForecasts.referencia_lima?.hoy;
   const fechaBase = pen.fecha_ultimo_cierre;
   const cierreBase = pen.ultimo_cierre;
-  const pronosticos = pen.pronosticos;
 
   const entries = [];
 
-  for (const key of HORIZONS_OF_INTEREST) {
-    const value = pronosticos[key];
-    if (!value) continue;
-
+  // Process "manana" block
+  if (pen.manana) {
+    const m = pen.manana;
     entries.push({
+      tipo: "manana",
+      fecha_publicacion: fechaPublicacion,
       fecha_base: fechaBase,
-      horizonte: key,
-      fecha_objetivo: value.fecha_objetivo,
       cierre_base: Number(cierreBase.toFixed(4)),
-      p10: Number(value.p10.toFixed(4)),
-      p50: Number(value.p50.toFixed(4)),
-      p90: Number(value.p90.toFixed(4)),
+      horizonte_dias_habiles: m.horizonte_dias_habiles,
+      fecha_objetivo: m.fecha_objetivo,
+      p10: Number(m.p10.toFixed(4)),
+      p50: Number(m.p50.toFixed(4)),
+      p90: Number(m.p90.toFixed(4)),
+    });
+  }
+
+  // Process "semana" block
+  if (pen.semana) {
+    const s = pen.semana;
+    entries.push({
+      tipo: "semana",
+      fecha_publicacion: fechaPublicacion,
+      fecha_base: fechaBase,
+      cierre_base: Number(cierreBase.toFixed(4)),
+      horizonte_dias_habiles: s.horizonte_dias_habiles,
+      fecha_objetivo: s.fecha_objetivo,
+      p10: Number(s.p10.toFixed(4)),
+      p50: Number(s.p50.toFixed(4)),
+      p90: Number(s.p90.toFixed(4)),
     });
   }
 
@@ -85,23 +100,23 @@ function main() {
 
     const entries = extractPronosticosFromDaily(daily);
     for (const entry of entries) {
-      const key = `${entry.fecha_base}|${entry.horizonte}`;
+      const key = `${entry.tipo}|${entry.fecha_objetivo}`;
       if (seenKeys.has(key)) continue;
 
-      // Only include from START_DATE onwards
-      if (entry.fecha_base < START_DATE) continue;
+      // Only include from START_DATE onwards (compare fecha_publicacion)
+      if (entry.fecha_publicacion < START_DATE) continue;
 
       seenKeys.add(key);
       allPronosticos.push(entry);
     }
   }
 
-  // Sort by fecha_base then horizonte
-  const horizonOrder = { h1: 1, h5: 2, h6: 3, h8: 4 };
+  // Sort by fecha_publicacion then tipo (manana before semana)
+  const tipoOrder = { manana: 1, semana: 2 };
   allPronosticos.sort((a, b) => {
-    const dateCmp = a.fecha_base.localeCompare(b.fecha_base);
+    const dateCmp = a.fecha_publicacion.localeCompare(b.fecha_publicacion);
     if (dateCmp !== 0) return dateCmp;
-    return (horizonOrder[a.horizonte] || 99) - (horizonOrder[b.horizonte] || 99);
+    return (tipoOrder[a.tipo] || 99) - (tipoOrder[b.tipo] || 99);
   });
 
   console.log(`Total entradas únicas desde ${START_DATE}: ${allPronosticos.length}`);

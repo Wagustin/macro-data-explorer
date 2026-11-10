@@ -34,179 +34,141 @@ const MOCK_OFFICIAL_SERIE = [
 ];
 
 const MOCK_PRONOSTICOS = [
-  // h1: 2025-01-02 -> target 2025-01-03 (close 3.71), range [3.68, 3.72] -> dentro
+  // manana: 2025-01-02 -> target 2025-01-06 (close 3.72), range [3.68, 3.75] -> dentro
   {
+    tipo: "manana",
+    fecha_publicacion: "2025-01-02",
     fecha_base: "2025-01-02",
-    horizonte: "h1",
-    fecha_objetivo: "2025-01-03",
     cierre_base: 3.70,
-    p10: 3.68,
-    p50: 3.70,
-    p90: 3.72,
-  },
-  // h1: 2025-01-03 -> target 2025-01-06 (close 3.72), range [3.69, 3.73] -> dentro
-  {
-    fecha_base: "2025-01-03",
-    horizonte: "h1",
+    horizonte_dias_habiles: 2,
     fecha_objetivo: "2025-01-06",
-    cierre_base: 3.71,
-    p10: 3.69,
-    p50: 3.71,
-    p90: 3.73,
-  },
-  // h1: 2025-01-06 -> target 2025-01-07 (close 3.73), range [3.70, 3.74] -> dentro
-  {
-    fecha_base: "2025-01-06",
-    horizonte: "h1",
-    fecha_objetivo: "2025-01-07",
-    cierre_base: 3.72,
-    p10: 3.70,
-    p50: 3.72,
-    p90: 3.74,
-  },
-  // h5: 2025-01-02 -> target 2025-01-09 (close 3.75), range [3.65, 3.75] -> dentro (boundary)
-  {
-    fecha_base: "2025-01-02",
-    horizonte: "h5",
-    fecha_objetivo: "2025-01-09",
-    cierre_base: 3.70,
-    p10: 3.65,
+    p10: 3.68,
     p50: 3.70,
     p90: 3.75,
   },
-  // h5: 2025-01-03 -> target 2025-01-10 (close 3.76), range [3.66, 3.76] -> dentro
+  // manana: 2025-01-03 -> target 2025-01-07 (close 3.73), range [3.69, 3.76] -> dentro
   {
+    tipo: "manana",
+    fecha_publicacion: "2025-01-03",
     fecha_base: "2025-01-03",
-    horizonte: "h5",
-    fecha_objetivo: "2025-01-10",
     cierre_base: 3.71,
-    p10: 3.66,
+    horizonte_dias_habiles: 2,
+    fecha_objetivo: "2025-01-07",
+    p10: 3.69,
     p50: 3.71,
     p90: 3.76,
   },
-  // h6: 2025-01-02 -> target 2025-01-13 (close 3.77), range [3.50, 3.90] -> dentro
+  // manana: 2025-01-06 -> target 2025-01-08 (close 3.74), range [3.70, 3.77] -> dentro
   {
-    fecha_base: "2025-01-02",
-    horizonte: "h6",
-    fecha_objetivo: "2025-01-13",
-    cierre_base: 3.70,
-    p10: 3.50,
-    p50: 3.70,
-    p90: 3.90,
+    tipo: "manana",
+    fecha_publicacion: "2025-01-06",
+    fecha_base: "2025-01-06",
+    cierre_base: 3.72,
+    horizonte_dias_habiles: 2,
+    fecha_objetivo: "2025-01-08",
+    p10: 3.70,
+    p50: 3.72,
+    p90: 3.77,
   },
-  // h8: 2025-01-02 -> target 2025-01-15 (close 3.79), range [3.50, 3.90] -> dentro
+  // semana: 2025-01-02 -> target 2025-01-13 (close 3.77), range [3.65, 3.80] -> dentro
   {
+    tipo: "semana",
+    fecha_publicacion: "2025-01-02",
     fecha_base: "2025-01-02",
-    horizonte: "h8",
-    fecha_objetivo: "2025-01-15",
     cierre_base: 3.70,
-    p10: 3.50,
+    horizonte_dias_habiles: 6,
+    fecha_objetivo: "2025-01-13",
+    p10: 3.65,
     p50: 3.70,
-    p90: 3.90,
+    p90: 3.80,
+  },
+  // semana: 2025-01-03 -> target 2025-01-14 (close 3.78), range [3.66, 3.81] -> dentro
+  {
+    tipo: "semana",
+    fecha_publicacion: "2025-01-03",
+    fecha_base: "2025-01-03",
+    cierre_base: 3.71,
+    horizonte_dias_habiles: 6,
+    fecha_objetivo: "2025-01-14",
+    p10: 3.66,
+    p50: 3.71,
+    p90: 3.81,
   },
   // Missing actual close (target date not in official serie) - should be skipped
   {
+    tipo: "manana",
+    fecha_publicacion: "2025-02-07",
     fecha_base: "2025-02-07",
-    horizonte: "h1",
-    fecha_objetivo: "2025-02-10",
     cierre_base: 3.96,
+    horizonte_dias_habiles: 2,
+    fecha_objetivo: "2025-02-10",
     p10: 3.94,
     p50: 3.96,
     p90: 3.98,
   },
 ];
 
-test("evaluatePublishedForecasts returns correct structure with all four horizons", () => {
+test("evaluatePublishedForecasts returns correct structure with both types", () => {
   const result = evaluatePublishedForecasts(MOCK_PRONOSTICOS, MOCK_OFFICIAL_SERIE);
 
   assert.ok(result.actualizado);
   assert.ok(result.horizontes);
-  assert.ok(result.horizontes.h1);
-  assert.ok(result.horizontes.h5);
-  assert.ok(result.horizontes.h6);
-  assert.ok(result.horizontes.h8);
+  assert.ok(result.horizontes.manana);
+  assert.ok(result.horizontes.semana);
   assert.ok(result.prueba_historica);
+  assert.ok(result.backtest_motor);
 });
 
-test("evaluatePublishedForecasts computes h1 horizon correctly", () => {
+test("evaluatePublishedForecasts computes manana type correctly", () => {
   const result = evaluatePublishedForecasts(MOCK_PRONOSTICOS, MOCK_OFFICIAL_SERIE);
-  const h1 = result.horizontes.h1;
+  const manana = result.horizontes.manana;
 
-  // 3 valid forecasts for h1 horizon
-  assert.equal(h1.n, 3);
+  // 3 valid forecasts for manana type
+  assert.equal(manana.n, 3);
   // All 3 should be within range
-  assert.equal(h1.dentro, 3);
-  assert.equal(h1.cobertura, 100.0);
-  // error_medio_centro = average of |actual - p50| = 0.01 each
-  assert.equal(h1.error_medio_centro, 0.01);
-  // error_medio_paseo_aleatorio = average of |actual - cierre_base| = 0.01 each
-  assert.equal(h1.error_medio_paseo_aleatorio, 0.01);
-  // desde should be earliest fecha_base
-  assert.equal(h1.desde, "2025-01-02");
+  assert.equal(manana.dentro, 3);
+  assert.equal(manana.cobertura, 100.0);
+  // error_medio_centro = average of |actual - p50| = 0.02 each
+  assert.equal(manana.error_medio_centro, 0.02);
+  // error_medio_paseo_aleatorio = average of |actual - cierre_base| = 0.02 each
+  assert.equal(manana.error_medio_paseo_aleatorio, 0.02);
+  // desde should be earliest fecha_publicacion
+  assert.equal(manana.desde, "2025-01-02");
   // 3 cases, all included
-  assert.equal(h1.casos.length, 3);
+  assert.equal(manana.casos.length, 3);
 });
 
-test("evaluatePublishedForecasts computes h5 horizon correctly", () => {
+test("evaluatePublishedForecasts computes semana type correctly", () => {
   const result = evaluatePublishedForecasts(MOCK_PRONOSTICOS, MOCK_OFFICIAL_SERIE);
-  const h5 = result.horizontes.h5;
+  const semana = result.horizontes.semana;
 
-  // 2 valid forecasts for h5 horizon
-  assert.equal(h5.n, 2);
-  // Case 1: target 2025-01-09 close 3.75, range [3.65, 3.75] -> dentro (boundary counts)
-  // Case 2: target 2025-01-10 close 3.76, range [3.66, 3.76] -> dentro
-  assert.equal(h5.dentro, 2);
-  assert.equal(h5.cobertura, 100.0);
-  // Case 1: |3.75 - 3.70| = 0.05
-  // Case 2: |3.76 - 3.71| = 0.05
-  assert.equal(h5.error_medio_centro, 0.05);
-  assert.equal(h5.error_medio_paseo_aleatorio, 0.05);
-  assert.equal(h5.desde, "2025-01-02");
-  assert.equal(h5.casos.length, 2);
-});
-
-test("evaluatePublishedForecasts computes h6 horizon correctly", () => {
-  const result = evaluatePublishedForecasts(MOCK_PRONOSTICOS, MOCK_OFFICIAL_SERIE);
-  const h6 = result.horizontes.h6;
-
-  // 1 valid forecast for h6 horizon
-  assert.equal(h6.n, 1);
-  assert.equal(h6.dentro, 1);
-  assert.equal(h6.cobertura, 100.0);
-  // |3.77 - 3.70| = 0.07
-  assert.equal(h6.error_medio_centro, 0.07);
-  assert.equal(h6.error_medio_paseo_aleatorio, 0.07);
-  assert.equal(h6.desde, "2025-01-02");
-  assert.equal(h6.casos.length, 1);
-});
-
-test("evaluatePublishedForecasts computes h8 horizon correctly", () => {
-  const result = evaluatePublishedForecasts(MOCK_PRONOSTICOS, MOCK_OFFICIAL_SERIE);
-  const h8 = result.horizontes.h8;
-
-  // 1 valid forecast for h8 horizon
-  assert.equal(h8.n, 1);
-  assert.equal(h8.dentro, 1);
-  assert.equal(h8.cobertura, 100.0);
-  // |3.79 - 3.70| = 0.09
-  assert.equal(h8.error_medio_centro, 0.09);
-  assert.equal(h8.error_medio_paseo_aleatorio, 0.09);
-  assert.equal(h8.desde, "2025-01-02");
-  assert.equal(h8.casos.length, 1);
+  // 2 valid forecasts for semana type
+  assert.equal(semana.n, 2);
+  // Case 1: target 2025-01-13 close 3.77, range [3.65, 3.80] -> dentro
+  // Case 2: target 2025-01-14 close 3.78, range [3.66, 3.81] -> dentro
+  assert.equal(semana.dentro, 2);
+  assert.equal(semana.cobertura, 100.0);
+  // Case 1: |3.77 - 3.70| = 0.07
+  // Case 2: |3.78 - 3.71| = 0.07
+  assert.equal(semana.error_medio_centro, 0.07);
+  assert.equal(semana.error_medio_paseo_aleatorio, 0.07);
+  assert.equal(semana.desde, "2025-01-02");
+  assert.equal(semana.casos.length, 2);
 });
 
 test("evaluatePublishedForecasts skips forecasts with missing actual close", () => {
   const result = evaluatePublishedForecasts(MOCK_PRONOSTICOS, MOCK_OFFICIAL_SERIE);
-  // The forecast with fecha_base 2025-02-07 has target beyond our mock data
+  // The forecast with fecha_publicacion 2025-02-07 has target beyond our mock data
   // It should be skipped, not counted
-  assert.equal(result.horizontes.h1.n, 3); // Not 4
+  assert.equal(result.horizontes.manana.n, 3); // Not 4
 });
 
 test("evaluatePublishedForecasts returns null stats when no valid forecasts", () => {
   const emptyPronosticos = [];
   const result = evaluatePublishedForecasts(emptyPronosticos, MOCK_OFFICIAL_SERIE);
 
-  for (const horizon of Object.values(result.horizontes)) {
+  for (const tipo of ["manana", "semana"]) {
+    const horizon = result.horizontes[tipo];
     assert.equal(horizon.n, 0);
     assert.equal(horizon.dentro, 0);
     assert.equal(horizon.cobertura, null);
@@ -217,41 +179,43 @@ test("evaluatePublishedForecasts returns null stats when no valid forecasts", ()
   }
 });
 
-test("evaluatePublishedForecasts sorts cases by fecha_emision descending (most recent first)", () => {
+test("evaluatePublishedForecasts sorts cases by fecha_publicacion descending (most recent first)", () => {
   const result = evaluatePublishedForecasts(MOCK_PRONOSTICOS, MOCK_OFFICIAL_SERIE);
-  const h1Cases = result.horizontes.h1.casos;
+  const mananaCases = result.horizontes.manana.casos;
 
   // Should be sorted newest first
-  assert.equal(h1Cases[0].fecha_emision, "2025-01-06");
-  assert.equal(h1Cases[1].fecha_emision, "2025-01-03");
-  assert.equal(h1Cases[2].fecha_emision, "2025-01-02");
+  assert.equal(mananaCases[0].fecha_publicacion, "2025-01-06");
+  assert.equal(mananaCases[1].fecha_publicacion, "2025-01-03");
+  assert.equal(mananaCases[2].fecha_publicacion, "2025-01-02");
 });
 
 test("evaluatePublishedForecasts limits cases to 60 most recent", () => {
-  // Create 65 forecasts for h1 horizon
+  // Create 65 forecasts for manana type
   const manyPronosticos = [];
   for (let i = 0; i < 65; i++) {
     const runDate = `2025-01-${String(i + 2).padStart(2, "0")}`;
     // Only add if target date exists in mock data (up to 2025-02-07)
     if (i < 30) {
       manyPronosticos.push({
+        tipo: "manana",
+        fecha_publicacion: runDate,
         fecha_base: runDate,
-        horizonte: "h1",
-        fecha_objetivo: `2025-01-${String(i + 3).padStart(2, "0")}`,
         cierre_base: 3.70 + i * 0.01,
+        horizonte_dias_habiles: 2,
+        fecha_objetivo: `2025-01-${String(i + 4).padStart(2, "0")}`,
         p10: 3.68 + i * 0.01,
         p50: 3.70 + i * 0.01,
-        p90: 3.72 + i * 0.01,
+        p90: 3.75 + i * 0.01,
       });
     }
   }
 
   const result = evaluatePublishedForecasts(manyPronosticos, MOCK_OFFICIAL_SERIE);
   // Should have at most 60 cases
-  assert.ok(result.horizontes.h1.casos.length <= 60);
-  // Should be the 60 most recent (highest fecha_base)
-  if (result.horizontes.h1.casos.length === 60) {
-    assert.equal(result.horizontes.h1.casos[0].fecha_emision, "2025-01-31");
+  assert.ok(result.horizontes.manana.casos.length <= 60);
+  // Should be the 60 most recent (highest fecha_publicacion)
+  if (result.horizontes.manana.casos.length === 60) {
+    assert.equal(result.horizontes.manana.casos[0].fecha_publicacion, "2025-01-31");
   }
 });
 
@@ -266,18 +230,40 @@ test("evaluatePublishedForecasts includes prueba_historica block", () => {
   assert.equal(result.prueba_historica.por_anio.length, 8);
 });
 
+test("evaluatePublishedForecasts includes backtest_motor block", () => {
+  const result = evaluatePublishedForecasts(MOCK_PRONOSTICOS, MOCK_OFFICIAL_SERIE);
+
+  assert.ok(result.backtest_motor);
+  // backtest_motor is read from daily-forecasts.json which we don't mock here
+  // but the structure should exist (may be empty if file not found in test)
+});
+
 test("buildPronosticosFromDaily adds new entries from daily-forecasts.json", () => {
   const dailyForecasts = {
+    referencia_lima: { hoy: "2025-01-02" },
     simbolos: {
       PEN: {
         fecha_ultimo_cierre: "2025-01-02",
         ultimo_cierre: 3.70,
+        manana: {
+          horizonte: "h2",
+          fecha_objetivo: "2025-01-06",
+          horizonte_dias_habiles: 2,
+          p10: 3.68,
+          p50: 3.70,
+          p90: 3.75,
+        },
+        semana: {
+          horizonte: "h6",
+          fecha_objetivo: "2025-01-13",
+          horizonte_dias_habiles: 6,
+          p10: 3.65,
+          p50: 3.70,
+          p90: 3.80,
+        },
         pronosticos: {
-          h1: { fecha_objetivo: "2025-01-03", p10: 3.68, p50: 3.70, p90: 3.72 },
-          h5: { fecha_objetivo: "2025-01-09", p10: 3.65, p50: 3.70, p90: 3.75 },
+          h2: { fecha_objetivo: "2025-01-06", p10: 3.67, p50: 3.70, p90: 3.73 },
           h6: { fecha_objetivo: "2025-01-13", p10: 3.50, p50: 3.70, p90: 3.90 },
-          h8: { fecha_objetivo: "2025-01-15", p10: 3.50, p50: 3.70, p90: 3.90 },
-          h2: { fecha_objetivo: "2025-01-06", p10: 3.67, p50: 3.70, p90: 3.73 }, // Should be ignored
         },
       },
     },
@@ -286,24 +272,41 @@ test("buildPronosticosFromDaily adds new entries from daily-forecasts.json", () 
   const existing = [];
   const result = buildPronosticosFromDaily(dailyForecasts, existing);
 
-  assert.equal(result.length, 4); // h1, h5, h6, h8
-  assert.equal(result[0].fecha_base, "2025-01-02");
-  assert.equal(result[0].horizonte, "h1");
+  assert.equal(result.length, 2); // manana, semana
+  assert.equal(result[0].fecha_publicacion, "2025-01-02");
+  assert.equal(result[0].tipo, "manana");
   assert.equal(result[0].cierre_base, 3.70);
   assert.equal(result[0].p10, 3.68);
   assert.equal(result[0].p50, 3.70);
-  assert.equal(result[0].p90, 3.72);
+  assert.equal(result[0].p90, 3.75);
+  assert.equal(result[1].tipo, "semana");
+  assert.equal(result[1].p10, 3.65);
+  assert.equal(result[1].p50, 3.70);
+  assert.equal(result[1].p90, 3.80);
 });
 
-test("buildPronosticosFromDaily does not overwrite existing entries (unique key: fecha_base + horizonte)", () => {
+test("buildPronosticosFromDaily does not overwrite existing entries (unique key: tipo + fecha_objetivo)", () => {
   const dailyForecasts = {
+    referencia_lima: { hoy: "2025-01-02" },
     simbolos: {
       PEN: {
         fecha_ultimo_cierre: "2025-01-02",
         ultimo_cierre: 3.70,
-        pronosticos: {
-          h1: { fecha_objetivo: "2025-01-03", p10: 3.68, p50: 3.70, p90: 3.72 },
-          h5: { fecha_objetivo: "2025-01-09", p10: 3.65, p50: 3.70, p90: 3.75 },
+        manana: {
+          horizonte: "h2",
+          fecha_objetivo: "2025-01-06",
+          horizonte_dias_habiles: 2,
+          p10: 3.68,
+          p50: 3.70,
+          p90: 3.75,
+        },
+        semana: {
+          horizonte: "h6",
+          fecha_objetivo: "2025-01-13",
+          horizonte_dias_habiles: 6,
+          p10: 3.65,
+          p50: 3.70,
+          p90: 3.80,
         },
       },
     },
@@ -311,37 +314,52 @@ test("buildPronosticosFromDaily does not overwrite existing entries (unique key:
 
   const existing = [
     {
+      tipo: "manana",
+      fecha_publicacion: "2025-01-02",
       fecha_base: "2025-01-02",
-      horizonte: "h1",
-      fecha_objetivo: "2025-01-03",
       cierre_base: 3.70,
+      horizonte_dias_habiles: 2,
+      fecha_objetivo: "2025-01-06",
       p10: 3.68,
       p50: 3.70,
-      p90: 3.72,
+      p90: 3.75,
     },
   ];
 
   const result = buildPronosticosFromDaily(dailyForecasts, existing);
 
-  // Should still have only 2 entries (existing h1 + new h5), not 3
+  // Should still have only 2 entries (existing manana + new semana), not 3
   assert.equal(result.length, 2);
-  // The existing h1 should remain unchanged
-  const existingH1 = result.find((p) => p.fecha_base === "2025-01-02" && p.horizonte === "h1");
-  assert.ok(existingH1);
-  assert.equal(existingH1.p10, 3.68);
-  assert.equal(existingH1.p50, 3.70);
-  assert.equal(existingH1.p90, 3.72);
+  // The existing manana should remain unchanged
+  const existingManana = result.find((p) => p.tipo === "manana" && p.fecha_objetivo === "2025-01-06");
+  assert.ok(existingManana);
+  assert.equal(existingManana.p10, 3.68);
+  assert.equal(existingManana.p50, 3.70);
+  assert.equal(existingManana.p90, 3.75);
 });
 
 test("buildPronosticosFromDaily preserves existing entries and adds new ones sorted", () => {
   const dailyForecasts = {
+    referencia_lima: { hoy: "2025-01-03" },
     simbolos: {
       PEN: {
         fecha_ultimo_cierre: "2025-01-03",
         ultimo_cierre: 3.71,
-        pronosticos: {
-          h1: { fecha_objetivo: "2025-01-06", p10: 3.69, p50: 3.71, p90: 3.73 },
-          h5: { fecha_objetivo: "2025-01-10", p10: 3.66, p50: 3.71, p90: 3.76 },
+        manana: {
+          horizonte: "h2",
+          fecha_objetivo: "2025-01-07",
+          horizonte_dias_habiles: 2,
+          p10: 3.69,
+          p50: 3.71,
+          p90: 3.76,
+        },
+        semana: {
+          horizonte: "h6",
+          fecha_objetivo: "2025-01-14",
+          horizonte_dias_habiles: 6,
+          p10: 3.66,
+          p50: 3.71,
+          p90: 3.81,
         },
       },
     },
@@ -349,34 +367,53 @@ test("buildPronosticosFromDaily preserves existing entries and adds new ones sor
 
   const existing = [
     {
+      tipo: "manana",
+      fecha_publicacion: "2025-01-02",
       fecha_base: "2025-01-02",
-      horizonte: "h1",
-      fecha_objetivo: "2025-01-03",
       cierre_base: 3.70,
+      horizonte_dias_habiles: 2,
+      fecha_objetivo: "2025-01-06",
       p10: 3.68,
       p50: 3.70,
-      p90: 3.72,
+      p90: 3.75,
     },
   ];
 
   const result = buildPronosticosFromDaily(dailyForecasts, existing);
 
   assert.equal(result.length, 3);
-  // Sorted by fecha_base then horizonte order (h1, h5, h6, h8)
-  assert.equal(result[0].fecha_base, "2025-01-02");
-  assert.equal(result[0].horizonte, "h1");
-  assert.equal(result[1].fecha_base, "2025-01-03");
-  assert.equal(result[1].horizonte, "h1");
-  assert.equal(result[2].fecha_base, "2025-01-03");
-  assert.equal(result[2].horizonte, "h5");
+  // Sorted by fecha_publicacion then tipo (manana before semana)
+  assert.equal(result[0].fecha_publicacion, "2025-01-02");
+  assert.equal(result[0].tipo, "manana");
+  assert.equal(result[1].fecha_publicacion, "2025-01-03");
+  assert.equal(result[1].tipo, "manana");
+  assert.equal(result[2].fecha_publicacion, "2025-01-03");
+  assert.equal(result[2].tipo, "semana");
 });
 
-test("buildPronosticosFromDaily ignores h2, h3, h4, h7, manana, semana", () => {
+test("buildPronosticosFromDaily ignores h1, h2, h3, h4, h5, h6, h7, h8 from pronosticos", () => {
   const dailyForecasts = {
+    referencia_lima: { hoy: "2025-01-02" },
     simbolos: {
       PEN: {
         fecha_ultimo_cierre: "2025-01-02",
         ultimo_cierre: 3.70,
+        manana: {
+          horizonte: "h2",
+          fecha_objetivo: "2025-01-06",
+          horizonte_dias_habiles: 2,
+          p10: 3.68,
+          p50: 3.70,
+          p90: 3.75,
+        },
+        semana: {
+          horizonte: "h6",
+          fecha_objetivo: "2025-01-13",
+          horizonte_dias_habiles: 6,
+          p10: 3.65,
+          p50: 3.70,
+          p90: 3.80,
+        },
         pronosticos: {
           h1: { fecha_objetivo: "2025-01-03", p10: 3.68, p50: 3.70, p90: 3.72 },
           h2: { fecha_objetivo: "2025-01-06", p10: 3.67, p50: 3.70, p90: 3.73 },
@@ -386,8 +423,6 @@ test("buildPronosticosFromDaily ignores h2, h3, h4, h7, manana, semana", () => {
           h6: { fecha_objetivo: "2025-01-13", p10: 3.50, p50: 3.70, p90: 3.90 },
           h7: { fecha_objetivo: "2025-01-14", p10: 3.49, p50: 3.70, p90: 3.91 },
           h8: { fecha_objetivo: "2025-01-15", p10: 3.50, p50: 3.70, p90: 3.90 },
-          manana: { fecha_objetivo: "2025-01-06", p10: 3.67, p50: 3.70, p90: 3.73 },
-          semana: { fecha_objetivo: "2025-01-13", p10: 3.50, p50: 3.70, p90: 3.90 },
         },
       },
     },
@@ -396,8 +431,8 @@ test("buildPronosticosFromDaily ignores h2, h3, h4, h7, manana, semana", () => {
   const existing = [];
   const result = buildPronosticosFromDaily(dailyForecasts, existing);
 
-  // Only h1, h5, h6, h8 should be included
-  assert.equal(result.length, 4);
-  const horizontes = result.map((p) => p.horizonte).sort();
-  assert.deepEqual(horizontes, ["h1", "h5", "h6", "h8"]);
+  // Only manana and semana should be included (from the top-level blocks, not pronosticos)
+  assert.equal(result.length, 2);
+  const tipos = result.map((p) => p.tipo).sort();
+  assert.deepEqual(tipos, ["manana", "semana"]);
 });
