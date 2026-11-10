@@ -170,9 +170,10 @@ test("renderHistorial part (b) includes backtest_motor paragraph", () => {
   const html = renderHistorial(aciertos);
   assert.ok(html.includes("El rango que publicamos para el día siguiente suele estar a dos días hábiles"));
   assert.ok(html.includes("81.2%"));
-  assert.ok(html.includes("1 957 días"));
+  assert.ok(html.includes("desde 2024"));
+  assert.ok(!html.includes("1 957"));
   assert.ok(html.includes("84.7%"));
-  assert.ok(html.includes("1 953 días"));
+  assert.ok(!html.includes("1 953"));
 });
 
 test("renderHistorial includes footer with update date", () => {
