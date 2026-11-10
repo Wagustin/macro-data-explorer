@@ -986,6 +986,20 @@ const fill = (html, personal, baja = `${SITE}/boletin`, prefs = `${SITE}/boletin
   .replace("{{EMPRESAS}}", () => prefs)
   .replace("{{PERSONAL}}", () => personal);
 
+// Gmail clips messages above ~102 KB and hides the footer, where the unsubscribe link lives.
+// If a subscriber's email would get there, drop company readings from the last company up until it fits.
+const LIMITE_BYTES = Number(process.env.BOLETIN_LIMITE_BYTES) || 98000;
+function armarPagado(base, cards, lecturas, baja, prefs) {
+  const lec = { ...lecturas };
+  let html = compactar(fill(base, renderPersonal(cards, lec), baja, prefs));
+  for (let i = cards.length - 1; i >= 0 && Buffer.byteLength(html) > LIMITE_BYTES; i--) {
+    if (!lec[cards[i].nemo]) continue;
+    delete lec[cards[i].nemo];
+    html = compactar(fill(base, renderPersonal(cards, lec), baja, prefs));
+  }
+  return html;
+}
+
 // Shared news sources for the two readings: the classifier and the raw feed,
 // read from data/ (the modules' demos read them the same way). Any failure
 // simply leaves both readings deterministic, never a crash.
@@ -1010,6 +1024,7 @@ const { dolar: lecturaDolarOut } = await lecturaDolarSegura(f, clasif, newsById,
 
 let previewPersonal = "";
 let lecturasPreview = {};
+let previewCards = null;
 if (process.env.PREVIEW_EMPRESAS) {
   const want = process.env.PREVIEW_EMPRESAS.split(",").map((x) => x.trim()).filter(Boolean);
   const smvAll = readLocal("data/smv-hechos.json", { hechos: {} }).hechos || {};
@@ -1048,6 +1063,7 @@ if (process.env.PREVIEW_EMPRESAS) {
     }
   }
   previewPersonal = PREVIEW_PLAN === "gratis" ? upsell : renderPersonal(cards, lecturasPreview);
+  previewCards = cards;
 }
 
 const htmlCompleto = compactar(render(f, ai, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null));
@@ -1055,7 +1071,9 @@ const htmlGratis = compactar(renderGratis(f, dateLabel, lecturaDolarOut?.horizon
 const cliPreviewPath = process.argv.find((a) => a.startsWith("--preview-path="))?.slice("--preview-path=".length);
 const previewPath = process.env.BOLETIN_PREVIEW_PATH || cliPreviewPath || path.join(ROOT, "..", "handoff", "qa", process.env.PREVIEW_PLAN === "gratis" ? "correo-gratis.html" : "correo-pagado.html");
 fs.mkdirSync(path.dirname(path.resolve(previewPath)), { recursive: true });
-const previewHtml = compactar(fill(PREVIEW_PLAN === "gratis" ? htmlGratis : htmlCompleto, previewPersonal));
+const previewHtml = PREVIEW_PLAN !== "gratis" && previewCards
+  ? armarPagado(htmlCompleto, previewCards, lecturasPreview, undefined, undefined)
+  : compactar(fill(PREVIEW_PLAN === "gratis" ? htmlGratis : htmlCompleto, previewPersonal));
 fs.writeFileSync(previewPath, previewHtml);
 console.log(`Vista previa: ${PREVIEW_PLAN} · mercados: ${f.markets.length} · SMV: ${f.smvFacts.length} · titulares: ${f.headlines.length} · historias: ${f.historiasTodas?.length || 0} · IA: ${ai ? "sí" : "no"}`);
 
@@ -1177,7 +1195,7 @@ if (!DRY && !PREVIEW) {
       from: FROM, 
       to: [email], 
       subject: `PerData · ${dateLabel}`, 
-      html: compactar(fill(baseHtml, personal, baja, prefs)) 
+      html: plan !== "gratis" && mine.length ? armarPagado(baseHtml, mine, lecturas, baja, prefs) : compactar(fill(baseHtml, personal, baja, prefs)),
     };
     
     if (token) msg.headers = { "List-Unsubscribe": `<${baja}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" };

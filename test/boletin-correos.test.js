@@ -258,3 +258,25 @@ test("correos: la cabecera precede a toda lectura y cada título de sección lle
     }
   }
 });
+
+test("correo pagado: si pasaría el límite de tamaño, quita lecturas de empresa desde la última y conserva el pie", () => {
+  const out = path.join(rootDir, "..", "handoff", "qa", "correo-limite.html");
+  const gen = (extra) => {
+    execFileSync(process.execPath, ["scripts/boletin.js", "--dry-run"], {
+      cwd: rootDir,
+      env: { ...process.env, PREVIEW_EMPRESAS: "ALICORC1,BVN,CVERDEC1", PREVIEW_PLAN: "boletin", BOLETIN_PREVIEW_PATH: out, ...extra },
+    });
+    return fs.readFileSync(out, "utf8");
+  };
+  const lecturas = (h) => (h.match(/Lectura de /g) || []).length;
+  const normal = gen({});
+  assert.ok(Buffer.byteLength(normal) < 98000, "el correo de tres empresas no debería acercarse al límite");
+  if (lecturas(normal) === 0) return; // sin lecturas hoy: no hay nada que recortar
+  const limite = Buffer.byteLength(normal) - 200;
+  const recortado = gen({ BOLETIN_LIMITE_BYTES: String(limite) });
+  assert.ok(Buffer.byteLength(recortado) <= limite, "el correo recortado sigue pasando el límite");
+  assert.equal(lecturas(recortado), lecturas(normal) - 1, "debe quitar solo las lecturas necesarias");
+  assert.ok(!recortado.includes("Lectura de Sociedad Minera Cerro Verde"), "la lectura que se quita es la de la última empresa");
+  assert.ok(recortado.includes("Lectura de Alicorp"), "la primera empresa conserva su lectura");
+  assert.ok(recortado.includes("Darme de baja"), "el pie con la baja debe seguir");
+});
