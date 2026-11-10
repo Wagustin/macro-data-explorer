@@ -21,6 +21,8 @@ const penDaily = dailyForecasts.simbolos.PEN;
 
 const fechaUltimoCierre = penDaily.fecha_ultimo_cierre;
 const ultimoCierre = penDaily.ultimo_cierre;
+const fuenteUltimoCierre = penDaily.fuente_ultimo_cierre || "BCRP";
+const etiquetaCierre = fuenteUltimoCierre === "SUNAT" ? "cierre SBS publicado por SUNAT" : "cierre oficial del BCRP";
 
 // Rangos de corto plazo: manana (h3) y semana (h7)
 const manana = penDaily.manana;
@@ -462,7 +464,7 @@ let htmlGenerado = `<!DOCTYPE html>
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://perdata.site/dolar">
   <title>Tipo de cambio hoy en Perú: S/ ${num(ultimoCierre, 3)} y rango para mañana · PerData</title>
-  <meta name="description" content="Precio del dólar hoy en Perú: cierre oficial del BCRP de S/ ${num(ultimoCierre, 3)} (${fechaLarga(fechaUltimoCierre)}). Para el ${diaSemana(manana.fecha_objetivo)}, entre S/ ${num(mananaP10, 3)} y S/ ${num(mananaP90, 3)} (8 de cada 10 veces).">
+  <meta name="description" content="Precio del dólar hoy en Perú: ${etiquetaCierre} de S/ ${num(ultimoCierre, 3)} (${fechaLarga(fechaUltimoCierre)}). Para el ${diaSemana(manana.fecha_objetivo)}, entre S/ ${num(mananaP10, 3)} y S/ ${num(mananaP90, 3)} (8 de cada 10 veces).">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/svg+xml" href="/icon.svg">
 
@@ -552,7 +554,7 @@ let htmlGenerado = `<!DOCTYPE html>
       <p class="micro-label text-ink-soft">Banco Central de Reserva del Peru · serie ${escapeHtml(penDaily.codigo)}</p>
       <h1 class="pd-page-title">Tipo de cambio hoy en Perú</h1>
       <p class="pd-page-lede">
-        Ultimo cierre oficial de ${escapeHtml(num(ultimoCierre, 4))} S/ por dolar, del
+        ${escapeHtml(etiquetaCierre.charAt(0).toUpperCase() + etiquetaCierre.slice(1))} de ${escapeHtml(num(ultimoCierre, 4))} S/ por dolar, del
         ${escapeHtml(fechaLarga(fechaUltimoCierre))}, con rangos probables para manana, la proxima semana
         y el proximo mes, y el contexto macro y monetario que reporta el BCRP.
       </p>

@@ -1,0 +1,63 @@
+name: Cierre de ayer (SUNAT)
+
+on:
+  schedule:
+    - cron: "37 8 * * 1-6"
+    - cron: "7 10 * * 1-6"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: official-data
+  cancel-in-progress: false
+
+jobs:
+  cierre:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - id: cierre
+        run: node scripts/cierre-sunat.js
+      - name: Calcular ENGINE_HOY
+        if: steps.cierre.outputs.aplicado == 'true'
+        run: |
+          node -e "
+            const fs = require('fs');
+            const { addBusinessDays, PERU_HOLIDAYS } = await import('./scripts/engine-daily.js');
+            const daily = JSON.parse(fs.readFileSync('data/daily-forecasts.json', 'utf8'));
+            const R = daily.referencia_lima.hoy;
+            const manana = addBusinessDays(R, 1, PERU_HOLIDAYS);
+            const hoyLima = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Lima', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+            if (manana >= hoyLima) {
+              console.log('ENGINE_HOY=' + R);
+              process.stdout.write('ENGINE_HOY=' + R + '\\n');
+            }
+          " >> $GITHUB_ENV
+      - name: PerData Engine diario
+        if: steps.cierre.outputs.aplicado == 'true'
+        run: node scripts/engine-daily.js
+      - name: Generar página de dólar estática
+        if: steps.cierre.outputs.aplicado == 'true'
+        run: node scripts/build-dolar-html.js
+      - name: Guardar si hay cambios
+        if: steps.cierre.outputs.aplicado == 'true'
+        run: |
+          git config user.name "perdata-bot"
+          git config user.email "perdata-bot@users.noreply.github.com"
+          git add data/official/bcrp-daily.json data/daily-forecasts.json dolar.html
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "data(official): cierre de ayer $(date -u +%F)"
+            for i in 1 2 3 4; do
+              git pull --rebase -q origin main && git push -q origin HEAD:main && break
+              [ "$i" -eq 4 ] && exit 1
+              sleep $((i*5))
+            done
+          fi

@@ -21,6 +21,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
       - run: pip install xlrd==2.0.1 openpyxl==3.1.5
       - name: Descargar datos oficiales
         run: python scripts/fetch_official.py
@@ -28,6 +31,9 @@ jobs:
       - name: Descargar índices EPU
         continue-on-error: true
         run: python scripts/fetch_epu.py
+      - name: Cierre de ayer (SUNAT)
+        continue-on-error: true
+        run: node scripts/cierre-sunat.js
       - name: PerData Engine diario
         run: node scripts/engine-daily.js
       - name: Generar página de dólar estática
