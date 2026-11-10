@@ -32,6 +32,7 @@ import fs from "fs";
 import path from "path";
 import { smvRows } from "../api/_lib/smv.js";
 import { graficoRango } from "./lib/grafico-correo.js";
+import { rangoEmpresaCorreo, lineaRangoCorreo } from "./lib/rango-empresa-correo.js";
 import { mencionaEmpresa } from "./empresa-mencion.js";
 import { formatCierreFecha } from "../api/diario.js";
 import { lecturaDolar, hechosDolar } from "./dolar-lectura.js";
@@ -866,6 +867,15 @@ function renderGratis(f, dateLabel, lectura, img) {
 // ---- Personal section: the companies each subscriber follows ----
 const empresasLocal = readLocal("data/empresas.json", { emisores: [] });
 const estadoLocal = readLocal("data/empresas-estado.json", { emisores: {} });
+// Rango semanal calibrado de las acciones (data/acciones-rangos.json): una sola
+// lectura para todas las tarjetas. Si el archivo no se puede leer, el correo
+// sale igual que hoy (con la proyección vieja), nunca falla el envío.
+let rangos = readLocal("data/acciones-rangos.json", null);
+if (!rangos) {
+  try { rangos = await getJson(`${RAW}/acciones-rangos.json`).catch(() => null); } catch { rangos = null; }
+}
+// Fecha de hoy en Lima (AAAA-MM-DD): con ella se mide la vigencia del rango.
+const hoyLima = new Date(Date.now() - 5 * 36e5).toISOString().slice(0, 10);
 // Live issuers are loaded at module level like before (one fetch, reused by
 // every subscriber); when the network is down the repo copy above keeps the
 // preview working with the same figures.
@@ -890,7 +900,7 @@ async function companyCard(nemo, smvAll, clasif, newsById) {
   const lima = Boolean(v && /\.LM$/i.test(v.simbolo_proyeccion || ""));
   const card = {
     nemo, name: prettyName(e.razonSocial), sector: e.sector || null, simbolo_proyeccion,
-    price: null, change: null, currency: st.moneda || v?.moneda || "S/", forecast: null,
+    price: null, change: null, currency: st.moneda || v?.moneda || "S/", forecast: null, rangoMotivo: null,
     smv: [], news: [], serie: [],
   };
   // Lima prices: data/empresas-estado.json (the table /empresas and the module
@@ -937,9 +947,16 @@ async function companyCard(nemo, smvAll, clasif, newsById) {
     }
     if (h?.currency && !st.moneda) card.currency = h.currency === "USD" ? "US$" : "S/";
   }
-  // The projection (with p25/p75 for the central range) comes from the same
-  // public endpoint for every security with a projection symbol.
-  if (simbolo_proyeccion) {
+  // El rango de la semana sale del motor calibrado (data/acciones-rangos.json):
+  // en las acciones de Lima sustituye a la banda mensual vieja de /api/forecast
+  // (ancha y sin calibrar). Los valores que NO son de Lima siguen con su
+  // proyección de /api/forecast, tal como hasta ahora.
+  const valorRango = rangos ? rangos.valores?.[nemo] : undefined;
+  const r = rangos ? rangoEmpresaCorreo(valorRango, { hoy: hoyLima }) : null;
+  if (r && lima) {
+    card.forecast = r.forecast;
+    card.rangoMotivo = r.motivo;
+  } else if (simbolo_proyeccion) {
     const fc = await getJson(`${SITE}/api/forecast?symbol=${encodeURIComponent(simbolo_proyeccion)}&horizon=1`).catch(() => null);
     if (fc?.quantiles) card.forecast = {
       p50: fc.predictedPrice, p10: fc.quantiles.p10 ?? fc.quantiles.P10, p25: fc.quantiles.p25 ?? fc.quantiles.P25,
@@ -947,6 +964,10 @@ async function companyCard(nemo, smvAll, clasif, newsById) {
       date: fc.horizonDate, prob: fc.probabilityOfRise,
     };
   }
+  // Sin rango propio (acciones que no son de Lima): cuando el motor conoce la
+  // acción y no publica un rango, la tarjeta explica el motivo en vez de callar.
+  // Las que el motor no conoce quedan exactamente como hasta ahora.
+  if (r && !lima && !card.forecast && valorRango) card.rangoMotivo = r.motivo;
   // The series ends at the close that is shown (nothing later) and the
   // variation is derived from it when the source did not give one.
   if (card.priceDate) {
@@ -961,7 +982,7 @@ async function companyCard(nemo, smvAll, clasif, newsById) {
   if (card.price == null && st.ultimo_cierre != null) { card.price = Number(st.ultimo_cierre); card.priceDate = st.ultima_fecha; }
   // Gráfico: sin proyección o con menos de 10 cierres la empresa sale sin imagen.
   card.grafico = (card.forecast && card.serie.length >= 10)
-    ? { archivo: `${nemo}.png`, ancho: 560, alto: 110, alt: `${card.name}: últimos cierres y rango proyectado a un mes` }
+    ? { archivo: `${nemo}.png`, ancho: 560, alto: 110, alt: `${card.name}: últimos cierres y rango proyectado a ${card.forecast.horizonte === "semana" ? "una semana" : "un mes"}` }
     : null;
   const since = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10);
   for (const n of nemos) for (const h of smvAll[n] || []) if (h.fecha >= since) card.smv.push({ ...h, titulo: sentence(h.titulo) || sentence(h.tipo) });
@@ -1019,9 +1040,24 @@ function renderPersonal(cards, lecturas, img) {
     const grafico = c.grafico ? imgTag(img, c.grafico.archivo, c.grafico.ancho, c.grafico.alto, c.grafico.alt) : "";
     const graficoHtml = grafico ? `<div style="margin:8px 0 0">${grafico}</div>` : "";
 
-    // Una línea en mono con el rango central y el amplio.
-    const rangoHtml = fc && fc.p25 != null && fc.p75 != null
-      ? `<div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:12px;color:${C.ink};margin:8px 0 0">Al ${esc(fechaCorta(fc.date))}: ${esc(rangoTexto(fc.p25, fc.p75, 2))} (1 de cada 2) · <span style="color:${C.soft}">${esc(rangoTexto(fc.p10, fc.p90, 2))} (8 de cada 10)</span></div>`
+    // Una línea en mono con el rango central y el amplio. Las de Lima usan el
+    // rango semanal calibrado (lineaRangoCorreo); el resto, igual que hoy, con
+    // la banda mensual de /api/forecast.
+    const linea = fc
+      ? (fc.horizonte === "semana"
+        ? lineaRangoCorreo(fc, { fmt, fechaCorta })
+        : (fc.p25 != null && fc.p75 != null
+          ? `Al ${fechaCorta(fc.date)}: ${rangoTexto(fc.p25, fc.p75, 2)} (1 de cada 2) · ${rangoTexto(fc.p10, fc.p90, 2)} (8 de cada 10)`
+          : ""))
+      : "";
+    const [cabeza, cola] = linea.split(" · ");
+    const rangoHtml = linea
+      ? `<div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:12px;color:${C.ink};margin:8px 0 0">${esc(cabeza)} · <span style="color:${C.soft}">${esc(cola ?? "")}</span></div>`
+      : "";
+
+    // Sin rango publicable: el motivo exacto del motor, en una línea.
+    const motivoHtml = !fc && c.rangoMotivo
+      ? `<div style="font-family:${UI_F};font-size:12px;color:${C.soft};margin:8px 0 0">${esc(c.rangoMotivo)}</div>`
       : "";
 
     // Hechos SMV y noticias: máximo 2 en total, una línea cada uno.
@@ -1051,6 +1087,7 @@ function renderPersonal(cards, lecturas, img) {
       </tr></table>
       ${graficoHtml}
       ${rangoHtml}
+      ${motivoHtml}
       ${hechosHtml}
       ${lecturaHtml}
       <div style="margin-top:8px"><a href="${SITE}/empresa/${encodeURIComponent(c.nemo)}" style="font-family:${UI_F};font-size:12px;color:${C.soft};text-decoration:underline">Ver ficha</a></div>
