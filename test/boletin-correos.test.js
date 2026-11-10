@@ -177,7 +177,9 @@ test("correo pagado: «Tus empresas» con imagen, rango en mono, máximo 2 hecho
 
   // Fila: nombre + nemónico a la izquierda; precio y variación a la derecha.
   assert.match(html, /Alicorp S\.A\.A\./);
-  assert.match(html, /S\/ 13\.32/);
+  // El precio sale de data/empresas-estado.json (cambia cada día: no se escribe a mano).
+  const estadoAlicorp = Object.values(JSON.parse(read("data/empresas-estado.json")).emisores).find((e) => e.nemonico === "ALICORC1");
+  assert.ok(html.includes(`S/ ${Number(estadoAlicorp.ultimo_cierre).toFixed(2)}`), "el precio de Alicorp de data/empresas-estado.json");
 
   // Una línea en mono con el rango central y el amplio.
   assert.match(html, /Al \d{1,2} [a-z]{3}: [\d.,]+ – [\d.,]+ \(1 de cada 2\) · (?:<span[^>]*>)?[\d.,]+ – [\d.,]+ \(8 de cada 10\)/);
