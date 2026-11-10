@@ -621,14 +621,16 @@
       }
     })();
 
-    // Compartir por WhatsApp: enlace de texto con el cierre de hoy y el rango de mañana (P10-P90)
+    // Compartir por WhatsApp: enlace de texto con el ultimo cierre oficial y el rango de manana (P10-P90)
     (function() {
       const link = document.getElementById('waShareLink');
       if (!link) return;
-      const hoy = '3.433';
+      const cierre = '3.433';
+      const fechaCierre = '6 nov';
+      const fechaObjetivo = 'martes 10 nov';
       const p10 = '3.414';
       const p90 = '3.451';
-      const texto = 'Dólar hoy S/ ' + hoy + '. Rango probable para mañana: S/ ' + p10 + ' – S/ ' + p90 + '. perdata.site/dolar';
+      const texto = 'Dólar: último cierre oficial S/ ' + cierre + ' (' + fechaCierre + '). Rango probable para el ' + fechaObjetivo + ': S/ ' + p10 + ' – S/ ' + p90 + '. perdata.site/dolar';
       link.href = 'https://wa.me/?text=' + encodeURIComponent(texto);
     })();
 

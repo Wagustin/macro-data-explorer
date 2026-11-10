@@ -156,6 +156,16 @@ const fechaLarga = (iso) => {
   return iso;
 };
 
+// Fecha corta sin punto (6 nov, 10 nov), como la que usa la nota semanal
+const MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'set', 'oct', 'nov', 'dic'];
+
+const fechaCorta = (iso) => {
+  if (!iso || typeof iso !== 'string') return 's/d';
+  const partes = iso.split('-');
+  if (partes.length === 3) return `${Number(partes[2])} ${MESES_CORTOS[Number(partes[1]) - 1]}`;
+  return iso;
+};
+
 const escapeHtml = (valor) =>
   String(valor ?? '').replace(/[&<>"']/g, (caracter) => ({
     '&': '&amp;',
@@ -720,14 +730,16 @@ let htmlGenerado = `<!DOCTYPE html>
       }
     })();
 
-    // Compartir por WhatsApp: enlace de texto con el cierre de hoy y el rango de mañana (P10-P90)
+    // Compartir por WhatsApp: enlace de texto con el ultimo cierre oficial y el rango de manana (P10-P90)
     (function() {
       const link = document.getElementById('waShareLink');
       if (!link) return;
-      const hoy = '${escapeHtml(num(ultimoCierre, 3))}';
+      const cierre = '${escapeHtml(num(ultimoCierre, 3))}';
+      const fechaCierre = '${escapeHtml(fechaCorta(fechaUltimoCierre))}';
+      const fechaObjetivo = '${escapeHtml(`${diaSemana(manana.fecha_objetivo)} ${fechaCorta(manana.fecha_objetivo)}`)}';
       const p10 = '${escapeHtml(num(mananaP10, 3))}';
       const p90 = '${escapeHtml(num(mananaP90, 3))}';
-      const texto = 'Dólar hoy S/ ' + hoy + '. Rango probable para mañana: S/ ' + p10 + ' – S/ ' + p90 + '. perdata.site/dolar';
+      const texto = 'Dólar: último cierre oficial S/ ' + cierre + ' (' + fechaCierre + '). Rango probable para el ' + fechaObjetivo + ': S/ ' + p10 + ' – S/ ' + p90 + '. perdata.site/dolar';
       link.href = 'https://wa.me/?text=' + encodeURIComponent(texto);
     })();
 
