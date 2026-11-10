@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { bloqueRango } from "./ficha-rango.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,6 +24,26 @@ const hechosData = fs.existsSync(hechosPath) ? (JSON.parse(fs.readFileSync(hecho
 
 const h120Path = path.join(projectRoot, "data", "history-120.json");
 const h120 = fs.existsSync(h120Path) ? JSON.parse(fs.readFileSync(h120Path, "utf8")) : {};
+
+// Rangos semanales y mensuales que calcula scripts/engine-acciones.js cada noche.
+// Si el archivo no está (todavía no se ha corrido el motor), las fichas se generan sin rango.
+const rangosPath = path.join(projectRoot, "data", "acciones-rangos.json");
+let rangos = null;
+if (fs.existsSync(rangosPath)) {
+  try {
+    rangos = JSON.parse(fs.readFileSync(rangosPath, "utf8"));
+  } catch (err) {
+    console.warn(`No se pudo leer data/acciones-rangos.json: ${err.message}`);
+  }
+}
+
+// Fecha de hoy en Lima (AAAA-MM-DD)
+const hoy = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "America/Lima",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+}).format(new Date());
 
 function formatSector(sec) {
   if (!sec) return "Diversas";
@@ -1079,6 +1100,21 @@ function buildFichas() {
 
       // Status
       fichaHtml = fichaHtml.replace(/<p class="issuer-status" id="issuerStatusText"><\/p>/, `<p class="issuer-status" id="issuerStatusText">${escapeHtml(statusMsg)}</p>`);
+
+      // Rango esperado de PerData Engine: solo en los valores que ya muestran precio
+      if (rangos && rangos.valores && hasPrice && Number.isFinite(close) && close > 0) {
+        const rangoHtml = bloqueRango(rangos.valores[nemo], {
+          moneda: currency,
+          hoy,
+          ultimoDia: rangos.ultimo_dia,
+        });
+        if (rangoHtml) {
+          fichaHtml = fichaHtml.replace(
+            '<div class="section hidden" id="rangoSection"></div>',
+            () => `<div class="section" id="rangoSection">${rangoHtml}</div>`
+          );
+        }
+      }
 
       // Shareholders
       if (holders.length > 0) {

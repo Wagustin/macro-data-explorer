@@ -464,9 +464,10 @@ async function facts() {
   const dailyVigente = Boolean(penDaily?.manana?.fecha_objetivo && penDaily.manana.fecha_objetivo >= todayLima);
   const penSerie = s.PEN?.serie || [];
   const penUltimo = penSerie.length ? { fecha: penSerie[penSerie.length - 1][0], valor: penSerie[penSerie.length - 1][1] } : null;
+  const fuenteCierre = penDaily?.fuente_ultimo_cierre || "BCRP";
   const cierre = penDaily?.ultimo_cierre != null
-    ? { valor: penDaily.ultimo_cierre, fecha: penDaily.fecha_ultimo_cierre, fuente: "BCRP" }
-    : (penUltimo ? { ...penUltimo, fuente: "BCRP" } : null);
+    ? { valor: penDaily.ultimo_cierre, fecha: penDaily.fecha_ultimo_cierre, fuente: fuenteCierre }
+    : (penUltimo ? { ...penUltimo, fuente: fuenteCierre } : null);
 
   const fresh = digest && Date.now() - Date.parse(digest.actualizado) < 30 * 36e5;
   // Paid: every publishable story of the digest (as today, with the double
@@ -684,7 +685,7 @@ function render(f, ai, dateLabel, lectura, img) {
       <td style="font-family:${SERIF_F};font-size:24px;font-weight:600;color:${C.ink}">Dólar</td>
       <td align="right" style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</td>
     </tr></table>
-    <p style="margin:4px 0 0;font-family:${UI_F};font-size:13px;color:${C.soft}">Tipo de cambio venta del sistema bancario (SBS), publicado por el BCRP · cierre del ${esc(formatCierreFecha(cierre.fecha))}</p>
+    <p style="margin:4px 0 0;font-family:${UI_F};font-size:13px;color:${C.soft}">Tipo de cambio venta del sistema bancario (SBS), publicado por ${cierre.fuente === "SUNAT" ? "SUNAT" : "el BCRP"} · cierre del ${esc(formatCierreFecha(cierre.fecha))}</p>
   </td></tr>` : "";
 
   const dollarImg = imgTag(img, "dolar.png", 560, 150, "Dólar: últimos 30 cierres y rango proyectado");
@@ -792,7 +793,7 @@ function renderGratis(f, dateLabel, lectura, img) {
       <td style="font-family:${SERIF_F};font-size:24px;font-weight:600;color:${C.ink}">Dólar</td>
       <td align="right" style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</td>
     </tr></table>
-    <p style="margin:4px 0 0;font-family:${UI_F};font-size:13px;color:${C.soft}">Tipo de cambio venta del sistema bancario (SBS), publicado por el BCRP · cierre del ${esc(formatCierreFecha(cierre.fecha))}</p>
+    <p style="margin:4px 0 0;font-family:${UI_F};font-size:13px;color:${C.soft}">Tipo de cambio venta del sistema bancario (SBS), publicado por ${cierre.fuente === "SUNAT" ? "SUNAT" : "el BCRP"} · cierre del ${esc(formatCierreFecha(cierre.fecha))}</p>
   </td></tr>` : "";
 
   const dollarImg = imgTag(img, "dolar.png", 560, 150, "Dólar: últimos 30 cierres y rango proyectado");

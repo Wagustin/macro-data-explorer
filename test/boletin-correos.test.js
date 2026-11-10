@@ -69,7 +69,7 @@ test("correo gratis: tabla de rangos con un solo horizonte (hoy) y valores de da
   assert.ok(html.includes(fila(pen.manana.p25, pen.manana.p75)), "el rango central de mañana");
   assert.ok(html.includes(fila(pen.manana.p10, pen.manana.p90)), "el rango amplio de mañana");
   assert.ok(html.includes(fmt3(pen.ultimo_cierre)), "el cierre de data/daily-forecasts.json");
-  assert.match(html, /Tipo de cambio venta del sistema bancario \(SBS\), publicado por el BCRP/);
+  assert.match(html, /Tipo de cambio venta del sistema bancario \(SBS\), publicado por (el BCRP|SUNAT)/);
 
   // El gratis no trae los horizontes de semana ni de mes.
   const etiquetas = etiquetasRangos(html);
