@@ -40,29 +40,114 @@ test("hechosEmpresa calcula precio, rango y macro desde los datos de ejemplo", (
   assert.equal(porId["macro-tasa"], "La tasa de referencia del BCRP está en 4.25 % desde el 6 de noviembre de 2026.");
 });
 
-test("el determinista registra qué hay y da dirección solo al metal de la minera", () => {
+test("el determinista da dirección solo al metal principal de la minera conocida", () => {
   const r = lecturaEmpresaDeterminista(DATOS, hechosEmpresa(DATOS));
   assert.equal(r.que_hay.length, 2);
-  assert.equal(r.podria_mover.al_alza.length, 1);
-  assert.match(r.podria_mover.al_alza[0].texto, /cobre subió 2\.10 %/);
-  assert.equal(r.podria_mover.a_la_baja.length, 1);
-  assert.match(r.podria_mover.a_la_baja[0].texto, /oro bajó 1\.50 %/);
-  // WTI y dólar no llevan dirección: el determinista los registra a contexto sin empujones
-  // (el máx. de 2 puntos por lista deja fuera el dólar, que va el último de los macro)
+  // TESTC1 no está en METAL_DE_MINERA, así que cobre y oro van a contexto sin dirección
+  assert.equal(r.podria_mover.al_alza.length + r.podria_mover.a_la_baja.length, 0);
   const ids = r.contexto.flatMap((p) => p.hechos);
-  assert.ok(ids.includes("macro-wti"), "el WTI sin dirección va a contexto");
-  assert.ok(!ids.includes("macro-cobre") && !ids.includes("macro-oro"), "cobre y oro ya fueron usados como factor con dirección");
+  assert.ok(ids.includes("macro-cobre") && ids.includes("macro-oro"), "cobre y oro sin metal principal van a contexto");
+  // Contexto tiene máximo 2, así que WTI y dólar no entran
   assert.equal(r.contexto.length, 2, "contexto respeta el máximo de 2 puntos");
   assert.equal(r.que_hay.length + r.podria_mover.al_alza.length + r.podria_mover.a_la_baja.length + r.contexto.length <= 8, true);
   assert.ok(r.resumen.split(/\s+/).length <= 40);
 });
 
-test("una no minera no lleva dirección: cobre y oro van a contexto", () => {
-  const noMinera = { ...DATOS, sector: "INDUSTRIALES" };
-  const r = lecturaEmpresaDeterminista(noMinera, hechosEmpresa(noMinera));
+test("Cerro Verde (CVERDEC1): solo cobre lleva dirección; oro va a contexto", () => {
+  const datosCV = { ...DATOS, nemo: "CVERDEC1", nombre: "Sociedad Minera Cerro Verde" };
+  const hechos = hechosEmpresa(datosCV);
+  // Hechos macro con cobre −3.42 % y oro +5.06 %
+  hechos.find((h) => h.id === "macro-cobre").texto = "El cobre acumuló −3.42 % en cinco sesiones y está a US$ 4.00 por libra el 4 de noviembre de 2026.";
+  hechos.find((h) => h.id === "macro-oro").texto = "El oro acumuló +5.06 % en cinco sesiones y está a US$ 2600.00 por onza el 4 de noviembre de 2026.";
+  const r = lecturaEmpresaDeterminista(datosCV, hechos);
+  // Cobre (metal principal) baja → a_la_baja
+  assert.equal(r.podria_mover.a_la_baja.length, 1);
+  assert.match(r.podria_mover.a_la_baja[0].texto, /cobre bajó 3\.42 %/);
+  assert.match(r.podria_mover.a_la_baja[0].texto, /precio más bajo de la minera/);
+  // Oro no lleva dirección → contexto, sin «más alto» ni «más bajo»
+  assert.equal(r.podria_mover.al_alza.length, 0);
+  const idsContexto = r.contexto.flatMap((p) => p.hechos);
+  assert.ok(idsContexto.includes("macro-oro"), "oro va a contexto");
+  const oroContexto = r.contexto.find((p) => p.hechos.includes("macro-oro"));
+  assert.ok(oroContexto);
+  assert.ok(!/más alto|más bajo/.test(oroContexto.texto), "oro en contexto no dice hacia dónde empuja");
+});
+
+test("Buenaventura (BVN): solo oro lleva dirección; cobre va a contexto", () => {
+  const datosBVN = { ...DATOS, nemo: "BVN", nombre: "Compañía de Minas Buenaventura" };
+  const hechos = hechosEmpresa(datosBVN);
+  hechos.find((h) => h.id === "macro-cobre").texto = "El cobre acumuló −3.42 % en cinco sesiones y está a US$ 4.00 por libra el 4 de noviembre de 2026.";
+  hechos.find((h) => h.id === "macro-oro").texto = "El oro acumuló +5.06 % en cinco sesiones y está a US$ 2600.00 por onza el 4 de noviembre de 2026.";
+  const r = lecturaEmpresaDeterminista(datosBVN, hechos);
+  // Oro (metal principal) sube → al_alza
+  assert.equal(r.podria_mover.al_alza.length, 1);
+  assert.match(r.podria_mover.al_alza[0].texto, /oro subió 5\.06 %/);
+  assert.match(r.podria_mover.al_alza[0].texto, /precio más alto de la minera/);
+  // Cobre no lleva dirección → contexto
+  assert.equal(r.podria_mover.a_la_baja.length, 0);
+  const idsContexto = r.contexto.flatMap((p) => p.hechos);
+  assert.ok(idsContexto.includes("macro-cobre"), "cobre va a contexto");
+  const cobreContexto = r.contexto.find((p) => p.hechos.includes("macro-cobre"));
+  assert.ok(cobreContexto);
+  assert.ok(!/más alto|más bajo/.test(cobreContexto.texto), "cobre en contexto no dice hacia dónde empuja");
+});
+
+test("Minsur (MINSURI1): ni cobre ni oro llevan dirección; ambos en contexto", () => {
+  const datosMinsur = { ...DATOS, nemo: "MINSURI1", nombre: "Minsur S.A." };
+  const hechos = hechosEmpresa(datosMinsur);
+  hechos.find((h) => h.id === "macro-cobre").texto = "El cobre acumuló −3.42 % en cinco sesiones y está a US$ 4.00 por libra el 4 de noviembre de 2026.";
+  hechos.find((h) => h.id === "macro-oro").texto = "El oro acumuló +5.06 % en cinco sesiones y está a US$ 2600.00 por onza el 4 de noviembre de 2026.";
+  const r = lecturaEmpresaDeterminista(datosMinsur, hechos);
   assert.equal(r.podria_mover.al_alza.length + r.podria_mover.a_la_baja.length, 0);
   const ids = r.contexto.flatMap((p) => p.hechos);
-  assert.ok(ids.includes("macro-cobre") && ids.includes("macro-oro"), "los metales sin relación documentada van a contexto");
+  assert.ok(ids.includes("macro-cobre") && ids.includes("macro-oro"), "ambos metales van a contexto");
+});
+
+test("un factor con dirección sin relación documentada se mueve a contexto", () => {
+  const hechos = hechosEmpresa(DATOS);
+  const salida = corregirDireccionEmpresa(
+    {
+      al_alza: [{ texto: "El petróleo WTI subió 0.50 % en cinco sesiones.", hechos: ["macro-wti"] }],
+      a_la_baja: [],
+      contexto: [],
+    },
+    hechos,
+    DATOS,
+  );
+  assert.equal(salida.al_alza.length, 0, "el WTI no empuja a ningún lado");
+  assert.equal(salida.contexto.length, 1);
+  assert.deepEqual(salida.contexto[0].hechos, ["macro-wti"]);
+
+  const noMinera = { ...DATOS, sector: "INDUSTRIALES" };
+  const hechos2 = hechosEmpresa(noMinera);
+  const salida2 = corregirDireccionEmpresa(
+    {
+      al_alza: [{ texto: "El cobre subió 2.10 % en cinco sesiones.", hechos: ["macro-cobre"] }],
+      a_la_baja: [],
+      contexto: [],
+    },
+    hechos2,
+    noMinera,
+  );
+  assert.equal(salida2.al_alza.length, 0, "sin sector minero, el cobre no tiene dirección");
+  assert.equal(salida2.contexto.length, 1);
+});
+
+test("la guardia mueve a contexto un punto al_alza de CVERDEC1 sostenido solo por macro-oro", () => {
+  const datosCV = { nemo: "CVERDEC1", nombre: "Sociedad Minera Cerro Verde", sector: "MINERAS" };
+  const hechos = hechosEmpresa(datosCV);
+  const salida = corregirDireccionEmpresa(
+    {
+      al_alza: [{ texto: "El oro subió 5.06 % en cinco sesiones.", hechos: ["macro-oro"] }],
+      a_la_baja: [],
+      contexto: [],
+    },
+    hechos,
+    datosCV,
+  );
+  assert.equal(salida.al_alza.length, 0, "macro-oro no empuja para Cerro Verde");
+  assert.equal(salida.contexto.length, 1);
+  assert.deepEqual(salida.contexto[0].hechos, ["macro-oro"]);
 });
 
 test("un texto con cifra inventada se rechaza y cae a la versión determinista", async () => {
@@ -127,36 +212,6 @@ test("empresa sin hechos: respuesta determinista sin llamar al LLM", async () =>
   assert.equal(out.resumen, "Sin hechos de importancia ni noticias en los últimos 7 días.");
   assert.equal(out.determinista, true);
   assert.equal(out.modelo, null);
-});
-
-test("un factor con dirección sin relación documentada se mueve a contexto", () => {
-  const hechos = hechosEmpresa(DATOS);
-  const salida = corregirDireccionEmpresa(
-    {
-      al_alza: [{ texto: "El petróleo WTI subió 0.50 % en cinco sesiones.", hechos: ["macro-wti"] }],
-      a_la_baja: [],
-      contexto: [],
-    },
-    hechos,
-    DATOS,
-  );
-  assert.equal(salida.al_alza.length, 0, "el WTI no empuja a ningún lado");
-  assert.equal(salida.contexto.length, 1);
-  assert.deepEqual(salida.contexto[0].hechos, ["macro-wti"]);
-
-  const noMinera = { ...DATOS, sector: "INDUSTRIALES" };
-  const hechos2 = hechosEmpresa(noMinera);
-  const salida2 = corregirDireccionEmpresa(
-    {
-      al_alza: [{ texto: "El cobre subió 2.10 % en cinco sesiones.", hechos: ["macro-cobre"] }],
-      a_la_baja: [],
-      contexto: [],
-    },
-    hechos2,
-    noMinera,
-  );
-  assert.equal(salida2.al_alza.length, 0, "sin sector minero, el cobre no tiene dirección");
-  assert.equal(salida2.contexto.length, 1);
 });
 
 test("con el revisor caído, solo pasa lo que cumple forma y cifras", async () => {

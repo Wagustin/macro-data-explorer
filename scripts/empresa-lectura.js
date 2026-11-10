@@ -150,19 +150,33 @@ function puntosValidos(lista, hechos, rango) {
 }
 
 // Relación documentada y simple entre un macro y la empresa: sector MINERAS con su metal
-// (cobre y oro: los que tienen serie en los datos; zinc/plata también tienen serie, pero un
-// productor de zinc o plata no garantiza que ese sea su metal y no se inventa qué produce),
-// y bancos con la tasa de referencia. Todo lo demás (WTI, dólar, oro en una no minera, etc.)
-// no tiene dirección documentada y va a «contexto».
+// principal (cobre u oro), y bancos con la tasa de referencia. Todo lo demás (WTI, dólar,
+// oro en una no minera, zinc, estaño, hierro, etc.) no tiene dirección documentada y va a
+// «contexto».
 const METALES_MINERA = new Set(["cobre", "oro"]);
 const SIN_DIRECCION = new Set(["macro-wti", "macro-dolar"]);
+
+// Metal principal de cada minera, solo donde es público e inequívoco. Una minera que no esté
+// aquí (zinc, estaño, hierro, polimetálicas) no recibe dirección de ningún metal: cobre y
+// oro van a contexto.
+const METAL_DE_MINERA = {
+  CVERDEC1: "cobre",
+  SCCO: "cobre",
+  SPCCPI1: "cobre",
+  SPCCPI2: "cobre",
+  BVN: "oro",
+  BUENAVI1: "oro",
+  PODERC1: "oro",
+};
 
 function macroConDireccion(datos, idHecho) {
   const clave = String(idHecho || "").replace(/^macro-/, "");
   if (!METALES_MINERA.has(clave) && clave !== "tasa_referencia") return false;
   const sector = String(datos?.sector || "");
   if (clave === "tasa_referencia") return sector === "BANCOS Y FINANCIERAS";
-  return sector === "MINERAS";
+  // Solo la minera cuyo metal principal coincida con el macro lleva dirección.
+  const nemo = datos?.nemo ?? datos?.nemonico ?? "";
+  return METAL_DE_MINERA[nemo] === clave;
 }
 
 // Guardia de dirección: un punto en al_alza/a_la_baja sostenido solo por hechos sin dirección
@@ -191,13 +205,14 @@ function promptLectura(datos, hechos) {
   const lista = hechos.map((h) => `${h.id}|${h.fuente}|${h.texto}`).join("\n");
   const nombre = d.nombre || d.nemo || "la empresa";
   const sector = d.sector ? ` Sector registrado en PerData: ${d.sector}. Solo puedes describir su actividad con ese sector y con los hechos de abajo; no inventes qué produce ni a qué se dedica.` : " No hay sector registrado en PerData: no inventes qué produce ni a qué se dedica, solo usa los hechos de abajo.";
+  const metalPrincipal = d.metal_principal ? ` Metal principal de la minera: ${d.metal_principal}.` : "";
   return `Eres el redactor del boletín de PerData, un medio económico del Perú. Escribes la lectura de ${nombre} (nemónico ${d.nemo || "sin nemónico"}): qué hay hoy de la empresa y qué podría mover su acción, sin afirmar la dirección.
 Hechos disponibles (formato: id|fuente|hecho):
 ${lista}
-${sector}
+${sector}${metalPrincipal}
 El modelo de PerData NO predice dirección: nunca afirmas «subirá» ni «bajará», nunca recomiendas comprar o vender, nunca nombras TimesFM y no usas cifras que no estén en los hechos citados. Cada punto cita los ids de los hechos que lo respaldan. El sentimiento de un titular se cita como tono («en tono positivo», «en tono negativo» o «en tono neutro»), nunca como dirección.
 
-Reglas económicas (obligatorias): solo un factor macro con relación documentada y simple puede ir en al_alza o a_la_baja: (a) una empresa del sector MINERAS con el precio del metal que aparece en los hechos macro (cobre u oro) — si el metal sube en cinco sesiones, suele acompañar un precio más alto de la minera y, si baja, uno más bajo; (b) un banco del sector BANCOS Y FINANCIERAS con la tasa de referencia — si la tasa sube, suele acompañar una presión bajista para el banco y, si baja, una presión alcista. Ningún otro hecho lleva dirección: el petróleo WTI, el dólar, el oro de una no minera, los hechos SMV y los titulares solo van en «que_hay» o en «contexto», con su cifra y sin decir hacia dónde empujan. Si el sector no es de esos dos, todo va sin dirección.
+Reglas económicas (obligatorias): solo un factor macro con relación documentada y simple puede ir en al_alza o a_la_baja: (a) una empresa del sector MINERAS con el precio de su metal principal (cobre u oro) — si ese metal sube en cinco sesiones, suele acompañar un precio más alto de la minera y, si baja, uno más bajo; (b) un banco del sector BANCOS Y FINANCIERAS con la tasa de referencia — si la tasa sube, suele acompañar una presión bajista para el banco y, si baja, una presión alcista. Ningún otro hecho lleva dirección: el petróleo WTI, el dólar, el cobre/oro de una minera que no los produce, los hechos SMV y los titulares solo van en «que_hay» o en «contexto», con su cifra y sin decir hacia dónde empujan. Si el sector no es de esos dos, todo va sin dirección.
 
 Escribe en español de Perú, tono llano de periodista económico, sin emojis, con tildes. Máximo 2 puntos por lista.
 
@@ -339,7 +354,7 @@ export function lecturaEmpresaDeterminista(datos, hechos) {
 // ---------- 6. lecturaEmpresa(datos, opciones) ----------
 export async function lecturaEmpresa(datos, opciones = {}) {
   const hechos = hechosEmpresa(datos);
-  const d = datos || {};
+  const d = { ...(datos || {}), metal_principal: METAL_DE_MINERA[datos?.nemo ?? datos?.nemonico ?? ""] || null };
 
   // Sin hechos: respuesta determinista sin llamar al LLM.
   if (!hechos.length) {
