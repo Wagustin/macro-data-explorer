@@ -77,6 +77,7 @@ const bcrpDaily = JSON.parse(
 const penSeries = bcrpDaily.series.PEN.serie;
 
 const ultimos20 = penSeries.slice(-20).map(([fecha, cierre]) => ({ fecha, cierre }));
+const fechaProvisional = bcrpDaily.series.PEN.provisional?.fecha || null; // cierre adelantado por SUNAT
 for (let i = 1; i < ultimos20.length; i++) {
   const anterior = ultimos20[i - 1].cierre;
   const cambio = ultimos20[i].cierre - anterior;
@@ -249,7 +250,7 @@ const filasCierres = ultimos20
   .map(
     (fila) => `
             <tr>
-              <td class="mono tnum">${escapeHtml(fila.fecha)}</td>
+              <td class="mono tnum">${escapeHtml(fila.fecha)}${fila.fecha === fechaProvisional ? ' <span class="text-ink-soft">(SUNAT)</span>' : ''}</td>
               <td class="mono tnum">${num(fila.cierre, 4)}</td>
               <td class="mono tnum ${fila.variacion > 0 ? 'text-pos' : fila.variacion < 0 ? 'text-neg' : ''}">${fila.variacion === null ? 's/d' : (fila.variacion > 0 ? '+' : '') + num(fila.variacion, 4)}</td>
               <td class="mono tnum ${fila.variacionPct > 0 ? 'text-pos' : fila.variacionPct < 0 ? 'text-neg' : ''}">${fila.variacionPct === null ? 's/d' : (fila.variacionPct > 0 ? '+' : '') + pct(fila.variacionPct, 2)}</td>

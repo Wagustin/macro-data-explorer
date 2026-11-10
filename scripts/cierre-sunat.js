@@ -4,49 +4,14 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { PERU_HOLIDAYS, addBusinessDays } from "./engine-daily.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const BCRP_PATH = path.join(ROOT, "data", "official", "bcrp-daily.json");
 const SUNAT_URL = "https://www.sunat.gob.pe/a/txt/tipoCambio.txt";
 const USER_AGENT = "PerDataBot/1.0 (+https://perdata.site)";
 
-// Feriados de Perú (exportados desde engine-daily.js)
-export const PERU_HOLIDAYS = new Set([
-  // 2026
-  "2026-01-01",
-  "2026-04-02",
-  "2026-04-03",
-  "2026-05-01",
-  "2026-06-07",
-  "2026-06-29",
-  "2026-07-23",
-  "2026-07-28",
-  "2026-07-29",
-  "2026-08-06",
-  "2026-08-30",
-  "2026-10-08",
-  "2026-11-01",
-  "2026-12-08",
-  "2026-12-09",
-  "2026-12-25",
-  // 2027
-  "2027-01-01",
-  "2027-03-25",
-  "2027-03-26",
-  "2027-05-01",
-  "2027-06-07",
-  "2027-06-29",
-  "2027-07-23",
-  "2027-07-28",
-  "2027-07-29",
-  "2027-08-06",
-  "2027-08-30",
-  "2027-10-08",
-  "2027-11-01",
-  "2027-12-08",
-  "2027-12-09",
-  "2027-12-25",
-]);
+export { PERU_HOLIDAYS };
 
 /**
  * Parsea la línea SUNAT: "DD/MM/AAAA|compra|venta|"
@@ -116,7 +81,7 @@ export function aplicarCierre(bcrp, punto, hoyLima) {
   const P = diaHabilAnterior(punto.fecha);
   const ultimaFechaSerie = penSerie[penSerie.length - 1][0];
   if (P <= ultimaFechaSerie) {
-    if (bcrpCopy.series.PEN.provisional) {
+    if (bcrpCopy.series.PEN.provisional && bcrpCopy.series.PEN.provisional.fecha !== ultimaFechaSerie) {
       delete bcrpCopy.series.PEN.provisional;
     }
     return { aplicado: false, motivo: "bcrp_ya_lo_tiene", bcrp: bcrpCopy };
@@ -146,6 +111,16 @@ export function aplicarCierre(bcrp, punto, hoyLima) {
     publicado: punto.fecha,
   };
   return { aplicado: true, motivo: "aplicado", bcrp: bcrpCopy };
+}
+
+/**
+ * Fecha de referencia para volver a correr el motor de madrugada: la misma de la corrida anterior
+ * mientras su «mañana» siga siendo hoy o un día futuro, para que los objetivos (hoy y la semana)
+ * no cambien y solo se afine el rango. Devuelve null si la corrida anterior ya quedó vieja.
+ */
+export function referenciaMotor(daily, hoyLima) {
+  const r = daily?.referencia_lima?.hoy;
+  return r && addBusinessDays(r, 1) >= hoyLima ? r : null;
 }
 
 /**
@@ -188,17 +163,16 @@ async function main() {
   } else {
     // Descargar de SUNAT
     let response = null;
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 15000);
-      response = await fetch(SUNAT_URL, {
-        headers: { "User-Agent": USER_AGENT },
-        signal: controller.signal,
-      });
-      clearTimeout(timeout);
-    } catch (e) {
-      console.log(`cierre-sunat: red_error ${e.message}`);
-      process.exit(0);
+    for (let intento = 1; intento <= 2 && !response; intento++) {
+      try {
+        response = await fetch(SUNAT_URL, { headers: { "User-Agent": USER_AGENT }, signal: AbortSignal.timeout(15000) });
+      } catch (e) {
+        if (intento === 2) {
+          console.log(`cierre-sunat: red_error ${e.message}`);
+          process.exit(0);
+        }
+        await new Promise((r) => setTimeout(r, 5000));
+      }
     }
 
     if (!response.ok) {
@@ -240,9 +214,14 @@ async function main() {
   if (resultado.aplicado && process.env.GITHUB_OUTPUT) {
     fs.appendFileSync(process.env.GITHUB_OUTPUT, "aplicado=true\n");
   }
+  if (resultado.aplicado && args.includes("--referencia")) {
+    const ref = referenciaMotor(JSON.parse(fs.readFileSync(path.join(ROOT, "data", "daily-forecasts.json"), "utf8")), hoyLima);
+    console.log(`cierre-sunat: referencia del motor ${ref || "hoy"}`);
+    if (ref && process.env.GITHUB_ENV) fs.appendFileSync(process.env.GITHUB_ENV, `ENGINE_HOY=${ref}\n`);
+  }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   main().catch((err) => {
     console.error("Error en cierre-sunat:", err);
     process.exit(1);

@@ -1,9 +1,13 @@
 name: Cierre de ayer (SUNAT)
 
+# El BCRP publica el cierre del dólar con un día hábil de retraso; SUNAT lo publica de madrugada.
+# Si SUNAT ya tiene un cierre que falta en la serie, se añade como dato provisional y el motor vuelve a
+# correr: el rango del día parte del cierre de ayer y queda más angosto con la misma cobertura.
+
 on:
   schedule:
-    - cron: "37 8 * * 1-6"
-    - cron: "7 10 * * 1-6"
+    - cron: "37 8 * * 1-6"    # 03:37 en Lima: SUNAT publica el cierre del día hábil anterior hacia las 02:20
+    - cron: "7 10 * * 1-6"    # respaldo 05:07, antes del boletín
   workflow_dispatch:
 
 permissions:
@@ -22,23 +26,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      # Con --referencia deja ENGINE_HOY para que el motor conserve las fechas objetivo de la corrida anterior.
       - id: cierre
-        run: node scripts/cierre-sunat.js
-      - name: Calcular ENGINE_HOY
-        if: steps.cierre.outputs.aplicado == 'true'
-        run: |
-          node -e "
-            const fs = require('fs');
-            const { addBusinessDays, PERU_HOLIDAYS } = await import('./scripts/engine-daily.js');
-            const daily = JSON.parse(fs.readFileSync('data/daily-forecasts.json', 'utf8'));
-            const R = daily.referencia_lima.hoy;
-            const manana = addBusinessDays(R, 1, PERU_HOLIDAYS);
-            const hoyLima = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Lima', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-            if (manana >= hoyLima) {
-              console.log('ENGINE_HOY=' + R);
-              process.stdout.write('ENGINE_HOY=' + R + '\\n');
-            }
-          " >> $GITHUB_ENV
+        run: node scripts/cierre-sunat.js --referencia
       - name: PerData Engine diario
         if: steps.cierre.outputs.aplicado == 'true'
         run: node scripts/engine-daily.js

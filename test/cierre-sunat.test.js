@@ -8,6 +8,7 @@ import {
   diaHabilAnterior,
   aplicarCierre,
   PERU_HOLIDAYS,
+  referenciaMotor,
 } from "../scripts/cierre-sunat.js";
 import { generateDailyForecasts, addBusinessDays } from "../scripts/engine-daily.js";
 
@@ -72,7 +73,7 @@ test("aplicarCierre: bcrp_ya_lo_tiene - y borra provisional si existía", () => 
         codigo: "PD04640PD",
         unidad: "S/ por US$",
         serie: [["2026-11-04", 3.41], ["2026-11-05", 3.412], ["2026-11-06", 3.415], ["2026-11-09", 3.418]],
-        provisional: { fecha: "2026-11-09", valor: 3.418, fuente: "SUNAT", url: "...", publicado: "2026-11-10" },
+        provisional: { fecha: "2026-11-06", valor: 3.415, fuente: "SUNAT", url: "...", publicado: "2026-11-09" },
       },
     },
   };
@@ -81,7 +82,21 @@ test("aplicarCierre: bcrp_ya_lo_tiene - y borra provisional si existía", () => 
   const res = aplicarCierre(bcrp, punto, hoyLima);
   assert.equal(res.aplicado, false);
   assert.equal(res.motivo, "bcrp_ya_lo_tiene");
-  assert.ok(!res.bcrp.series.PEN.provisional);
+  assert.ok(!res.bcrp.series.PEN.provisional, "una marca de un día que ya no es el último se borra");
+  assert.ok(bcrp.series.PEN.provisional, "no muta la entrada");
+  // Segunda corrida de la misma madrugada: el último punto es el adelantado por SUNAT y su marca se queda.
+  bcrp.series.PEN.provisional = { fecha: "2026-11-09", valor: 3.418, fuente: "SUNAT", url: "...", publicado: "2026-11-10" };
+  const otra = aplicarCierre(bcrp, punto, hoyLima);
+  assert.equal(otra.aplicado, false);
+  assert.equal(otra.bcrp.series.PEN.provisional.fecha, "2026-11-09");
+});
+
+test("referenciaMotor: conserva la fecha de la corrida anterior mientras su mañana no haya pasado", () => {
+  const daily = { referencia_lima: { hoy: "2026-11-09" } };
+  assert.equal(referenciaMotor(daily, "2026-11-10"), "2026-11-09"); // martes de madrugada
+  assert.equal(referenciaMotor({ referencia_lima: { hoy: "2026-11-06" } }, "2026-11-07"), "2026-11-06"); // sábado
+  assert.equal(referenciaMotor(daily, "2026-11-11"), null); // la corrida anterior ya quedó vieja
+  assert.equal(referenciaMotor({}, "2026-11-10"), null);
 });
 
 test("aplicarCierre: fecha_futura", () => {
