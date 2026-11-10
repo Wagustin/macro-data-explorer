@@ -58,62 +58,161 @@ const UI_F = "'Libre Franklin',Arial,sans-serif";
 const SERIF_F = "'Source Serif 4',Georgia,serif";
 const NUM = ' style="font-variant-numeric:tabular-nums"';
 
-// Remove whitespace between tags and collapse repeated spaces outside text nodes.
-// Keeps a single space where a newline existed inside text content.
+// Structural tags (table/block) that cause adjacent space removal.
+const STRUCTURAL_TAGS = new Set([
+  "table", "/table", "tr", "/tr", "td", "/td", "tbody", "/tbody",
+  "div", "/div", "p", "/p", "ul", "/ul", "li", "/li",
+  "html", "/html", "head", "/head", "body", "/body"
+]);
+// Inline tags where spaces are preserved.
+const INLINE_TAGS = new Set([
+  "span", "/span", "a", "/a", "b", "/b", "strong", "/strong", "em", "/em"
+]);
+
+function tagBaseName(tag) {
+  // "<td ...>" -> "td", "</td>" -> "/td"
+  const inner = tag.slice(1, -1).trim();
+  return inner.split(/\s/)[0].toLowerCase();
+}
+
+function isStructural(tag) {
+  return STRUCTURAL_TAGS.has(tagBaseName(tag));
+}
+function isInline(tag) {
+  return INLINE_TAGS.has(tagBaseName(tag));
+}
+function isClosing(tag) {
+  return tagBaseName(tag).startsWith("/");
+}
+
+// Collapse whitespace in text nodes to a single space.
+// Remove spaces adjacent to structural tags (before structural closing, after structural opening).
+// Preserve spaces between inline tags.
 function compactar(html) {
+  // First pass: collapse whitespace in text, trim around structural tags.
   let out = "";
-  let inTag = false;
-  let inText = false;
-  let textBuf = "";
-  for (let i = 0; i < html.length; i++) {
-    const ch = html[i];
-    if (ch === "<") {
-      if (inText) {
-        out += textBuf.replace(/\s+/g, " ").trim();
-        textBuf = "";
-        inText = false;
+  let i = 0;
+  let lastTag = null;
+
+  while (i < html.length) {
+    if (html[i] === "<") {
+      const tagEnd = html.indexOf(">", i);
+      if (tagEnd === -1) {
+        out += html.slice(i);
+        break;
       }
-      out += ch;
-      inTag = true;
-    } else if (ch === ">") {
-      out += ch;
-      inTag = false;
-      inText = true;
-    } else if (inTag) {
-      out += ch;
+      const tag = html.slice(i, tagEnd + 1);
+      out += tag;
+      lastTag = { full: tag, structural: isStructural(tag), inline: isInline(tag), closing: isClosing(tag) };
+      i = tagEnd + 1;
     } else {
-      textBuf += ch;
+      // Text content
+      let textStart = i;
+      while (i < html.length && html[i] !== "<") i++;
+      let text = html.slice(textStart, i).replace(/\s+/g, " ");
+
+      // Remove leading space if previous tag was structural opening
+      if (lastTag && lastTag.structural && !lastTag.closing && text.startsWith(" ")) {
+        text = text.slice(1);
+      }
+
+      // Remove trailing space if next tag is structural closing
+      if (i < html.length && html[i] === "<") {
+        const tagEnd = html.indexOf(">", i);
+        if (tagEnd !== -1) {
+          const nextTag = html.slice(i, tagEnd + 1);
+          if (isStructural(nextTag) && isClosing(nextTag) && text.endsWith(" ")) {
+            text = text.slice(0, -1);
+          }
+        }
+      }
+
+      out += text;
     }
   }
-  if (inText) out += textBuf.replace(/\s+/g, " ").trim();
-  // Collapse whitespace between tags: >\s+<  →  ><
-  return out.replace(/>\s+</g, "><");
+
+  // Second pass: handle spaces between adjacent tags (no text between them).
+  return out.replace(/(<[^>]+>)\s+(<[^>]+>)/g, (match, before, after) => {
+    const beforeStructural = isStructural(before);
+    const afterStructural = isStructural(after);
+    const beforeInline = isInline(before);
+    const afterInline = isInline(after);
+    // Remove space if either side is structural, unless both are inline.
+    if ((beforeStructural || afterStructural) && !(beforeInline && afterInline)) {
+      return before + after;
+    }
+    return match;
+  });
 }
 
 // Table-based range bar (works in Gmail, Outlook, Yahoo — no SVG)
 function barraRango({ min, max, centro, ultimo, prefijo = "S/", fechaUltimo, decimales = 3 }) {
+  // Scale: lo = min(min, ultimo) - 15% of range, hi = max(max, ultimo) + 15% of range
   const range = max - min;
   const lo = Math.min(min, ultimo) - range * 0.15;
   const hi = Math.max(max, ultimo) + range * 0.15;
   const total = hi - lo;
 
+  // Track: three cells with integer percentages summing to 100
+  // Band goes from min to max, so leftPct uses min, rightPct uses max
   const leftPct = Math.round(((min - lo) / total) * 100);
   const rightPct = Math.round(((hi - max) / total) * 100);
   const midPct = 100 - leftPct - rightPct;
+
+  // Last close position as percentage
   const ultimoPct = Math.round(((ultimo - lo) / total) * 100);
 
+  // Use same formatter as "Rango:" line for consistency
   const fmt = (v) => `${prefijo} ${Number(v).toLocaleString("es-PE", { minimumFractionDigits: decimales, maximumFractionDigits: decimales })}`;
+
+  // Band color: soft green #cfdccb, track #e4dfd6
   const bandColor = "#cfdccb";
   const trackColor = "#e4dfd6";
-  const ink = "#1B1916";
-  const paper = "#F5F1E8";
-  const soft = "#5E584E";
 
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-family:${MONO_F};font-size:12px;color:${ink};font-variant-numeric:tabular-nums">
-<tr><td width="${leftPct}%" style="font-size:0;line-height:0;height:8px;background:${trackColor}">&nbsp;</td><td width="${midPct}%" style="font-size:0;line-height:0;height:8px;background:${bandColor}">&nbsp;</td><td width="${rightPct}%" style="font-size:0;line-height:0;height:8px;background:${trackColor}">&nbsp;</td></tr>
-<tr><td width="${leftPct}%" style="font-size:11px;padding-top:2px;text-align:left;white-space:nowrap">${esc(fmt(min))}</td><td width="${midPct}%" style="font-size:0;line-height:0;height:8px;background:${paper}">&nbsp;</td><td width="${rightPct}%" style="font-size:11px;padding-top:2px;text-align:right;white-space:nowrap">${esc(fmt(max))}</td></tr>
-<tr><td width="${ultimoPct}%" style="font-size:0;line-height:0;height:8px;background:${paper}">&nbsp;</td><td width="3" style="font-size:0;line-height:0;height:8px;background:${ink}">&nbsp;</td><td style="font-size:0;line-height:0;height:8px;background:${paper}">&nbsp;</td></tr>
-<tr><td colspan="3" style="font-family:${UI_F};font-size:12px;color:${soft};padding-top:2px">último cierre ${esc(fmt(ultimo))} (${esc(fechaUltimo)})</td></tr>
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-family:${MONO_F};font-size:12px;color:${C.ink};font-variant-numeric:tabular-nums">
+<tr>
+  <td colspan="3" style="padding:0 0 4px">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td width="${leftPct}%" style="font-size:0;line-height:0">&nbsp;</td>
+        <td width="${midPct}%" style="font-size:0;line-height:0">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="text-align:left;font-size:11px;white-space:nowrap">${esc(fmt(min))}</td>
+              <td style="text-align:right;font-size:11px;white-space:nowrap">${esc(fmt(max))}</td>
+            </tr>
+          </table>
+        </td>
+        <td width="${rightPct}%" style="font-size:0;line-height:0">&nbsp;</td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+  <td colspan="3" style="padding:0">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="height:8px;background:${trackColor}">
+      <tr>
+        <td width="${leftPct}%" style="background:${trackColor};height:8px;font-size:0;line-height:0">&nbsp;</td>
+        <td width="${midPct}%" style="background:${bandColor};height:8px;font-size:0;line-height:0">&nbsp;</td>
+        <td width="${rightPct}%" style="background:${trackColor};height:8px;font-size:0;line-height:0">&nbsp;</td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+  <td colspan="3" style="padding:4px 0 0">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="height:8px">
+      <tr>
+        <td width="${ultimoPct}%" style="background:${C.paper};height:8px;font-size:0;line-height:0">&nbsp;</td>
+        <td width="3" style="background:${C.ink};height:8px;font-size:0;line-height:0">&nbsp;</td>
+        <td style="background:${C.paper};height:8px;font-size:0;line-height:0">&nbsp;</td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+  <td colspan="3" style="font-family:${UI_F};font-size:12px;color:${C.soft};padding-top:2px">último cierre ${esc(fmt(ultimo))} (${esc(fechaUltimo)})</td>
+</tr>
 </table>`;
 }
 

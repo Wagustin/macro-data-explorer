@@ -78,9 +78,9 @@ test("correo pagado: dólar x3 con lectura, metales, SMV, todas las noticias y T
   const buenas = (digest.historias || []).filter((h) => h.nota && h.revision?.ok !== false);
 
   // (1) Dólar mañana, semana y mes con rango y su lectura
-  // Use formatFechaObjetivo to get the actual label for "manana" horizon
+  // Use the same date logic as the render: current date in Lima timezone
+  const todayLima = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Lima" }).format(new Date());
   const daily = JSON.parse(read("data/daily-forecasts.json"));
-  const todayLima = daily.referencia_lima.hoy;
   const mananaFecha = daily.simbolos.PEN.manana.fecha_objetivo;
   const dt = new Date(`${mananaFecha}T12:00:00Z`);
   const hdt = new Date(`${todayLima}T12:00:00Z`);
