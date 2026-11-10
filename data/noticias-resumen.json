@@ -1,21 +1,33 @@
 {
- "actualizado": "2026-11-10T12:37:26.043Z",
+ "actualizado": "2026-11-10T15:01:43.523Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "Perú emite bonos soberanos récord por 4.500 millones de dólares",
-   "nota": "El Ministerio de Economía y Finanzas completó la mayor emisión de bonos en dólares de la historia del país por 4.500 millones. La operación se realizó bajo formato sostenible y supera cualquier colocación previa de la región.",
+   "titulo": "Perú coloca bonos sostenibles récord por 4.500 millones",
+   "nota": "El Ministerio de Economía y Finanzas completó la mayor emisión de bonos en dólares de la historia del país. La operación alcanzó los 4.500 millones y registró una demanda superior a los 21.000 millones.",
    "tema": "Dólar y BCRP",
    "empresas": [
     "BVN"
    ],
    "fuentes": [
     {
-     "titulo": "Perú realiza emisión de bonos en dólares más grande de su historia por US$ 4,500 millones",
+     "titulo": "Perú se endeuda por USD 4.500 millones en la mayor emisión de bonos en dólares de su historia",
+     "fuente": "Infobae Perú",
+     "url": "https://www.infobae.com/peru/2026/11/10/peru-se-endeuda-por-usd-4500-millones-en-la-mayor-emision-de-bonos-en-dolares-de-su-historia/",
+     "fecha": "2026-11-10T13:06:32.000Z"
+    },
+    {
+     "titulo": "Perú emite bonos globales por US$ 4,500 millones, la más grande de su historia",
      "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-peru-realiza-emision-bonos-dolares-mas-grande-su-historia-4500-millones-1099300.aspx",
+     "url": "https://andina.pe/agencia/noticia-peru-emite-bonos-globales-4500-millones-mas-grande-su-historia-1099300.aspx",
      "fecha": "2026-11-10T12:21:21.000Z"
+    },
+    {
+     "titulo": "Perú realizó la emisión de bonos en dólares más grande de su historia por US$ 4 500 millones, cuya demanda superó los US$ 21 000 millones",
+     "fuente": "Ministerio de Economía y Finanzas",
+     "url": "https://www.gob.pe/institucion/mef/noticias/1471852-peru-realizo-la-emision-de-bonos-en-dolares-mas-grande-de-su-historia-por-us-4-500-millones-cuya-demanda-supero-los-us-21-000-millones",
+     "fecha": "2026-11-10T12:13:00.000Z"
     },
     {
      "titulo": "MEF completa emisión de bonos sostenibles por US$4.500 millones, la más alta en dólares realizada por un país de la región",
@@ -31,8 +43,27 @@
    }
   },
   {
-   "titulo": "Gobierno impulsa paquete laboral y tributario para el verano",
-   "nota": "El Ejecutivo alista un combo que incluye reducción de aportes a salud y pensiones para menores ingresos y flexibilización de despidos para trabajadores de mayores remuneraciones. El Congreso también busca facultar a Sunat para cobrar deudas tributarias por hasta 123.000 millones de soles.",
+   "titulo": "ProInversión adjudicará diez mil millones anuales bajo Fujimori",
+   "nota": "El gobierno de Fujimori busca adjudicar proyectos por diez mil millones de dólares al año mediante ProInversión.",
+   "tema": "Economía y fiscal",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "ProInversión: Gobierno de Fujimori busca adjudicar US$ 10 mil millones al año en proyectos",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/proinversion-gobierno-de-keiko-fujimori-busca-adjudicar-us-10-mil-millones-al-ano-en-proyectos-en-peru-noticia/",
+     "fecha": "2026-11-10T14:47:54.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "MEF alista paquete laboral tributario con cambios en aportes y despidos",
+   "nota": "El Ministerio de Economía prepara un conjunto de medidas para el verano que incluye reducir los aportes a salud y pensiones de los trabajadores de menores ingresos. La propuesta también contempla modificaciones en las reglas de despido.",
    "tema": "Economía y fiscal",
    "empresas": [
     "MINSURI1"
@@ -42,25 +73,13 @@
      "titulo": "Se alista “combo” laboral tributario para verano: aportes y despidos, claves de la propuesta",
      "fuente": "Gestión",
      "url": "https://gestion.pe/economia/gobierno-de-keiko-fujimori-alista-combo-laboral-tributario-para-el-verano-aportes-y-despidos-como-puntos-clave-especialistas-analizan-la-propuesta-noticia-2/",
-     "fecha": "2026-11-10T10:35:00.000Z"
+     "fecha": "2026-11-10T12:56:15.000Z"
     },
     {
      "titulo": "MEF plantea reducir aportes a salud y pensiones para trabajadores de menores ingresos",
      "fuente": "Gestión",
      "url": "https://gestion.pe/economia/mef-plantea-reducir-aportes-de-salud-y-pensiones-para-trabajadores-de-menores-ingresos-noticia/",
      "fecha": "2026-11-09T23:10:00.000Z"
-    },
-    {
-     "titulo": "MEF propone flexibilizar despidos de trabajadores con mejores remuneraciones y reducir aportes laborales",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/2026/11/09/mef-presentara-proyectos-de-reforma-laboral-y-tributaria-para-impulsar-la-formalizacion-de-las-microempresas-504270",
-     "fecha": "2026-11-09T22:15:40.000Z"
-    },
-    {
-     "titulo": "Deudas tributarias: Congreso quiere “ayudar” a Sunat a cobrar hasta S/ 123,000 millones, ¿cómo?",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/deudas-y-controversias-tributarias-congreso-quiere-ayudar-a-sunat-a-cobrar-hasta-s-123000-millones-como-noticia/",
-     "fecha": "2026-11-10T01:10:00.000Z"
     }
    ],
    "revision": {
@@ -70,67 +89,17 @@
    }
   },
   {
-   "titulo": "Inversiones por APP y OxI superarán 17.800 millones en 2027",
-   "nota": "ProInversión proyecta que las inversiones mediante APP y Obras por Impuestos superarán los 17.800 millones de soles el próximo año. El MEF inyectará nuevos recursos para bonos de vivienda este año y duplicará la cantidad para 2027.",
-   "tema": "Bolsa y empresas",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "ProInversión: inversiones superarán los S/ 17,800 millones en 2027 mediante APP y OxI",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-proinversion-inversiones-superaran-los-s-17800-millones-2027-mediante-app-y-oxi-1099227.aspx",
-     "fecha": "2026-11-09T21:00:00.000Z"
-    },
-    {
-     "titulo": "Bonos de vivienda: MEF inyectará nuevos recursos este año y duplicará cantidad para 2027",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/bonos-de-vivienda-mef-inyectara-nuevos-recursos-este-ano-y-duplicara-cantidad-para-2027-la-mirada-junto-al-fondo-mivivienda-noticia/",
-     "fecha": "2026-11-10T04:16:00.000Z"
-    },
-    {
-     "titulo": "MEF promete duplicar presupuesto para bonos de vivienda el próximo año: el detalle de lo que anunció",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/mef-promete-duplicar-presupuesto-para-bonos-de-vivienda-el-proximo-ano-noticia/",
-     "fecha": "2026-11-09T23:21:47.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "El Niño amenaza cosechas clave y eleva precios de alimentos en Lima",
-   "nota": "El fenómeno climático ahoga las previsiones sobre los cinco principales cultivos del país. En la capital, hortalizas y pescados acumulan alzas superiores al 23 por ciento en un año.",
+   "titulo": "Perupetro negocia nuevos lotes de gas natural offshore",
+   "nota": "La empresa estatal Perupetro está en negociaciones para nuevos contratos exploratorios de gas natural frente a las costas de Lambayeque y Tumbes. Además, prevé firmar cinco nuevos contratos exploratorios durante 2027.",
    "tema": "Energía",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "El Niño “ahoga” previsiones sobre 5 principales cultivos de Perú, ¿aumenta amenaza?",
+     "titulo": "¿Empresas en Perú empezarían a trasladar alza de combustibles a sus precios de venta?",
      "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/el-nino-ahoga-previsiones-sobre-5-principales-cultivos-de-peru-hasta-diciembre-aumenta-amenaza-noticia/",
-     "fecha": "2026-11-10T09:01:00.000Z"
+     "url": "https://gestion.pe/economia/glp-gasolina-y-otros-en-peru-empresas-empezarian-a-trasladar-alza-de-combustibles-al-precio-de-venta-noticia/",
+     "fecha": "2026-11-10T14:40:37.000Z"
     },
-    {
-     "titulo": "Hortalizas y pescados subieron más de 23% de precio en un año en Lima, ¿qué explica el alza?",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/hortalizas-y-pescados-subieron-mas-de-23-en-un-ano-en-lima-y-lideraron-el-alza-de-alimentos-apuesplan-noticia/",
-     "fecha": "2026-11-09T23:57:46.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": null,
-    "ok": null,
-    "motivo": "revisor no disponible"
-   }
-  },
-  {
-   "titulo": "Perupetro avanza en nuevos contratos de gas offshore y exploración",
-   "nota": "La estatal negocia lotes de gas natural frente a Lambayeque y Tumbes mientras prevé firmar cinco contratos exploratorios en 2027. Minsur ve una oportunidad única para atraer más inversión minera.",
-   "tema": "Minería y metales",
-   "empresas": [],
-   "fuentes": [
     {
      "titulo": "Perupetro negocia nuevos lotes offshore de gas natural frente a Lambayeque y Tumbes",
      "fuente": "Gestión",
@@ -141,13 +110,7 @@
      "titulo": "Perupetro prevé firmar 5 nuevos contratos exploratorios el 2027, ¿a dónde apuntan?",
      "fuente": "Gestión",
      "url": "https://gestion.pe/economia/petroleo-y-gas-natural-perupetro-preve-firmar-5-nuevos-contratos-exploratorios-el-2027-noticia/",
-     "fecha": "2026-11-10T10:47:00.000Z"
-    },
-    {
-     "titulo": "CEO de Minsur ve una “oportunidad única” para Perú: ¿qué falta para atraer más inversión?",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/empresas/cade-2026-ceo-de-minsur-anticipa-record-exportador-que-falta-para-atraer-mas-inversion-noticia/",
-     "fecha": "2026-11-10T10:30:00.000Z"
+     "fecha": "2026-11-10T13:41:00.000Z"
     }
    ],
    "revision": {
@@ -157,40 +120,49 @@
    }
   },
   {
-   "titulo": "Wall Street sube mientras Nvidia cae y Trump media en Ucrania",
-   "nota": "Wall Street repuntó con fuerza mientras Nvidia profundiza sus pérdidas. Trump ve poco probables nuevos ataques contra Irán mientras Rubio cuestiona las exigencias de Teherán. Las negociaciones de paz entre Rusia y Ucrania vuelven a Abu Dabi con mediación del gobierno Trump.",
-   "tema": "Mundo",
+   "titulo": "El Niño golpea cultivos y logística mientras Perú firma TLC con Tailandia",
+   "nota": "El fenómeno El Niño afecta las previsiones de los cinco principales cultivos del país y obliga a la industria a prepararse para problemas logísticos. Perú suscribirá un tratado de libre comercio con Tailandia en los próximos días, según Keiko Fujimori.",
+   "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Ventas de TSMC crecen 60% en octubre en medio del auge de la inteligencia artificial",
-     "fuente": "Bloomberg Línea",
-     "url": "https://www.bloomberglinea.com/negocios/ventas-de-tsmc-crecen-60-en-octubre-en-medio-del-auge-de-la-inteligencia-artificial/",
-     "fecha": "2026-11-10T09:03:51.000Z"
+     "titulo": "El Niño “ahoga” previsiones sobre 5 principales cultivos de Perú, ¿aumenta amenaza?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/el-nino-ahoga-previsiones-sobre-5-principales-cultivos-de-peru-hasta-diciembre-aumenta-amenaza-noticia/",
+     "fecha": "2026-11-10T09:01:00.000Z"
     },
     {
-     "titulo": "Aventura de Jensen Huang con una presunta espía china pone a Nvidia ante una crisis sin precedentes",
-     "fuente": "Bloomberg Línea",
-     "url": "https://www.bloomberglinea.com/negocios/aventura-de-jensen-huang-con-una-presunta-espia-china-pone-a-nvidia-ante-una-crisis-sin-precedentes/",
-     "fecha": "2026-11-10T01:39:25.000Z"
+     "titulo": "El Niño: industria se prepara en caso de problemas logísticos y su foco está en esta medida",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/el-nino-industria-de-peru-se-prepara-en-caso-de-problemas-o-interrupciones-logisticas-y-su-foco-esta-en-esta-medida-segun-encuesta-de-la-sni-noticia/",
+     "fecha": "2026-11-09T23:15:00.000Z"
     },
     {
-     "titulo": "Wall Street repunta con fuerza tras ola de compras, mientras Nvidia profundiza sus pérdidas",
-     "fuente": "Bloomberg Línea",
-     "url": "https://www.bloomberglinea.com/mercados/wall-street-recupera-terreno-tras-ventas-de-acciones-tecnologicas-y-desplome-de-los-precios-del-petroleo/",
-     "fecha": "2026-11-09T21:44:39.000Z"
-    },
+     "titulo": "Perú suscribirá TLC con Tailandia en los próximos días, dice Keiko Fujimori",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/peru/tlc-noticia/",
+     "fecha": "2026-11-10T02:20:00.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Bolsa de Lima cierra con pérdidas tras caída en Wall Street",
+   "nota": "Los principales indicadores de la Bolsa de Valores de Lima terminaron la jornada en terreno negativo. El movimiento siguió la tendencia bajista registrada en los mercados accionarios de Estados Unidos.",
+   "tema": "Bolsa y empresas",
+   "empresas": [
+    "BVLC1"
+   ],
+   "fuentes": [
     {
-     "titulo": "Negociaciones de paz entre Rusia y Ucrania vuelven a Abu Dabi con mediación del gobierno Trump",
-     "fuente": "Bloomberg Línea",
-     "url": "https://www.bloomberglinea.com/mundo/negociaciones-de-paz-entre-rusia-y-ucrania-vuelven-a-abu-dabi-con-mediacion-del-gobierno-trump/",
-     "fecha": "2026-11-10T11:57:17.000Z"
-    },
-    {
-     "titulo": "Trump ve poco probables nuevos ataques contra Irán mientras Rubio cuestiona las exigencias de Teherán",
-     "fuente": "Bloomberg Línea",
-     "url": "https://www.bloomberglinea.com/mundo/estados-unidos/trump-ve-poco-probables-nuevos-ataques-contra-iran-mientras-rubio-cuestiona-las-exigencias-de-teheran/",
-     "fecha": "2026-11-10T04:01:14.000Z"
+     "titulo": "Bolsa de Valores de Lima presenta índices negativos en sintonía con caída de Wall Street",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-bolsa-valores-lima-presenta-indices-negativos-sintonia-caida-wall-street-1099328.aspx",
+     "fecha": "2026-11-10T14:45:00.000Z"
     }
    ],
    "revision": {
