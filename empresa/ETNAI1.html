@@ -338,16 +338,17 @@ html.dark .ui-switch {
           <span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Perú"><b></b><b></b><b></b></span></span>
         </a>
 
-        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft">
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft" aria-label="Navegación principal">
           <a href="/dolar" class="hover:text-ink transition no-underline">Dólar</a>
           <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a>
-          <a href="/empresas" class="text-ink font-semibold transition no-underline">Empresas</a>
+          <a href="/empresas" class="hover:text-ink transition no-underline">Empresas</a>
           <a href="/mercado" class="hover:text-ink transition no-underline">Mercado</a>
           <a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a>
           <a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a>
           <a href="/guia" class="hover:text-ink transition no-underline">Guía</a>
-          <a href="/boletin" class="hover:text-ink transition no-underline">Boletín</a><a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
-        </nav>
+          <a href="/boletin" class="hover:text-ink transition no-underline">Boletín</a>
+          <a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
+</nav>
       </div>
 
       <div class="flex items-center space-x-2 sm:space-x-3">
@@ -368,16 +369,17 @@ html.dark .ui-switch {
 
     <!-- Mobile Drawer -->
     <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors">
-      <nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft">
-        <a href="/dolar" class="hover:text-ink py-1 transition no-underline">Dólar</a>
-          <a href="/explorer" class="hover:text-ink py-1 transition no-underline">Terminal</a>
-        <a href="/empresas" class="text-ink font-semibold py-1 transition no-underline">Empresas</a>
-        <a href="/mercado" class="hover:text-ink py-1 transition no-underline">Mercado</a>
-        <a href="/noticias" class="hover:text-ink py-1 transition no-underline">Noticias</a>
-        <a href="/metodologia" class="hover:text-ink py-1 transition no-underline">Metodología</a>
-        <a href="/guia" class="hover:text-ink py-1 transition no-underline">Guía</a>
-        <a href="/boletin" class="hover:text-ink py-1 transition no-underline">Boletín</a><a href="/precios" class="hover:text-ink py-1 transition no-underline">Precios</a>
-      </nav>
+      <nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft" aria-label="Menú móvil">
+        <a href="/dolar" class="hover:text-ink py-1 no-underline">Dólar</a>
+        <a href="/explorer" class="hover:text-ink py-1 no-underline">Terminal</a>
+        <a href="/empresas" class="hover:text-ink py-1 no-underline">Empresas</a>
+        <a href="/mercado" class="hover:text-ink py-1 no-underline">Mercado</a>
+        <a href="/noticias" class="hover:text-ink py-1 no-underline">Noticias</a>
+        <a href="/metodologia" class="hover:text-ink py-1 no-underline">Metodología</a>
+        <a href="/guia" class="hover:text-ink py-1 no-underline">Guía</a>
+        <a href="/boletin" class="hover:text-ink py-1 no-underline">Boletín</a>
+        <a href="/precios" class="hover:text-ink py-1 no-underline">Precios</a>
+</nav>
     </div>
   </header>
 
@@ -538,7 +540,7 @@ html.dark .ui-switch {
             <p class="mb-3">En cuanto a su estructura de control societario, el registro de la SMV identifica a los siguientes accionistas con participaciones superiores al 4% del capital social: PEYON GIRIBALDI DE PIAGGIO, MARIA ROCIO (de PERU, con 13.72% de participación, declarada desde 2023-04-21), PEYON GIRIBALDI DE MORRIS, MARIA DEL PILAR JESUS (de PERU, con 13.06% de participación, declarada desde 2023-04-21), PEYON CASARETTO, MARIA LUCIA (de PERU, con 8.08% de participación, declarada desde 2023-04-21), PEYON CASARETTO, MARIA ROSARIO (de PERU, con 8.08% de participación, declarada desde 2023-04-21), PEYON VALEGA, IGNACIO HERNAN (de PERU, con 6.86% de participación, declarada desde 2023-04-21), PEYON VALEGA, ISMAEL JAVIER (de PERU, con 6.86% de participación, declarada desde 2023-04-21), PEYON VALEGA, MAURICIO RICARDO (de PERU, con 6.86% de participación, declarada desde 2023-04-21), PEYON CASARETTO, ALFONSO ISMAEL (de PERU, con 5.56% de participación, declarada desde 2023-04-21), PEYON MENDEZ DE LOSADA, GLADYS AIDA (de PERU, con 4.22% de participación, declarada desde 2023-07-07). En conjunto, estos accionistas representativos acumulan el 73.30% del capital con derecho a voto reportado en la plataforma de datos abiertos de la Superintendencia del Mercado de Valores (SMV), bajo licencia ODC-BY.</p>
             <p class="mb-3">Durante el ciclo de seguimiento reciente no se han registrado nuevos hechos de importancia específicos para los nemónicos de esta firma en el registro automatizado de la SMV, manteniéndose vigentes las comunicaciones institucionales ordinarias y estados financieros depositados formalmente ante el regulador bursátil.</p>
             <p class="mb-3">En los últimos 12 meses, la acción ETNAI1 computó un total de 9 operaciones en rueda de bolsa, marcando su último cierre oficial de negociación en S/ 0.680 con fecha 2026-11-05.</p>
-            <p class="mb-3">Actualmente esta empresa no dispone de estimación de proyección algorítmica en PerData Engine debido a que no cumple con el umbral mínimo de liquidez continua e historial diario ininterrumpido requerido para calibrar los modelos predictivos del sistema.</p></div>
+            <p class="mb-3">Esta compañía cuenta con cobertura estadística y proyección cuantitativa en el motor analítico de PerData Engine bajo el identificador de serie ETNAI1.LM, lo que permite modelar rangos probables de precio a diferentes horizontes mediante distribución empírica y calibración probabilística sin supuestos arbitrarios.</p></div>
         </div>
 
         <!-- Volver al directorio -->
