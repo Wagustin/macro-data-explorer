@@ -278,13 +278,14 @@ test("correo pagado: si pasaría el límite de tamaño, quita lecturas de empres
     });
     return fs.readFileSync(out, "utf8");
   };
-  const lecturas = (h) => (h.match(/Podría mover al alza/g) || []).length;
+  const lecturas = (h) => (h.match(/Podría mover (al alza|a la baja)/g) || []).length;
   const normal = gen({});
   assert.ok(Buffer.byteLength(normal) < 98000, "el correo de tres empresas no debería acercarse al límite");
   if (lecturas(normal) === 0) return; // sin lecturas hoy: no hay nada que recortar
   const limite = Buffer.byteLength(normal) - 200;
   const recortado = gen({ BOLETIN_LIMITE_BYTES: String(limite) });
   assert.ok(Buffer.byteLength(recortado) <= limite, "el correo recortado sigue pasando el límite");
-  assert.equal(lecturas(recortado), lecturas(normal) - 1, "debe quitar solo las lecturas necesarias");
+  assert.ok(lecturas(recortado) < lecturas(normal), "debe quitar al menos una lectura");
+  assert.ok(lecturas(recortado) >= lecturas(normal) - 2, "debe quitar solo las lecturas necesarias (una empresa: uno o dos títulos)");
   assert.ok(recortado.includes("Darme de baja"), "el pie con la baja debe seguir");
 });
