@@ -496,18 +496,32 @@ async function testIndexability() {
     record("Sitemap solo indexables", false, `Error: ${err.message}`);
   }
 
-  // The Worker writes the dollar question into the homepage, so it is readable without JavaScript
+  // The Worker writes the dollar range into the homepage, so it is readable without JavaScript.
+  // When the forecast is not vigente (a holiday with no data) the slot may stay empty.
   try {
     const res = await fetchWithTimeout(`${base}/`);
     const html = (await res.text()).replace(/<script[\s\S]*?<\/script>/gi, " ");
-    const hasQuestion = /¿A cuánto/.test(html);
+    const m = html.match(/id="pdCardDailyP10"[^>]*>\s*(\d\.\d{3})\s*</);
+    const hay = /id="pdCardDailyP10"/.test(html);
+
+    let vigente = false;
+    try {
+      const diarioRes = await fetchWithTimeout(`${base}/api/diario`);
+      if (diarioRes.ok) {
+        const diario = await diarioRes.json();
+        vigente = diario.vigente === true;
+      }
+    } catch {
+      vigente = false;
+    }
+
     record(
-      "Portada con la pregunta sin JS",
-      res.status === 200 && hasQuestion,
-      `HTTP ${res.status} · «¿A cuánto»: ${hasQuestion ? "sí" : "no"}`
+      "Portada con el rango sin JS",
+      res.status === 200 && hay && (m || !vigente),
+      `HTTP ${res.status} · rango escrito: ${m ? m[1] : "no"} · vigente: ${vigente ? "sí" : "no"}`
     );
   } catch (err) {
-    record("Portada con la pregunta sin JS", false, `Error: ${err.message}`);
+    record("Portada con el rango sin JS", false, `Error: ${err.message}`);
   }
 }
 

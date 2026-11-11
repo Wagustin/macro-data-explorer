@@ -2,7 +2,7 @@
  * PerData - Gestión de Consentimiento de Cookies y Carga de Publicidad (T74)
  * - Cumplimiento RGPD/ePrivacy: auto-alojado, sin CMP externa.
  * - En EEE, Reino Unido y Suiza: AdSense desactivado por completo.
- * - Fuera de EEE: Anuncios no personalizados por defecto hasta consentimiento explícito.
+ * - Fuera de EEE: sin elección no se carga AdSense; al elegir, anuncios personalizados (Aceptar) o no personalizados.
  * - Cookie 'pd_consent': ads=1|0, v=1, date; 180 días, SameSite=Lax, Secure.
  */
 (function() {
@@ -127,7 +127,7 @@
               <span class="pd-consent-toggle-slider"></span>
             </label>
           </div>
-          <p class="pd-consent-cat-desc">Permiten adaptar los anuncios de Google AdSense fuera del Espacio Económico Europeo. En Europa nunca se muestran anuncios.</p>
+          <p class="pd-consent-cat-desc">Si lo activas, los anuncios de Google AdSense se adaptan a tus intereses. Si lo dejas desactivado verás anuncios genéricos, que también usan cookies de Google para medirlos y evitar fraudes. En Europa nunca se muestran anuncios.</p>
         </div>
         <div class="pd-consent-modal-actions">
           <button type="button" class="pd-consent-btn" id="pdConsentModalSave">Guardar preferencias</button>
@@ -176,6 +176,14 @@
   function renderBanner() {
     if (document.getElementById("pdConsentBanner")) return;
 
+    // El aviso dice la verdad según la zona: fuera del EEE se muestran anuncios de Google
+    // (personalizados solo con permiso); en Europa no se muestra ninguno.
+    const eea = getGeo() === "eea";
+    const texto = eea
+      ? "Usamos cookies necesarias para que la web funcione. En Europa no mostramos anuncios."
+      : "Usamos cookies necesarias para que la web funcione y mostramos anuncios de Google. Con tu permiso, personalizados.";
+    const botonNecesarias = eea ? "Solo necesarias" : "Sin personalizar";
+
     const bar = document.createElement("aside");
     bar.id = "pdConsentBanner";
     bar.className = "pd-consent-bar";
@@ -184,10 +192,10 @@
 
     bar.innerHTML = `
       <div class="pd-consent-inner">
-        <p class="pd-consent-text">Usamos cookies necesarias para que la web funcione. Con tu permiso, también para anuncios personalizados.</p>
+        <p class="pd-consent-text">${texto}</p>
         <div class="pd-consent-actions">
           <button type="button" class="pd-consent-btn" id="pdConsentAccept">Aceptar</button>
-          <button type="button" class="pd-consent-btn" id="pdConsentNecessary">Solo necesarias</button>
+          <button type="button" class="pd-consent-btn" id="pdConsentNecessary">${botonNecesarias}</button>
           <button type="button" class="pd-consent-link" id="pdConsentConfig">Configurar</button>
         </div>
       </div>

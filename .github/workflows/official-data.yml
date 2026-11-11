@@ -36,6 +36,8 @@ jobs:
         run: node scripts/cierre-sunat.js
       - name: PerData Engine diario
         run: node scripts/engine-daily.js
+      - name: Evaluar aciertos del dólar (pronósticos publicados)
+        run: node scripts/aciertos-dolar.js
       - name: Generar página de dólar estática
         run: node scripts/build-dolar-html.js
       # Nota semanal «El dólar esta semana»: el script solo escribe la semana que falta, así que

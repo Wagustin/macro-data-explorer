@@ -30,6 +30,8 @@ const CLEAN_PAGES = {
   "/cuenta": "cuenta.html",
   "/restablecer": "restablecer.html",
   "/privacidad": "privacidad.html",
+  "/terminos": "terms.html",
+  "/cookies": "privacidad.html",
   "/nosotros": "nosotros.html",
   "/politica-editorial": "politica-editorial.html",
   "/contacto": "contacto.html",
@@ -594,6 +596,19 @@ export default {
     // 2. Delegate to Static Assets (handles clean URLs, trailing slashes, etc.)
     const assetResponse = await env.ASSETS.fetch(request);
     if (assetResponse.status === 404) {
+      // Alias routes: /terminos -> terms.html, /cookies -> privacidad.html (CLEAN_PAGES).
+      // El servidor de assets solo resuelve nombres de archivo (privacidad.html -> /privacidad),
+      // asi que las rutas con otro nombre se sirven desde aqui.
+      const cleanPath = pathname.replace(/\/+$/, "") || "/";
+      const alias = CLEAN_PAGES[cleanPath];
+      if (alias && !cleanPath.endsWith(".html")) {
+        const aliasRes = await env.ASSETS.fetch(new Request(new URL(`/${alias}`, request.url).toString(), request));
+        if (aliasRes.ok) {
+          const headers = new Headers(aliasRes.headers);
+          headers.set("Cache-Control", "no-cache");
+          return new Response(aliasRes.body, { status: aliasRes.status, statusText: aliasRes.statusText, headers });
+        }
+      }
       const notFoundUrl = new URL("/404.html", request.url);
       const notFoundReq = new Request(notFoundUrl.toString(), request);
       const notFoundRes = await env.ASSETS.fetch(notFoundReq);

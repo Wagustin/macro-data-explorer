@@ -4,6 +4,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { renderHistorial } from './lib/historial-html.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -72,7 +73,16 @@ const mesAnchoPct = Math.abs((mesP90 - mesP10) / mesP50) * 100;
 const mesCobertura = Number(calibracionMensual.coverage80) || null;
 const mesN = calibracionMensual.n;
 
-// 1c. bcrp-daily.json -> ultimos 20 cierres oficiales y resumen 2026
+// 1c. aciertos-dolar.json -> historial de aciertos
+const aciertosPath = path.join(dataDir, 'official', 'aciertos-dolar.json');
+let aciertos = null;
+if (fs.existsSync(aciertosPath)) {
+  aciertos = JSON.parse(fs.readFileSync(aciertosPath, 'utf8'));
+} else {
+  console.warn('Aviso: aciertos-dolar.json no encontrado, historial no se incluirá.');
+}
+
+// 1d. bcrp-daily.json -> ultimos 20 cierres oficiales y resumen 2026
 const bcrpDaily = JSON.parse(
   fs.readFileSync(path.join(dataDir, 'official', 'bcrp-daily.json'), 'utf8')
 );
@@ -161,6 +171,16 @@ const fechaLarga = (iso) => {
   return iso;
 };
 
+// Fecha corta sin punto (6 nov, 10 nov), como la que usa la nota semanal
+const MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'set', 'oct', 'nov', 'dic'];
+
+const fechaCorta = (iso) => {
+  if (!iso || typeof iso !== 'string') return 's/d';
+  const partes = iso.split('-');
+  if (partes.length === 3) return `${Number(partes[2])} ${MESES_CORTOS[Number(partes[1]) - 1]}`;
+  return iso;
+};
+
 const escapeHtml = (valor) =>
   String(valor ?? '').replace(/[&<>"']/g, (caracter) => ({
     '&': '&amp;',
@@ -182,7 +202,7 @@ const valorIndicador = (ind) => {
 
 // ---- 3. Tarjetas de rangos probables ----
 
-const tarjetaRango = ({ titulo, subtitulo, fechaObjetivo, p10, p25, p50, p75, p90, anchoPct, cobertura, cortes, extra }) => `
+const tarjetaRango = ({ titulo, subtitulo, fechaObjetivo, p10, p25, p50, p75, p90, anchoPct, cobertura, cortes, extra, pie }) => `
       <article class="pd-range-card">
         <p class="micro-label text-ink-soft">${escapeHtml(titulo)}</p>
         <p class="pd-range-target">${escapeHtml(subtitulo)} · ${escapeHtml(fechaObjetivo)}</p>
@@ -197,6 +217,7 @@ const tarjetaRango = ({ titulo, subtitulo, fechaObjetivo, p10, p25, p50, p75, p9
         <p class="pd-range-meta">Ancho de banda P10-P90: ${pct(anchoPct, 2)}</p>
         <p class="pd-range-meta">Cobertura empirica fuera de muestra: ${pct(cobertura, 2)} sobre ${num(cortes, 0)} cortes</p>
         ${extra ? `<p class="pd-range-meta">${extra}</p>` : ''}
+        ${pie || ''}
       </article>`;
 
 const diaSemana = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('es-PE', { weekday: 'long', timeZone: 'UTC' });
@@ -213,6 +234,8 @@ const tarjetaManana = tarjetaRango({
   anchoPct: mananaAnchoPct,
   cobertura: mananaCoberturaFuera,
   cortes: mananaCortes,
+  // Enlace de texto (no boton) para compartir el rango de manana por WhatsApp
+  pie: `<p class="pd-share-row"><a id="waShareLink" class="pd-share-link" href="#" target="_blank" rel="noopener noreferrer">Compartir por WhatsApp</a></p>`,
 });
 
 const tarjetaSemana = tarjetaRango({
@@ -442,7 +465,21 @@ const datasetLd = {
 
 const faqLdScript = `  <script type="application/ld+json">${ldJson(faqLd)}</script>`;
 const datasetLdScript = `  <script type="application/ld+json">${ldJson(datasetLd)}</script>`;
-// ---- 6b. Bloque de invitacion al boletin (estatico, sin pop-ups) ----
+// ---- 6c. Franja de captura del boletin (formulario que POSTea a /api/boletin) ----
+// Va justo debajo de los tres horizontes: el rango de manana es lo que se lleva el correo
+const bloqueBoletinRango = `
+    <section class="pd-boletin-strip" aria-label="Boletín diario">
+      <h2 class="pd-boletin-strip-title">El rango de mañana, cada día a las <span class="mono tnum">06:00</span> en tu correo</h2>
+      <form id="pdBoletinForm" class="pd-boletin-strip-form" novalidate>
+        <label for="boletinEmail" class="sr-only">Correo electrónico</label>
+        <input type="email" id="boletinEmail" name="email" class="pd-boletin-input mono tnum" placeholder="tu@correo.com" required autocomplete="email" aria-describedby="boletinHelp">
+        <button type="submit" class="pdl-btn pdl-btn-primary" id="boletinSubmit">Recibirlo gratis</button>
+      </form>
+      <p id="boletinHelp" class="pd-boletin-note">Lunes a sábado. Gratis. Te das de baja con un clic. <a href="/politica-editorial" class="pd-boletin-policy">Política editorial</a>.</p>
+      <p id="boletinStatus" class="pd-boletin-status" aria-live="polite"></p>
+    </section>`;
+
+// ---- 6d. Bloque de invitacion al boletin al final de la pagina (solo enlace, sin formulario) ----
 
 const bloqueBoletin = `
     <section class="mt-12 border-t border-rule pt-8" aria-label="Boletin diario">
@@ -501,8 +538,49 @@ let htmlGenerado = `<!DOCTYPE html>
     .pd-prose p { margin: 0 0 14px; font: 400 16px/1.7 var(--pd-font-read); color: var(--pd-ink); }
     .pd-fact-table td, .pd-fact-table th { white-space: nowrap; }
     .pd-fact-table td:first-child { white-space: normal; }
+    .pd-fact-table { table-layout: fixed; width: 100%; max-width: 100%; }
+    .pd-fact-table th, .pd-fact-table td { overflow: hidden; text-overflow: ellipsis; }
+    .overflow-x-auto { max-width: 100%; }
     .pd-boletin-cta-text { margin: 0; font: 400 16px/1.7 var(--pd-font-read); color: var(--pd-ink); max-width: 60ch; }
     @media (max-width: 560px) { .pd-range-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+    /* Franja del boletin: el rango de manana cada dia por correo */
+    .pd-boletin-strip {
+      margin-top: 32px;
+      padding: 20px 0 22px;
+      border-top: 2px solid var(--pd-ink);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+      gap: 10px 32px;
+      align-items: center;
+    }
+    .pd-boletin-strip-title { margin: 0; font: 600 17px/1.35 var(--pd-font-ui); letter-spacing: -.01em; color: var(--pd-ink); }
+    .pd-boletin-strip-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; }
+    .pd-boletin-input {
+      flex: 1 1 240px;
+      min-width: 0;
+      padding: 11px 12px;
+      font: 400 15px/1.4 var(--pd-font-mono);
+      color: var(--pd-ink);
+      background: var(--pd-card);
+      border: 1px solid var(--pd-rule);
+      border-radius: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .pd-boletin-input::placeholder { color: var(--pd-ink-soft); }
+    .pd-boletin-input:focus { outline: 2px solid var(--pd-ink); outline-offset: 1px; }
+    .pd-boletin-strip-form .pdl-btn { padding: 11px 18px; white-space: nowrap; }
+    .pd-boletin-note { grid-column: 1 / -1; margin: 0; font: 500 12px/1.45 var(--pd-font-ui); color: var(--pd-ink-soft); }
+    .pd-boletin-policy { color: var(--pd-ink); text-decoration: underline; text-underline-offset: 3px; }
+    .pd-boletin-status { grid-column: 1 / -1; margin: 0; font: 500 13px/1.45 var(--pd-font-ui); color: var(--pd-ink-soft); }
+
+    /* Enlace para compartir por WhatsApp: enlace de texto, no boton */
+    .pd-share-row { margin: 14px 0 0; }
+    .pd-share-link { font: 600 13px/1.4 var(--pd-font-ui); color: var(--pd-ink); text-decoration: underline; text-underline-offset: 3px; }
+    .pd-share-link:hover { color: var(--pd-ink-soft); }
+
+    @media (max-width: 760px) { .pd-boletin-strip { grid-template-columns: minmax(0, 1fr); } }
+    @media (max-width: 480px) { .pd-boletin-strip-form .pdl-btn { width: 100%; } }
   </style>
 
   <!-- Early Theme Init to prevent flash of unstyled content -->
@@ -569,6 +647,8 @@ let htmlGenerado = `<!DOCTYPE html>
       ${tarjetaMes}
     </section>
 
+    ${bloqueBoletinRango}
+
     <section class="mt-10">
       <p class="pd-fineprint">Notas semanales: <a href="/semana" class="hover:text-ink transition no-underline">el resumen de cada semana cerrada, con el recorrido del dolar, la intervencion del BCRP y el rango frente al cierre real</a>.</p>
     </section>
@@ -628,6 +708,14 @@ let htmlGenerado = `<!DOCTYPE html>
 
     ${textoExplicativo}
 
+    <section id="historial" class="mt-12 space-y-4 border-t border-rule pt-8" aria-label="Historial de aciertos">
+      <h2 class="pd-section-title">Historial público: cuántas veces acertó el rango</h2>
+      <p class="pd-page-lede">
+        Cada día publicamos un rango para el siguiente cierre del dólar y otro para la semana. Aquí está cada uno comparado con el cierre oficial del BCRP, incluidos los que fallaron.
+      </p>
+      ${aciertos ? renderHistorial(aciertos) : '<p class="text-ink-soft text-sm">Historial no disponible.</p>'}
+    </section>
+
     ${bloqueBoletin}
   </main>
 
@@ -663,6 +751,57 @@ let htmlGenerado = `<!DOCTYPE html>
           menuButton.setAttribute('aria-expanded', String(open));
         });
       }
+    })();
+
+    // Compartir por WhatsApp: enlace de texto con el ultimo cierre oficial y el rango de manana (P10-P90)
+    (function() {
+      const link = document.getElementById('waShareLink');
+      if (!link) return;
+      const cierre = '${escapeHtml(num(ultimoCierre, 3))}';
+      const fechaCierre = '${escapeHtml(fechaCorta(fechaUltimoCierre))}';
+      const fechaObjetivo = '${escapeHtml(`${diaSemana(manana.fecha_objetivo)} ${fechaCorta(manana.fecha_objetivo)}`)}';
+      const p10 = '${escapeHtml(num(mananaP10, 3))}';
+      const p90 = '${escapeHtml(num(mananaP90, 3))}';
+      const texto = 'Dólar: último cierre oficial S/ ' + cierre + ' (' + fechaCierre + '). Rango probable para el ' + fechaObjetivo + ': S/ ' + p10 + ' – S/ ' + p90 + '. perdata.site/dolar';
+      link.href = 'https://wa.me/?text=' + encodeURIComponent(texto);
+    })();
+
+    // Formulario del boletin: POST JSON a /api/boletin (mismo cuerpo que la portada)
+    (function() {
+      const form = document.getElementById('pdBoletinForm');
+      const status = document.getElementById('boletinStatus');
+      const submit = document.getElementById('boletinSubmit');
+      const email = document.getElementById('boletinEmail');
+      if (!form || !status || !submit || !email) return;
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        submit.disabled = true;
+        submit.textContent = 'Enviando...';
+        status.textContent = '';
+        status.className = 'pd-boletin-status';
+        try {
+          const res = await fetch('/api/boletin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email.value.trim(), origen: 'dolar' }),
+          });
+          const json = await res.json().catch(() => ({}));
+          if (res.ok && json.ok) {
+            status.textContent = json.mensaje || 'Te enviamos un correo para confirmar. Revisa tu bandeja de entrada (y la de spam).';
+            status.classList.add('text-pos');
+            form.reset();
+          } else {
+            status.textContent = json.error || 'No pudimos procesar la solicitud. Inténtalo más tarde.';
+            status.classList.add('text-neg');
+          }
+        } catch (err) {
+          status.textContent = 'Error de red. Inténtalo más tarde.';
+          status.classList.add('text-neg');
+        } finally {
+          submit.disabled = false;
+          submit.textContent = 'Recibirlo gratis';
+        }
+      });
     })();
   </script>
   <script src="/consent.js" defer></script>
@@ -700,7 +839,10 @@ const conAcentos = (txt) => txt.replace(/[A-Za-z]+/g, (w) => {
   return w[0] === w[0].toUpperCase() ? fixed[0].toUpperCase() + fixed.slice(1) : fixed;
 });
 htmlGenerado = htmlGenerado
-  .replace(/(<(script|style)[^>]*>[\s\S]*?<\/\2>)|>([^<]+)</g, (m, block, _t, text) => (block ? block : '>' + conAcentos(text) + '<'))
+  // Los bloques <script> y <style> se dejan intactos: dentro hay URLs y cadenas que no deben
+  // cambiar con los acentos (/api/boletin, perdata.site/dolar). El texto visible se acenta igual.
+  .replace(/(<script\b[^>]*>[\s\S]*?<\/script>)|(<style\b[^>]*>[\s\S]*?<\/style>)|>([^<]+)/g,
+    (m, script, style, text) => (script || style ? m : '>' + conAcentos(text)))
   .replace(/(<meta[^>]+content=")([^"]*)(")/g, (m, a, b, c) => a + conAcentos(b) + c);
 
 // Los bloques JSON-LD se insertan despues del pipeline de acentos para que ningun dato

@@ -50,34 +50,49 @@ const etiquetaHorizonte = (fecha) => {
 };
 const fila = (a, b) => `${fmt3(a)} – ${fmt3(b)}`;
 
-// Etiquetas de la tabla de rangos que salen en el correo.
-const etiquetasRangos = (html) => [...html.matchAll(/>([^<>]*(?:Hoy|Mañana|Semana|Mes),[^<>]*)</g)].map((m) => m[1].trim());
+// «Hoy, mié 11 nov» -> título «Hoy» y detalle «mié 11 nov» (la etiqueta entera
+// es el título cuando no hay coma).
+const parteEtiqueta = (etiqueta) => {
+  const [titulo, ...resto] = String(etiqueta || "").split(",");
+  return { titulo: titulo.trim(), detalle: resto.join(",").trim() };
+};
+
+// Títulos y fechas de las filas de la tabla de rangos («Hoy», «Semana», «Mes»).
+const titulosRangos = (html) => [...html.matchAll(/font-size:13px;font-weight:600;color:#1B1916;white-space:nowrap">([^<]+)</g)].map((m) => m[1].trim());
+const detallesRangos = (html) => [...html.matchAll(/font-size:11px;color:#5E584E;white-space:nowrap">([^<]+)</g)].map((m) => m[1].trim());
 
 test("correo gratis: tabla de rangos con un solo horizonte (hoy) y valores de daily-forecasts.json", () => {
   const html = generar("gratis");
   const daily = JSON.parse(read("data/daily-forecasts.json"));
   const pen = daily.simbolos.PEN;
 
-  // Cabecera de la tabla: rango central y rango amplio, con el «S/» una sola vez.
-  assert.match(html, /Rango central \(1 de cada 2 veces\)/);
-  assert.match(html, /Rango amplio \(8 de cada 10 veces\)/);
-  // La celda «S/» va una sola vez, junto a las dos cabeceras de rango.
-  assert.equal((html.match(/>S\/<\/td>/g) || []).length, 1, "el «S/» va una sola vez en la cabecera");
+  // Cabecera de la tabla: dos bloques por rango, sin el paréntesis largo.
+  assert.match(html, /Rango probable · en soles/);
+  assert.match(html, />Central</);
+  assert.match(html, />1 de cada 2 veces</);
+  assert.match(html, />Amplio</);
+  assert.match(html, />8 de cada 10 veces</);
+  assert.doesNotMatch(html, /Rango central \(1 de cada 2 veces\)/);
+  assert.doesNotMatch(html, /Rango amplio \(8 de cada 10 veces\)/);
+  // Ninguna celda dice solo «S/»: la unidad va en el título de la tabla.
+  assert.doesNotMatch(html, />\s*S\/\s*<\/td>/);
 
   // La fila de hoy con los valores de data/daily-forecasts.json.
-  const etiqueta = etiquetaHorizonte(pen.manana.fecha_objetivo);
-  assert.ok(html.includes(etiqueta), `el gratis trae la fila «${etiqueta}»`);
+  const { titulo, detalle } = parteEtiqueta(etiquetaHorizonte(pen.manana.fecha_objetivo));
+  assert.ok(html.includes(`>${titulo}</`), `el gratis trae la fila «${titulo}»`);
+  if (detalle) assert.ok(html.includes(`>${detalle}</`), `el gratis trae el detalle «${detalle}»`);
   assert.ok(html.includes(fila(pen.manana.p25, pen.manana.p75)), "el rango central de mañana");
   assert.ok(html.includes(fila(pen.manana.p10, pen.manana.p90)), "el rango amplio de mañana");
   assert.ok(html.includes(fmt3(pen.ultimo_cierre)), "el cierre de data/daily-forecasts.json");
   assert.match(html, /Tipo de cambio venta del sistema bancario \(SBS\), publicado por (el BCRP|SUNAT)/);
 
   // El gratis no trae los horizontes de semana ni de mes.
-  const etiquetas = etiquetasRangos(html);
-  assert.equal(etiquetas.length, 1, `el gratis trae una sola fila de rango (${etiquetas.join(" | ")})`);
+  const titulos = titulosRangos(html);
+  assert.equal(titulos.length, 1, `el gratis trae una sola fila de rango (${titulos.join(" | ")})`);
   assert.ok(!html.includes(fila(pen.semana.p25, pen.semana.p75)), "el gratis no trae el rango de la semana");
   assert.ok(!html.includes(fila(pen.semana.p10, pen.semana.p90)), "el gratis no trae el rango amplio de la semana");
-  assert.ok(!/Mes, \d{1,2} [a-z]{3}/.test(html), "el gratis no trae la fila del mes");
+  assert.ok(!titulos.includes("Semana"), "el gratis no trae la fila de la semana");
+  assert.ok(!titulos.includes("Mes"), "el gratis no trae la fila del mes");
 
   // Lectura (una sola vez), plan y pie.
   assert.match(html, /Qué podría presionar al dólar/);
@@ -106,23 +121,35 @@ test("correo pagado: tabla de rangos con los tres horizontes", () => {
   const daily = JSON.parse(read("data/daily-forecasts.json"));
   const pen = daily.simbolos.PEN;
 
-  assert.match(html, /Rango central \(1 de cada 2 veces\)/);
-  assert.match(html, /Rango amplio \(8 de cada 10 veces\)/);
-  // La celda «S/» va una sola vez, junto a las dos cabeceras de rango.
-  assert.equal((html.match(/>S\/<\/td>/g) || []).length, 1, "el «S/» va una sola vez en la cabecera");
+  // Cabecera de la tabla: dos bloques por rango, sin el paréntesis largo.
+  assert.match(html, /Rango probable · en soles/);
+  assert.match(html, />Central</);
+  assert.match(html, />1 de cada 2 veces</);
+  assert.match(html, />Amplio</);
+  assert.match(html, />8 de cada 10 veces</);
+  assert.doesNotMatch(html, /Rango central \(1 de cada 2 veces\)/);
+  assert.doesNotMatch(html, /Rango amplio \(8 de cada 10 veces\)/);
+  // Ninguna celda dice solo «S/»: la unidad va en el título de la tabla.
+  assert.doesNotMatch(html, />\s*S\/\s*<\/td>/);
+  // «Central» va antes que «Amplio».
+  assert.ok(html.indexOf("Central") < html.indexOf("Amplio"), "«Central» va antes que «Amplio»");
 
   // Hoy y semana salen de data/daily-forecasts.json.
-  assert.ok(html.includes(etiquetaHorizonte(pen.manana.fecha_objetivo)), "la fila de hoy");
+  const hoy = parteEtiqueta(etiquetaHorizonte(pen.manana.fecha_objetivo));
+  assert.ok(html.includes(`>${hoy.titulo}</`), "la fila de hoy");
+  if (hoy.detalle) assert.ok(html.includes(`>${hoy.detalle}</`), "la fecha de la fila de hoy");
   assert.ok(html.includes(fila(pen.manana.p25, pen.manana.p75)), "el rango central de hoy");
   assert.ok(html.includes(fila(pen.manana.p10, pen.manana.p90)), "el rango amplio de hoy");
-  assert.ok(html.includes(`Semana, ${diaCorta(pen.semana.fecha_objetivo)}`), "la fila de la semana");
+  assert.ok(html.includes(`>${diaCorta(pen.semana.fecha_objetivo)}</`), "la fecha de la fila de la semana");
   assert.ok(html.includes(fila(pen.semana.p25, pen.semana.p75)), "el rango central de la semana");
   assert.ok(html.includes(fila(pen.semana.p10, pen.semana.p90)), "el rango amplio de la semana");
 
   // El mes: con la etiqueta del horizonte y sin inventar cifras.
-  assert.match(html, /Mes, \d{1,2} [a-z]{3}/, "la fila del mes");
-  const etiquetas = etiquetasRangos(html);
-  assert.equal(etiquetas.length, 3, `el pagado trae tres filas de rango (${etiquetas.join(" | ")})`);
+  const titulos = titulosRangos(html);
+  assert.ok(titulos.includes("Hoy"), "la fila «Hoy»");
+  assert.ok(titulos.includes("Semana"), "la fila «Semana»");
+  assert.ok(titulos.includes("Mes"), "la fila «Mes»");
+  assert.equal(titulos.length, 3, `el pagado trae tres filas de rango (${titulos.join(" | ")})`);
   assert.match(html, /El rango es estadístico: no dice hacia dónde irá el dólar\./);
 });
 
@@ -195,8 +222,27 @@ test("correo pagado: «Tus empresas» con imagen, rango en mono, máximo 2 hecho
 });
 
 test("correo pagado: «Tus empresas» usa el rango semanal calibrado de las acciones de Lima", () => {
-  const html = generar("boletin", {}, "ALICORC1,FERREYC1,EXALMC1,AUNA");
   const valores = JSON.parse(read("data/acciones-rangos.json")).valores;
+
+  // Elige dinámicamente empresas sin rango según los datos del día:
+  // - corta: primera con semana.motivo === "historia_insuficiente"
+  // - noConfiable: primera con semana.publicable === false y otro motivo
+  let corta = null;
+  let noConfiable = null;
+  for (const [nemonico, v] of Object.entries(valores)) {
+    const semana = v.semana;
+    if (semana && semana.publicable === false) {
+      if (semana.motivo === "historia_insuficiente" && !corta) {
+        corta = nemonico;
+      } else if (semana.motivo !== "historia_insuficiente" && !noConfiable) {
+        noConfiable = nemonico;
+      }
+    }
+    if (corta && noConfiable) break;
+  }
+
+  const empresas = ["ALICORC1", corta, noConfiable].filter(Boolean).join(",");
+  const html = generar("boletin", {}, empresas);
   const sinTags = (s) => s.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
   const texto = sinTags(html);
 
@@ -218,14 +264,54 @@ test("correo pagado: «Tus empresas» usa el rango semanal calibrado de las acci
   assert.ok(!html.includes("rango proyectado a un mes"), "ninguna acción de Lima se anuncia a un mes");
 
   // Cuando el motor no publica un rango, la tarjeta explica el motivo exacto.
-  assert.ok(
-    texto.includes("Sin rango esta semana: en la prueba no fue lo bastante confiable y preferimos no mostrarlo."),
-    "Ferreycorp explica por qué no hay rango"
-  );
-  assert.ok(
-    texto.includes("Aún sin rango: su historia en bolsa es corta para probarlo."),
-    "Auna explica que su prueba todavía es corta"
-  );
+  if (noConfiable) {
+    assert.ok(
+      texto.includes("Sin rango esta semana: en la prueba no fue lo bastante confiable y preferimos no mostrarlo."),
+      `${noConfiable} explica por qué no hay rango`
+    );
+  }
+  if (corta) {
+    assert.ok(
+      texto.includes("Aún sin rango: su historia en bolsa es corta para probarlo."),
+      `${corta} explica que su prueba todavía es corta`
+    );
+  }
+});
+
+test("rango de empresa en el correo: los tres motivos y el caso publicable (sin depender de los datos del día)", async () => {
+  const { rangoEmpresaCorreo } = await import("../scripts/lib/rango-empresa-correo.js");
+  const hoy = "2026-11-11";
+
+  // 1. valor undefined → motivo "Sin rango: esta acción casi no se negocia." y forecast null
+  let r = rangoEmpresaCorreo(undefined, { hoy });
+  assert.equal(r.forecast, null, "undefined → forecast null");
+  assert.equal(r.motivo, "Sin rango: esta acción casi no se negocia.", "undefined → motivo sin rango");
+
+  // 2. semana.motivo === "historia_insuficiente" → "Aún sin rango: su historia en bolsa es corta para probarlo."
+  r = rangoEmpresaCorreo({ semana: { publicable: false, motivo: "historia_insuficiente" } }, { hoy });
+  assert.equal(r.forecast, null, "historia_insuficiente → forecast null");
+  assert.equal(r.motivo, "Aún sin rango: su historia en bolsa es corta para probarlo.", "historia_insuficiente → motivo historia corta");
+
+  // 3. semana.motivo === "cobertura_fuera_de_rango" → "Sin rango esta semana: en la prueba no fue lo bastante confiable y preferimos no mostrarlo."
+  r = rangoEmpresaCorreo({ semana: { publicable: false, motivo: "cobertura_fuera_de_rango" } }, { hoy });
+  assert.equal(r.forecast, null, "cobertura_fuera_de_rango → forecast null");
+  assert.equal(r.motivo, "Sin rango esta semana: en la prueba no fue lo bastante confiable y preferimos no mostrarlo.", "cobertura_fuera_de_rango → motivo confiabilidad");
+
+  // 4. valor publicable con fecha objetivo futura → forecast con los cinco números y motivo null
+  const valorPublicable = {
+    semana: {
+      publicable: true,
+      motivo: null,
+      fecha_objetivo: "2026-11-17",
+      p10: 1, p25: 1.1, p50: 1.2, p75: 1.3, p90: 1.4,
+    },
+  };
+  r = rangoEmpresaCorreo(valorPublicable, { hoy });
+  assert.deepEqual(r.forecast, {
+    p10: 1, p25: 1.1, p50: 1.2, p75: 1.3, p90: 1.4,
+    date: "2026-11-17", horizonte: "semana",
+  }, "publicable → forecast con cinco números");
+  assert.equal(r.motivo, null, "publicable → motivo null");
 });
 
 test("correos: sin emojis, sin «subirá»/«bajará»/«interbancario» y sin fechas ISO", () => {
@@ -284,7 +370,7 @@ test("correos: la cabecera precede a toda lectura y cada título de sección lle
     const presionar = html.indexOf("Podría presionar al dólar");
     assert.ok(presionar !== -1, `${plan}: sin «Podría presionar al dólar»`);
     assert.ok(cabecera < presionar, `${plan}: la lectura del dólar sale antes que la cabecera`);
-    for (const lectura of ["Rango central", "Lo importante de hoy", "Tus empresas"]) {
+    for (const lectura of ["Rango probable", "Lo importante de hoy", "Tus empresas"]) {
       const i = html.indexOf(lectura);
       if (i === -1) continue;
       assert.ok(i > cabecera, `${plan}: «${lectura}» aparece antes que la cabecera`);
@@ -302,6 +388,31 @@ test("correos: la cabecera precede a toda lectura y cada título de sección lle
       const siguiente = titulos[i + 1] ?? html.length;
       const cuerpo = sinTags(html.slice(finTitulo + 5, siguiente));
       assert.ok(cuerpo.length > 0, `${plan}: el título de sección #${i + 1} queda sin contenido debajo`);
+    }
+  }
+});
+
+test("correos: sin tablas anidadas de dos celdas, la cabecera en una columna y las tablas al ancho completo", () => {
+  for (const plan of ["gratis", "boletin"]) {
+    const html = generar(plan);
+
+    // La banderita ya no es una tabla (Gmail en iPhone aplasta las inline-table).
+    assert.ok(!html.includes("inline-table"), `${plan}: el HTML aún lleva «inline-table»`);
+
+    // La cabecera va en una sola columna: «Boletín diario · Edición» va DEBAJO
+    // del logotipo, no al lado.
+    const marca = html.indexOf(">PerData");
+    const boletin = html.indexOf("Boletín diario · Edición");
+    assert.ok(marca !== -1, `${plan}: sin el logotipo «PerData»`);
+    assert.ok(boletin !== -1, `${plan}: sin «Boletín diario · Edición»`);
+    assert.ok(marca < boletin, `${plan}: «Boletín diario · Edición» aparece antes que «PerData»`);
+
+    // Toda tabla con width="100%" lleva también width:100% en su style (si no,
+    // Gmail la encoge y el bloque se desarma).
+    const tablas = html.match(/<table[^>]*width="100%"[^>]*>/g) || [];
+    assert.ok(tablas.length > 0, `${plan}: no se encontró ninguna tabla con width="100%"`);
+    for (const tabla of tablas) {
+      assert.match(tabla, /style="[^"]*width:100%/, `${plan}: una tabla con width="100%" sin width:100% en el style`);
     }
   }
 });
