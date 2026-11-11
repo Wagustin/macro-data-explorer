@@ -54,13 +54,51 @@
       diario: fetch('/api/diario?symbol=PEN').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       noticias: fetch('/api/news').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
     };
+    // Cifras del heroe: rango probable para el siguiente cierre y enlace para compartir.
+    // Se pintan con el mismo dato diario que usa la tarjeta del heroe.
+    window.__pdHeroCifras = function (d) {
+      if (!d || !d.vigente || !d.manana) return;
+      var fmt3 = function (v) { return typeof v === 'number' && !isNaN(v) ? v.toLocaleString('es-PE', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) : '—'; };
+      var hoy = fmt3(d.ultimo_cierre);
+      var p10 = fmt3(d.manana.p10);
+      var p90 = fmt3(d.manana.p90);
+      var set = function (id, txt) { var el = document.getElementById(id); if (el) el.textContent = txt; };
+      set('pdCardDailyP10', p10);
+      set('pdCardDailyP90', p90);
+
+      var etiqueta = document.getElementById('pdCardDailyLabel');
+      if (etiqueta && d.manana.fecha_objetivo) {
+        var pts = String(d.manana.fecha_objetivo).split('-');
+        if (pts.length === 3) {
+          var dt = new Date(parseInt(pts[0], 10), parseInt(pts[1], 10) - 1, parseInt(pts[2], 10));
+          var wk = dt.toLocaleDateString('es-PE', { weekday: 'long' });
+          var dm = dt.toLocaleDateString('es-PE', { day: 'numeric', month: 'short' }).replace('.', '');
+          etiqueta.textContent = 'PRÓXIMO CIERRE: ' + (wk + ' ' + dm).toUpperCase();
+        }
+      }
+
+      // WhatsApp con el nuevo formato
+      var wa = document.getElementById('pdHeroWhatsApp');
+      if (wa && d.fecha_ultimo_cierre && d.manana.fecha_objetivo) {
+        var ptsHoy = String(d.fecha_ultimo_cierre).split('-');
+        var ptsManana = String(d.manana.fecha_objetivo).split('-');
+        if (ptsHoy.length === 3 && ptsManana.length === 3) {
+          var dtHoy = new Date(parseInt(ptsHoy[0], 10), parseInt(ptsHoy[1], 10) - 1, parseInt(ptsHoy[2], 10));
+          var dtManana = new Date(parseInt(ptsManana[0], 10), parseInt(ptsManana[1], 10) - 1, parseInt(ptsManana[2], 10));
+          var dmHoy = dtHoy.toLocaleDateString('es-PE', { day: 'numeric', month: 'short' }).replace('.', '');
+          var wkManana = dtManana.toLocaleDateString('es-PE', { weekday: 'long' });
+          var dmManana = dtManana.toLocaleDateString('es-PE', { day: 'numeric', month: 'short' }).replace('.', '');
+          var waText = 'Dólar: último cierre oficial S/ ' + hoy + ' (' + dmHoy + '). Rango probable para el ' + wkManana + ' ' + dmManana + ': S/ ' + p10 + ' – S/ ' + p90 + '. perdata.site/dolar';
+          wa.href = 'https://wa.me/?text=' + encodeURIComponent(waText);
+        }
+      }
+    };
     function paintEarlyCard() {
       var fmt3 = function (v) { return typeof v === 'number' && !isNaN(v) ? v.toLocaleString('es-PE', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) : '—'; };
       var fmt2 = function (v) { return typeof v === 'number' && !isNaN(v) ? v.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—'; };
       window.__pdEarly.diario.then(function (d) {
         if (d && d.vigente && d.manana) {
-          var qEl = document.getElementById('pdHeroQuestion');
-          if (qEl) qEl.textContent = d.pregunta || '¿A cuánto estará el dólar mañana?';
+          window.__pdHeroCifras(d);
           var hHorizon = document.getElementById('pdCardHorizon');
           if (hHorizon) hHorizon.textContent = 'Horizonte: diario';
           var cDaily = document.getElementById('pdCardDaily');
@@ -513,6 +551,35 @@
     @media (min-width: 1280px) { .pdl-h1 { line-height: 65px; min-height: 141px; } }
     @media (min-width: 640px) { #pdHeroChartContainer { height: 230px; } }
     @media (min-width: 1024px) { .pdl-hero .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); } .pdl-hero .lg\:col-span-7 { grid-column: span 7 / span 7; } .pdl-hero .lg\:col-span-5 { grid-column: span 5 / span 5; } }
+    /* Primer bloque: titulo y estado, tarjeta al lado y el resto (formulario, buscador, botones) debajo */
+    .pd-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
+    .pd-hero-top > :last-child { margin-bottom: 0; }
+    @media (min-width: 1024px) {
+      .pd-hero-grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-rows: auto 1fr; column-gap: 56px; row-gap: 32px; align-items: start; }
+      .pd-hero-top  { grid-column: 1; grid-row: 1; }
+      .pd-hero-rest { grid-column: 1; grid-row: 2; }
+      .pd-hero-side { grid-column: 2; grid-row: 1 / span 2; }
+    }
+    /* En movil el bloque lateral se abre: la tarjeta va justo despues del estado y las
+       noticias de contexto quedan al final del primer bloque, como antes de este cambio. */
+    @media (max-width: 1023px) {
+      .pd-hero-side { display: contents; }
+      .pd-hero-top { grid-row: 1; }
+      .pd-hero-side > .pdl-card { grid-row: 2; }
+      .pd-hero-rest { grid-row: 3; }
+      .pd-hero-side > #pdNewsContextBlock { grid-row: 4; }
+    }
+    .pdl-share { display: inline-block; margin-top: 10px; font-family: var(--pd-font-ui); font-size: 13px; font-weight: 500; color: var(--pd-accent); text-decoration: underline; text-underline-offset: 3px; }
+    .pdl-share:hover { color: var(--pd-ink); }
+    .pdl-boletin-form { display: flex; flex-direction: column; gap: 12px; }
+    .pdl-boletin-input { flex: 1 1 0%; min-width: 0; padding: 12px 0; color: var(--pd-ink); background: transparent !important; border: 0 !important; border-bottom: 2px solid var(--pd-ink) !important; border-radius: 0 !important; font-family: var(--pd-font-read); font-size: 20px; outline: none; }
+    .pdl-boletin-input::placeholder { color: var(--pd-ink-soft); }
+    .pdl-boletin-msg { margin: 6px 0 0; font-family: var(--pd-font-ui); font-size: 13px; line-height: 1.4; color: var(--pd-ink-soft); }
+    .pdl-hero-note { margin: 8px 0 0; font-family: var(--pd-font-ui); font-size: 13px; color: var(--pd-ink-soft); }
+    .pdl-central { margin: 12px 0 0; font-family: var(--pd-font-ui); font-size: 13px; color: var(--pd-ink-soft); }
+    .pdl-lead-form { margin: 0 0 10px; font-family: var(--pd-font-ui); font-size: 15px; font-weight: 600; color: var(--pd-ink); }
+    .pd-hero-copy .pdl-boletin-msg { margin-bottom: 32px; }
+    @media (min-width: 640px) { .pdl-boletin-form { flex-direction: row; align-items: flex-end; } }
     header > div:first-child { box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; position: relative; width: 100%; max-width: 1152px; height: 56px; margin: 0 auto; padding: 0 16px; }
     header > div:first-child > div:first-child nav { display: none; }
     #mobileMenuBtn { display: inline-flex; }
@@ -776,46 +843,16 @@
     <!-- HERO EDITORIAL (diseño de Stitch, datos en vivo) -->
     <section class="pdl-hero full-bleed">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-16 lg:pt-20 lg:pb-24">
-        <div class="pd-hero-grid grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-          <div class="pd-hero-copy lg:col-span-7">
+        <div class="pd-hero-grid">
+          <div class="pd-hero-top">
             <h1 class="pdl-h1" data-hero-seq="1">
               <span class="pdl-mask"><span class="pdl-rise">El mercado peruano,</span></span>
               <span class="pdl-mask"><span class="pdl-rise pdl-rise-2 pdl-h1-soft">con su rango probable.</span></span>
             </h1>
             <div id="homeStatus" class="pd-home-status mono tnum" role="status" aria-live="polite">Cargando estado del mercado…</div>
-            <div class="pdl-quote" data-hero-seq="2">
-              <p class="pdl-question" id="pdHeroQuestion">¿A cuánto estará el dólar el próximo mes?</p>
-              <p class="pd-hero-answer pdl-answer">
-                <span class="pd-skeleton" style="width: 85%; height: 20px; display: block; margin-bottom: 8px;"></span><span class="pd-skeleton" style="width: 55%; height: 20px; display: block;"></span>
-              </p>
-              <p id="pd-forecast-fallback" class="pdl-answer hidden">Abre la terminal para ver la proyección de hoy.</p>
-            </div>
-            <form class="pd-hero-search" id="pdHeroSearch" role="search" action="/empresas" method="get" data-hero-seq="3">
-              <div class="pd-hero-search-box">
-                <label class="sr-only" for="pdHeroQuery">Buscar una empresa o un activo</label>
-                <input id="pdHeroQuery" name="q" type="search" autocomplete="off" spellcheck="false"
-                       placeholder="Alicorp, BCP, Southern Copper, dólar…"
-                       role="combobox" aria-expanded="false" aria-controls="pdHeroSugerencias"
-                       aria-autocomplete="list" aria-describedby="pdHeroSearchHint">
-                <ul id="pdHeroSugerencias" class="pd-hero-suggest" role="listbox" aria-label="Sugerencias" hidden></ul>
-              </div>
-              <button type="submit" class="pdl-btn pdl-btn-primary">Buscar</button>
-              <p id="pdHeroSearchHint" class="pd-hero-search-hint">Busca por nombre o nemónico entre las 182 emisoras de la BVL.</p>
-            </form>
-
-            <div class="pd-home-actions flex flex-col sm:flex-row items-stretch sm:items-center gap-3" data-hero-seq="4">
-              <a href="/explorer?symbol=PEN%3DX" class="pdl-btn pdl-btn-primary">Abrir la terminal <span aria-hidden="true">&#8599;</span></a>
-              <a href="/boletin#suscribirse" class="pdl-btn pdl-btn-boletin">Recibir el boletín gratis</a>
-              <a href="#metodologia" class="pd-link-quiet">Cómo lo calculamos</a>
-            </div>
-            <dl class="pdl-stats">
-              <div><dt class="pdl-label">Activos con datos</dt><dd class="pdl-stat-val"><span data-stat="tradable-count">61</span></dd></div>
-              <div><dt class="pdl-label">Rango P10–P90</dt><dd class="pdl-stat-val">acierta el 80&nbsp;%</dd></div>
-              <div><dt class="pdl-label">Horizontes</dt><dd class="pdl-stat-val">1 a 48 meses</dd></div>
-            </dl>
           </div>
 
-          <div class="lg:col-span-5">
+          <div class="pd-hero-side">
             <div class="pdl-card">
               <div class="pdl-card-head">
                 <span class="font-mono text-[12px] font-semibold text-ink">USD / PEN</span>
@@ -831,15 +868,12 @@
                     <span class="pdl-big tnum">S/&nbsp;<span id="pdCardDailyRange"><span id="pdCardDailyP10">3.449</span> &ndash; <span id="pdCardDailyP90">3.482</span></span></span>
                     <span class="pdl-chip text-xs">8 de cada 10 veces</span>
                   </div>
-                  <div class="pdl-band">
-                    <div><span class="pdl-label block">Piso</span><span class="font-mono text-sm font-semibold text-ink tnum">S/&nbsp;<span id="pdCardMananaP10">3.449</span></span></div>
-                    <div class="text-center"><span class="pdl-label block">Central</span><span class="font-mono text-sm font-semibold text-ink tnum">S/&nbsp;<span id="pdCardMananaP50">3.466</span></span></div>
-                    <div class="text-right"><span class="pdl-label block">Techo</span><span class="font-mono text-sm font-semibold text-ink tnum">S/&nbsp;<span id="pdCardMananaP90">3.482</span></span></div>
-                  </div>
+                  <p class="pdl-central">Valor central: <span class="font-mono font-semibold text-ink tnum">S/&nbsp;<span id="pdCardMananaP50">3.466</span></span></p>
                   <div class="pdl-week text-ink-soft font-sans">
                     <span>Próxima semana (<span id="pdCardSemanaFecha" class="tnum font-medium text-ink">mar 10 nov</span>): <span class="font-mono font-medium text-ink tnum pdl-nowrap">S/&nbsp;<span id="pdCardSemanaP10">3.431</span> &ndash; <span id="pdCardSemanaP90">3.496</span></span></span>
                     <a href="/explorer?symbol=PEN%3DX" class="pdl-link text-[13px] text-ink hover:underline">Próximo mes en la terminal &rarr;</a>
                   </div>
+                  <a id="pdHeroWhatsApp" class="pdl-share" href="https://wa.me/?text=D%C3%B3lar%20hoy%20en%20perdata.site%2Fdolar" target="_blank" rel="noopener">Compartir por WhatsApp</a>
                 </div>
                 <div id="pdCardMonthly">
                   <span class="pdl-label">Valor central estimado (P50)</span>
@@ -872,6 +906,40 @@
               <p class="text-[12px] text-ink-soft leading-normal mt-3">Las noticias no entran en el cálculo del rango: en las pruebas de 2024-2026 no lo mejoraron. <a href="/metodologia#diario" class="pdl-link underline">Cómo lo calculamos</a></p>
             </div>
           </div>
+
+          <div class="pd-hero-copy pd-hero-rest">
+            <!-- FORMULARIO DEL BOLETÍN: en línea, con el mismo envío del bloque final -->
+            <p id="homeBoletinLead" class="pdl-lead-form">Recibe este rango en tu correo antes de que abra el mercado.</p>
+            <form id="homeBoletinForm" class="pdl-boletin-form" data-boletin data-msg="homeBoletinMsg" novalidate>
+              <label for="homeBoletinEmail" class="sr-only">Tu correo</label>
+              <input id="homeBoletinEmail" class="pdl-boletin-input" type="email" required autocomplete="email" placeholder="tu@correo.com" />
+              <button type="submit" class="pdl-btn pdl-btn-primary">Recibirlo gratis</button>
+            </form>
+            <p class="pdl-hero-note">Lunes a sábado, 06:00. Gratis. Te das de baja con un clic.</p>
+            <p id="homeBoletinMsg" class="pdl-boletin-msg" role="status">Te enviaremos un correo para confirmar.</p>
+            <form class="pd-hero-search" id="pdHeroSearch" role="search" action="/empresas" method="get" data-hero-seq="3">
+              <div class="pd-hero-search-box">
+                <label class="sr-only" for="pdHeroQuery">Buscar una empresa o un activo</label>
+                <input id="pdHeroQuery" name="q" type="search" autocomplete="off" spellcheck="false"
+                       placeholder="Alicorp, BCP, Southern Copper, dólar…"
+                       role="combobox" aria-expanded="false" aria-controls="pdHeroSugerencias"
+                       aria-autocomplete="list" aria-describedby="pdHeroSearchHint">
+                <ul id="pdHeroSugerencias" class="pd-hero-suggest" role="listbox" aria-label="Sugerencias" hidden></ul>
+              </div>
+              <button type="submit" class="pdl-btn pdl-btn-primary">Buscar</button>
+              <p id="pdHeroSearchHint" class="pd-hero-search-hint">Busca por nombre o nemónico entre las 182 emisoras de la BVL.</p>
+            </form>
+
+            <div class="pd-home-actions flex flex-col sm:flex-row items-stretch sm:items-center gap-3" data-hero-seq="4">
+              <a href="/explorer?symbol=PEN%3DX" class="pdl-btn pdl-btn-primary">Abrir la terminal <span aria-hidden="true">&#8599;</span></a>
+              <a href="#metodologia" class="pd-link-quiet">Cómo lo calculamos</a>
+            </div>
+            <dl class="pdl-stats">
+              <div><dt class="pdl-label">Activos con datos</dt><dd class="pdl-stat-val"><span data-stat="tradable-count">61</span></dd></div>
+              <div><dt class="pdl-label">Rango P10–P90</dt><dd class="pdl-stat-val">acierta el 80&nbsp;%</dd></div>
+              <div><dt class="pdl-label">Horizontes</dt><dd class="pdl-stat-val">1 a 48 meses</dd></div>
+            </dl>
+          </div>
         </div>
       </div>
     </section>
@@ -885,49 +953,6 @@
           <a class="pdl-ind" href="/explorer?symbol=GC%3DF" data-ind="GC=F" data-dec="2" data-prefix="US$ "><span class="pdl-label">Oro · COMEX</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val><span class="pd-skeleton" style="width: 60px; height: 18px; display: inline-block;"></span></span><span class="pdl-ind-chg font-mono" data-ind-chg><span class="pd-skeleton" style="width: 45px; height: 14px; display: inline-block;"></span></span></span><span class="pdl-ind-unit">US$ por onza · hoy</span></a>
           <a class="pdl-ind" href="/explorer?symbol=ALICORC1.LM" data-ind="ALICORC1.LM" data-dec="2" data-prefix="S/ "><span class="pdl-label">Alicorp · BVL</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val><span class="pd-skeleton" style="width: 60px; height: 18px; display: inline-block;"></span></span><span class="pdl-ind-chg font-mono" data-ind-chg><span class="pd-skeleton" style="width: 45px; height: 14px; display: inline-block;"></span></span></span><span class="pdl-ind-unit">S/ por acción · hoy</span></a>
         </div>
-      </div>
-    </section>
-
-    <!-- POR DÓNDE EMPEZAR: tres caminos, sin ruido -->
-    <section class="full-bleed border-b border-rule" aria-labelledby="pdStartTitle">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6">
-        <p class="pd-start-kicker" id="pdStartTitle">Por dónde empezar</p>
-        <div class="pd-start-grid">
-          <a class="pd-start-item" href="/dolar">
-            <span class="pd-start-num tnum">01</span>
-            <span class="pd-start-label">Ver la proyección del dólar</span>
-            <span class="pd-start-note">Doce meses, con banda P10-P90 y datos del BCRP.</span>
-          </a>
-          <a class="pd-start-item" href="/empresas">
-            <span class="pd-start-num tnum">02</span>
-            <span class="pd-start-label">Buscar una empresa de la BVL</span>
-            <span class="pd-start-note">Precio, hechos de la SMV y noticias que la mencionan.</span>
-          </a>
-          <a class="pd-start-item" href="/boletin#suscribirse">
-            <span class="pd-start-num tnum">03</span>
-            <span class="pd-start-label">Recibir el boletín gratis</span>
-            <span class="pd-start-note">Un correo cada mañana, de lunes a sábado.</span>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- INVITACIÓN AL BOLETÍN: bloque sobrio, sin pop-ups, con enlace a /boletin -->
-    <section class="full-bleed border-b border-rule" data-section-rule aria-label="Boletín diario">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-x-8 gap-y-2">
-        <p class="m-0 text-sm text-ink" style="max-width:68ch">Recibe gratis cada mañana el correo del dólar para el próximo día hábil: su rango probable, tres noticias y una lectura de qué podría moverlo. El plan Boletín (US$&nbsp;1.99 al mes o 15 al año) trae el resto del día y tus empresas.</p>
-        <a href="/boletin" class="pdl-btn pdl-btn-secondary no-underline shrink-0">Ver el boletín</a>
-      </div>
-    </section>
-
-    <!-- TUS EMPRESAS (solo con sesión y seguimiento) -->
-    <section id="pdMisEmpresas" class="full-bleed border-b border-rule" data-section-rule aria-label="Tus empresas" hidden>
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-5">
-        <div class="flex items-baseline justify-between gap-3 mb-3">
-          <h2 class="text-sm font-bold text-ink">Tus empresas</h2>
-          <a href="/cuenta" class="text-xs text-ink-soft hover:text-ink no-underline">Gestionar seguimiento</a>
-        </div>
-        <div id="pdMisEmpresasLista" class="flex flex-wrap gap-2"></div>
       </div>
     </section>
 
@@ -996,6 +1021,38 @@
       </div>
     </section>
 
+    <!-- TUS EMPRESAS (solo con sesión y seguimiento) -->
+    <section id="pdMisEmpresas" class="full-bleed border-b border-rule" data-section-rule aria-label="Tus empresas" hidden>
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-5">
+        <div class="flex items-baseline justify-between gap-3 mb-3">
+          <h2 class="text-sm font-bold text-ink">Tus empresas</h2>
+          <a href="/cuenta" class="text-xs text-ink-soft hover:text-ink no-underline">Gestionar seguimiento</a>
+        </div>
+        <div id="pdMisEmpresasLista" class="flex flex-wrap gap-2"></div>
+      </div>
+    </section>
+
+    <!-- BOLETÍN: un solo bloque con el correo gratis y el plan de pago -->
+    <section id="boletin" class="pdl-meth full-bleed" data-section-rule aria-labelledby="pdBoletinTitle">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 lg:py-20 grid gap-8 lg:grid-cols-2 lg:items-end" data-reveal>
+        <div>
+          <span class="pdl-label pdl-label-accent">Boletín</span>
+          <h2 class="pdl-h2 pdl-h2-lg" id="pdBoletinTitle">El dólar, <em>cada mañana</em></h2>
+          <p class="pdl-lede">Recibe gratis cada mañana el correo del dólar para el próximo día hábil: su rango probable, tres noticias y una lectura de qué podría moverlo.</p>
+          <p class="pdl-text">El plan Boletín (US$&nbsp;1.99 al mes o 15 al año) trae el resto del día y tus empresas, con 7 días de prueba (se pide tarjeta). <a href="/precios" class="pdl-link">Ver los planes y los precios</a>.</p>
+          <p class="pdl-quote-sm">Un ejemplo de lo que llega: <a href="/boletin" class="pdl-link">ver el boletín</a>.</p>
+        </div>
+        <div>
+          <form id="pdBoletinForm" class="pdl-boletin-form" data-boletin data-msg="pdBoletinMsg" novalidate>
+            <label for="pdBoletinEmail" class="sr-only">Tu correo</label>
+            <input id="pdBoletinEmail" class="pdl-boletin-input" type="email" required autocomplete="email" placeholder="tu@correo.com" />
+            <button type="submit" class="pdl-btn pdl-btn-primary">Suscribirme</button>
+          </form>
+          <p id="pdBoletinMsg" class="pdl-boletin-msg" role="status">Te enviaremos un correo para confirmar.</p>
+        </div>
+      </div>
+    </section>
+
     <!-- METODOLOGÍA: 3 principios (diseño de Stitch, contenido verificado contra el código) -->
     <section id="metodologia" class="pdl-meth full-bleed" data-section-rule>
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-20 lg:py-28">
@@ -1041,26 +1098,6 @@
           </div>
           <dl class="lg:col-span-3 pdl-facts"><div class="pdl-fact"><dt>Cobertura a 1 mes</dt><dd>80&nbsp;%</dd></div><div class="pdl-fact"><dt>Cobertura a 4 años</dt><dd>80&nbsp;%</dd></div><div class="pdl-fact"><dt>Casos de prueba</dt><dd>de 760 a 1.600 por plazo</dd></div></dl>
         </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- BOLETÍN -->
-    <section id="boletin" class="pdl-meth full-bleed" data-section-rule>
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 lg:py-20 grid gap-8 lg:grid-cols-2 lg:items-end" data-reveal>
-        <div>
-          <span class="pdl-label pdl-label-accent">Boletín</span>
-          <h2 class="pdl-h2 pdl-h2-lg">El dólar, <em>cada mañana</em></h2>
-          <p class="pdl-lede">De lunes a sábado a las 06:00: el correo gratis trae el dólar para el próximo día hábil con su rango probable, tres noticias que importan y una lectura de qué podría moverlo. Gratis. Con el plan Boletín (US$&nbsp;1.99 al mes o 15 al año) recibes el correo completo y añades tus propias empresas.</p>
-        </div>
-        <div>
-          <form id="homeBoletinForm" class="flex flex-col sm:flex-row gap-3" novalidate>
-            <label for="homeBoletinEmail" class="sr-only">Tu correo</label>
-            <input id="homeBoletinEmail" type="email" required autocomplete="email" placeholder="tu@correo.com"
-              class="flex-1 min-w-0 px-0 py-3 bg-transparent text-ink" style="background:transparent !important;border-radius:0 !important;border:0 !important;border-bottom:2px solid var(--pd-ink) !important;font-family:var(--pd-font-serif,'Source Serif 4',Georgia,serif);font-size:20px;outline:none" />
-            <button type="submit" class="pdl-btn pdl-btn-primary">Suscribirme</button>
-          </form>
-          <p id="homeBoletinMsg" class="text-sm text-ink-soft mt-3" role="status">Te enviaremos un correo para confirmar. El correo gratis trae el dólar para el próximo día hábil con su rango probable, tres noticias y una lectura de qué podría moverlo; con el plan Boletín (US$&nbsp;1.99 al mes o 15 al año) recibes el correo completo y añades tus propias empresas. <a href="/boletin" class="pdl-link">Más detalles</a></p>
         </div>
       </div>
     </section>
@@ -1434,6 +1471,7 @@
         var cardMonthly = document.getElementById('pdCardMonthly');
 
         if (diario && diario.vigente && diario.manana) {
+          if (window.__pdHeroCifras) window.__pdHeroCifras(diario);
           if (heroQ) heroQ.textContent = diario.pregunta || '¿A cuánto estará el dólar mañana?';
           if (cardHorizon) cardHorizon.textContent = 'Horizonte: diario';
           if (cardDaily) cardDaily.classList.remove('hidden');
@@ -1680,20 +1718,24 @@
     </a>
   </nav>
 <script>
+  // Un solo envio para los dos formularios del boletin (heroe y bloque final).
   (function () {
-    var form = document.getElementById("homeBoletinForm");
-    if (!form) return;
-    var msg = document.getElementById("homeBoletinMsg");
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var btn = form.querySelector("button");
-      btn.disabled = true;
-      fetch("/api/boletin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: document.getElementById("homeBoletinEmail").value, origen: "portada" }) })
-        .then(function (r) { return r.json(); })
-        .then(function (d) { msg.textContent = d.mensaje || d.error || "Algo salió mal. Inténtalo más tarde."; if (d.ok) form.reset(); })
-        .catch(function () { msg.textContent = "No pudimos conectar. Inténtalo más tarde."; })
-        .finally(function () { btn.disabled = false; });
-    });
+    function suscribir(form) {
+      var input = form.querySelector("input[type='email']");
+      var msg = document.getElementById(form.getAttribute("data-msg"));
+      if (!input || !msg) return;
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var btn = form.querySelector("button");
+        if (btn) btn.disabled = true;
+        fetch("/api/boletin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: input.value, origen: "portada" }) })
+          .then(function (r) { return r.json(); })
+          .then(function (d) { msg.textContent = d.mensaje || d.error || "Algo salió mal. Inténtalo más tarde."; if (d.ok) form.reset(); })
+          .catch(function () { msg.textContent = "No pudimos conectar. Inténtalo más tarde."; })
+          .finally(function () { if (btn) btn.disabled = false; });
+      });
+    }
+    document.querySelectorAll("form[data-boletin]").forEach(suscribir);
   })();
 </script>
 <script>

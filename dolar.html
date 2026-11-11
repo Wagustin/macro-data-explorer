@@ -45,8 +45,49 @@
     .pd-prose p { margin: 0 0 14px; font: 400 16px/1.7 var(--pd-font-read); color: var(--pd-ink); }
     .pd-fact-table td, .pd-fact-table th { white-space: nowrap; }
     .pd-fact-table td:first-child { white-space: normal; }
-    .pd-boletín-cta-text { margin: 0; font: 400 16px/1.7 var(--pd-font-read); color: var(--pd-ink); max-width: 60ch; }
+    .pd-fact-table { table-layout: fixed; width: 100%; max-width: 100%; }
+    .pd-fact-table th, .pd-fact-table td { overflow: hidden; text-overflow: ellipsis; }
+    .overflow-x-auto { max-width: 100%; }
+    .pd-boletin-cta-text { margin: 0; font: 400 16px/1.7 var(--pd-font-read); color: var(--pd-ink); max-width: 60ch; }
     @media (max-width: 560px) { .pd-range-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+    /* Franja del boletin: el rango de manana cada dia por correo */
+    .pd-boletin-strip {
+      margin-top: 32px;
+      padding: 20px 0 22px;
+      border-top: 2px solid var(--pd-ink);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+      gap: 10px 32px;
+      align-items: center;
+    }
+    .pd-boletin-strip-title { margin: 0; font: 600 17px/1.35 var(--pd-font-ui); letter-spacing: -.01em; color: var(--pd-ink); }
+    .pd-boletin-strip-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; }
+    .pd-boletin-input {
+      flex: 1 1 240px;
+      min-width: 0;
+      padding: 11px 12px;
+      font: 400 15px/1.4 var(--pd-font-mono);
+      color: var(--pd-ink);
+      background: var(--pd-card);
+      border: 1px solid var(--pd-rule);
+      border-radius: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .pd-boletin-input::placeholder { color: var(--pd-ink-soft); }
+    .pd-boletin-input:focus { outline: 2px solid var(--pd-ink); outline-offset: 1px; }
+    .pd-boletin-strip-form .pdl-btn { padding: 11px 18px; white-space: nowrap; }
+    .pd-boletin-note { grid-column: 1 / -1; margin: 0; font: 500 12px/1.45 var(--pd-font-ui); color: var(--pd-ink-soft); }
+    .pd-boletin-policy { color: var(--pd-ink); text-decoration: underline; text-underline-offset: 3px; }
+    .pd-boletin-status { grid-column: 1 / -1; margin: 0; font: 500 13px/1.45 var(--pd-font-ui); color: var(--pd-ink-soft); }
+
+    /* Enlace para compartir por WhatsApp: enlace de texto, no boton */
+    .pd-share-row { margin: 14px 0 0; }
+    .pd-share-link { font: 600 13px/1.4 var(--pd-font-ui); color: var(--pd-ink); text-decoration: underline; text-underline-offset: 3px; }
+    .pd-share-link:hover { color: var(--pd-ink-soft); }
+
+    @media (max-width: 760px) { .pd-boletin-strip { grid-template-columns: minmax(0, 1fr); } }
+    @media (max-width: 480px) { .pd-boletin-strip-form .pdl-btn { width: 100%; } }
   </style>
 
   <!-- Early Theme Init to prevent flash of unstyled content -->
@@ -123,6 +164,7 @@
         <p class="pd-range-meta">Ancho de banda P10-P90: 1.11%</p>
         <p class="pd-range-meta">Cobertura empírica fuera de muestra: 80.94% sobre 1,958 cortes</p>
         
+        <p class="pd-share-row"><a id="waShareLink" class="pd-share-link" href="#" target="_blank" rel="noopener noreferrer">Compartir por WhatsApp</a></p>
       </article>
       
       <article class="pd-range-card">
@@ -138,6 +180,7 @@
         </dl>
         <p class="pd-range-meta">Ancho de banda P10-P90: 2.12%</p>
         <p class="pd-range-meta">Cobertura empírica fuera de muestra: 85.69% sobre 1,954 cortes</p>
+        
         
       </article>
       
@@ -155,7 +198,20 @@
         <p class="pd-range-meta">Ancho de banda P10-P90: 4.15%</p>
         <p class="pd-range-meta">Cobertura empírica fuera de muestra: 80.00% sobre 827 cortes</p>
         <p class="pd-range-meta">Cobertura de calibración del motor mensual</p>
+        
       </article>
+    </section>
+
+    
+    <section class="pd-boletin-strip" aria-label="Boletín diario">
+      <h2 class="pd-boletin-strip-title">El rango de mañana, cada día a las <span class="mono tnum">06:00</span> en tu correo</h2>
+      <form id="pdBoletinForm" class="pd-boletin-strip-form" novalidate>
+        <label for="boletinEmail" class="sr-only">Correo electrónico</label>
+        <input type="email" id="boletinEmail" name="email" class="pd-boletin-input mono tnum" placeholder="tu@correo.com" required autocomplete="email" aria-describedby="boletinHelp">
+        <button type="submit" class="pdl-btn pdl-btn-primary" id="boletinSubmit">Recibirlo gratis</button>
+      </form>
+      <p id="boletinHelp" class="pd-boletin-note">Lunes a sábado. Gratis. Te das de baja con un clic. <a href="/politica-editorial" class="pd-boletin-policy">Política editorial</a>.</p>
+      <p id="boletinStatus" class="pd-boletin-status" aria-live="polite"></p>
     </section>
 
     <section class="mt-10">
@@ -520,6 +576,14 @@
           </dl>
         </section>
 
+    <section id="historial" class="mt-12 space-y-4 border-t border-rule pt-8" aria-label="Historial de aciertos">
+      <h2 class="pd-section-title">Historial público: cuántas veces acertó el rango</h2>
+      <p class="pd-page-lede">
+        Cada día publicamos un rango para el siguiente cierre del dólar y otro para la semana. Aquí está cada uno comparado con el cierre oficial del BCRP, incluidos los que fallaron.
+      </p>
+      <div class="space-y-8"><div class="space-y-6"><h3 class="text-lg font-semibold text-ink">Rangos publicados desde el 4 de noviembre de 2026</h3><div class="space-y-3"><h4 class="text-base font-medium text-ink">Rango para el día siguiente</h4><p class="text-ink-soft text-sm">2 de 4 cierres cayeron dentro del rango publicado. Todavía hay pocos casos (4); el porcentaje se mostrará a partir de 20.</p><div class="overflow-x-auto"><table class="w-full text-left text-sm border border-rule"><thead class="bg-paper border-b border-rule font-mono text-xs text-ink uppercase"><tr><th class="py-2 px-2 font-semibold">Cierre del</th><th class="py-2 px-2 font-semibold">Rango publicado</th><th class="py-2 px-2 font-semibold">Cierre real</th><th class="py-2 px-2 font-semibold">Resultado</th></tr></thead><tbody class="divide-y divide-rule font-mono tnum text-ink"><tr><td class="py-2 px-2 font-sans">9 nov</td><td class="py-2 px-2">3.435 – 3.468</td><td class="py-2 px-2">3.418</td><td class="py-2 px-2 font-sans">fuera</td></tr><tr><td class="py-2 px-2 font-sans">6 nov</td><td class="py-2 px-2">3.435 – 3.468</td><td class="py-2 px-2">3.433</td><td class="py-2 px-2 font-sans">fuera</td></tr><tr><td class="py-2 px-2 font-sans">5 nov</td><td class="py-2 px-2">3.443 – 3.487</td><td class="py-2 px-2">3.452</td><td class="py-2 px-2 font-sans">dentro</td></tr><tr><td class="py-2 px-2 font-sans">4 nov</td><td class="py-2 px-2">3.449 – 3.482</td><td class="py-2 px-2">3.452</td><td class="py-2 px-2 font-sans">dentro</td></tr></tbody></table></div><p class="text-ink-soft text-xs mt-1">en soles por dólar</p></div><div class="space-y-3"><h4 class="text-base font-medium text-ink">Rango para la semana</h4><p class="text-ink-soft text-sm">Aún no ha vencido ningún rango semanal.</p></div></div><div class="space-y-4 border-t border-rule pt-6"><h3 class="text-lg font-semibold text-ink">Prueba histórica (no son rangos publicados)</h3><p class="text-ink-soft text-sm">Entre enero de 2019 y noviembre de 2026, recalculando el modelo solo con la historia anterior a cada día, el rango a un día hábil del último cierre conocido contuvo el cierre real 80.59% de las veces (1 958 días).</p><div class="overflow-x-auto"><table class="w-full text-left text-sm border border-rule"><thead class="bg-paper border-b border-rule font-mono text-xs text-ink uppercase"><tr><th class="py-2 px-2 font-semibold">Año</th><th class="py-2 px-2 font-semibold">Días</th><th class="py-2 px-2 font-semibold">Dentro del rango</th></tr></thead><tbody class="divide-y divide-rule font-mono tnum text-ink"><tr><td class="py-2 px-2 font-sans">2019</td><td class="py-2 px-2">249</td><td class="py-2 px-2">79.12%</td></tr><tr><td class="py-2 px-2 font-sans">2020</td><td class="py-2 px-2">254</td><td class="py-2 px-2">82.68%</td></tr><tr><td class="py-2 px-2 font-sans">2021</td><td class="py-2 px-2">251</td><td class="py-2 px-2">82.87%</td></tr><tr><td class="py-2 px-2 font-sans">2022</td><td class="py-2 px-2">251</td><td class="py-2 px-2">78.09%</td></tr><tr><td class="py-2 px-2 font-sans">2023</td><td class="py-2 px-2">250</td><td class="py-2 px-2">80.00%</td></tr><tr><td class="py-2 px-2 font-sans">2024</td><td class="py-2 px-2">246</td><td class="py-2 px-2">78.46%</td></tr><tr><td class="py-2 px-2 font-sans">2025</td><td class="py-2 px-2">248</td><td class="py-2 px-2">80.65%</td></tr><tr><td class="py-2 px-2 font-sans">2026</td><td class="py-2 px-2">209</td><td class="py-2 px-2">83.25%</td></tr></tbody></table></div><p class="text-ink-soft text-sm mt-4">Hasta el 9 de noviembre de 2026 el rango del día siguiente partía de un cierre de dos días hábiles atrás, porque el BCRP lo difunde con un día de retraso. Desde el 10 de noviembre parte del cierre del día hábil anterior, que SUNAT difunde de madrugada, y por eso es más angosto. Cada rango queda registrado antes de las 9:00 a. m. del día que anuncia y no se cambia después. En la prueba del propio motor sobre los cierres desde 2024, el rango de un día acertó 80.4 % de las veces; el de la semana, 83.4 %.</p><p class="text-ink-soft text-xs mt-4">Actualizado el 10 nov de 2026. Cierres: tipo de cambio venta SBS, publicado por el BCRP y por SUNAT.</p></div>
+    </section>
+
     
     <section class="mt-12 border-t border-rule pt-8" aria-label="Boletin diario">
       <p class="micro-label text-ink-soft">Boletín diario</p>
@@ -563,6 +627,57 @@
           menuButton.setAttribute('aria-expanded', String(open));
         });
       }
+    })();
+
+    // Compartir por WhatsApp: enlace de texto con el ultimo cierre oficial y el rango de manana (P10-P90)
+    (function() {
+      const link = document.getElementById('waShareLink');
+      if (!link) return;
+      const cierre = '3.418';
+      const fechaCierre = '9 nov';
+      const fechaObjetivo = 'martes 10 nov';
+      const p10 = '3.405';
+      const p90 = '3.430';
+      const texto = 'Dólar: último cierre oficial S/ ' + cierre + ' (' + fechaCierre + '). Rango probable para el ' + fechaObjetivo + ': S/ ' + p10 + ' – S/ ' + p90 + '. perdata.site/dolar';
+      link.href = 'https://wa.me/?text=' + encodeURIComponent(texto);
+    })();
+
+    // Formulario del boletin: POST JSON a /api/boletin (mismo cuerpo que la portada)
+    (function() {
+      const form = document.getElementById('pdBoletinForm');
+      const status = document.getElementById('boletinStatus');
+      const submit = document.getElementById('boletinSubmit');
+      const email = document.getElementById('boletinEmail');
+      if (!form || !status || !submit || !email) return;
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        submit.disabled = true;
+        submit.textContent = 'Enviando...';
+        status.textContent = '';
+        status.className = 'pd-boletin-status';
+        try {
+          const res = await fetch('/api/boletin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email.value.trim(), origen: 'dolar' }),
+          });
+          const json = await res.json().catch(() => ({}));
+          if (res.ok && json.ok) {
+            status.textContent = json.mensaje || 'Te enviamos un correo para confirmar. Revisa tu bandeja de entrada (y la de spam).';
+            status.classList.add('text-pos');
+            form.reset();
+          } else {
+            status.textContent = json.error || 'No pudimos procesar la solicitud. Inténtalo más tarde.';
+            status.classList.add('text-neg');
+          }
+        } catch (err) {
+          status.textContent = 'Error de red. Inténtalo más tarde.';
+          status.classList.add('text-neg');
+        } finally {
+          submit.disabled = false;
+          submit.textContent = 'Recibirlo gratis';
+        }
+      });
     })();
   </script>
   <script src="/consent.js" defer></script>

@@ -1691,6 +1691,37 @@ html.dark .pdl-btn-primary:hover { background: #FFFFFF; border-color: #FFFFFF; c
 
 .pdl-label { display: block; font-family: var(--pd-font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--pd-ink-soft); }
 .pdl-label-accent { color: var(--pd-accent); font-weight: 500; }
+
+/* Primer bloque del heroe: titulo y estado, tarjeta al lado y el resto (formulario, buscador, botones) debajo */
+.pd-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
+.pd-hero-top > :last-child { margin-bottom: 0; }
+@media (min-width: 1024px) {
+  .pd-hero-grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-rows: auto 1fr; column-gap: 56px; row-gap: 32px; align-items: start; }
+  .pd-hero-top  { grid-column: 1; grid-row: 1; }
+  .pd-hero-rest { grid-column: 1; grid-row: 2; }
+  .pd-hero-side { grid-column: 2; grid-row: 1 / span 2; }
+}
+/* En movil el bloque lateral se abre: la tarjeta va justo despues del estado y las
+   noticias de contexto quedan al final del primer bloque, como antes de este cambio. */
+@media (max-width: 1023px) {
+  .pd-hero-side { display: contents; }
+  .pd-hero-top { grid-row: 1; }
+  .pd-hero-side > .pdl-card { grid-row: 2; }
+  .pd-hero-rest { grid-row: 3; }
+  .pd-hero-side > #pdNewsContextBlock { grid-row: 4; }
+}
+.pdl-share { display: inline-block; margin-top: 10px; font-family: var(--pd-font-ui); font-size: 13px; font-weight: 500; color: var(--pd-accent); text-decoration: underline; text-underline-offset: 3px; }
+.pdl-share:hover { color: var(--pd-ink); }
+.pdl-boletin-form { display: flex; flex-direction: column; gap: 12px; }
+.pdl-boletin-input { flex: 1 1 0%; min-width: 0; padding: 12px 0; color: var(--pd-ink); background: transparent !important; border: 0 !important; border-bottom: 2px solid var(--pd-ink) !important; border-radius: 0 !important; font-family: var(--pd-font-read); font-size: 20px; outline: none; }
+.pdl-boletin-input::placeholder { color: var(--pd-ink-soft); }
+.pdl-boletin-msg { margin: 6px 0 0; font-family: var(--pd-font-ui); font-size: 13px; line-height: 1.4; color: var(--pd-ink-soft); }
+.pdl-hero-note { margin: 8px 0 0; font-family: var(--pd-font-ui); font-size: 13px; color: var(--pd-ink-soft); }
+.pdl-central { margin: 12px 0 0; font-family: var(--pd-font-ui); font-size: 13px; color: var(--pd-ink-soft); }
+.pdl-lead-form { margin: 0 0 10px; font-family: var(--pd-font-ui); font-size: 15px; font-weight: 600; color: var(--pd-ink); }
+.pd-hero-copy .pdl-boletin-msg { margin-bottom: 32px; }
+@media (min-width: 640px) { .pdl-boletin-form { flex-direction: row; align-items: flex-end; } }
+
 .pdl-stats { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 20px; margin: 44px 0 0; padding-top: 24px; border-top: 1px solid var(--pd-rule); }
 .pdl-stats dd { margin: 4px 0 0; }
 .pdl-stat-val { font-family: var(--pd-font-mono); font-size: 15px; font-weight: 600; color: var(--pd-ink); font-variant-numeric: tabular-nums; }
@@ -2980,59 +3011,6 @@ html.dark .pd-skeleton {
   }
 }
 
-/* Tira «Por dónde empezar» (portada) */
-.pd-start-kicker {
-  margin: 0 0 10px;
-  font-family: var(--pd-font-ui);
-  font-size: 11px;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--pd-ink-soft);
-}
-.pd-start-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 2px; }
-.pd-start-item {
-  display: block;
-  padding: 0 20px 4px 0;
-  text-decoration: none;
-  color: var(--pd-ink);
-  border-right: 1px solid var(--pd-rule);
-}
-.pd-start-item:not(:first-child) { padding-left: 20px; }
-.pd-start-item:last-child { border-right: 0; padding-right: 0; }
-.pd-start-num {
-  display: block;
-  font-family: var(--pd-font-mono, ui-monospace, monospace);
-  font-size: 11px;
-  color: var(--pd-ink-soft);
-  font-variant-numeric: tabular-nums;
-}
-.pd-start-label {
-  display: block;
-  margin-top: 5px;
-  font-family: var(--pd-font-serif, Georgia, serif);
-  font-size: 19px;
-  line-height: 1.25;
-}
-.pd-start-note {
-  display: block;
-  margin-top: 3px;
-  font-family: var(--pd-font-ui);
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--pd-ink-soft);
-}
-.pd-start-item:hover .pd-start-label { text-decoration: underline; text-underline-offset: 3px; }
-@media (max-width: 767px) {
-  .pd-start-grid { grid-template-columns: 1fr; }
-  .pd-start-item,
-  .pd-start-item:not(:first-child),
-  .pd-start-item:last-child {
-    padding: 12px 0;
-    border-right: 0;
-    border-bottom: 1px solid var(--pd-rule);
-  }
-  .pd-start-item:last-child { border-bottom: 0; padding-bottom: 0; }
-}
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),
   ::view-transition-old(*),
