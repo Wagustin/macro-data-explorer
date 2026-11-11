@@ -194,6 +194,40 @@ test("correo pagado: «Tus empresas» con imagen, rango en mono, máximo 2 hecho
   assert.match(html, /https:\/\/perdata\.site\/empresa\/ALICORC1/);
 });
 
+test("correo pagado: «Tus empresas» usa el rango semanal calibrado de las acciones de Lima", () => {
+  const html = generar("boletin", {}, "ALICORC1,FERREYC1,EXALMC1,AUNA");
+  const valores = JSON.parse(read("data/acciones-rangos.json")).valores;
+  const sinTags = (s) => s.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+  const texto = sinTags(html);
+
+  // El rango sale del motor calibrado (data/acciones-rangos.json), no de la
+  // banda mensual vieja de /api/forecast.
+  const fmt2 = (v) => Number(v).toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const fecha = (f) => {
+    const d = new Date(`${String(f).slice(0, 10)}T12:00:00Z`);
+    return `${d.getUTCDate()} ${MESES_ES[d.getUTCMonth()]}`;
+  };
+  const semana = valores.ALICORC1.semana;
+  assert.ok(
+    texto.includes(`Al ${fecha(semana.fecha_objetivo)}: ${fmt2(semana.p25)} – ${fmt2(semana.p75)} (1 de cada 2) · ${fmt2(semana.p10)} – ${fmt2(semana.p90)} (8 de cada 10)`),
+    "la línea de Alicorp es el rango de la semana del motor"
+  );
+
+  // El gráfico de la acción se anuncia como proyección de una semana.
+  assert.match(html, /Alicorp S\.A\.A\.: últimos cierres y rango proyectado a una semana/);
+  assert.ok(!html.includes("rango proyectado a un mes"), "ninguna acción de Lima se anuncia a un mes");
+
+  // Cuando el motor no publica un rango, la tarjeta explica el motivo exacto.
+  assert.ok(
+    texto.includes("Sin rango esta semana: en la prueba no fue lo bastante confiable y preferimos no mostrarlo."),
+    "Ferreycorp explica por qué no hay rango"
+  );
+  assert.ok(
+    texto.includes("Aún sin rango: su historia en bolsa es corta para probarlo."),
+    "Auna explica que su prueba todavía es corta"
+  );
+});
+
 test("correos: sin emojis, sin «subirá»/«bajará»/«interbancario» y sin fechas ISO", () => {
   const gratis = generar("gratis");
   const pagado = generar("boletin");

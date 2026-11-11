@@ -262,3 +262,216 @@ test("addBusinessDays funciona correctamente", () => {
   assert.equal(addBusinessDays("2026-11-06", 1), "2026-11-09");
   assert.equal(addBusinessDays("2026-07-24", 5), "2026-08-04");
 });
+
+// ============================================================================
+// Tests del segundo escalón «fondo común»
+// ============================================================================
+import { rangosDeValor, fondoComunBandas } from "../scripts/engine-acciones.js";
+
+/**
+ * Generador pseudoaleatorio determinista (LCG) para series sintéticas.
+ */
+function lcg(seed) {
+  let s = seed >>> 0;
+  return () => {
+    s = (s * 1664525 + 1013904223) % 4294967296;
+    return s / 4294967296;
+  };
+}
+
+/**
+ * Calendario de n días hábiles (lunes a viernes) desde una fecha ISO.
+ */
+function diasHabiles(inicioIso, n) {
+  const cal = [];
+  const d = new Date(inicioIso + "T00:00:00Z");
+  while (cal.length < n) {
+    const dia = d.getUTCDay();
+    if (dia !== 0 && dia !== 6) cal.push(d.toISOString().slice(0, 10));
+    d.setUTCDate(d.getUTCDate() + 1);
+  }
+  return cal;
+}
+
+/**
+ * Dataset sintético: cinco valores con historia larga (desde 2022) y uno con
+ * historia corta (empieza en 2025), con retornos independientes y estables.
+ */
+function datasetFondo() {
+  const cal = diasHabiles("2022-01-03", 1250);
+  const largos = ["LARGO1", "LARGO2", "LARGO3", "LARGO4", "LARGO5"];
+  const filas = [];
+
+  for (const sym of largos) {
+    let precio = 50;
+    const rnd = lcg(1000 + largos.indexOf(sym));
+    for (const fecha of cal) {
+      precio *= Math.exp(0.015 * (rnd() * 2 - 1) + 0.0002);
+      filas.push({ nemonico: sym, fecha, cierre: Number(precio.toFixed(4)) });
+    }
+  }
+
+  // Valor con historia corta: empieza en 2025-01-27 (índice 800)
+  let precio = 20;
+  const rnd = lcg(7777);
+  for (let i = 800; i < cal.length; i++) {
+    precio *= Math.exp(0.015 * (rnd() * 2 - 1) + 0.0002);
+    filas.push({ nemonico: "TARDIO", fecha: cal[i], cierre: Number(precio.toFixed(4)) });
+  }
+
+  return { cal, filas };
+}
+
+/**
+ * Comprueba que un horizonte nunca queda "a medias": o bien se publica (con su
+ * método) o bien no se publica con un motivo explícito.
+ */
+function assertCoherente(v, etiqueta) {
+  if (v.publicable) {
+    assert.ok(v.metodo === "propio" || v.metodo === "fondo", `${etiqueta}: publicable exige metodo propio/fondo`);
+    assert.equal(v.motivo, null, `${etiqueta}: publicable sin motivo`);
+    assert.ok(v.p10 <= v.p25, `${etiqueta}: p10 <= p25`);
+    assert.ok(v.p25 <= v.p50, `${etiqueta}: p25 <= p50`);
+    assert.ok(v.p50 <= v.p75, `${etiqueta}: p50 <= p75`);
+    assert.ok(v.p75 <= v.p90, `${etiqueta}: p75 <= p90`);
+  } else {
+    assert.equal(v.metodo, null, `${etiqueta}: no publicable exige metodo null`);
+    assert.equal(typeof v.motivo, "string", `${etiqueta}: no publicable exige motivo explícito`);
+    assert.ok(v.motivo.length > 0, `${etiqueta}: motivo no vacío`);
+    assert.equal(v.p10, null, `${etiqueta}: no publicable sin p10`);
+    assert.equal(v.p90, null, `${etiqueta}: no publicable sin p90`);
+  }
+}
+
+// ============================================================================
+// Test: valor con historia corta -> metodo "fondo" o no publicable con motivo
+// ============================================================================
+test("valor con historia corta: metodo fondo con cuantiles ordenados o no publicable con motivo", () => {
+  const { filas } = datasetFondo();
+  const resultado = motorAcciones(filas);
+
+  const v = resultado.valores.TARDIO;
+  assert.ok(v, "TARDIO debe estar en resultados");
+  assert.equal(v.primera_fecha, "2025-01-27");
+
+  for (const nombre of ["semana", "mes"]) {
+    const h = v[nombre];
+    assertCoherente(h, `TARDIO ${nombre}`);
+
+    if (h.publicable) {
+      // Solo el fondo puede publicar a un valor con historia corta
+      assert.equal(h.metodo, "fondo", `TARDIO ${nombre}: con historia corta se publica por fondo`);
+      assert.ok(h.p10 <= h.p25 && h.p25 <= h.p50 && h.p50 <= h.p75 && h.p75 <= h.p90,
+        `TARDIO ${nombre}: cuantiles ordenados`);
+    } else {
+      assert.ok(["historia_insuficiente", "cobertura_fuera_de_rango"].includes(h.motivo),
+        `TARDIO ${nombre}: motivo explicito, ${h.motivo}`);
+    }
+  }
+
+  // Ningún valor del archivo queda a medias
+  for (const [sym, val] of Object.entries(resultado.valores)) {
+    assertCoherente(val.semana, `${sym} semana`);
+    assertCoherente(val.mes, `${sym} mes`);
+  }
+});
+
+// ============================================================================
+// Test: sin fuga de futuro en el escalón «fondo»
+// ============================================================================
+test("sin fuga: la banda de un corte antiguo no depende de los datos posteriores", () => {
+  const { cal, filas } = datasetFondo();
+
+  // Serie completa y serie cortada 100 días antes del final
+  const T = 1150;
+  const filasCortadas = filas.filter(f => f.fecha <= cal[T]);
+
+  const completo = fondoComunBandas(filas, 5);
+  const cortado = fondoComunBandas(filasCortadas, 5);
+
+  assert.ok(cortado.LARGO1.cortes.length > 100, "el prefijo debe tener cortes de prueba");
+
+  for (const sym of Object.keys(cortado)) {
+    const porCorte = new Map(completo[sym].cortes.map(b => [b.c, b]));
+    for (const banda of cortado[sym].cortes) {
+      const ref = porCorte.get(banda.c);
+      assert.ok(ref, `${sym}: el corte ${banda.c} debe existir en la serie completa`);
+      assert.equal(ref.L80, banda.L80, `${sym} corte ${banda.c}: L80 no cambia con datos posteriores`);
+      assert.equal(ref.U80, banda.U80, `${sym} corte ${banda.c}: U80 no cambia con datos posteriores`);
+      assert.equal(ref.L50, banda.L50, `${sym} corte ${banda.c}: L50 no cambia con datos posteriores`);
+      assert.equal(ref.U50, banda.U50, `${sym} corte ${banda.c}: U50 no cambia con datos posteriores`);
+      assert.equal(ref.y, banda.y, `${sym} corte ${banda.c}: el resultado observado no cambia`);
+    }
+  }
+});
+
+// ============================================================================
+// Test: el segundo escalón no altera los valores publicables por el método propio
+// ============================================================================
+test("las acciones publicables por el metodo propio dan los mismos numeros con el segundo escalon", () => {
+  const { filas } = datasetFondo();
+  const resultado = motorAcciones(filas);
+
+  const cal = calendarioBursatil(filas);
+  const bySymbol = new Map();
+  for (const fila of filas) {
+    if (!bySymbol.has(fila.nemonico)) bySymbol.set(fila.nemonico, []);
+    bySymbol.get(fila.nemonico).push(fila);
+  }
+
+  const campos = ["publicable", "motivo", "p10", "p25", "p50", "p75", "p90", "ancho80_pct", "ancho50_pct", "validacion"];
+  let propios = 0;
+
+  for (const [sym, filasValor] of bySymbol) {
+    const v = resultado.valores[sym];
+    if (!v) continue;
+    for (const [h, nombre] of [[5, "semana"], [21, "mes"]]) {
+      const propio = rangosDeValor(filasValor, cal, h);
+      if (!propio.publicable) continue;
+
+      propios++;
+      assert.equal(v[nombre].metodo, "propio", `${sym} ${nombre}: el metodo propio manda`);
+
+      const publicado = Object.fromEntries(campos.map(k => [k, v[nombre][k]]));
+      const esperado = Object.fromEntries(campos.map(k => [k, propio[k]]));
+      assert.deepEqual(publicado, esperado, `${sym} ${nombre}: numeros intactos con el segundo escalon`);
+    }
+  }
+
+  assert.ok(propios > 0, "el dataset debe tener al menos un valor publicable por el metodo propio");
+});
+
+// ============================================================================
+// Test: el fondo solo valida cortes con la ventana del pool COMPLETA
+// ----------------------------------------------------------------------------
+// La ventana del fondo son 756 días. Un corte anterior a 756 tiene el pool
+// recortado: sus cuantiles no son comparables con los del rango vigente (que
+// sí se construye sobre la ventana completa), así que no cuentan como corte de
+// prueba del fondo. Con menos de 100 cortes con ventana completa el fondo no
+// publica y el motivo sigue siendo "historia_insuficiente".
+// ============================================================================
+test("el fondo no valida cortes con la ventana del pool recortada", () => {
+  const cal = diasHabiles("2023-01-02", 850); // los cortes de prueba empiezan antes de 756
+  const filas = [];
+  for (let s = 0; s < 6; s++) {
+    let precio = 50 + s;
+    const rnd = lcg(4200 + s);
+    for (const fecha of cal) {
+      precio *= Math.exp(0.012 * (rnd() * 2 - 1) + 0.0001);
+      filas.push({ nemonico: `VENT${s}`, fecha, cierre: Number(precio.toFixed(4)) });
+    }
+  }
+
+  const resultado = motorAcciones(filas);
+  const v = resultado.valores.VENT0;
+  assert.ok(v, "VENT0 debe estar en resultados");
+
+  for (const nombre of ["semana", "mes"]) {
+    const hz = v[nombre];
+    assert.equal(hz.publicable, false, `VENT0 ${nombre}: no publicable`);
+    assert.equal(hz.metodo, null, `VENT0 ${nombre}: sin metodo`);
+    assert.equal(hz.motivo, "historia_insuficiente", `VENT0 ${nombre}: historia_insuficiente`);
+    assert.equal(hz.p10, null, `VENT0 ${nombre}: sin p10`);
+    assert.equal(hz.p90, null, `VENT0 ${nombre}: sin p90`);
+  }
+});
