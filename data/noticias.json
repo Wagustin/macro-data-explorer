@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-11T03:31:39.372Z",
+  "actualizado": "2026-11-11T06:16:15.217Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 67
+      "items": 65
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -34,7 +34,7 @@
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 17
+      "items": 16
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -44,7 +44,7 @@
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 17
+      "items": 18
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -64,6 +64,60 @@
   },
   "noticias": [
     {
+      "id": "gestion-eaa02fe4a9",
+      "titulo": "Se alista “combo” laboral tributario para verano: aportes y despidos, claves de la propuesta",
+      "url": "https://gestion.pe/economia/gobierno-de-keiko-fujimori-alista-combo-laboral-tributario-para-el-verano-aportes-y-despidos-como-puntos-clave-especialistas-analizan-la-propuesta-noticia-2/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-11T06:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-f29ee84736",
+      "titulo": "Inversiones renovables por casi US$3,000 millones abrirán demanda por talento especializado en Perú",
+      "url": "https://gestion.pe/economia/inversiones-renovables-por-casi-us3000-millones-abriran-demanda-por-talento-especializado-en-peru-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-11T05:58:11.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-9722f15419",
+      "titulo": "Congreso aprueba extender exoneración del Impuesto a la Renta a intereses de ahorros",
+      "url": "https://gestion.pe/economia/congreso-aprueba-extender-exoneracion-del-impuesto-a-la-renta-a-intereses-de-ahorros-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-11T05:56:37.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-e48d3da44f",
+      "titulo": "La justicia de Brasil condenó a Meta a pagar 1,3 millones de dólares por dar trato desigual a candidatos en las elecciones presidenciales",
+      "url": "https://rpp.pe/mundo/latinoamerica/la-justicia-de-brasil-condeno-a-meta-a-pagar-13-millones-de-dolares-por-dar-trato-desigual-a-candidatos-en-las-elecciones-presidenciales-noticia-1717138",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-11T05:30:28.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-8f089153b9",
+      "titulo": "¿Cuándo debe una empresa cambiar lo que siempre le funcionó? Las señales de alerta",
+      "url": "https://gestion.pe/economia/empresas/cuando-debe-una-empresa-cambiar-lo-que-siempre-le-funciono-las-senales-de-alerta-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-11T04:18:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-e57504a1a8",
+      "titulo": "MTPE: plataforma Mi Carrera gana premio por orientar decisiones de formación de jóvenes",
+      "url": "https://andina.pe/agencia/noticia-mtpe-plataforma-mi-carrera-gana-premio-orientar-decisiones-formacion-jovenes-1099436.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-11T04:00:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
+    {
       "id": "andina-a2f1e68c73",
       "titulo": "Rueda de negocios en Francia generó potencial de US$ 2,5 millones para turismo peruano",
       "url": "https://andina.pe/agencia/noticia-rueda-negocios-francia-genero-potencial-25-millones-para-turismo-peruano-1099435.aspx",
@@ -80,15 +134,6 @@
       "fecha_iso": "2026-11-11T02:00:01.000Z",
       "categoria": "Otros",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-9722f15419",
-      "titulo": "Congreso aprueba extender exoneración del Impuesto a la Renta a intereses de ahorros",
-      "url": "https://gestion.pe/economia/congreso-aprueba-extender-exoneracion-del-impuesto-a-la-renta-a-intereses-de-ahorros-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-11T01:38:42.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "el_comercio-5eafdc6a3a",
@@ -132,6 +177,15 @@
       "url": "https://www.infobae.com/peru/2026/11/10/investigacion-publicada-en-estados-unidos-evaluo-tecnica-de-remodelacion-costal-creada-en-peru/",
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-11T00:24:50.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-c4adbf7b9f",
+      "titulo": "Renovación Popular busca revertir decisión del JNE que impide a alcaldes volver al cargo tras elecciones",
+      "url": "https://rpp.pe/politica/elecciones/renovacion-popular-busca-revertir-decision-del-jne-que-impide-a-alcaldes-volver-al-cargo-tras-elecciones-noticia-1717111",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-11T00:24:32.000Z",
       "categoria": "Mundo",
       "semaforo": "AMARILLO"
     },
@@ -196,15 +250,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-10T23:45:00.000Z",
       "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-eaa02fe4a9",
-      "titulo": "Se alista “combo” laboral tributario para verano: aportes y despidos, claves de la propuesta",
-      "url": "https://gestion.pe/economia/gobierno-de-keiko-fujimori-alista-combo-laboral-tributario-para-el-verano-aportes-y-despidos-como-puntos-clave-especialistas-analizan-la-propuesta-noticia-2/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-10T23:45:00.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -277,15 +322,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-10T23:19:33.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-8f089153b9",
-      "titulo": "¿Cuándo debe una empresa cambiar lo que siempre le funcionó? Las señales de alerta",
-      "url": "https://gestion.pe/economia/empresas/cuando-debe-una-empresa-cambiar-lo-que-siempre-le-funciono-las-senales-de-alerta-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-10T23:18:18.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -622,15 +658,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "rpp-99549aafcf",
-      "titulo": "Alemania retira drones y coches chinos de instalaciones militares por peligro de espionaje",
-      "url": "https://rpp.pe/mundo/europa/nvidia-alemania-retira-drones-y-coches-chinos-de-instalaciones-militares-por-peligro-de-espionaje-noticia-1717052",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-10T19:00:08.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "infobae-193cd06ac1",
       "titulo": "Los departamentos de entre 40 y 60 m² concentraron el 39% de las ventas en Lima",
       "url": "https://www.infobae.com/peru/2026/11/10/los-departamentos-de-entre-40-y-60-m-concentraron-el-39-de-las-ventas-en-lima/",
@@ -647,15 +674,6 @@
       "fecha_iso": "2026-11-10T18:50:47.000Z",
       "categoria": "Otros",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "rpp-203fb7f5bd",
-      "titulo": "Irán niega su implicación en los ataques a los frigoríficos de la distribución de Francia",
-      "url": "https://rpp.pe/mundo/medio-oriente/iran-niega-su-implicacion-en-los-ataques-a-los-frigorificos-de-la-distribucion-de-francia-noticia-1717046",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-10T18:41:23.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "andina-99832505db",
@@ -718,15 +736,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-10T18:10:33.000Z",
       "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-c163181f8b",
-      "titulo": "Conductores de vehículos con GLP recibirán descuento de S/ 2,000 para convertirlos a GNV",
-      "url": "https://rpp.pe/economia/economia/conductores-de-vehiculos-con-glp-recibiran-descuento-de-s-2000-para-convertirlos-a-gnv-noticia-1717044",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-10T18:09:31.000Z",
-      "categoria": "Energía",
       "semaforo": "AMARILLO"
     },
     {
@@ -899,15 +908,6 @@
       "fecha_iso": "2026-11-10T14:47:36.000Z",
       "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-33a90ad3a7",
-      "titulo": "Bolsa de Valores de Lima presenta índices negativos en sintonía con caída de Wall Street",
-      "url": "https://andina.pe/agencia/noticia-bolsa-valores-lima-presenta-indices-negativos-sintonia-caida-wall-street-1099328.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-10T14:45:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "VERDE"
     },
     {
       "id": "gestion-fd4bddc69c",
