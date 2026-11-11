@@ -202,9 +202,9 @@ const valorIndicador = (ind) => {
 
 // ---- 3. Tarjetas de rangos probables ----
 
-const tarjetaRango = ({ titulo, subtitulo, fechaObjetivo, p10, p25, p50, p75, p90, anchoPct, cobertura, cortes, extra, pie }) => `
+const tarjetaRango = ({ titulo, subtitulo, fechaObjetivo, objetivoIso, p10, p25, p50, p75, p90, anchoPct, cobertura, cortes, extra, pie }) => `
       <article class="pd-range-card">
-        <p class="micro-label text-ink-soft">${escapeHtml(titulo)}</p>
+        <p class="micro-label text-ink-soft"${objetivoIso ? ` id="pdEtiquetaCierre" data-objetivo="${escapeHtml(objetivoIso)}"` : ''}>${escapeHtml(titulo)}</p>
         <p class="pd-range-target">${escapeHtml(subtitulo)} · ${escapeHtml(fechaObjetivo)}</p>
         <p class="pd-range-p50">S/ ${num(p50, 4)}</p>
         <p class="pd-range-caption">Mediana del pronostico (P50)</p>
@@ -223,7 +223,8 @@ const tarjetaRango = ({ titulo, subtitulo, fechaObjetivo, p10, p25, p50, p75, p9
 const diaSemana = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('es-PE', { weekday: 'long', timeZone: 'UTC' });
 
 const tarjetaManana = tarjetaRango({
-  titulo: 'Mañana',
+  titulo: 'Proximo cierre',
+  objetivoIso: manana.fecha_objetivo,
   subtitulo: diaSemana(manana.fecha_objetivo),
   fechaObjetivo: fechaLarga(manana.fecha_objetivo),
   p10: mananaP10,
@@ -391,13 +392,13 @@ const textoExplicativo = `
           </p>
           <p>
             La validacion importa mas que el numero. El motor se evalua con cortes fuera de muestra:
-            cortes de tiempo que nunca vio durante el calibracion. Para el horizonte de manana la cobertura
+            cortes de tiempo que nunca vio durante el calibracion. Para el horizonte de un dia la cobertura
             empirica fue de ${pct(mananaCoberturaFuera, 2)} sobre ${num(mananaCortes, 0)} cortes; para la
             semana, ${pct(semanaCoberturaFuera, 2)} sobre ${num(semanaCortes, 0)} cortes; y el motor
             mensual entrega una cobertura de calibracion de ${pct(mesCobertura, 2)} sobre ${num(mesN, 0)}
             observaciones. Cuando la cobertura empirica se acerca a la cobertura nominal, el rango tiene
             poder predictivo y no solo describe el pasado. El ancho de banda tambien comunica incertidumbre:
-            hoy el rango de manana abarca ${pct(mananaAnchoPct, 2)} y el de la semana
+            hoy el rango del proximo cierre abarca ${pct(mananaAnchoPct, 2)} y el de la semana
             ${pct(semanaAnchoPct, 2)}, porque a mayor horizonte la incertidumbre acumulada crece de forma
             monotona.
           </p>
@@ -469,7 +470,7 @@ const datasetLdScript = `  <script type="application/ld+json">${ldJson(datasetLd
 // Va justo debajo de los tres horizontes: el rango de manana es lo que se lleva el correo
 const bloqueBoletinRango = `
     <section class="pd-boletin-strip" aria-label="Boletín diario">
-      <h2 class="pd-boletin-strip-title">El rango de mañana, cada día a las <span class="mono tnum">06:00</span> en tu correo</h2>
+      <h2 class="pd-boletin-strip-title">El rango del día, cada mañana a las <span class="mono tnum">06:00</span> en tu correo</h2>
       <form id="pdBoletinForm" class="pd-boletin-strip-form" novalidate>
         <label for="boletinEmail" class="sr-only">Correo electrónico</label>
         <input type="email" id="boletinEmail" name="email" class="pd-boletin-input mono tnum" placeholder="tu@correo.com" required autocomplete="email" aria-describedby="boletinHelp">
@@ -503,7 +504,7 @@ let htmlGenerado = `<!DOCTYPE html>
   <meta name="pd-ads" content="1">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://perdata.site/dolar">
-  <title>Tipo de cambio hoy en Perú: S/ ${num(ultimoCierre, 3)} y rango para mañana · PerData</title>
+  <title>Tipo de cambio hoy en Perú: S/ ${num(ultimoCierre, 3)} y rango del próximo cierre · PerData</title>
   <meta name="description" content="Precio del dólar hoy en Perú: ${etiquetaCierreCorta} de S/ ${num(ultimoCierre, 3)} (${fechaLarga(fechaUltimoCierre)}). Para el ${diaSemana(manana.fecha_objetivo)}, entre S/ ${num(mananaP10, 3)} y S/ ${num(mananaP90, 3)} (8 de cada 10 veces).">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/svg+xml" href="/icon.svg">
@@ -554,7 +555,7 @@ let htmlGenerado = `<!DOCTYPE html>
       gap: 10px 32px;
       align-items: center;
     }
-    .pd-boletin-strip-title { margin: 0; font: 600 17px/1.35 var(--pd-font-ui); letter-spacing: -.01em; color: var(--pd-ink); }
+    .pd-boletin-strip h2 { margin: 0; font: 600 17px/1.35 var(--pd-font-ui); letter-spacing: -.01em; color: var(--pd-ink); }
     .pd-boletin-strip-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; }
     .pd-boletin-input {
       flex: 1 1 240px;
@@ -636,7 +637,7 @@ let htmlGenerado = `<!DOCTYPE html>
       <h1 class="pd-page-title">Tipo de cambio hoy en Perú</h1>
       <p class="pd-page-lede">
         ${escapeHtml(etiquetaCierre.charAt(0).toUpperCase() + etiquetaCierre.slice(1))} de ${escapeHtml(num(ultimoCierre, 4))} S/ por dolar, del
-        ${escapeHtml(fechaLarga(fechaUltimoCierre))}, con rangos probables para manana, la proxima semana
+        ${escapeHtml(fechaLarga(fechaUltimoCierre))}, con rangos probables para el proximo cierre, la proxima semana
         y el proximo mes, y el contexto macro y monetario que reporta el BCRP.
       </p>
     </section>
@@ -646,6 +647,8 @@ let htmlGenerado = `<!DOCTYPE html>
       ${tarjetaSemana}
       ${tarjetaMes}
     </section>
+
+    <p class="pd-range-meta" id="pdNotaOficial" style="margin-top: 18px; max-width: 76ch;">Estos rangos se refieren al tipo de cambio de venta del sistema bancario que publica la SBS (serie ${escapeHtml(bcrpDaily.series.PEN.codigo)} del BCRP), un promedio ponderado de las operaciones de los bancos. El precio al publico de cada banco o casa de cambio es distinto porque incluye su propio margen.</p>
 
     ${bloqueBoletinRango}
 
@@ -753,6 +756,16 @@ let htmlGenerado = `<!DOCTYPE html>
       }
     })();
 
+    // The first card says «Cierre de hoy» or «Mañana» only when that is true for the reader's day in Lima; otherwise it stays «Próximo cierre»
+    (function() {
+      const el = document.getElementById('pdEtiquetaCierre');
+      if (!el) return;
+      const lima = (ms) => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Lima' }).format(new Date(ms));
+      const objetivo = el.getAttribute('data-objetivo');
+      if (objetivo === lima(Date.now())) el.textContent = 'Cierre de hoy';
+      else if (objetivo === lima(Date.now() + 864e5)) el.textContent = 'Mañana';
+    })();
+
     // Compartir por WhatsApp: enlace de texto con el ultimo cierre oficial y el rango de manana (P10-P90)
     (function() {
       const link = document.getElementById('waShareLink');
@@ -827,7 +840,7 @@ const ACENTOS = {
   proyeccion: 'proyección', proyecciones: 'proyecciones', intervencion: 'intervención', posicion: 'posición',
   inflacion: 'inflación', terminos: 'términos', deposito: 'depósito', depositos: 'depósitos', senal: 'señal',
   rapido: 'rápido', historica: 'histórica', historico: 'histórico', ademas: 'además', economica: 'económica',
-  economico: 'económico', analisis: 'análisis', periodo: 'período', publica: 'pública', publico: 'público',
+  economico: 'económico', analisis: 'análisis', periodo: 'período', publico: 'público',
   credito: 'crédito', cotizacion: 'cotización', evolucion: 'evolución', despues: 'después', tecnica: 'técnica',
   util: 'útil', segun: 'según', informacion: 'información', region: 'región', decision: 'decisión',
   decisiones: 'decisiones', minima: 'mínima', maxima: 'máxima', limite: 'límite', facil: 'fácil',

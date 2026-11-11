@@ -56,7 +56,7 @@ const checks = {
   'no TimesFM mentions': !/TimesFM/i.test(html),
   'no dev filler words': !/(ningún valor está hardcodeado|alta precisión predictiva|respaldado por.*calibración empírica)/i.test(html),
   'normal case headings': !/Rangos Probables de Cotización/.test(html) && /Rangos probables/.test(html),
-  'tomorrow with weekday': /Mañana, [a-záéíóúñ]+ \d+ [a-záéíóúñ]+/i.test(html),
+  'next close with weekday and date': /id="pdEtiquetaCierre" data-objetivo="\d{4}-\d{2}-\d{2}">Próximo cierre<\/p>\s*<p class="pd-range-target">[a-záéíóúñ]+ · \d+ de [a-záéíóúñ]+ de \d{4}<\/p>/.test(html),
   'monthly forecast matches api': /3\.3933/.test(html) && /3\.5438/.test(html) && /3\.4658/.test(html),
   'short dates without dots': !/(ene|feb|mar|abr|may|jun|jul|ago|set|oct|nov|dic)\./i.test(html),
 };
