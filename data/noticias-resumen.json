@@ -1,12 +1,12 @@
 {
- "actualizado": "2026-11-11T09:36:39.642Z",
- "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
+ "actualizado": "2026-11-11T14:40:01.518Z",
+ "modelo": "minimaxai/minimax-m3.1-flash",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "Perú emite bonos en dólares por US$4.500 millones con demanda récord",
-   "nota": "El Ministerio de Economía y Finanzas realizó la mayor emisión de bonos soberanos en dólares de la historia del país, colocando US$4.500 millones y recibiendo ofertas por más de US$21.000 millones.",
-   "tema": "Economía y fiscal",
+   "titulo": "Perú realiza la mayor emisión de bonos en dólares de su historia",
+   "nota": "El Perú colocó 4.500 millones de dólares en bonos y recibió ofertas superiores a 21.000 millones. La operación representa la mayor emisión de bonos en dólares realizada por el país.",
+   "tema": "Dólar y BCRP",
    "empresas": [],
    "fuentes": [
     {
@@ -29,76 +29,34 @@
    }
   },
   {
-   "titulo": "Inflación en EE.UU. presiona al alza el dólar y cae Wall Street",
-   "nota": "El dato de inflación estadounidense de octubre, superior a lo esperado, impulsó la apertura del dólar en S/3,41 y provocó caídas en los principales índices bursátiles de Nueva York.",
-   "tema": "Mundo",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "El dólar abre al alza en S/3,41 tras inflación de Estados Unidos mayor a la esperada",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/el-dolar-abre-al-alza-en-s341-tras-inflacion-de-estados-unidos-mayor-a-la-esperada-l-cotizacion-del-dolar-l-dolar-l-tipo-de-cambio-l-ultimas-noticia/",
-     "fecha": "2026-11-10T16:19:49.000Z"
-    },
-    {
-     "titulo": "​Wall Street abre en rojo tras dato de inflación en EE.UU. peor de lo previsto",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/mercados/wall-street-abre-en-rojo-tras-dato-de-inflacion-en-eeuu-peor-de-lo-previsto-l-mercados-l-wall-street-l-ultimas-noticia/",
-     "fecha": "2026-11-10T15:13:33.000Z"
-    },
-    {
-     "titulo": "Wall Street cierra en rojo por la subida de los precios en EE.UU. en octubre",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/mercados/wall-street-cierra-en-rojo-por-la-subida-de-los-precios-en-eeuu-en-octubre-l-mercados-l-wall-street-l-ultimas-noticia/",
-     "fecha": "2026-11-10T22:13:27.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "Visita papal generaría impacto económico de S/1.200 millones",
-   "nota": "La Cámara de Comercio de Lima estima que la llegada del pontífice moverá hasta S/1.200 millones en la economía. Las ventas de las mypes podrían aumentar hasta 40% y el retail crecería 14,5% superando los S/60.000 millones en 2026.",
+   "titulo": "MEF propone combo laboral con.flexibilización de despidos",
+   "nota": "El MEF propuso flexibilizar los despidos de trabajadores con mejores remuneraciones y reducir los aportes laborales. La medida forma parte de un combo laboral y tributario previsto para el verano.",
    "tema": "Economía y fiscal",
-   "empresas": [],
+   "empresas": [
+    "MINSURI1"
+   ],
    "fuentes": [
     {
-     "titulo": "CCL: visita del Papa León XIV movería hasta S/1.200 millones y dispararía ventas de pymes hasta en 40%",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/ccl-visita-del-papa-leon-xiv-moveria-hasta-s1200-millones-y-dispararia-ventas-de-pymes-hasta-en-40-l-ultimas-noticia/",
-     "fecha": "2026-11-10T23:26:43.000Z"
+     "titulo": "Se alista “combo” laboral tributario para verano: aportes y despidos, claves de la propuesta",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/gobierno-de-keiko-fujimori-alista-combo-laboral-tributario-para-el-verano-aportes-y-despidos-como-puntos-clave-especialistas-analizan-la-propuesta-noticia-2/",
+     "fecha": "2026-11-11T06:00:00.000Z"
     },
     {
-     "titulo": "“El King kong del Papa’, ‘Papaletas’, viajes y polos: estas son las cifras que bendecirán la economía por la visita de León XIV",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/papa-king-kones-y-papaletas-asi-se-mueve-la-economia-peruana-por-la-visita-de-leon-xiv-apuesplan-noticia/",
-     "fecha": "2026-11-10T23:26:20.000Z"
-    },
-    {
-     "titulo": "Visita del papa León XIV daría un impulso al retail: ventas crecerían 14,5% y superarían los S/60.000 millones en 2026",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/visita-del-papa-leon-xiv-daria-un-impulso-al-retail-ventas-crecerian-145-y-superarian-los-s60000-millones-en-2026-apuesplan-noticia/",
-     "fecha": "2026-11-10T23:25:55.000Z"
-    },
-    {
-     "titulo": "Llegada del papa León XIV al Perú generará un impacto económico de hasta S/1.200 millones: ventas de las mypes aumentarán hasta 40%",
-     "fuente": "RPP Noticias",
-     "url": "https://rpp.pe/economia/economia/llegada-del-papa-leon-xiv-al-peru-generara-un-impacto-economico-de-hasta-s-1200-millones-las-ventas-de-las-mypes-aumentaran-hasta-40-noticia-1717008",
-     "fecha": "2026-11-10T16:12:11.000Z"
+     "titulo": "MEF propone flexibilizar despidos de trabajadores con mejores remuneraciones y reducir aportes laborales",
+     "fuente": "La República Economía",
+     "url": "https://larepublica.pe/economia/2026/11/09/mef-presentara-proyectos-de-reforma-laboral-y-tributaria-para-impulsar-la-formalizacion-de-las-microempresas-504270",
+     "fecha": "2026-11-10T21:43:55.000Z"
     }
    ],
    "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
+    "modelo": null,
+    "ok": null,
+    "motivo": "revisor no disponible"
    }
   },
   {
-   "titulo": "Mina Justa Subterránea recibe aprobación para inversión millonaria",
-   "nota": "El proyecto de expansión subterránea obtuvo luz verde oficial. La iniciativa contempla una inversión de US$ 2,000 millones.",
+   "titulo": "Mina Justa Subterránea obtiene luz verde: ¿qué contempla la inversión de US$ 2,000 millones?",
    "tema": "Minería y metales",
    "empresas": [],
    "fuentes": [
@@ -111,47 +69,27 @@
    ],
    "revision": {
     "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
+    "ok": false,
+    "motivo": "La nota añade «una operación minera de gran escala en el país», hecho que no está en el titular, y el título omite que se trata de una inversión de US$ 2,000 millones."
    }
   },
   {
-   "titulo": "Gobierno adopta medidas excepcionales para abastecer combustibles en Ucayali",
-   "nota": "El Ministerio de Energía y Minas y Petroperú activaron acciones logísticas extraordinarias, incluyendo el traslado de cisternas por vía terrestre y fluvial, para restablecer el suministro en la región.",
+   "titulo": "Inversión estadounidense en Perú incluye energía nuclear y cuatro proyectos",
+   "nota": "Estados Unidos busca invertir en centros de datos, puertos y minas en Perú, y evalúa cuatro proyectos para reducir aranceles. La posibilidad de inversión en energía nuclear se presenta como una oportunidad para el país.",
    "tema": "Energía",
-   "empresas": [
-    "PETROBC1"
-   ],
+   "empresas": [],
    "fuentes": [
     {
-     "titulo": "Petroperú moviliza cisternas para recuperar abastecimiento de combustibles en Ucayali",
+     "titulo": "Energía nuclear: Estados Unidos busca invertir en data centers, puertos y minas en Perú",
      "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/petroperu-moviliza-cisternas-para-recuperar-abastecimiento-de-combustibles-en-ucayali-noticia/",
-     "fecha": "2026-11-10T23:45:00.000Z"
+     "url": "https://gestion.pe/economia/energia-nuclear-estados-unidos-busca-invertir-en-data-centers-puertos-y-minas-en-peru-noticia/",
+     "fecha": "2026-11-11T12:21:31.000Z"
     },
     {
-     "titulo": "Petro-Perú: se implementaron acciones logísticas para mantener el abastecimiento de combustible en Pucallpa",
+     "titulo": "Estados Unidos alista inversiones en Perú y ya evalúa cuatro proyectos: ¿cómo van las conversaciones para reducir aranceles?",
      "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/petro-peru-se-implementaron-acciones-logisticas-para-mantener-el-abastecimiento-de-combustible-en-pucallpa-l-ultimas-noticia/",
-     "fecha": "2026-11-10T19:51:27.000Z"
-    },
-    {
-     "titulo": "Petroperú traslada combustibles vía terrestre y fluvial a Pucallpa para su abastecimiento",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-petroperu-traslada-combustibles-via-terrestre-y-fluvial-a-pucallpa-para-su-abastecimiento-1099375.aspx",
-     "fecha": "2026-11-10T19:36:23.000Z"
-    },
-    {
-     "titulo": "Minem adopta medidas excepcionales para contribuir el abastecimiento combustibles en Ucayali",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/minem-adopta-medidas-excepcionales-para-contribuir-el-abastecimiento-combustibles-en-ucayali-l-ultimas-noticia/",
-     "fecha": "2026-11-10T17:30:20.000Z"
-    },
-    {
-     "titulo": "Gobierno adopta medidas excepcionales para el abastecimiento de combustibles en Ucayali",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-gobierno-adopta-medidas-excepcionales-para-abastecimiento-combustibles-ucayali-1099338.aspx",
-     "fecha": "2026-11-10T15:59:39.000Z"
+     "url": "https://elcomercio.pe/economia/estados-unidos-alista-inversiones-en-peru-evalua-cuatro-proyectos-y-esta-cerca-de-cerrar-uno-noticia/",
+     "fecha": "2026-11-10T23:19:33.000Z"
     }
    ],
    "revision": {
@@ -161,16 +99,41 @@
    }
   },
   {
-   "titulo": "Consejo Fiscal respalda ajustes a reglas fiscales por El Niño",
-   "nota": "El Consejo Fiscal consideró que el fenómeno El Niño justifica ajustes a las reglas fiscales. La entidad pidió considerar un punto específico en la implementación de estas modificaciones.",
+   "titulo": "El Niño afecta cultivos principales y reglas fiscales del Perú",
+   "nota": "El Niño pone en riesgo las previsiones de cinco cultivos principales del Perú. El Consejo Fiscal estima que el fenómeno justifica ajustes a las reglas fiscales, aunque solicita considerar este punto.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
+    {
+     "titulo": "El Niño “ahoga” previsiones sobre 5 principales cultivos de Perú, ¿aumenta amenaza?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/el-nino-ahoga-previsiones-sobre-5-principales-cultivos-de-peru-hasta-diciembre-aumenta-amenaza-noticia/",
+     "fecha": "2026-11-11T00:30:00.000Z"
+    },
     {
      "titulo": "Consejo Fiscal: El Niño justifica ajustes a reglas fiscales, pero pidió considerar este punto",
      "fuente": "Gestión",
      "url": "https://gestion.pe/economia/consejo-fiscal-el-nino-justifica-ajustes-a-reglas-fiscales-como-las-del-deficit-discal-pero-pidio-considerar-este-punto-noticia/",
      "fecha": "2026-11-10T21:25:34.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "OpenAI eleva sus ingresos trimestrales casi 50% hasta 10.000 millones",
+   "nota": "OpenAI aumentó casi 50% sus ingresos trimestrales y alcanzó 10.000 millones de dólares. El avance de la inteligencia artificial sigue marcando el entorno de los mercados globales.",
+   "tema": "Mundo",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "OpenAI aumenta casi 50% sus ingresos trimestrales y alcanza US$10.000 millones",
+     "fuente": "Bloomberg Línea",
+     "url": "https://www.bloomberglinea.com/negocios/openai-aumenta-casi-50-sus-ingresos-trimestrales-y-alcanza-us10000-millones/",
+     "fecha": "2026-11-11T07:49:34.000Z"
     }
    ],
    "revision": {

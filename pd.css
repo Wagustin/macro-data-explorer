@@ -1481,12 +1481,12 @@ html.dark.pd-motion header.bg-card.is-scrolled {
   border-bottom-color: rgba(245, 241, 232, 0.35) !important;
 }
 
-/* 2. Entrada de secciones data-reveal (450ms, 12px, cubic-bezier(.05,.7,.1,1)) */
+/* 2. Entrada de secciones data-reveal (600ms, 24px, cubic-bezier(.05,.7,.1,1)) */
 html.pd-motion [data-reveal],
 html.pd-motion .pd-reveal {
   opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 450ms cubic-bezier(0.05, 0.7, 0.1, 1), transform 450ms cubic-bezier(0.05, 0.7, 0.1, 1);
+  transform: translateY(24px);
+  transition: opacity 600ms cubic-bezier(0.05, 0.7, 0.1, 1), transform 600ms cubic-bezier(0.05, 0.7, 0.1, 1);
   will-change: opacity, transform;
 }
 
@@ -1496,11 +1496,38 @@ html.pd-motion .pd-reveal.is-revealed {
   transform: translateY(0);
 }
 
-/* 3. Filas escalonadas data-stagger (40ms por fila, fundido + 12px, 450ms) */
+/* 2b. Variantes laterales: la columna izquierda entra desde la izquierda y la derecha desde la derecha */
+html.pd-motion [data-reveal="izq"] {
+  transform: translateX(-24px);
+}
+
+html.pd-motion [data-reveal="der"] {
+  transform: translateX(24px);
+}
+
+html.pd-motion [data-reveal="izq"].is-revealed,
+html.pd-motion [data-reveal="der"].is-revealed {
+  transform: none;
+}
+
+/* En móvil las variantes laterales entran en vertical: nada de desplazamiento horizontal */
+@media (max-width: 640px) {
+  html.pd-motion [data-reveal="izq"],
+  html.pd-motion [data-reveal="der"] {
+    transform: translateY(24px);
+  }
+
+  html.pd-motion [data-reveal="izq"].is-revealed,
+  html.pd-motion [data-reveal="der"].is-revealed {
+    transform: none;
+  }
+}
+
+/* 3. Filas escalonadas data-stagger (70ms por fila, fundido + 24px, 600ms) */
 html.pd-motion [data-stagger] > * {
   opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 450ms cubic-bezier(0.05, 0.7, 0.1, 1), transform 450ms cubic-bezier(0.05, 0.7, 0.1, 1);
+  transform: translateY(24px);
+  transition: opacity 600ms cubic-bezier(0.05, 0.7, 0.1, 1), transform 600ms cubic-bezier(0.05, 0.7, 0.1, 1);
   will-change: opacity, transform;
 }
 
@@ -1510,14 +1537,14 @@ html.pd-motion [data-stagger].is-revealed > * {
 }
 
 html.pd-motion [data-stagger] > *:nth-child(1) { transition-delay: 0ms; }
-html.pd-motion [data-stagger] > *:nth-child(2) { transition-delay: 25ms; }
-html.pd-motion [data-stagger] > *:nth-child(3) { transition-delay: 50ms; }
-html.pd-motion [data-stagger] > *:nth-child(4) { transition-delay: 75ms; }
-html.pd-motion [data-stagger] > *:nth-child(5) { transition-delay: 100ms; }
-html.pd-motion [data-stagger] > *:nth-child(6) { transition-delay: 125ms; }
-html.pd-motion [data-stagger] > *:nth-child(7) { transition-delay: 150ms; }
-html.pd-motion [data-stagger] > *:nth-child(8) { transition-delay: 175ms; }
-html.pd-motion [data-stagger] > *:nth-child(n+9) { transition-delay: 200ms; }
+html.pd-motion [data-stagger] > *:nth-child(2) { transition-delay: 70ms; }
+html.pd-motion [data-stagger] > *:nth-child(3) { transition-delay: 140ms; }
+html.pd-motion [data-stagger] > *:nth-child(4) { transition-delay: 210ms; }
+html.pd-motion [data-stagger] > *:nth-child(5) { transition-delay: 280ms; }
+html.pd-motion [data-stagger] > *:nth-child(6) { transition-delay: 350ms; }
+html.pd-motion [data-stagger] > *:nth-child(7) { transition-delay: 420ms; }
+html.pd-motion [data-stagger] > *:nth-child(8) { transition-delay: 490ms; }
+html.pd-motion [data-stagger] > *:nth-child(n+9) { transition-delay: 560ms; }
 
 /* 4. Dibujo de filetes nuevos de izquierda a derecha (scaleX 0→1, 400ms) */
 .pd-rule-draw {
@@ -1555,6 +1582,8 @@ html.pd-motion [data-reveal].is-revealed hr.pd-rule-draw {
 @media (prefers-reduced-motion: reduce) {
   html.pd-motion [data-reveal],
   html.pd-motion .pd-reveal,
+  html.pd-motion [data-reveal="izq"],
+  html.pd-motion [data-reveal="der"],
   html.pd-motion [data-stagger] > *,
   .pd-rule-draw::after,
   hr.pd-rule-draw {
@@ -1718,6 +1747,38 @@ html.dark .pdl-btn-primary:hover { background: #FFFFFF; border-color: #FFFFFF; c
 .pdl-boletin-msg { margin: 6px 0 0; font-family: var(--pd-font-ui); font-size: 13px; line-height: 1.4; color: var(--pd-ink-soft); }
 .pdl-hero-note { margin: 8px 0 0; font-family: var(--pd-font-ui); font-size: 13px; color: var(--pd-ink-soft); }
 .pdl-central { margin: 12px 0 0; font-family: var(--pd-font-ui); font-size: 13px; color: var(--pd-ink-soft); }
+
+/* Línea vertical roja de la tarjeta del dólar (identidad de marca) */
+.pdl-redline {
+  position: relative;
+  padding-left: 20px;
+}
+.pdl-redline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 2px;
+  bottom: 2px;
+  width: 2px;
+  background: var(--pd-peru);
+  transform-origin: top;
+}
+html.pd-motion .pdl-redline::before {
+  transform: scaleY(0);
+  transition: transform 700ms cubic-bezier(.2,.7,.2,1) 200ms;
+}
+html.pd-motion.hero-ready .pdl-redline::before {
+  transform: scaleY(1);
+}
+@media (max-width: 640px) {
+  .pdl-redline { padding-left: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.pd-motion .pdl-redline::before {
+    transform: scaleY(1) !important;
+    transition: none !important;
+  }
+}
 .pdl-lead-form { margin: 0 0 10px; font-family: var(--pd-font-ui); font-size: 15px; font-weight: 600; color: var(--pd-ink); }
 .pd-hero-copy .pdl-boletin-msg { margin-bottom: 32px; }
 @media (min-width: 640px) { .pdl-boletin-form { flex-direction: row; align-items: flex-end; } }
@@ -2384,16 +2445,16 @@ html.pd-motion .pd-table tbody tr:hover {
   border-bottom-color: var(--pd-ink-soft) !important;
 }
 
-/* ---- 7. Stagger ajustado a 40ms entre hijos (BRIEF_PERIODICO req B.1) */
+/* ---- 7. Stagger a 70ms entre hijos (mismo bloque que la entrada de secciones) */
 html.pd-motion [data-stagger] > *:nth-child(1)  { transition-delay: 0ms; }
-html.pd-motion [data-stagger] > *:nth-child(2)  { transition-delay: 40ms; }
-html.pd-motion [data-stagger] > *:nth-child(3)  { transition-delay: 80ms; }
-html.pd-motion [data-stagger] > *:nth-child(4)  { transition-delay: 120ms; }
-html.pd-motion [data-stagger] > *:nth-child(5)  { transition-delay: 160ms; }
-html.pd-motion [data-stagger] > *:nth-child(6)  { transition-delay: 200ms; }
-html.pd-motion [data-stagger] > *:nth-child(7)  { transition-delay: 240ms; }
-html.pd-motion [data-stagger] > *:nth-child(8)  { transition-delay: 280ms; }
-html.pd-motion [data-stagger] > *:nth-child(n+9){ transition-delay: 280ms; }
+html.pd-motion [data-stagger] > *:nth-child(2)  { transition-delay: 70ms; }
+html.pd-motion [data-stagger] > *:nth-child(3)  { transition-delay: 140ms; }
+html.pd-motion [data-stagger] > *:nth-child(4)  { transition-delay: 210ms; }
+html.pd-motion [data-stagger] > *:nth-child(5)  { transition-delay: 280ms; }
+html.pd-motion [data-stagger] > *:nth-child(6)  { transition-delay: 350ms; }
+html.pd-motion [data-stagger] > *:nth-child(7)  { transition-delay: 420ms; }
+html.pd-motion [data-stagger] > *:nth-child(8)  { transition-delay: 490ms; }
+html.pd-motion [data-stagger] > *:nth-child(n+9){ transition-delay: 560ms; }
 
 /* ---- 8. Dibujo de filetes full-bleed (scaleX 0→1, 700ms) ----------- */
 /* Clase aplicada por JS a secciones con data-section-rule:

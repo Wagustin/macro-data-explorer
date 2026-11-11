@@ -858,19 +858,21 @@
                 <span class="font-mono text-[12px] font-semibold text-ink">USD / PEN</span>
                 <span id="pdCardHeadRight" class="font-mono text-[12px] text-ink-soft">
                   <span id="pdCardHorizon" class="hidden">Horizonte: 1 mes</span>
-                  <span id="pdCardLastCloseWrap">Último cierre · <span id="pdCardHoyFecha" class="tnum">2 nov</span> · S/&nbsp;<span id="pdCardHoyCierre" class="tnum">3.466</span></span>
+                  <span id="pdCardLastCloseWrap">Último cierre · <span id="pdCardHoyFecha" class="tnum"><span class="pd-skeleton" style="width:44px;height:1em;display:inline-block"></span></span> · S/&nbsp;<span id="pdCardHoyCierre" class="tnum"><span class="pd-skeleton" style="width:48px;height:1em;display:inline-block"></span></span></span>
                 </span>
               </div>
               <div class="pdl-card-body">
                 <div id="pdCardDaily" class="hidden">
-                  <span id="pdCardDailyLabel" class="pdl-label block mb-2" style="font-family: var(--pd-font-ui); font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;">PARA EL CIERRE DE HOY, MIÉRCOLES 4 NOV</span>
-                  <div class="flex items-baseline gap-3 flex-wrap">
-                    <span class="pdl-big tnum">S/&nbsp;<span id="pdCardDailyRange"><span id="pdCardDailyP10">3.449</span> &ndash; <span id="pdCardDailyP90">3.482</span></span></span>
-                    <span class="pdl-chip text-xs">8 de cada 10 veces</span>
+                  <div class="pdl-redline">
+                    <span id="pdCardDailyLabel" class="pdl-label block mb-2" style="font-family: var(--pd-font-ui); font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;">PARA EL CIERRE DE HOY</span>
+                    <div class="flex items-baseline gap-3 flex-wrap">
+                      <span class="pdl-big tnum">S/&nbsp;<span id="pdCardDailyRange"><span id="pdCardDailyP10"><span class="pd-skeleton" style="width:64px;height:1em;display:inline-block"></span></span> &ndash; <span id="pdCardDailyP90"><span class="pd-skeleton" style="width:64px;height:1em;display:inline-block"></span></span></span></span>
+                      <span class="pdl-chip text-xs">8 de cada 10 veces</span>
+                    </div>
+                    <p class="pdl-central">Valor central: <span class="font-mono font-semibold text-ink tnum">S/&nbsp;<span id="pdCardMananaP50"><span class="pd-skeleton" style="width:48px;height:1em;display:inline-block"></span></span></span></p>
                   </div>
-                  <p class="pdl-central">Valor central: <span class="font-mono font-semibold text-ink tnum">S/&nbsp;<span id="pdCardMananaP50">3.466</span></span></p>
                   <div class="pdl-week text-ink-soft font-sans">
-                    <span>Próxima semana (<span id="pdCardSemanaFecha" class="tnum font-medium text-ink">mar 10 nov</span>): <span class="font-mono font-medium text-ink tnum pdl-nowrap">S/&nbsp;<span id="pdCardSemanaP10">3.431</span> &ndash; <span id="pdCardSemanaP90">3.496</span></span></span>
+                    <span>Próxima semana (<span id="pdCardSemanaFecha" class="tnum font-medium text-ink"><span class="pd-skeleton" style="width:44px;height:1em;display:inline-block"></span></span>): <span class="font-mono font-medium text-ink tnum pdl-nowrap">S/&nbsp;<span id="pdCardSemanaP10"><span class="pd-skeleton" style="width:48px;height:1em;display:inline-block"></span></span> &ndash; <span id="pdCardSemanaP90"><span class="pd-skeleton" style="width:48px;height:1em;display:inline-block"></span></span></span></span>
                     <a href="/explorer?symbol=PEN%3DX" class="pdl-link text-[13px] text-ink hover:underline">Próximo mes en la terminal &rarr;</a>
                   </div>
                   <a id="pdHeroWhatsApp" class="pdl-share" href="https://wa.me/?text=D%C3%B3lar%20hoy%20en%20perdata.site%2Fdolar" target="_blank" rel="noopener">Compartir por WhatsApp</a>
@@ -947,7 +949,7 @@
     <!-- FRANJA DE INDICADORES (en vivo) -->
     <section class="pdl-strip full-bleed" data-section-rule aria-label="Indicadores de mercado">
       <div class="max-w-6xl mx-auto px-4 sm:px-6">
-        <div class="pdl-strip-grid">
+        <div class="pdl-strip-grid" data-stagger>
           <a class="pdl-ind" href="/explorer?symbol=PEN%3DX" data-ind="PEN=X" data-dec="4" data-prefix="S/ "><span class="pdl-label">Dólar · USD/PEN</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val><span class="pd-skeleton" style="width: 60px; height: 18px; display: inline-block;"></span></span><span class="pdl-ind-chg font-mono" data-ind-chg><span class="pd-skeleton" style="width: 45px; height: 14px; display: inline-block;"></span></span></span><span class="pdl-ind-unit">S/ por dólar · hoy</span></a>
           <a class="pdl-ind" href="/explorer?symbol=HG%3DF" data-ind="HG=F" data-dec="2" data-prefix="US$ "><span class="pdl-label">Cobre · COMEX</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val><span class="pd-skeleton" style="width: 60px; height: 18px; display: inline-block;"></span></span><span class="pdl-ind-chg font-mono" data-ind-chg><span class="pd-skeleton" style="width: 45px; height: 14px; display: inline-block;"></span></span></span><span class="pdl-ind-unit">US$ por libra · hoy</span></a>
           <a class="pdl-ind" href="/explorer?symbol=GC%3DF" data-ind="GC=F" data-dec="2" data-prefix="US$ "><span class="pdl-label">Oro · COMEX</span><span class="pdl-ind-row"><span class="pdl-ind-val tnum" data-ind-val><span class="pd-skeleton" style="width: 60px; height: 18px; display: inline-block;"></span></span><span class="pdl-ind-chg font-mono" data-ind-chg><span class="pd-skeleton" style="width: 45px; height: 14px; display: inline-block;"></span></span></span><span class="pdl-ind-unit">US$ por onza · hoy</span></a>
@@ -966,7 +968,7 @@
         </div>
         <a href="/explorer" class="pdl-btn pdl-btn-primary">Ver todos en la terminal</a>
       </div>
-      <div class="overflow-x-auto">
+      <div class="overflow-x-auto" data-reveal>
         <table class="pd-table w-full text-left border-collapse text-sm border-t border-ink">
           <thead>
             <tr class="border-b border-rule text-ink-soft text-xs">
@@ -1014,7 +1016,7 @@
           </tbody>
         </table>
       </div>
-      <p id="pdTableFooter" class="pie-ft text-[12px] text-ink-soft leading-normal border-t border-rule pt-2" style="font-family: var(--pd-font-ui);">Fuente: BCRP, EIA y datos de mercado. Proyección: PerData Engine v6. Datos al <span id="pdTableDate"><span class="pd-skeleton" style="width: 70px; height: 11px; display: inline-block;"></span></span>.</p>
+      <p id="pdTableFooter" class="pie-ft text-[12px] text-ink-soft leading-normal border-t border-rule pt-2" style="font-family: var(--pd-font-ui);" data-reveal>Fuente: BCRP, EIA y datos de mercado. Proyección: PerData Engine v6. Datos al <span id="pdTableDate"><span class="pd-skeleton" style="width: 70px; height: 11px; display: inline-block;"></span></span>.</p>
       <p class="text-sm sm:text-base text-ink-soft leading-relaxed mt-4">
         Escribe <span class="mono text-ink">"cobre"</span> en <a href="/explorer" class="text-ink hover:text-brand underline font-medium">la terminal</a>, elige un horizonte y descarga la serie en Excel.
       </p>
@@ -1034,15 +1036,15 @@
 
     <!-- BOLETÍN: un solo bloque con el correo gratis y el plan de pago -->
     <section id="boletin" class="pdl-meth full-bleed" data-section-rule aria-labelledby="pdBoletinTitle">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 lg:py-20 grid gap-8 lg:grid-cols-2 lg:items-end" data-reveal>
-        <div>
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 lg:py-20 grid gap-8 lg:grid-cols-2 lg:items-end">
+        <div data-reveal="izq">
           <span class="pdl-label pdl-label-accent">Boletín</span>
           <h2 class="pdl-h2 pdl-h2-lg" id="pdBoletinTitle">El dólar, <em>cada mañana</em></h2>
           <p class="pdl-lede">Recibe gratis cada mañana el correo del dólar para el próximo día hábil: su rango probable, tres noticias y una lectura de qué podría moverlo.</p>
           <p class="pdl-text">El plan Boletín (US$&nbsp;1.99 al mes o 15 al año) trae el resto del día y tus empresas, con 7 días de prueba (se pide tarjeta). <a href="/precios" class="pdl-link">Ver los planes y los precios</a>.</p>
           <p class="pdl-quote-sm">Un ejemplo de lo que llega: <a href="/boletin" class="pdl-link">ver el boletín</a>.</p>
         </div>
-        <div>
+        <div data-reveal="der">
           <form id="pdBoletinForm" class="pdl-boletin-form" data-boletin data-msg="pdBoletinMsg" novalidate>
             <label for="pdBoletinEmail" class="sr-only">Tu correo</label>
             <input id="pdBoletinEmail" class="pdl-boletin-input" type="email" required autocomplete="email" placeholder="tu@correo.com" />
@@ -1104,7 +1106,7 @@
 
     <!-- CIERRE (diseño de Stitch) -->
     <section class="pdl-close full-bleed" data-section-rule>
-      <div class="max-w-3xl mx-auto px-4 sm:px-6 py-20 lg:py-28 text-center flex flex-col items-center" data-reveal>
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 py-20 lg:py-28 text-center flex flex-col items-center" data-stagger>
         <h2 class="pdl-h2 pdl-h2-xl">Empieza con cualquier activo.</h2>
         <p class="pdl-lede mt-4 mb-9">Busca una empresa, un metal o el tipo de cambio: la historia y la proyección salen en segundos.</p>
         <div class="flex flex-col sm:flex-row items-center gap-3">

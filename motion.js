@@ -40,29 +40,24 @@
     });
 
     // 3. Filetes de lado a lado y revelado de contenido
-    // Al entrar en pantalla: filete dibuja scaleX 0->1 (700ms), luego contenido aparece (fundido + 12px, 450ms)
+    // Al entrar en pantalla: filete dibuja scaleX 0->1 (700ms).
+    // Cada bloque con data-reveal / data-stagger se observa POR SEPARADO:
+    // aparece cuando ÉL entra en pantalla, no cuando entra su sección.
     const sectionRules = document.querySelectorAll('[data-section-rule]');
     if ('IntersectionObserver' in window) {
       const ruleObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            const el = entry.target;
-            el.classList.add('rule-drawn');
-            // Revelar hijos con data-reveal o data-stagger tras un ligero retraso para acompañar el dibujo del filete
-            setTimeout(() => {
-              el.querySelectorAll('[data-reveal], [data-stagger]').forEach(child => {
-                child.classList.add('is-revealed');
-              });
-            }, 150);
-            ruleObserver.unobserve(el);
+            entry.target.classList.add('rule-drawn');
+            ruleObserver.unobserve(entry.target);
           }
         });
       }, { rootMargin: '0px 0px -5% 0px' });
 
       sectionRules.forEach(r => ruleObserver.observe(r));
 
-      // Revelados generales independientes
-      const reveals = document.querySelectorAll('[data-reveal]:not([data-section-rule] [data-reveal]), [data-stagger]:not([data-section-rule] [data-stagger]), .pd-rule-draw');
+      // Revelados generales independientes: uno por bloque
+      const reveals = document.querySelectorAll('[data-reveal], [data-stagger], .pd-rule-draw');
       const generalObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
@@ -70,7 +65,7 @@
             generalObserver.unobserve(entry.target);
           }
         });
-      }, { rootMargin: '0px 0px -5% 0px' });
+      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.05 });
 
       reveals.forEach(el => generalObserver.observe(el));
     } else {
@@ -79,11 +74,15 @@
       document.querySelectorAll('[data-reveal], [data-stagger], .pd-rule-draw').forEach(el => el.classList.add('is-revealed'));
     }
 
-    // Safety timeout: por si IntersectionObserver no dispara en contenedores pequeños
+    // Safety timeout: por si IntersectionObserver no dispara en contenedores pequeños.
+    // Solo revela lo que ya está en pantalla; lo que está más abajo espera al scroll.
     setTimeout(() => {
       document.documentElement.classList.add('hero-ready');
       document.querySelectorAll('[data-section-rule]').forEach(r => r.classList.add('rule-drawn'));
-      document.querySelectorAll('[data-reveal], [data-stagger], .pd-rule-draw').forEach(el => el.classList.add('is-revealed'));
+      document.querySelectorAll('[data-reveal], [data-stagger], .pd-rule-draw').forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.top < window.innerHeight) el.classList.add('is-revealed');
+      });
     }, 1800);
 
     // 4. Actualización reactiva de cifras sin contadores: solo fundido sutil (160ms)
