@@ -52,6 +52,10 @@
       letter-spacing: -0.01em;
       margin-bottom: 4px;
     }
+    .company-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+    .company-title-row .company-title { flex: 1 1 auto; min-width: 0; margin-bottom: 0; }
+    .company-title-row #pdFollowMount { flex: 0 0 auto; margin-top: 2px; }
+    #pdFollowMsg:empty { display: none; }
     .company-meta {
       font-family: var(--pd-font-ui);
       font-size: 12px;
@@ -61,8 +65,7 @@
       text-transform: uppercase;
     }
     .price-block {
-      padding: 0 16px 20px;
-      min-height: 250px;
+      padding: 0 16px 4px;
     }
     .price-row {
       display: flex;
@@ -92,7 +95,7 @@
       margin-bottom: 16px;
       min-height: 13px;
     }
-    .issuer-status { min-height: 56px; padding: 10px 12px; margin-top: 10px; border-left: 2px solid var(--pd-rule); color: var(--pd-ink-soft); font-size: 13px; line-height: 1.5; }
+    .issuer-status { padding: 10px 12px; margin-top: 10px; border-left: 2px solid var(--pd-rule); color: var(--pd-ink-soft); font-size: 13px; line-height: 1.5; }
     .issuer-status .mono { color: var(--pd-ink); font-variant-numeric: tabular-nums; }
     .shareholders-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .shareholders-table th, .shareholders-table td { padding: 9px 6px; border-bottom: 1px solid var(--pd-rule); text-align: left; vertical-align: top; }
@@ -139,8 +142,8 @@
       opacity: 0.88;
     }
     .chart-section {
-      padding: 0 16px 20px;
-      height: 230px;
+      padding: 0 16px 24px;
+      min-height: 230px;
     }
     .chart-wrap {
       background: var(--pd-card);
@@ -424,11 +427,11 @@ html.dark .ui-switch {
           <p class="breadcrumb">
             <a href="/empresas">Empresas</a> / <span id="breadName">Union de Cervecerias Peruanas Backus y Johnston S.A.A.</span>
           </p>
-          <h1 class="company-title" id="companyTitle">Union de Cervecerias Peruanas Backus y Johnston S.A.A.</h1>
-          <div class="flex items-center gap-3 mt-1">
+          <div class="company-title-row">
+            <h1 class="company-title" id="companyTitle">Union de Cervecerias Peruanas Backus y Johnston S.A.A.</h1>
             <span id="pdFollowMount"></span>
-            <span id="pdFollowMsg" class="text-xs text-ink-soft" role="status"></span>
           </div>
+          <p id="pdFollowMsg" class="text-xs text-ink-soft" role="status"></p>
           <p class="company-meta" id="companyMeta">Industriales · BACKUBC2 · S/</p>
         </div>
 
@@ -749,6 +752,7 @@ html.dark .ui-switch {
         const statusEl = document.getElementById("issuerStatusText");
         statusEl.innerHTML = messages[status] || messages.sin_negociacion;
         if (!hasProyeccion && Number.isFinite(lastClose) && lastClose > 0 && validStatusDate) statusEl.innerHTML += `<br>Último precio negociado: <span class="mono">${safePriceText}</span> el ${escapeHTML(statusFullDate)} · Fuente: SMV`;
+        document.getElementById("issuerStatusSection").classList.toggle("hidden", status === "con_proyeccion");
         const ruc = rucs[emitter.codigoBVL];
         const shareholderRows = shareholders.emisores?.[ruc]?.accionistas || [];
         if (shareholderRows.length) {
@@ -806,7 +810,7 @@ html.dark .ui-switch {
         } else {
           // Keep projections disabled while checking for SMV historical quotes.
           document.getElementById("btnProyeccion").classList.add("hidden");
-          document.getElementById("proyeccionDisabled").classList.remove("hidden");
+          document.getElementById("proyeccionDisabled").classList.toggle("hidden", !!document.querySelector("#rangoSection .rango-linea"));
           document.getElementById("noProyeccionNotice").classList.remove("hidden");
           if (status === "sin_negociacion") {
             document.getElementById("noMarketCopy").textContent = "Esta empresa no tiene precio de mercado: sus acciones no se negocian en bolsa. Mostramos lo que sí es público: accionistas, hechos de importancia y noticias.";
