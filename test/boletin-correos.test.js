@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
@@ -193,6 +194,40 @@ test("correo pagado: «Tus empresas» con imagen, rango en mono, máximo 2 hecho
   assert.match(html, /https:\/\/perdata\.site\/empresa\/ALICORC1/);
 });
 
+test("correo pagado: «Tus empresas» usa el rango semanal calibrado de las acciones de Lima", () => {
+  const html = generar("boletin", {}, "ALICORC1,FERREYC1,EXALMC1,AUNA");
+  const valores = JSON.parse(read("data/acciones-rangos.json")).valores;
+  const sinTags = (s) => s.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+  const texto = sinTags(html);
+
+  // El rango sale del motor calibrado (data/acciones-rangos.json), no de la
+  // banda mensual vieja de /api/forecast.
+  const fmt2 = (v) => Number(v).toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const fecha = (f) => {
+    const d = new Date(`${String(f).slice(0, 10)}T12:00:00Z`);
+    return `${d.getUTCDate()} ${MESES_ES[d.getUTCMonth()]}`;
+  };
+  const semana = valores.ALICORC1.semana;
+  assert.ok(
+    texto.includes(`Al ${fecha(semana.fecha_objetivo)}: ${fmt2(semana.p25)} – ${fmt2(semana.p75)} (1 de cada 2) · ${fmt2(semana.p10)} – ${fmt2(semana.p90)} (8 de cada 10)`),
+    "la línea de Alicorp es el rango de la semana del motor"
+  );
+
+  // El gráfico de la acción se anuncia como proyección de una semana.
+  assert.match(html, /Alicorp S\.A\.A\.: últimos cierres y rango proyectado a una semana/);
+  assert.ok(!html.includes("rango proyectado a un mes"), "ninguna acción de Lima se anuncia a un mes");
+
+  // Cuando el motor no publica un rango, la tarjeta explica el motivo exacto.
+  assert.ok(
+    texto.includes("Sin rango esta semana: en la prueba no fue lo bastante confiable y preferimos no mostrarlo."),
+    "Ferreycorp explica por qué no hay rango"
+  );
+  assert.ok(
+    texto.includes("Aún sin rango: su historia en bolsa es corta para probarlo."),
+    "Auna explica que su prueba todavía es corta"
+  );
+});
+
 test("correos: sin emojis, sin «subirá»/«bajará»/«interbancario» y sin fechas ISO", () => {
   const gratis = generar("gratis");
   const pagado = generar("boletin");
@@ -290,4 +325,22 @@ test("correo pagado: si pasaría el límite de tamaño, quita lecturas de empres
   assert.ok(lecturas(recortado) < lecturas(normal), "debe quitar al menos una lectura");
   assert.ok(lecturas(recortado) >= lecturas(normal) - 2, "debe quitar solo las lecturas necesarias (una empresa: uno o dos títulos)");
   assert.ok(recortado.includes("Darme de baja"), "el pie con la baja debe seguir");
+});
+
+test("envío real: solo se referencian los PNG publicados (el gratis usa «dolar-hoy.png»)", async () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "boletin-render-"));
+  process.env.BOLETIN_PREVIEW_PATH = path.join(tmp, "preview.html");
+  process.argv.push("--dry-run");
+  const { renderForTests } = await import("../scripts/boletin.js");
+  const facts = {
+    cierre: { valor: 3.42, fecha: "2026-11-10", fuente: "BCRP" },
+    markets: [], smvFacts: [], historiasTodas: [], historiasTop3: [],
+    daily: null, forecast: null, bcrp: { series: {} },
+  };
+  // Solo se publicó «dolar.png»: el pago lo lleva y el gratis (que usa
+  // «dolar-hoy.png») no lleva ninguna imagen.
+  const img = { base: "https://x.invalid/b", archivos: new Set(["dolar.png"]) };
+  const { pagado, gratis } = renderForTests(facts, "martes, 10 de noviembre de 2026", { img });
+  assert.match(pagado, /<img src="https:\/\/x\.invalid\/b\/dolar\.png"/);
+  assert.ok(!/<img/i.test(gratis), "el gratis no lleva ninguna imagen");
 });

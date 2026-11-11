@@ -1,14 +1,15 @@
 {
   "version": 1,
-  "actualizado": "2026-11-10T19:43:37.797Z",
+  "actualizado": "2026-11-11T07:54:27.373Z",
   "ultimo_dia": "2026-11-10",
-  "metodo": "FHS diario con EWMA 0.97 y calibracion expansiva; validacion 2025-2026 fuera de muestra",
+  "metodo": "FHS diario con EWMA 0.97 y calibracion expansiva; validacion 2025-2026 fuera de muestra; segundo escalon con fondo comun y correccion en linea",
   "valores": {
     "AENZAC1": {
       "grupo": "A",
-      "dias_12m": 158,
+      "dias_12m": 159,
       "ultimo_cierre": 0.35,
-      "ultima_negociacion": "2026-11-09",
+      "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2020-11-12",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -31,7 +32,8 @@
           "score80_referencia": 0.2797,
           "cobertura80_referencia": 82.27,
           "sin_operar_pct": 31.59
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -55,7 +57,8 @@
           "score80_referencia": 0.5111,
           "cobertura80_referencia": 76.65,
           "sin_operar_pct": 2.59
-        }
+        },
+        "metodo": "propio"
       }
     },
     "AIHC1": {
@@ -63,6 +66,7 @@
       "dias_12m": 29,
       "ultimo_cierre": 1.21,
       "ultima_negociacion": "2026-11-06",
+      "primera_fecha": "2016-11-07",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -85,7 +89,8 @@
           "score80_referencia": 0.0855,
           "cobertura80_referencia": 91.82,
           "sin_operar_pct": 84.32
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -109,14 +114,16 @@
           "score80_referencia": 0.2527,
           "cobertura80_referencia": 95.52,
           "sin_operar_pct": 49.76
-        }
+        },
+        "metodo": null
       }
     },
     "ALICORC1": {
       "grupo": "A",
-      "dias_12m": 244,
+      "dias_12m": 245,
       "ultimo_cierre": 13.24,
-      "ultima_negociacion": "2026-11-09",
+      "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -139,7 +146,8 @@
           "score80_referencia": 0.1048,
           "cobertura80_referencia": 88.18,
           "sin_operar_pct": 0.45
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -163,7 +171,8 @@
           "score80_referencia": 0.2642,
           "cobertura80_referencia": 82.78,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "ALICORI1": {
@@ -171,6 +180,7 @@
       "dias_12m": 55,
       "ultimo_cierre": 11.3,
       "ultima_negociacion": "2026-10-12",
+      "primera_fecha": "2016-11-08",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -193,7 +203,8 @@
           "score80_referencia": 0.2232,
           "cobertura80_referencia": 70.23,
           "sin_operar_pct": 43.64
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -217,7 +228,8 @@
           "score80_referencia": 0.5134,
           "cobertura80_referencia": 51.65,
           "sin_operar_pct": 4.95
-        }
+        },
+        "metodo": "propio"
       }
     },
     "ATACOBC1": {
@@ -225,29 +237,31 @@
       "dias_12m": 216,
       "ultimo_cierre": 0.3,
       "ultima_negociacion": "2026-11-09",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
-        "publicable": false,
-        "motivo": "cobertura_fuera_de_rango",
-        "p10": null,
-        "p25": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 0.2878,
+        "p25": 0.3,
         "p50": 0.3,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "p75": 0.3,
+        "p90": 0.3155,
+        "ancho80_pct": 9.24,
+        "ancho50_pct": 0,
         "validacion": {
           "cortes": 440,
-          "cobertura80": 70,
+          "cobertura80": 76.36,
           "cobertura50": 44.32,
-          "ancho80_mediano_pct": 13.55,
+          "ancho80_mediano_pct": 18.76,
           "ancho50_mediano_pct": 0,
-          "score80": 0.543,
+          "score80": 0.454,
           "score80_referencia": 0.4774,
           "cobertura80_referencia": 70.23,
           "sin_operar_pct": 28.64
-        }
+        },
+        "metodo": "fondo"
       },
       "mes": {
         "h": 21,
@@ -271,61 +285,65 @@
           "score80_referencia": 0.9585,
           "cobertura80_referencia": 75.71,
           "sin_operar_pct": 6.84
-        }
+        },
+        "metodo": "propio"
       }
     },
     "AUNA": {
       "grupo": "A",
       "dias_12m": 250,
-      "ultimo_cierre": 4.69,
+      "ultimo_cierre": 4.6,
       "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2025-07-17",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
-        "publicable": false,
-        "motivo": "historia_insuficiente",
-        "p10": null,
-        "p25": null,
-        "p50": null,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 4.38,
+        "p25": 4.49,
+        "p50": 4.6,
+        "p75": 4.78,
+        "p90": 4.89,
+        "ancho80_pct": 11.12,
+        "ancho50_pct": 6.31,
         "validacion": {
-          "cortes": 0,
-          "cobertura80": 0,
-          "cobertura50": 0,
-          "ancho80_mediano_pct": 0,
-          "ancho50_mediano_pct": 0,
-          "score80": 0,
-          "score80_referencia": 0,
-          "cobertura80_referencia": 0,
+          "cortes": 239,
+          "cobertura80": 83.68,
+          "cobertura50": 52.3,
+          "ancho80_mediano_pct": 17.08,
+          "ancho50_mediano_pct": 8.36,
+          "score80": 0.2783,
+          "score80_referencia": 0.2436,
+          "cobertura80_referencia": 69.46,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "fondo"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
-        "publicable": false,
-        "motivo": "historia_insuficiente",
-        "p10": null,
-        "p25": null,
-        "p50": null,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 4.17,
+        "p25": 4.44,
+        "p50": 4.6,
+        "p75": 4.87,
+        "p90": 5.22,
+        "ancho80_pct": 22.84,
+        "ancho50_pct": 9.38,
         "validacion": {
-          "cortes": 0,
-          "cobertura80": 0,
-          "cobertura50": 0,
-          "ancho80_mediano_pct": 0,
-          "ancho50_mediano_pct": 0,
-          "score80": 0,
-          "score80_referencia": 0,
-          "cobertura80_referencia": 0,
+          "cortes": 207,
+          "cobertura80": 76.81,
+          "cobertura50": 52.66,
+          "ancho80_mediano_pct": 26.65,
+          "ancho50_mediano_pct": 12.65,
+          "score80": 0.3786,
+          "score80_referencia": 0.4459,
+          "cobertura80_referencia": 74.4,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "fondo"
       }
     },
     "AUSTRAC1": {
@@ -333,6 +351,7 @@
       "dias_12m": 43,
       "ultimo_cierre": 1.4,
       "ultima_negociacion": "2026-10-01",
+      "primera_fecha": "2016-11-16",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -355,7 +374,8 @@
           "score80_referencia": 0.1782,
           "cobertura80_referencia": 78.86,
           "sin_operar_pct": 54.55
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -379,7 +399,8 @@
           "score80_referencia": 0.318,
           "cobertura80_referencia": 82.55,
           "sin_operar_pct": 8.02
-        }
+        },
+        "metodo": "propio"
       }
     },
     "BACKUAC1": {
@@ -387,6 +408,7 @@
       "dias_12m": 48,
       "ultimo_cierre": 275,
       "ultima_negociacion": "2026-11-02",
+      "primera_fecha": "2016-11-21",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -409,7 +431,8 @@
           "score80_referencia": 0.1507,
           "cobertura80_referencia": 67.73,
           "sin_operar_pct": 67.05
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -433,7 +456,8 @@
           "score80_referencia": 0.3097,
           "cobertura80_referencia": 56.84,
           "sin_operar_pct": 30.42
-        }
+        },
+        "metodo": "propio"
       }
     },
     "BACKUBC1": {
@@ -441,6 +465,7 @@
       "dias_12m": 58,
       "ultimo_cierre": 290,
       "ultima_negociacion": "2026-11-09",
+      "primera_fecha": "2016-11-04",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -463,7 +488,8 @@
           "score80_referencia": 0.1085,
           "cobertura80_referencia": 77.73,
           "sin_operar_pct": 50.68
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -487,25 +513,27 @@
           "score80_referencia": 0.2425,
           "cobertura80_referencia": 73.11,
           "sin_operar_pct": 4.72
-        }
+        },
+        "metodo": "propio"
       }
     },
     "BACKUSI1": {
       "grupo": "A",
-      "dias_12m": 236,
-      "ultimo_cierre": 28.9,
-      "ultima_negociacion": "2026-11-09",
+      "dias_12m": 237,
+      "ultimo_cierre": 28.95,
+      "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-03",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
         "publicable": true,
         "motivo": null,
-        "p10": 28.1,
-        "p25": 28.57,
-        "p50": 28.9,
-        "p75": 29.34,
-        "p90": 29.87,
-        "ancho80_pct": 6.11,
+        "p10": 28.15,
+        "p25": 28.62,
+        "p50": 28.95,
+        "p75": 29.39,
+        "p90": 29.92,
+        "ancho80_pct": 6.12,
         "ancho50_pct": 2.66,
         "validacion": {
           "cortes": 440,
@@ -517,18 +545,19 @@
           "score80_referencia": 0.0891,
           "cobertura80_referencia": 85.91,
           "sin_operar_pct": 2.05
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
         "publicable": true,
         "motivo": null,
-        "p10": 27.21,
-        "p25": 28.31,
-        "p50": 28.9,
-        "p75": 29.96,
-        "p90": 31.1,
+        "p10": 27.25,
+        "p25": 28.36,
+        "p50": 28.95,
+        "p75": 30.01,
+        "p90": 31.16,
         "ancho80_pct": 13.48,
         "ancho50_pct": 5.72,
         "validacion": {
@@ -541,104 +570,110 @@
           "score80_referencia": 0.1696,
           "cobertura80_referencia": 91.04,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "BAP": {
       "grupo": "A",
       "dias_12m": 248,
-      "ultimo_cierre": 347,
+      "ultimo_cierre": 367.91,
       "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
         "publicable": true,
         "motivo": null,
-        "p10": 332.59,
-        "p25": 341.29,
-        "p50": 347,
-        "p75": 356.45,
-        "p90": 366.13,
-        "ancho80_pct": 9.67,
-        "ancho50_pct": 4.37,
+        "p10": 352.76,
+        "p25": 361.91,
+        "p50": 367.91,
+        "p75": 377.9,
+        "p90": 388.01,
+        "ancho80_pct": 9.58,
+        "ancho50_pct": 4.35,
         "validacion": {
           "cortes": 440,
           "cobertura80": 80.68,
-          "cobertura50": 49.55,
+          "cobertura50": 49.32,
           "ancho80_mediano_pct": 9.17,
           "ancho50_mediano_pct": 4.25,
           "score80": 0.1376,
           "score80_referencia": 0.1334,
           "cobertura80_referencia": 80.23,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
         "publicable": true,
         "motivo": null,
-        "p10": 323.15,
-        "p25": 338.25,
-        "p50": 347,
-        "p75": 374.06,
-        "p90": 401.75,
-        "ancho80_pct": 22.65,
-        "ancho50_pct": 10.32,
+        "p10": 342.92,
+        "p25": 358.71,
+        "p50": 367.91,
+        "p75": 396.33,
+        "p90": 425.4,
+        "ancho80_pct": 22.42,
+        "ancho50_pct": 10.23,
         "validacion": {
           "cortes": 424,
-          "cobertura80": 83.96,
+          "cobertura80": 84.2,
           "cobertura50": 49.76,
           "ancho80_mediano_pct": 21.92,
           "ancho50_mediano_pct": 9.93,
-          "score80": 0.2862,
+          "score80": 0.2858,
           "score80_referencia": 0.2777,
           "cobertura80_referencia": 82.08,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "BBVAC1": {
       "grupo": "A",
-      "dias_12m": 248,
-      "ultimo_cierre": 2.2,
-      "ultima_negociacion": "2026-11-09",
+      "dias_12m": 249,
+      "ultimo_cierre": 2.19,
+      "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2019-06-18",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
         "publicable": true,
         "motivo": null,
-        "p10": 2.14,
-        "p25": 2.18,
-        "p50": 2.2,
-        "p75": 2.23,
-        "p90": 2.28,
-        "ancho80_pct": 6.02,
+        "p10": 2.13,
+        "p25": 2.17,
+        "p50": 2.19,
+        "p75": 2.22,
+        "p90": 2.27,
+        "ancho80_pct": 6.03,
         "ancho50_pct": 2.37,
         "validacion": {
           "cortes": 440,
           "cobertura80": 77.27,
-          "cobertura50": 46.82,
+          "cobertura50": 46.59,
           "ancho80_mediano_pct": 5.94,
           "ancho50_mediano_pct": 2.45,
           "score80": 0.119,
           "score80_referencia": 0.1233,
           "cobertura80_referencia": 85.91,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
         "publicable": true,
         "motivo": null,
-        "p10": 2.06,
-        "p25": 2.14,
-        "p50": 2.2,
-        "p75": 2.3,
-        "p90": 2.46,
-        "ancho80_pct": 18.46,
-        "ancho50_pct": 7.22,
+        "p10": 2.05,
+        "p25": 2.13,
+        "p50": 2.19,
+        "p75": 2.29,
+        "p90": 2.45,
+        "ancho80_pct": 18.49,
+        "ancho50_pct": 7.23,
         "validacion": {
           "cortes": 424,
           "cobertura80": 83.96,
@@ -649,7 +684,8 @@
           "score80_referencia": 0.3027,
           "cobertura80_referencia": 82.55,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "BROCALC1": {
@@ -657,6 +693,7 @@
       "dias_12m": 102,
       "ultimo_cierre": 24,
       "ultima_negociacion": "2026-11-03",
+      "primera_fecha": "2016-11-03",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -679,31 +716,33 @@
           "score80_referencia": 0.1983,
           "cobertura80_referencia": 76.36,
           "sin_operar_pct": 42.27
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
-        "publicable": false,
-        "motivo": "cobertura_fuera_de_rango",
-        "p10": null,
-        "p25": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 20.66,
+        "p25": 22.72,
         "p50": 24,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "p75": 26.14,
+        "p90": 29.06,
+        "ancho80_pct": 34.99,
+        "ancho50_pct": 14.27,
         "validacion": {
           "cortes": 424,
-          "cobertura80": 91.51,
-          "cobertura50": 62.03,
-          "ancho80_mediano_pct": 38.19,
-          "ancho50_mediano_pct": 13.98,
-          "score80": 0.4343,
+          "cobertura80": 83.73,
+          "cobertura50": 54.48,
+          "ancho80_mediano_pct": 31.76,
+          "ancho50_mediano_pct": 10.03,
+          "score80": 0.4631,
           "score80_referencia": 0.4062,
           "cobertura80_referencia": 81.13,
           "sin_operar_pct": 5.42
-        }
+        },
+        "metodo": "fondo"
       }
     },
     "BROCALI1": {
@@ -711,29 +750,31 @@
       "dias_12m": 62,
       "ultimo_cierre": 17.5,
       "ultima_negociacion": "2026-11-09",
+      "primera_fecha": "2016-11-10",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
-        "publicable": false,
-        "motivo": "cobertura_fuera_de_rango",
-        "p10": null,
-        "p25": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 16.64,
+        "p25": 17.5,
         "p50": 17.5,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "p75": 17.5,
+        "p90": 18.61,
+        "ancho80_pct": 11.28,
+        "ancho50_pct": 0,
         "validacion": {
           "cortes": 440,
-          "cobertura80": 72.73,
+          "cobertura80": 75,
           "cobertura50": 50.45,
-          "ancho80_mediano_pct": 7.35,
+          "ancho80_mediano_pct": 7.67,
           "ancho50_mediano_pct": 0,
-          "score80": 0.1939,
+          "score80": 0.1971,
           "score80_referencia": 0.1944,
           "cobertura80_referencia": 71.82,
           "sin_operar_pct": 48.86
-        }
+        },
+        "metodo": "fondo"
       },
       "mes": {
         "h": 21,
@@ -757,7 +798,8 @@
           "score80_referencia": 0.4072,
           "cobertura80_referencia": 83.25,
           "sin_operar_pct": 10.85
-        }
+        },
+        "metodo": "propio"
       }
     },
     "BUENAVI1": {
@@ -765,6 +807,7 @@
       "dias_12m": 48,
       "ultimo_cierre": 63,
       "ultima_negociacion": "2026-11-02",
+      "primera_fecha": "2017-01-18",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -787,7 +830,8 @@
           "score80_referencia": 0.3626,
           "cobertura80_referencia": 64.09,
           "sin_operar_pct": 64.09
-        }
+        },
+        "metodo": null
       },
       "mes": {
         "h": 21,
@@ -811,26 +855,28 @@
           "score80_referencia": 1.169,
           "cobertura80_referencia": 31.37,
           "sin_operar_pct": 31.37
-        }
+        },
+        "metodo": null
       }
     },
     "BVN": {
       "grupo": "A",
       "dias_12m": 248,
-      "ultimo_cierre": 27.5,
+      "ultimo_cierre": 27.15,
       "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
         "publicable": true,
         "motivo": null,
-        "p10": 25.49,
-        "p25": 26.57,
-        "p50": 27.5,
-        "p75": 29.03,
-        "p90": 30.26,
-        "ancho80_pct": 17.34,
-        "ancho50_pct": 8.95,
+        "p10": 25.12,
+        "p25": 26.21,
+        "p50": 27.15,
+        "p75": 28.69,
+        "p90": 29.94,
+        "ancho80_pct": 17.75,
+        "ancho50_pct": 9.16,
         "validacion": {
           "cortes": 440,
           "cobertura80": 74.77,
@@ -841,31 +887,33 @@
           "score80_referencia": 0.2529,
           "cobertura80_referencia": 72.27,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
         "publicable": true,
         "motivo": null,
-        "p10": 23.98,
-        "p25": 26.2,
-        "p50": 27.5,
-        "p75": 31.44,
-        "p90": 34.99,
-        "ancho80_pct": 40.05,
-        "ancho50_pct": 19.07,
+        "p10": 23.59,
+        "p25": 25.83,
+        "p50": 27.15,
+        "p75": 31.14,
+        "p90": 34.74,
+        "ancho80_pct": 41.06,
+        "ancho50_pct": 19.54,
         "validacion": {
           "cortes": 424,
           "cobertura80": 74.53,
           "cobertura50": 41.51,
           "ancho80_mediano_pct": 31.18,
           "ancho50_mediano_pct": 14.81,
-          "score80": 0.4614,
-          "score80_referencia": 0.4406,
+          "score80": 0.4617,
+          "score80_referencia": 0.4409,
           "cobertura80_referencia": 70.28,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "CARTAVC1": {
@@ -873,6 +921,7 @@
       "dias_12m": 117,
       "ultimo_cierre": 30.88,
       "ultima_negociacion": "2026-11-09",
+      "primera_fecha": "2016-11-03",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -895,31 +944,33 @@
           "score80_referencia": 0.1266,
           "cobertura80_referencia": 80,
           "sin_operar_pct": 19.09
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
-        "publicable": false,
-        "motivo": "cobertura_fuera_de_rango",
-        "p10": null,
-        "p25": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 29.1,
+        "p25": 30.15,
         "p50": 30.88,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "p75": 32.05,
+        "p90": 33.31,
+        "ancho80_pct": 13.61,
+        "ancho50_pct": 6.12,
         "validacion": {
           "cortes": 424,
-          "cobertura80": 93.4,
-          "cobertura50": 55.42,
-          "ancho80_mediano_pct": 18.07,
-          "ancho50_mediano_pct": 7.41,
-          "score80": 0.2292,
+          "cobertura80": 78.54,
+          "cobertura50": 50.24,
+          "ancho80_mediano_pct": 13.4,
+          "ancho50_mediano_pct": 6.65,
+          "score80": 0.2049,
           "score80_referencia": 0.252,
           "cobertura80_referencia": 90.09,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "fondo"
       }
     },
     "CASAGRC1": {
@@ -927,6 +978,7 @@
       "dias_12m": 180,
       "ultimo_cierre": 7.95,
       "ultima_negociacion": "2026-11-09",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -949,7 +1001,8 @@
           "score80_referencia": 0.1633,
           "cobertura80_referencia": 87.27,
           "sin_operar_pct": 6.14
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -973,7 +1026,8 @@
           "score80_referencia": 0.2902,
           "cobertura80_referencia": 86.32,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "CORAREC1": {
@@ -981,6 +1035,7 @@
       "dias_12m": 40,
       "ultimo_cierre": 2.3,
       "ultima_negociacion": "2026-10-27",
+      "primera_fecha": "2016-11-07",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -1003,7 +1058,8 @@
           "score80_referencia": 0.0909,
           "cobertura80_referencia": 89.32,
           "sin_operar_pct": 61.14
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -1027,26 +1083,28 @@
           "score80_referencia": 0.1512,
           "cobertura80_referencia": 93.63,
           "sin_operar_pct": 14.15
-        }
+        },
+        "metodo": "propio"
       }
     },
     "CORAREI1": {
       "grupo": "A",
-      "dias_12m": 231,
-      "ultimo_cierre": 1.7,
-      "ultima_negociacion": "2026-11-09",
+      "dias_12m": 232,
+      "ultimo_cierre": 1.69,
+      "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
         "publicable": true,
         "motivo": null,
-        "p10": 1.62,
-        "p25": 1.66,
-        "p50": 1.7,
-        "p75": 1.75,
-        "p90": 1.81,
-        "ancho80_pct": 11.47,
-        "ancho50_pct": 5.48,
+        "p10": 1.61,
+        "p25": 1.65,
+        "p50": 1.69,
+        "p75": 1.74,
+        "p90": 1.8,
+        "ancho80_pct": 11.48,
+        "ancho50_pct": 5.49,
         "validacion": {
           "cortes": 440,
           "cobertura80": 79.09,
@@ -1057,20 +1115,21 @@
           "score80_referencia": 0.1835,
           "cobertura80_referencia": 84.55,
           "sin_operar_pct": 4.32
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
         "publicable": true,
         "motivo": null,
-        "p10": 1.54,
-        "p25": 1.62,
-        "p50": 1.7,
-        "p75": 1.81,
-        "p90": 1.95,
-        "ancho80_pct": 23.65,
-        "ancho50_pct": 11.27,
+        "p10": 1.53,
+        "p25": 1.61,
+        "p50": 1.69,
+        "p75": 1.8,
+        "p90": 1.93,
+        "ancho80_pct": 23.67,
+        "ancho50_pct": 11.28,
         "validacion": {
           "cortes": 424,
           "cobertura80": 74.53,
@@ -1081,7 +1140,8 @@
           "score80_referencia": 0.3798,
           "cobertura80_referencia": 81.6,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "CPACASI1": {
@@ -1089,6 +1149,7 @@
       "dias_12m": 46,
       "ultimo_cierre": 7.1,
       "ultima_negociacion": "2026-11-09",
+      "primera_fecha": "2016-11-09",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -1111,7 +1172,8 @@
           "score80_referencia": 0.1311,
           "cobertura80_referencia": 77.05,
           "sin_operar_pct": 70.91
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -1135,50 +1197,53 @@
           "score80_referencia": 0.3129,
           "cobertura80_referencia": 79.95,
           "sin_operar_pct": 33.73
-        }
+        },
+        "metodo": "propio"
       }
     },
     "CREDITC1": {
       "grupo": "A",
-      "dias_12m": 248,
-      "ultimo_cierre": 6.9,
-      "ultima_negociacion": "2026-11-09",
+      "dias_12m": 249,
+      "ultimo_cierre": 6.8,
+      "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
         "publicable": true,
         "motivo": null,
-        "p10": 6.74,
-        "p25": 6.84,
-        "p50": 6.9,
-        "p75": 7.03,
-        "p90": 7.19,
-        "ancho80_pct": 6.48,
-        "ancho50_pct": 2.71,
+        "p10": 6.64,
+        "p25": 6.74,
+        "p50": 6.8,
+        "p75": 6.93,
+        "p90": 7.09,
+        "ancho80_pct": 6.59,
+        "ancho50_pct": 2.75,
         "validacion": {
           "cortes": 440,
           "cobertura80": 77.5,
           "cobertura50": 52.95,
           "ancho80_mediano_pct": 6.98,
           "ancho50_mediano_pct": 3.28,
-          "score80": 0.1263,
-          "score80_referencia": 0.1236,
+          "score80": 0.1259,
+          "score80_referencia": 0.1232,
           "cobertura80_referencia": 80.91,
           "sin_operar_pct": 0.45
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
         "publicable": true,
         "motivo": null,
-        "p10": 6.61,
-        "p25": 6.83,
-        "p50": 6.9,
-        "p75": 7.3,
-        "p90": 7.59,
-        "ancho80_pct": 14.19,
-        "ancho50_pct": 6.84,
+        "p10": 6.51,
+        "p25": 6.73,
+        "p50": 6.8,
+        "p75": 7.21,
+        "p90": 7.49,
+        "ancho80_pct": 14.44,
+        "ancho50_pct": 6.96,
         "validacion": {
           "cortes": 424,
           "cobertura80": 77.83,
@@ -1189,7 +1254,8 @@
           "score80_referencia": 0.2712,
           "cobertura80_referencia": 78.3,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "CUMBRAC1": {
@@ -1197,6 +1263,7 @@
       "dias_12m": 20,
       "ultimo_cierre": 0.06,
       "ultima_negociacion": "2026-11-02",
+      "primera_fecha": "2026-08-04",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -1219,7 +1286,8 @@
           "score80_referencia": 0,
           "cobertura80_referencia": 0,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": null
       },
       "mes": {
         "h": 21,
@@ -1243,61 +1311,65 @@
           "score80_referencia": 0,
           "cobertura80_referencia": 0,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": null
       }
     },
     "CVERDEC1": {
       "grupo": "A",
-      "dias_12m": 241,
-      "ultimo_cierre": 64,
-      "ultima_negociacion": "2026-11-09",
+      "dias_12m": 242,
+      "ultimo_cierre": 63.7,
+      "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-03",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
         "publicable": true,
         "motivo": null,
-        "p10": 61.61,
-        "p25": 63.15,
-        "p50": 64,
-        "p75": 65.69,
-        "p90": 67.24,
-        "ancho80_pct": 8.79,
-        "ancho50_pct": 3.96,
+        "p10": 61.32,
+        "p25": 62.85,
+        "p50": 63.7,
+        "p75": 65.38,
+        "p90": 66.93,
+        "ancho80_pct": 8.8,
+        "ancho50_pct": 3.97,
         "validacion": {
           "cortes": 440,
           "cobertura80": 76.14,
           "cobertura50": 50.91,
           "ancho80_mediano_pct": 5.78,
           "ancho50_mediano_pct": 2.83,
-          "score80": 0.1169,
-          "score80_referencia": 0.1318,
+          "score80": 0.117,
+          "score80_referencia": 0.1319,
           "cobertura80_referencia": 89.32,
           "sin_operar_pct": 1.14
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
         "publicable": true,
         "motivo": null,
-        "p10": 60.92,
-        "p25": 62.9,
-        "p50": 64,
-        "p75": 68.22,
-        "p90": 72.56,
-        "ancho80_pct": 18.2,
-        "ancho50_pct": 8.3,
+        "p10": 60.63,
+        "p25": 62.61,
+        "p50": 63.7,
+        "p75": 67.9,
+        "p90": 72.23,
+        "ancho80_pct": 18.21,
+        "ancho50_pct": 8.31,
         "validacion": {
           "cortes": 424,
           "cobertura80": 74.29,
           "cobertura50": 48.58,
           "ancho80_mediano_pct": 11.53,
           "ancho50_mediano_pct": 5.72,
-          "score80": 0.243,
+          "score80": 0.2431,
           "score80_referencia": 0.282,
           "cobertura80_referencia": 88.21,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "ELCOMEI1": {
@@ -1305,6 +1377,7 @@
       "dias_12m": 35,
       "ultimo_cierre": 0.52,
       "ultima_negociacion": "2026-11-04",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -1327,7 +1400,8 @@
           "score80_referencia": 0.2093,
           "cobertura80_referencia": 75.23,
           "sin_operar_pct": 69.09
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -1351,26 +1425,28 @@
           "score80_referencia": 0.4928,
           "cobertura80_referencia": 65.09,
           "sin_operar_pct": 23.11
-        }
+        },
+        "metodo": null
       }
     },
     "ENGIEC1": {
       "grupo": "A",
       "dias_12m": 243,
-      "ultimo_cierre": 5.05,
+      "ultimo_cierre": 5,
       "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-03",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
         "publicable": true,
         "motivo": null,
-        "p10": 4.95,
-        "p25": 5.02,
-        "p50": 5.05,
-        "p75": 5.09,
-        "p90": 5.15,
-        "ancho80_pct": 3.79,
-        "ancho50_pct": 1.23,
+        "p10": 4.9,
+        "p25": 4.97,
+        "p50": 5,
+        "p75": 5.04,
+        "p90": 5.1,
+        "ancho80_pct": 3.94,
+        "ancho50_pct": 1.28,
         "validacion": {
           "cortes": 440,
           "cobertura80": 80,
@@ -1381,20 +1457,21 @@
           "score80_referencia": 0.1217,
           "cobertura80_referencia": 77.73,
           "sin_operar_pct": 4.77
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
         "publicable": true,
         "motivo": null,
-        "p10": 4.76,
-        "p25": 4.94,
-        "p50": 5.05,
-        "p75": 5.17,
-        "p90": 5.37,
-        "ancho80_pct": 12.13,
-        "ancho50_pct": 4.38,
+        "p10": 4.7,
+        "p25": 4.89,
+        "p50": 5,
+        "p75": 5.12,
+        "p90": 5.33,
+        "ancho80_pct": 12.61,
+        "ancho50_pct": 4.55,
         "validacion": {
           "cortes": 424,
           "cobertura80": 75,
@@ -1405,7 +1482,8 @@
           "score80_referencia": 0.3025,
           "cobertura80_referencia": 72.41,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "EXALMC1": {
@@ -1413,6 +1491,7 @@
       "dias_12m": 28,
       "ultimo_cierre": 2.35,
       "ultima_negociacion": "2026-10-05",
+      "primera_fecha": "2016-11-07",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -1435,7 +1514,8 @@
           "score80_referencia": 0.1491,
           "cobertura80_referencia": 84.09,
           "sin_operar_pct": 80
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -1459,61 +1539,65 @@
           "score80_referencia": 0.368,
           "cobertura80_referencia": 75,
           "sin_operar_pct": 43.16
-        }
+        },
+        "metodo": "propio"
       }
     },
     "FERREYC1": {
       "grupo": "A",
       "dias_12m": 250,
-      "ultimo_cierre": 4.1,
+      "ultimo_cierre": 4.09,
       "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
-        "publicable": false,
-        "motivo": "cobertura_fuera_de_rango",
-        "p10": null,
-        "p25": null,
-        "p50": 4.1,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 3.93,
+        "p25": 4.04,
+        "p50": 4.09,
+        "p75": 4.17,
+        "p90": 4.29,
+        "ancho80_pct": 8.72,
+        "ancho50_pct": 3.34,
         "validacion": {
           "cortes": 440,
-          "cobertura80": 72.73,
-          "cobertura50": 46.14,
-          "ancho80_mediano_pct": 5.64,
-          "ancho50_mediano_pct": 2.15,
-          "score80": 0.1064,
+          "cobertura80": 77.73,
+          "cobertura50": 48.41,
+          "ancho80_mediano_pct": 5.9,
+          "ancho50_mediano_pct": 2.39,
+          "score80": 0.1069,
           "score80_referencia": 0.1056,
-          "cobertura80_referencia": 88.64,
+          "cobertura80_referencia": 88.41,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "fondo"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
-        "publicable": false,
-        "motivo": "cobertura_fuera_de_rango",
-        "p10": null,
-        "p25": null,
-        "p50": 4.1,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 3.75,
+        "p25": 3.95,
+        "p50": 4.09,
+        "p75": 4.32,
+        "p90": 4.57,
+        "ancho80_pct": 20.14,
+        "ancho50_pct": 9.07,
         "validacion": {
           "cortes": 424,
-          "cobertura80": 68.63,
-          "cobertura50": 42.22,
-          "ancho80_mediano_pct": 14.2,
-          "ancho50_mediano_pct": 6.18,
-          "score80": 0.2245,
-          "score80_referencia": 0.2178,
+          "cobertura80": 75.71,
+          "cobertura50": 45.52,
+          "ancho80_mediano_pct": 14.52,
+          "ancho50_mediano_pct": 6.59,
+          "score80": 0.2583,
+          "score80_referencia": 0.2179,
           "cobertura80_referencia": 86.56,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "fondo"
       }
     },
     "FIBCCAP": {
@@ -1521,6 +1605,7 @@
       "dias_12m": 36,
       "ultimo_cierre": 50,
       "ultima_negociacion": "2026-10-22",
+      "primera_fecha": "2020-12-18",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -1543,7 +1628,8 @@
           "score80_referencia": 0.058,
           "cobertura80_referencia": 82.95,
           "sin_operar_pct": 82.95
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -1567,25 +1653,27 @@
           "score80_referencia": 0.1651,
           "cobertura80_referencia": 73.82,
           "sin_operar_pct": 48.58
-        }
+        },
+        "metodo": "propio"
       }
     },
     "FIBPRIME": {
       "grupo": "A",
-      "dias_12m": 199,
-      "ultimo_cierre": 6.85,
-      "ultima_negociacion": "2026-11-09",
+      "dias_12m": 200,
+      "ultimo_cierre": 6.83,
+      "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2019-01-09",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
         "publicable": true,
         "motivo": null,
-        "p10": 6.74,
-        "p25": 6.83,
-        "p50": 6.85,
-        "p75": 6.87,
-        "p90": 6.96,
-        "ancho80_pct": 3.32,
+        "p10": 6.72,
+        "p25": 6.81,
+        "p50": 6.83,
+        "p75": 6.85,
+        "p90": 6.94,
+        "ancho80_pct": 3.33,
         "ancho50_pct": 0.61,
         "validacion": {
           "cortes": 440,
@@ -1597,7 +1685,8 @@
           "score80_referencia": 0.1279,
           "cobertura80_referencia": 60,
           "sin_operar_pct": 23.86
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -1606,7 +1695,7 @@
         "motivo": "cobertura_fuera_de_rango",
         "p10": null,
         "p25": null,
-        "p50": 6.85,
+        "p50": 6.83,
         "p75": null,
         "p90": null,
         "ancho80_pct": null,
@@ -1621,7 +1710,8 @@
           "score80_referencia": 0.2116,
           "cobertura80_referencia": 61.56,
           "sin_operar_pct": 3.07
-        }
+        },
+        "metodo": null
       }
     },
     "GLORIAI1": {
@@ -1629,6 +1719,7 @@
       "dias_12m": 65,
       "ultimo_cierre": 11.2,
       "ultima_negociacion": "2026-10-27",
+      "primera_fecha": "2016-11-03",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -1651,7 +1742,8 @@
           "score80_referencia": 0.1787,
           "cobertura80_referencia": 65.23,
           "sin_operar_pct": 55.91
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -1675,7 +1767,8 @@
           "score80_referencia": 0.2945,
           "cobertura80_referencia": 69.34,
           "sin_operar_pct": 4.95
-        }
+        },
+        "metodo": null
       }
     },
     "HIDRA2C1": {
@@ -1683,29 +1776,31 @@
       "dias_12m": 94,
       "ultimo_cierre": 1.04,
       "ultima_negociacion": "2026-11-06",
+      "primera_fecha": "2016-11-03",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
-        "publicable": false,
-        "motivo": "cobertura_fuera_de_rango",
-        "p10": null,
-        "p25": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 0.9748,
+        "p25": 1.02,
         "p50": 1.04,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "p75": 1.08,
+        "p90": 1.13,
+        "ancho80_pct": 14.45,
+        "ancho50_pct": 6.2,
         "validacion": {
           "cortes": 440,
-          "cobertura80": 71.82,
-          "cobertura50": 45.91,
-          "ancho80_mediano_pct": 7.33,
-          "ancho50_mediano_pct": 3.21,
-          "score80": 0.1523,
+          "cobertura80": 75.91,
+          "cobertura50": 49.77,
+          "ancho80_mediano_pct": 8.57,
+          "ancho50_mediano_pct": 3.79,
+          "score80": 0.1499,
           "score80_referencia": 0.1494,
           "cobertura80_referencia": 70.91,
           "sin_operar_pct": 20.68
-        }
+        },
+        "metodo": "fondo"
       },
       "mes": {
         "h": 21,
@@ -1729,104 +1824,110 @@
           "score80_referencia": 0.2985,
           "cobertura80_referencia": 74.29,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "IFS": {
       "grupo": "A",
-      "dias_12m": 223,
-      "ultimo_cierre": 47.98,
-      "ultima_negociacion": "2026-11-09",
+      "dias_12m": 224,
+      "ultimo_cierre": 48.6,
+      "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
         "publicable": true,
         "motivo": null,
-        "p10": 45.31,
-        "p25": 46.79,
-        "p50": 47.98,
-        "p75": 49.81,
-        "p90": 51.47,
-        "ancho80_pct": 12.84,
-        "ancho50_pct": 6.3,
+        "p10": 45.89,
+        "p25": 47.39,
+        "p50": 48.6,
+        "p75": 50.47,
+        "p90": 52.16,
+        "ancho80_pct": 12.9,
+        "ancho50_pct": 6.35,
         "validacion": {
           "cortes": 440,
           "cobertura80": 79.09,
-          "cobertura50": 54.09,
+          "cobertura50": 53.86,
           "ancho80_mediano_pct": 8.96,
           "ancho50_mediano_pct": 4.79,
           "score80": 0.1543,
           "score80_referencia": 0.1488,
           "cobertura80_referencia": 81.59,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
         "publicable": true,
         "motivo": null,
-        "p10": 42.52,
-        "p25": 46.34,
-        "p50": 47.98,
-        "p75": 53.56,
-        "p90": 57.39,
-        "ancho80_pct": 31,
-        "ancho50_pct": 15.03,
+        "p10": 43.12,
+        "p25": 46.94,
+        "p50": 48.6,
+        "p75": 54.27,
+        "p90": 58.17,
+        "ancho80_pct": 30.97,
+        "ancho50_pct": 15.1,
         "validacion": {
           "cortes": 424,
-          "cobertura80": 83.25,
+          "cobertura80": 83.49,
           "cobertura50": 47.17,
           "ancho80_mediano_pct": 21.76,
           "ancho50_mediano_pct": 9.93,
-          "score80": 0.2987,
-          "score80_referencia": 0.2972,
-          "cobertura80_referencia": 77.59,
+          "score80": 0.2984,
+          "score80_referencia": 0.2969,
+          "cobertura80_referencia": 77.83,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "INRETC1": {
       "grupo": "A",
-      "dias_12m": 249,
-      "ultimo_cierre": 38.5,
-      "ultima_negociacion": "2026-11-09",
+      "dias_12m": 250,
+      "ultimo_cierre": 37.8,
+      "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
         "publicable": true,
         "motivo": null,
-        "p10": 37.12,
-        "p25": 37.98,
-        "p50": 38.5,
-        "p75": 38.98,
-        "p90": 39.91,
-        "ancho80_pct": 7.24,
-        "ancho50_pct": 2.58,
+        "p10": 36.41,
+        "p25": 37.27,
+        "p50": 37.8,
+        "p75": 38.28,
+        "p90": 39.22,
+        "ancho80_pct": 7.42,
+        "ancho50_pct": 2.66,
         "validacion": {
           "cortes": 440,
           "cobertura80": 80.23,
-          "cobertura50": 50,
+          "cobertura50": 49.77,
           "ancho80_mediano_pct": 6.63,
           "ancho50_mediano_pct": 2.63,
           "score80": 0.1194,
           "score80_referencia": 0.117,
           "cobertura80_referencia": 86.14,
           "sin_operar_pct": 0.45
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
         "publicable": true,
         "motivo": null,
-        "p10": 35.05,
-        "p25": 36.99,
-        "p50": 38.5,
-        "p75": 40.12,
-        "p90": 42.33,
-        "ancho80_pct": 18.91,
-        "ancho50_pct": 8.13,
+        "p10": 34.34,
+        "p25": 36.28,
+        "p50": 37.8,
+        "p75": 39.43,
+        "p90": 41.66,
+        "ancho80_pct": 19.38,
+        "ancho50_pct": 8.33,
         "validacion": {
           "cortes": 424,
           "cobertura80": 85.61,
@@ -1837,7 +1938,8 @@
           "score80_referencia": 0.2543,
           "cobertura80_referencia": 87.74,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "INTERBC1": {
@@ -1845,6 +1947,7 @@
       "dias_12m": 56,
       "ultimo_cierre": 2.02,
       "ultima_negociacion": "2026-11-04",
+      "primera_fecha": "2016-11-04",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -1867,7 +1970,8 @@
           "score80_referencia": 0.1972,
           "cobertura80_referencia": 60.91,
           "sin_operar_pct": 48.86
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -1891,7 +1995,8 @@
           "score80_referencia": 0.3897,
           "cobertura80_referencia": 57.08,
           "sin_operar_pct": 4.25
-        }
+        },
+        "metodo": "propio"
       }
     },
     "INTPEBC1": {
@@ -1899,11 +2004,12 @@
       "dias_12m": 23,
       "ultimo_cierre": 0.13,
       "ultima_negociacion": "2026-10-12",
+      "primera_fecha": "2025-11-28",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
         "publicable": false,
-        "motivo": "historia_insuficiente",
+        "motivo": "cobertura_fuera_de_rango",
         "p10": null,
         "p25": null,
         "p50": null,
@@ -1912,22 +2018,23 @@
         "ancho80_pct": null,
         "ancho50_pct": null,
         "validacion": {
-          "cortes": 0,
-          "cobertura80": 0,
-          "cobertura50": 0,
-          "ancho80_mediano_pct": 0,
+          "cortes": 150,
+          "cobertura80": 87.33,
+          "cobertura50": 80.67,
+          "ancho80_mediano_pct": 13.51,
           "ancho50_mediano_pct": 0,
-          "score80": 0,
-          "score80_referencia": 0,
-          "cobertura80_referencia": 0,
-          "sin_operar_pct": 0
-        }
+          "score80": 0.3339,
+          "score80_referencia": 0.3797,
+          "cobertura80_referencia": 90.67,
+          "sin_operar_pct": 80.67
+        },
+        "metodo": null
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
         "publicable": false,
-        "motivo": "historia_insuficiente",
+        "motivo": "cobertura_fuera_de_rango",
         "p10": null,
         "p25": null,
         "p50": null,
@@ -1936,82 +2043,87 @@
         "ancho80_pct": null,
         "ancho50_pct": null,
         "validacion": {
-          "cortes": 0,
-          "cobertura80": 0,
-          "cobertura50": 0,
-          "ancho80_mediano_pct": 0,
-          "ancho50_mediano_pct": 0,
-          "score80": 0,
-          "score80_referencia": 0,
-          "cobertura80_referencia": 0,
-          "sin_operar_pct": 0
-        }
+          "cortes": 118,
+          "cobertura80": 82.2,
+          "cobertura50": 66.95,
+          "ancho80_mediano_pct": 34.83,
+          "ancho50_mediano_pct": 13.63,
+          "score80": 0.9491,
+          "score80_referencia": 0.9039,
+          "cobertura80_referencia": 100,
+          "sin_operar_pct": 40.68
+        },
+        "metodo": null
       }
     },
     "IPCHAC1": {
       "grupo": "C",
-      "dias_12m": 44,
-      "ultimo_cierre": 1.35,
-      "ultima_negociacion": "2026-10-28",
+      "dias_12m": 45,
+      "ultimo_cierre": 1.31,
+      "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2024-05-27",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
-        "publicable": false,
-        "motivo": "historia_insuficiente",
-        "p10": null,
-        "p25": null,
-        "p50": 1.35,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 1.21,
+        "p25": 1.31,
+        "p50": 1.31,
+        "p75": 1.31,
+        "p90": 1.44,
+        "ancho80_pct": 17.74,
+        "ancho50_pct": 0,
         "validacion": {
-          "cortes": 0,
-          "cobertura80": 0,
-          "cobertura50": 0,
-          "ancho80_mediano_pct": 0,
-          "ancho50_mediano_pct": 0,
-          "score80": 0,
-          "score80_referencia": 0,
-          "cobertura80_referencia": 0,
-          "sin_operar_pct": 0
-        }
+          "cortes": 440,
+          "cobertura80": 78.86,
+          "cobertura50": 59.77,
+          "ancho80_mediano_pct": 13.45,
+          "ancho50_mediano_pct": 0.27,
+          "score80": 0.2887,
+          "score80_referencia": 0.2988,
+          "cobertura80_referencia": 85.45,
+          "sin_operar_pct": 58.64
+        },
+        "metodo": "fondo"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
-        "publicable": false,
-        "motivo": "historia_insuficiente",
-        "p10": null,
-        "p25": null,
-        "p50": 1.35,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 1.03,
+        "p25": 1.22,
+        "p50": 1.31,
+        "p75": 1.47,
+        "p90": 1.77,
+        "ancho80_pct": 56.58,
+        "ancho50_pct": 19.27,
         "validacion": {
-          "cortes": 0,
-          "cobertura80": 0,
-          "cobertura50": 0,
-          "ancho80_mediano_pct": 0,
-          "ancho50_mediano_pct": 0,
-          "score80": 0,
-          "score80_referencia": 0,
-          "cobertura80_referencia": 0,
-          "sin_operar_pct": 0
-        }
+          "cortes": 424,
+          "cobertura80": 78.3,
+          "cobertura50": 51.89,
+          "ancho80_mediano_pct": 52.93,
+          "ancho50_mediano_pct": 18.89,
+          "score80": 0.8549,
+          "score80_referencia": 0.6272,
+          "cobertura80_referencia": 84.2,
+          "sin_operar_pct": 16.27
+        },
+        "metodo": "fondo"
       }
     },
     "IPCHBC1": {
       "grupo": "A",
-      "dias_12m": 236,
+      "dias_12m": 237,
       "ultimo_cierre": 0.11,
-      "ultima_negociacion": "2026-11-09",
+      "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2024-05-23",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
         "publicable": false,
-        "motivo": "historia_insuficiente",
+        "motivo": "cobertura_fuera_de_rango",
         "p10": null,
         "p25": null,
         "p50": 0.11,
@@ -2020,22 +2132,23 @@
         "ancho80_pct": null,
         "ancho50_pct": null,
         "validacion": {
-          "cortes": 0,
-          "cobertura80": 0,
-          "cobertura50": 0,
-          "ancho80_mediano_pct": 0,
-          "ancho50_mediano_pct": 0,
-          "score80": 0,
-          "score80_referencia": 0,
-          "cobertura80_referencia": 0,
-          "sin_operar_pct": 0
-        }
+          "cortes": 440,
+          "cobertura80": 81.36,
+          "cobertura50": 60.23,
+          "ancho80_mediano_pct": 16.71,
+          "ancho50_mediano_pct": 10.43,
+          "score80": 0.2315,
+          "score80_referencia": 0.2156,
+          "cobertura80_referencia": 85.68,
+          "sin_operar_pct": 29.77
+        },
+        "metodo": null
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
         "publicable": false,
-        "motivo": "historia_insuficiente",
+        "motivo": "cobertura_fuera_de_rango",
         "p10": null,
         "p25": null,
         "p50": 0.11,
@@ -2044,16 +2157,17 @@
         "ancho80_pct": null,
         "ancho50_pct": null,
         "validacion": {
-          "cortes": 0,
-          "cobertura80": 0,
-          "cobertura50": 0,
-          "ancho80_mediano_pct": 0,
-          "ancho50_mediano_pct": 0,
-          "score80": 0,
-          "score80_referencia": 0,
-          "cobertura80_referencia": 0,
-          "sin_operar_pct": 0
-        }
+          "cortes": 424,
+          "cobertura80": 87.74,
+          "cobertura50": 50.94,
+          "ancho80_mediano_pct": 35.94,
+          "ancho50_mediano_pct": 16.44,
+          "score80": 0.4244,
+          "score80_referencia": 0.433,
+          "cobertura80_referencia": 88.21,
+          "sin_operar_pct": 0.71
+        },
+        "metodo": null
       }
     },
     "LAREDOC1": {
@@ -2061,6 +2175,7 @@
       "dias_12m": 27,
       "ultimo_cierre": 17.6,
       "ultima_negociacion": "2026-11-04",
+      "primera_fecha": "2016-11-16",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -2083,31 +2198,33 @@
           "score80_referencia": 0.1072,
           "cobertura80_referencia": 80.23,
           "sin_operar_pct": 79.55
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
-        "publicable": false,
-        "motivo": "cobertura_fuera_de_rango",
-        "p10": null,
-        "p25": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 16.25,
+        "p25": 17.6,
         "p50": 17.6,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "p75": 17.6,
+        "p90": 19.49,
+        "ancho80_pct": 18.38,
+        "ancho50_pct": 0,
         "validacion": {
           "cortes": 424,
-          "cobertura80": 86.32,
-          "cobertura50": 51.89,
-          "ancho80_mediano_pct": 25.2,
-          "ancho50_mediano_pct": 0.01,
-          "score80": 0.3135,
+          "cobertura80": 85.85,
+          "cobertura50": 50,
+          "ancho80_mediano_pct": 16.98,
+          "ancho50_mediano_pct": 0,
+          "score80": 0.2843,
           "score80_referencia": 0.2307,
           "cobertura80_referencia": 73.58,
           "sin_operar_pct": 40.8
-        }
+        },
+        "metodo": "fondo"
       }
     },
     "LUISAI1": {
@@ -2115,6 +2232,7 @@
       "dias_12m": 81,
       "ultimo_cierre": 348,
       "ultima_negociacion": "2026-11-02",
+      "primera_fecha": "2016-11-10",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -2137,7 +2255,8 @@
           "score80_referencia": 0.1095,
           "cobertura80_referencia": 77.05,
           "sin_operar_pct": 50.91
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -2161,7 +2280,8 @@
           "score80_referencia": 0.3123,
           "cobertura80_referencia": 73.11,
           "sin_operar_pct": 10.61
-        }
+        },
+        "metodo": "propio"
       }
     },
     "LUSURC1": {
@@ -2169,6 +2289,7 @@
       "dias_12m": 134,
       "ultimo_cierre": 13,
       "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -2191,31 +2312,33 @@
           "score80_referencia": 0.1092,
           "cobertura80_referencia": 84.77,
           "sin_operar_pct": 15.68
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
-        "publicable": false,
-        "motivo": "cobertura_fuera_de_rango",
-        "p10": null,
-        "p25": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 12.5,
+        "p25": 12.8,
         "p50": 13,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "p75": 13.32,
+        "p90": 13.67,
+        "ancho80_pct": 8.96,
+        "ancho50_pct": 4.06,
         "validacion": {
           "cortes": 424,
-          "cobertura80": 86.32,
-          "cobertura50": 49.76,
-          "ancho80_mediano_pct": 13.65,
-          "ancho50_mediano_pct": 4.75,
-          "score80": 0.2067,
+          "cobertura80": 82.31,
+          "cobertura50": 51.42,
+          "ancho80_mediano_pct": 12.75,
+          "ancho50_mediano_pct": 4.99,
+          "score80": 0.2115,
           "score80_referencia": 0.192,
           "cobertura80_referencia": 87.5,
           "sin_operar_pct": 0.71
-        }
+        },
+        "metodo": "fondo"
       }
     },
     "MINCORI1": {
@@ -2223,6 +2346,7 @@
       "dias_12m": 84,
       "ultimo_cierre": 38,
       "ultima_negociacion": "2026-10-27",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -2245,85 +2369,90 @@
           "score80_referencia": 0.1637,
           "cobertura80_referencia": 82.05,
           "sin_operar_pct": 34.09
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
-        "publicable": false,
-        "motivo": "cobertura_fuera_de_rango",
-        "p10": null,
-        "p25": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 34.95,
+        "p25": 36.39,
         "p50": 38,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "p75": 40.65,
+        "p90": 42.27,
+        "ancho80_pct": 19.26,
+        "ancho50_pct": 11.22,
         "validacion": {
           "cortes": 424,
-          "cobertura80": 86.79,
-          "cobertura50": 51.18,
-          "ancho80_mediano_pct": 25.91,
-          "ancho50_mediano_pct": 11.97,
-          "score80": 0.4096,
+          "cobertura80": 80.9,
+          "cobertura50": 47.41,
+          "ancho80_mediano_pct": 26.32,
+          "ancho50_mediano_pct": 10.22,
+          "score80": 0.4434,
           "score80_referencia": 0.3915,
           "cobertura80_referencia": 84.91,
           "sin_operar_pct": 0.71
-        }
+        },
+        "metodo": "fondo"
       }
     },
     "MINSURI1": {
       "grupo": "A",
       "dias_12m": 250,
-      "ultimo_cierre": 6.89,
+      "ultimo_cierre": 6.86,
       "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
         "publicable": true,
         "motivo": null,
-        "p10": 6.6,
-        "p25": 6.8,
-        "p50": 6.89,
-        "p75": 7.03,
-        "p90": 7.26,
-        "ancho80_pct": 9.65,
-        "ancho50_pct": 3.38,
+        "p10": 6.57,
+        "p25": 6.77,
+        "p50": 6.86,
+        "p75": 7,
+        "p90": 7.23,
+        "ancho80_pct": 9.68,
+        "ancho50_pct": 3.39,
         "validacion": {
           "cortes": 440,
           "cobertura80": 78.18,
           "cobertura50": 51.59,
           "ancho80_mediano_pct": 9.65,
           "ancho50_mediano_pct": 3.4,
-          "score80": 0.1603,
-          "score80_referencia": 0.1644,
+          "score80": 0.1604,
+          "score80_referencia": 0.1645,
           "cobertura80_referencia": 82.27,
           "sin_operar_pct": 0.23
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
         "publicable": true,
         "motivo": null,
-        "p10": 6.36,
-        "p25": 6.66,
-        "p50": 6.89,
-        "p75": 7.3,
-        "p90": 7.71,
-        "ancho80_pct": 19.62,
-        "ancho50_pct": 9.31,
+        "p10": 6.33,
+        "p25": 6.63,
+        "p50": 6.86,
+        "p75": 7.27,
+        "p90": 7.68,
+        "ancho80_pct": 19.69,
+        "ancho50_pct": 9.34,
         "validacion": {
           "cortes": 424,
           "cobertura80": 74.76,
           "cobertura50": 50.47,
           "ancho80_mediano_pct": 20.05,
           "ancho50_mediano_pct": 9.97,
-          "score80": 0.3455,
-          "score80_referencia": 0.3352,
+          "score80": 0.3456,
+          "score80_referencia": 0.3353,
           "cobertura80_referencia": 89.86,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "MOROCOI1": {
@@ -2331,6 +2460,7 @@
       "dias_12m": 22,
       "ultimo_cierre": 0.69,
       "ultima_negociacion": "2026-10-28",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -2353,31 +2483,33 @@
           "score80_referencia": 0.3112,
           "cobertura80_referencia": 85.23,
           "sin_operar_pct": 81.14
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
-        "publicable": false,
-        "motivo": "cobertura_fuera_de_rango",
-        "p10": null,
-        "p25": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 0.5478,
+        "p25": 0.6785,
         "p50": 0.69,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "p75": 0.7083,
+        "p90": 0.9263,
+        "ancho80_pct": 54.86,
+        "ancho50_pct": 4.33,
         "validacion": {
           "cortes": 424,
-          "cobertura80": 73.35,
-          "cobertura50": 50.71,
-          "ancho80_mediano_pct": 24.78,
-          "ancho50_mediano_pct": 9.79,
-          "score80": 1.0557,
+          "cobertura80": 79.48,
+          "cobertura50": 55.42,
+          "ancho80_mediano_pct": 41.81,
+          "ancho50_mediano_pct": 3.31,
+          "score80": 1.0932,
           "score80_referencia": 0.9044,
           "cobertura80_referencia": 79.72,
           "sin_operar_pct": 48.11
-        }
+        },
+        "metodo": "fondo"
       }
     },
     "NEXAPEC1": {
@@ -2385,6 +2517,7 @@
       "dias_12m": 249,
       "ultimo_cierre": 4.25,
       "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2018-09-24",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -2407,7 +2540,8 @@
           "score80_referencia": 0.2298,
           "cobertura80_referencia": 72.27,
           "sin_operar_pct": 8.18
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -2431,7 +2565,8 @@
           "score80_referencia": 0.5425,
           "cobertura80_referencia": 73.11,
           "sin_operar_pct": 0.47
-        }
+        },
+        "metodo": "propio"
       }
     },
     "NEXAPEI1": {
@@ -2439,29 +2574,31 @@
       "dias_12m": 66,
       "ultimo_cierre": 3.5,
       "ultima_negociacion": "2026-11-02",
+      "primera_fecha": "2018-09-24",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
-        "publicable": false,
-        "motivo": "cobertura_fuera_de_rango",
-        "p10": null,
-        "p25": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 3.34,
+        "p25": 3.5,
         "p50": 3.5,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "p75": 3.5,
+        "p90": 3.71,
+        "ancho80_pct": 10.5,
+        "ancho50_pct": 0,
         "validacion": {
           "cortes": 440,
-          "cobertura80": 73.18,
+          "cobertura80": 75.45,
           "cobertura50": 48.64,
-          "ancho80_mediano_pct": 8.94,
+          "ancho80_mediano_pct": 9.16,
           "ancho50_mediano_pct": 0,
-          "score80": 0.2438,
+          "score80": 0.2378,
           "score80_referencia": 0.2407,
           "cobertura80_referencia": 70.91,
           "sin_operar_pct": 47.27
-        }
+        },
+        "metodo": "fondo"
       },
       "mes": {
         "h": 21,
@@ -2485,115 +2622,122 @@
           "score80_referencia": 0.6069,
           "cobertura80_referencia": 70.75,
           "sin_operar_pct": 5.42
-        }
+        },
+        "metodo": "propio"
       }
     },
     "ORYGENC1": {
       "grupo": "A",
-      "dias_12m": 243,
-      "ultimo_cierre": 2.35,
-      "ultima_negociacion": "2026-11-09",
+      "dias_12m": 244,
+      "ultimo_cierre": 2.29,
+      "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2024-07-26",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
-        "publicable": false,
-        "motivo": "historia_insuficiente",
-        "p10": null,
-        "p25": null,
-        "p50": 2.35,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 2.2,
+        "p25": 2.25,
+        "p50": 2.29,
+        "p75": 2.35,
+        "p90": 2.41,
+        "ancho80_pct": 9.36,
+        "ancho50_pct": 4.06,
         "validacion": {
-          "cortes": 0,
-          "cobertura80": 0,
-          "cobertura50": 0,
-          "ancho80_mediano_pct": 0,
-          "ancho50_mediano_pct": 0,
-          "score80": 0,
-          "score80_referencia": 0,
-          "cobertura80_referencia": 0,
-          "sin_operar_pct": 0
-        }
+          "cortes": 440,
+          "cobertura80": 79.32,
+          "cobertura50": 52.05,
+          "ancho80_mediano_pct": 5.6,
+          "ancho50_mediano_pct": 2.62,
+          "score80": 0.1053,
+          "score80_referencia": 0.1117,
+          "cobertura80_referencia": 72.05,
+          "sin_operar_pct": 3.64
+        },
+        "metodo": "fondo"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
-        "publicable": false,
-        "motivo": "historia_insuficiente",
-        "p10": null,
-        "p25": null,
-        "p50": 2.35,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 2.04,
+        "p25": 2.19,
+        "p50": 2.29,
+        "p75": 2.45,
+        "p90": 2.65,
+        "ancho80_pct": 26.56,
+        "ancho50_pct": 11.21,
         "validacion": {
-          "cortes": 0,
-          "cobertura80": 0,
-          "cobertura50": 0,
-          "ancho80_mediano_pct": 0,
-          "ancho50_mediano_pct": 0,
-          "score80": 0,
-          "score80_referencia": 0,
-          "cobertura80_referencia": 0,
+          "cortes": 424,
+          "cobertura80": 74.29,
+          "cobertura50": 42.92,
+          "ancho80_mediano_pct": 11.01,
+          "ancho50_mediano_pct": 4.68,
+          "score80": 0.3034,
+          "score80_referencia": 0.288,
+          "cobertura80_referencia": 57.08,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "fondo"
       }
     },
     "PLUZENC1": {
       "grupo": "A",
-      "dias_12m": 153,
+      "dias_12m": 154,
       "ultimo_cierre": 1.37,
-      "ultima_negociacion": "2026-11-09",
+      "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2024-08-13",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
-        "publicable": false,
-        "motivo": "historia_insuficiente",
-        "p10": null,
-        "p25": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 1.33,
+        "p25": 1.35,
         "p50": 1.37,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "p75": 1.4,
+        "p90": 1.42,
+        "ancho80_pct": 6.32,
+        "ancho50_pct": 3.06,
         "validacion": {
-          "cortes": 0,
-          "cobertura80": 0,
-          "cobertura50": 0,
-          "ancho80_mediano_pct": 0,
-          "ancho50_mediano_pct": 0,
-          "score80": 0,
-          "score80_referencia": 0,
-          "cobertura80_referencia": 0,
-          "sin_operar_pct": 0
-        }
+          "cortes": 440,
+          "cobertura80": 77.27,
+          "cobertura50": 47.27,
+          "ancho80_mediano_pct": 5.66,
+          "ancho50_mediano_pct": 1.48,
+          "score80": 0.1213,
+          "score80_referencia": 0.1206,
+          "cobertura80_referencia": 80.68,
+          "sin_operar_pct": 26.36
+        },
+        "metodo": "fondo"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
-        "publicable": false,
-        "motivo": "historia_insuficiente",
-        "p10": null,
-        "p25": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 1.31,
+        "p25": 1.35,
         "p50": 1.37,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "p75": 1.4,
+        "p90": 1.45,
+        "ancho80_pct": 10.18,
+        "ancho50_pct": 3.32,
         "validacion": {
-          "cortes": 0,
-          "cobertura80": 0,
-          "cobertura50": 0,
-          "ancho80_mediano_pct": 0,
-          "ancho50_mediano_pct": 0,
-          "score80": 0,
-          "score80_referencia": 0,
-          "cobertura80_referencia": 0,
-          "sin_operar_pct": 0
-        }
+          "cortes": 424,
+          "cobertura80": 79.01,
+          "cobertura50": 52.12,
+          "ancho80_mediano_pct": 14.14,
+          "ancho50_mediano_pct": 4.98,
+          "score80": 0.2907,
+          "score80_referencia": 0.4708,
+          "cobertura80_referencia": 80.19,
+          "sin_operar_pct": 2.36
+        },
+        "metodo": "fondo"
       }
     },
     "PODERC1": {
@@ -2601,6 +2745,7 @@
       "dias_12m": 171,
       "ultimo_cierre": 8.52,
       "ultima_negociacion": "2026-11-09",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -2623,31 +2768,33 @@
           "score80_referencia": 0.1534,
           "cobertura80_referencia": 80,
           "sin_operar_pct": 3.86
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
-        "publicable": false,
-        "motivo": "cobertura_fuera_de_rango",
-        "p10": null,
-        "p25": null,
+        "publicable": true,
+        "motivo": null,
+        "p10": 8.21,
+        "p25": 8.38,
         "p50": 8.52,
-        "p75": null,
-        "p90": null,
-        "ancho80_pct": null,
-        "ancho50_pct": null,
+        "p75": 8.74,
+        "p90": 8.93,
+        "ancho80_pct": 8.49,
+        "ancho50_pct": 4.22,
         "validacion": {
           "cortes": 424,
-          "cobertura80": 90.33,
-          "cobertura50": 52.59,
-          "ancho80_mediano_pct": 27.54,
-          "ancho50_mediano_pct": 8.13,
-          "score80": 0.3071,
+          "cobertura80": 85.61,
+          "cobertura50": 53.3,
+          "ancho80_mediano_pct": 21.79,
+          "ancho50_mediano_pct": 8.45,
+          "score80": 0.291,
           "score80_referencia": 0.2969,
           "cobertura80_referencia": 90.8,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "fondo"
       }
     },
     "POMALCC1": {
@@ -2655,6 +2802,7 @@
       "dias_12m": 114,
       "ultimo_cierre": 0.25,
       "ultima_negociacion": "2026-11-09",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -2677,7 +2825,8 @@
           "score80_referencia": 0.2374,
           "cobertura80_referencia": 86.14,
           "sin_operar_pct": 35.68
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -2701,7 +2850,8 @@
           "score80_referencia": 0.4266,
           "cobertura80_referencia": 86.32,
           "sin_operar_pct": 0.47
-        }
+        },
+        "metodo": "propio"
       }
     },
     "RIMSEGC1": {
@@ -2709,6 +2859,7 @@
       "dias_12m": 49,
       "ultimo_cierre": 1.36,
       "ultima_negociacion": "2026-11-03",
+      "primera_fecha": "2016-11-04",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -2731,7 +2882,8 @@
           "score80_referencia": 0.1761,
           "cobertura80_referencia": 73.41,
           "sin_operar_pct": 47.95
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -2755,26 +2907,28 @@
           "score80_referencia": 0.3724,
           "cobertura80_referencia": 71.46,
           "sin_operar_pct": 5.9
-        }
+        },
+        "metodo": "propio"
       }
     },
     "SCCO": {
       "grupo": "A",
       "dias_12m": 235,
-      "ultimo_cierre": 171.5,
+      "ultimo_cierre": 170.03,
       "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
         "publicable": true,
         "motivo": null,
-        "p10": 157.17,
-        "p25": 163.75,
-        "p50": 171.5,
-        "p75": 181.76,
-        "p90": 190.2,
-        "ancho80_pct": 19.26,
-        "ancho50_pct": 10.5,
+        "p10": 155.7,
+        "p25": 162.28,
+        "p50": 170.03,
+        "p75": 180.3,
+        "p90": 188.75,
+        "ancho80_pct": 19.44,
+        "ancho50_pct": 10.6,
         "validacion": {
           "cortes": 440,
           "cobertura80": 79.55,
@@ -2785,38 +2939,41 @@
           "score80_referencia": 0.2497,
           "cobertura80_referencia": 65.45,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
         "publicable": true,
         "motivo": null,
-        "p10": 149.64,
-        "p25": 161.06,
-        "p50": 171.5,
-        "p75": 188.98,
-        "p90": 210.92,
-        "ancho80_pct": 35.74,
-        "ancho50_pct": 16.28,
+        "p10": 148.17,
+        "p25": 159.59,
+        "p50": 170.03,
+        "p75": 187.52,
+        "p90": 209.51,
+        "ancho80_pct": 36.08,
+        "ancho50_pct": 16.43,
         "validacion": {
           "cortes": 424,
           "cobertura80": 83.73,
           "cobertura50": 56.13,
           "ancho80_mediano_pct": 32.96,
           "ancho50_mediano_pct": 15.04,
-          "score80": 0.4255,
-          "score80_referencia": 0.4216,
+          "score80": 0.4257,
+          "score80_referencia": 0.4218,
           "cobertura80_referencia": 75.24,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "SCOTIAC1": {
       "grupo": "C",
-      "dias_12m": 53,
+      "dias_12m": 54,
       "ultimo_cierre": 20,
-      "ultima_negociacion": "2026-11-05",
+      "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -2839,7 +2996,8 @@
           "score80_referencia": 0.1935,
           "cobertura80_referencia": 70.23,
           "sin_operar_pct": 47.5
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -2863,7 +3021,8 @@
           "score80_referencia": 0.3501,
           "cobertura80_referencia": 73.58,
           "sin_operar_pct": 6.84
-        }
+        },
+        "metodo": "propio"
       }
     },
     "SHPC1": {
@@ -2871,6 +3030,7 @@
       "dias_12m": 43,
       "ultimo_cierre": 29,
       "ultima_negociacion": "2026-10-22",
+      "primera_fecha": "2016-11-08",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -2893,7 +3053,8 @@
           "score80_referencia": 0.2309,
           "cobertura80_referencia": 60.23,
           "sin_operar_pct": 60
-        }
+        },
+        "metodo": null
       },
       "mes": {
         "h": 21,
@@ -2917,14 +3078,16 @@
           "score80_referencia": 0.4183,
           "cobertura80_referencia": 63.68,
           "sin_operar_pct": 10.14
-        }
+        },
+        "metodo": null
       }
     },
     "SIDERC1": {
       "grupo": "A",
-      "dias_12m": 219,
+      "dias_12m": 220,
       "ultimo_cierre": 2.81,
-      "ultima_negociacion": "2026-11-09",
+      "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -2947,7 +3110,8 @@
           "score80_referencia": 0.1834,
           "cobertura80_referencia": 82.73,
           "sin_operar_pct": 2.73
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -2971,7 +3135,8 @@
           "score80_referencia": 0.3315,
           "cobertura80_referencia": 88.92,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "SNJACIC1": {
@@ -2979,6 +3144,7 @@
       "dias_12m": 30,
       "ultimo_cierre": 9,
       "ultima_negociacion": "2026-09-08",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -3001,7 +3167,8 @@
           "score80_referencia": 0.2237,
           "cobertura80_referencia": 62.5,
           "sin_operar_pct": 62.05
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -3025,7 +3192,8 @@
           "score80_referencia": 0.4156,
           "cobertura80_referencia": 68.16,
           "sin_operar_pct": 14.39
-        }
+        },
+        "metodo": "propio"
       }
     },
     "SNJUANI1": {
@@ -3033,6 +3201,7 @@
       "dias_12m": 52,
       "ultimo_cierre": 72,
       "ultima_negociacion": "2026-11-02",
+      "primera_fecha": "2016-11-04",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -3055,7 +3224,8 @@
           "score80_referencia": 0.2162,
           "cobertura80_referencia": 69.55,
           "sin_operar_pct": 56.36
-        }
+        },
+        "metodo": null
       },
       "mes": {
         "h": 21,
@@ -3079,7 +3249,8 @@
           "score80_referencia": 0.3375,
           "cobertura80_referencia": 70.75,
           "sin_operar_pct": 17.69
-        }
+        },
+        "metodo": "propio"
       }
     },
     "SPCCPI1": {
@@ -3087,6 +3258,7 @@
       "dias_12m": 125,
       "ultimo_cierre": 264,
       "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-09",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
@@ -3109,7 +3281,8 @@
           "score80_referencia": 0.148,
           "cobertura80_referencia": 74.77,
           "sin_operar_pct": 19.32
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
@@ -3133,80 +3306,85 @@
           "score80_referencia": 0.3077,
           "cobertura80_referencia": 87.03,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "UNACEMC1": {
       "grupo": "A",
       "dias_12m": 232,
-      "ultimo_cierre": 2.37,
+      "ultimo_cierre": 2.4,
       "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
         "publicable": true,
         "motivo": null,
-        "p10": 2.29,
-        "p25": 2.34,
-        "p50": 2.37,
-        "p75": 2.42,
-        "p90": 2.47,
-        "ancho80_pct": 7.51,
-        "ancho50_pct": 3.32,
+        "p10": 2.32,
+        "p25": 2.37,
+        "p50": 2.4,
+        "p75": 2.45,
+        "p90": 2.5,
+        "ancho80_pct": 7.61,
+        "ancho50_pct": 3.37,
         "validacion": {
           "cortes": 440,
           "cobertura80": 80.91,
-          "cobertura50": 47.27,
+          "cobertura50": 47.05,
           "ancho80_mediano_pct": 6.49,
           "ancho50_mediano_pct": 2.91,
           "score80": 0.0979,
           "score80_referencia": 0.1046,
           "cobertura80_referencia": 88.86,
           "sin_operar_pct": 1.14
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
         "publicable": true,
         "motivo": null,
-        "p10": 2.2,
-        "p25": 2.31,
-        "p50": 2.37,
-        "p75": 2.5,
-        "p90": 2.65,
-        "ancho80_pct": 19.26,
-        "ancho50_pct": 7.96,
+        "p10": 2.22,
+        "p25": 2.34,
+        "p50": 2.4,
+        "p75": 2.53,
+        "p90": 2.69,
+        "ancho80_pct": 19.51,
+        "ancho50_pct": 8.03,
         "validacion": {
           "cortes": 424,
           "cobertura80": 79.95,
-          "cobertura50": 46.7,
+          "cobertura50": 46.93,
           "ancho80_mediano_pct": 15.22,
           "ancho50_mediano_pct": 6.05,
           "score80": 0.2316,
           "score80_referencia": 0.2423,
           "cobertura80_referencia": 88.21,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     },
     "VOLCABC1": {
       "grupo": "A",
       "dias_12m": 250,
-      "ultimo_cierre": 0.78,
+      "ultimo_cierre": 0.77,
       "ultima_negociacion": "2026-11-10",
+      "primera_fecha": "2016-11-02",
       "semana": {
         "h": 5,
         "fecha_objetivo": "2026-11-17",
         "publicable": true,
         "motivo": null,
-        "p10": 0.7466,
-        "p25": 0.7626,
-        "p50": 0.78,
-        "p75": 0.8007,
-        "p90": 0.8246,
-        "ancho80_pct": 10,
-        "ancho50_pct": 4.89,
+        "p10": 0.7361,
+        "p25": 0.7523,
+        "p50": 0.77,
+        "p75": 0.791,
+        "p90": 0.8153,
+        "ancho80_pct": 10.28,
+        "ancho50_pct": 5.03,
         "validacion": {
           "cortes": 440,
           "cobertura80": 77.73,
@@ -3217,37 +3395,41 @@
           "score80_referencia": 0.2764,
           "cobertura80_referencia": 76.36,
           "sin_operar_pct": 7.05
-        }
+        },
+        "metodo": "propio"
       },
       "mes": {
         "h": 21,
         "fecha_objetivo": "2026-12-11",
         "publicable": true,
         "motivo": null,
-        "p10": 0.6979,
-        "p25": 0.746,
-        "p50": 0.78,
-        "p75": 0.8285,
-        "p90": 0.9201,
-        "ancho80_pct": 28.49,
-        "ancho50_pct": 10.58,
+        "p10": 0.6867,
+        "p25": 0.7355,
+        "p50": 0.77,
+        "p75": 0.8193,
+        "p90": 0.9128,
+        "ancho80_pct": 29.37,
+        "ancho50_pct": 10.88,
         "validacion": {
           "cortes": 424,
-          "cobertura80": 76.42,
+          "cobertura80": 76.18,
           "cobertura50": 44.34,
           "ancho80_mediano_pct": 39.71,
           "ancho50_mediano_pct": 15.53,
-          "score80": 0.7106,
+          "score80": 0.7108,
           "score80_referencia": 0.6504,
           "cobertura80_referencia": 73.58,
           "sin_operar_pct": 0
-        }
+        },
+        "metodo": "propio"
       }
     }
   },
   "resumen": {
     "valores": 60,
-    "publicables_semana": 45,
-    "publicables_mes": 39
+    "publicables_semana": 54,
+    "publicables_mes": 51,
+    "por_fondo_semana": 9,
+    "por_fondo_mes": 12
   }
 }
