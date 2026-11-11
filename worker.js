@@ -676,6 +676,13 @@ async function notFound(env, request) {
 }
 
 const REPO = "Wagustin/macro-data-explorer";
+
+// True when SUNAT's file carries a date the "cierre de ayer" workflow has not seen yet
+export function sunatNuevo(texto, visto) {
+  const m = /^(\d{2})\/(\d{2})\/(\d{4})\|/.exec(String(texto || "").trim());
+  return !!m && `${m[3]}-${m[2]}-${m[1]}` !== (visto && visto.sunat);
+}
+
 // due(now): whether the job should have run by now; minGapMin: don't start it again if it ran this recently
 const JOBS = [
   { file: "watchdog.yml", minGapMin: 55, due: () => true },
@@ -685,6 +692,14 @@ const JOBS = [
   { file: "smv-precios.yml", minGapMin: 600, due: (d) => d.getUTCHours() >= 1 && d.getUTCHours() < 10 && d.getUTCDay() >= 2 && d.getUTCDay() <= 6 },
   { file: "timesfm.yml", minGapMin: 1200, due: (d) => d.getUTCHours() >= 11 },
   { file: "official-data.yml", minGapMin: 600, due: (d) => d.getUTCHours() >= 22 && d.getUTCDay() >= 1 && d.getUTCDay() <= 5 },
+  // Yesterday's dollar close: SUNAT publishes it overnight. Run as soon as its date changes (GitHub's own cron can be hours late)
+  { file: "cierre-ayer.yml", minGapMin: 25, due: () => true, check: async (d) => {
+      const [visto, texto] = await Promise.all([
+        fetch(`https://raw.githubusercontent.com/${REPO}/main/data/official/cierre-visto.json?t=${d.getTime()}`).then((r) => (r.ok ? r.json() : {})).catch(() => ({})),
+        fetch("https://www.sunat.gob.pe/a/txt/tipoCambio.txt", { headers: { "User-Agent": "PerDataBot/1.0 (+https://perdata.site)" } }).then((r) => (r.ok ? r.text() : "")).catch(() => ""),
+      ]);
+      return sunatNuevo(texto, visto);
+    } },
   { file: "alertas.yml", minGapMin: 25, due: () => true },
   // Newsletter: weekdays from 05:50 Lima until noon, only if today's send isn't recorded yet
   { file: "boletin.yml", minGapMin: 25, due: (d) => {
