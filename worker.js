@@ -597,17 +597,14 @@ export default {
     const assetResponse = await env.ASSETS.fetch(request);
     if (assetResponse.status === 404) {
       // Alias routes: /terminos -> terms.html, /cookies -> privacidad.html (CLEAN_PAGES).
-      // El servidor de assets solo resuelve nombres de archivo (privacidad.html -> /privacidad),
-      // asi que las rutas con otro nombre se sirven desde aqui.
+      // Las rutas con otro nombre redirigen a la dirección limpia que sí existe.
       const cleanPath = pathname.replace(/\/+$/, "") || "/";
       const alias = CLEAN_PAGES[cleanPath];
-      if (alias && !cleanPath.endsWith(".html")) {
-        const aliasRes = await env.ASSETS.fetch(new Request(new URL(`/${alias}`, request.url).toString(), request));
-        if (aliasRes.ok) {
-          const headers = new Headers(aliasRes.headers);
-          headers.set("Cache-Control", "no-cache");
-          return new Response(aliasRes.body, { status: aliasRes.status, statusText: aliasRes.statusText, headers });
-        }
+      const destino = alias ? `/${alias.replace(/\.html$/, "")}` : null;
+      if (destino && destino !== cleanPath && destino !== "/index") {
+        const u = new URL(request.url);
+        u.pathname = destino;
+        return Response.redirect(u.toString(), 301);
       }
       const notFoundUrl = new URL("/404.html", request.url);
       const notFoundReq = new Request(notFoundUrl.toString(), request);
