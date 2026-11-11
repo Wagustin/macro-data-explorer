@@ -195,8 +195,27 @@ test("correo pagado: «Tus empresas» con imagen, rango en mono, máximo 2 hecho
 });
 
 test("correo pagado: «Tus empresas» usa el rango semanal calibrado de las acciones de Lima", () => {
-  const html = generar("boletin", {}, "ALICORC1,FERREYC1,EXALMC1,AUNA");
   const valores = JSON.parse(read("data/acciones-rangos.json")).valores;
+
+  // Elige dinámicamente empresas sin rango según los datos del día:
+  // - corta: primera con semana.motivo === "historia_insuficiente"
+  // - noConfiable: primera con semana.publicable === false y otro motivo
+  let corta = null;
+  let noConfiable = null;
+  for (const [nemonico, v] of Object.entries(valores)) {
+    const semana = v.semana;
+    if (semana && semana.publicable === false) {
+      if (semana.motivo === "historia_insuficiente" && !corta) {
+        corta = nemonico;
+      } else if (semana.motivo !== "historia_insuficiente" && !noConfiable) {
+        noConfiable = nemonico;
+      }
+    }
+    if (corta && noConfiable) break;
+  }
+
+  const empresas = ["ALICORC1", corta, noConfiable].filter(Boolean).join(",");
+  const html = generar("boletin", {}, empresas);
   const sinTags = (s) => s.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
   const texto = sinTags(html);
 
@@ -218,14 +237,54 @@ test("correo pagado: «Tus empresas» usa el rango semanal calibrado de las acci
   assert.ok(!html.includes("rango proyectado a un mes"), "ninguna acción de Lima se anuncia a un mes");
 
   // Cuando el motor no publica un rango, la tarjeta explica el motivo exacto.
-  assert.ok(
-    texto.includes("Sin rango esta semana: en la prueba no fue lo bastante confiable y preferimos no mostrarlo."),
-    "Ferreycorp explica por qué no hay rango"
-  );
-  assert.ok(
-    texto.includes("Aún sin rango: su historia en bolsa es corta para probarlo."),
-    "Auna explica que su prueba todavía es corta"
-  );
+  if (noConfiable) {
+    assert.ok(
+      texto.includes("Sin rango esta semana: en la prueba no fue lo bastante confiable y preferimos no mostrarlo."),
+      `${noConfiable} explica por qué no hay rango`
+    );
+  }
+  if (corta) {
+    assert.ok(
+      texto.includes("Aún sin rango: su historia en bolsa es corta para probarlo."),
+      `${corta} explica que su prueba todavía es corta`
+    );
+  }
+});
+
+test("rango de empresa en el correo: los tres motivos y el caso publicable (sin depender de los datos del día)", async () => {
+  const { rangoEmpresaCorreo } = await import("../scripts/lib/rango-empresa-correo.js");
+  const hoy = "2026-11-11";
+
+  // 1. valor undefined → motivo "Sin rango: esta acción casi no se negocia." y forecast null
+  let r = rangoEmpresaCorreo(undefined, { hoy });
+  assert.equal(r.forecast, null, "undefined → forecast null");
+  assert.equal(r.motivo, "Sin rango: esta acción casi no se negocia.", "undefined → motivo sin rango");
+
+  // 2. semana.motivo === "historia_insuficiente" → "Aún sin rango: su historia en bolsa es corta para probarlo."
+  r = rangoEmpresaCorreo({ semana: { publicable: false, motivo: "historia_insuficiente" } }, { hoy });
+  assert.equal(r.forecast, null, "historia_insuficiente → forecast null");
+  assert.equal(r.motivo, "Aún sin rango: su historia en bolsa es corta para probarlo.", "historia_insuficiente → motivo historia corta");
+
+  // 3. semana.motivo === "cobertura_fuera_de_rango" → "Sin rango esta semana: en la prueba no fue lo bastante confiable y preferimos no mostrarlo."
+  r = rangoEmpresaCorreo({ semana: { publicable: false, motivo: "cobertura_fuera_de_rango" } }, { hoy });
+  assert.equal(r.forecast, null, "cobertura_fuera_de_rango → forecast null");
+  assert.equal(r.motivo, "Sin rango esta semana: en la prueba no fue lo bastante confiable y preferimos no mostrarlo.", "cobertura_fuera_de_rango → motivo confiabilidad");
+
+  // 4. valor publicable con fecha objetivo futura → forecast con los cinco números y motivo null
+  const valorPublicable = {
+    semana: {
+      publicable: true,
+      motivo: null,
+      fecha_objetivo: "2026-11-17",
+      p10: 1, p25: 1.1, p50: 1.2, p75: 1.3, p90: 1.4,
+    },
+  };
+  r = rangoEmpresaCorreo(valorPublicable, { hoy });
+  assert.deepEqual(r.forecast, {
+    p10: 1, p25: 1.1, p50: 1.2, p75: 1.3, p90: 1.4,
+    date: "2026-11-17", horizonte: "semana",
+  }, "publicable → forecast con cinco números");
+  assert.equal(r.motivo, null, "publicable → motivo null");
 });
 
 test("correos: sin emojis, sin «subirá»/«bajará»/«interbancario» y sin fechas ISO", () => {
