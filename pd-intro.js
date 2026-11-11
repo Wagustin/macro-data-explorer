@@ -4,9 +4,9 @@
  * body from the previous close to the close, no wicks: we only have closes). They lie flat and stand
  * up one after another in an accelerating wave while a camera follows it, starting close and pulling
  * back until the whole series fits. Then the fan of the next close's probable range opens to the right of
- * «hoy» and a sharp block spells it out, the last candle shrinks into a dot, the wordmark appears beside
- * it and lands exactly on the header logo. Without real data there is no intro. The <head> script only
- * sets data-intro="play" when motion and data saving allow it.
+ * «hoy» as a soft curved band that fades out, the last candle shrinks into a dot, the wordmark appears
+ * beside it and lands exactly on the header logo. Without real data there is no intro. The <head>
+ * script only sets data-intro="play" when motion and data saving allow it.
  */
 (function(window, document) {
   'use strict';
@@ -27,7 +27,7 @@
   const T_DOT = 160;           // ms for the last candle to become the dot
   const T_WORD = 200;          // ms for the wordmark to appear
   const T_DOCK = 520;          // ms for the wordmark to land on the header logo
-  const BAND_W = NARROW ? 64 : 120;  // px the range fan opens to the right of «hoy»
+  const bandW = () => (NARROW ? 110 : Math.round(Math.min(300, W * 0.22)));  // px the range fan opens to the right of «hoy»
   const SKIP = ['click', 'keydown', 'wheel', 'touchstart'];
 
   let overlay, canvas, ctx, W, H, dpr;
@@ -38,7 +38,6 @@
   let marcaT = null;          // ms when the marca phase started (null while the candles are up)
   let rangoDatos = null;      // the next close's range, as soon as the API answers
   let rango = null;           // ... and once the fan opens (the decision is taken only once)
-  let rangoEl = null, rangoCifra = null;
 
   const clamp01 = (t) => (t < 0 ? 0 : t > 1 ? 1 : t);
   const lerp = (a, b, t) => a + (b - a) * t;
@@ -57,17 +56,6 @@
     const d = fechaDe(iso);
     return d ? d.toLocaleDateString('es-PE', { day: 'numeric', month: 'short' }).replace('.', '') : '';
   };
-  const fechaLarga = (iso) => {
-    const d = fechaDe(iso);
-    if (!d) return '';
-    const dia = d.toLocaleDateString('es-PE', { weekday: 'long' });
-    return `${dia} ${fechaCorta(iso)}`;
-  };
-
-  function removeRango() {
-    if (rangoEl && rangoEl.parentNode) rangoEl.parentNode.removeChild(rangoEl);
-    rangoEl = null; rangoCifra = null;
-  }
 
   function finish(natural) {
     if (ended) return;
@@ -77,7 +65,6 @@
     try { sessionStorage.setItem('pd_intro_seen', '1'); } catch (_) {}
     root.dataset.intro = natural ? 'in' : 'done';
     if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
-    removeRango();
     delete root.dataset.introFase;
     if (natural) setTimeout(() => { root.dataset.intro = 'done'; }, 700);
   }
@@ -129,81 +116,59 @@
     else ctx.fillRect(0, -hh, w, hh);
   }
 
-  // The fan of the next close's probable range, opening to the right of «hoy»
+  // The fan of the next close's probable range: a soft curved band, borderless, fading out to the right of «hoy»
   function drawFan(t, alpha) {
     if (!rango || alpha <= 0) return;
-    const w = BAND_W * easeOut(clamp01((t - T_HOLD) / T_BAND));
     const hoy = toScreen(N - 1, wy(candles[N - 1].close));
+    const wMax = Math.max(40, Math.min(bandW(), W - 16 - hoy.x));
+    const w = wMax * easeOut(clamp01((t - T_HOLD) / T_BAND));
     const p90 = toScreen(N - 1, wy(rango.p90));
     const p50 = toScreen(N - 1, wy(rango.p50));
     const p10 = toScreen(N - 1, wy(rango.p10));
+    const tinta = (a) => (dark() ? `rgba(237,232,220,${a})` : `rgba(27,25,22,${a})`);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.fillStyle = ctx.strokeStyle = ink();
-    ctx.globalAlpha = 0.12 * alpha;
-    ctx.beginPath();
-    ctx.moveTo(hoy.x, hoy.y);
-    ctx.lineTo(hoy.x + w, p90.y);
-    ctx.lineTo(hoy.x + w, p10.y);
-    ctx.closePath();
-    ctx.fill();
-    ctx.globalAlpha = 0.7 * alpha;
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(hoy.x, hoy.y); ctx.lineTo(hoy.x + w, p90.y);
-    ctx.moveTo(hoy.x, hoy.y); ctx.lineTo(hoy.x + w, p10.y);
-    ctx.stroke();
-    ctx.globalAlpha = 0.5 * alpha;
-    ctx.setLineDash([3, 4]);
-    ctx.beginPath();
-    ctx.moveTo(hoy.x, hoy.y); ctx.lineTo(hoy.x + w, p50.y);
-    ctx.stroke();
-    ctx.setLineDash([]);
+    ctx.globalAlpha = alpha;
+    // Curved edges: they open fast at first and then flatten, like a square root
+    const n = 24;
+    const borde = (p, k) => {
+      ctx.beginPath();
+      ctx.moveTo(hoy.x, hoy.y);
+      for (let i = 1; i <= n; i++) {
+        const u = i / n, x = hoy.x + w * u;
+        ctx.lineTo(x, hoy.y + (p.y - hoy.y) * k * Math.sqrt(u));
+      }
+      for (let i = n; i >= 0; i--) {
+        const u = i / n, x = hoy.x + w * u;
+        ctx.lineTo(x, hoy.y + (p10.y - hoy.y) * k * Math.sqrt(u));
+      }
+      ctx.closePath();
+    };
+    if (w >= 1) {
+      const g = ctx.createLinearGradient(hoy.x, 0, hoy.x + w, 0);
+      g.addColorStop(0, tinta(0.20)); g.addColorStop(0.6, tinta(0.09)); g.addColorStop(1, tinta(0));
+      ctx.fillStyle = g;
+      borde(p90, 1); ctx.fill();      // full band
+      borde(p90, 0.5); ctx.fill();    // inner band, more marked because it adds up
+      // Central line: a single continuous 1 px line from «hoy» to the tip of the median
+      const gm = ctx.createLinearGradient(hoy.x, 0, hoy.x + w, 0);
+      gm.addColorStop(0, tinta(0.55)); gm.addColorStop(1, tinta(0));
+      ctx.strokeStyle = gm;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(hoy.x, hoy.y);
+      ctx.lineTo(hoy.x + w, p50.y);
+      ctx.stroke();
+    }
+    // «hoy»: the last close as a filled dot
+    ctx.fillStyle = tinta(1);
+    ctx.beginPath(); ctx.arc(hoy.x, hoy.y, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
   }
 
-  // The range as sharp DOM text, inside the layer so it disappears with it
   function beginRango() {
     fase = 'rango';
     rango = rangoDatos;
     root.dataset.introFase = 'rango';
-    const el = document.createElement('div');
-    el.id = 'pdIntroRango';
-    el.setAttribute('aria-hidden', 'true');
-    const titulo = document.createElement('span');
-    titulo.className = 'pd-intro-rango-titulo';
-    titulo.textContent = `Rango probable · ${fechaLarga(rango.fecha)}`;
-    const cifra = document.createElement('span');
-    cifra.className = 'pd-intro-rango-cifra';
-    cifra.textContent = `S/ ${fmt(rango.p10)} – ${fmt(rango.p90)}`;
-    const nota = document.createElement('span');
-    nota.className = 'pd-intro-rango-nota';
-    nota.textContent = '8 de cada 10 veces';
-    el.appendChild(titulo); el.appendChild(cifra); el.appendChild(nota);
-    el.style.cssText = `position:absolute; display:flex; flex-direction:column; gap:6px; pointer-events:none; opacity:0; transition:opacity 240ms ease; color:${ink()};`;
-    titulo.style.cssText = "font:600 12px/1.2 var(--pd-font-ui, system-ui, sans-serif); letter-spacing:.08em; text-transform:uppercase; opacity:.7;";
-    cifra.style.cssText = "font:600 clamp(28px, 3.4vw, 44px)/1.05 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric:tabular-nums; white-space:nowrap;";
-    nota.style.cssText = "font:500 13px/1.2 var(--pd-font-ui, system-ui, sans-serif); opacity:.7;";
-    overlay.appendChild(el);
-    rangoEl = el; rangoCifra = cifra;
-    // Placed with the final framing (not with the camera still moving), then kept inside the screen
-    const fs = fitScale();
-    const xHoy = W / 2 + ((N - 1) - fitX()) * fs;
-    const yP50 = H * 0.5 - (wy(rango.p50) - YR / 2) * fs;
-    const q = el.getBoundingClientRect();
-    let left, top;
-    if (W >= 1100) {
-      left = xHoy + BAND_W + 28;      // to the right of the fan
-      top = yP50 - q.height / 2;      // centred on the median of the band
-    } else {
-      left = W >= 680 ? 24 : 16;      // below the chart, on phones and tablets
-      top = H * 0.5 + (YR / 2) * fs + 32;
-    }
-    if (left + q.width > W - 16) left = W - 16 - q.width;
-    if (left < 16) left = 16;
-    if (top + q.height > H - 16) top = H - 16 - q.height;
-    if (top < 16) top = 16;
-    el.style.left = `${left}px`;
-    el.style.top = `${top}px`;
-    el.style.opacity = '1';
   }
 
   // The wordmark phase: the last candle becomes the dot and the brand flies to the header
@@ -211,25 +176,6 @@
     fase = 'marca';
     marcaT = t;
     root.dataset.introFase = 'marca';
-    if (!rangoEl) return;
-    const D = T_DOT + T_WORD + T_DOCK;
-    const dest = document.getElementById('pdCardDailyRange');
-    let vuela = false;
-    if (dest) {
-      const dr = dest.getBoundingClientRect();
-      if (dr.width > 0 && dr.top >= 0 && dr.bottom <= window.innerHeight) {
-        const cr = (rangoCifra || rangoEl).getBoundingClientRect();
-        const dx = dr.left - cr.left, dy = dr.top - cr.top;
-        rangoEl.style.transition = `transform ${D}ms cubic-bezier(.2,.7,.2,1), opacity ${Math.round(D / 3)}ms ease ${Math.round(D * 2 / 3)}ms`;
-        rangoEl.style.transform = `translate(${dx}px, ${dy}px)`;
-        rangoEl.style.opacity = '0';
-        vuela = true;
-      }
-    }
-    if (!vuela) {
-      rangoEl.style.transition = `opacity ${T_WORD}ms ease`;
-      rangoEl.style.opacity = '0';
-    }
   }
 
   function headerTextBox() {
