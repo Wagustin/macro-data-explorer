@@ -279,8 +279,10 @@
     const fadeOut = marcaT == null ? 1 : 1 - clamp01((t - dotEnd) / T_WORD);
     ctx.fillStyle = ctx.strokeStyle = color;
     ctx.lineWidth = Math.max(1.2, cam.s * 0.05);
+    // The grid has done its job once the range takes over: it fades out while the fan opens
+    const gridK = rango ? 1 - clamp01((t - T_HOLD) / 220) : 1;
     // Price grid of a real chart: round levels that move and scale with the camera
-    if (fadeOut > 0) {
+    if (fadeOut * gridK > 0) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const span = hi - lo || 0.01;
       const step = [0.005, 0.01, 0.02, 0.025, 0.05, 0.1].find((v) => span / v <= 5) || 0.1;
@@ -289,9 +291,9 @@
       for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) {
         const y = Math.round(toScreen(0, wy(v)).y) + 0.5;
         if (y < 0 || y > H) continue;
-        ctx.globalAlpha = 0.09 * fadeOut;
+        ctx.globalAlpha = 0.09 * fadeOut * gridK;
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-        ctx.globalAlpha = 0.42 * fadeOut;
+        ctx.globalAlpha = 0.42 * fadeOut * gridK;
         ctx.fillText(`S/ ${v.toFixed(step < 0.01 ? 3 : 2)}`, W - (NARROW ? 62 : 84), y - 5);
       }
     }
