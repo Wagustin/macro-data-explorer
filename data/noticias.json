@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-11T06:16:15.217Z",
+  "actualizado": "2026-11-11T09:31:33.568Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -29,7 +29,7 @@
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 63
+      "items": 64
     },
     "rpp": {
       "nombre": "RPP Noticias",
@@ -39,12 +39,12 @@
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 11
+      "items": 12
     },
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 18
+      "items": 16
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -63,6 +63,42 @@
     }
   },
   "noticias": [
+    {
+      "id": "la_republica-d95ad7142f",
+      "titulo": "Precio del dólar hoy en Perú, miércoles 11 noviembre: consulta el tipo de cambio para compra y venta",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/11/precio-del-dolar-hoy-en-peru-miercoles-11-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-252030",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-11T09:30:00.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-053fa0f2b1",
+      "titulo": "MTC impulsa inversiones para ampliar conectividad en zonas rurales y la Amazonía",
+      "url": "https://andina.pe/agencia/noticia-mtc-impulsa-inversiones-para-ampliar-conectividad-zonas-rurales-y-amazonia-1099445.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-11T08:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "bloomberg_linea-a2a909d132",
+      "titulo": "OpenAI aumenta casi 50% sus ingresos trimestrales y alcanza US$10.000 millones",
+      "url": "https://www.bloomberglinea.com/negocios/openai-aumenta-casi-50-sus-ingresos-trimestrales-y-alcanza-us10000-millones/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-11T07:49:34.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-2e92155119",
+      "titulo": "Precio del dólar en Perú hoy, miércoles 11 de noviembre: cuál es el tipo de cambio del día",
+      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-hoy-miercoles-11-de-noviembre-a-cuanto-esta-el-dolar-y-tipo-de-cambio-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-11T06:58:28.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "gestion-eaa02fe4a9",
       "titulo": "Se alista “combo” laboral tributario para verano: aportes y despidos, claves de la propuesta",
@@ -712,24 +748,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "infobae-e0301af168",
-      "titulo": "Perú registró 3,9 millones de hectáreas quemadas en 36 años: más de 400 mil solo entre 2025 y 2026",
-      "url": "https://www.infobae.com/peru/2026/11/10/peru-registro-39-millones-de-hectareas-quemadas-en-36-anos-mas-de-400-mil-solo-entre-2025-y-2026/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-10T18:25:03.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-82358ae573",
-      "titulo": "OEFA realizó 1.332 supervisiones y aplicó multas por S/110,5 millones: ¿qué sectores fueron los más castigados?",
-      "url": "https://www.infobae.com/peru/2026/11/10/oefa-realizo-1332-supervisiones-y-aplico-multas-por-s1105-millones-que-sectores-fueron-los-mas-castigados/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-10T18:23:00.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-9a1df918d9",
       "titulo": "Buenaventura y el Perú dan campanazo en Wall Street",
       "url": "https://elcomercio.pe/economia/peru/buenaventura-y-el-peru-dan-campanazo-en-wall-street-l-ultimas-noticia/",
@@ -836,15 +854,6 @@
       "fecha_iso": "2026-11-10T15:24:27.000Z",
       "categoria": "Minería y metales",
       "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-1af9c53114",
-      "titulo": "CTS: ¿Cuándo vence el plazo para que las empresas hagan el depósito de noviembre?",
-      "url": "https://andina.pe/agencia/noticia-cts-cuando-vence-plazo-para-las-empresas-hagan-deposito-noviembre-1099324.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-10T15:20:05.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "VERDE"
     },
     {
       "id": "el_comercio-ce1324ebef",
