@@ -18,15 +18,15 @@
   const NARROW = window.innerWidth < 680;
   const N = NARROW ? 36 : 60;
   const YR = NARROW ? 16 : 14;  // world height of the price range (candle x step = 1): tall enough to read the peaks
-  const T_FIRST = 60;          // ms until the first candle starts to stand up
-  const T_WAVE = 1350;         // ms for the wave front to reach the last candle (a quick sweep)
-  const T_TIP = 150;           // ms a candle takes to stand up (each one snaps up fast)
-  const T_PAUSE = 90;          // ms held on «hoy»
-  const T_BAND = 380;          // ms the range fan takes to open
-  const T_READ = 640;          // ms the range stays on screen, still, to be read
-  const T_DOT = 160;           // ms for the last candle to become the dot
-  const T_WORD = 200;          // ms for the wordmark to appear
-  const T_DOCK = 520;          // ms for the wordmark to land on the header logo
+  const T_FIRST = 100;         // ms until the first candle starts to stand up
+  const T_WAVE = 2000;         // ms for the wave front to reach the last candle (an unhurried travelling shot)
+  const T_TIP = 190;           // ms a candle takes to stand up
+  const T_PAUSE = 140;         // ms held on «hoy»
+  const T_BAND = 520;          // ms the range fan takes to open
+  const T_READ = 700;          // ms the range stays on screen, still
+  const T_DOT = 200;           // ms for the last candle to become the dot
+  const T_WORD = 260;          // ms for the wordmark to appear
+  const T_DOCK = 640;          // ms for the wordmark to land on the header logo
   const bandW = () => (NARROW ? 110 : Math.round(Math.min(300, W * 0.22)));  // px the range fan opens to the right of «hoy»
   const SKIP = ['click', 'keydown', 'wheel', 'touchstart'];
 
@@ -111,7 +111,11 @@
     // Lying flat (rotated -90° about its bottom-left corner) → standing
     const ang = (1 - k) * (Math.PI / 2), cs = Math.cos(ang) * dpr, sn = Math.sin(ang) * dpr;
     ctx.setTransform(cs, sn, -sn, cs, base.x * dpr, base.y * dpr);
-    ctx.globalAlpha = alpha * (0.25 + 0.75 * k);
+    // Depth: candles left behind dim to half ink while the camera travels; all return to full ink on the pull-back
+    const lejos = clamp01((frontAt(t) - i - 4) / 10);            // 0 near the front, 1 ten candles behind
+    const viaje = 1 - clamp01((t - T_FIRST) / T_WAVE);             // 1 at the start of the travel, 0 on arrival
+    const atenua = 1 - 0.5 * lejos * Math.min(1, viaje * 2.5);
+    ctx.globalAlpha = alpha * (0.25 + 0.75 * k) * atenua;
     if (c.up) ctx.strokeRect(0, -hh, w, hh);
     else ctx.fillRect(0, -hh, w, hh);
   }
@@ -215,7 +219,7 @@
     // Critically damped spring with velocity: no jolts when a frame is dropped, no overshoot
     const dt = Math.min(Math.max(t - prevT, 1000 / 120), 1000 / 20) / 1000;
     prevT = t;
-    const w0 = 8.5, k1 = w0 * w0, k2 = 2 * w0;
+    const w0 = 7, k1 = w0 * w0, k2 = 2 * w0;
     for (const [key, target] of [['x', targetX], ['y', targetY], ['s', targetS]]) {
       vel[key] += (k1 * (target - cam[key]) - k2 * vel[key]) * dt;
       cam[key] += vel[key] * dt;
