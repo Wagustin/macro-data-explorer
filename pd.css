@@ -2570,6 +2570,8 @@ html.pd-motion.hero-ready [data-hero-seq="5"]  { opacity: 1; transform: translat
 /* Publicidad (ads.js): oculta hasta que el script la activa; mismo lenguaje de filetes que el resto */
 .pd-ad { display: none; }
 .pd-ad.is-armed { display: block; height: 1px; }
+/* Apagado: 1 px de alto (para poder detectarlo al llegar) pero sin dejar hueco entre secciones */
+.pd-ad.is-armed:not(.is-on) { margin: 0 !important; margin-top: -1px !important; }
 .pd-ad.is-armed.is-on { height: auto; }
 .pd-ad.is-on {
   display: block;
@@ -2587,15 +2589,23 @@ html.pd-motion.hero-ready [data-hero-seq="5"]  { opacity: 1; transform: translat
   font-family: var(--pd-font-ui, "Libre Franklin", sans-serif);
   font-size: 11px;
   color: var(--pd-ink-soft);
+  text-align: center; letter-spacing: .08em; text-transform: uppercase;
 }
-.pd-ad-box { min-height: 250px; }
+.pd-ad-box { min-height: 250px; max-width: 970px; margin: 0 auto; }
+@media (min-width: 768px) { .pd-ad-display .pd-ad-box { min-height: 90px; } }
 .pd-ad-infeed .pd-ad-box { min-height: 120px; }
 .pd-ad-box.is-preview {
   display: flex; align-items: center; justify-content: center;
+  height: 250px;
   background: var(--pd-surface);
   font-family: var(--pd-font-ui, "Libre Franklin", sans-serif);
   font-size: 13px; color: var(--pd-ink-soft);
 }
+@media (min-width: 768px) { .pd-ad-display .pd-ad-box.is-preview { height: 90px; } }
+.pd-ad-infeed .pd-ad-box.is-preview { height: 120px; }
+/* La portada va a sangre: el espacio ancho se mantiene dentro del ancho de lectura */
+.pd-ad-wide.is-on { max-width: 1180px; margin: 0 auto; padding: 28px 24px; border-top: 0; }
+@media (max-width: 640px) { .pd-ad-wide.is-on { padding: 24px 16px; } }
 
 /* ============================================================
    BANNER DE CONSENTIMIENTO Y COOKIES (T74)

@@ -242,47 +242,69 @@ const cierresDeSerie = (lista, campoFecha = "fecha", campoValor = "valor") => (A
   .map((p) => ({ fecha: String(p?.[campoFecha] ?? "").slice(0, 10), valor: Number(p?.[campoValor]) }))
   .filter((p) => p.fecha && Number.isFinite(p.valor));
 
+// «Hoy, mié 11 nov» -> título «Hoy» y detalle «mié 11 nov» (sin coma: la
+// etiqueta entera es el título y no hay detalle).
+const parteEtiqueta = (etiqueta) => {
+  const [titulo, ...resto] = String(etiqueta || "").split(",");
+  return { titulo: titulo.trim(), detalle: resto.join(",").trim() };
+};
+
 // Filas de la tabla de rangos del dólar (central p25–p75, amplio p10–p90).
 function filasRangosDolar(f) {
   const filas = [];
   const manana = f.daily?.manana;
-  if (manana) filas.push({
-    clave: "manana", etiqueta: etiquetaHoy(manana.fecha_objetivo, f.todayLima),
-    central: [manana.p25, manana.p75], amplio: [manana.p10, manana.p90],
-  });
+  if (manana) {
+    const etiqueta = etiquetaHoy(manana.fecha_objetivo, f.todayLima);
+    filas.push({
+      clave: "manana", etiqueta, ...parteEtiqueta(etiqueta),
+      central: [manana.p25, manana.p75], amplio: [manana.p10, manana.p90],
+    });
+  }
   const semana = f.daily?.semana;
-  if (semana) filas.push({
-    clave: "semana", etiqueta: `Semana, ${diaCorta(semana.fecha_objetivo)}`,
-    central: [semana.p25, semana.p75], amplio: [semana.p10, semana.p90],
-  });
+  if (semana) {
+    const etiqueta = `Semana, ${diaCorta(semana.fecha_objetivo)}`;
+    filas.push({
+      clave: "semana", etiqueta, ...parteEtiqueta(etiqueta),
+      central: [semana.p25, semana.p75], amplio: [semana.p10, semana.p90],
+    });
+  }
   const mes = f.forecast;
-  if (mes?.horizon) filas.push({
-    clave: "mes", etiqueta: `Mes, ${fechaCorta(mes.horizon)}`,
-    central: [mes.p25, mes.p75], amplio: [mes.p10, mes.p90],
-  });
+  if (mes?.horizon) {
+    const etiqueta = `Mes, ${fechaCorta(mes.horizon)}`;
+    filas.push({
+      clave: "mes", etiqueta, ...parteEtiqueta(etiqueta),
+      central: [mes.p25, mes.p75], amplio: [mes.p10, mes.p90],
+    });
+  }
   return filas;
 }
 
 // Tabla compacta de rangos: cabe a 390 px (letra 13 px, cifras tabulares).
+// Sin la celda suelta «S/»: la unidad va en el título («Rango probable · en
+// soles») y cada rango lleva su propia etiqueta.
 function tablaRangos(f, soloHoy = false) {
   const filas = filasRangosDolar(f);
   const lista = soloHoy ? filas.slice(0, 1) : filas;
   if (!lista.length) return "";
-  const celda = (txt, extra = "") => `<td style="padding:6px 0;font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:13px;${extra}">${txt}</td>`;
+  // El rango va en su propio <span>: la celda se estira a la altura de la
+  // fila (por el título y la fecha), pero el texto del rango sigue en una
+  // sola línea.
+  const celda = (txt, color, peso) => `<td style="text-align:right;white-space:nowrap;vertical-align:top;padding:8px 0;border-bottom:1px solid ${C.rule};font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:13px;color:${color};font-weight:${peso}"><span>${txt}</span></td>`;
   const cuerpo = lista.map((r) => `<tr>
-      <td style="padding:6px 8px 6px 0;font-family:${UI_F};font-size:13px;color:${C.ink};white-space:nowrap">${esc(r.etiqueta)}</td>
-      ${celda(esc(rangoTexto(r.central[0], r.central[1], 3)), `color:${C.ink};text-align:right;white-space:nowrap`)}
-      ${celda(esc(rangoTexto(r.amplio[0], r.amplio[1], 3)), `color:${C.soft};text-align:right;white-space:nowrap`)}
+      <td style="padding:8px 8px 8px 0;border-bottom:1px solid ${C.rule};vertical-align:top">
+        <div style="font-family:${UI_F};font-size:13px;font-weight:600;color:${C.ink};white-space:nowrap">${esc(r.titulo)}</div>
+        ${r.detalle ? `<div style="font-family:${UI_F};font-size:11px;color:${C.soft};white-space:nowrap">${esc(r.detalle)}</div>` : ""}
+      </td>
+      ${celda(esc(rangoTexto(r.central[0], r.central[1], 3)), C.ink, 600)}
+      ${celda(esc(rangoTexto(r.amplio[0], r.amplio[1], 3)), C.soft, 400)}
     </tr>`).join("");
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-variant-numeric:tabular-nums">
+  const cabeceraRango = (titulo, sub, color) => `<div style="font-family:${UI_F};font-size:12px;font-weight:600;color:${color};white-space:nowrap">${titulo}</div><div style="font-family:${UI_F};font-size:10px;color:${C.soft};white-space:nowrap">${sub}</div>`;
+  return `<div style="font-family:${UI_F};font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:${C.soft};margin:0 0 8px">Rango probable · en soles</div>
+  <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;font-variant-numeric:tabular-nums" width="100%">
     <tr>
-      <td style="padding:0 0 4px 0;font-family:${UI_F};font-size:11px;color:${C.soft}"></td>
-      <td colspan="2" align="right" style="padding:0 0 4px 0;font-family:${UI_F};font-size:11px;color:${C.soft}">S/</td>
-    </tr>
-    <tr>
-      <td style="padding:0 8px 4px 0;font-family:${UI_F};font-size:12px;color:${C.soft}"></td>
-      <td style="padding:0 8px 4px 0;font-family:${UI_F};font-size:12px;font-weight:600;color:${C.ink};text-align:right">Rango central (1 de cada 2 veces)</td>
-      <td style="padding:0 0 4px 0;font-family:${UI_F};font-size:12px;font-weight:600;color:${C.soft};text-align:right">Rango amplio (8 de cada 10 veces)</td>
+      <td width="24%" style="padding:0 0 6px;border-bottom:1px solid ${C.rule}"></td>
+      <td width="38%" align="right" style="padding:0 0 6px;text-align:right;border-bottom:1px solid ${C.rule}">${cabeceraRango("Central", "1 de cada 2 veces", C.ink)}</td>
+      <td width="38%" align="right" style="padding:0 0 6px;text-align:right;border-bottom:1px solid ${C.rule}">${cabeceraRango("Amplio", "8 de cada 10 veces", C.soft)}</td>
     </tr>
     ${cuerpo}
   </table>`;
@@ -328,7 +350,7 @@ function bloquePresionDolar(lectura, soloManana = false) {
   if (aLaBaja.length) partes.push(etiqueta("Podría presionar al dólar a la baja"), aLaBaja.map((p) => punto(p, "a_la_baja")).join(""));
   if (contexto.length) partes.push(etiqueta("Contexto"), contexto.map((p) => punto(p, "contexto")).join(""));
   return `<tr><td style="padding:12px 0 8px">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">Qué podría presionar al dólar</td></tr></table>
+    <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">Qué podría presionar al dólar</td></tr></table>
     ${partes.join("")}
   </td></tr>`;
 }
@@ -393,7 +415,9 @@ const prettyName = (raw) => String(raw || "").trim().split(/\s+/).map((w, i) => 
   return i > 0 && SMALL.has(lw) ? lw : lw.replace(/(^|[-(«"])(\p{L})/gu, (m, a, b) => a + b.toUpperCase());
 }).join(" ");
 const sentence = (t) => { const x = String(t || "").trim(); return x && x === x.toUpperCase() ? x.charAt(0) + x.slice(1).toLowerCase() : x; };
-const flagHtml = (C) => `<table role="presentation" cellpadding="0" cellspacing="0" style="display:inline-table;vertical-align:middle;margin-left:8px;border:1px solid ${C.ink}"><tr><td width="5" height="12" style="background:${C.peru}"></td><td width="5" style="background:#ffffff"></td><td width="5" style="background:${C.peru}"></td></tr></table>`;
+// Banderita: tres franjas en spans (nada de tablas: Gmail en iPhone aplasta
+// las tablas anidadas y las pega al logotipo).
+const flagHtml = (C) => `<span style="display:inline-block;vertical-align:middle;margin-left:8px;border:1px solid ${C.ink};line-height:0;font-size:0"><span style="display:inline-block;width:5px;height:12px;background:${C.peru}"></span><span style="display:inline-block;width:5px;height:12px;background:#ffffff"></span><span style="display:inline-block;width:5px;height:12px;background:${C.peru}"></span></span>`;
 
 // ---------------------------------------------------------------------------
 // Local snapshots of the public data (data/). The preview must agree with
@@ -682,17 +706,15 @@ function render(f, ai, dateLabel, lectura, img) {
     t ? `<p style="margin:0 0 ${mgb}px;font-family:${SERIF_F};font-size:${size}px;line-height:${lh};color:${clr};font-weight:${weight}">${esc(t)}</p>` : "";
   
   const tituloSeccion = (title, numero) => 
-    `<tr><td style="padding:24px 0 8px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table></td></tr>`;
+    `<tr><td style="padding:24px 0 8px"><table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table></td></tr>`;
   
   const regla = () => `<tr><td style="padding:0"><hr style="border:none;border-top:1px solid ${C.rule};margin:0"/></td></tr>`;
 
   // Bloque del dólar: cabecera, gráfico PNG, tabla de rangos y lectura unificada.
   const cierre = f.cierre;
   const dollarHeadline = cierre ? `<tr><td style="padding:16px 0 8px">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td style="font-family:${SERIF_F};font-size:24px;font-weight:600;color:${C.ink}">Dólar</td>
-      <td align="right" style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</td>
-    </tr></table>
+    <div style="font-family:${UI_F};font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:${C.soft}">Dólar</div>
+    <div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:34px;line-height:1.15;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</div>
     <p style="margin:4px 0 0;font-family:${UI_F};font-size:13px;color:${C.soft}">Tipo de cambio venta del sistema bancario (SBS), publicado por ${cierre.fuente === "SUNAT" ? "SUNAT" : "el BCRP"} · cierre del ${esc(formatCierreFecha(cierre.fecha))}</p>
   </td></tr>` : "";
 
@@ -712,8 +734,10 @@ function render(f, ai, dateLabel, lectura, img) {
 
   const mercadoCards = metales.map((m) => {
     const pctColor = m.change >= 0 ? C.pos : C.neg;
+    // El nombre puede partirse en dos líneas (a 320 px no cabe «Petróleo
+    // Brent» junto a la cifra): las cifras van siempre en una sola línea.
     return `<tr>
-      <td style="padding:8px 8px 8px 0;font-family:${UI_F};font-size:14px;color:${C.ink};white-space:nowrap">${esc(m.name)}</td>
+      <td style="padding:8px 8px 8px 0;font-family:${UI_F};font-size:14px;color:${C.ink}">${esc(m.name)}</td>
       <td align="right" style="padding:8px 8px 8px 0;font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:14px;color:${C.ink};white-space:nowrap">${esc(m.unit)} ${fmt(m.value, m.dec)}</td>
       <td align="right" style="padding:8px 0;font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:13px;color:${pctColor};white-space:nowrap">${fmtPct(m.change)}</td>
     </tr>`;
@@ -740,14 +764,12 @@ function render(f, ai, dateLabel, lectura, img) {
 <title>Boletín PerData</title></head>
 <body style="margin:0;padding:0;background:${C.paper}">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0">${preheader}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.paper}"><tr><td align="center" style="padding:0 16px">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px">
+<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;background:${C.paper}" width="100%"><tr><td align="center" style="padding:0 16px">
+<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px" width="100%">
   <tr><td style="padding:28px 0 12px;border-bottom:4px double ${C.ink}">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td style="font-family:${SERIF_F};font-size:32px;font-style:italic;font-weight:600;color:${C.ink};white-space:nowrap">PerData${flagHtml(C)}</td>
-      <td align="right" style="font-family:${UI_F};font-size:12px;line-height:1.5;color:${C.soft}">Boletín diario<br>Edición ${edition > 0 ? edition : 1}</td>
-    </tr></table>
-    <div style="font-family:${UI_F};font-size:13px;color:${C.soft};margin-top:6px">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
+    <div style="font-family:${SERIF_F};font-size:32px;line-height:1.1;font-style:italic;font-weight:600;color:${C.ink}">PerData${flagHtml(C)}</div>
+    <div style="font-family:${UI_F};font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:${C.soft};margin-top:8px">Boletín diario · Edición ${edition > 0 ? edition : 1}</div>
+    <div style="font-family:${UI_F};font-size:13px;color:${C.soft};margin-top:2px">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
   </td></tr>
   
   ${dollarHeadline}
@@ -756,13 +778,13 @@ function render(f, ai, dateLabel, lectura, img) {
   ${lecturaHtml}
   {{PERSONAL}}
   
-  ${f.historiasTodas?.length ? tituloSeccion("Lo importante de hoy", 0) + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${f.historiasTodas.slice(0, 4).map(historiaHtml).join(regla())}</table><div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:16px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
+  ${f.historiasTodas?.length ? tituloSeccion("Lo importante de hoy", 0) + `<tr><td><table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%">${f.historiasTodas.slice(0, 4).map(historiaHtml).join(regla())}</table><div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:16px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
   
   ${tituloSeccion("Mercados", 0)}
-  ${metales.length ? `<tr><td style="padding:8px 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${mercadoCards}</table></td></tr>` : ""}
+  ${metales.length ? `<tr><td style="padding:8px 0"><table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%">${mercadoCards}</table></td></tr>` : ""}
   <tr><td style="padding:12px 0 0"><div style="font-family:${UI_F};font-size:11px;color:${C.soft}">Fuente: BCRP${f.markets.some((m) => m.name.includes("Brent")) ? " y EIA" : ""}. Variación frente al dato anterior.</div></td></tr>
   
-  ${f.smvFacts.length ? tituloSeccion("Hechos de importancia", 0) + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${smv}</table><div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:12px">Fuente: Superintendencia del Mercado de Valores (SMV).</div></td></tr>` : ""}
+  ${f.smvFacts.length ? tituloSeccion("Hechos de importancia", 0) + `<tr><td><table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%">${smv}</table><div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:12px">Fuente: Superintendencia del Mercado de Valores (SMV).</div></td></tr>` : ""}
   
   <tr><td align="center" style="padding:32px 0 8px">
     <a href="${SITE}/explorer" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${UI_F};font-size:15px;font-weight:600;text-decoration:none;padding:13px 26px;border-radius:4px">Abrir la terminal</a>
@@ -790,17 +812,15 @@ function renderGratis(f, dateLabel, lectura, img) {
     t ? `<p style="margin:0 0 ${mgb}px;font-family:${SERIF_F};font-size:${size}px;line-height:${lh};color:${clr};font-weight:${weight}">${esc(t)}</p>` : "";
   
   const tituloSeccion = (title, numero) => 
-    `<tr><td style="padding:24px 0 8px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table></td></tr>`;
+    `<tr><td style="padding:24px 0 8px"><table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table></td></tr>`;
   
   const regla = () => `<tr><td style="padding:0"><hr style="border:none;border-top:1px solid ${C.rule};margin:0"/></td></tr>`;
 
   // Bloque del dólar (gratis): cabecera, gráfico PNG, tabla de un horizonte y lectura.
   const cierre = f.cierre;
   const dollarHeadline = cierre ? `<tr><td style="padding:16px 0 8px">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td style="font-family:${SERIF_F};font-size:24px;font-weight:600;color:${C.ink}">Dólar</td>
-      <td align="right" style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</td>
-    </tr></table>
+    <div style="font-family:${UI_F};font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:${C.soft}">Dólar</div>
+    <div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:34px;line-height:1.15;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</div>
     <p style="margin:4px 0 0;font-family:${UI_F};font-size:13px;color:${C.soft}">Tipo de cambio venta del sistema bancario (SBS), publicado por ${cierre.fuente === "SUNAT" ? "SUNAT" : "el BCRP"} · cierre del ${esc(formatCierreFecha(cierre.fecha))}</p>
   </td></tr>` : "";
 
@@ -819,7 +839,7 @@ function renderGratis(f, dateLabel, lectura, img) {
   // Plan Boletín invitation - 3 bullets
   const plan = `<!-- plan-boletin -->
   <tr><td style="padding:24px 0 0">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.card};border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule}"><tr><td style="padding:20px 4px">
+    <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;background:${C.card};border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule}" width="100%"><tr><td style="padding:20px 4px">
       <div style="font-family:${UI_F};font-size:14px;line-height:1.55;color:${C.ink};margin-bottom:12px">Con el plan Boletín (US$&nbsp;1.99 al mes, 7 días de prueba con tarjeta) recibes:</div>
       <ul style="margin:0;padding-left:20px;font-family:${SERIF_F};font-size:15px;line-height:1.6;color:${C.ink}">
         <li style="margin-bottom:8px">Dólar a una semana y a un mes, cada uno con su rango y lectura</li>
@@ -838,14 +858,12 @@ function renderGratis(f, dateLabel, lectura, img) {
 <title>Boletín PerData</title></head>
 <body style="margin:0;padding:0;background:${C.paper}">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0">${preheader}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.paper}"><tr><td align="center" style="padding:0 16px">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px">
+<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;background:${C.paper}" width="100%"><tr><td align="center" style="padding:0 16px">
+<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px" width="100%">
   <tr><td style="padding:28px 0 12px;border-bottom:4px double ${C.ink}">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td style="font-family:${SERIF_F};font-size:32px;font-style:italic;font-weight:600;color:${C.ink};white-space:nowrap">PerData${flagHtml(C)}</td>
-      <td align="right" style="font-family:${UI_F};font-size:12px;line-height:1.5;color:${C.soft}">Boletín diario<br>Edición ${edition > 0 ? edition : 1}</td>
-    </tr></table>
-    <div style="font-family:${UI_F};font-size:13px;color:${C.soft};margin-top:6px">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
+    <div style="font-family:${SERIF_F};font-size:32px;line-height:1.1;font-style:italic;font-weight:600;color:${C.ink}">PerData${flagHtml(C)}</div>
+    <div style="font-family:${UI_F};font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:${C.soft};margin-top:8px">Boletín diario · Edición ${edition > 0 ? edition : 1}</div>
+    <div style="font-family:${UI_F};font-size:13px;color:${C.soft};margin-top:2px">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
   </td></tr>
   
   ${dollarHeadline}
@@ -854,7 +872,7 @@ function renderGratis(f, dateLabel, lectura, img) {
   ${presionaHtml}
   {{PERSONAL}}
   
-  ${f.historiasTop3?.length ? tituloSeccion("Lo importante de hoy", 0) + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${f.historiasTop3.map(historiaHtml).join(regla())}</table><div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:16px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
+  ${f.historiasTop3?.length ? tituloSeccion("Lo importante de hoy", 0) + `<tr><td><table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%">${f.historiasTop3.map(historiaHtml).join(regla())}</table><div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:16px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
   
   ${plan}
   
@@ -1088,7 +1106,7 @@ function renderPersonal(cards, lecturas, img) {
       : "";
 
     return `<tr><td style="padding:18px 0">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+      <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%"><tr>
         <td style="font-family:${UI_F};font-size:15px;font-weight:600;color:${C.ink};vertical-align:top">${esc(c.name)} <span style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:11px;font-weight:400;color:${C.soft}">${esc(c.nemo)}</span></td>
         <td align="right" style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:15px;color:${C.ink};white-space:nowrap;vertical-align:top">${c.price != null ? `${esc(c.currency)} ${fmt(c.price)}` : ""}${ch ? `<br><span style="font-size:13px">${ch}</span>` : ""}</td>
       </tr></table>
@@ -1101,8 +1119,8 @@ function renderPersonal(cards, lecturas, img) {
     </td></tr>`;
   }).join(regla());
   
-  return `<tr><td style="padding:24px 0 8px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">Tus empresas</td></tr></table></td></tr>
-  <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${body}</table>
+  return `<tr><td style="padding:24px 0 8px"><table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">Tus empresas</td></tr></table></td></tr>
+  <tr><td><table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%">${body}</table>
   <div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:16px">Precios: datos de mercado de cierre. Hechos: SMV. La proyección es estadística y no incorpora las noticias.</div></td></tr>`;
 }
 
