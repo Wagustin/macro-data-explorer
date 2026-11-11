@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Torneo del motor, ronda 1.
-
+"""Torneo del motor, ronda 2.
+ 
 Varios motores aprenden solo con datos anteriores a cada día y predicen, día por día, el rango del
 precio a 1, 5 y 21 días hábiles. Práctica 2021-2024 (ahí se eligen los ajustes), examen 2025 (ajustes
 congelados) y confirmación 2026 (nunca se usa para elegir nada).
-
+ 
 Regla de no hacer trampa: la predicción del corte c solo usa precios hasta c, noticias de días
-anteriores a c y fechas de calendario anunciadas con antelación. --autoprueba lo comprueba.
+anteriores a c (las del corpus se usan hasta las 05:00 de Lima de la mañana siguiente al corte, cuando
+se arma el correo) y fechas de calendario anunciadas con antelación. --autoprueba lo comprueba.
 
   python research/torneo/torneo.py --autoprueba
   python research/torneo/torneo.py [--rapido] [--salida data/torneo] [--predicciones DIR]
@@ -24,6 +25,8 @@ PERIODOS = {"practica": ("2021-01-01", "2024-12-31"), "examen_2025": ("2025-01-0
 INICIO_PREDICCION = "2018-01-01"   # desde aquí predicen los modelos que aprenden (calentamiento hasta 2021)
 VENTANA, MIN_K, PRIMERA_FILA = 756, 250, 300
 PROGRAMADOS = ("fomc", "bcrp_tasa", "elecciones_pe_1v", "elecciones_pe_2v")
+TEMAS_CORPUS = ("pe_dolar", "pe_bcrp", "pe_politica", "pe_conflicto", "pe_elecciones", "pe_incert",
+                "mu_fed", "mu_aranceles", "mu_recesion", "mu_dolar", "mu_guerra", "mu_incert")
 REJILLA = [
     dict(num_leaves=4, min_data_in_leaf=60, n_estimators=150, learning_rate=0.05),
     dict(num_leaves=8, min_data_in_leaf=40, n_estimators=300, learning_rate=0.05),
@@ -48,7 +51,12 @@ def cargar():
         for fila in csv.DictReader(fh):
             if fila["tipo"] in eventos:
                 eventos[fila["tipo"]].append(fila["fecha"])
-    return series, tono, {t: sorted(v) for t, v in eventos.items()}
+    corpus = []
+    ruta = RAIZ / "data/torneo/noticias-rasgos.csv"
+    if ruta.exists():
+        with open(ruta, encoding="utf-8") as fh:
+            corpus = list(csv.DictReader(fh))
+    return series, tono, {t: sorted(v) for t, v in eventos.items()}, corpus
 
 
 def ordinal(f):
@@ -69,7 +77,7 @@ def media_movil(x, k):
     return out
 
 
-def variables(fechas, lp, h, tono, eventos):
+def variables(fechas, lp, h, tono, eventos, corpus):
     """Devuelve (nombres, matriz, grupos). La fila i solo usa información conocida al cierre del día i."""
     n = len(lp); u = np.zeros(n); u[1:] = np.diff(lp)
     cols = {}
@@ -100,8 +108,32 @@ def variables(fechas, lp, h, tono, eventos):
         m5, m21, v60 = tv[j - 5:j].mean(), tv[j - 21:j].mean(), tv[j - 60:j]
         cols["not_tono"][i] = tv[j - 1]; cols["not_m5"][i] = m5; cols["not_m21"][i] = m21; cols["not_giro"][i] = m5 - m21
         cols["not_z60"][i] = (m5 - v60.mean()) / max(v60.std(), 1e-6); cols["not_sd21"][i] = tv[j - 21:j].std(); cols["not_salto"][i] = abs(tv[j - 1] - tv[j - 2])
+    # corpus de noticias: parte de cada tema por día y su z frente a las 60 filas anteriores
+    nombres_corpus = [f"c_{t}_z" for t in TEMAS_CORPUS] + ["c_calor"]
+    for c in nombres_corpus:
+        cols[c] = np.full(n, np.nan)
+    if corpus:
+        dias = [f["dia"] for f in corpus]; ordd = [ordinal(d) for d in dias]
+        part = np.full((len(corpus), len(TEMAS_CORPUS)), np.nan)
+        for k, f in enumerate(corpus):
+            for c, t in enumerate(TEMAS_CORPUS):
+                tot = float(f["pe_total"] if t.startswith("pe_") else f["mu_total"])
+                if tot > 0:
+                    part[k, c] = float(f[t]) / tot
+        for i, f in enumerate(fechas):
+            o = ords[i]; j = bisect.bisect_right(ordd, o + 1) - 1   # hasta el día siguiente al corte (05:00 de Lima)
+            if j < 62 or (o + 1) - ordd[j] > 3 or ordd[j] - ordd[j - 62] > 80:
+                continue
+            rec, ant = part[j - 2:j + 1], part[j - 62:j - 2]
+            if not (np.isfinite(rec).all() and np.isfinite(ant).all()):
+                continue
+            sd = ant.std(axis=0); z = np.where(sd > 1e-12, (rec.mean(axis=0) - ant.mean(axis=0)) / np.maximum(sd, 1e-12), 0.0)
+            z = np.clip(z, -8, 8)
+            for c, v in enumerate(z):
+                cols[nombres_corpus[c]][i] = v
+            cols["c_calor"][i] = z.mean()
     nombres = list(cols)
-    return nombres, np.column_stack([cols[c] for c in nombres]), {"base": base, "cal": cal, "not": list(nombres_not)}
+    return nombres, np.column_stack([cols[c] for c in nombres]), {"base": base, "cal": cal, "not": list(nombres_not), "corpus": nombres_corpus}
 
 
 # ---------- motores clásicos ----------
@@ -190,8 +222,23 @@ def duelo(Qa, Qb, y, idx, h):
     return {"n": int(n), "razon": float(la.mean() / lb.mean()), "p": float(p)}
 
 
+def analogos(Z, y, escala, Qref, h, i0, beta):
+    """Días parecidos: ensancha o afina el rango del motor actual según cómo le fue en los días con noticias parecidas."""
+    n = len(y); salida = Qref.copy(); r = np.abs(y) / escala
+    for i in range(i0, n):
+        if not np.isfinite(Z[i]).all() or not np.isfinite(Qref[i, 0]):
+            continue
+        js = np.array([j for j in range(0, i - h + 1) if np.isfinite(Z[j]).all() and np.isfinite(r[j])], dtype=int)
+        if len(js) < 120:
+            continue
+        d = np.sqrt(((Z[js] - Z[i]) ** 2).sum(axis=1)); cerca = js[np.argsort(d, kind="stable")[:25]]
+        k = float(np.clip(r[cerca].mean() / r[js].mean(), 0.7, 1.5)) ** beta
+        salida[i] = Qref[i, 2] + (Qref[i] - Qref[i, 2]) * k
+    return salida
+
+
 def correr_activo(args):
-    activo, serie, tono, eventos, rapido = args
+    activo, serie, tono, eventos, corpus, rapido = args
     fechas = [f for f, _ in serie]; lp = np.log(np.array([v for _, v in serie])); n = len(lp)
     i0 = bisect.bisect_left(fechas, INICIO_PREDICCION); i25 = bisect.bisect_left(fechas, PERIODOS["examen_2025"][0])
     cortes = {p: np.arange(bisect.bisect_left(fechas, a), bisect.bisect_right(fechas, b)) for p, (a, b) in PERIODOS.items()}
@@ -200,14 +247,27 @@ def correr_activo(args):
         y = np.full(n, np.nan); y[:n - h] = lp[h:] - lp[:n - h]
         Q = clasicos(lp, h, i0 - VENTANA)
         elegidos = {}
+        nombres, X, grupos = variables(fechas, lp, h, tono, eventos, corpus)
+        u = np.zeros(n); u[1:] = np.diff(lp); cs = np.cumsum(np.insert(u ** 2, 0, 0.0))
+        rvh = np.full(n, np.nan); rvh[:n - h] = np.sqrt(cs[h + 1:] - cs[1:n - h + 1])
+        t_vol = np.log(rvh + 1e-4)
+        escala = np.exp(X[:, nombres.index("lv97")]) * math.sqrt(h); t_q = y / escala
+        # motor de días parecidos: ajusta el rango del motor actual con los 25 días de noticias más parecidas
+        cols_z = [nombres.index(f"c_{t}_z") for t in TEMAS_CORPUS]
+        Z = X[:, cols_z]
+        if np.isfinite(Z[:, 0]).any():
+            Qref = Q["motor_actual"]; mejor = None
+            for beta in (0.5, 1.0):   # el beta se elige solo con la práctica
+                q = analogos(Z, y, escala, Qref, h, i0, beta)
+                m = metricas(q, y, cortes["practica"])
+                if m and (mejor is None or m["pinball"] < mejor[0]):
+                    mejor = (m["pinball"], beta, q)
+            if mejor is not None:
+                Q["analogos"] = mejor[2]; elegidos["analogos"] = {"beta": mejor[1]}
         if lgb is not None:
-            nombres, X, grupos = variables(fechas, lp, h, tono, eventos)
-            u = np.zeros(n); u[1:] = np.diff(lp); cs = np.cumsum(np.insert(u ** 2, 0, 0.0))
-            rvh = np.full(n, np.nan); rvh[:n - h] = np.sqrt(cs[h + 1:] - cs[1:n - h + 1])
-            t_vol = np.log(rvh + 1e-4)
-            escala = np.exp(X[:, nombres.index("lv97")]) * math.sqrt(h); t_q = y / escala
             col = lambda gs: [nombres.index(c) for g in gs for c in grupos[g]]
             planes = [("aprende_vol", ("base",), t_vol, (None,)), ("aprende_vol_cal", ("base", "cal"), t_vol, (None,)), ("aprende_vol_noticias", ("base", "cal", "not"), t_vol, (None,)),
+                      ("aprende_vol_corpus", ("base", "cal", "corpus"), t_vol, (None,)),
                       ("aprende_rango_cal", ("base", "cal"), t_q, QS), ("aprende_rango_noticias", ("base", "cal", "not"), t_q, QS)]
             for nombre, gs, t, alfas in planes:
                 Xc = X[:, col(gs)]; mejor = None
@@ -231,7 +291,8 @@ def correr_activo(args):
             if nombre in elegidos:
                 res[nombre]["ajustes"] = elegidos[nombre]
         efecto = {}
-        for con, sin in (("aprende_vol_noticias", "aprende_vol_cal"), ("aprende_rango_noticias", "aprende_rango_cal")):
+        for con, sin in (("aprende_vol_noticias", "aprende_vol_cal"), ("aprende_rango_noticias", "aprende_rango_cal"),
+                         ("aprende_vol_corpus", "aprende_vol_cal"), ("analogos", "motor_actual")):
             if con in Q and sin in Q:
                 efecto[con] = {}
                 for p, idx in cortes.items():
@@ -240,7 +301,9 @@ def correr_activo(args):
                         cambio = np.abs((Q[con][ok, 4] - Q[con][ok, 0]) / np.maximum(Q[sin][ok, 4] - Q[sin][ok, 0], 1e-9) - 1) * 100
                         d.update(cambio_ancho_mediano_pct=float(np.median(cambio)), cambio_ancho_p90_pct=float(np.quantile(cambio, 0.9)))
                     efecto[con][p] = d
-        salida[f"h{h}"] = {"motores": res, "efecto_noticias": efecto}
+        con_corpus = np.isfinite(Z[:, 0])
+        salida[f"h{h}"] = {"motores": res, "efecto_noticias": efecto,
+                           "dias_con_corpus": {p: int(con_corpus[idx].sum()) for p, idx in cortes.items()}}
         for nombre, q in Q.items():
             for c in range(i25, n):
                 if np.isfinite(q[c, 0]):
@@ -264,7 +327,7 @@ def veredicto(m):
 
 def informe(marcador):
     f = lambda v, d=2: "—" if v is None else f"{v:.{d}f}"
-    L = ["# Torneo del motor — ronda 1", "", f"Actualizado {marcador['actualizado']} · último dato {marcador['ultimo_dato']}", "",
+    L = ["# Torneo del motor — ronda 2", "", f"Actualizado {marcador['actualizado']} · último dato {marcador['ultimo_dato']}", "",
          "Práctica 2021-2024 (ahí se eligen ajustes), examen 2025 (ajustes congelados), confirmación 2026 (no se usa para elegir).",
          "Pinball: error del rango, menor es mejor. Razón < 1 = mejor que la referencia. p < 0,05 = la diferencia no parece azar.", ""]
     for activo, hs in marcador["activos"].items():
@@ -276,6 +339,8 @@ def informe(marcador):
                 d = lambda c: "—" if not c else f"{c['razon']:.3f} ({c['p']:.2f})"
                 L.append(f"| {nombre} | {f(ex.get('pinball'), 4)} | {f(ex.get('cobertura80'), 1)} | {f(ex.get('ancho80'))} | {d(c1)} | {d(c2)} | {f(co.get('pinball'), 4)} | {f(co.get('cobertura80'), 1)} | {m.get('veredicto') or '—'} |")
             L.append("")
+            dcc = bloque.get("dias_con_corpus") or {}
+            L.append(f"- Días con noticias del corpus: práctica {dcc.get('practica', 0)}, examen 2025 {dcc.get('examen_2025', 0)}, confirmación 2026 {dcc.get('confirmacion_2026', 0)}.")
             for con, per in bloque["efecto_noticias"].items():
                 for p in ("examen_2025", "confirmacion_2026"):
                     e = per.get(p)
@@ -287,20 +352,39 @@ def informe(marcador):
 
 def autoprueba():
     """Si se borra el futuro, la predicción y las variables de un corte no deben cambiar."""
-    series, tono, eventos = cargar(); serie = series["PEN"]; fechas = [f for f, _ in serie]; lp = np.log(np.array([v for _, v in serie]))
+    series, tono, eventos, corpus = cargar(); serie = series["PEN"]; fechas = [f for f, _ in serie]; lp = np.log(np.array([v for _, v in serie]))
     c = bisect.bisect_left(fechas, "2025-03-03"); i0 = bisect.bisect_left(fechas, INICIO_PREDICCION)
+    sig = (dt.date.fromisoformat(fechas[c]) + dt.timedelta(days=1)).isoformat()   # el corpus llega hasta el día siguiente al corte
+    tono2 = [x for x in tono if x[0] < fechas[c]]; corpus2 = [f for f in corpus if f["dia"] <= sig]
     for h in HS:
-        _, Xa, _ = variables(fechas, lp, h, tono, eventos)
-        _, Xb, _ = variables(fechas[:c + 1], lp[:c + 1], h, [x for x in tono if x[0] < fechas[c]], eventos)
+        nombres, Xa, _ = variables(fechas, lp, h, tono, eventos, corpus)
+        _, Xb, _ = variables(fechas[:c + 1], lp[:c + 1], h, tono2, eventos, corpus2)
         assert np.allclose(Xa[c], Xb[c], equal_nan=True), f"variables con fuga h={h}"
         assert np.isfinite(Xa[c]).all(), "variables vacías en el corte de prueba"
+        if corpus:   # las 13 columnas del corpus son finitas en el corte de prueba
+            cols_corpus = [f"c_{t}_z" for t in TEMAS_CORPUS] + ["c_calor"]
+            assert np.isfinite(Xa[c, [nombres.index(x) for x in cols_corpus]]).all(), "corpus vacío en el corte de prueba"
         qa, qb = clasicos(lp, h, i0 - VENTANA), clasicos(lp[:c + 1], h, i0 - VENTANA)
         for k in qa:
             assert np.allclose(qa[k][c], qb[k][c]), f"{k} con fuga h={h}"
             assert (np.diff(qa[k][c]) >= 0).all(), f"{k} cuantiles desordenados"
+    for h in (1, 5, 21):   # analogos sin fuga: recortado a [:c+1] con el y recalculado da la misma fila c
+        y = np.full(len(lp), np.nan); y[:len(lp) - h] = lp[h:] - lp[:len(lp) - h]
+        lp2 = lp[:c + 1]; y2 = np.full(c + 1, np.nan); y2[:c + 1 - h] = lp2[h:] - lp2[:c + 1 - h]
+        nombres, X, _ = variables(fechas, lp, h, tono, eventos, corpus)
+        _, X2, _ = variables(fechas[:c + 1], lp2, h, tono2, eventos, corpus2)
+        Z = X[:, [nombres.index(f"c_{t}_z") for t in TEMAS_CORPUS]]
+        Z2 = X2[:, [nombres.index(f"c_{t}_z") for t in TEMAS_CORPUS]]
+        escala = np.exp(X[:, nombres.index("lv97")]) * math.sqrt(h)
+        escala2 = np.exp(X2[:, nombres.index("lv97")]) * math.sqrt(h)
+        Qref, Qref2 = clasicos(lp, h, i0 - VENTANA)["motor_actual"], clasicos(lp2, h, i0 - VENTANA)["motor_actual"]
+        for beta in (0.5, 1.0):
+            qa = analogos(Z, y, escala, Qref, h, i0, beta)
+            qb = analogos(Z2, y2, escala2, Qref2, h, i0, beta)
+            assert np.allclose(qa[c], qb[c], equal_nan=True), f"analogos con fuga beta={beta} h={h}"
     y = np.array([0.0, 0.01, -0.02]); Q = np.tile(np.array([-0.01, -0.005, 0.0, 0.005, 0.01]), (3, 1))
     assert abs(pinball(Q, y)[0] - np.mean([0.1 * 0.01, 0.25 * 0.005, 0, 0.25 * 0.005, 0.1 * 0.01])) < 1e-12
-    print("autoprueba: sin fuga de información, cuantiles en orden, pinball correcto")
+    print("autoprueba: sin fuga de información, cuantiles en orden, pinball correcto, corpus sin fuga")
 
 
 def main():
@@ -308,10 +392,10 @@ def main():
     ap.add_argument("--salida", default=str(RAIZ / "data/torneo")); ap.add_argument("--predicciones"); a = ap.parse_args()
     if a.autoprueba:
         return autoprueba()
-    series, tono, eventos = cargar()
+    series, tono, eventos, corpus = cargar()
     activos = ["PEN"] if a.rapido else list(series)
     with Pool(min(4, len(activos))) as pool:
-        resultados = pool.map(correr_activo, [(k, series[k], tono, eventos, a.rapido) for k in activos])
+        resultados = pool.map(correr_activo, [(k, series[k], tono, eventos, corpus, a.rapido) for k in activos])
     marcador = {"actualizado": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "ultimo_dato": max(r[1] for r in resultados),
                 "protocolo": "practica 2021-2024, examen 2025, confirmacion 2026", "con_aprendizaje": lgb is not None, "rapido": a.rapido, "activos": {}}
     for activo, _, salida, _ in resultados:
