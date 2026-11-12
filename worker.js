@@ -713,6 +713,16 @@ const JOBS = [
       const r = await fetch(`https://raw.githubusercontent.com/${REPO}/main/data/boletin-last.json?t=${d.getTime()}`);
       return !(r.ok && (await r.json()).date === today);
     } },
+  // Afternoon capture of the 1:30 p. m. close: weekdays 14:15–17:30 Lima, only while today's provisional is missing
+  { file: "cierre-tarde.yml", minGapMin: 25, due: (d) => {
+    const lima = new Date(d.getTime() - 5 * 36e5);
+    const mins = lima.getUTCHours() * 60 + lima.getUTCMinutes();
+    return lima.getUTCDay() >= 1 && lima.getUTCDay() <= 5 && mins >= 855 && mins <= 1050;
+  }, check: async (d) => {
+    const today = new Date(d.getTime() - 5 * 36e5).toISOString().slice(0, 10);
+    const r = await fetch(`https://raw.githubusercontent.com/${REPO}/main/data/official/cierre-1330.json?t=${d.getTime()}`);
+    return !(r.ok && ((await r.json()).provisional || {}).fecha === today);
+  } },
 ];
 
 async function dispatchDueWorkflows(env) {
