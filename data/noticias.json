@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-12T13:01:30.183Z",
+  "actualizado": "2026-11-12T16:01:38.011Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,17 +24,17 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 71
+      "items": 64
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 56
+      "items": 62
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 6
+      "items": 9
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -44,7 +44,7 @@
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 8
+      "items": 10
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 13
+      "items": 15
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -64,220 +64,256 @@
   },
   "noticias": [
     {
-      "id": "inei-5f10bfd390",
-      "titulo": "Población ocupada en Lima Metropolitana aumentó en 6,0% en el tercer trimestre 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1457077-poblacion-ocupada-en-lima-metropolitana-aumento-en-6-0-en-el-tercer-trimestre-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.266Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-deb989e00d",
-      "titulo": "Producción nacional presentó un crecimiento de 3,23% en agosto 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1457074-produccion-nacional-presento-un-crecimiento-de-3-23-en-agosto-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.266Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-a3e46e0f5d",
-      "titulo": "INEI: Tacna tiene una población más envejecida que el promedio nacional",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1456676-inei-tacna-tiene-una-poblacion-mas-envejecida-que-el-promedio-nacional",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.266Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-d4a2729b98",
-      "titulo": "Volumen total exportado subió 17,7% en agosto de 2026 impulsado por mayores envíos tradicionales",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1456078-volumen-total-exportado-subio-17-7-en-agosto-de-2026-impulsado-por-mayores-envios-tradicionales",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.266Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-b0e1764858",
-      "titulo": "INEI instala el Consejo Consultivo Nacional de Estadística",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1454601-inei-instala-el-consejo-consultivo-nacional-de-estadistica",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.266Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-866b925e5f",
-      "titulo": "Población de Apurímac vuelve a crecer con alta presencia de adultos mayores",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1452213-poblacion-de-apurimac-vuelve-a-crecer-con-alta-presencia-de-adultos-mayores",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.266Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-b62b9c9966",
-      "titulo": "INEI y ACNUR dialogan sobre la importancia de la información de la población extranjera como herramienta para el diseño de políticas pública",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1451739-inei-y-acnur-dialogan-sobre-la-importancia-de-la-informacion-de-la-poblacion-extranjera-como-herramienta-para-el-diseno-de-politicas-publica",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.266Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-1b3a6c0c8c",
-      "titulo": "Consumo interno de cemento subió 7,6% en agosto de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1451370-consumo-interno-de-cemento-subio-7-6-en-agosto-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.266Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-b3e5ef7861",
-      "titulo": "INEI: Precios al consumidor de Lima Metropolitana aumentaron 0,12% en setiembre de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1451369-inei-precios-al-consumidor-de-lima-metropolitana-aumentaron-0-12-en-setiembre-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.266Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-6026195c80",
-      "titulo": "El 45,6% de los hogares del país tenía al menos una persona adulta mayor entre abril y junio de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1450977-el-45-6-de-los-hogares-del-pais-tenia-al-menos-una-persona-adulta-mayor-entre-abril-y-junio-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.266Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-65a8cef473",
-      "titulo": "54 de cada 100 municipalidades provinciales y distritales del país tienen conformado el Centro de Operaciones de Emergencia Local",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1472369-54-de-cada-100-municipalidades-provinciales-y-distritales-del-pais-tienen-conformado-el-centro-de-operaciones-de-emergencia-local",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.265Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-c24fb02492",
-      "titulo": "INEI: Precios al consumidor de Lima Metropolitana subieron 0,57% en octubre de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1466754-inei-precios-al-consumidor-de-lima-metropolitana-subieron-0-57-en-octubre-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.265Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-0d4444e1c2",
-      "titulo": "Consumo interno de cemento subió 12,22% en setiembre 2026 y en el periodo enero-setiembre en 11,96%",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1466755-consumo-interno-de-cemento-subio-12-22-en-setiembre-2026-y-en-el-periodo-enero-setiembre-en-11-96",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.265Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-37900b23e9",
-      "titulo": "Censos Nacionales 2025: Disminuye la población menor de 15 años en la Región Lima",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1465128-censos-nacionales-2025-disminuye-la-poblacion-menor-de-15-anos-en-la-region-lima",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.265Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-7e1824fb47",
-      "titulo": "Producción de arándanos en Ica, Piura, Lima, Áncash y La Libertad concentró el 81,6% del total nacional en agosto de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1464747-produccion-de-arandanos-en-ica-piura-lima-ancash-y-la-libertad-concentro-el-81-6-del-total-nacional-en-agosto-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.265Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-bca4467f68",
-      "titulo": "Producción de agua potable en Lima Metropolitana aumentó 3,8% en setiembre de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1462449-produccion-de-agua-potable-en-lima-metropolitana-aumento-3-8-en-setiembre-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.265Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-9da8da02aa",
-      "titulo": "Tráfico vehicular en garitas de peajes a nivel nacional creció 2,7% en agosto de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1460705-trafico-vehicular-en-garitas-de-peajes-a-nivel-nacional-crecio-2-7-en-agosto-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.265Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-925fae2aba",
-      "titulo": "Sector comercio creció 6,89% durante agosto 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1460688-sector-comercio-crecio-6-89-durante-agosto-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.265Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-365fc49b7a",
-      "titulo": "Actividad de restaurantes reportó alza de 1,13% en agosto de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1460686-actividad-de-restaurantes-reporto-alza-de-1-13-en-agosto-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.265Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-0b0af4a0b3",
-      "titulo": "Sector servicios prestados a empresas registró aumento de 3,91% en agosto de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1460681-sector-servicios-prestados-a-empresas-registro-aumento-de-3-91-en-agosto-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.265Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-58eced89e2",
-      "titulo": "Viviendas de Huánuco cuentan con más servicios básicos entre 2017 y 2025",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1459110-viviendas-de-huanuco-cuentan-con-mas-servicios-basicos-entre-2017-y-2025",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.265Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-832d1011ec",
-      "titulo": "Censos Nacionales 2025: Población de Pasco continúa en descenso",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1459066-censos-nacionales-2025-poblacion-de-pasco-continua-en-descenso",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.265Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-cc309d802e",
-      "titulo": "INEI, MINEM e INGEMMET firman convenio para la realización del I Censo de la Pequeña Minería y Minería Artesanal",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1457905-inei-minem-e-ingemmet-firman-convenio-para-la-realizacion-del-i-censo-de-la-pequena-mineria-y-mineria-artesanal",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.265Z",
+      "id": "andina-e955798778",
+      "titulo": "Perú: crece confianza de inversionistas para desarrollar proyectos minero-energéticos",
+      "url": "https://andina.pe/agencia/noticia-peru-crece-confianza-inversionistas-para-desarrollar-proyectos-mineroenergeticos-1099656.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-12T16:00:47.000Z",
       "categoria": "Minería y metales",
       "semaforo": "VERDE"
     },
     {
-      "id": "inei-7027a3e8f9",
-      "titulo": "Censos Nacionales 2025: Moquegua es la segunda región más envejecida del Perú con un índice de 86,9",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1457276-censos-nacionales-2025-moquegua-es-la-segunda-region-mas-envejecida-del-peru-con-un-indice-de-86-9",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-12T13:01:10.265Z",
-      "categoria": "Otros",
+      "id": "el_comercio-8ee8ad7bb9",
+      "titulo": "Wall Street abre mixto y Nvidia pierde cerca de un 6 % tras renuncia de su CEO",
+      "url": "https://elcomercio.pe/economia/mercados/wall-street-abre-mixto-y-nvidia-pierde-cerca-de-un-6-tras-renuncia-de-su-ceo-l-mercados-l-wall-street-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-12T15:53:39.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-f014ef60b6",
+      "titulo": "El riesgo de impago de Nvidia se mantiene cerca de niveles récord tras la renuncia de Huang",
+      "url": "https://www.bloomberglinea.com/mercados/el-riesgo-de-impago-de-nvidia-se-mantiene-cerca-de-niveles-record-tras-la-renuncia-de-huang/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-12T15:35:01.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-f23c0191e0",
+      "titulo": "Bolsa de Valores de Lima presenta pérdidas al inicio en sintonía con Wall Street",
+      "url": "https://andina.pe/agencia/noticia-bolsa-valores-lima-presenta-perdidas-al-inicio-sintonia-wall-street-1099648.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-12T15:30:00.000Z",
+      "categoria": "Bolsa y empresas",
       "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-e052a1426a",
+      "titulo": "Perupetro prevé firmar 5 nuevos contratos exploratorios el 2027, ¿a dónde apuntan?",
+      "url": "https://gestion.pe/economia/petroleo-y-gas-natural-perupetro-preve-firmar-5-nuevos-contratos-exploratorios-el-2027-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-12T15:29:19.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-4284659bf8",
+      "titulo": "Hidrovía Amazónica está antes que el Tren Bioceánico en agenda para conectar con Brasil",
+      "url": "https://gestion.pe/economia/hidrovia-amazonica-esta-antes-que-el-tren-bioceanico-en-agenda-para-conectar-peru-con-brasil-lo-que-dice-el-mtc-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-12T15:26:27.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-f126d63efd",
+      "titulo": "Nvidia cae un 7,45% en bolsa tras la dimisión de su cofundador, Jensen Huang",
+      "url": "https://elcomercio.pe/economia/mercados/nvidia-cae-un-745-en-bolsa-tras-la-dimision-de-su-cofundador-jensen-huang-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-12T15:22:52.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-dcf7650021",
+      "titulo": "Tisur alista nueva grúa en puerto de Matarani como parte de inversión por US$ 598 millones",
+      "url": "https://gestion.pe/economia/empresas/puerto-de-matarani-tisur-suma-grua-konecranes-a-su-plan-de-inversion-de-us-598-millones-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-12T15:17:45.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-0f64dab69e",
+      "titulo": "¿Cuál es la cotización del dólar hoy jueves 12 de noviembre del 2026?",
+      "url": "https://andina.pe/agencia/noticia-cual-es-cotizacion-del-dolar-hoy-jueves-12-noviembre-del-2026-1099646.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-12T15:15:26.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "bloomberg_linea-195439380c",
+      "titulo": "El valor de mercado de Nvidia cae por debajo de los US$4 billones tras la renuncia de Huang",
+      "url": "https://www.bloomberglinea.com/mercados/el-valor-de-mercado-de-nvidia-cae-por-debajo-de-los-us4-billones-tras-la-renuncia-de-huang/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-12T15:14:43.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-a7179b148c",
+      "titulo": "Tiroteo cerca de la Casa Blanca causa despliegue policial en Washington D.C. y se reportan varios heridos",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/tiroteo-cerca-de-la-casa-blanca-causa-despliegue-policial-en-washington-dc-y-se-reportan-varios-heridos/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-12T15:09:39.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-da0d635567",
+      "titulo": "Entel inicia búsqueda de compradores para su operación en Perú: Millicom está interesado",
+      "url": "https://gestion.pe/economia/empresas/entel-evalua-vender-su-operacion-en-peru-y-millicom-figura-entre-los-posibles-compradores-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-12T15:07:43.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-cdc1da4bd4",
+      "titulo": "Estados Unidos: varias personas heridas en tiroteo en Washington mientras la policía busca a sospechoso",
+      "url": "https://rpp.pe/mundo/estados-unidos/estados-unidos-varias-personas-heridas-en-tiroteo-en-washington-mientras-la-policia-busca-a-sospechoso-noticia-1717416",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-12T15:04:52.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-724fef629f",
+      "titulo": "Precio del dólar hoy en Perú, jueves 12 noviembre: consulta el tipo de cambio para compra y venta",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/11/precio-del-dolar-hoy-en-peru-jueves-12-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-1030381",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-12T14:58:40.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-7649413513",
+      "titulo": "ONP: 10,471 personas recibirán pensión desde el lunes 16 de noviembre sin salir de casa",
+      "url": "https://andina.pe/agencia/noticia-onp-10471-personas-recibiran-pension-desde-lunes-16-noviembre-sin-salir-casa-1099640.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-12T14:46:36.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "el_comercio-b32fbeb3a9",
+      "titulo": "Precio del dólar en Perú: tipo de cambio hoy, jueves 12 de noviembre",
+      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-2026-a-cuanto-esta-el-tipo-de-cambio-este-jueves-12-de-noviembre-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-12T14:18:54.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-7ef55a8b95",
+      "titulo": "Esposo de Estrella Torres aparece en app de citas, pero asegura que es IA: “Ahora hay tanta tecnología”",
+      "url": "https://www.infobae.com/peru/2026/11/12/esposo-de-estrella-torres-aparece-en-app-de-citas-pero-asegura-que-es-ia-ahora-hay-tanta-tecnologia/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-12T14:17:49.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-61535f3790",
+      "titulo": "Jensen Huang, CEO de Nvidia, renuncia al cargo en medio de crisis por infidelidad con presunta espía china",
+      "url": "https://elcomercio.pe/economia/mundo/jensen-huang-ceo-de-nvidia-renuncia-a-su-cargo-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-12T14:16:46.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-29fa0e926e",
+      "titulo": "Jensen Huang renunció como CEO de Nvidia tras escándalo de infidelidad",
+      "url": "https://rpp.pe/mundo/estados-unidos/jensen-huang-renuncia-como-ceo-de-nvidia-tras-escandalo-de-infidelidad-noticia-1717404",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-12T14:15:48.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "inei-2e24b4346c",
+      "titulo": "INEI: Importaciones crecieron 7,3% y exportaciones disminuyeron 8,0% en setiembre de 2026",
+      "url": "https://www.gob.pe/institucion/inei/noticias/1472937-inei-importaciones-crecieron-7-3-y-exportaciones-disminuyeron-8-0-en-setiembre-de-2026",
+      "fuente": "Instituto Nacional de Estadística e Informática",
+      "fecha_iso": "2026-11-12T14:12:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "el_comercio-62c1821baa",
+      "titulo": "Scotiabank: 6 de cada 10 soles retirados de la CTS permanecen en cuentas bancarias",
+      "url": "https://elcomercio.pe/economia/peru/scotiabank-6-de-cada-10-soles-retirados-de-la-cts-permanecen-en-cuentas-bancarias-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-12T14:09:58.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-1e5eb6bf89",
+      "titulo": "Papa León XIV volvió a casa: su visita movería S/300 millones y estos productos podrían estar entre los más vendidos",
+      "url": "https://elcomercio.pe/economia/peru/visita-del-papa-moveria-s300-millones-estos-productos-podrian-estar-entre-los-mas-vendidos-l-apuesplan-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-12T13:55:51.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-2a5a6c5940",
+      "titulo": "Remo peruano mira más allá de La Punta: el plan para ampliar su alcance",
+      "url": "https://gestion.pe/economia/empresas/remo-peruano-mira-mas-alla-de-la-punta-el-plan-para-ampliar-su-alcance-y-llegar-a-provincias-y-a-mas-patrocinadores-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-12T13:50:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-3c2051ff40",
+      "titulo": "Papa León XIV llegó al Perú: las mypes se llenan de fe y podrían dinamizarse hasta por S/1.200 millones, ¿qué productos del Santo Padre sorprenden?",
+      "url": "https://elcomercio.pe/economia/peru/visita-del-papa-leon-xiv-podria-movilizar-hasta-s1200-millones-y-dinamizar-el-segmento-mype-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-12T13:43:10.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-b97f156c93",
+      "titulo": "PromPerú impulsa oportunidades de inversiones y negocios en Alemania",
+      "url": "https://andina.pe/agencia/noticia-promperu-impulsa-oportunidades-inversiones-y-negocios-alemania-1099617.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-12T13:35:55.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "infobae-71362f9afc",
+      "titulo": "Cómo avanza el proyecto del noveno retiro AFP al día de hoy, 12 de noviembre: todo lo que debes saber",
+      "url": "https://www.infobae.com/peru/2026/11/09/como-va-el-proyecto-del-noveno-retiro-afp-al-dia-de-hoy-9-de-noviembre-lo-que-debes-saber/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-12T13:29:08.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-5185b36c30",
+      "titulo": "Riesgo país de Argentina podría oscilar entre 700 y 900 hasta las elecciones, dice Filippini de Adcap",
+      "url": "https://www.bloomberglinea.com/latinoamerica/argentina/riesgo-pais-de-argentina-podria-oscilar-entre-700-y-900-hasta-las-elecciones-dice-filippini-de-adcap/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-12T13:07:00.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-10dd475f2b",
+      "titulo": "Precio del euro hoy en Perú: cotización de apertura del 12 de noviembre",
+      "url": "https://www.infobae.com/peru/2026/11/12/precio-del-euro-hoy-en-peru-cotizacion-de-apertura-del-12-de-noviembre/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-12T13:01:58.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
     },
     {
       "id": "el_comercio-d9453958a8",
@@ -325,30 +361,12 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "la_republica-724fef629f",
-      "titulo": "Precio del dólar hoy en Perú, jueves 12 noviembre: consulta el tipo de cambio para compra y venta",
-      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/11/precio-del-dolar-hoy-en-peru-jueves-12-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-1030381",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-12T12:11:04.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "infobae-34f9017cde",
       "titulo": "Este es el precio de la gasolina en Lima hoy jueves 12 de noviembre",
       "url": "https://www.infobae.com/peru/2026/11/12/este-es-el-precio-de-la-gasolina-en-lima-hoy-jueves-12-de-noviembre/",
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-12T12:01:38.000Z",
       "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-b32fbeb3a9",
-      "titulo": "Precio del dólar hoy: cuál es el tipo de cambio para el jueves 12 de noviembre",
-      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-2026-a-cuanto-esta-el-tipo-de-cambio-este-jueves-12-de-noviembre-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T12:00:00.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -451,18 +469,18 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-f621f61191",
-      "titulo": "Nuevo parque logístico en Lurín: LPA invertirá con socios tras vender Parque Lima Sur",
-      "url": "https://gestion.pe/economia/empresas/logistic-properties-tras-vender-parque-lima-sur-alista-parque-logistico-en-lurin-por-us-85-millones-noticia/",
+      "id": "gestion-e9c1e63cc4",
+      "titulo": "Confiep: preocupa respuesta frente a El Niño porque nuevos alcaldes llegarán tarde a enfrentarlo",
+      "url": "https://gestion.pe/economia/confiep-sobre-el-nino-preocupa-respuesta-frente-al-fenomeno-porque-nuevos-alcaldes-llegaran-tarde-a-enfrentarlo-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-12T10:30:00.000Z",
       "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-e9c1e63cc4",
-      "titulo": "Confiep: preocupa respuesta frente a El Niño porque nuevos alcaldes llegarán tarde a enfrentarlo",
-      "url": "https://gestion.pe/economia/confiep-sobre-el-nino-preocupa-respuesta-frente-al-fenomeno-porque-nuevos-alcaldes-llegaran-tarde-a-enfrentarlo-noticia/",
+      "id": "gestion-f621f61191",
+      "titulo": "Nuevo parque logístico en Lurín: LPA invertirá con socios tras vender Parque Lima Sur",
+      "url": "https://gestion.pe/economia/empresas/logistic-properties-tras-vender-parque-lima-sur-alista-parque-logistico-en-lurin-por-us-85-millones-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-12T10:30:00.000Z",
       "categoria": "Otros",
@@ -483,15 +501,6 @@
       "url": "https://www.bloomberglinea.com/mercados/opi-de-anthropic-podria-desencadenar-una-correccion-en-el-mercado-de-ia-advierte-inversor/",
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-12T08:58:02.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-5185b36c30",
-      "titulo": "Riesgo país de Argentina podría oscilar entre 700 y 900 hasta las elecciones, dice Filippini de Adcap",
-      "url": "https://www.bloomberglinea.com/latinoamerica/argentina/riesgo-pais-de-argentina-podria-oscilar-entre-700-y-900-hasta-las-elecciones-dice-filippini-de-adcap/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-12T08:40:00.000Z",
       "categoria": "Mundo",
       "semaforo": "AMARILLO"
     },
@@ -595,15 +604,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-1e5eb6bf89",
-      "titulo": "Visita del papa León XIV movería S/300 millones: estos productos podrían estar entre los más vendidos",
-      "url": "https://elcomercio.pe/economia/peru/visita-del-papa-moveria-s300-millones-estos-productos-podrian-estar-entre-los-mas-vendidos-l-apuesplan-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T01:30:58.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-224fb87a11",
       "titulo": "Comunal alcanza 34,000 m2 de coworking en Lima con nueva sede",
       "url": "https://gestion.pe/economia/empresas/comunal-inaugura-sede-en-chacarilla-surco-y-alcanza-34000-m2-de-espacios-de-coworking-en-lima-noticia/",
@@ -618,15 +618,6 @@
       "url": "https://gestion.pe/economia/peru-y-brasil-avanzaran-acuerdo-comercial-en-los-proximos-meses-lo-que-alista-el-mincetur-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-12T01:05:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-4284659bf8",
-      "titulo": "Hidrovía Amazónica está antes que el Tren Bioceánico en agenda para conectar con Brasil",
-      "url": "https://gestion.pe/economia/hidrovia-amazonica-esta-antes-que-el-tren-bioceanico-en-agenda-para-conectar-peru-con-brasil-lo-que-dice-el-mtc-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-12T00:57:00.000Z",
       "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
@@ -646,15 +637,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-12T00:11:18.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-3c2051ff40",
-      "titulo": "Visita del Papa León XIV podría movilizar hasta S/1.200 millones y dinamizar a las mypes: lo que se prepara y las cifras de su arribo",
-      "url": "https://elcomercio.pe/economia/peru/visita-del-papa-leon-xiv-podria-movilizar-hasta-s1200-millones-y-dinamizar-el-segmento-mype-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T00:03:20.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -989,42 +971,6 @@
       "fecha_iso": "2026-11-11T20:00:59.000Z",
       "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-9722f15419",
-      "titulo": "Congreso aprueba extender exoneración del Impuesto a la Renta a intereses de ahorros",
-      "url": "https://gestion.pe/economia/congreso-aprueba-extender-exoneracion-del-impuesto-a-la-renta-a-intereses-de-ahorros-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-11T20:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-8e31b0a4b8",
-      "titulo": "CTS: conoce cuándo puedes retirar el 100% de tu dinero y cómo aprovecharlo",
-      "url": "https://andina.pe/agencia/noticia-cts-conoce-cuando-puedes-retirar-100-tu-dinero-y-como-aprovecharlo-1098519.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-11T19:59:32.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "el_comercio-2a8618fcd1",
-      "titulo": "Consejo Fiscal sostiene que el fenómeno de El Niño justifica ajuste a reglas fiscales, pero pidió considerar este punto",
-      "url": "https://elcomercio.pe/economia/peru/consejo-fiscal-sostiene-que-el-fenomeno-de-el-nino-justifica-ajuste-a-reglas-fiscales-pero-pidio-considerar-este-punto-l-apuesplan-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-11T19:41:54.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-56fc6fd4f5",
-      "titulo": "Inversión minera se acelera en el Perú ante mejora de expectativas empresariales",
-      "url": "https://andina.pe/agencia/noticia-inversion-minera-se-acelera-el-peru-ante-mejora-expectativas-empresariales-1099523.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-11T19:35:56.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "VERDE"
     }
   ]
 }
