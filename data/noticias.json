@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-12T23:31:43.699Z",
+  "actualizado": "2026-11-12T23:38:53.526Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -48,8 +48,8 @@
     },
     "semana_economica": {
       "nombre": "Semana Económica",
-      "ok": true,
-      "items": 15
+      "ok": false,
+      "items": 0
     },
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
@@ -68,7 +68,7 @@
       "titulo": "BCRP sube a 4,50% su tasa de referencia ante inflación en máximos de tres años",
       "url": "https://larepublica.pe/economia/2026/11/12/bcrp-eleva-su-tasa-de-interes-a-450-y-rompe-14-meses-de-pausa-ante-inflacion-record-en-tres-anos-hnews-271524",
       "fuente": "La República Economía",
-      "fecha_iso": "2026-11-12T23:27:29.000Z",
+      "fecha_iso": "2026-11-12T23:33:55.000Z",
       "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
@@ -97,15 +97,6 @@
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-12T22:59:06.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "semana_economica-fb05b8abb5",
-      "titulo": "BBVA Research: consumo privado creció 9% en octubre y mostró una ligera moderación",
-      "url": "https://www.semanaeconomica.com/que-esta-pasando/articulos/",
-      "fuente": "Semana Económica",
-      "fecha_iso": "2026-11-12T22:51:07.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -649,15 +640,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "semana_economica-9660a77f83",
-      "titulo": "Buenaventura aumentó 50% su utilidad neta en el 3T26, hasta US$268.4 millones",
-      "url": "https://www.semanaeconomica.com/sectores-empresas/mineria/",
-      "fuente": "Semana Económica",
-      "fecha_iso": "2026-11-12T16:55:29.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-1af9c53114",
       "titulo": "CTS: ¿Cuándo vence el plazo para que las empresas hagan el depósito de noviembre?",
       "url": "https://andina.pe/agencia/noticia-cts-cuando-vence-plazo-para-las-empresas-hagan-deposito-noviembre-1099324.aspx",
@@ -754,15 +736,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-12T15:22:52.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "semana_economica-48c424a3d1",
-      "titulo": "Matriz chilena de Entel inició proceso para la venta de su operación en el Perú",
-      "url": "https://www.semanaeconomica.com/sectores-empresas/telecomunicaciones/",
-      "fuente": "Semana Económica",
-      "fecha_iso": "2026-11-12T15:20:47.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -933,6 +906,33 @@
       "url": "https://gestion.pe/economia/empresas/visita-del-papa-leon-xiv-moveria-millones-en-turismo-comercio-y-transporte-en-peru-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-12T10:15:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-a3695cb8e1",
+      "titulo": "OPI de Anthropic podría desencadenar una corrección en el mercado de IA, advierte inversor",
+      "url": "https://www.bloomberglinea.com/mercados/opi-de-anthropic-podria-desencadenar-una-correccion-en-el-mercado-de-ia-advierte-inversor/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-12T08:58:02.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-9a499b2e86",
+      "titulo": "Presunta espía china vinculada a Nvidia regresa a Pekín en medio del escándalo que amenaza a Jensen Huang",
+      "url": "https://www.bloomberglinea.com/negocios/presunta-espia-china-vinculada-a-nvidia-regresa-a-pekin-en-medio-del-escandalo-que-amenaza-a-jensen-huang/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-12T05:39:03.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-02a3310f49",
+      "titulo": "Leche Gloria aumenta sus inversiones de capital en 84.6%: ¿en qué está destinando sus recursos?",
+      "url": "https://gestion.pe/economia/empresas/leche-gloria-eleva-a-s226-millones-sus-proyectos-en-curso-que-busca-ampliar-en-su-operacion-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-12T02:00:00.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     }

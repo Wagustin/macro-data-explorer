@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-12T23:31:54.301Z",
+ "actualizado": "2026-11-12T23:38:57.491Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "items": {
   "el_comercio-1872eaa44a": {
@@ -500,14 +500,6 @@
    "sentimiento": "NEGATIVO",
    "empresas": []
   },
-  "semana_economica-fb05b8abb5": {
-   "relevancia": "MEDIA",
-   "tema": "Economía y fiscal",
-   "sentimiento": "POSITIVO",
-   "empresas": [
-    "BBVAC1"
-   ]
-  },
   "andina-154120fb7c": {
    "relevancia": "BAJA",
    "tema": "Mundo",
@@ -582,17 +574,25 @@
     "BVN"
    ]
   },
-  "semana_economica-9660a77f83": {
-   "relevancia": "ALTA",
-   "tema": "Bolsa y empresas",
+  "bloomberg_linea-a3695cb8e1": {
+   "relevancia": "BAJA",
+   "tema": "Mundo",
    "sentimiento": "NEUTRO",
    "empresas": []
   },
-  "semana_economica-48c424a3d1": {
-   "relevancia": "ALTA",
+  "bloomberg_linea-9a499b2e86": {
+   "relevancia": "BAJA",
    "tema": "Mundo",
-   "sentimiento": "NEGATIVO",
+   "sentimiento": "NEUTRO",
    "empresas": []
+  },
+  "gestion-02a3310f49": {
+   "relevancia": "ALTA",
+   "tema": "Bolsa y empresas",
+   "sentimiento": "POSITIVO",
+   "empresas": [
+    "GLORIAI1"
+   ]
   }
  },
  "descartados": [
@@ -892,6 +892,7 @@
   "infobae-c6f7c64965",
   "bloomberg_linea-b40e7f5335",
   "rpp-3ff00058e3",
-  "infobae-1fecf60fd8"
+  "infobae-1fecf60fd8",
+  "el_comercio-db9a168e59"
  ]
 }
