@@ -12,6 +12,8 @@ const BCRP_PATH = path.join(ROOT, "data", "official", "bcrp-daily.json");
 const FORECASTS_PATH = path.join(ROOT, "data", "daily-forecasts.json");
 const GDELT_DAILY_PATH = path.join(ROOT, "data", "official", "gdelt-daily.json");
 const GDELT_MONTHLY_PATH = path.join(ROOT, "data", "official", "gdelt-news.json");
+const BCRP_CONTEXTO_PATH = path.join(ROOT, "data", "official", "bcrp-contexto.json");
+const CIERRE_1330_PATH = path.join(ROOT, "data", "official", "cierre-1330.json");
 
 /**
  * Feriados oficiales de Perú en 2026 y 2027 (lista fija).
@@ -626,6 +628,25 @@ export function generateDailyForecasts(bcrpData, options = {}) {
 
     const sDate = sym === "WTI" ? "2020-07-01" : "2019-01-01";
 
+    // El dólar (PEN) puede afinarse a 1 día con el cierre interbancario de
+    // la 1:30 p. m. del último día, si ese dato ya se conoce.
+    let cierreAfinado = null;
+    if (sym === "PEN") {
+      const { cierres, fuente } = cargarCierres(
+        options.contexto,
+        options.cierre1330,
+        lastDate,
+        lastClose,
+      );
+      if (fuente !== null) {
+        const P = prepararCierre(serie, cierres);
+        const r = rangoConCierre(P, serie.length - 1);
+        if (r !== null) {
+          cierreAfinado = { P, r, cierres, fuente };
+        }
+      }
+    }
+
     for (const h of horizons) {
       const bt = runFHSBacktest(serie, h, { startDate: sDate, sym });
       const curr = computeCurrentFHSQuantiles(serie, h);
@@ -664,6 +685,44 @@ export function generateDailyForecasts(bcrpData, options = {}) {
           ancho_medio_pct_k_expansivo: bt.expansivo.ancho_medio_pct,
         },
       };
+
+      // Afinado del dólar a 1 día con el cierre interbancario de la 1:30 p. m.
+      // del último día: el centro y la banda se corrigen hacia ese cierre.
+      if (h === 1 && cierreAfinado) {
+        const { P, r, cierres, fuente } = cierreAfinado;
+        const fc = symEntry.pronosticos.h1;
+
+        fc.p10 = Number((lastClose * Math.exp(r.q10)).toFixed(4));
+        fc.p25 = Number((lastClose * Math.exp(r.q25)).toFixed(4));
+        fc.p50 = Number((lastClose * Math.exp(r.q50)).toFixed(4));
+        fc.p75 = Number((lastClose * Math.exp(r.q75)).toFixed(4));
+        fc.p90 = Number((lastClose * Math.exp(r.q90)).toFixed(4));
+        fc.ancho_banda_pct = Number((((fc.p90 - fc.p10) / lastClose) * 100).toFixed(2));
+
+        // El rango afinado ya está calibrado: no hay factor K que aplicar.
+        const b = backtestConCierre(P, "2019-01-01");
+        fc.backtest.cobertura_80_real = b.cobertura_80;
+        fc.backtest.cobertura_80_fuera_muestra = b.cobertura_80;
+        fc.backtest.cobertura_80_k_expansivo = b.cobertura_80;
+        fc.backtest.cobertura_50_real = b.cobertura_50;
+        fc.backtest.cobertura_50_fuera_muestra = b.cobertura_50;
+        fc.backtest.cobertura_50_k_expansivo = b.cobertura_50;
+        fc.backtest.ancho_medio_pct = b.ancho_medio_pct;
+        fc.backtest.ancho_medio_pct_fuera_muestra = b.ancho_medio_pct;
+        fc.backtest.ancho_medio_pct_k_expansivo = b.ancho_medio_pct;
+        fc.backtest.mae_p50 = b.mae_p50;
+        fc.backtest.mae_fuera_muestra = b.mae_p50;
+        fc.backtest.factor_k = 1;
+        fc.backtest.factor_k_entrenamiento = 1;
+        fc.backtest.cortes_evaluados = b.cortes;
+
+        fc.afinado = {
+          metodo: "cierre_1330",
+          fecha: lastDate,
+          cierre: cierres[lastDate],
+          fuente,
+        };
+      }
     }
 
     // Identificar horizonte para 'manana' (siguiente día hábil tras HOY en Lima)
@@ -699,6 +758,8 @@ export function generateDailyForecasts(bcrpData, options = {}) {
       p90: matchManana.p90,
       ancho_banda_pct: matchManana.ancho_banda_pct,
       backtest: matchManana.backtest,
+      // El refinamiento con el cierre de la 1:30 sólo aplica al horizonte de 1 día.
+      ...(matchManana.afinado ? { afinado: matchManana.afinado } : {}),
     };
 
     symEntry.semana = {
@@ -843,10 +904,31 @@ export async function main() {
     }
   }
 
+  // 1b. Contexto BCRP (serie de cierres interbancarios) y cierre de la 1:30 p. m.
+  const leerJsonOpcional = (filePath) => {
+    if (!fs.existsSync(filePath)) return null;
+    try {
+      return JSON.parse(fs.readFileSync(filePath, "utf8"));
+    } catch {
+      // Ignorar fallo de lectura: el motor sigue sin el refinamiento
+      return null;
+    }
+  };
+
+  const contexto = leerJsonOpcional(BCRP_CONTEXTO_PATH);
+  const cierre1330 = leerJsonOpcional(CIERRE_1330_PATH);
+
   // 2. Generar pronósticos diarios
-  const forecasts = generateDailyForecasts(bcrp);
+  const forecasts = generateDailyForecasts(bcrp, { contexto, cierre1330 });
   fs.writeFileSync(FORECASTS_PATH, JSON.stringify(forecasts, null, 2) + "\n", "utf8");
   console.log(`Pronósticos guardados en ${FORECASTS_PATH}`);
+
+  const afinadoPen = forecasts.simbolos?.PEN?.pronosticos?.h1?.afinado;
+  console.log(
+    afinadoPen
+      ? `Dólar a 1 día afinado con el cierre de la 1:30 (${afinadoPen.fuente}): ${afinadoPen.cierre} S/ del ${afinadoPen.fecha}`
+      : "Dólar a 1 día sin cierre de la 1:30 (sin afinar)",
+  );
 
   // 3. Evaluar noticias
   const newsEval = evaluateNewsCovariate(bcrp, gdeltDaily);
