@@ -474,7 +474,14 @@ export function prepararCierre(serie, cierres) {
   for (let j = 0; j < n - 1; j++) y[j] = lp[j + 1] - lp[j];
   y[n - 1] = NaN;
 
-  return { fechas, precios, lp, s: sigma, gc, y };
+  // Log del cierre de la 1:30 p. m. de cada día, sin centrar (NaN si no hay).
+  const lc = new Float64Array(n);
+  for (let i = 0; i < n; i++) {
+    const cierre = cierres?.[fechas[i]];
+    lc[i] = cierre === undefined || cierre === null ? NaN : Math.log(cierre);
+  }
+
+  return { fechas, precios, lp, s: sigma, gc, y, lc };
 }
 
 /**
@@ -551,6 +558,118 @@ export function backtestConCierre(P, desde) {
     const p75 = precios[c] * Math.exp(r.q75);
     const p90 = precios[c] * Math.exp(r.q90);
     const real = precios[c + 1];
+
+    if (p10 <= real && real <= p90) dentro80++;
+    if (p25 <= real && real <= p75) dentro50++;
+    ancho += ((p90 - p10) / precios[c]) * 100;
+    mae += Math.abs(real - p50);
+    cortes++;
+  }
+
+  if (cortes === 0) {
+    return {
+      cobertura_80: 0,
+      cobertura_50: 0,
+      ancho_medio_pct: 0,
+      mae_p50: 0,
+      cortes: 0,
+    };
+  }
+
+  return {
+    cobertura_80: Number(((dentro80 / cortes) * 100).toFixed(2)),
+    cobertura_50: Number(((dentro50 / cortes) * 100).toFixed(2)),
+    ancho_medio_pct: Number((ancho / cortes).toFixed(2)),
+    mae_p50: Number((mae / cortes).toFixed(4)),
+    cortes,
+  };
+}
+
+/**
+ * Rango a 2 días hábiles desde la tarde de T-1 (gemelo de cierre_tarde del torneo).
+ * En el corte c se conoce el SBS hasta c y el cierre de la 1:30 p. m. del día hábil siguiente (c + 1).
+ * x = log(cierre de c+1) - log(SBS de c), sin centrar; objetivo y2 = log(SBS de c+2) - log(SBS de c).
+ * Regresión ponderada (1/sigma^2, con intercepto) sobre los cortes j cuyo resultado ya se conoce (j + 2 <= c).
+ * Devuelve las mismas claves que rangoConCierre (q10..q90 son log-retornos desde el SBS de c)
+ * o null si falta el cierre de c + 1 o no hay historia suficiente.
+ */
+export function rangoTarde(P, c) {
+  const { lp, s, lc } = P;
+  const n = lp.length;
+
+  if (c + 1 >= n || !Number.isFinite(lc[c + 1])) return null;
+  const xc = lc[c + 1] - lp[c];
+
+  // Mínimos cuadrados ponderados con intercepto: sistema normal 2 x 2.
+  let sw = 0, swx = 0, swxx = 0, swy = 0, swxy = 0, cuenta = 0;
+  for (let j = Math.max(1, c - VENTANA_BETA); j <= c - 2; j++) {
+    const x = lc[j + 1] - lp[j];
+    if (!Number.isFinite(x)) continue;
+    const y = lp[j + 2] - lp[j];
+    const w = 1 / Math.max(s[j], 1e-9) ** 2;
+    sw += w;
+    swx += w * x;
+    swxx += w * x * x;
+    swy += w * y;
+    swxy += w * x * y;
+    cuenta++;
+  }
+  if (cuenta < MIN_BETA) return null;
+
+  const det = sw * swxx - swx * swx;
+  const alfa = (swy * swxx - swx * swxy) / det;
+  const beta = (sw * swxy - swx * swy) / det;
+
+  // Residuos escalados por la volatilidad del corte; sin x se toma 0, como en el torneo.
+  const residuos = [];
+  for (let k = Math.max(1, c - VENTANA); k <= c - 2; k++) {
+    const xk = lc[k + 1] - lp[k];
+    const y = lp[k + 2] - lp[k];
+    const razon = Math.min(5, Math.max(0.2, s[c] / s[k]));
+    residuos.push((y - alfa - beta * (Number.isFinite(xk) ? xk : 0)) * razon);
+  }
+  residuos.sort((a, b) => a - b);
+
+  const m = residuos.length;
+  const cuantil = q => residuos[Math.max(0, Math.ceil(m * q - 1e-12) - 1)];
+  const ajuste = alfa + beta * xc;
+
+  return {
+    beta,
+    brecha: xc,
+    q10: ajuste + cuantil(0.10),
+    q25: ajuste + cuantil(0.25),
+    q50: ajuste + cuantil(0.50),
+    q75: ajuste + cuantil(0.75),
+    q90: ajuste + cuantil(0.90),
+  };
+}
+
+/**
+ * Evalúa el rango de la tarde (rangoTarde) en cortes históricos desde la fecha `desde`,
+ * contra el SBS de dos días hábiles después del corte. Mismas claves que backtestConCierre.
+ */
+export function backtestTarde(P, desde) {
+  const { fechas, precios } = P;
+  const n = fechas.length;
+
+  let dentro80 = 0;
+  let dentro50 = 0;
+  let ancho = 0;
+  let mae = 0;
+  let cortes = 0;
+
+  for (let c = 0; c < n - 2; c++) {
+    if (fechas[c] < desde) continue;
+    const r = rangoTarde(P, c);
+    if (r === null) continue;
+
+    const p10 = precios[c] * Math.exp(r.q10);
+    const p25 = precios[c] * Math.exp(r.q25);
+    const p50 = precios[c] * Math.exp(r.q50);
+    const p75 = precios[c] * Math.exp(r.q75);
+    const p90 = precios[c] * Math.exp(r.q90);
+    const real = precios[c + 2];
 
     if (p10 <= real && real <= p90) dentro80++;
     if (p25 <= real && real <= p75) dentro50++;

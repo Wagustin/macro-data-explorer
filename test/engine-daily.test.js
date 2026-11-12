@@ -14,6 +14,7 @@ import {
   cargarCierres,
   prepararCierre,
   rangoConCierre,
+  rangoTarde,
 } from "../scripts/engine-daily.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -290,6 +291,44 @@ test("rangoConCierre exige cierres y devuelve un rango monotónico", () => {
   assert.ok(r, "Con cierres suficientes debe devolver un rango");
   assert.ok(Number.isFinite(r.beta), "beta debe ser finito");
   assert.ok(r.q10 < r.q25 && r.q25 < r.q50 && r.q50 < r.q75 && r.q75 < r.q90, "Los cuantiles deben crecer");
+});
+
+test("rangoTarde no usa datos posteriores al corte ni al cierre del día siguiente", () => {
+  const serie = serieSinteticaPEN();
+  const cierres = cierresSinteticos(serie);
+  const fechas = serie.map(p => p[0]);
+  const c = 700;
+
+  // Se alteran los SBS posteriores a c y los cierres posteriores a c + 1; el cierre de c + 1 se conserva.
+  const alterada = serie.map(([f, p], i) => [f, i > c ? p * 1.5 : p]);
+  const cierresAlterados = Object.fromEntries(
+    Object.entries(cierres).map(([f, v]) => [f, f > fechas[c + 1] ? v * 1.5 : v]),
+  );
+
+  const original = rangoTarde(prepararCierre(serie, cierres), c);
+  const conFuturo = rangoTarde(prepararCierre(alterada, cierresAlterados), c);
+  assert.ok(original, "En el corte de prueba debe haber rango");
+  assert.deepEqual(conFuturo, original);
+});
+
+test("rangoTarde devuelve cuantiles ordenados y null sin el cierre del día siguiente", () => {
+  const serie = serieSinteticaPEN();
+  const cierres = cierresSinteticos(serie);
+  const fechas = serie.map(p => p[0]);
+
+  for (const c of [500, 700, 850]) {
+    const r = rangoTarde(prepararCierre(serie, cierres), c);
+    assert.ok(r, `En el corte ${c} debe haber rango`);
+    assert.ok(r.q10 <= r.q25 && r.q25 <= r.q50 && r.q50 <= r.q75 && r.q75 <= r.q90, "Los cuantiles deben estar ordenados");
+  }
+
+  // Sin cierres no hay rango.
+  assert.equal(rangoTarde(prepararCierre(serie, {}), 700), null);
+
+  // Sin el cierre del día siguiente al corte no hay rango.
+  const sinSiguiente = { ...cierres };
+  delete sinSiguiente[fechas[701]];
+  assert.equal(rangoTarde(prepararCierre(serie, sinSiguiente), 700), null);
 });
 
 test("generateDailyForecasts afina el dólar a 1 día sólo con el cierre de la 1:30", () => {
