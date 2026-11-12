@@ -97,6 +97,8 @@
       }
 
       const { history = [], forecast, macro, options = {} } = props;
+      // Punto de hoy (opcional): primer hueco futuro con valores exactos de /api/diario
+      const hoyOpt = options.hoy && Number.isFinite(Number(options.hoy.p50)) ? options.hoy : null;
       const currency = options.currency || "USD";
       const sym = currencySymbol(currency);
       const isDark = Boolean(options.isDark);
@@ -208,6 +210,19 @@
           });
         });
 
+        // Hoy (si llega): hito propio entre el último cierre y el primer mes proyectado
+        if (hoyOpt) {
+          milestones.splice(1, 0, {
+            prog: 1 / nFutureSlots,
+            date: hoyOpt.date,
+            p10: Number(hoyOpt.p10),
+            p25: Number(hoyOpt.p25 ?? hoyOpt.p10),
+            p50: Number(hoyOpt.p50),
+            p75: Number(hoyOpt.p75 ?? hoyOpt.p90),
+            p90: Number(hoyOpt.p90),
+          });
+        }
+
         // Punto de anclaje inicial en Hoy (nHist - 1)
         p50[nHist - 1] = lastRealVal;
         p10[nHist - 1] = lastRealVal;
@@ -251,6 +266,17 @@
             : rangoChip(mesDe(m0.date), mesDe(m1.date));
 
           labels.push(alpha > 0.5 ? m1.date : m0.date);
+        }
+
+        // Punto de hoy: valores exactos de /api/diario, no interpolados
+        if (hoyOpt) {
+          const hi = nHist;
+          p50[hi] = Number(hoyOpt.p50);
+          p10[hi] = Number(hoyOpt.p10);
+          p25[hi] = Number(hoyOpt.p25 ?? hoyOpt.p10);
+          p75[hi] = Number(hoyOpt.p75 ?? hoyOpt.p90);
+          p90[hi] = Number(hoyOpt.p90);
+          futureChip[hi] = formatChipDate(hoyOpt.date);
         }
 
         // Escenario del modelo: misma rejilla que el P50, interpolado entre hitos mensuales
@@ -518,11 +544,11 @@
               const { ctx: c, chartArea: area, scales } = ch;
               if (!area || !scales.x) return;
               const xScale = scales.x;
-              const hoyIdx = nHist - 1;
+              const hoyIdx = hoyOpt && hoyOpt.esHoy ? nHist : nHist - 1;
               const hoyX = xScale.getPixelForValue(hoyIdx);
               if (!isFinite(hoyX)) return;
 
-              // Línea Hoy: exactamente en el punto del último cierre real
+              // Línea Hoy: en el último cierre real; con options.hoy.esHoy, en el punto de hoy
               c.save();
               c.strokeStyle = hexAlpha(tokens.inkSoft, 70);
               c.lineWidth = 1;
@@ -776,15 +802,24 @@
           dotHalo.style.display = "none";
         }
 
+        const esPuntoHoy = !!hoyOpt && idx === nHist;
         const dateStr = isFuture && futureChip[idx] ? futureChip[idx] : formatChipDate(label);
+        const fmt3 = (n) => sym + Number(n).toLocaleString("es-PE", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+        const sufijo = esPuntoHoy
+          ? (hoyOpt.esHoy ? " · hoy, estimado" : " · siguiente día hábil, estimado")
+          : (isFuture ? " · proyección" : "");
         const fmt = (n) => sym + Number(n).toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         const row = (name, val, strong) =>
           `<div style="display:flex;justify-content:space-between;gap:14px;margin-top:3px;color:${strong ? tokens.ink : tokens.inkSoft};"><span>${name}</span><span style="font-family:var(--pd-font-mono,monospace);font-variant-numeric:tabular-nums;${strong ? "font-weight:700;" : ""}color:${tokens.ink};">${val}</span></div>`;
-        let html = `<div style="font-weight:700;font-size:12px;margin-bottom:5px;border-bottom:1px solid ${tokens.rule};padding-bottom:4px;color:${tokens.ink};">${dateStr}${isFuture ? " · proyección" : ""}</div>`;
+        let html = `<div style="font-weight:700;font-size:12px;margin-bottom:5px;border-bottom:1px solid ${tokens.rule};padding-bottom:4px;color:${tokens.ink};">${dateStr}${sufijo}</div>`;
         if (!isFuture && v != null && !isNaN(v)) {
           html += row("Precio de cierre", fmt(v), true);
         }
-        if (isFuture && p != null && !isNaN(p)) {
+        if (esPuntoHoy && p != null && !isNaN(p)) {
+          html += row("Lo más probable (P50)", fmt3(p), true);
+          if (p10[idx] != null && p90[idx] != null) html += row("Rango 80 % (P10–P90)", fmt3(p10[idx]) + " – " + fmt3(p90[idx]));
+          if (p25[idx] != null && p75[idx] != null) html += row("Rango 50 % (P25–P75)", fmt3(p25[idx]) + " – " + fmt3(p75[idx]));
+        } else if (isFuture && p != null && !isNaN(p)) {
           html += row("Lo más probable (P50)", fmt(p), true);
           if (p10[idx] != null && p90[idx] != null) html += row("Rango 80 % (P10–P90)", fmt(p10[idx]) + " – " + fmt(p90[idx]));
           if (p25[idx] != null && p75[idx] != null) html += row("Rango 50 % (P25–P75)", fmt(p25[idx]) + " – " + fmt(p75[idx]));
