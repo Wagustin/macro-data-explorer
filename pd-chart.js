@@ -38,6 +38,16 @@
     return mName;
   }
 
+  // Rango de dos meses ("Nov – Dic 2026") para un punto entre dos hitos proyectados
+  function rangoChip(desdeMes, hastaMes) {
+    const [y0, m0s] = String(desdeMes).split("-");
+    const [y1, m1s] = String(hastaMes).split("-");
+    const a = MONTHS_ES[parseInt(m0s, 10) - 1];
+    const b = MONTHS_ES[parseInt(m1s, 10) - 1];
+    if (String(desdeMes) === String(hastaMes)) return `${b} ${y1}`;
+    return y0 === y1 ? `${a} – ${b} ${y1}` : `${a} ${y0} – ${b} ${y1}`;
+  }
+
   function maxSixLabels(labels) {
     if (labels.length <= 6) return labels;
     const step = Math.floor((labels.length - 1) / 5);
@@ -156,6 +166,8 @@
         : 0;
 
       const labels = [...seriesLabels];
+      // Fecha que muestra la ficha en cada hueco futuro (nunca la del último cierre)
+      const futureChip = [];
       const histPadded = [...seriesData];
       for (let s = 0; s < nFutureSlots; s++) histPadded.push(null);
 
@@ -231,6 +243,12 @@
             const d = seg === 0 ? d1 * shape : d0 + (d1 - d0) * shape;
             target[q][idx] = Number((mid + d).toFixed(4));
           });
+
+          const esHito = Math.abs(prog - m1.prog) < 1e-9;
+          const mesDe = (d) => String(d).substring(0, 7);
+          futureChip[idx] = esHito
+            ? formatChipDate(mesDe(m1.date))
+            : rangoChip(mesDe(m0.date), mesDe(m1.date));
 
           labels.push(alpha > 0.5 ? m1.date : m0.date);
         }
@@ -758,7 +776,7 @@
           dotHalo.style.display = "none";
         }
 
-        const dateStr = formatChipDate(label);
+        const dateStr = isFuture && futureChip[idx] ? futureChip[idx] : formatChipDate(label);
         const fmt = (n) => sym + Number(n).toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         const row = (name, val, strong) =>
           `<div style="display:flex;justify-content:space-between;gap:14px;margin-top:3px;color:${strong ? tokens.ink : tokens.inkSoft};"><span>${name}</span><span style="font-family:var(--pd-font-mono,monospace);font-variant-numeric:tabular-nums;${strong ? "font-weight:700;" : ""}color:${tokens.ink};">${val}</span></div>`;
