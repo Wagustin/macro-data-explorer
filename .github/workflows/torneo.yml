@@ -34,11 +34,6 @@ jobs:
         run: python research/torneo/torneo.py --autoprueba
       - name: Correr el torneo
         run: python research/torneo/torneo.py ${{ inputs.rapido && '--rapido --salida /tmp/torneo' || '' }} --predicciones /tmp/predicciones
-      - uses: actions/upload-artifact@v4
-        with:
-          name: predicciones
-          path: /tmp/predicciones/predicciones.csv
-          retention-days: 30
       - name: Guardar el marcador
         if: ${{ !inputs.rapido }}
         run: |
@@ -53,3 +48,9 @@ jobs:
               sleep $((i*5))
             done
           )
+      - uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: predicciones
+          path: /tmp/predicciones/predicciones.csv
+          retention-days: 30

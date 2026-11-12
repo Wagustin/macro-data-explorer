@@ -2,10 +2,11 @@
  * PerData — intro de la portada
  * The last 60 (36 on phones) daily USD/PEN closes as candles (hollow = the dollar rose that day, filled = it fell,
  * body from the previous close to the close, no wicks: we only have closes). They lie flat and stand
- * up one after another in an accelerating wave while a camera follows it, starting very close and
- * pulling back until the whole series fits. The last candle («hoy») shrinks into a dot, the
- * wordmark appears beside it and lands exactly on the header logo. Without real data there is no
- * intro. The <head> script only sets data-intro="play" when motion and data saving allow it.
+ * up one after another in an accelerating wave while a camera follows it, starting close and pulling
+ * back until the whole series fits. Then the fan of the next close's probable range opens to the right of
+ * «hoy» as a soft curved band that fades out, the last candle shrinks into a dot, the wordmark appears
+ * beside it and lands exactly on the header logo. Without real data there is no intro. The <head>
+ * script only sets data-intro="play" when motion and data saving allow it.
  */
 (function(window, document) {
   'use strict';
@@ -17,19 +18,26 @@
   const NARROW = window.innerWidth < 680;
   const N = NARROW ? 36 : 60;
   const YR = NARROW ? 16 : 14;  // world height of the price range (candle x step = 1): tall enough to read the peaks
-  const T_FIRST = 320;        // ms until the first candle starts to stand up
-  const T_WAVE = 2600;        // ms for the wave front to reach the last candle (a slow sweep)
-  const T_TIP = 200;          // ms a candle takes to stand up (each one snaps up fast)
-  const T_PAUSE = 180;        // ms held on «hoy»
-  const T_DOT = 220;          // ms for the last candle to become the dot
-  const T_WORD = 260;         // ms for the wordmark to appear
-  const T_DOCK = 680;         // ms for the wordmark to land on the header logo
+  const T_FIRST = 100;         // ms until the first candle starts to stand up
+  const T_WAVE = 2000;         // ms for the wave front to reach the last candle (an unhurried travelling shot)
+  const T_TIP = 190;           // ms a candle takes to stand up
+  const T_PAUSE = 140;         // ms held on «hoy»
+  const T_BAND = 520;          // ms the range fan takes to open
+  const T_READ = 700;          // ms the range stays on screen, still
+  const T_DOT = 200;           // ms for the last candle to become the dot
+  const T_WORD = 260;          // ms for the wordmark to appear
+  const T_DOCK = 640;          // ms for the wordmark to land on the header logo
+  const bandW = () => (NARROW ? 110 : Math.round(Math.min(300, W * 0.22)));  // px the range fan opens to the right of «hoy»
   const SKIP = ['click', 'keydown', 'wheel', 'touchstart'];
 
   let overlay, canvas, ctx, W, H, dpr;
-  let candles = [], lo = 0, hi = 1, label = '';
+  let candles = [], lo = 0, hi = 1;
   let start = 0, prevT = 0, raf = 0, ended = false;
   let cam = { x: 0, y: 0, s: 1 }, vel = { x: 0, y: 0, s: 0 };
+  let fase = 'velas';         // velas → rango → marca
+  let marcaT = null;          // ms when the marca phase started (null while the candles are up)
+  let rangoDatos = null;      // the next close's range, as soon as the API answers
+  let rango = null;           // ... and once the fan opens (the decision is taken only once)
 
   const clamp01 = (t) => (t < 0 ? 0 : t > 1 ? 1 : t);
   const lerp = (a, b, t) => a + (b - a) * t;
@@ -39,6 +47,16 @@
   const ink = () => (dark() ? '#EDE8DC' : '#1B1916');
   const fmt = (v) => v.toLocaleString('es-PE', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
 
+  // Dates come as 'AAAA-MM-DD'; the site writes them without the trailing dot
+  function fechaDe(iso) {
+    const p = String(iso || '').split('-').map(Number);
+    return p.length === 3 && p[0] && p[1] && p[2] ? new Date(p[0], p[1] - 1, p[2]) : null;
+  }
+  const fechaCorta = (iso) => {
+    const d = fechaDe(iso);
+    return d ? d.toLocaleDateString('es-PE', { day: 'numeric', month: 'short' }).replace('.', '') : '';
+  };
+
   function finish(natural) {
     if (ended) return;
     ended = true;
@@ -47,6 +65,7 @@
     try { sessionStorage.setItem('pd_intro_seen', '1'); } catch (_) {}
     root.dataset.intro = natural ? 'in' : 'done';
     if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    delete root.dataset.introFase;
     if (natural) setTimeout(() => { root.dataset.intro = 'done'; }, 700);
   }
   const onSkip = () => finish(false);
@@ -60,21 +79,18 @@
 
   // World: candle i sits at x = i; prices map to y in [0, YR] (up is positive)
   const wy = (v) => ((v - lo) / (hi - lo || 1)) * YR;
-  // Final framing: the series from 5 % of the width to «hoy», leaving room for the wordmark
-  // (beside «hoy» on desktop; on phones it goes above it, so the series can use the width)
-  const lastFrac = () => (NARROW ? 0.9 : 0.58);
+  // Final framing: the series from 5 % of the width to «hoy», leaving room for the range fan
+  const lastFrac = () => (NARROW ? 0.78 : 0.52);
   const fitScale = () => Math.min((W * (lastFrac() - 0.05)) / (N - 1), (H * 0.42) / YR);
   const fitX = () => (N - 1) - (W * (lastFrac() - 0.5)) / fitScale();
-  const closeScale = () => W / (W < 680 ? 3.2 : 4.2);
+  const closeScale = () => W / (NARROW ? 7 : 9);
   const toScreen = (x, y) => ({ x: W / 2 + (x - cam.x) * cam.s, y: H * 0.5 - (y - cam.y) * cam.s });
 
   // Moment the wave front reaches candle i: gaps shrink as it goes, so the wave accelerates
   const tStart = (i) => T_FIRST + T_WAVE * Math.pow(i / (N - 1), 0.62);
   const T_LAST = tStart(N - 1) + T_TIP;
   const T_HOLD = T_LAST + T_PAUSE;
-  const T_DOT_END = T_HOLD + T_DOT;
-  const T_DOCK_START = T_DOT_END + T_WORD;
-  const T_END = T_DOCK_START + T_DOCK;
+  const T_RANGO_END = T_HOLD + T_BAND + T_READ;
 
   // The front, as a continuous position, drives the camera
   function frontAt(t) {
@@ -95,9 +111,75 @@
     // Lying flat (rotated -90° about its bottom-left corner) → standing
     const ang = (1 - k) * (Math.PI / 2), cs = Math.cos(ang) * dpr, sn = Math.sin(ang) * dpr;
     ctx.setTransform(cs, sn, -sn, cs, base.x * dpr, base.y * dpr);
-    ctx.globalAlpha = alpha * (0.25 + 0.75 * k);
+    // Depth: candles left behind dim to half ink while the camera travels; all return to full ink on the pull-back
+    const lejos = clamp01((frontAt(t) - i - 4) / 10);            // 0 near the front, 1 ten candles behind
+    const viaje = 1 - clamp01((t - T_FIRST) / T_WAVE);             // 1 at the start of the travel, 0 on arrival
+    const atenua = 1 - 0.5 * lejos * Math.min(1, viaje * 2.5);
+    ctx.globalAlpha = alpha * (0.25 + 0.75 * k) * atenua;
     if (c.up) ctx.strokeRect(0, -hh, w, hh);
     else ctx.fillRect(0, -hh, w, hh);
+  }
+
+  // The fan of the next close's probable range: a soft curved band, borderless, fading out to the right of «hoy»
+  function drawFan(t, alpha) {
+    if (!rango || alpha <= 0) return;
+    const hoy = toScreen(N - 1, wy(candles[N - 1].close));
+    const wMax = Math.max(40, Math.min(bandW(), W - 16 - hoy.x));
+    const w = wMax * easeOut(clamp01((t - T_HOLD) / T_BAND));
+    const p90 = toScreen(N - 1, wy(rango.p90));
+    const p50 = toScreen(N - 1, wy(rango.p50));
+    const p10 = toScreen(N - 1, wy(rango.p10));
+    const tinta = (a) => (dark() ? `rgba(237,232,220,${a})` : `rgba(27,25,22,${a})`);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalAlpha = alpha;
+    // Curved edges: they open fast at first and then flatten, like a square root
+    const n = 24;
+    const borde = (p, k) => {
+      ctx.beginPath();
+      ctx.moveTo(hoy.x, hoy.y);
+      for (let i = 1; i <= n; i++) {
+        const u = i / n, x = hoy.x + w * u;
+        ctx.lineTo(x, hoy.y + (p.y - hoy.y) * k * Math.sqrt(u));
+      }
+      for (let i = n; i >= 0; i--) {
+        const u = i / n, x = hoy.x + w * u;
+        ctx.lineTo(x, hoy.y + (p10.y - hoy.y) * k * Math.sqrt(u));
+      }
+      ctx.closePath();
+    };
+    if (w >= 1) {
+      const g = ctx.createLinearGradient(hoy.x, 0, hoy.x + w, 0);
+      g.addColorStop(0, tinta(0.20)); g.addColorStop(0.6, tinta(0.09)); g.addColorStop(1, tinta(0));
+      ctx.fillStyle = g;
+      borde(p90, 1); ctx.fill();      // full band
+      borde(p90, 0.5); ctx.fill();    // inner band, more marked because it adds up
+      // Central line: a single continuous 1 px line from «hoy» to the tip of the median
+      const gm = ctx.createLinearGradient(hoy.x, 0, hoy.x + w, 0);
+      gm.addColorStop(0, tinta(0.55)); gm.addColorStop(1, tinta(0));
+      ctx.strokeStyle = gm;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(hoy.x, hoy.y);
+      ctx.lineTo(hoy.x + w, p50.y);
+      ctx.stroke();
+    }
+    // «hoy»: the last close as a filled dot
+    ctx.fillStyle = tinta(1);
+    ctx.beginPath(); ctx.arc(hoy.x, hoy.y, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  function beginRango() {
+    fase = 'rango';
+    rango = rangoDatos;
+    root.dataset.introFase = 'rango';
+  }
+
+  // The wordmark phase: the last candle becomes the dot and the brand flies to the header
+  function beginMarca(t) {
+    fase = 'marca';
+    marcaT = t;
+    root.dataset.introFase = 'marca';
   }
 
   function headerTextBox() {
@@ -115,6 +197,17 @@
     const color = ink();
     ctx.clearRect(0, 0, W, H);
 
+    // Phases: the range is decided once, when the wave holds on «hoy»
+    if (fase === 'velas' && t >= T_HOLD) {
+      if (rangoDatos) beginRango(); else beginMarca(t);
+    } else if (fase === 'rango' && t >= T_RANGO_END) {
+      beginMarca(t);
+    }
+    // Everything after the candles depends on when the marca phase started
+    const dotEnd = marcaT == null ? Infinity : marcaT + T_DOT;
+    const dockStart = marcaT == null ? Infinity : dotEnd + T_WORD;
+    const endT = marcaT == null ? Infinity : dockStart + T_DOCK;
+
     // Camera: follows the front with inertia and pulls back (logarithmic zoom) as the wave advances
     const f = frontAt(t);
     const zoom = easeInOut(clamp01(f / (N - 1)));
@@ -126,18 +219,20 @@
     // Critically damped spring with velocity: no jolts when a frame is dropped, no overshoot
     const dt = Math.min(Math.max(t - prevT, 1000 / 120), 1000 / 20) / 1000;
     prevT = t;
-    const w0 = 6.5, k1 = w0 * w0, k2 = 2 * w0;
+    const w0 = 7, k1 = w0 * w0, k2 = 2 * w0;
     for (const [key, target] of [['x', targetX], ['y', targetY], ['s', targetS]]) {
       vel[key] += (k1 * (target - cam[key]) - k2 * vel[key]) * dt;
       cam[key] += vel[key] * dt;
     }
 
     // Candles fade while the wordmark appears, so only the wordmark travels to the header
-    const fadeOut = 1 - clamp01((t - T_DOT_END) / T_WORD);
+    const fadeOut = marcaT == null ? 1 : 1 - clamp01((t - dotEnd) / T_WORD);
     ctx.fillStyle = ctx.strokeStyle = color;
     ctx.lineWidth = Math.max(1.2, cam.s * 0.05);
+    // The grid has done its job once the range takes over: it fades out while the fan opens
+    const gridK = rango ? 1 - clamp01((t - T_HOLD) / 220) : 1;
     // Price grid of a real chart: round levels that move and scale with the camera
-    if (fadeOut > 0) {
+    if (fadeOut * gridK > 0) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const span = hi - lo || 0.01;
       const step = [0.005, 0.01, 0.02, 0.025, 0.05, 0.1].find((v) => span / v <= 5) || 0.1;
@@ -146,12 +241,14 @@
       for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) {
         const y = Math.round(toScreen(0, wy(v)).y) + 0.5;
         if (y < 0 || y > H) continue;
-        ctx.globalAlpha = 0.09 * fadeOut;
+        ctx.globalAlpha = 0.09 * fadeOut * gridK;
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-        ctx.globalAlpha = 0.42 * fadeOut;
+        ctx.globalAlpha = 0.42 * fadeOut * gridK;
         ctx.fillText(`S/ ${v.toFixed(step < 0.01 ? 3 : 2)}`, W - (NARROW ? 62 : 84), y - 5);
       }
     }
+    // The range fan, behind the candles: «hoy» opens into the p90-p10 band
+    if (rango) drawFan(t, fadeOut);
     // A thin line through the closes, drawn behind the wave, so the series reads as an asset's peaks
     if (fadeOut > 0) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -174,15 +271,15 @@
 
     // «hoy»: the last candle stands, then shrinks into the dot
     const last = candles[N - 1];
-    const dotK = easeInOut(clamp01((t - T_HOLD) / T_DOT));
+    const dotK = marcaT == null ? 0 : easeInOut(clamp01((t - marcaT) / T_DOT));
     const dotCenter = toScreen(N - 1, wy(last.close));
-    if (dotK <= 0) drawCandle(last, N - 1, t, 1);
+    if (dotK <= 0) drawCandle(last, N - 1, t, fadeOut);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.globalAlpha = 1;
 
     // Wordmark next to the dot, then the dock onto the header logo
-    const wordK = easeOut(clamp01((t - T_DOT_END) / T_WORD));
-    const dockK = easeInOut(clamp01((t - T_DOCK_START) / T_DOCK));
+    const wordK = easeOut(clamp01((t - dotEnd) / T_WORD));
+    const dockK = easeInOut(clamp01((t - dockStart) / T_DOCK));
     const fontPx = Math.max(34, Math.min(W * (NARROW ? 0.13 : 0.075), 96));
     ctx.font = `italic 600 ${fontPx}px 'Source Serif 4', Georgia, serif`;
     const metrics = ctx.measureText('PerData');
@@ -221,18 +318,22 @@
       ctx.restore();
     }
 
-    // Data line, bottom left, until the dock
-    if (label && t < T_DOCK_START) {
-      ctx.save();
-      ctx.globalAlpha = clamp01(t / 400) * fadeOut;
-      ctx.fillStyle = color;
-      ctx.font = `500 ${W < 680 ? 11 : 12}px 'IBM Plex Mono', ui-monospace, monospace`;
-      ctx.fillText(label, W < 680 ? 16 : 40, H - (W < 680 ? 24 : 40));
-      ctx.restore();
+    // Data line, bottom left, counting the closes the wave has already passed
+    if (t < dockStart) {
+      const i = Math.min(N - 1, Math.max(0, Math.round(frontAt(t))));
+      const c = candles[i];
+      if (c) {
+        ctx.save();
+        ctx.globalAlpha = clamp01(t / 400) * fadeOut;
+        ctx.fillStyle = color;
+        ctx.font = `500 ${W < 680 ? 11 : 12}px 'IBM Plex Mono', ui-monospace, monospace`;
+        ctx.fillText(`USD/PEN · ${fechaCorta(c.date)} · S/ ${fmt(c.close)}`, W < 680 ? 16 : 40, H - (W < 680 ? 24 : 40));
+        ctx.restore();
+      }
     }
 
-    if (t >= T_DOCK_START && root.dataset.intro === 'play') root.dataset.intro = 'dock';
-    if (t >= T_END) { finish(true); return; }
+    if (t >= dockStart && root.dataset.intro === 'play') root.dataset.intro = 'dock';
+    if (t >= endT) { finish(true); return; }
     raf = requestAnimationFrame(frame);
   }
 
@@ -240,10 +341,9 @@
     if (ended) return;
     if (!points || points.length < N + 1) { finish(false); return; }  // no real data, no intro
     const s = points.slice(-(N + 1));
-    candles = s.slice(1).map((p, i) => ({ close: p.close, prev: s[i].close, up: p.close >= s[i].close }));
+    candles = s.slice(1).map((p, i) => ({ close: p.close, prev: s[i].close, up: p.close >= s[i].close, date: p.date }));
     const all = s.map((p) => p.close);
     lo = Math.min(...all); hi = Math.max(...all);
-    label = `USD/PEN · ${N} días · S/ ${fmt(lo)} – S/ ${fmt(hi)}`;
     overlay = document.getElementById('pdIntro');
     canvas = document.getElementById('pdIntroCanvas');
     if (!overlay || !canvas) { finish(false); return; }
@@ -252,16 +352,30 @@
     window.addEventListener('resize', resize);
     SKIP.forEach((e) => window.addEventListener(e, onSkip, { passive: true }));
     cam = { x: -0.6, y: wy((candles[0].close + candles[0].prev) / 2), s: closeScale() };
-    const go = () => { start = performance.now(); raf = requestAnimationFrame(frame); };
-    // Draw the wordmark with the real font: wait for it, but never more than 400 ms
-    const fonts = document.fonts && document.fonts.load ? document.fonts.load("italic 600 48px 'Source Serif 4'") : Promise.resolve();
-    Promise.race([fonts, new Promise((r) => setTimeout(r, 400))]).then(go, go);
+    const go = () => {
+      start = performance.now();
+      root.dataset.introFase = 'velas';
+      raf = requestAnimationFrame(frame);
+    };
+    // The wordmark font is asked for in the background: the intro never waits for it
+    if (document.fonts && document.fonts.load) document.fonts.load("italic 600 48px 'Source Serif 4'");
+    go();
   }
 
   function dailyOf(h) {
     const d = h && Array.isArray(h.daily) ? h.daily : null;
     return d ? d.filter((p) => p && typeof p.close === 'number' && p.close > 0) : null;
   }
+
+  // The next close's range: asked for right away, but the intro never waits for it
+  const diario = window.__pdEarly && window.__pdEarly.diario && typeof window.__pdEarly.diario.then === 'function'
+    ? window.__pdEarly.diario
+    : fetch('/api/diario?symbol=PEN').then((r) => (r.ok ? r.json() : null)).catch(() => null);
+  Promise.resolve(diario).then((d) => {
+    const m = d && d.vigente ? d.manana : null;
+    if (!m || ![m.p10, m.p50, m.p90].every((v) => typeof v === 'number' && isFinite(v)) || !m.fecha_objetivo) return;
+    rangoDatos = { p10: m.p10, p50: m.p50, p90: m.p90, fecha: m.fecha_objetivo };
+  }, () => {});
 
   const early = window.__pdEarly && window.__pdEarly.hist;
   const source = early && typeof early.then === 'function'

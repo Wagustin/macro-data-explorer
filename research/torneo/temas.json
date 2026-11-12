@@ -1,0 +1,33 @@
+{
+  "nota": "Temas de la ronda 2 del torneo. Se fijaron el 2026-11-11 sin mirar resultados de 2025 ni de 2026. Cada patron se busca en minusculas y sin tildes sobre titulo + espacio + resumen.",
+  "peru": {
+    "pe_dolar": "\\b(dolar|dolares|tipo de cambio)\\b",
+    "pe_bcrp": "\\b(bcr|bcrp|banco central|tasa de referencia|velarde)\\b",
+    "pe_inflacion": "\\b(inflacion|ipc|precios al consumidor)\\b",
+    "pe_mineria": "\\b(mineria|minera|mineras|minero|mineros|cobre|las bambas|tia maria|southern|antamina|quellaveco)\\b",
+    "pe_conflicto": "\\b(paro|huelga|bloqueo|bloqueos|protesta|protestas|manifestantes|estado de emergencia)\\b",
+    "pe_politica": "\\b(vacancia|censura|mocion|interpelacion|cuestion de confianza|disolucion del congreso|gabinete|renuncia)\\b",
+    "pe_elecciones": "\\b(elecciones|electoral|jne|onpe|candidato|candidata|candidatos|segunda vuelta|encuesta)\\b",
+    "pe_riesgo": "\\b(riesgo pais|calificacion crediticia|moody|fitch|s&p|grado de inversion|deficit fiscal|consejo fiscal)\\b",
+    "pe_economia": "\\b(economia|economico|economica|pbi|mef|inversion|inversiones|exportaciones|recesion|crecimiento)\\b",
+    "pe_incert": "\\b(incertidumbre|incierto|incierta|crisis|volatilidad|riesgo|temor|inestabilidad)\\b",
+    "pe_gobierno": "\\b(gobierno|congreso|ley|reforma|regulacion|ministro|ministra)\\b"
+  },
+  "mundo": {
+    "mu_fed": "\\b(fed|federal reserve|reserva federal|fomc|powell|rate cut|rate cuts|rate hike|rate hikes|interest rate|interest rates|tasa de interes|tasas de interes)\\b",
+    "mu_aranceles": "\\b(tariff|tariffs|arancel|aranceles|trade war|guerra comercial)\\b",
+    "mu_china": "\\b(china|chinese|beijing|pekin|yuan)\\b",
+    "mu_recesion": "\\b(recession|recesion|crisis|crash|selloff|sell-off|desplome|turmoil|panic|panico)\\b",
+    "mu_petroleo": "\\b(oil|crude|opec|opep|petroleo|brent|wti)\\b",
+    "mu_cobre": "\\b(copper|cobre)\\b",
+    "mu_oro": "\\b(gold|oro)\\b",
+    "mu_inflacion": "\\b(inflation|inflacion|cpi)\\b",
+    "mu_dolar": "\\b(dollar|dolar|dxy|greenback)\\b",
+    "mu_guerra": "\\b(war|guerra|missile|missiles|misil|misiles|sanctions|sanciones|invasion|attack|ataque)\\b",
+    "mu_peru": "\\b(peru|peruvian|peruano|peruana|lima)\\b",
+    "mu_incert": "\\b(uncertainty|uncertain|incertidumbre|volatility|volatilidad|fear|fears|temor|risk-off)\\b"
+  },
+  "combinados": {
+    "pe_epu": { "todos": ["pe_economia", "pe_incert"], "alguno": ["pe_politica", "pe_elecciones", "pe_gobierno"] }
+  }
+}

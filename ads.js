@@ -47,6 +47,11 @@
     if (kind === "infeed" && ADS.infeedLayoutKey) {
       ins.setAttribute("data-ad-format", "fluid");
       ins.setAttribute("data-ad-layout-key", ADS.infeedLayoutKey);
+    } else if (kind === "display") {
+      // Wide screens get a low horizontal band (728x90 / 970x90); narrow ones a 300x250 rectangle
+      var wide = window.matchMedia && window.matchMedia("(min-width: 768px)").matches;
+      ins.setAttribute("data-ad-format", wide ? "horizontal" : "rectangle");
+      ins.setAttribute("data-full-width-responsive", wide ? "false" : "true");
     } else {
       ins.setAttribute("data-ad-format", "auto");
       ins.setAttribute("data-full-width-responsive", "true");

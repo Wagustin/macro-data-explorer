@@ -8,6 +8,7 @@ import { PERU_HOLIDAYS, addBusinessDays } from "./engine-daily.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const BCRP_PATH = path.join(ROOT, "data", "official", "bcrp-daily.json");
+const VISTO_PATH = path.join(ROOT, "data", "official", "cierre-visto.json");
 const SUNAT_URL = "https://www.sunat.gob.pe/a/txt/tipoCambio.txt";
 const USER_AGENT = "PerDataBot/1.0 (+https://perdata.site)";
 
@@ -207,6 +208,12 @@ async function main() {
   if (resultado.aplicado) {
     fs.writeFileSync(BCRP_PATH, JSON.stringify(resultado.bcrp) + "\n", "utf8");
   }
+
+  // Marker read by the Worker's cron: which SUNAT date this run saw and the last close in the series
+  const visto = JSON.stringify({ sunat: punto.fecha, cierre: resultado.bcrp.series.PEN.serie.at(-1)[0] }) + "\n";
+  let previo = null;
+  try { previo = fs.readFileSync(VISTO_PATH, "utf8"); } catch (e) {}
+  if (previo !== visto) fs.writeFileSync(VISTO_PATH, visto, "utf8");
 
   const P = diaHabilAnterior(punto.fecha);
   console.log(`cierre-sunat: ${resultado.motivo} ${P} ${punto.venta}`);

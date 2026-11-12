@@ -4,40 +4,381 @@
 // 2. NVIDIA NIM writes short plain-Spanish blocks using ONLY those facts; any sentence with a
 //    number that is not in the facts is dropped, and if NIM fails the email goes out without it.
 // 3. Renders an editorial HTML email and sends it with Resend. Two versions:
-//    - Gratis (Mon-Sat 06:00 Lima): dollar for the next business day with its range, the previous
-//      close, the 3 best digest stories already redacted (double-checked by news-digest.js), the
-//      «Qué podría presionar al dólar» reading for the `manana` horizon from
-//      scripts/dolar-lectura.js (lecturaDolar), a one-line transparency note and a brief
-//      invitation to the Boletín plan (US$ 1.99/month, 7-day trial with card), without promising
-//      anything the paid email does not bring.
-//    - Pagado (Boletín y Pro): dollar for tomorrow, week and month, each with its range and its
-//      reading (lecturaDolar), copper, gold and oil with variation and date, the SMV facts of the
-//      day, ALL the digest stories (the full digest as today), «Tus empresas» (≤15 from the
-//      seguimiento table) with price, variation, range, SMV facts, news and the company reading
-//      from scripts/empresa-lectura.js (lecturasEmpresas, only the news that companyCard already
-//      filtered by real mention), and the transparency note plus the existing unsubscribe /
-//      preferences links ({{BAJA}}, {{EMPRESAS}}). Without chosen companies: an invitation to
-//      choose them in /cuenta.
+//    - Gratis (Mon-Sat 06:00 Lima): the dollar close with a PNG chart (30 closes + tomorrow's
+//      fan), a one-row range table (central p25-p75 and wide p10-p90), the 3 best digest
+//      stories already redacted (double-checked by news-digest.js), the «Qué podría presionar
+//      al dólar» reading from scripts/dolar-lectura.js (lecturaDolar), a transparency note and a
+//      brief invitation to the Boletín plan (US$ 1.99/month, 7-day trial with card).
+//    - Pagado (Boletín y Pro): the same dollar block with the week and month rows added to the
+//      table and the chart fan, the 4 best digest stories, a 4-row markets table (copper, gold,
+//      WTI, Brent), the 3 latest SMV facts, and «Tus empresas» (≤15 from the seguimiento table):
+//      price, variation, a PNG chart (60 closes + 1-month fan), one projection line, up to 2
+//      SMV/news lines and the directional points of the company reading from
+//      scripts/empresa-lectura.js (lecturasEmpresas), plus a «Ver ficha» link. Footer with the
+//      unsubscribe / preferences links ({{BAJA}}, {{EMPRESAS}}).
+//    Charts are PNGs built in pure JS (scripts/lib/png.js + scripts/lib/grafico-correo.js), no
+//    dependencies. Renderers take an `img` param ({ base } or null): previews write the PNGs
+//    next to the HTML (<ruta-sin-ext>-img/) and pass that relative folder as base; the real
+//    send passes BOLETIN_IMG_BASE, or null when it is not set (the email then has no <img>).
+//    Without BOLETIN_IMG_BASE but with BOLETIN_IMG_CMD the PNGs of the day are published first
+//    (scripts/publicar-imagenes-correo.sh, through scripts/lib/imagenes-correo.js) and the email
+//    points to them; if that fails the email goes out without images, never breaking the send.
 //    Fallbacks: if lecturaDolar/lecturasEmpresas fail or take too long (> 90 s total) the email
 //    still goes out with the deterministic version or without that section, never crashing the
-//    send. The console records which sections used LLM and which were deterministic. The free
-//    user never receives paid sections.
+//    send. The free user never receives paid sections.
 // Env: RESEND_API_KEY, BOLETIN_TO (comma list), SUPABASE_URL + SUPABASE_SERVICE_KEY (subscribers),
-//      NVIDIA_API_KEY and GEMINI_API_KEY (optional), NIM_MODEL (optional)
+//      NVIDIA_API_KEY and GEMINI_API_KEY (optional), NIM_MODEL (optional), BOLETIN_IMG_BASE (optional),
+//      BOLETIN_IMG_CMD + BOLETIN_IMG_DIR (optional, publish the PNGs before sending)
 // Usage: node scripts/boletin.js [--dry-run] (writes the preview, sends nothing)
 // Preview: PREVIEW_PLAN=gratis|boletin (default boletin), PREVIEW_EMPRESAS="ALICORC1" (sample
 //          personal section), BOLETIN_PREVIEW_PATH=path/to/preview.html
 import fs from "fs";
 import path from "path";
 import { smvRows } from "../api/_lib/smv.js";
+import { graficoRango } from "./lib/grafico-correo.js";
+import { rangoEmpresaCorreo, lineaRangoCorreo } from "./lib/rango-empresa-correo.js";
 import { mencionaEmpresa } from "./empresa-mencion.js";
-import { formatFechaObjetivo, formatSemanaFecha, formatCierreFecha } from "../api/diario.js";
+import { formatCierreFecha } from "../api/diario.js";
 import { lecturaDolar, hechosDolar } from "./dolar-lectura.js";
 import { lecturasEmpresas } from "./empresa-lectura.js";
+import { publicarImagenes } from "./lib/imagenes-correo.js";
+
+const MONTHS_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+
+function formatSMVFecha(fechaStr) {
+  // Convert "2026-11-09 14:36" -> "9 nov, 14:36"
+  const dt = new Date(`${String(fechaStr).slice(0, 10)}T${String(fechaStr).slice(11, 16)}:00Z`);
+  if (isNaN(dt.getTime())) return String(fechaStr);
+  const day = dt.getUTCDate();
+  const month = MONTHS_ES[dt.getUTCMonth()];
+  const hour = String(dt.getUTCHours()).padStart(2, "0");
+  const min = String(dt.getUTCMinutes()).padStart(2, "0");
+  return `${day} ${month}, ${hour}:${min}`;
+}
 
 const DRY = process.argv.includes("--dry-run");
 const PREVIEW = Boolean(process.env.PREVIEW_EMPRESAS);
 const PREVIEW_PLAN = (process.env.PREVIEW_PLAN || "boletin").toLowerCase() === "gratis" ? "gratis" : "boletin";
+
+const C = { paper: "#F5F1E8", card: "#FBF9F4", ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", peru: "#D91023" };
+const MONO_F = "'IBM Plex Mono',monospace";
+const UI_F = "'Libre Franklin',Arial,sans-serif";
+const SERIF_F = "'Source Serif 4',Georgia,serif";
+const NUM = ' style="font-variant-numeric:tabular-nums"';
+
+// Structural tags (table/block) that cause adjacent space removal.
+const STRUCTURAL_TAGS = new Set([
+  "table", "/table", "tr", "/tr", "td", "/td", "tbody", "/tbody",
+  "div", "/div", "p", "/p", "ul", "/ul", "li", "/li",
+  "html", "/html", "head", "/head", "body", "/body"
+]);
+// Inline tags where spaces are preserved.
+const INLINE_TAGS = new Set([
+  "span", "/span", "a", "/a", "b", "/b", "strong", "/strong", "em", "/em"
+]);
+
+function tagBaseName(tag) {
+  // "<td ...>" -> "td", "</td>" -> "/td"
+  const inner = tag.slice(1, -1).trim();
+  return inner.split(/\s/)[0].toLowerCase();
+}
+
+function isStructural(tag) {
+  return STRUCTURAL_TAGS.has(tagBaseName(tag));
+}
+function isInline(tag) {
+  return INLINE_TAGS.has(tagBaseName(tag));
+}
+function isClosing(tag) {
+  return tagBaseName(tag).startsWith("/");
+}
+
+// Collapse whitespace in text nodes to a single space.
+// Remove spaces adjacent to structural tags (before structural closing, after structural opening).
+// Preserve spaces between inline tags.
+function compactar(html) {
+  // First pass: collapse whitespace in text, trim around structural tags.
+  let out = "";
+  let i = 0;
+  let lastTag = null;
+
+  while (i < html.length) {
+    if (html[i] === "<") {
+      const tagEnd = html.indexOf(">", i);
+      if (tagEnd === -1) {
+        out += html.slice(i);
+        break;
+      }
+      const tag = html.slice(i, tagEnd + 1);
+      out += tag;
+      lastTag = { full: tag, structural: isStructural(tag), inline: isInline(tag), closing: isClosing(tag) };
+      i = tagEnd + 1;
+    } else {
+      // Text content
+      let textStart = i;
+      while (i < html.length && html[i] !== "<") i++;
+      let text = html.slice(textStart, i).replace(/\s+/g, " ");
+
+      // Remove leading space if previous tag was structural opening
+      if (lastTag && lastTag.structural && !lastTag.closing && text.startsWith(" ")) {
+        text = text.slice(1);
+      }
+
+      // Remove trailing space if next tag is structural closing
+      if (i < html.length && html[i] === "<") {
+        const tagEnd = html.indexOf(">", i);
+        if (tagEnd !== -1) {
+          const nextTag = html.slice(i, tagEnd + 1);
+          if (isStructural(nextTag) && isClosing(nextTag) && text.endsWith(" ")) {
+            text = text.slice(0, -1);
+          }
+        }
+      }
+
+      out += text;
+    }
+  }
+
+  // Second pass: handle spaces between adjacent tags (no text between them).
+  return out.replace(/(<[^>]+>)\s+(<[^>]+>)/g, (match, before, after) => {
+    const beforeStructural = isStructural(before);
+    const afterStructural = isStructural(after);
+    const beforeInline = isInline(before);
+    const afterInline = isInline(after);
+    // Remove space if either side is structural, unless both are inline.
+    if ((beforeStructural || afterStructural) && !(beforeInline && afterInline)) {
+      return before + after;
+    }
+    return match;
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Helpers del rediseño v9: gráficos PNG, tabla de rangos y lecturas unificadas.
+// ---------------------------------------------------------------------------
+const DIAS_ES = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
+const MESES_CORTOS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+
+// Carpeta (relativa al HTML) donde se escriben los PNG de la vista previa.
+const carpetaImagen = (rutaHtml) => {
+  const base = String(rutaHtml || "").replace(/\.html?$/i, "");
+  return base.split(/[\\/]/).pop() + "-img";
+};
+
+// Etiqueta <img>: sin imágenes cuando no hay dónde alojarlas (envío real) y
+// sin referenciar ningún archivo que no se haya publicado.
+const imgTag = (img, archivo, ancho, alto, alt) => {
+  const base = img?.base;
+  if (!base) return "";
+  if (img.archivos && !img.archivos.has(archivo)) return "";
+  return `<img src="${esc(`${base}/${archivo}`)}" width="${ancho}" height="${alto}" alt="${esc(alt)}" style="display:block;width:100%;max-width:${ancho}px;height:auto;border:0">`;
+};
+
+const escribirImagen = (dir, archivo, bytes) => {
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, archivo), bytes);
+};
+
+// "2026-11-10" -> "10 nov"
+const fechaCorta = (fecha) => {
+  const d = new Date(`${String(fecha || "").slice(0, 10)}T12:00:00Z`);
+  if (isNaN(d.getTime())) return String(fecha || "");
+  return `${d.getUTCDate()} ${MESES_CORTOS[d.getUTCMonth()]}`;
+};
+
+// "2026-11-10" -> "mar 10 nov"
+const diaCorta = (fecha) => {
+  const d = new Date(`${String(fecha || "").slice(0, 10)}T12:00:00Z`);
+  if (isNaN(d.getTime())) return String(fecha || "");
+  return `${DIAS_ES[d.getUTCDay()]} ${d.getUTCDate()} ${MESES_CORTOS[d.getUTCMonth()]}`;
+};
+
+// Etiqueta del primer horizonte: «Hoy, mar 10 nov» / «Mañana, mar 11 nov».
+const etiquetaHoy = (fecha, hoy) => {
+  const d = diaCorta(fecha);
+  const a = new Date(`${String(fecha || "").slice(0, 10)}T12:00:00Z`);
+  const b = new Date(`${String(hoy || "").slice(0, 10)}T12:00:00Z`);
+  if (isNaN(a.getTime()) || isNaN(b.getTime())) return d;
+  const diff = Math.round((a - b) / 864e5);
+  if (diff === 0) return `Hoy, ${d}`;
+  if (diff === 1) return `Mañana, ${d}`;
+  return d.charAt(0).toUpperCase() + d.slice(1);
+};
+
+// "3.423 – 3.442" (guion largo, cifras tabulares)
+const rangoTexto = (a, b, dec = 3) => (a == null || b == null) ? "—" : `${fmt(a, dec)} – ${fmt(b, dec)}`;
+
+// Días hábiles entre dos fechas (desde exclusive, hasta inclusive).
+function diasHabilesHasta(desde, hasta) {
+  const d0 = new Date(`${String(desde || "").slice(0, 10)}T12:00:00Z`);
+  const d1 = new Date(`${String(hasta || "").slice(0, 10)}T12:00:00Z`);
+  if (isNaN(d0.getTime()) || isNaN(d1.getTime())) return 1;
+  const paso = d1 > d0 ? 1 : -1;
+  let n = 0;
+  const cur = new Date(d0.getTime());
+  while (cur.getTime() !== d1.getTime()) {
+    cur.setUTCDate(cur.getUTCDate() + paso);
+    const wd = cur.getUTCDay();
+    if (wd !== 0 && wd !== 6) n += paso;
+  }
+  return Math.max(1, n);
+}
+
+// Primera frase de un texto largo (para el resumen de cada historia).
+const primeraFrase = (t) => {
+  const x = String(t || "").trim();
+  const m = x.match(/^[\s\S]*?[.!?](?=\s|$)/);
+  return (m ? m[0] : x).trim();
+};
+
+// Recorta a N caracteres con «…».
+const recortar = (t, max) => {
+  const x = String(t || "").trim();
+  return x.length > max ? `${x.slice(0, max - 1).trimEnd()}…` : x;
+};
+
+// Normaliza una serie de cierres a [{fecha, valor}].
+const cierresDeSerie = (lista, campoFecha = "fecha", campoValor = "valor") => (Array.isArray(lista) ? lista : [])
+  .map((p) => ({ fecha: String(p?.[campoFecha] ?? "").slice(0, 10), valor: Number(p?.[campoValor]) }))
+  .filter((p) => p.fecha && Number.isFinite(p.valor));
+
+// «Hoy, mié 11 nov» -> título «Hoy» y detalle «mié 11 nov» (sin coma: la
+// etiqueta entera es el título y no hay detalle).
+const parteEtiqueta = (etiqueta) => {
+  const [titulo, ...resto] = String(etiqueta || "").split(",");
+  return { titulo: titulo.trim(), detalle: resto.join(",").trim() };
+};
+
+// Filas de la tabla de rangos del dólar (central p25–p75, amplio p10–p90).
+function filasRangosDolar(f) {
+  const filas = [];
+  const manana = f.daily?.manana;
+  if (manana) {
+    const etiqueta = etiquetaHoy(manana.fecha_objetivo, f.todayLima);
+    filas.push({
+      clave: "manana", etiqueta, ...parteEtiqueta(etiqueta),
+      central: [manana.p25, manana.p75], amplio: [manana.p10, manana.p90],
+    });
+  }
+  const semana = f.daily?.semana;
+  if (semana) {
+    const etiqueta = `Semana, ${diaCorta(semana.fecha_objetivo)}`;
+    filas.push({
+      clave: "semana", etiqueta, ...parteEtiqueta(etiqueta),
+      central: [semana.p25, semana.p75], amplio: [semana.p10, semana.p90],
+    });
+  }
+  const mes = f.forecast;
+  if (mes?.horizon) {
+    const etiqueta = `Mes, ${fechaCorta(mes.horizon)}`;
+    filas.push({
+      clave: "mes", etiqueta, ...parteEtiqueta(etiqueta),
+      central: [mes.p25, mes.p75], amplio: [mes.p10, mes.p90],
+    });
+  }
+  return filas;
+}
+
+// Tabla compacta de rangos: cabe a 390 px (letra 13 px, cifras tabulares).
+// Sin la celda suelta «S/»: la unidad va en el título («Rango probable · en
+// soles») y cada rango lleva su propia etiqueta.
+function tablaRangos(f, soloHoy = false) {
+  const filas = filasRangosDolar(f);
+  const lista = soloHoy ? filas.slice(0, 1) : filas;
+  if (!lista.length) return "";
+  // El rango va en su propio <span>: la celda se estira a la altura de la
+  // fila (por el título y la fecha), pero el texto del rango sigue en una
+  // sola línea.
+  const celda = (txt, color, peso) => `<td style="text-align:right;white-space:nowrap;vertical-align:top;padding:8px 0;border-bottom:1px solid ${C.rule};font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:13px;color:${color};font-weight:${peso}"><span>${txt}</span></td>`;
+  const cuerpo = lista.map((r) => `<tr>
+      <td style="padding:8px 8px 8px 0;border-bottom:1px solid ${C.rule};vertical-align:top">
+        <div style="font-family:${UI_F};font-size:13px;font-weight:600;color:${C.ink};white-space:nowrap">${esc(r.titulo)}</div>
+        ${r.detalle ? `<div style="font-family:${UI_F};font-size:11px;color:${C.soft};white-space:nowrap">${esc(r.detalle)}</div>` : ""}
+      </td>
+      ${celda(esc(rangoTexto(r.central[0], r.central[1], 3)), C.ink, 600)}
+      ${celda(esc(rangoTexto(r.amplio[0], r.amplio[1], 3)), C.soft, 400)}
+    </tr>`).join("");
+  const cabeceraRango = (titulo, sub, color) => `<div style="font-family:${UI_F};font-size:12px;font-weight:600;color:${color};white-space:nowrap">${titulo}</div><div style="font-family:${UI_F};font-size:10px;color:${C.soft};white-space:nowrap">${sub}</div>`;
+  return `<div style="font-family:${UI_F};font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:${C.soft};margin:0 0 8px">Rango probable · en soles</div>
+  <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;font-variant-numeric:tabular-nums" width="100%">
+    <tr>
+      <td width="24%" style="padding:0 0 6px;border-bottom:1px solid ${C.rule}"></td>
+      <td width="38%" align="right" style="padding:0 0 6px;text-align:right;border-bottom:1px solid ${C.rule}">${cabeceraRango("Central", "1 de cada 2 veces", C.ink)}</td>
+      <td width="38%" align="right" style="padding:0 0 6px;text-align:right;border-bottom:1px solid ${C.rule}">${cabeceraRango("Amplio", "8 de cada 10 veces", C.soft)}</td>
+    </tr>
+    ${cuerpo}
+  </table>`;
+}
+
+// Bloque completo del dólar: cabecera + gráfico + tabla + nota + lectura.
+function bloqueTablaRangos(f, soloHoy = false) {
+  const tabla = tablaRangos(f, soloHoy);
+  if (!tabla) return "";
+  return `<tr><td style="padding:12px 0 4px">
+    ${tabla}
+    <div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:8px">El rango es estadístico: no dice hacia dónde irá el dólar.</div>
+  </td></tr>`;
+}
+
+// Lectura unificada del dólar: 1 punto al alza, 1 a la baja y 2 de contexto.
+function puntosLecturaDolar(lectura, soloManana = false) {
+  const horizontes = lectura?.horizontes || lectura || {};
+  const claves = soloManana ? ["manana"] : ["manana", "semana", "mes"];
+  const vistos = new Set();
+  const toma = (arr) => (Array.isArray(arr) ? arr : []).filter((p) => p && p.texto && !vistos.has(p.texto) && vistos.add(p.texto));
+  const alAlza = [];
+  const aLaBaja = [];
+  const contexto = [];
+  for (const k of claves) {
+    const h = horizontes[k];
+    if (!h) continue;
+    for (const p of toma(h.al_alza)) if (alAlza.length < 1) alAlza.push(p);
+    for (const p of toma(h.a_la_baja)) if (aLaBaja.length < 1) aLaBaja.push(p);
+    for (const p of toma(h.contexto)) if (contexto.length < 2) contexto.push(p);
+  }
+  return { alAlza, aLaBaja, contexto };
+}
+
+// Bloque «Qué podría presionar al dólar» (una sola vez en el correo).
+function bloquePresionDolar(lectura, soloManana = false) {
+  const { alAlza, aLaBaja, contexto } = puntosLecturaDolar(lectura, soloManana);
+  if (!alAlza.length && !aLaBaja.length && !contexto.length) return "";
+  const punto = (p, tipo) => `<div style="margin:0 0 6px;padding-left:12px;border-left:2px solid ${tipo === "al_alza" ? C.pos : tipo === "a_la_baja" ? C.neg : C.soft};opacity:${tipo === "contexto" ? "0.7" : "1"};font-family:${SERIF_F};font-size:15px;line-height:1.5;color:${C.ink}">${esc(p.texto)}</div>`;
+  const etiqueta = (txt) => `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin:10px 0 4px">${txt}</div>`;
+  const partes = [];
+  if (alAlza.length) partes.push(etiqueta("Podría presionar al dólar al alza"), alAlza.map((p) => punto(p, "al_alza")).join(""));
+  if (aLaBaja.length) partes.push(etiqueta("Podría presionar al dólar a la baja"), aLaBaja.map((p) => punto(p, "a_la_baja")).join(""));
+  if (contexto.length) partes.push(etiqueta("Contexto"), contexto.map((p) => punto(p, "contexto")).join(""));
+  return `<tr><td style="padding:12px 0 8px">
+    <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">Qué podría presionar al dólar</td></tr></table>
+    ${partes.join("")}
+  </td></tr>`;
+}
+
+// Gráfico del dólar: 30 cierres + abanico (hoy/mañana, semana y mes; en el
+// gratis solo el de mañana, para no filtrar los rangos del plan de pago).
+function pngDolar(f, soloManana = false) {
+  const serie = cierresDeSerie((f.penSerie30 || []).map((p) => ({ fecha: p[0], valor: p[1] })));
+  const fuente = soloManana ? (f.bandasDolar || []).filter((b) => b.clave === "manana") : (f.bandasDolar || []);
+  const bandas = fuente.map((b) => ({ pasos: b.pasos, p10: b.p10, p25: b.p25, p75: b.p75, p90: b.p90 }));
+  return graficoRango({ serie, bandas, ancho: 560, alto: 150 });
+}
+
+// Gráfico de una empresa: 60 cierres + abanico a un mes.
+function pngEmpresa(c) {
+  const serie = cierresDeSerie(c.serie || []);
+  const fc = c.forecast;
+  const bandas = [];
+  if (fc && serie.length) {
+    const ultimo = serie[serie.length - 1];
+    bandas.push({
+      pasos: diasHabilesHasta(ultimo.fecha, fc.date),
+      p10: fc.p10, p25: fc.p25, p75: fc.p75, p90: fc.p90,
+    });
+  }
+  return graficoRango({ serie, bandas, ancho: 560, alto: 110 });
+}
+
 const SITE = "https://perdata.site";
 const RAW = "https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data";
 const FROM = process.env.BOLETIN_FROM || "PerData <boletin@perdata.site>";
@@ -74,7 +415,9 @@ const prettyName = (raw) => String(raw || "").trim().split(/\s+/).map((w, i) => 
   return i > 0 && SMALL.has(lw) ? lw : lw.replace(/(^|[-(«"])(\p{L})/gu, (m, a, b) => a + b.toUpperCase());
 }).join(" ");
 const sentence = (t) => { const x = String(t || "").trim(); return x && x === x.toUpperCase() ? x.charAt(0) + x.slice(1).toLowerCase() : x; };
-const flagHtml = (C) => `<table role="presentation" cellpadding="0" cellspacing="0" style="display:inline-table;vertical-align:middle;margin-left:8px;border:1px solid ${C.ink}"><tr><td width="5" height="12" style="background:${C.peru}"></td><td width="5" style="background:#ffffff"></td><td width="5" style="background:${C.peru}"></td></tr></table>`;
+// Banderita: tres franjas en spans (nada de tablas: Gmail en iPhone aplasta
+// las tablas anidadas y las pega al logotipo).
+const flagHtml = (C) => `<span style="display:inline-block;vertical-align:middle;margin-left:8px;border:1px solid ${C.ink};line-height:0;font-size:0"><span style="display:inline-block;width:5px;height:12px;background:${C.peru}"></span><span style="display:inline-block;width:5px;height:12px;background:#ffffff"></span><span style="display:inline-block;width:5px;height:12px;background:${C.peru}"></span></span>`;
 
 // ---------------------------------------------------------------------------
 // Local snapshots of the public data (data/). The preview must agree with
@@ -143,6 +486,7 @@ async function facts() {
   // demos; when the network fails the month horizon already comes with a deterministic reading.
   const forecast = fx && fx.quantiles ? {
     horizon: fx.horizonDate, p50: fx.predictedPrice, p10: fx.quantiles.p10 ?? fx.quantiles.P10,
+    p25: fx.quantiles.p25 ?? fx.quantiles.P25, p75: fx.quantiles.p75 ?? fx.quantiles.P75,
     p90: fx.quantiles.p90 ?? fx.quantiles.P90, probRise: fx.probabilityOfRise, model: fx.architecture?.split(" (")[0],
   } : null;
 
@@ -164,7 +508,25 @@ async function facts() {
   const historiasTop3 = historiasTodas.slice(0, 3);
   const stories = historiasTodas.slice(0, 5);
   const used = new Set(stories.flatMap((h) => (h.fuentes || []).map((x) => x.url)));
-  return { markets, smvFacts: uniqueFacts.slice(0, 8), headlines: headlines.filter((h) => !used.has(h.url)).slice(0, 6), forecast, stories, historiasTodas, historiasTop3, daily: penDaily, dailyVigente, cierre, todayLima, bcrp, ctx };
+
+  // Últimos 30 cierres del dólar y abanicos (hoy/mañana, semana y mes) para el gráfico.
+  const penSerie30 = (s.PEN?.serie || []).slice(-30);
+  const basePasos = cierre?.fecha || todayLima;
+  const bandasDolar = [];
+  if (penDaily?.manana) bandasDolar.push({
+    clave: "manana", pasos: diasHabilesHasta(basePasos, penDaily.manana.fecha_objetivo),
+    p10: penDaily.manana.p10, p25: penDaily.manana.p25, p75: penDaily.manana.p75, p90: penDaily.manana.p90,
+  });
+  if (penDaily?.semana) bandasDolar.push({
+    clave: "semana", pasos: diasHabilesHasta(basePasos, penDaily.semana.fecha_objetivo),
+    p10: penDaily.semana.p10, p25: penDaily.semana.p25, p75: penDaily.semana.p75, p90: penDaily.semana.p90,
+  });
+  if (forecast?.horizon) bandasDolar.push({
+    clave: "mes", pasos: diasHabilesHasta(basePasos, forecast.horizon),
+    p10: forecast.p10, p25: forecast.p25, p75: forecast.p75, p90: forecast.p90,
+  });
+
+  return { markets, smvFacts: uniqueFacts.slice(0, 8), headlines: headlines.filter((h) => !used.has(h.url)).slice(0, 6), forecast, stories, historiasTodas, historiasTop3, daily: penDaily, dailyVigente, cierre, todayLima, bcrp, ctx, penSerie30, bandasDolar };
 }
 
 // Headline from the data only: no model, no claims about trends or records
@@ -336,101 +698,103 @@ function lecturaDolarDeterminista(f, clasif, newsById) {
   } catch { return null; }
 }
 
-function render(f, ai, dateLabel, lectura) {
+function render(f, ai, dateLabel, lectura, img) {
   const C = { paper: "#F5F1E8", card: "#FBF9F4", ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", peru: "#D91023" };
-  const serif = "'Source Serif 4',Georgia,'Times New Roman',serif";
-  const ui = "'Libre Franklin',Helvetica,Arial,sans-serif";
-  const mono = "'IBM Plex Mono',Menlo,Consolas,monospace";
   const edition = Math.floor((Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()) - Date.UTC(2026, 9, 26)) / 864e5) + 1;
-  const para = (t, size = 17) => t ? `<p style="margin:0 0 14px;font-family:${serif};font-size:${size}px;line-height:1.55;color:${C.ink}">${esc(t)}</p>` : "";
-  const section = (title) => `<tr><td style="padding:30px 0 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:2px solid ${C.ink};padding-top:10px;font-family:${serif};font-size:22px;font-weight:600;color:${C.ink}">${title}</td></tr></table></td></tr>`;
+  
+  const texto = (t, size = 15, lh = 1.5, clr = C.ink, weight = 400, mgb = 14) => 
+    t ? `<p style="margin:0 0 ${mgb}px;font-family:${SERIF_F};font-size:${size}px;line-height:${lh};color:${clr};font-weight:${weight}">${esc(t)}</p>` : "";
+  
+  const tituloSeccion = (title, numero) => 
+    `<tr><td style="padding:24px 0 8px"><table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table></td></tr>`;
+  
+  const regla = () => `<tr><td style="padding:0"><hr style="border:none;border-top:1px solid ${C.rule};margin:0"/></td></tr>`;
 
-  // Brief (paid #2): copper, gold and oil with variation and date.
+  // Bloque del dólar: cabecera, gráfico PNG, tabla de rangos y lectura unificada.
+  const cierre = f.cierre;
+  const dollarHeadline = cierre ? `<tr><td style="padding:16px 0 8px">
+    <div style="font-family:${UI_F};font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:${C.soft}">Dólar</div>
+    <div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:34px;line-height:1.15;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</div>
+    <p style="margin:4px 0 0;font-family:${UI_F};font-size:13px;color:${C.soft}">Tipo de cambio venta del sistema bancario (SBS), publicado por ${cierre.fuente === "SUNAT" ? "SUNAT" : "el BCRP"} · cierre del ${esc(formatCierreFecha(cierre.fecha))}</p>
+  </td></tr>` : "";
+
+  const dollarImg = imgTag(img, "dolar.png", 560, 150, "Dólar: últimos 30 cierres y rango proyectado");
+  const dollarGraphHtml = dollarImg ? `<tr><td style="padding:4px 0 0">${dollarImg}</td></tr>` : "";
+
+  // Tabla de rangos (central 1 de cada 2, amplio 8 de cada 10) y lectura única.
+  const tablaHtml = bloqueTablaRangos(f, false);
+  const lecturaHtml = bloquePresionDolar(lectura, false);
+
+  // Mercados: una sola tabla de 4 filas (cobre, oro, WTI, Brent).
   const metales = f.markets.filter((m) => ["Cobre", "Oro", "Petróleo WTI", "Petróleo Brent"].includes(m.name));
-  const rows = metales.map((m) => {
-    const up = m.change >= 0;
+  const fmtPct = (v) => {
+    const s = v >= 0 ? `+${v.toFixed(2)}` : v.toFixed(2);
+    return `${s} %`;
+  };
+
+  const mercadoCards = metales.map((m) => {
+    const pctColor = m.change >= 0 ? C.pos : C.neg;
+    // El nombre puede partirse en dos líneas (a 320 px no cabe «Petróleo
+    // Brent» junto a la cifra): las cifras van siempre en una sola línea.
     return `<tr>
-      <td style="padding:11px 0;border-bottom:1px solid ${C.rule};font-family:${ui};font-size:15px;color:${C.ink}">${esc(m.name)}<br><span style="font-size:12px;color:${C.soft}">${esc(m.unit)}</span></td>
-      <td align="right" style="padding:11px 0;border-bottom:1px solid ${C.rule};font-family:${mono};font-size:16px;color:${C.ink};white-space:nowrap">${fmt(m.value, m.dec)}</td>
-      <td align="right" style="padding:11px 0 11px 14px;border-bottom:1px solid ${C.rule};font-family:${mono};font-size:14px;color:${up ? C.pos : C.neg};white-space:nowrap">${up ? "&#9650;" : "&#9660;"} ${fmt(Math.abs(m.change))}&nbsp;%</td>
-      <td align="right" style="padding:11px 0 11px 14px;border-bottom:1px solid ${C.rule};font-family:${mono};font-size:11px;color:${C.soft};white-space:nowrap">${esc(m.date)}</td></tr>`;
+      <td style="padding:8px 8px 8px 0;font-family:${UI_F};font-size:14px;color:${C.ink}">${esc(m.name)}</td>
+      <td align="right" style="padding:8px 8px 8px 0;font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:14px;color:${C.ink};white-space:nowrap">${esc(m.unit)} ${fmt(m.value, m.dec)}</td>
+      <td align="right" style="padding:8px 0;font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:13px;color:${pctColor};white-space:nowrap">${fmtPct(m.change)}</td>
+    </tr>`;
   }).join("");
 
-  const punto = (p) => `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:2px">${esc(p.texto)}</div>`;
-  // The same factor often applies to every horizon: show it once, in the first one
-  const vistos = new Set();
-  const nuevos = (h, lado) => (h?.[lado] || []).filter((p) => !vistos.has(p.texto) && vistos.add(p.texto));
-  const ladoOk = (h, lado, ps = nuevos(h, lado)) => ps.length ? `<div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin:10px 0 2px">${lado === "al_alza" ? "Podría presionar al dólar al alza" : lado === "a_la_baja" ? "Podría presionar al dólar a la baja" : "Contexto"}</div>${ps.map(punto).join("")}` : "";
-  const lecturaHorizonte = (h, titulo, rango, conContexto = true) => {
-    if (!h) return "";
-    const rangoTxt = rango ? `entre S/ ${fmt(rango.p10, 3)} y S/ ${fmt(rango.p90, 3)} <br><span style="font-size:11px;color:${C.soft}">8 de cada 10 veces · central: S/ ${fmt(rango.p50, 3)}</span>` : "";
-    return `<tr><td style="padding:14px 0;border-bottom:1px solid ${C.rule}">
-      <div style="font-family:${ui};font-size:12px;color:${C.soft}">${esc(titulo)}</div>
-      ${rangoTxt ? `<div style="font-family:${mono};font-size:14px;color:${C.ink};margin-top:2px">${rangoTxt}</div>` : ""}
-      ${h.resumen && !h.determinista ? `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:6px">${esc(h.resumen)}</div>` : ""}
-      ${ladoOk(h, "al_alza")}${ladoOk(h, "a_la_baja")}${conContexto ? ladoOk(h, "contexto") : ""}
-    </td></tr>`;
-  };
-  const lect = lectura?.horizontes || {};
-  const dolarRows = [];
-  if (f.dailyVigente && f.daily) {
-    if (f.daily.manana) dolarRows.push({ key: "manana", titulo: formatFechaObjetivo(f.daily.manana.fecha_objetivo, f.todayLima), rango: f.daily.manana });
-    if (f.daily.semana) dolarRows.push({ key: "semana", titulo: `Próxima semana (${formatSemanaFecha(f.daily.semana.fecha_objetivo)})`, rango: f.daily.semana });
-  }
-  if (f.forecast) dolarRows.push({ key: "mes", titulo: `Próximo mes (${f.forecast.horizon})`, rango: f.forecast });
-  const fc = dolarRows.length ? `<tr><td style="padding:18px 0 0">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.card};border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule}"><tr><td style="padding:16px 4px">
-      <div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin-bottom:8px">Dólar interbancario (USD/PEN) · Rango proyectado y lectura</div>
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-        ${dolarRows.map((r, i) => lecturaHorizonte(lect[r.key], r.titulo, r.rango, i === 0)).join("")}
-      </table>
-    </td></tr></table></td></tr>` : "";
+  // Hechos de importancia de la SMV (máximo 3, una línea cada uno).
+  const smv = f.smvFacts.slice(0, 3).map((h) => `<tr><td style="padding:8px 0;font-family:${UI_F};font-size:13px;line-height:1.45;color:${C.ink}">
+    <span style="font-weight:600">${esc(h.empresa)}:</span>
+    <a href="${esc(h.url_oficial)}" style="color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(h.titulo || h.tipo)}</a>
+    <span style="font-family:${MONO_F};font-size:11px;color:${C.soft}"> · ${esc(formatSMVFecha(h.fecha))}</span>
+  </td></tr>`).join("");
 
-  const smv = f.smvFacts.map((h) => `<tr><td style="padding:12px 0;border-bottom:1px solid ${C.rule}">
-      <div style="font-family:${ui};font-size:14px;font-weight:600;color:${C.ink}">${esc(h.empresa)}</div>
-      <a href="${esc(h.url_oficial)}" style="font-family:${serif};font-size:16px;line-height:1.45;color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(h.titulo || h.tipo)}</a>
-      <div style="font-family:${mono};font-size:11px;color:${C.soft};margin-top:3px">${esc(h.fecha)}</div></td></tr>`).join("");
-  const news = f.headlines.map((n) => `<tr><td style="padding:12px 0;border-bottom:1px solid ${C.rule}">
-      <a href="${esc(n.url)}" style="font-family:${serif};font-size:16px;line-height:1.45;color:${C.ink};text-decoration:underline;text-decoration-color:${C.rule}">${esc(n.title)}</a>
-      <div style="font-family:${ui};font-size:12px;color:${C.soft};margin-top:3px">${esc(n.source)}</div></td></tr>`).join("");
+  // Historias: título + primera frase + fuente (máximo 4 en el pagado).
+  const historiaHtml = (h) => `<tr><td style="padding:16px 0">
+    <div style="font-family:${SERIF_F};font-size:17px;font-weight:600;line-height:1.3;color:${C.ink};margin-bottom:4px">${esc(h.titulo)}</div>
+    ${h.nota ? `<div style="font-family:${SERIF_F};font-size:15px;line-height:1.45;color:${C.ink}">${esc(primeraFrase(h.nota))}</div>` : ""}
+    <div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:6px">${(h.fuentes || []).filter((x, i, a) => a.findIndex((y) => y.fuente === x.fuente) === i).map((x) => `<a href="${esc(x.url)}" style="color:${C.soft}">${esc(x.fuente)}</a>`).join(" · ")}</div>
+  </td></tr>`;
+
   const preheader = esc(entradillaDeterminista(f) || `Dólar, cobre, oro y petróleo; hechos de importancia de la SMV y titulares del ${dateLabel}.`);
-
-  // Brief (paid #4): ALL the digest stories, as the current full digest.
-  const historiaHtml = (h) => `<tr><td style="padding:14px 0;border-bottom:1px solid ${C.rule}">
-      <div style="font-family:${ui};font-size:12px;color:${C.soft}">${esc(h.tema)}</div>
-      <div style="font-family:${serif};font-size:19px;font-weight:600;line-height:1.3;color:${C.ink};margin-top:2px">${esc(h.titulo)}</div>
-      ${h.nota ? `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:6px">${esc(h.nota)}</div>` : ""}
-      <div style="font-family:${ui};font-size:12px;color:${C.soft};margin-top:6px">${(h.fuentes || []).filter((x, i, a) => a.findIndex((y) => y.fuente === x.fuente) === i).map((x) => `<a href="${esc(x.url)}" style="color:${C.soft}">${esc(x.fuente)}</a>`).join(" · ")}</div>
-    </td></tr>`;
 
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light only">
 <title>Boletín PerData</title></head>
 <body style="margin:0;padding:0;background:${C.paper}">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0">${preheader}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.paper}"><tr><td align="center" style="padding:0 16px">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px">
+<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;background:${C.paper}" width="100%"><tr><td align="center" style="padding:0 16px">
+<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px" width="100%">
   <tr><td style="padding:28px 0 12px;border-bottom:4px double ${C.ink}">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td style="font-family:${serif};font-size:32px;font-style:italic;font-weight:600;color:${C.ink};white-space:nowrap">PerData${flagHtml(C)}</td>
-      <td align="right" style="font-family:${ui};font-size:12px;line-height:1.5;color:${C.soft}">Boletín diario<br>Edición ${edition > 0 ? edition : 1}</td>
-    </tr></table>
-    <div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:6px;text-transform:none">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
+    <div style="font-family:${SERIF_F};font-size:32px;line-height:1.1;font-style:italic;font-weight:600;color:${C.ink}">PerData${flagHtml(C)}</div>
+    <div style="font-family:${UI_F};font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:${C.soft};margin-top:8px">Boletín diario · Edición ${edition > 0 ? edition : 1}</div>
+    <div style="font-family:${UI_F};font-size:13px;color:${C.soft};margin-top:2px">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
   </td></tr>
-  ${entradillaDeterminista(f) ? `<tr><td style="padding:22px 0 4px">${para(entradillaDeterminista(f), 20)}</td></tr>` : ""}
-  ${fc}
+  
+  ${dollarHeadline}
+  ${dollarGraphHtml}
+  ${tablaHtml}
+  ${lecturaHtml}
   {{PERSONAL}}
-  ${f.historiasTodas?.length ? section("Lo importante de hoy") + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${f.historiasTodas.map(historiaHtml).join("")}</table><div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:6px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
-  ${section("Mercados")}
-  ${ai?.mercados ? `<tr><td style="padding:12px 0 0">${para(ai.mercados)}</td></tr>` : ""}
-  ${rows ? `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid ${C.rule}">${rows}</table>
-    <div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:6px">Fuente: BCRP${f.markets.some((m) => m.name.includes("Brent")) ? " y EIA" : ""}. Variación frente al dato anterior.</div></td></tr>` : ""}
-  ${f.smvFacts.length ? section("Hechos de importancia") + (ai?.empresas ? `<tr><td style="padding:12px 0 0">${para(ai.empresas)}</td></tr>` : "") + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${smv}</table><div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:6px">Fuente: Superintendencia del Mercado de Valores (SMV).</div></td></tr>` : ""}
-  ${f.headlines.length ? section("Titulares") + `<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${news}</table></td></tr>` : ""}
+  
+  ${f.historiasTodas?.length ? tituloSeccion("Lo importante de hoy", 0) + `<tr><td><table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%">${f.historiasTodas.slice(0, 4).map(historiaHtml).join(regla())}</table><div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:16px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
+  
+  ${tituloSeccion("Mercados", 0)}
+  ${metales.length ? `<tr><td style="padding:8px 0"><table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%">${mercadoCards}</table></td></tr>` : ""}
+  <tr><td style="padding:12px 0 0"><div style="font-family:${UI_F};font-size:11px;color:${C.soft}">Fuente: BCRP${f.markets.some((m) => m.name.includes("Brent")) ? " y EIA" : ""}. Variación frente al dato anterior.</div></td></tr>
+  
+  ${f.smvFacts.length ? tituloSeccion("Hechos de importancia", 0) + `<tr><td><table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%">${smv}</table><div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:12px">Fuente: Superintendencia del Mercado de Valores (SMV).</div></td></tr>` : ""}
+  
   <tr><td align="center" style="padding:32px 0 8px">
-    <a href="${SITE}/explorer" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${ui};font-size:15px;font-weight:600;text-decoration:none;padding:13px 26px">Abrir la terminal</a>
+    <a href="${SITE}/explorer" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${UI_F};font-size:15px;font-weight:600;text-decoration:none;padding:13px 26px;border-radius:4px">Abrir la terminal</a>
   </td></tr>
-  <tr><td style="padding:24px 0 36px;border-top:1px solid ${C.rule};font-family:${ui};font-size:12px;line-height:1.6;color:${C.soft}">
+
+  <tr><td style="padding:16px 0 8px;font-family:${UI_F};font-size:13px;color:${C.soft};text-align:center">
+    ¿Te sirvió? Reenvía este correo. Quien lo reciba puede suscribirse gratis en <a href="${SITE}/boletin?utm_source=correo&amp;utm_medium=reenvio" style="color:${C.ink};text-decoration:underline">perdata.site/boletin</a>
+  </td></tr>
+  
+  <tr><td style="padding:24px 0 36px;border-top:1px solid ${C.rule};font-family:${UI_F};font-size:12px;line-height:1.6;color:${C.soft}">
     El rango es estadístico; los factores son contexto, no una predicción de dirección.<br>
     ${ai ? "La interpretación la redacta un modelo de IA a partir de los datos de este correo; las cifras se comprueban contra la fuente.<br>" : ""}
     Información con fines informativos; no es una recomendación de inversión.<br>
@@ -440,94 +804,83 @@ function render(f, ai, dateLabel, lectura) {
 </table></td></tr></table></body></html>`;
 }
 
-function renderGratis(f, dateLabel, lectura) {
-  const C = { paper: "#F5F1E8", card: "#FBF9F4", ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", peru: "#D91023" };
-  const serif = "'Source Serif 4',Georgia,'Times New Roman',serif";
-  const ui = "'Libre Franklin',Helvetica,Arial,sans-serif";
-  const mono = "'IBM Plex Mono',Menlo,Consolas,monospace";
+function renderGratis(f, dateLabel, lectura, img) {
+  const C = { paper: "#F5F1E8", card: "#FBF9F4", ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", peru: "#D91023" };
   const edition = Math.floor((Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()) - Date.UTC(2026, 9, 26)) / 864e5) + 1;
-  const manana = f.daily?.manana;
-  const rango = f.dailyVigente ? manana : null;
+  
+  const texto = (t, size = 15, lh = 1.5, clr = C.ink, weight = 400, mgb = 14) => 
+    t ? `<p style="margin:0 0 ${mgb}px;font-family:${SERIF_F};font-size:${size}px;line-height:${lh};color:${clr};font-weight:${weight}">${esc(t)}</p>` : "";
+  
+  const tituloSeccion = (title, numero) => 
+    `<tr><td style="padding:24px 0 8px"><table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">${numero ? `${numero}. ` : ''}${title}</td></tr></table></td></tr>`;
+  
+  const regla = () => `<tr><td style="padding:0"><hr style="border:none;border-top:1px solid ${C.rule};margin:0"/></td></tr>`;
+
+  // Bloque del dólar (gratis): cabecera, gráfico PNG, tabla de un horizonte y lectura.
   const cierre = f.cierre;
-  const etiquetaManana = rango ? formatFechaObjetivo(rango.fecha_objetivo, f.todayLima) : "";
-
-  const dollar = `<tr><td style="padding:18px 0 0">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.card};border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule}"><tr><td style="padding:16px 4px">
-      <div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin-bottom:8px">Dólar interbancario (USD/PEN)</div>
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-        ${cierre ? `<tr><td style="padding:8px 0;border-bottom:1px solid ${C.rule}">
-          <div style="font-family:${ui};font-size:12px;color:${C.soft}">${cierre.fuente === "SUNAT" ? "Último cierre (SBS, publicado por SUNAT)" : "Último cierre oficial (BCRP)"} · cierre del ${esc(formatCierreFecha(cierre.fecha))}</div>
-          <div style="font-family:${mono};font-size:14px;color:${C.ink};margin-top:2px">S/ ${fmt(cierre.valor, 3)}</div>
-        </td></tr>` : ""}
-        ${rango ? `<tr><td style="padding:8px 0">
-          <div style="font-family:${ui};font-size:12px;color:${C.soft}">Rango probable · ${esc(etiquetaManana)}</div>
-          <div style="font-family:${mono};font-size:14px;color:${C.ink};margin-top:2px">
-            entre S/ ${fmt(rango.p10, 3)} y S/ ${fmt(rango.p90, 3)} <span style="font-size:11px;color:${C.soft}">(8 de cada 10 veces)</span> · central: S/ ${fmt(rango.p50, 3)}
-          </div>
-        </td></tr>` : `<tr><td style="padding:8px 0">
-          <div style="font-family:${ui};font-size:12px;color:${C.soft}">Rango probable</div>
-          <div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:2px">Se publica cada mañana con el cierre del día anterior.</div>
-        </td></tr>`}
-      </table>
-    </td></tr></table></td></tr>`;
-
-  // Brief (free #3): «Qué podría presionar al dólar» of the `manana` horizon.
-  // `lectura` is the lecturaDolar result ({ horizontes }); tolerate the bare horizon too.
-  const mananaLec = lectura?.horizontes?.manana || lectura?.manana || null;
-  const mananaOk = Boolean(mananaLec && typeof mananaLec.resumen === "string" && mananaLec.resumen.length > 0);
-  const punto = (p) => `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:3px">${esc(p.texto)}</div>`;
-  const lado = (h, key, label) => (h?.[key] || []).length
-    ? `<div style="font-family:${ui};font-size:13px;font-weight:600;color:${C.ink};margin:10px 0 2px">${label}</div>${h[key].map(punto).join("")}` : "";
-  const presiona = mananaOk ? `<tr><td style="padding:24px 0 0">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:2px solid ${C.ink};padding-top:10px;font-family:${serif};font-size:22px;font-weight:600;color:${C.ink}">Qué podría presionar al dólar</td></tr></table>
-    ${mananaLec.determinista ? "" : `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:8px">${esc(mananaLec.resumen)}</div>`}
-    ${lado(mananaLec, "al_alza", "Podría presionar al dólar al alza")}${lado(mananaLec, "a_la_baja", "Podría presionar al dólar a la baja")}${lado(mananaLec, "contexto", "Contexto")}
+  const dollarHeadline = cierre ? `<tr><td style="padding:16px 0 8px">
+    <div style="font-family:${UI_F};font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:${C.soft}">Dólar</div>
+    <div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:34px;line-height:1.15;font-weight:600;color:${C.ink};white-space:nowrap">S/ ${fmt(cierre.valor, 3)}</div>
+    <p style="margin:4px 0 0;font-family:${UI_F};font-size:13px;color:${C.soft}">Tipo de cambio venta del sistema bancario (SBS), publicado por ${cierre.fuente === "SUNAT" ? "SUNAT" : "el BCRP"} · cierre del ${esc(formatCierreFecha(cierre.fecha))}</p>
   </td></tr>` : "";
-  const transparencia = `<tr><td style="padding:16px 0 0;font-family:${ui};font-size:13px;line-height:1.55;color:${C.soft}">El rango es estadístico; los factores son contexto, no una predicción de dirección.</td></tr>`;
 
-  const historiaHtml = (h) => `<tr><td style="padding:14px 0;border-bottom:1px solid ${C.rule}">
-      <div style="font-family:${ui};font-size:12px;color:${C.soft}">${esc(h.tema)}</div>
-      <div style="font-family:${serif};font-size:19px;font-weight:600;line-height:1.3;color:${C.ink};margin-top:2px">${esc(h.titulo)}</div>
-      ${h.nota ? `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:6px">${esc(h.nota)}</div>` : ""}
-      <div style="font-family:${ui};font-size:12px;color:${C.soft};margin-top:6px">${(h.fuentes || []).filter((x, i, a) => a.findIndex((y) => y.fuente === x.fuente) === i).map((x) => `<a href="${esc(x.url)}" style="color:${C.soft}">${esc(x.fuente)}</a>`).join(" · ")}</div>
-    </td></tr>`;
-  const historias = f.historiasTop3?.length ? `<tr><td style="padding:30px 0 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:2px solid ${C.ink};padding-top:10px;font-family:${serif};font-size:22px;font-weight:600;color:${C.ink}">Lo importante de hoy</td></tr></table></td></tr>
-  <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${f.historiasTop3.map(historiaHtml).join("")}</table><div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:6px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : "";
+  const dollarImg = imgTag(img, "dolar-hoy.png", 560, 150, "Dólar: últimos 30 cierres y rango proyectado");
+  const dollarGraphHtml = dollarImg ? `<tr><td style="padding:4px 0 0">${dollarImg}</td></tr>` : "";
+  const tablaHtml = bloqueTablaRangos(f, true);
+  const presionaHtml = bloquePresionDolar(lectura, true);
 
-  // Brief (free #4): brief invitation to the Boletín plan, without promising anything
-  // the paid email does not bring.
+  // Top 3 stories
+  const historiaHtml = (h) => `<tr><td style="padding:16px 0">
+    <div style="font-family:${SERIF_F};font-size:17px;font-weight:600;line-height:1.3;color:${C.ink};margin-bottom:4px">${esc(h.titulo)}</div>
+    ${h.nota ? `<div style="font-family:${SERIF_F};font-size:15px;line-height:1.45;color:${C.ink}">${esc(primeraFrase(h.nota))}</div>` : ""}
+    <div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:6px">${(h.fuentes || []).filter((x, i, a) => a.findIndex((y) => y.fuente === x.fuente) === i).map((x) => `<a href="${esc(x.url)}" style="color:${C.soft}">${esc(x.fuente)}</a>`).join(" · ")}</div>
+  </td></tr>`;
+
+  // Plan Boletín invitation - 3 bullets
   const plan = `<!-- plan-boletin -->
   <tr><td style="padding:24px 0 0">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.card};border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule}"><tr><td style="padding:16px 4px">
-      <div style="font-family:${ui};font-size:14px;line-height:1.55;color:${C.ink}">Con el plan Boletín (US$&nbsp;1.99 al mes, 7 días de prueba con tarjeta) recibes cada mañana el dólar a una semana y a un mes, el cobre, el oro y el petróleo, los hechos de importancia de la SMV, lo importante del día y tus propias empresas.</div>
-      <div style="margin-top:12px"><a href="${SITE}/precios" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${ui};font-size:14px;font-weight:600;text-decoration:none;padding:10px 18px">Ver los planes</a></div>
+    <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;background:${C.card};border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule}" width="100%"><tr><td style="padding:20px 4px">
+      <div style="font-family:${UI_F};font-size:14px;line-height:1.55;color:${C.ink};margin-bottom:12px">Con el plan Boletín (US$&nbsp;1.99 al mes, 7 días de prueba con tarjeta) recibes:</div>
+      <ul style="margin:0;padding-left:20px;font-family:${SERIF_F};font-size:15px;line-height:1.6;color:${C.ink}">
+        <li style="margin-bottom:8px">Dólar a una semana y a un mes, cada uno con su rango y lectura</li>
+        <li style="margin-bottom:8px">Cobre, oro y petróleo con variación y gráficos</li>
+        <li>Tus empresas (hasta 15) con precio, proyección, hechos y noticias</li>
+      </ul>
+      <div style="margin-top:16px"><a href="${SITE}/precios" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${UI_F};font-size:14px;font-weight:600;text-decoration:none;padding:12px 24px;border-radius:4px">Ver los planes</a></div>
     </td></tr></table>
   </td></tr>
   <!-- /plan-boletin -->`;
 
-  const preheader = esc(`Cierre oficial del dólar y rango probable (${etiquetaManana ? etiquetaManana.charAt(0).toLowerCase() + etiquetaManana.slice(1) : "del próximo día hábil"}).`);
+  const preheader = esc("Cierre oficial del dólar (sistema bancario SBS) y rango probable para el próximo día hábil.");
 
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light only">
 <title>Boletín PerData</title></head>
 <body style="margin:0;padding:0;background:${C.paper}">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0">${preheader}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.paper}"><tr><td align="center" style="padding:0 16px">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px">
+<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;background:${C.paper}" width="100%"><tr><td align="center" style="padding:0 16px">
+<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px" width="100%">
   <tr><td style="padding:28px 0 12px;border-bottom:4px double ${C.ink}">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td style="font-family:${serif};font-size:32px;font-style:italic;font-weight:600;color:${C.ink};white-space:nowrap">PerData${flagHtml(C)}</td>
-      <td align="right" style="font-family:${ui};font-size:12px;line-height:1.5;color:${C.soft}">Boletín diario<br>Edición ${edition > 0 ? edition : 1}</td>
-    </tr></table>
-    <div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:6px;text-transform:none">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
+    <div style="font-family:${SERIF_F};font-size:32px;line-height:1.1;font-style:italic;font-weight:600;color:${C.ink}">PerData${flagHtml(C)}</div>
+    <div style="font-family:${UI_F};font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:${C.soft};margin-top:8px">Boletín diario · Edición ${edition > 0 ? edition : 1}</div>
+    <div style="font-family:${UI_F};font-size:13px;color:${C.soft};margin-top:2px">${esc(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))} · Lima</div>
   </td></tr>
-  ${dollar}
+  
+  ${dollarHeadline}
+  ${dollarGraphHtml}
+  ${tablaHtml}
+  ${presionaHtml}
   {{PERSONAL}}
-  ${historias}
-  ${presiona}
-  ${transparencia}
+  
+  ${f.historiasTop3?.length ? tituloSeccion("Lo importante de hoy", 0) + `<tr><td><table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%">${f.historiasTop3.map(historiaHtml).join(regla())}</table><div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:16px">Notas de PerData redactadas con IA a partir de los titulares de varias fuentes; cada enlace lleva al medio original.</div></td></tr>` : ""}
+  
   ${plan}
-  <tr><td style="padding:24px 0 36px;border-top:1px solid ${C.rule};font-family:${ui};font-size:12px;line-height:1.6;color:${C.soft}">
+  
+  <tr><td style="padding:16px 0 8px;font-family:${UI_F};font-size:13px;color:${C.soft};text-align:center">
+    ¿Te sirvió? Reenvía este correo. Quien lo reciba puede suscribirse gratis en <a href="${SITE}/boletin?utm_source=correo&amp;utm_medium=reenvio" style="color:${C.ink};text-decoration:underline">perdata.site/boletin</a>
+  </td></tr>
+  
+  <tr><td style="padding:24px 0 36px;border-top:1px solid ${C.rule};font-family:${UI_F};font-size:12px;line-height:1.6;color:${C.soft}">
     El rango es estadístico; los factores son contexto, no una predicción de dirección.<br>
     Información con fines informativos; no es una recomendación de inversión.<br>
     <a href="${SITE}" style="color:${C.ink}">perdata.site</a> · Equipo de PerData<br>
@@ -539,6 +892,15 @@ function renderGratis(f, dateLabel, lectura) {
 // ---- Personal section: the companies each subscriber follows ----
 const empresasLocal = readLocal("data/empresas.json", { emisores: [] });
 const estadoLocal = readLocal("data/empresas-estado.json", { emisores: {} });
+// Rango semanal calibrado de las acciones (data/acciones-rangos.json): una sola
+// lectura para todas las tarjetas. Si el archivo no se puede leer, el correo
+// sale igual que hoy (con la proyección vieja), nunca falla el envío.
+let rangos = readLocal("data/acciones-rangos.json", null);
+if (!rangos) {
+  try { rangos = await getJson(`${RAW}/acciones-rangos.json`).catch(() => null); } catch { rangos = null; }
+}
+// Fecha de hoy en Lima (AAAA-MM-DD): con ella se mide la vigencia del rango.
+const hoyLima = new Date(Date.now() - 5 * 36e5).toISOString().slice(0, 10);
 // Live issuers are loaded at module level like before (one fetch, reused by
 // every subscriber); when the network is down the repo copy above keeps the
 // preview working with the same figures.
@@ -563,8 +925,8 @@ async function companyCard(nemo, smvAll, clasif, newsById) {
   const lima = Boolean(v && /\.LM$/i.test(v.simbolo_proyeccion || ""));
   const card = {
     nemo, name: prettyName(e.razonSocial), sector: e.sector || null, simbolo_proyeccion,
-    price: null, change: null, currency: st.moneda || v?.moneda || "S/", forecast: null,
-    smv: [], news: [], sentiment: null,
+    price: null, change: null, currency: st.moneda || v?.moneda || "S/", forecast: null, rangoMotivo: null,
+    smv: [], news: [], serie: [],
   };
   // Lima prices: data/empresas-estado.json (the table /empresas and the module
   // demos read) with the SMV table as the live fallback. The figure shown is
@@ -574,33 +936,79 @@ async function companyCard(nemo, smvAll, clasif, newsById) {
     card.priceDate = st.ultima_fecha;
     card.priceSource = "empresas-estado";
   }
+  // Cierres para el gráfico (60): la tabla de la SMV para las de Lima y el
+  // endpoint público /api/historical para el resto. Si la consulta falla, la
+  // empresa sale sin imagen (pero con precio y noticias).
   if (lima) {
     try {
-      const rows = await smvRows(nemo, "2000-01-01", { limit: 2 });
+      const rows = await smvRows(nemo, "2000-01-01", { limit: 60 });
       if (rows.length) {
-        card.price = Number(rows[0].cierre);
-        card.currency = "S/";
-        card.priceDate = rows[0].fecha;
-        card.priceSource = "smv";
-        if (rows[1] && Number(rows[1].cierre) !== 0) card.change = pct(Number(rows[0].cierre), Number(rows[1].cierre));
+        card.serie = rows.map((r) => ({ fecha: String(r.fecha).slice(0, 10), valor: Number(r.cierre) }))
+          .filter((p) => p.fecha && Number.isFinite(p.valor))
+          .sort((a, b) => a.fecha.localeCompare(b.fecha));
+        const last = card.serie[card.serie.length - 1];
+        const prev = card.serie[card.serie.length - 2];
+        if (last) {
+          card.price = last.valor;
+          card.currency = "S/";
+          card.priceDate = last.fecha;
+          card.priceSource = "smv";
+          if (prev && prev.valor) card.change = pct(last.valor, prev.valor);
+        }
       }
     } catch (e2) {
       console.error(`SMV ${nemo}: ${e2.message}`);
     }
+  }
+  if (!card.serie.length && simbolo_proyeccion) {
+    const rango = /\.LM$/i.test(simbolo_proyeccion) ? "3mo" : "1y";
+    const h = await getJson(`${SITE}/api/historical?symbol=${encodeURIComponent(simbolo_proyeccion)}&range=${rango}&interval=1d`).catch(() => null);
+    card.serie = (h?.series || []).map((p) => ({ fecha: String(p.date).slice(0, 10), valor: Number(p.close) }))
+      .filter((p) => p.fecha && Number.isFinite(p.valor));
+    if (h?.live?.price && card.price == null) {
+      card.price = h.live.price;
+      card.change = h.live.changePct ?? null;
+      card.priceDate = h.live.time;
+    }
+    if (h?.currency && !st.moneda) card.currency = h.currency === "USD" ? "US$" : "S/";
+  }
+  // El rango de la semana sale del motor calibrado (data/acciones-rangos.json):
+  // en las acciones de Lima sustituye a la banda mensual vieja de /api/forecast
+  // (ancha y sin calibrar). Los valores que NO son de Lima siguen con su
+  // proyección de /api/forecast, tal como hasta ahora.
+  const valorRango = rangos ? rangos.valores?.[nemo] : undefined;
+  const r = rangos ? rangoEmpresaCorreo(valorRango, { hoy: hoyLima }) : null;
+  if (r && lima) {
+    card.forecast = r.forecast;
+    card.rangoMotivo = r.motivo;
   } else if (simbolo_proyeccion) {
-    const h = await getJson(`${SITE}/api/historical?symbol=${encodeURIComponent(simbolo_proyeccion)}&range=1y`).catch(() => null);
-    if (h?.live?.price) { card.price = h.live.price; card.change = h.live.changePct ?? null; card.priceDate = h.live.time; }
-    else if (h?.series?.length) { card.price = h.series[h.series.length - 1].close; card.priceDate = h.series[h.series.length - 1].date; }
-    card.currency = h?.currency === "USD" ? "US$" : "S/";
     const fc = await getJson(`${SITE}/api/forecast?symbol=${encodeURIComponent(simbolo_proyeccion)}&horizon=1`).catch(() => null);
-    if (fc?.quantiles) card.forecast = { p50: fc.predictedPrice, p10: fc.quantiles.p10 ?? fc.quantiles.P10, p90: fc.quantiles.p90 ?? fc.quantiles.P90, date: fc.horizonDate, prob: fc.probabilityOfRise };
+    if (fc?.quantiles) card.forecast = {
+      p50: fc.predictedPrice, p10: fc.quantiles.p10 ?? fc.quantiles.P10, p25: fc.quantiles.p25 ?? fc.quantiles.P25,
+      p75: fc.quantiles.p75 ?? fc.quantiles.P75, p90: fc.quantiles.p90 ?? fc.quantiles.P90,
+      date: fc.horizonDate, prob: fc.probabilityOfRise,
+    };
   }
-  // Lima securities get their projection range from the same public endpoint.
+  // Sin rango propio (acciones que no son de Lima): cuando el motor conoce la
+  // acción y no publica un rango, la tarjeta explica el motivo en vez de callar.
+  // Las que el motor no conoce quedan exactamente como hasta ahora.
+  if (r && !lima && !card.forecast && valorRango) card.rangoMotivo = r.motivo;
+  // The series ends at the close that is shown (nothing later) and the
+  // variation is derived from it when the source did not give one.
+  if (card.priceDate) {
+    const limite = String(card.priceDate).slice(0, 10);
+    card.serie = card.serie.filter((p) => p.fecha <= limite);
+  }
+  if (card.change == null && card.serie.length >= 2) {
+    const last = card.serie[card.serie.length - 1];
+    const prev = card.serie[card.serie.length - 2];
+    if (prev.valor) card.change = pct(last.valor, prev.valor);
+  }
   if (card.price == null && st.ultimo_cierre != null) { card.price = Number(st.ultimo_cierre); card.priceDate = st.ultima_fecha; }
-  if (lima && simbolo_proyeccion && !card.forecast) {
-    const fc = await getJson(`${SITE}/api/forecast?symbol=${encodeURIComponent(simbolo_proyeccion)}&horizon=1`).catch(() => null);
-    if (fc?.quantiles) card.forecast = { p50: fc.predictedPrice, p10: fc.quantiles.p10 ?? fc.quantiles.P10, p90: fc.quantiles.p90 ?? fc.quantiles.P90, date: fc.horizonDate, prob: fc.probabilityOfRise };
-  }
+  // Gráfico: sin proyección o con menos de 10 cierres la empresa sale sin imagen.
+  card.grafico = (card.forecast && card.serie.length >= 10)
+    ? { archivo: `${nemo}.png`, ancho: 560, alto: 110, alt: `${card.name}: últimos cierres y rango proyectado a ${card.forecast.horizonte === "semana" ? "una semana" : "un mes"}` }
+    : null;
   const since = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10);
   for (const n of nemos) for (const h of smvAll[n] || []) if (h.fecha >= since) card.smv.push({ ...h, titulo: sentence(h.titulo) || sentence(h.tipo) });
   const seen = new Set();
@@ -617,18 +1025,9 @@ async function companyCard(nemo, smvAll, clasif, newsById) {
   }
   card.news.sort((a, b) => String(b.fecha_iso).localeCompare(String(a.fecha_iso)));
   card.news = card.news.slice(0, 3);
-  if (card.news.length) {
-    const counts = { POSITIVO: 0, NEGATIVO: 0, NEUTRO: 0 };
-    for (const n of card.news) if (counts[n.sentimiento] != null) counts[n.sentimiento]++;
-    const parts = [["POSITIVO", "positiva"], ["NEGATIVO", "negativa"], ["NEUTRO", "neutra"]]
-      .filter(([key]) => counts[key]).map(([key, label]) => `${counts[key]} ${label}${counts[key] === 1 ? "" : "s"}`);
-    card.sentiment = `Tono de las noticias: ${parts.join(", ")}.`;
-  }
   return card;
 }
 const numOk = (v) => v !== null && v !== undefined && v !== "" && Number.isFinite(Number(v));
-
-const shortDay = (iso) => new Date(`${String(iso).slice(0, 10)}T12:00:00Z`).toLocaleDateString("es-PE", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).replace(/\./g, "");
 
 function macroEmpresa(f) {
   const macroDeSerie = (serie) => {
@@ -650,49 +1049,105 @@ function macroEmpresa(f) {
   return macro;
 }
 
-function renderPersonal(cards, lecturas) {
+function renderPersonal(cards, lecturas, img) {
   const C = { ink: "#1B1916", soft: "#5E584E", rule: "#DCD4C4", pos: "#1E7A46", neg: "#B42318", card: "#FBF9F4" };
-  const serif = "'Source Serif 4',Georgia,'Times New Roman',serif";
-  const ui = "'Libre Franklin',Helvetica,Arial,sans-serif";
-  const mono = "'IBM Plex Mono',Menlo,Consolas,monospace";
+
+  const punto = (p, tipo) => `<div style="margin:0 0 6px;padding-left:10px;border-left:2px solid ${tipo === "al_alza" ? C.pos : C.neg};font-family:${SERIF_F};font-size:14px;line-height:1.45;color:${C.ink}">${esc(p.texto)}</div>`;
+
+  const regla = () => `<tr><td style="padding:0"><hr style="border:none;border-top:1px solid ${C.rule};margin:0"/></td></tr>`;
+
   const body = cards.map((c) => {
-    const ch = c.change == null ? "" : `<span style="color:${c.change >= 0 ? C.pos : C.neg}">${c.change >= 0 ? "&#9650;" : "&#9660;"} ${fmt(Math.abs(c.change))}&nbsp;%</span>`;
-    const fc = c.forecast ? `<div style="font-family:${ui};font-size:13px;color:${C.soft};margin-top:4px">Proyección al ${esc(c.forecast.date)}: ${c.currency} ${fmt(c.forecast.p50)}${c.forecast.p10 ? ` (entre ${fmt(c.forecast.p10)} y ${fmt(c.forecast.p90)}, 8 de cada 10 veces)` : ""}</div>` : "";
-    const item = (html) => `<tr><td valign="top" style="width:16px;padding:5px 0 0;font-family:${ui};font-size:13px;color:${C.soft}">–</td><td style="padding:5px 0 0;font-family:${ui};font-size:13px;line-height:1.45">${html}</td></tr>`;
-    const smv = c.smv.map((h) => item(`<span style="color:${C.soft}">SMV, ${esc(shortDay(h.fecha))}:</span> <a href="${esc(h.url_oficial)}" style="color:${C.ink}">${esc(h.titulo)}</a>`)).join("");
-    const news = c.news.map((n) => item(`<a href="${esc(n.url)}" style="color:${C.ink}">${esc(n.titulo)}</a> <span style="color:${C.soft}">· ${esc(n.fuente)}</span>`)).join("");
-    const quiet = !c.smv.length && !c.news.length ? `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">Sin hechos de importancia ni noticias en los últimos días.</div>` : "";
-    const sentiment = c.sentiment ? `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">${esc(c.sentiment)}</div>` : (quiet ? "" : `<div style="margin-top:6px;font-family:${ui};font-size:13px;color:${C.soft}">Sin noticias recientes de esta empresa.</div>`);
-    // Brief (paid #5): the company reading (que_hay, podría mover, contexto).
+    const ch = c.change == null ? "" : `<span style="color:${c.change >= 0 ? C.pos : C.neg}">${c.change >= 0 ? "▲" : "▼"} ${fmt(Math.abs(c.change))}%</span>`;
+    const fc = c.forecast;
+
+    // Gráfico: 60 cierres + abanico a un mes (alto 110). Sin proyección o con
+    // menos de 10 cierres la empresa sale sin imagen.
+    const grafico = c.grafico ? imgTag(img, c.grafico.archivo, c.grafico.ancho, c.grafico.alto, c.grafico.alt) : "";
+    const graficoHtml = grafico ? `<div style="margin:8px 0 0">${grafico}</div>` : "";
+
+    // Una línea en mono con el rango central y el amplio. Las de Lima usan el
+    // rango semanal calibrado (lineaRangoCorreo); el resto, igual que hoy, con
+    // la banda mensual de /api/forecast.
+    const linea = fc
+      ? (fc.horizonte === "semana"
+        ? lineaRangoCorreo(fc, { fmt, fechaCorta })
+        : (fc.p25 != null && fc.p75 != null
+          ? `Al ${fechaCorta(fc.date)}: ${rangoTexto(fc.p25, fc.p75, 2)} (1 de cada 2) · ${rangoTexto(fc.p10, fc.p90, 2)} (8 de cada 10)`
+          : ""))
+      : "";
+    const [cabeza, cola] = linea.split(" · ");
+    const rangoHtml = linea
+      ? `<div style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:12px;color:${C.ink};margin:8px 0 0">${esc(cabeza)} · <span style="color:${C.soft}">${esc(cola ?? "")}</span></div>`
+      : "";
+
+    // Sin rango publicable: el motivo exacto del motor, en una línea.
+    const motivoHtml = !fc && c.rangoMotivo
+      ? `<div style="font-family:${UI_F};font-size:12px;color:${C.soft};margin:8px 0 0">${esc(c.rangoMotivo)}</div>`
+      : "";
+
+    // Hechos SMV y noticias: máximo 2 en total, una línea cada uno.
+    const lineas = [
+      ...c.smv.map((h) => `<span style="color:${C.soft}">SMV</span> <a href="${esc(h.url_oficial)}" style="color:${C.ink}">${esc(recortar(h.titulo, 110))}</a>`),
+      ...c.news.map((n) => `<a href="${esc(n.url)}" style="color:${C.ink}">${esc(recortar(n.titulo, 110))}</a> <span style="color:${C.soft}">· ${esc(n.fuente)}</span>`),
+    ].slice(0, 2);
+    const hechosHtml = lineas.length
+      ? `<div style="margin-top:8px;font-family:${UI_F};font-size:13px;line-height:1.45;color:${C.ink}">${lineas.join("<br>")}</div>`
+      : "";
+
+    // Lectura: solo los puntos con dirección (1 por lado). Sin «Qué hay» ni «Contexto».
     const l = lecturas?.[c.nemo];
-    const punto = (p) => `<div style="font-family:${serif};font-size:15px;line-height:1.5;color:${C.ink};margin-top:3px">${esc(p.texto)}</div>`;
-    const bloqueLectura = (lista, label) => (lista || []).length
-      ? `<div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink};margin:8px 0 2px">${label}</div>${lista.map(punto).join("")}` : "";
-    const lecturaHtml = l ? `<div style="margin-top:10px;border-top:1px dashed ${C.rule};padding-top:6px">
-        <div style="font-family:${ui};font-size:12px;font-weight:600;color:${C.ink}">Lectura de ${esc(c.name)}</div>
-        ${l.resumen && l.resumen !== l.que_hay?.[0]?.texto && !(l.que_hay?.[0]?.texto || "").startsWith(l.resumen.replace(/\.$/, "")) ? `<div style="font-family:${serif};font-size:16px;line-height:1.5;color:${C.ink};margin-top:4px">${esc(l.resumen)}</div>` : ""}
-        ${bloqueLectura(l.que_hay, "Qué hay")}${bloqueLectura(l.podria_mover?.al_alza, "Podría mover al alza")}${bloqueLectura(l.podria_mover?.a_la_baja, "Podría mover a la baja")}${bloqueLectura(l.contexto, "Contexto")}
-      </div>` : "";
-    return `<tr><td style="padding:14px 0;border-bottom:1px solid ${C.rule}">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-        <td style="font-family:${ui};font-size:15px;font-weight:600;color:${C.ink}">${esc(c.name)} <span style="font-family:${mono};font-size:11px;font-weight:400;color:${C.soft}">${esc(c.nemo)}</span></td>
-        <td align="right" style="font-family:${mono};font-size:15px;color:${C.ink};white-space:nowrap">${c.price != null ? `${c.currency} ${fmt(c.price)}` : `<a href="${SITE}/empresa/${encodeURIComponent(c.nemo)}" style="color:${C.soft};font-family:${ui};font-size:12px">Ver ficha</a>`}<br><span style="font-size:13px">${ch}</span>${c.price != null ? `<br><span style="font-size:10px;color:${C.soft}">${c.priceDate ? `cierre del ${esc(shortDay(c.priceDate))}` : "último cierre disponible"}</span>` : ""}</td>
-      </tr></table>${sentiment}${fc}${smv || news ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:4px">${smv}${news}</table>` : ""}${quiet}${lecturaHtml}</td></tr>`;
-  }).join("");
-  return `<tr><td style="padding:30px 0 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:2px solid ${C.ink};padding-top:10px;font-family:${serif};font-size:22px;font-weight:600;color:${C.ink}">Tus empresas</td></tr></table></td></tr>
-  <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${body}</table>
-  <div style="font-family:${ui};font-size:11px;color:${C.soft};margin-top:6px">Precios: datos de mercado de cierre. Hechos: SMV. La proyección es estadística y no incorpora las noticias.</div></td></tr>`;
+    const alAlza = (l?.podria_mover?.al_alza || []).slice(0, 1);
+    const aLaBaja = (l?.podria_mover?.a_la_baja || []).slice(0, 1);
+    const lecturaHtml = (alAlza.length || aLaBaja.length)
+      ? `<div style="margin-top:10px;padding-top:8px;border-top:1px dashed ${C.rule}">
+          ${alAlza.length ? `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin-bottom:4px">Podría mover al alza</div>${alAlza.map((p) => punto(p, "al_alza")).join("")}` : ""}
+          ${aLaBaja.length ? `<div style="font-family:${UI_F};font-size:12px;font-weight:600;margin-bottom:4px">Podría mover a la baja</div>${aLaBaja.map((p) => punto(p, "a_la_baja")).join("")}` : ""}
+        </div>`
+      : "";
+
+    return `<tr><td style="padding:18px 0">
+      <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%"><tr>
+        <td style="font-family:${UI_F};font-size:15px;font-weight:600;color:${C.ink};vertical-align:top">${esc(c.name)} <span style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:11px;font-weight:400;color:${C.soft}">${esc(c.nemo)}</span></td>
+        <td align="right" style="font-family:${MONO_F};font-variant-numeric:tabular-nums;font-size:15px;color:${C.ink};white-space:nowrap;vertical-align:top">${c.price != null ? `${esc(c.currency)} ${fmt(c.price)}` : ""}${ch ? `<br><span style="font-size:13px">${ch}</span>` : ""}</td>
+      </tr></table>
+      ${graficoHtml}
+      ${rangoHtml}
+      ${motivoHtml}
+      ${hechosHtml}
+      ${lecturaHtml}
+      <div style="margin-top:8px"><a href="${SITE}/empresa/${encodeURIComponent(c.nemo)}" style="font-family:${UI_F};font-size:12px;color:${C.soft};text-decoration:underline">Ver ficha</a></div>
+    </td></tr>`;
+  }).join(regla());
+  
+  return `<tr><td style="padding:24px 0 8px"><table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%"><tr><td style="border-left:3px solid ${C.ink};padding-left:10px;font-family:${UI_F};font-size:14px;font-weight:600;color:${C.ink};text-transform:uppercase;letter-spacing:0.5px">Tus empresas</td></tr></table></td></tr>
+  <tr><td><table role="presentation" cellpadding="0" cellspacing="0" style="width:100%" width="100%">${body}</table>
+  <div style="font-family:${UI_F};font-size:11px;color:${C.soft};margin-top:16px">Precios: datos de mercado de cierre. Hechos: SMV. La proyección es estadística y no incorpora las noticias.</div></td></tr>`;
 }
 
 const f = await facts();
 const ai = await interpret(f);
 const lima = new Date(Date.now() - 5 * 36e5);
 const dateLabel = lima.toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
-const upsell = `<tr><td style="padding:24px 0 0;font-family:'Libre Franklin',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#5E584E">Elegiste empresas para seguir. La sección «Tus empresas» (precio, proyección, hechos y noticias de cada una) llega con el plan Boletín.</td></tr>`;
+
+const upsell = `<tr><td style="padding:24px 0 0;font-family:${UI_F};font-size:14px;line-height:1.5;color:#5E584E">Elegiste empresas para seguir. La sección «Tus empresas» (precio, proyección, hechos y noticias de cada una) llega con el plan Boletín.</td></tr>`;
 const fill = (html, personal, baja = `${SITE}/boletin`, prefs = `${SITE}/boletin`) => html
   .replace("{{BAJA}}", () => baja)
   .replace("{{EMPRESAS}}", () => prefs)
   .replace("{{PERSONAL}}", () => personal);
+
+// Gmail clips messages above ~102 KB and hides the footer, where the unsubscribe link lives.
+// If a subscriber's email would get there, drop company readings from the last company up until it fits.
+const LIMITE_BYTES = Number(process.env.BOLETIN_LIMITE_BYTES) || 98000;
+function armarPagado(base, cards, lecturas, baja, prefs, img) {
+  const lec = { ...lecturas };
+  let html = compactar(fill(base, renderPersonal(cards, lec, img), baja, prefs));
+  for (let i = cards.length - 1; i >= 0 && Buffer.byteLength(html) > LIMITE_BYTES; i--) {
+    if (!lec[cards[i].nemo]) continue;
+    delete lec[cards[i].nemo];
+    html = compactar(fill(base, renderPersonal(cards, lec, img), baja, prefs));
+  }
+  return html;
+}
 
 // Shared news sources for the two readings: the classifier and the raw feed,
 // read from data/ (the modules' demos read them the same way). Any failure
@@ -716,8 +1171,20 @@ if (!Object.keys(clasif).length || !Object.keys(newsById).length) {
 const lecturaDeadline = Date.now() + 90 * 1000;
 const { dolar: lecturaDolarOut } = await lecturaDolarSegura(f, clasif, newsById, lecturaDeadline);
 
+// Vista previa local: los PNG se escriben junto al HTML y se referencian con
+// una ruta relativa («<archivo>-img/»). En el envío real las imágenes solo
+// aparecen si existe BOLETIN_IMG_BASE (si no, el correo va sin <img>).
+const cliPreviewPath = process.argv.find((a) => a.startsWith("--preview-path="))?.slice("--preview-path=".length);
+const previewPath = process.env.BOLETIN_PREVIEW_PATH || cliPreviewPath || path.join(ROOT, "..", "handoff", "qa", PREVIEW_PLAN === "gratis" ? "correo-gratis.html" : "correo-pagado.html");
+fs.mkdirSync(path.dirname(path.resolve(previewPath)), { recursive: true });
+const imgPreview = {
+  dir: path.join(path.dirname(path.resolve(previewPath)), carpetaImagen(previewPath)),
+  base: carpetaImagen(previewPath),
+};
+
 let previewPersonal = "";
 let lecturasPreview = {};
+let previewCards = null;
 if (process.env.PREVIEW_EMPRESAS) {
   const want = process.env.PREVIEW_EMPRESAS.split(",").map((x) => x.trim()).filter(Boolean);
   const smvAll = readLocal("data/smv-hechos.json", { hechos: {} }).hechos || {};
@@ -755,16 +1222,76 @@ if (process.env.PREVIEW_EMPRESAS) {
       console.log(`Lecturas de empresa no disponibles: ${e.message} (se envía sin la sección)`);
     }
   }
-  previewPersonal = PREVIEW_PLAN === "gratis" ? upsell : renderPersonal(cards, lecturasPreview);
+  previewPersonal = PREVIEW_PLAN === "gratis" ? upsell : renderPersonal(cards, lecturasPreview, imgPreview);
+  previewCards = cards;
 }
 
-const htmlCompleto = render(f, ai, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null);
-const htmlGratis = renderGratis(f, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null);
-const cliPreviewPath = process.argv.find((a) => a.startsWith("--preview-path="))?.slice("--preview-path=".length);
-const previewPath = process.env.BOLETIN_PREVIEW_PATH || cliPreviewPath || path.join(ROOT, "..", "handoff", "qa", process.env.PREVIEW_PLAN === "gratis" ? "correo-gratis.html" : "correo-pagado.html");
-fs.mkdirSync(path.dirname(path.resolve(previewPath)), { recursive: true });
-fs.writeFileSync(previewPath, fill(PREVIEW_PLAN === "gratis" ? htmlGratis : htmlCompleto, previewPersonal));
+// Gráficos de la vista previa: el del dólar (el gratis solo lleva el de hoy) y
+// uno por empresa con imagen.
+try {
+  if (PREVIEW_PLAN === "gratis") escribirImagen(imgPreview.dir, "dolar-hoy.png", pngDolar(f, true));
+  else {
+    escribirImagen(imgPreview.dir, "dolar.png", pngDolar(f, false));
+    for (const c of previewCards || []) if (c.grafico) escribirImagen(imgPreview.dir, c.grafico.archivo, pngEmpresa(c));
+  }
+} catch (e) {
+  console.error(`Gráficos de la vista previa: ${e.message}`);
+}
+
+const htmlCompleto = compactar(render(f, ai, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null, imgPreview));
+const htmlGratis = compactar(renderGratis(f, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null, imgPreview));
+const previewHtml = PREVIEW_PLAN !== "gratis" && previewCards
+  ? armarPagado(htmlCompleto, previewCards, lecturasPreview, undefined, undefined, imgPreview)
+  : compactar(fill(PREVIEW_PLAN === "gratis" ? htmlGratis : htmlCompleto, previewPersonal));
+fs.writeFileSync(previewPath, previewHtml);
 console.log(`Vista previa: ${PREVIEW_PLAN} · mercados: ${f.markets.length} · SMV: ${f.smvFacts.length} · titulares: ${f.headlines.length} · historias: ${f.historiasTodas?.length || 0} · IA: ${ai ? "sí" : "no"}`);
+
+// HTML del envío real: las imágenes solo van si hay dónde alojarlas.
+const imgEnv = process.env.BOLETIN_IMG_BASE ? { base: process.env.BOLETIN_IMG_BASE } : null;
+const htmlCompletoEnv = compactar(render(f, ai, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null, imgEnv));
+const htmlGratisEnv = compactar(renderGratis(f, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null, imgEnv));
+
+// Vista previa del HTML de envío (sin enviar nada): comprueba, entre otras
+// cosas, que sin BOLETIN_IMG_BASE el correo no lleva ninguna etiqueta <img>.
+if (process.env.BOLETIN_PREVIEW_SEND === "1") {
+  const sendPath = process.env.BOLETIN_PREVIEW_SEND_PATH || previewPath.replace(/\.html?$/i, "-envio.html");
+  const personalEnv = PREVIEW_PLAN === "gratis" ? upsell : (previewCards?.length ? renderPersonal(previewCards, lecturasPreview, imgEnv) : "");
+  const htmlEnv = PREVIEW_PLAN !== "gratis" && previewCards
+    ? armarPagado(htmlCompletoEnv, previewCards, lecturasPreview, undefined, undefined, imgEnv)
+    : compactar(fill(PREVIEW_PLAN === "gratis" ? htmlGratisEnv : htmlCompletoEnv, personalEnv));
+  fs.writeFileSync(sendPath, htmlEnv);
+  console.log(`Vista previa del envío: ${sendPath} · imágenes: ${imgEnv ? "sí" : "no"}`);
+  process.exit(0);
+}
+
+// Publica los PNG del día (el dólar completo, el de hoy y uno por empresa con
+// gráfico). Si un PNG no se puede dibujar, ese archivo no se publica y el
+// correo sigue como si nada.
+async function publicarGraficos(fecha, listaCards) {
+  const archivos = new Map();
+  const agrega = (nombre, dibuja) => {
+    try {
+      const bytes = dibuja();
+      if (bytes) archivos.set(nombre, Buffer.from(bytes));
+    } catch (e) {
+      console.error(`Gráfico ${nombre}: ${e.message}`);
+    }
+  };
+  agrega("dolar.png", () => pngDolar(f, false));
+  agrega("dolar-hoy.png", () => pngDolar(f, true));
+  for (const c of listaCards || []) if (c?.grafico) agrega(c.grafico.archivo, () => pngEmpresa(c));
+  return publicarImagenes({ archivos, fecha, cmd: process.env.BOLETIN_IMG_CMD, dir: process.env.BOLETIN_IMG_DIR });
+}
+
+// La fecha del boletín en Lima (la misma que usa el archivo «ya enviado»).
+const today = new Date(Date.now() - 5 * 36e5).toISOString().slice(0, 10);
+
+// Corrida de prueba (--dry-run sin vista previa): publica los PNG del dólar
+// para comprobar el alojamiento, sin enviar nada.
+if (DRY && !PREVIEW && process.env.BOLETIN_IMG_CMD) {
+  const imgPrueba = await publicarGraficos(today, []);
+  console.log(imgPrueba ? `Imágenes del correo: ${imgPrueba.archivos.size} en ${imgPrueba.base}` : "Imágenes del correo: ninguna");
+}
 
 async function seguimientoDe(email) {
   const base = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
@@ -793,7 +1320,6 @@ async function seguimientoDe(email) {
 
 if (!DRY && !PREVIEW) {
   if (!process.env.RESEND_API_KEY) throw new Error("Falta RESEND_API_KEY");
-  const today = new Date(Date.now() - 5 * 36e5).toISOString().slice(0, 10);
   const LAST = new URL("../data/boletin-last.json", import.meta.url);
   if (process.env.FORCE !== "true" && fs.existsSync(LAST)) {
     const last = JSON.parse(fs.readFileSync(LAST, "utf8"));
@@ -873,14 +1399,31 @@ if (!DRY && !PREVIEW) {
     }
   }
 
+  // Imágenes del envío: manda la base ya configurada; si no hay, se publican
+  // los PNG del día y el correo los referencia. Si algo falla, el correo sale
+  // sin imágenes (el envío nunca se rompe).
+  let imgEnvSend = null;
+  if (process.env.BOLETIN_IMG_BASE) imgEnvSend = { base: process.env.BOLETIN_IMG_BASE };
+  else if (process.env.BOLETIN_IMG_CMD) imgEnvSend = await publicarGraficos(today, paidCards);
+  const htmlCompletoSend = compactar(render(f, ai, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null, imgEnvSend));
+  const htmlGratisSend = compactar(renderGratis(f, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null, imgEnvSend));
+  const nImagenes = imgEnvSend?.archivos?.size ?? (2 + paidCards.filter((c) => c.grafico).length);
+  console.log(imgEnvSend ? `Imágenes del correo: ${nImagenes} en ${imgEnvSend.base}` : "Imágenes del correo: ninguna");
+
   const emails = list.map(({ email, token, empresas, plan }) => {
     const baja = token ? `${SITE}/api/boletin?accion=baja&t=${token}` : `${SITE}/boletin`;
     const prefs = token ? `${SITE}/boletin?t=${token}#empresas` : `${SITE}/boletin`;
     const mine = (empresas || []).map((n) => cards[n]).filter(Boolean);
     // Free version: no «Tus empresas» section, only the note about the plan
-    const personal = plan === "gratis" ? ((empresas || []).length ? upsell : "") : (mine.length ? renderPersonal(mine, lecturas) : `<tr><td style="padding:24px 0 0;font-family:'Libre Franklin',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#5E584E">Aún no elegiste empresas. Elige hasta 15 en <a href="${SITE}/cuenta" style="color:#1B1916">/cuenta</a> y cada mañana llegará tu sección «Tus empresas».</td></tr>`);
-    const baseHtml = plan === "gratis" ? htmlGratis : htmlCompleto;
-    const msg = { from: FROM, to: [email], subject: `PerData · ${dateLabel}`, html: fill(baseHtml, personal, baja, prefs) };
+    const personal = plan === "gratis" ? ((empresas || []).length ? upsell : "") : (mine.length ? renderPersonal(mine, lecturas, imgEnvSend) : `<tr><td style="padding:24px 0 0;font-family:${UI_F};font-size:14px;line-height:1.5;color:#5E584E">Aún no elegiste empresas. Elige hasta 15 en <a href="${SITE}/cuenta" style="color:#1B1916">/cuenta</a> y cada mañana llegará tu sección «Tus empresas».</td></tr>`);
+    const baseHtml = plan === "gratis" ? htmlGratisSend : htmlCompletoSend;
+    const msg = { 
+      from: FROM, 
+      to: [email], 
+      subject: `PerData · ${dateLabel}`, 
+      html: plan !== "gratis" && mine.length ? armarPagado(baseHtml, mine, lecturas, baja, prefs, imgEnvSend) : compactar(fill(baseHtml, personal, baja, prefs)),
+    };
+    
     if (token) msg.headers = { "List-Unsubscribe": `<${baja}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" };
     return msg;
   });
@@ -901,7 +1444,7 @@ if (!DRY && !PREVIEW) {
 // Self-contained smoke used in tests: no fetch, same renderers as the previews.
 export function renderForTests(f, dateLabel, opts = {}) {
   return {
-    gratis: renderGratis(f, dateLabel, opts.lecturaDolar),
-    pagado: render(f, null, dateLabel, opts.lecturaDolar),
+    gratis: renderGratis(f, dateLabel, opts.lecturaDolar, opts.img),
+    pagado: render(f, null, dateLabel, opts.lecturaDolar, opts.img),
   };
 }

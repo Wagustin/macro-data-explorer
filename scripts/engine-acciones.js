@@ -168,7 +168,7 @@ function resultadoNoPublicable(motivo, validacion, base = null) {
  * Calcula los rangos para un valor en un horizonte h.
  * Devuelve { publicable, motivo, p10, p25, p50, p75, p90, ancho80_pct, ancho50_pct, validacion }
  */
-function rangosDeValor(filasValor, cal, h) {
+export function rangosDeValor(filasValor, cal, h) {
   const n = cal.length;
   const { p, first, lp } = serieConArraste(filasValor, cal);
 
@@ -467,17 +467,308 @@ function mediana(arr) {
 }
 
 // ============================================================================
+// Escalón 2: rango por fondo común
+// ----------------------------------------------------------------------------
+// Cuando el método propio de un valor no es publicable se prueba un segundo
+// escalón: los cuantiles de un fondo común de retornos estandarizados de TODAS
+// las acciones, escalados por la volatilidad propia del valor, con K propio
+// (a partir de 60 necesidades realizadas) y corrección en línea (gamma 0.02).
+// ============================================================================
+
+const FONDO = {
+  W: 756,         // ventana del pool (días)
+  GAMMA: 0.02,    // corrección en línea
+  KMIN: 60,       // necesidades realizadas mínimas para calibrar K
+  MINP: 60,       // precalentamiento mínimo por valor (días)
+  MIN_POOL: 2000, // tamaño mínimo del pool para que un corte tenga rango
+};
+
+/**
+ * Necesidad de una predicción: cuánto se excede el rango frente al valor real.
+ * max(0, y/hi) si y >= 0; max(0, y/lo) si y < 0; 1.0 si el rango no tiene el
+ * signo esperado.
+ */
+function necesidad(y, lo, hi) {
+  if (y >= 0) return Math.max(0, hi > 0 ? y / hi : 1.0);
+  return Math.max(0, lo < 0 ? y / lo : 1.0);
+}
+
+/**
+ * Inserta un valor en un array ordenado ascendente (búsqueda binaria + memmove).
+ * Devuelve el nuevo tamaño.
+ */
+function insertarOrdenado(arr, m, v) {
+  let lo = 0;
+  let hi = m;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (arr[mid] < v) lo = mid + 1;
+    else hi = mid;
+  }
+  arr.copyWithin(lo + 1, lo, m);
+  arr[lo] = v;
+  return m + 1;
+}
+
+/**
+ * Retornos estandarizados z[j] = (lp[j] - lp[j-h]) / sig[j] de un valor,
+ * disponibles desde j = first + h + FONDO.MINP (precalentamiento).
+ */
+function zEstandarizados(datos, h) {
+  const { lp, sig, first } = datos;
+  const n = lp.length;
+  const inicio = first + h + FONDO.MINP;
+  const largo = Math.max(0, n - inicio);
+  const z = new Float64Array(largo);
+  for (let i = 0; i < largo; i++) {
+    const j = inicio + i;
+    z[i] = (lp[j] - lp[j - h]) / sig[j];
+  }
+  return { z, inicio };
+}
+
+/**
+ * Cuantililes del fondo común por corte c: sobre el pool de retornos
+ * estandarizados de TODAS las acciones en la ventana [c-W, c] (si c < W la
+ * ventana se recorta a [0, c], igual que la referencia).
+ * Devuelve un Float64Array de 4*N con (p10, p25, p75, p90) por corte
+ * (NaN cuando el pool tiene menos de MIN_POOL valores).
+ */
+function cuantilesFondoComun(seriesZ, n) {
+  const FQ = new Float64Array(4 * n).fill(NaN);
+  const pool = new Float64Array(seriesZ.length * (FONDO.W + 1));
+  for (let c = 0; c < n; c++) {
+    const winStart = Math.max(0, c - FONDO.W);
+    let m = 0;
+    for (const s of seriesZ) {
+      const jStart = Math.max(s.inicio, winStart);
+      if (jStart > c) continue;
+      const desde = jStart - s.inicio;
+      const len = c - jStart + 1;
+      pool.set(s.z.subarray(desde, desde + len), m);
+      m += len;
+    }
+    if (m < FONDO.MIN_POOL) continue;
+    const vals = pool.subarray(0, m);
+    vals.sort();
+    FQ[4 * c] = cuantil(vals, 0.10);
+    FQ[4 * c + 1] = cuantil(vals, 0.25);
+    FQ[4 * c + 2] = cuantil(vals, 0.75);
+    FQ[4 * c + 3] = cuantil(vals, 0.90);
+  }
+  return FQ;
+}
+
+/**
+ * Rango de un valor por el escalón «fondo»: cuantiles del fondo común escalados
+ * por su volatilidad, K propio con las necesidades ya realizadas y corrección en
+ * línea (gamma 0.02). Devuelve { publicable, motivo, p10..p90, ancho80_pct,
+ * ancho50_pct, validacion } con la misma forma que el método propio.
+ */
+function rangosDeValorFondo(datos, cal, h, FQ, testStart) {
+  const { p, first, lp, sig } = datos;
+  const n = cal.length;
+  const c0 = first + h + FONDO.MINP;
+
+  const validacionVacia = {
+    cortes: 0,
+    cobertura80: 0,
+    cobertura50: 0,
+    ancho80_mediano_pct: 0,
+    ancho50_mediano_pct: 0,
+    score80: 0,
+    score80_referencia: 0,
+    cobertura80_referencia: 0,
+    sin_operar_pct: 0,
+  };
+
+  if (c0 >= n) {
+    return { publicable: false, motivo: "historia_insuficiente", validacion: validacionVacia, bandas: [], vigente: null };
+  }
+
+  const rh = retornosH(lp, first, h);
+  // Los cortes que miden el método son los de prueba (fecha >= 2025-01-01) con la
+  // ventana del pool COMPLETA (c >= W=756). Con la ventana recortada (c < W) los
+  // cuantiles del fondo de ese corte no son comparables con los del rango
+  // vigente, que sí se construye sobre la ventana completa.
+  const validacionDesde = Math.max(testStart, FONDO.W);
+  const needs80 = new Float64Array(n);
+  const needs50 = new Float64Array(n);
+  const fallos80 = new Float64Array(n);
+  const fallos50 = new Float64Array(n);
+  const orden80 = new Float64Array(n); // necesidades80 ordenadas (para el cuantil de K)
+  const orden50 = new Float64Array(n); // necesidades50 ordenadas
+  const ordenRh = new Float64Array(n); // retornos propios ordenados (referencia)
+  let m80 = 0;
+  let m50 = 0;
+  let mRh = 0;
+
+  // Retornos ya disponibles para la referencia (sin escalar)
+  for (let i = first + h; i < c0; i++) mRh = insertarOrdenado(ordenRh, mRh, rh[i]);
+
+  let a80 = 0;
+  let a50 = 0;
+  let vigente = null;
+  let cortes = 0;
+  let cobertura80 = 0;
+  let cobertura50 = 0;
+  let cobertura80Ref = 0;
+  let score80Sum = 0;
+  let score80RefSum = 0;
+  let sinOperar = 0;
+  const anchos80 = [];
+  const anchos50 = [];
+  const bandas = []; // bandas de los cortes de prueba (para pruebas de no-fuga)
+  for (let c = c0; c < n; c++) {
+    mRh = insertarOrdenado(ordenRh, mRh, rh[c]);
+
+    // Necesidades ya realizadas: las de los cortes <= c-h
+    if (c - h >= c0) {
+      m80 = insertarOrdenado(orden80, m80, needs80[c - h]);
+      m50 = insertarOrdenado(orden50, m50, needs50[c - h]);
+      // Corrección en línea: en c ya se conoce el fallo de la predicción de c-h
+      a80 += FONDO.GAMMA * (fallos80[c - h] - 0.20);
+      a50 += FONDO.GAMMA * (fallos50[c - h] - 0.50);
+    }
+
+    const nprev = c - c0 - h + 1;
+    let k80;
+    let k50;
+    if (nprev >= FONDO.KMIN) {
+      k80 = cuantil(orden80.subarray(0, m80), 0.80);
+      k50 = cuantil(orden50.subarray(0, m50), 0.50);
+    } else {
+      k80 = 1.0;
+      k50 = 1.0;
+    }
+
+    const q10 = FQ[4 * c];
+    const q25 = FQ[4 * c + 1];
+    const q75 = FQ[4 * c + 2];
+    const q90 = FQ[4 * c + 3];
+    const hayFondo = Number.isFinite(q10);
+    // Los cuantiles del fondo se escalan por la volatilidad propia del valor
+    const f10 = q10 * sig[c];
+    const f25 = q25 * sig[c];
+    const f75 = q75 * sig[c];
+    const f90 = q90 * sig[c];
+    const y = c + h < n ? lp[c + h] - lp[c] : null;
+
+    let fallo80 = 0.2;
+    let fallo50 = 0.5;
+    let L80 = null;
+    let U80 = null;
+    let L50 = null;
+    let U50 = null;
+
+    if (hayFondo) {
+      const K80 = k80 * Math.exp(a80);
+      const K50 = k50 * Math.exp(a50);
+      L80 = K80 * f10;
+      L50 = K50 * f25;
+      U50 = K50 * f75;
+      U80 = K80 * f90;
+      if (y !== null) {
+        fallo80 = (L80 <= y && y <= U80) ? 0.0 : 1.0;
+        fallo50 = (L50 <= y && y <= U50) ? 0.0 : 1.0;
+        if (c >= validacionDesde) {
+          cortes++;
+          bandas.push({ c, y, L80, U80, L50, U50 });
+          const base = p[c];
+          const precio10 = base * Math.exp(L80);
+          const precio90 = base * Math.exp(U80);
+          const precio25 = base * Math.exp(L50);
+          const precio75 = base * Math.exp(U50);
+          const actualPrice = p[c + h];
+          if (actualPrice >= precio10 && actualPrice <= precio90) cobertura80++;
+          if (actualPrice >= precio25 && actualPrice <= precio75) cobertura50++;
+          anchos80.push(100 * (Math.exp(U80) - Math.exp(L80)));
+          anchos50.push(100 * (Math.exp(U50) - Math.exp(L50)));
+          // Score80 = media de (U-L) + 10*max(0, L-y) + 10*max(0, y-U)
+          score80Sum += (U80 - L80) + 10 * Math.max(0, L80 - y) + 10 * Math.max(0, y - U80);
+          // Referencia: cuantiles de TODOS los rh[first+h .. c] sin escalar
+          const q10r = cuantil(ordenRh.subarray(0, mRh), 0.10);
+          const q90r = cuantil(ordenRh.subarray(0, mRh), 0.90);
+          if (y >= q10r && y <= q90r) cobertura80Ref++;
+          score80RefSum += (q90r - q10r) + 10 * Math.max(0, q10r - y) + 10 * Math.max(0, y - q90r);
+          // Sin operar: el valor no negoció ningún día de (c, c+h]
+          let negoEnPeriodo = false;
+          for (let i = c + 1; i <= c + h; i++) {
+            if (p[i] !== p[i - 1]) {
+              negoEnPeriodo = true;
+              break;
+            }
+          }
+          if (!negoEnPeriodo) sinOperar++;
+        }
+      } else if (c === n - 1) {
+        vigente = { L80, U80, L50, U50 };
+      }
+    }
+    fallos80[c] = fallo80;
+    fallos50[c] = fallo50;
+
+    if (hayFondo && y !== null) {
+      needs80[c] = necesidad(y, f10, f90);
+      needs50[c] = necesidad(y, f25, f75);
+    } else {
+      needs80[c] = 1.0;
+      needs50[c] = 1.0;
+    }
+  }
+
+  const validacion = {
+    cortes,
+    cobertura80: cortes > 0 ? Number(((cobertura80 / cortes) * 100).toFixed(2)) : 0,
+    cobertura50: cortes > 0 ? Number(((cobertura50 / cortes) * 100).toFixed(2)) : 0,
+    ancho80_mediano_pct: anchos80.length > 0 ? Number(mediana(anchos80).toFixed(2)) : 0,
+    ancho50_mediano_pct: anchos50.length > 0 ? Number(mediana(anchos50).toFixed(2)) : 0,
+    score80: cortes > 0 ? Number((score80Sum / cortes).toFixed(4)) : 0,
+    score80_referencia: cortes > 0 ? Number((score80RefSum / cortes).toFixed(4)) : 0,
+    cobertura80_referencia: cortes > 0 ? Number(((cobertura80Ref / cortes) * 100).toFixed(2)) : 0,
+    sin_operar_pct: cortes > 0 ? Number(((sinOperar / cortes) * 100).toFixed(2)) : 0,
+  };
+
+  // Regla de publicación del fondo: cortes, cobertura80, cobertura50 y rango vigente
+  const publicable = cortes >= 100 &&
+    validacion.cobertura80 >= 74 && validacion.cobertura80 <= 86 &&
+    validacion.cobertura50 >= 40 && validacion.cobertura50 <= 60 &&
+    vigente !== null;
+
+  if (!publicable) {
+    const motivo = cortes < 100 ? "historia_insuficiente" : "cobertura_fuera_de_rango";
+    return { publicable: false, motivo, validacion, bandas, vigente };
+  }
+
+  const base = p[n - 1];
+  const fmt = (v) => v < 1 ? Number(v.toFixed(4)) : Number(v.toFixed(2));
+
+  return {
+    publicable: true,
+    motivo: null,
+    p10: fmt(base * Math.exp(vigente.L80)),
+    p25: fmt(base * Math.exp(vigente.L50)),
+    p50: fmt(base),
+    p75: fmt(base * Math.exp(vigente.U50)),
+    p90: fmt(base * Math.exp(vigente.U80)),
+    ancho80_pct: Number((100 * (Math.exp(vigente.U80) - Math.exp(vigente.L80))).toFixed(2)),
+    ancho50_pct: Number((100 * (Math.exp(vigente.U50) - Math.exp(vigente.L50))).toFixed(2)),
+    validacion,
+    bandas,
+    vigente,
+  };
+}
+
+// ============================================================================
 // Motor principal
 // ============================================================================
 
 /**
- * Motor principal que toma filas { nemonico, fecha, cierre } y devuelve el JSON de rangos.
+ * Prepara el universo de valores: filas válidas, calendario bursátil y metadatos
+ * de los valores que entran al archivo (dias_12m, grupo, último cierre).
  */
-export function motorAcciones(filas) {
-  // Filtrar filas válidas
+function prepararValores(filas) {
   const validRows = filas.filter(f => Number.isFinite(f.cierre) && f.cierre > 0 && f.fecha && f.nemonico);
-
-  // Calendario bursátil
   const cal = calendarioBursatil(validRows);
   const N = cal.length;
 
@@ -494,7 +785,7 @@ export function motorAcciones(filas) {
 
   // Para cada valor, contar días negociados en últimos 250 días del calendario
   const last250Start = Math.max(0, N - 250);
-  const resultados = {};
+  const metaPorValor = [];
 
   for (const [nemonico, filasValor] of bySymbol) {
     // Contar días negociados reales en últimos 250 días de calendario
@@ -519,30 +810,129 @@ export function motorAcciones(filas) {
     // Último cierre
     const ultimoCierre = filasValor[filasValor.length - 1].cierre;
 
-    // Calcular rangos para semana (h=5) y mes (h=21)
-    const semana = rangosDeValor(filasValor, cal, 5);
-    const mes = rangosDeValor(filasValor, cal, 21);
+    metaPorValor.push({ nemonico, filasValor, dias12m, grupo, ultimoCierre, ultimaNegociacion });
+  }
 
-    // Fecha objetivo usando addBusinessDays de engine-daily.js
-    const ultimaFecha = cal[N - 1];
-    const fechaObjetivoSemana = addBusinessDays(ultimaFecha, 5);
-    const fechaObjetivoMes = addBusinessDays(ultimaFecha, 21);
+  return { validRows, cal, N, bySymbol, metaPorValor };
+}
+
+/**
+ * Series de cada valor (precalentamiento y volatilidad EWMA) para el pool del fondo.
+ */
+function seriesPorValor(metaPorValor, cal) {
+  const datosPorValor = new Map();
+  for (const meta of metaPorValor) {
+    const { p, first, lp } = serieConArraste(meta.filasValor, cal);
+    const { sig } = ewmaVolatility(lp, first);
+    datosPorValor.set(meta.nemonico, { p, first, lp, sig });
+  }
+  return datosPorValor;
+}
+
+/**
+ * Primer corte de prueba (validación fuera de muestra desde 2025-01-01).
+ */
+function primerCorteDePrueba(cal) {
+  return Math.max(0, cal.findIndex(d => d >= "2025-01-01"));
+}
+
+/**
+ * Bandas del escalón «fondo» por corte, para todos los valores (función pura).
+ * Sirve para comprobar que un corte antiguo no depende de los datos posteriores.
+ * Devuelve { nemonico: { cortes: [{ c, y, L80, U80, L50, U50 }], vigente } }.
+ */
+export function fondoComunBandas(filas, h) {
+  const { cal, metaPorValor } = prepararValores(filas);
+  const datosPorValor = seriesPorValor(metaPorValor, cal);
+  const seriesZ = metaPorValor.map(m => zEstandarizados(datosPorValor.get(m.nemonico), h));
+  const FQ = cuantilesFondoComun(seriesZ, cal.length);
+  const testStart = primerCorteDePrueba(cal);
+
+  const salida = {};
+  for (const meta of metaPorValor) {
+    const r = rangosDeValorFondo(datosPorValor.get(meta.nemonico), cal, h, FQ, testStart);
+    salida[meta.nemonico] = { cortes: r.bandas, vigente: r.vigente };
+  }
+  return salida;
+}
+
+/**
+ * Motor principal que toma filas { nemonico, fecha, cierre } y devuelve el JSON de rangos.
+ */
+export function motorAcciones(filas) {
+  const { cal, N, metaPorValor } = prepararValores(filas);
+  const resultados = {};
+
+  // --- Escalón 2: fondo común ---
+  const datosPorValor = seriesPorValor(metaPorValor, cal);
+
+  // Cuantililes del fondo común por horizonte (semana y mes)
+  const FQ = {};
+  for (const h of [5, 21]) {
+    const seriesZ = metaPorValor.map(m => zEstandarizados(datosPorValor.get(m.nemonico), h));
+    FQ[h] = cuantilesFondoComun(seriesZ, N);
+  }
+
+  // Primer corte de prueba (validación fuera de muestra desde 2025-01-01)
+  const testStart = primerCorteDePrueba(cal);
+
+  // Fechas objetivo usando addBusinessDays de engine-daily.js
+  const ultimaFecha = cal[N - 1];
+  const fechaObjetivo = {
+    5: addBusinessDays(ultimaFecha, 5),
+    21: addBusinessDays(ultimaFecha, 21),
+  };
+
+  for (const meta of metaPorValor) {
+    const { nemonico, filasValor, dias12m, grupo, ultimoCierre, ultimaNegociacion } = meta;
+    const datos = datosPorValor.get(nemonico);
+
+    // Calcular rangos para semana (h=5) y mes (h=21)
+    const horizontes = {};
+    for (const [h, nombre] of [[5, "semana"], [21, "mes"]]) {
+      const propio = rangosDeValor(filasValor, cal, h);
+      let final;
+      if (propio.publicable) {
+        // El método propio manda: sus números se dejan TAL CUAL
+        final = { ...propio, metodo: "propio" };
+      } else {
+        // Segundo escalón: rango por fondo común
+        const fondo = rangosDeValorFondo(datos, cal, h, FQ[h], testStart);
+        if (fondo.publicable) {
+          final = {
+            publicable: fondo.publicable,
+            motivo: fondo.motivo,
+            p10: fondo.p10,
+            p25: fondo.p25,
+            p50: fondo.p50,
+            p75: fondo.p75,
+            p90: fondo.p90,
+            ancho80_pct: fondo.ancho80_pct,
+            ancho50_pct: fondo.ancho50_pct,
+            validacion: fondo.validacion,
+            metodo: "fondo",
+          };
+        } else if (propio.motivo === "historia_insuficiente" && fondo.validacion.cortes >= 100) {
+          // El fondo sí alcanza 100 cortes de prueba: el motivo real es la cobertura
+          final = { ...propio, motivo: "cobertura_fuera_de_rango", validacion: fondo.validacion, metodo: null };
+        } else {
+          final = { ...propio, metodo: null };
+        }
+      }
+      horizontes[nombre] = {
+        h,
+        fecha_objetivo: fechaObjetivo[h],
+        ...final,
+      };
+    }
 
     resultados[nemonico] = {
       grupo,
       dias_12m: dias12m,
       ultimo_cierre: Number(ultimoCierre.toFixed(2)),
       ultima_negociacion: ultimaNegociacion,
-      semana: {
-        h: 5,
-        fecha_objetivo: fechaObjetivoSemana,
-        ...semana,
-      },
-      mes: {
-        h: 21,
-        fecha_objetivo: fechaObjetivoMes,
-        ...mes,
-      },
+      primera_fecha: datos.first >= 0 ? cal[datos.first] : null,
+      ...horizontes,
     };
   }
 
@@ -554,17 +944,21 @@ export function motorAcciones(filas) {
 
   const publicablesSemana = Object.values(sorted).filter(v => v.semana.publicable).length;
   const publicablesMes = Object.values(sorted).filter(v => v.mes.publicable).length;
+  const porFondoSemana = Object.values(sorted).filter(v => v.semana.metodo === "fondo").length;
+  const porFondoMes = Object.values(sorted).filter(v => v.mes.metodo === "fondo").length;
 
   return {
     version: 1,
     actualizado: new Date().toISOString(),
     ultimo_dia: cal[N - 1],
-    metodo: "FHS diario con EWMA 0.97 y calibracion expansiva; validacion 2025-2026 fuera de muestra",
+    metodo: "FHS diario con EWMA 0.97 y calibracion expansiva; validacion 2025-2026 fuera de muestra; segundo escalon con fondo comun y correccion en linea",
     valores: sorted,
     resumen: {
       valores: Object.keys(sorted).length,
       publicables_semana: publicablesSemana,
       publicables_mes: publicablesMes,
+      por_fondo_semana: porFondoSemana,
+      por_fondo_mes: porFondoMes,
     },
   };
 }
