@@ -1,11 +1,30 @@
 {
- "actualizado": "2026-11-11T22:01:40.993Z",
+ "actualizado": "2026-11-12T01:08:05.534Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "Exportaciones peruanas baten récord histórico superando 83 mil millones",
-   "nota": "Los envíos al exterior acumularon 83.785 millones de dólares hasta setiembre. Esa cifra representa un alza del 31 por ciento respecto al mismo periodo anterior. Los sectores estrella explican el resultado sin precedentes.",
+   "titulo": "Inversionistas respaldan macroeconomía peruana con colocación de bonos",
+   "nota": "El Perú colocó bonos soberanos por 4.500 millones de dólares. La operación muestra el respaldo de los inversionistas a la macroeconomía peruana.",
+   "tema": "Bolsa y empresas",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Inversionistas dan “espaldarazo” a la macroeconomía peruana: ¿qué hay detrás de la colocación de bonos por US$4.500 millones?",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/economia/peru/mef-inversionistas-dan-espaldarazo-a-la-macroeconomia-peruana-que-hay-detras-de-la-colocacion-de-bonos-por-us4500-millones-noticia/",
+     "fecha": "2026-11-12T00:11:18.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": true,
+    "motivo": ""
+   }
+  },
+  {
+   "titulo": "Exportaciones peruanas crecen 31% y superan 83.785 millones a setiembre",
+   "nota": "Las exportaciones peruanas crecieron 31% hasta setiembre y superaron los 83.785 millones de dólares. Este monto representa un récord histórico para el país.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
@@ -29,16 +48,42 @@
    }
   },
   {
-   "titulo": "Inversionistas respaldan macroeconomía peruana con bonos soberanos por US$4.500 millones",
-   "nota": "La colocación de bonos soberanos por US$4.500 millones recibió una fuerte demanda de inversionistas. Esta operación refleja un respaldo a la macroeconomía peruana según el reporte.",
-   "tema": "Bolsa y empresas",
+   "titulo": "CEO de Minsur ve una “oportunidad única” para Perú: ¿qué falta para atraer más inversión?",
+   "tema": "Minería y metales",
+   "empresas": [
+    "MINSURI1"
+   ],
+   "fuentes": [
+    {
+     "titulo": "CEO de Minsur ve una “oportunidad única” para Perú: ¿qué falta para atraer más inversión?",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/empresas/cade-2026-ceo-de-minsur-anticipa-record-exportador-que-falta-para-atraer-mas-inversion-noticia/",
+     "fecha": "2026-11-11T23:50:32.000Z"
+    },
+    {
+     "titulo": "Minsur dispara sus ganancias con el estaño, pero el oro de Pucamarca se agota: las cifras",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/empresas/estano-dispara-ventas-de-minsur-y-la-minera-del-grupo-breca-invierte-en-extender-san-rafael-noticia/",
+     "fecha": "2026-11-11T23:50:11.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": false,
+    "motivo": "La nota añade que hacen falta mejoras en permisología y estabilidad regulatoria, pero los titulares no mencionan esos requisitos; por tanto, incumple la fidelidad."
+   }
+  },
+  {
+   "titulo": "Estados Unidos busca invertir en energía nuclear para data centers y minas",
+   "nota": "Estados Unidos manifestó interés en invertir en proyectos de energía nuclear en el Perú, enfocados en data centers, puertos y operaciones mineras. La iniciativa busca aprovechar la creciente demanda energética de infraestructura tecnológica y extractiva.",
+   "tema": "Energía",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Inversionistas dan “espaldarazo” a la macroeconomía peruana: ¿qué hay detrás de la colocación de bonos por US$4.500 millones?",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/mef-inversionistas-dan-espaldarazo-a-la-macroeconomia-peruana-que-hay-detras-de-la-colocacion-de-bonos-por-us4500-millones-noticia/",
-     "fecha": "2026-11-11T19:43:07.000Z"
+     "titulo": "Energía nuclear: Estados Unidos busca invertir en data centers, puertos y minas en Perú",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/energia-nuclear-estados-unidos-busca-invertir-en-data-centers-puertos-y-minas-en-peru-noticia/",
+     "fecha": "2026-11-11T12:21:31.000Z"
     }
    ],
    "revision": {
@@ -48,8 +93,32 @@
    }
   },
   {
-   "titulo": "Dólar cierra en 3.40 soles pese a fortaleza global de la divisa",
-   "nota": "El tipo de cambio cerró en 3.40 soles por dólar a pesar del fortalecimiento global de la moneda estadounidense, según reportes coincidentes de El Comercio y Agencia Andina.",
+   "titulo": "Prorrogan exoneración del Impuesto a la Renta a los intereses de los ahorros hasta el 2029",
+   "tema": "Economía y fiscal",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Prorrogan exoneración del Impuesto a la Renta a los intereses de los ahorros hasta el 2029",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-prorrogan-exoneracion-del-impuesto-a-renta-a-los-intereses-los-ahorros-hasta-2029-1099544.aspx",
+     "fecha": "2026-11-11T22:00:00.000Z"
+    },
+    {
+     "titulo": "Congreso aprueba extender exoneración del Impuesto a la Renta a intereses de ahorros",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/congreso-aprueba-extender-exoneracion-del-impuesto-a-la-renta-a-intereses-de-ahorros-noticia/",
+     "fecha": "2026-11-11T20:00:00.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": "minimaxai/minimax-m3.1-flash",
+    "ok": false,
+    "motivo": "La nota añade que la medida busca mantener el incentivo al ahorro en moneda nacional y que fue respaldada por el Ministerio de Economía, hechos que no aparecen en los titulares; además, el título omite que la extensión es hasta 2029."
+   }
+  },
+  {
+   "titulo": "Dólar cierra en 3,40 soles pese a fortaleza externa",
+   "nota": "La divisa estadounidense cerró en 3,40 soles en el mercado local. El precio se mantuvo a la baja pese al fortalecimiento global del dólar. La apertura también registró un retroceso a 3,41 soles.",
    "tema": "Dólar y BCRP",
    "empresas": [],
    "fuentes": [
@@ -64,88 +133,12 @@
      "fuente": "Agencia Andina",
      "url": "https://andina.pe/agencia/noticia-dolar-cierra-a-baja-s-3409-pese-a-fortalecimiento-global-de-divisa-1099545.aspx",
      "fecha": "2026-11-11T21:11:58.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "Perú busca recuperar segundo lugar mundial en producción de cobre",
-   "nota": "El Ministerio de Energía y Minas plantea aumentar en un millón de toneladas la producción de cobre al 2031 para desplazar a Congo y volver al segundo puesto global, mientras la inversión minera se acelera ante mejores expectativas empresariales.",
-   "tema": "Minería y metales",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Perú busca desplazar al Congo y volver al segundo lugar en producción mundial de cobre: \"Un millón más de toneladas al 2031\", plantea Shinno",
-     "fuente": "RPP Noticias",
-     "url": "https://rpp.pe/economia/economia/peru-busca-desplazar-al-congo-y-volver-al-segundo-lugar-en-produccion-mundial-de-cobre-un-millon-mas-de-toneladas-al-2031-plantea-shinno-noticia-1717271",
-     "fecha": "2026-11-11T19:45:59.000Z"
     },
     {
-     "titulo": "Inversión minera se acelera en el Perú ante mejora de expectativas empresariales",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-inversion-minera-se-acelera-el-peru-ante-mejora-expectativas-empresariales-1099523.aspx",
-     "fecha": "2026-11-11T19:35:56.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": true,
-    "motivo": ""
-   }
-  },
-  {
-   "titulo": "Energía nuclear: Estados Unidos busca invertir en data centers, puertos y minas en Perú",
-   "tema": "Energía",
-   "empresas": [
-    "MINSURI1"
-   ],
-   "fuentes": [
-    {
-     "titulo": "Energía nuclear: Estados Unidos busca invertir en data centers, puertos y minas en Perú",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/energia-nuclear-estados-unidos-busca-invertir-en-data-centers-puertos-y-minas-en-peru-noticia/",
-     "fecha": "2026-11-11T12:21:31.000Z"
-    },
-    {
-     "titulo": "CEO de Minsur ve una “oportunidad única” para Perú: ¿qué falta para atraer más inversión?",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/empresas/cade-2026-ceo-de-minsur-anticipa-record-exportador-que-falta-para-atraer-mas-inversion-noticia/",
-     "fecha": "2026-11-11T18:12:57.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": "minimaxai/minimax-m3.1-flash",
-    "ok": false,
-    "motivo": "El título atribuye a Estados Unidos una inversión en energía nuclear, pero los titulares solo indican que busca invertir en data centers, puertos y minas en Perú, sin mencionar energía nuclear; además, la nota presenta esa energía nuclear como el objeto de la inversión."
-   }
-  },
-  {
-   "titulo": "Wall Street sube por optimismo en inteligencia artificial y rebote de Nvidia",
-   "nota": "Wall Street abrió en verde impulsado por el renovado optimismo sobre inteligencia artificial y el rebote de Nvidia, llevando al Nasdaq 100 hacia su mejor semana desde mayo, mientras el embajador estadounidense advierte que el caso Nvidia tensa la relación con China antes de la cumbre Trump-Xi.",
-   "tema": "Mundo",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Wall Street sube por el renovado optimismo sobre la IA; Nasdaq 100 se encamina a su mejor semana desde mayo",
-     "fuente": "Bloomberg Línea",
-     "url": "https://www.bloomberglinea.com/mercados/acciones-tecnologicas-repuntan-y-wall-street-recupera-terreno-ante-el-optimismo-por-la-ia/",
-     "fecha": "2026-11-11T21:33:31.000Z"
-    },
-    {
-     "titulo": "​Wall Street abre en verde empujado por el rebote de Nvidia y las tecnológicas",
+     "titulo": "El dólar abre a la baja en S/3,41 pese al fortalecimiento de la divisa estadounidense",
      "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/mercados/wall-street-abre-en-verde-empujado-por-el-rebote-de-nvidia-y-las-tecnologicas-l-mercados-l-wall-street-l-ultimas-noticia/",
-     "fecha": "2026-11-11T15:19:59.000Z"
-    },
-    {
-     "titulo": "Embajador de EE.UU. advierte que el caso Nvidia tensa la relación con China antes de la cumbre Trump-Xi",
-     "fuente": "Bloomberg Línea",
-     "url": "https://www.bloomberglinea.com/mundo/estados-unidos/embajador-de-eeuu-advierte-que-el-caso-nvidia-tensa-la-relacion-con-china-antes-de-la-cumbre-trump-xi/",
-     "fecha": "2026-11-11T17:05:16.000Z"
+     "url": "https://elcomercio.pe/economia/peru/el-dolar-abre-a-la-baja-en-s341-pese-al-fortalecimiento-de-la-divisa-estadounidense-l-ultimas-noticia/",
+     "fecha": "2026-11-11T16:42:35.000Z"
     }
    ],
    "revision": {
