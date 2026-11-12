@@ -5,6 +5,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { PERU_HOLIDAYS } from "./engine-daily.js";
 
 const USER_AGENT = "PerDataBot/1.0 (+https://perdata.site)";
 const DIAS = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
@@ -142,6 +143,33 @@ function diaSemana(fecha) {
 }
 
 /**
+ * ¿La fecha "AAAA-MM-DD" es un día hábil (lunes a viernes y no feriado)?
+ */
+function esDiaHabil(fecha) {
+  const [y, m, d] = fecha.split("-").map(Number);
+  if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return false;
+  const dia = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+  if (dia === 0 || dia === 6) return false;
+  return !PERU_HOLIDAYS.has(fecha);
+}
+
+/**
+ * ¿Dos cifras coinciden? (tolerancia de medio centavo)
+ */
+function coinciden(a, b) {
+  return Math.abs(a - b) <= 0.00051;
+}
+
+/**
+ * Fecha más reciente de un objeto { "AAAA-MM-DD": valor } ("" si está vacío).
+ */
+function fechaMasReciente(serie) {
+  let max = "";
+  for (const fecha of Object.keys(serie || {})) if (fecha > max) max = fecha;
+  return max;
+}
+
+/**
  * Candidatos del canal de El Comercio.
  * - "nota": la descripción anuncia el cierre del día.
  * - "envivo": el contenido en vivo cita el cierre con fecha explícita.
@@ -204,8 +232,89 @@ export function candidatosAndina(xml) {
 }
 
 /**
- * Estado provisional: se completa en el paso 2 del encargo.
+ * Estado provisional: bitácora de las cifras de prensa y el cierre provisional vigente.
+ * Función pura: no modifica sus argumentos, no lee archivos ni el reloj.
+ *
+ * @param {null|{provisional: object|null, bitacora: Array}} estado
+ * @param {{candidatos: Array, oficiales: object, sbs: object, hoyLima: string, ahora: string}} datos
+ * @returns {{provisional: object|null, bitacora: Array}}
  */
 export function actualizarEstado(estado, { candidatos, oficiales, sbs, hoyLima, ahora }) {
-  return { provisional: null, bitacora: [] };
+  const serieOficiales = oficiales || {};
+  const serieSbs = sbs || {};
+
+  // 1. Copia de la bitácora con las claves en orden.
+  const filas = new Map();
+  for (const fila of estado?.bitacora || []) {
+    filas.set(fila.fecha, {
+      fecha: fila.fecha,
+      envivo: fila.envivo ?? null,
+      nota: fila.nota ?? null,
+      andina: fila.andina ?? null,
+      usado: fila.usado ?? null,
+      oficial: fila.oficial ?? null,
+    });
+  }
+
+  // 2. Candidatos de esta corrida por fecha y tipo; si hay dos valores distintos
+  //    para el mismo par, ese tipo se ignora en esa fecha.
+  const vistos = new Map();
+  for (const c of candidatos || []) {
+    if (!c || !c.fecha || !c.tipo) continue;
+    const clave = `${c.fecha}|${c.tipo}`;
+    if (!vistos.has(clave)) vistos.set(clave, new Set());
+    vistos.get(clave).add(c.valor);
+  }
+  for (const [clave, valores] of vistos) {
+    if (valores.size !== 1) continue;
+    const [fecha, tipo] = clave.split("|");
+    const valor = valores.values().next().value;
+    const fila = filas.get(fecha) || { fecha, envivo: null, nota: null, andina: null, usado: null, oficial: null };
+    fila[tipo] = valor;
+    filas.set(fecha, fila);
+  }
+
+  // 3. Cierre oficial del BCRP, si ya existe para esa fecha.
+  for (const fila of filas.values()) {
+    if (fila.fecha in serieOficiales) fila.oficial = serieOficiales[fila.fecha];
+  }
+
+  // 4. Orden por fecha ascendente.
+  const ordenadas = [...filas.values()].sort((a, b) => (a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : 0));
+
+  // 5-6. Regla de decisión y elegibilidad.
+  const ultimaOficial = fechaMasReciente(serieOficiales);
+  const fechasSbs = Object.keys(serieSbs).sort();
+  const ultimaSbs = fechasSbs.length ? fechasSbs[fechasSbs.length - 1] : "";
+  let elegida = null;
+  for (const fila of ordenadas) {
+    if (fila.envivo === null) continue;
+    const tieneNota = fila.nota !== null && coinciden(fila.nota, fila.envivo);
+    const tieneAndina = fila.andina !== null && coinciden(fila.andina, fila.envivo);
+    if (!tieneNota && !tieneAndina) continue;
+    const referenciaSbs = fila.fecha in serieSbs ? fila.fecha : ultimaSbs;
+    if (!referenciaSbs) continue;
+    const tolerancia = fila.fecha in serieSbs ? 0.015 : 0.03;
+    if (Math.abs(fila.envivo / serieSbs[referenciaSbs] - 1) > tolerancia) continue;
+    if (ultimaOficial && fila.fecha <= ultimaOficial) continue;
+    if (fila.fecha > hoyLima) continue;
+    if (!esDiaHabil(fila.fecha)) continue;
+    elegida = { fila, tieneNota, tieneAndina };
+  }
+
+  // 7. Provisional vigente.
+  let provisional = null;
+  if (elegida) {
+    const { fila, tieneNota, tieneAndina } = elegida;
+    const fuentes = ["envivo"];
+    if (tieneNota) fuentes.push("nota");
+    if (tieneAndina) fuentes.push("andina");
+    const anterior = estado?.provisional;
+    const capturado = anterior && anterior.fecha === fila.fecha && anterior.valor === fila.envivo ? anterior.capturado : ahora;
+    provisional = { fecha: fila.fecha, valor: fila.envivo, fuentes, capturado };
+    fila.usado = fila.envivo;
+  }
+
+  // 8. Solo las últimas 120 filas.
+  return { provisional, bitacora: ordenadas.slice(-120) };
 }
