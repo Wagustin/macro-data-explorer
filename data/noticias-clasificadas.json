@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-12T04:01:42.736Z",
+ "actualizado": "2026-11-12T07:01:39.053Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "items": {
   "el_comercio-1872eaa44a": {
@@ -454,12 +454,6 @@
    "sentimiento": "POSITIVO",
    "empresas": []
   },
-  "rpp-139b3b5bcf": {
-   "relevancia": "MEDIA",
-   "tema": "Economía y fiscal",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
   "el_comercio-2a8618fcd1": {
    "relevancia": "ALTA",
    "tema": "Minería y metales",
@@ -610,13 +604,29 @@
    "sentimiento": "POSITIVO",
    "empresas": []
   },
-  "el_comercio-c28637bde2": {
+  "rpp-69b68c3aa8": {
    "relevancia": "BAJA",
-   "tema": "Bolsa y empresas",
+   "tema": "Mundo",
    "sentimiento": "NEUTRO",
-   "empresas": [
-    "CREDITC1"
-   ]
+   "empresas": []
+  },
+  "bloomberg_linea-9a499b2e86": {
+   "relevancia": "BAJA",
+   "tema": "Mundo",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "el_comercio-b32fbeb3a9": {
+   "relevancia": "ALTA",
+   "tema": "Dólar y BCRP",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "rpp-efc530e479": {
+   "relevancia": "BAJA",
+   "tema": "Mundo",
+   "sentimiento": "NEUTRO",
+   "empresas": []
   }
  },
  "descartados": [
@@ -889,6 +899,7 @@
   "andina-30c147e8e3",
   "infobae-06d65e8c76",
   "andina-b6334d9218",
-  "el_comercio-950b73eb02"
+  "el_comercio-950b73eb02",
+  "infobae-5fc216e5c7"
  ]
 }
