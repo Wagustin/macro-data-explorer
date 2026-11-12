@@ -692,6 +692,8 @@ const JOBS = [
   { file: "smv-precios.yml", minGapMin: 600, due: (d) => d.getUTCHours() >= 1 && d.getUTCHours() < 10 && d.getUTCDay() >= 2 && d.getUTCDay() <= 6 },
   { file: "timesfm.yml", minGapMin: 1200, due: (d) => d.getUTCHours() >= 11 },
   { file: "official-data.yml", minGapMin: 600, due: (d) => d.getUTCHours() >= 22 && d.getUTCDay() >= 1 && d.getUTCDay() <= 5 },
+  // Morning news counts for the engine: GitHub's own cron (10:20 UTC) can be hours late, so the 10:30 tick starts it if it has not run
+  { file: "noticias-dia.yml", minGapMin: 600, due: (d) => d.getUTCHours() === 10 && d.getUTCMinutes() >= 25 },
   // Yesterday's dollar close: SUNAT publishes it overnight. Run as soon as its date changes (GitHub's own cron can be hours late)
   { file: "cierre-ayer.yml", minGapMin: 25, due: () => true, check: async (d) => {
       const [visto, texto] = await Promise.all([

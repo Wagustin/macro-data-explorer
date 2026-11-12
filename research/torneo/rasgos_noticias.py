@@ -6,9 +6,10 @@ Lee el corpus local de noticias (una noticia por línea, JSON) y cuenta, por dí
 
 Uso:
   python3 research/torneo/rasgos_noticias.py [--corpus DIR] [--desde AAAA-MM-DD] [--hasta AAAA-MM-DD] [--salida CSV]
+  python3 research/torneo/rasgos_noticias.py --unir FILA.csv --salida TABLA.csv
   python3 research/torneo/rasgos_noticias.py --autoprueba
 """
-import argparse, csv, datetime as dt, json, re, unicodedata
+import argparse, csv, datetime as dt, json, re, sys, unicodedata
 from pathlib import Path
 
 AQUI = Path(__file__).resolve().parent
@@ -35,10 +36,16 @@ def contar(corpus, temas, desde="0000-00-00", hasta="9999-99-99"):
     corpus = Path(corpus)
     cols = columnas(temas)[1:]
     pat = {g: {t: re.compile(p) for t, p in temas[g].items()} for g in ("peru", "mundo")}
-    hechos = set()
+    # completos: whole days. hechos: days that can be counted (whole, or cut at 10:00 UTC or later)
+    hechos, completos = set(), set()
     for linea in open(corpus / "gal/dias.jsonl", encoding="utf-8"):
         try:
-            hechos.add(json.loads(linea)["dia"])
+            j = json.loads(linea)
+            corte = j.get("corte")
+            if not corte:
+                completos.add(j["dia"])
+            if not corte or corte >= "10:00":
+                hechos.add(j["dia"])
         except Exception:
             pass
     # solo hacen falta los meses desde el de (desde - 1 día) hasta el de hasta
@@ -60,7 +67,7 @@ def contar(corpus, temas, desde="0000-00-00", hasta="9999-99-99"):
                     continue  # línea rota o fecha ilegible
                 if not (desde <= d <= hasta) or d not in hechos:
                     continue
-                if (dt.date.fromisoformat(d) - dt.timedelta(days=1)).isoformat() not in hechos:
+                if (dt.date.fromisoformat(d) - dt.timedelta(days=1)).isoformat() not in completos:
                     continue
                 if not (n.get("titulo") or "").strip():
                     continue
@@ -89,6 +96,71 @@ def escribir(tabla, temas, salida):
         w.writerow(cols)
         for d in sorted(tabla):
             w.writerow([d] + [tabla[d][c] for c in cols[1:]])
+
+
+def unir(fila_csv, tabla_csv):
+    """Mete las filas de FILA.csv dentro de TABLA.csv: cada día de FILA.csv reemplaza su fila o se añade."""
+    def fallo(msg):
+        print(msg, file=sys.stderr)
+        sys.exit(1)
+
+    def leer_lineas(path):
+        with open(path, encoding="utf-8", newline="") as fh:
+            lineas = [l.rstrip("\r") for l in fh.read().split("\n")]
+        while lineas and lineas[-1] == "":
+            lineas.pop()
+        return lineas
+
+    filas = leer_lineas(fila_csv)
+    if not filas:
+        fallo(f"{fila_csv} está vacío")
+    cab_fila = filas[0]
+    cols_fila = next(csv.reader([cab_fila]))
+    if "dia" not in cols_fila or "pe_total" not in cols_fila:
+        fallo(f"{fila_csv} no tiene las columnas «dia» y «pe_total»")
+    i_dia, i_pe = cols_fila.index("dia"), cols_fila.index("pe_total")
+    datos = filas[1:]
+    if not datos:
+        fallo(f"{fila_csv} no tiene ninguna fila de datos")
+    nuevas = []
+    for linea in datos:
+        campos = next(csv.reader([linea]))
+        if i_dia >= len(campos) or i_pe >= len(campos):
+            fallo(f"Fila incompleta en {fila_csv}: {linea}")
+        try:
+            pe = int(campos[i_pe])
+        except ValueError:
+            fallo(f"pe_total no es un número en {fila_csv}: {linea}")
+        if pe < 500:
+            fallo(f"El día {campos[i_dia]} tiene solo {pe} noticias de Perú: la descarga está incompleta")
+        nuevas.append((campos[i_dia], linea))
+
+    cuerpo = []
+    if Path(tabla_csv).exists():
+        lineas = leer_lineas(tabla_csv)
+        if lineas:
+            if next(csv.reader([lineas[0]])) != cols_fila:
+                fallo(f"La cabecera de {fila_csv} no es la misma que la de {tabla_csv}")
+            cuerpo = lineas[1:]
+    dias = []
+    for linea in cuerpo:
+        campos = next(csv.reader([linea]))
+        dias.append([campos[i_dia] if i_dia < len(campos) else linea, linea])
+    unidas = reemplazadas = 0
+    for d, linea in nuevas:
+        pos = next((i for i, (dia, _) in enumerate(dias) if dia == d), None)
+        if pos is None:
+            dias.append([d, linea])
+            unidas += 1
+        else:
+            dias[pos][1] = linea
+            reemplazadas += 1
+    dias.sort(key=lambda x: x[0])
+    destino = Path(tabla_csv)
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    with open(destino, "w", encoding="utf-8", newline="") as fh:
+        fh.write("\n".join([cab_fila] + [linea for _, linea in dias]) + "\n")
+    print(f"unidas: {unidas}  reemplazadas: {reemplazadas}")
 
 
 def autoprueba():
@@ -150,6 +222,43 @@ def autoprueba():
     # pe_epu cuenta la noticia que cumple todos y alguno; la que solo tiene política no
     assert d3["pe_epu"] == 1 and d2["pe_epu"] == 0, (d2["pe_epu"], d3["pe_epu"])
     assert d3["pe_economia"] == 2 and d3["pe_incert"] == 2 and d3["pe_politica"] == 2
+
+    # 3a: un día con corte cuenta solo si el corte es a las 10:00 UTC o después, y solo si el día
+    # anterior está completo (sin corte)
+    with tempfile.TemporaryDirectory() as tmp:
+        corpus = Path(tmp)
+        (corpus / "gal/peru").mkdir(parents=True)
+        (corpus / "gal/mundo").mkdir(parents=True)
+        with open(corpus / "gal/dias.jsonl", "w", encoding="utf-8") as fh:
+            for j in [{"dia": "2030-01-01"}, {"dia": "2030-01-02", "corte": "10:00"}, {"dia": "2030-01-03", "corte": "08:00"},
+                      {"dia": "2030-01-04"}, {"dia": "2030-01-05", "corte": "09:59"}, {"dia": "2030-01-06", "corte": "12:00"}]:
+                fh.write(json.dumps(j) + "\n")
+        with open(corpus / "gal/peru/2030-01.jsonl", "w", encoding="utf-8") as fh:
+            for i, d in enumerate(["2030-01-01", "2030-01-02", "2030-01-03", "2030-01-04", "2030-01-05", "2030-01-06"]):
+                fh.write(json.dumps({"visto": f"{d}T05:00:00Z", "titulo": f"Titular {i}", "resumen": "", "url": f"https://ejemplo.pe/{i}"}) + "\n")
+        open(corpus / "gal/mundo/2030-01.jsonl", "w", encoding="utf-8").close()
+        tabla = contar(corpus, temas)
+    # solo cuenta 2030-01-02: corte a las 10:00 y anterior completo. 01-03 y 01-05 cortan antes de las
+    # 10:00; 01-04 y 01-06 tienen el día anterior con corte (no completo)
+    assert set(tabla) == {"2030-01-02"} and tabla["2030-01-02"]["pe_total"] == 1, sorted(tabla)
+
+    # 3b: unir() reemplaza el día que ya existe, añade los nuevos, ordena por día y deja fin de línea \n
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        cab = "dia,pe_total,pe_economia"
+        tabla_csv = tmp / "tabla.csv"
+        tabla_csv.write_text(cab + "\n2024-01-01,900,5\n2024-01-03,700,3\n", encoding="utf-8")
+        fila_csv = tmp / "fila.csv"
+        fila_csv.write_text(cab + "\n2024-01-03,800,4\n2024-01-02,600,2\n", encoding="utf-8")
+        unir(str(fila_csv), str(tabla_csv))
+        texto = tabla_csv.read_text(encoding="utf-8")
+        assert texto == cab + "\n2024-01-01,900,5\n2024-01-02,600,2\n2024-01-03,800,4\n", repr(texto)
+        fila_csv.write_text(cab + "\n2024-01-09,120,1\n", encoding="utf-8")
+        try:
+            unir(str(fila_csv), str(tabla_csv))
+            raise AssertionError("unir debía rechazar pe_total < 500")
+        except SystemExit as e:
+            assert e.code == 1 and tabla_csv.read_text(encoding="utf-8") == texto, "pe_total < 500: sale con 1 y no toca la tabla"
     print("autoprueba: bien")
 
 
@@ -159,10 +268,13 @@ def main():
     ap.add_argument("--desde", default="0000-00-00")
     ap.add_argument("--hasta", default="9999-99-99")
     ap.add_argument("--salida", default=SALIDA)
+    ap.add_argument("--unir", metavar="FILA.csv", help="Añade las filas de FILA.csv a la tabla de --salida (no lee el corpus).")
     ap.add_argument("--autoprueba", action="store_true")
     a = ap.parse_args()
     if a.autoprueba:
         return autoprueba()
+    if a.unir:
+        return unir(a.unir, a.salida)
     temas = json.load(open(AQUI / "temas.json", encoding="utf-8"))
     tabla = contar(a.corpus, temas, a.desde, a.hasta)
     escribir(tabla, temas, a.salida)

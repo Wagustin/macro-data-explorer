@@ -146,7 +146,7 @@ test("correo pagado: tabla de rangos con los tres horizontes", () => {
 
   // El mes: con la etiqueta del horizonte y sin inventar cifras.
   const titulos = titulosRangos(html);
-  assert.ok(titulos.includes("Hoy"), "la fila «Hoy»");
+  assert.ok(titulos.includes(hoy.titulo), `la fila «${hoy.titulo}»`);
   assert.ok(titulos.includes("Semana"), "la fila «Semana»");
   assert.ok(titulos.includes("Mes"), "la fila «Mes»");
   assert.equal(titulos.length, 3, `el pagado trae tres filas de rango (${titulos.join(" | ")})`);

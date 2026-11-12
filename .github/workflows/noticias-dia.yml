@@ -1,0 +1,85 @@
+name: Noticias del día (temas para el motor)
+
+# Cada mañana cuenta las noticias vistas hasta las 10:00 UTC (05:00 en Lima) y añade la fila del día a
+# data/torneo/noticias-rasgos.csv. Los titulares se quedan en la carpeta temporal y en la caché de Actions:
+# al repositorio solo entran las cuentas.
+
+on:
+  schedule:
+    - cron: "20 10 * * *"
+  workflow_dispatch:
+    inputs:
+      dia:
+        description: "Último día a contar (AAAA-MM-DD). Vacío: hoy."
+        required: false
+      desde:
+        description: "Primer día a contar, del mismo mes (AAAA-MM-DD). Vacío: solo el último día."
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: noticias-dia
+  cancel-in-progress: false
+
+jobs:
+  noticias:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Qué días tocan
+        env:
+          DIA_PEDIDO: ${{ inputs.dia }}
+          DESDE_PEDIDO: ${{ inputs.desde }}
+        run: |
+          DIA="${DIA_PEDIDO:-$(date -u +%F)}"
+          # GitHub's cron can fire many hours late: before 10:00 UTC "today" is not ready, redo yesterday (it changes nothing)
+          if [ -z "$DIA_PEDIDO" ] && [ "$(date -u +%-H)" -lt 10 ]; then DIA="$(date -u -d yesterday +%F)"; fi
+          DESDE="${DESDE_PEDIDO:-$DIA}"
+          for f in "$DIA" "$DESDE"; do
+            echo "$f" | grep -Eq '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' || { echo "Fecha inválida: $f"; exit 1; }
+          done
+          AYER="$(date -u -d "$DIA -1 day" +%F)"
+          INICIO="${AYER:0:7}-01"
+          if [[ "$DESDE" < "$INICIO" || "$DESDE" > "$DIA" ]]; then echo "«desde» debe estar entre $INICIO y $DIA"; exit 1; fi
+          { echo "DIA=$DIA"; echo "DESDE=$DESDE"; echo "AYER=$AYER"; echo "INICIO=$INICIO"; } >> "$GITHUB_ENV"
+      - uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/noticias
+          key: noticias-gal-${{ github.run_id }}
+          restore-keys: noticias-gal-
+      - name: Bajar lo que falta del mes y la mañana del día
+        run: |
+          export NOTICIAS_DIR="$RUNNER_TEMP/noticias/gal"
+          node research/torneo/descargar_gal.mjs --desde "$INICIO" --hasta "$AYER" --conc 4
+          node research/torneo/descargar_gal.mjs --desde "$DIA" --hasta "$DIA" --corte 10:00 --conc 4
+      - name: Contar los temas y unir la fila
+        run: |
+          python3 research/torneo/rasgos_noticias.py --corpus "$RUNNER_TEMP/noticias" --desde "$DESDE" --hasta "$DIA" --salida "$RUNNER_TEMP/fila.csv"
+          python3 research/torneo/rasgos_noticias.py --unir "$RUNNER_TEMP/fila.csv" --salida data/torneo/noticias-rasgos.csv
+      - name: Dejar en la caché solo los dos meses que hacen falta
+        run: find "$RUNNER_TEMP/noticias/gal" -name '*.jsonl' ! -name 'dias.jsonl' ! -name "${AYER:0:7}.jsonl" ! -name "${DIA:0:7}.jsonl" -delete
+      - uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/noticias
+          key: noticias-gal-${{ github.run_id }}
+      - name: Guardar la fila
+        run: |
+          git config user.name "perdata-bot"
+          git config user.email "perdata-bot@users.noreply.github.com"
+          git add data/torneo/noticias-rasgos.csv
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "data(torneo): noticias del día $DIA"
+            for i in 1 2 3 4; do
+              git pull --rebase -q origin main && git push -q origin HEAD:main && break
+              [ "$i" -eq 4 ] && exit 1
+              sleep $((i*5))
+            done
+          fi
