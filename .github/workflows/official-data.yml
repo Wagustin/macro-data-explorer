@@ -34,6 +34,9 @@ jobs:
       - name: Cierre de ayer (SUNAT)
         continue-on-error: true
         run: node scripts/cierre-sunat.js
+      - name: Cierre de la 1:30 p. m. (provisional, prensa)
+        continue-on-error: true
+        run: node scripts/cierre-1330.js
       - name: PerData Engine diario
         run: node scripts/engine-daily.js
       - name: Evaluar aciertos del dólar (pronósticos publicados)

@@ -7,6 +7,12 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { PERU_HOLIDAYS } from "./engine-daily.js";
 
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const BCRP_DAILY_PATH = path.join(ROOT, "data", "official", "bcrp-daily.json");
+const BCRP_CONTEXTO_PATH = path.join(ROOT, "data", "official", "bcrp-contexto.json");
+const ESTADO_PATH = path.join(ROOT, "data", "official", "cierre-1330.json");
+const URL_COMERCIO = "https://elcomercio.pe/arc/outboundfeeds/rss/category/economia/?outputType=xml";
+const URL_ANDINA = "https://andina.pe/agencia/rss.aspx?id=2";
 const USER_AGENT = "PerDataBot/1.0 (+https://perdata.site)";
 const DIAS = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
@@ -318,3 +324,119 @@ export function actualizarEstado(estado, { candidatos, oficiales, sbs, hoyLima, 
   // 8. Solo las últimas 120 filas.
   return { provisional, bitacora: ordenadas.slice(-120) };
 }
+
+/**
+ * Lee una serie { codigo: { serie: [[fecha, valor], ...] } } de un JSON del BCRP.
+ * Si el archivo falta o está roto, devuelve un objeto vacío.
+ */
+export function leerSerie(archivo, codigo) {
+  const serie = {};
+  let datos = null;
+  try {
+    datos = JSON.parse(fs.readFileSync(archivo, "utf8"));
+  } catch {
+    return serie;
+  }
+  const puntos = datos?.series?.[codigo]?.serie;
+  if (!Array.isArray(puntos)) return serie;
+  for (const punto of puntos) {
+    if (!Array.isArray(punto) || punto.length < 2) continue;
+    const fecha = String(punto[0]);
+    const valor = Number(punto[1]);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha) || !Number.isFinite(valor)) continue;
+    serie[fecha] = valor;
+  }
+  return serie;
+}
+
+/**
+ * Descarga un canal RSS: un solo intento, con límite de 20 s.
+ * Devuelve { xml, error }; si el canal falla, xml es "" y error explica el motivo.
+ */
+export async function descargarCanal(url, etiqueta) {
+  try {
+    const respuesta = await fetch(url, {
+      headers: { "User-Agent": USER_AGENT },
+      redirect: "follow",
+      signal: AbortSignal.timeout(20000),
+    });
+    if (!respuesta.ok) {
+      return { xml: "", error: `${etiqueta} http_${respuesta.status}` };
+    }
+    return { xml: await respuesta.text(), error: null };
+  } catch (e) {
+    return { xml: "", error: `${etiqueta} ${e.message}` };
+  }
+}
+
+/**
+ * Fecha de hoy en Lima ("AAAA-MM-DD").
+ */
+function hoyEnLima() {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Lima",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
+
+/**
+ * CLI: lee los dos canales, actualiza el estado provisional y lo guarda.
+ * Siempre termina con código 0.
+ */
+async function main() {
+  try {
+    const sbs = leerSerie(BCRP_DAILY_PATH, "PEN");
+    const oficiales = leerSerie(BCRP_CONTEXTO_PATH, "TC_CIERRE_VENTA");
+
+    let estado = null;
+    try {
+      estado = JSON.parse(fs.readFileSync(ESTADO_PATH, "utf8"));
+    } catch {
+      estado = null;
+    }
+
+    const [canalComercio, canalAndina] = await Promise.all([
+      descargarCanal(URL_COMERCIO, "comercio"),
+      descargarCanal(URL_ANDINA, "andina"),
+    ]);
+    const comercio = candidatosComercio(canalComercio.xml);
+    const andina = candidatosAndina(canalAndina.xml);
+
+    const nuevo = actualizarEstado(estado, {
+      candidatos: [...comercio, ...andina],
+      oficiales,
+      sbs,
+      hoyLima: hoyEnLima(),
+      ahora: new Date().toISOString(),
+    });
+
+    const contenido = JSON.stringify(nuevo, null, 1) + "\n";
+    let previo = null;
+    try {
+      previo = fs.readFileSync(ESTADO_PATH, "utf8");
+    } catch {
+      previo = null;
+    }
+    if (previo !== contenido) fs.writeFileSync(ESTADO_PATH, contenido, "utf8");
+
+    const p = nuevo.provisional;
+    const detalle = p
+      ? `provisional ${p.fecha} ${p.valor} (${p.fuentes.join("+")})`
+      : "sin provisional";
+    const avisos = [canalComercio.error, canalAndina.error].filter(Boolean).join("; ");
+    console.log(
+      `cierre-1330: comercio ${comercio.length}, andina ${andina.length}; ${detalle}${avisos ? `; ${avisos}` : ""}`
+    );
+  } catch (e) {
+    console.log(`cierre-1330: error ${e.message}`);
+  }
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main().catch((e) => {
+    console.log(`cierre-1330: error ${e.message}`);
+  });
+}
+
