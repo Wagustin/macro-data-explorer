@@ -11,7 +11,8 @@ Writes to data/official/:
                       calls the BCRP API on visitor requests (its API started showing a bot check).
   bcrp-contexto.json  BCRP monetary and macroeconomic series providing context for USD/PEN:
                       net international reserves, policy rate, FX interventions, swaps, CDRs,
-                      annual inflation, terms of trade and export copper price.
+                      the 1:30 pm closing rate, annual inflation, terms of trade and export
+                      copper price.
 
 Identified User-Agent, a few requests per day, nothing behind logins or bot checks.
 Needs: xlrd, openpyxl.  Usage: python scripts/fetch_official.py
@@ -205,6 +206,7 @@ BCRP_CONTEXTO_SERIES = {
     "SWAPS_CAMBIARIOS_NETOS": ("PD04660MD", "Millones US$", 1, "diaria"),
     "CDR_EMITIDO": ("PD37517TD", "Millones US$", 1, "diaria"),
     "SWAP_VENTA_PACTADO": ("PD37521TD", "Millones US$", 1, "diaria"),
+    "TC_CIERRE_VENTA": ("PD04646PD", "S/ por US$", 1, "diaria"),
     # Mensuales
     "INFLACION_ANUAL": ("PN01273PM", "Var. % 12 meses", 1, "mensual"),
     "INFLACION_SUBYACENTE": ("PN01277PM", "Var. % 12 meses", 1, "mensual"),
