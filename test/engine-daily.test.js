@@ -15,6 +15,7 @@ import {
   prepararCierre,
   rangoConCierre,
   rangoTarde,
+  backtestTarde,
 } from "../scripts/engine-daily.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -329,6 +330,30 @@ test("rangoTarde devuelve cuantiles ordenados y null sin el cierre del día sigu
   const sinSiguiente = { ...cierres };
   delete sinSiguiente[fechas[701]];
   assert.equal(rangoTarde(prepararCierre(serie, sinSiguiente), 700), null);
+});
+
+test("backtestTarde mide el rango de dos días con las mismas claves que el backtest de un día", () => {
+  const serie = serieSinteticaPEN();
+  const cierres = cierresSinteticos(serie);
+  const P = prepararCierre(serie, cierres);
+
+  const bt = backtestTarde(P, "2019-01-01");
+
+  assert.deepEqual(Object.keys(bt).sort(), [
+    "ancho_medio_pct",
+    "cobertura_50",
+    "cobertura_80",
+    "cortes",
+    "mae_p50",
+  ]);
+  assert.ok(bt.cortes > 0, "Debe haber cortes evaluados");
+  assert.ok(
+    bt.cobertura_80 >= 70 && bt.cobertura_80 <= 90,
+    `La cobertura del 80 % debe quedar entre 70 y 90 (dio ${bt.cobertura_80}%)`,
+  );
+  assert.ok(bt.cobertura_50 >= 0 && bt.cobertura_50 <= 100, "La cobertura del 50 % debe ser un porcentaje");
+  assert.ok(bt.ancho_medio_pct > 0, "El ancho medio debe ser positivo");
+  assert.ok(bt.mae_p50 >= 0, "El error absoluto de la mediana no puede ser negativo");
 });
 
 test("generateDailyForecasts afina el dólar a 1 día sólo con el cierre de la 1:30", () => {
