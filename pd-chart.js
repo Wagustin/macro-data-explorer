@@ -423,6 +423,21 @@
             order: 1,
           });
         }
+        // Cierre provisional de la 1:30 p. m. en el punto de hoy (solo si llega con options.hoy)
+        if (hoyOpt && hoyOpt.cierre1330) {
+          const cierre = new Array(labels.length).fill(null);
+          cierre[nHist] = Number(hoyOpt.cierre1330.valor);
+          datasets.push({
+            label: "Cierre 1:30",
+            data: cierre,
+            borderColor: "transparent",
+            backgroundColor: tokens.ink,
+            borderWidth: 0,
+            pointRadius: 3,
+            showLine: false,
+            order: 4,
+          });
+        }
         // Punto del último cierre real
         const lastReal = new Array(labels.length).fill(null);
         lastReal[nHist - 1] = seriesData[seriesData.length - 1];
@@ -784,11 +799,12 @@
         const v = seriesData[idx];
         const p = p50[idx];
         const isFuture = idx >= nHist;
+        const esPuntoHoy = !!hoyOpt && idx === nHist;
         
         vline.style.left = xPx + "px";
         vline.style.display = "block";
 
-        const ptVal = isFuture ? p : v;
+        const ptVal = esPuntoHoy && hoyOpt.cierre1330 ? Number(hoyOpt.cierre1330.valor) : (isFuture ? p : v);
         if (ptVal != null && !isNaN(ptVal)) {
           const yPx = chart.scales.y.getPixelForValue(ptVal);
           if (isFinite(yPx)) {
@@ -802,11 +818,10 @@
           dotHalo.style.display = "none";
         }
 
-        const esPuntoHoy = !!hoyOpt && idx === nHist;
         const dateStr = isFuture && futureChip[idx] ? futureChip[idx] : formatChipDate(label);
         const fmt3 = (n) => sym + Number(n).toLocaleString("es-PE", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
         const sufijo = esPuntoHoy
-          ? (hoyOpt.esHoy ? " · hoy, estimado" : " · siguiente día hábil, estimado")
+          ? (hoyOpt.cierre1330 && hoyOpt.esHoy ? " · hoy" : (hoyOpt.esHoy ? " · hoy, estimado" : " · siguiente día hábil, estimado"))
           : (isFuture ? " · proyección" : "");
         const fmt = (n) => sym + Number(n).toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         const row = (name, val, strong) =>
@@ -816,9 +831,16 @@
           html += row("Precio de cierre", fmt(v), true);
         }
         if (esPuntoHoy && p != null && !isNaN(p)) {
+          if (hoyOpt.cierre1330) {
+            const cierreFuente = hoyOpt.cierre1330.fuente === "BCRP" ? "BCRP" : "provisional";
+            html += row(`Cierre 1:30 p. m. (${cierreFuente})`, fmt3(hoyOpt.cierre1330.valor), true);
+          }
           html += row("Lo más probable (P50)", fmt3(p), true);
           if (p10[idx] != null && p90[idx] != null) html += row("Rango 80 % (P10–P90)", fmt3(p10[idx]) + " – " + fmt3(p90[idx]));
           if (p25[idx] != null && p75[idx] != null) html += row("Rango 50 % (P25–P75)", fmt3(p25[idx]) + " – " + fmt3(p75[idx]));
+          if (hoyOpt.cierre1330 && hoyOpt.cierre1330.fuente === "prensa") {
+            html += `<div style="margin-top:5px;font-size:11px;color:${tokens.inkSoft};">Cierre interbancario según El Comercio y Andina; el BCRP lo confirma al día siguiente.</div>`;
+          }
         } else if (isFuture && p != null && !isNaN(p)) {
           html += row("Lo más probable (P50)", fmt(p), true);
           if (p10[idx] != null && p90[idx] != null) html += row("Rango 80 % (P10–P90)", fmt(p10[idx]) + " – " + fmt(p90[idx]));

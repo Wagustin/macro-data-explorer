@@ -1606,6 +1606,11 @@
           hoyOpt = { date: h1.fecha_objetivo, esHoy: h1.fecha_objetivo === diario.hoy_lima, p10: h1.p10, p25: h1.p25, p50: h1.p50, p75: h1.p75, p90: h1.p90 };
         }
 
+        // Cierre provisional de la 1:30 p. m. (solo por la tarde, mismo día que el punto de hoy)
+        if (hoyOpt && diario.cierre_1330 && diario.cierre_1330.fecha === hoyOpt.date && typeof diario.cierre_1330.valor === 'number') {
+          hoyOpt.cierre1330 = { valor: diario.cierre_1330.valor, fuente: diario.cierre_1330.fuente };
+        }
+
         function renderHeroChart() {
           if (!window.PdChart || !chartContainer) return;
           var curDark = document.documentElement.classList.contains('dark');
