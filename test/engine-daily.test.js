@@ -418,3 +418,35 @@ test("generateDailyForecasts afina el dólar a 2 días con el cierre del día h�
   assert.equal(lejos.simbolos.PEN.pronosticos.h2.afinado, undefined);
   assert.deepEqual(lejos.simbolos.PEN.pronosticos.h2, sin.simbolos.PEN.pronosticos.h2);
 });
+
+test("generateDailyForecasts expone el cierre de la 1:30 de hoy sólo si se conoce", () => {
+  const serie = serieSinteticaPEN();
+  const cierres = cierresSinteticos(serie);
+  const bcrp = { series: { PEN: { codigo: "PEN", unidad: "S/", serie } } };
+  const hoy = "2019-06-28"; // último SBS
+  const siguiente = addBusinessDays(hoy, 1);
+  const valor = Number((serie[serie.length - 1][1] * 0.999).toFixed(4));
+  const contextoSinUltimo = {
+    series: { TC_CIERRE_VENTA: { serie: Object.entries(cierres).filter(([f]) => f !== hoy) } },
+  };
+
+  // (a) Con provisional del día hábil siguiente y hoy en Lima ese día: se expone con fuente prensa.
+  const con = generateDailyForecasts(bcrp, {
+    todayInLima: siguiente,
+    contexto: contextoSinUltimo,
+    cierre1330: { provisional: { fecha: siguiente, valor } },
+  });
+  assert.deepEqual(con.simbolos.PEN.cierre_1330, { fecha: siguiente, valor, fuente: "prensa" });
+
+  // (b) Sin provisional no aparece la clave.
+  const sin = generateDailyForecasts(bcrp, { todayInLima: siguiente, contexto: contextoSinUltimo });
+  assert.equal("cierre_1330" in sin.simbolos.PEN, false);
+
+  // (c) Un cierre posterior a hoy en Lima no se expone.
+  const futuro = generateDailyForecasts(bcrp, {
+    todayInLima: hoy,
+    contexto: contextoSinUltimo,
+    cierre1330: { provisional: { fecha: siguiente, valor } },
+  });
+  assert.equal("cierre_1330" in futuro.simbolos.PEN, false);
+});

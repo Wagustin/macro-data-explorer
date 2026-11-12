@@ -781,6 +781,18 @@ export function generateDailyForecasts(bcrpData, options = {}) {
         lastDate,
         lastClose,
       );
+
+      // Cierre de la 1:30 p. m. de hoy (posterior al último SBS y no posterior a hoy en Lima):
+      // el oficial del BCRP si ya existe, o el provisional de la prensa.
+      const cierreHoy = Object.keys(cierres)
+        .filter(f => f > lastDate && f <= todayInLima)
+        .sort()
+        .pop();
+      if (cierreHoy !== undefined) {
+        symEntry.cierre_1330 = { fecha: cierreHoy, valor: cierres[cierreHoy], fuente: "BCRP" };
+      } else if (siguiente !== null && siguiente.fecha <= todayInLima) {
+        symEntry.cierre_1330 = { fecha: siguiente.fecha, valor: siguiente.valor, fuente: "prensa" };
+      }
       if (fuente !== null || siguiente !== null) {
         const P = prepararCierre(serie, cierres);
         if (fuente !== null) {
