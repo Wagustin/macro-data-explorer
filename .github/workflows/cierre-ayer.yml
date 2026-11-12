@@ -30,6 +30,9 @@ jobs:
       # Con --referencia deja ENGINE_HOY para que el motor conserve las fechas objetivo de la corrida anterior.
       - id: cierre
         run: node scripts/cierre-sunat.js --referencia
+      - name: Cierre de la 1:30 p. m. (provisional, prensa)
+        continue-on-error: true
+        run: node scripts/cierre-1330.js
       - name: PerData Engine diario
         if: steps.cierre.outputs.aplicado == 'true'
         run: node scripts/engine-daily.js
@@ -43,7 +46,7 @@ jobs:
         run: |
           git config user.name "perdata-bot"
           git config user.email "perdata-bot@users.noreply.github.com"
-          git add data/official/bcrp-daily.json data/daily-forecasts.json data/official/pronosticos-dolar.json data/official/aciertos-dolar.json dolar.html data/official/cierre-visto.json
+          git add data/official/bcrp-daily.json data/daily-forecasts.json data/official/pronosticos-dolar.json data/official/aciertos-dolar.json dolar.html data/official/cierre-visto.json data/official/cierre-1330.json
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
