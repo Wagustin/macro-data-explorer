@@ -1,6 +1,6 @@
 # Torneo del motor — ronda 2
 
-Actualizado 2026-11-12T05:21Z · último dato 2026-11-10
+Actualizado 2026-11-12T06:34Z · último dato 2026-11-11
 
 Práctica 2021-2024 (ahí se eligen ajustes), examen 2025 (ajustes congelados), confirmación 2026 (no se usa para elegir).
 Pinball: error del rango, menor es mejor. Razón < 1 = mejor que la referencia. p < 0,05 = la diferencia no parece azar.
@@ -9,28 +9,30 @@ Pinball: error del rango, menor es mejor. Razón < 1 = mejor que la referencia. 
 
 | motor | pinball 2025 | cobertura 80 % | ancho 80 % | vs caminata (p) | vs motor actual (p) | pinball 2026 | cobertura 2026 | veredicto |
 |---|---|---|---|---|---|---|---|---|
-| caminata | 0.0769 | 86.7 | 0.82 | — | 1.014 (0.05) | 0.1012 | 79.1 | — |
-| motor_actual | 0.0758 | 77.0 | 0.69 | 0.986 (0.05) | — | 0.1026 | 81.5 | — |
-| fhs97_k | 0.0760 | 77.8 | 0.70 | 0.988 (0.07) | 1.002 (0.35) | 0.1035 | 83.4 | empata |
-| analogos | 0.0760 | 77.0 | 0.69 | 0.989 (0.15) | 1.003 (0.34) | 0.1018 | 82.9 | empata |
-| aprende_vol | 0.0766 | 80.2 | 0.73 | 0.996 (0.60) | 1.010 (0.05) | 0.1000 | 83.4 | empata |
-| aprende_vol_cal | 0.0765 | 80.6 | 0.74 | 0.995 (0.51) | 1.009 (0.06) | 0.1005 | 83.4 | empata |
-| aprende_vol_noticias | 0.0767 | 80.6 | 0.74 | 0.997 (0.71) | 1.011 (0.01) | 0.1007 | 82.9 | empata |
-| aprende_vol_corpus | 0.0766 | 82.3 | 0.74 | 0.996 (0.62) | 1.010 (0.10) | 0.1002 | 84.4 | empata |
-| aprende_vol_cruz | 0.0766 | 81.0 | 0.74 | 0.996 (0.56) | 1.009 (0.05) | 0.1009 | 84.4 | empata |
-| aprende_rango_cal | 0.0765 | 78.2 | 0.67 | 0.994 (0.61) | 1.008 (0.27) | 0.1003 | 79.1 | empata |
-| aprende_rango_noticias | 0.0765 | 78.6 | 0.70 | 0.995 (0.60) | 1.009 (0.19) | 0.1005 | 78.7 | empata |
-| mezcla | 0.0760 | 79.8 | 0.72 | 0.988 (0.09) | 1.002 (0.42) | 0.1011 | 82.9 | empata |
+| caminata | 0.0769 | 86.7 | 0.82 | — | 1.014 (0.05) | 0.1010 | 79.2 | — |
+| motor_actual | 0.0758 | 77.0 | 0.69 | 0.986 (0.05) | — | 0.1024 | 81.6 | — |
+| fhs97_k | 0.0760 | 77.8 | 0.70 | 0.988 (0.07) | 1.002 (0.35) | 0.1033 | 83.5 | empata |
+| cierre_ayer | 0.0582 | 81.0 | 0.54 | 0.756 (0.00) | 0.767 (0.00) | 0.0787 | 82.5 | gana |
+| analogos | 0.0760 | 77.0 | 0.69 | 0.989 (0.15) | 1.003 (0.34) | 0.1016 | 83.0 | empata |
+| aprende_vol | 0.0766 | 80.2 | 0.73 | 0.996 (0.60) | 1.010 (0.05) | 0.0998 | 83.5 | empata |
+| aprende_vol_cal | 0.0765 | 80.6 | 0.74 | 0.995 (0.51) | 1.009 (0.06) | 0.1003 | 83.5 | empata |
+| aprende_vol_noticias | 0.0767 | 80.6 | 0.74 | 0.997 (0.71) | 1.011 (0.01) | 0.1005 | 83.0 | empata |
+| aprende_vol_corpus | 0.0766 | 82.3 | 0.74 | 0.996 (0.62) | 1.010 (0.10) | 0.1000 | 84.4 | empata |
+| aprende_vol_cruz | 0.0766 | 81.0 | 0.74 | 0.996 (0.56) | 1.009 (0.05) | 0.1007 | 84.4 | empata |
+| aprende_rango_cal | 0.0765 | 78.2 | 0.67 | 0.994 (0.61) | 1.008 (0.27) | 0.1001 | 79.2 | empata |
+| aprende_rango_noticias | 0.0765 | 78.6 | 0.70 | 0.995 (0.60) | 1.009 (0.19) | 0.1003 | 78.8 | empata |
+| mezcla | 0.0760 | 79.8 | 0.72 | 0.988 (0.09) | 1.002 (0.42) | 0.1009 | 83.0 | empata |
+- `cierre_ayer` necesita el tipo de cambio de cierre de la 1:30 p. m. del día del corte (BCRP, PD04646PD), que el BCRP publica con retraso.
 
-- Días con noticias del corpus: práctica 452, examen 2025 239, confirmación 2026 212.
+- Días con noticias del corpus: práctica 452, examen 2025 239, confirmación 2026 213.
 - Noticias en `aprende_vol_noticias` (examen_2025): razón 1.002 frente al mismo motor sin noticias (p 0.31); el ancho del rango cambia 5.0 % en un día típico y 11.9 % en los días de más noticias.
 - Noticias en `aprende_vol_noticias` (confirmacion_2026): razón 1.002 frente al mismo motor sin noticias (p 0.40); el ancho del rango cambia 4.5 % en un día típico y 10.5 % en los días de más noticias.
 - Noticias en `aprende_rango_noticias` (examen_2025): razón 1.001 frente al mismo motor sin noticias (p 0.86); el ancho del rango cambia 4.8 % en un día típico y 13.2 % en los días de más noticias.
 - Noticias en `aprende_rango_noticias` (confirmacion_2026): razón 1.002 frente al mismo motor sin noticias (p 0.75); el ancho del rango cambia 4.9 % en un día típico y 13.1 % en los días de más noticias.
 - Noticias en `aprende_vol_corpus` (examen_2025): razón 1.001 frente al mismo motor sin noticias (p 0.78); el ancho del rango cambia 8.7 % en un día típico y 22.6 % en los días de más noticias.
-- Noticias en `aprende_vol_corpus` (confirmacion_2026): razón 0.996 frente al mismo motor sin noticias (p 0.49); el ancho del rango cambia 11.0 % en un día típico y 25.6 % en los días de más noticias.
+- Noticias en `aprende_vol_corpus` (confirmacion_2026): razón 0.996 frente al mismo motor sin noticias (p 0.48); el ancho del rango cambia 10.9 % en un día típico y 25.6 % en los días de más noticias.
 - Noticias en `aprende_vol_cruz` (examen_2025): razón 1.001 frente al mismo motor sin noticias (p 0.85); el ancho del rango cambia 6.3 % en un día típico y 15.9 % en los días de más noticias.
-- Noticias en `aprende_vol_cruz` (confirmacion_2026): razón 1.003 frente al mismo motor sin noticias (p 0.46); el ancho del rango cambia 8.1 % en un día típico y 18.0 % en los días de más noticias.
+- Noticias en `aprende_vol_cruz` (confirmacion_2026): razón 1.003 frente al mismo motor sin noticias (p 0.43); el ancho del rango cambia 8.1 % en un día típico y 18.0 % en los días de más noticias.
 - Noticias en `analogos` (examen_2025): razón 1.003 frente al mismo motor sin noticias (p 0.34); el ancho del rango cambia 5.5 % en un día típico y 13.5 % en los días de más noticias.
 - Noticias en `analogos` (confirmacion_2026): razón 0.992 frente al mismo motor sin noticias (p 0.02); el ancho del rango cambia 7.4 % en un día típico y 16.3 % en los días de más noticias.
 
@@ -38,59 +40,63 @@ Pinball: error del rango, menor es mejor. Razón < 1 = mejor que la referencia. 
 
 | motor | pinball 2025 | cobertura 80 % | ancho 80 % | vs caminata (p) | vs motor actual (p) | pinball 2026 | cobertura 2026 | veredicto |
 |---|---|---|---|---|---|---|---|---|
-| caminata | 0.1905 | 92.3 | 2.26 | — | 1.021 (0.09) | 0.2607 | 77.8 | — |
-| motor_actual | 0.1866 | 83.1 | 1.84 | 0.979 (0.09) | — | 0.2635 | 81.6 | — |
-| fhs97_k | 0.1871 | 83.1 | 1.84 | 0.982 (0.11) | 1.002 (0.45) | 0.2667 | 82.1 | empata |
-| analogos | 0.1890 | 81.5 | 1.84 | 0.992 (0.55) | 1.013 (0.00) | 0.2647 | 82.6 | empata |
-| aprende_vol | 0.1886 | 85.5 | 1.94 | 0.990 (0.43) | 1.011 (0.03) | 0.2556 | 82.6 | empata |
-| aprende_vol_cal | 0.1887 | 85.9 | 1.95 | 0.990 (0.45) | 1.011 (0.03) | 0.2561 | 84.5 | empata |
-| aprende_vol_noticias | 0.1892 | 87.5 | 2.05 | 0.993 (0.45) | 1.014 (0.04) | 0.2554 | 86.0 | empata |
-| aprende_vol_corpus | 0.1902 | 87.1 | 2.00 | 0.998 (0.85) | 1.019 (0.00) | 0.2547 | 85.0 | empata |
-| aprende_vol_cruz | 0.1879 | 86.7 | 2.01 | 0.986 (0.24) | 1.007 (0.33) | 0.2545 | 85.5 | empata |
-| aprende_rango_cal | 0.1950 | 74.6 | 1.64 | 1.023 (0.29) | 1.045 (0.00) | 0.2555 | 82.6 | pierde |
-| aprende_rango_noticias | 0.1985 | 78.6 | 1.73 | 1.042 (0.05) | 1.064 (0.00) | 0.2646 | 83.1 | pierde |
-| mezcla | 0.1874 | 85.1 | 1.90 | 0.984 (0.17) | 1.004 (0.12) | 0.2585 | 83.6 | empata |
+| caminata | 0.1905 | 92.3 | 2.26 | — | 1.021 (0.09) | 0.2609 | 77.9 | — |
+| motor_actual | 0.1866 | 83.1 | 1.84 | 0.979 (0.09) | — | 0.2640 | 81.2 | — |
+| fhs97_k | 0.1871 | 83.1 | 1.84 | 0.982 (0.11) | 1.002 (0.45) | 0.2670 | 81.7 | empata |
+| cierre_ayer | 0.1829 | 83.5 | 1.85 | 0.960 (0.02) | 0.980 (0.22) | 0.2529 | 85.1 | empata |
+| analogos | 0.1890 | 81.5 | 1.84 | 0.992 (0.55) | 1.013 (0.00) | 0.2652 | 82.2 | empata |
+| aprende_vol | 0.1886 | 85.5 | 1.94 | 0.990 (0.43) | 1.011 (0.03) | 0.2560 | 82.2 | empata |
+| aprende_vol_cal | 0.1887 | 85.9 | 1.95 | 0.990 (0.45) | 1.011 (0.03) | 0.2565 | 84.1 | empata |
+| aprende_vol_noticias | 0.1892 | 87.5 | 2.05 | 0.993 (0.45) | 1.014 (0.04) | 0.2559 | 85.6 | empata |
+| aprende_vol_corpus | 0.1902 | 87.1 | 2.00 | 0.998 (0.85) | 1.019 (0.00) | 0.2552 | 84.6 | empata |
+| aprende_vol_cruz | 0.1879 | 86.7 | 2.01 | 0.986 (0.24) | 1.007 (0.33) | 0.2548 | 85.1 | empata |
+| aprende_rango_cal | 0.1950 | 74.6 | 1.64 | 1.023 (0.29) | 1.045 (0.00) | 0.2558 | 82.2 | pierde |
+| aprende_rango_noticias | 0.1985 | 78.6 | 1.73 | 1.042 (0.05) | 1.064 (0.00) | 0.2653 | 82.7 | pierde |
+| mezcla | 0.1874 | 85.1 | 1.90 | 0.984 (0.17) | 1.004 (0.12) | 0.2589 | 83.2 | empata |
+- `cierre_ayer` necesita el tipo de cambio de cierre de la 1:30 p. m. del día del corte (BCRP, PD04646PD), que el BCRP publica con retraso.
 
-- Días con noticias del corpus: práctica 452, examen 2025 239, confirmación 2026 212.
+- Días con noticias del corpus: práctica 452, examen 2025 239, confirmación 2026 213.
 - Noticias en `aprende_vol_noticias` (examen_2025): razón 1.003 frente al mismo motor sin noticias (p 0.58); el ancho del rango cambia 5.9 % en un día típico y 21.3 % en los días de más noticias.
-- Noticias en `aprende_vol_noticias` (confirmacion_2026): razón 0.997 frente al mismo motor sin noticias (p 0.56); el ancho del rango cambia 7.4 % en un día típico y 13.6 % en los días de más noticias.
+- Noticias en `aprende_vol_noticias` (confirmacion_2026): razón 0.998 frente al mismo motor sin noticias (p 0.64); el ancho del rango cambia 7.4 % en un día típico y 14.1 % en los días de más noticias.
 - Noticias en `aprende_rango_noticias` (examen_2025): razón 1.018 frente al mismo motor sin noticias (p 0.14); el ancho del rango cambia 7.9 % en un día típico y 22.5 % en los días de más noticias.
-- Noticias en `aprende_rango_noticias` (confirmacion_2026): razón 1.036 frente al mismo motor sin noticias (p 0.08); el ancho del rango cambia 8.2 % en un día típico y 21.6 % en los días de más noticias.
+- Noticias en `aprende_rango_noticias` (confirmacion_2026): razón 1.037 frente al mismo motor sin noticias (p 0.07); el ancho del rango cambia 8.2 % en un día típico y 21.5 % en los días de más noticias.
 - Noticias en `aprende_vol_corpus` (examen_2025): razón 1.008 frente al mismo motor sin noticias (p 0.05); el ancho del rango cambia 5.2 % en un día típico y 15.6 % en los días de más noticias.
-- Noticias en `aprende_vol_corpus` (confirmacion_2026): razón 0.995 frente al mismo motor sin noticias (p 0.26); el ancho del rango cambia 6.6 % en un día típico y 17.0 % en los días de más noticias.
+- Noticias en `aprende_vol_corpus` (confirmacion_2026): razón 0.995 frente al mismo motor sin noticias (p 0.25); el ancho del rango cambia 6.6 % en un día típico y 17.0 % en los días de más noticias.
 - Noticias en `aprende_vol_cruz` (examen_2025): razón 0.995 frente al mismo motor sin noticias (p 0.30); el ancho del rango cambia 6.9 % en un día típico y 16.5 % en los días de más noticias.
-- Noticias en `aprende_vol_cruz` (confirmacion_2026): razón 0.994 frente al mismo motor sin noticias (p 0.38); el ancho del rango cambia 7.7 % en un día típico y 22.4 % en los días de más noticias.
+- Noticias en `aprende_vol_cruz` (confirmacion_2026): razón 0.993 frente al mismo motor sin noticias (p 0.35); el ancho del rango cambia 7.7 % en un día típico y 22.4 % en los días de más noticias.
 - Noticias en `analogos` (examen_2025): razón 1.013 frente al mismo motor sin noticias (p 0.00); el ancho del rango cambia 5.5 % en un día típico y 15.0 % en los días de más noticias.
-- Noticias en `analogos` (confirmacion_2026): razón 1.004 frente al mismo motor sin noticias (p 0.45); el ancho del rango cambia 6.7 % en un día típico y 16.3 % en los días de más noticias.
+- Noticias en `analogos` (confirmacion_2026): razón 1.004 frente al mismo motor sin noticias (p 0.43); el ancho del rango cambia 6.8 % en un día típico y 16.3 % en los días de más noticias.
 
 ## PEN · 21 días hábiles
 
 | motor | pinball 2025 | cobertura 80 % | ancho 80 % | vs caminata (p) | vs motor actual (p) | pinball 2026 | cobertura 2026 | veredicto |
 |---|---|---|---|---|---|---|---|---|
-| caminata | 0.3748 | 88.3 | 4.71 | — | 1.052 (0.00) | 0.4559 | 79.1 | — |
-| motor_actual | 0.3563 | 82.3 | 3.83 | 0.951 (0.00) | — | 0.5234 | 78.5 | — |
-| fhs97_k | 0.3593 | 83.9 | 4.12 | 0.959 (0.00) | 1.009 (0.20) | 0.5159 | 84.3 | empata |
-| analogos | 0.3550 | 85.5 | 3.90 | 0.947 (0.00) | 0.996 (0.51) | 0.5270 | 77.5 | empata |
-| aprende_vol | 0.3643 | 86.3 | 4.27 | 0.972 (0.00) | 1.022 (0.02) | 0.4920 | 85.3 | empata |
-| aprende_vol_cal | 0.3647 | 85.1 | 4.24 | 0.973 (0.01) | 1.024 (0.01) | 0.5064 | 84.3 | empata |
-| aprende_vol_noticias | 0.3637 | 88.3 | 4.34 | 0.970 (0.00) | 1.021 (0.21) | 0.5006 | 82.7 | empata |
-| aprende_vol_corpus | 0.3662 | 87.1 | 4.36 | 0.977 (0.00) | 1.028 (0.02) | 0.5030 | 82.7 | empata |
-| aprende_vol_cruz | 0.3749 | 85.5 | 4.20 | 1.000 (0.99) | 1.052 (0.00) | 0.5106 | 87.4 | empata |
-| aprende_rango_cal | 0.3990 | 73.0 | 3.44 | 1.065 (0.12) | 1.120 (0.00) | 0.5303 | 78.0 | pierde |
-| aprende_rango_noticias | 0.4297 | 71.4 | 3.63 | 1.147 (0.03) | 1.206 (0.00) | 0.5329 | 74.9 | pierde |
-| mezcla | 0.3600 | 83.9 | 4.07 | 0.961 (0.00) | 1.011 (0.02) | 0.5127 | 81.7 | empata |
+| caminata | 0.3748 | 88.3 | 4.71 | — | 1.052 (0.00) | 0.4547 | 79.2 | — |
+| motor_actual | 0.3563 | 82.3 | 3.83 | 0.951 (0.00) | — | 0.5218 | 78.6 | — |
+| fhs97_k | 0.3593 | 83.9 | 4.12 | 0.959 (0.00) | 1.009 (0.20) | 0.5144 | 84.4 | empata |
+| cierre_ayer | 0.3547 | 83.9 | 3.91 | 0.946 (0.00) | 0.996 (0.72) | 0.5246 | 78.1 | empata |
+| analogos | 0.3550 | 85.5 | 3.90 | 0.947 (0.00) | 0.996 (0.51) | 0.5256 | 77.6 | empata |
+| aprende_vol | 0.3643 | 86.3 | 4.27 | 0.972 (0.00) | 1.022 (0.02) | 0.4907 | 85.4 | empata |
+| aprende_vol_cal | 0.3647 | 85.1 | 4.24 | 0.973 (0.01) | 1.024 (0.01) | 0.5050 | 84.4 | empata |
+| aprende_vol_noticias | 0.3637 | 88.3 | 4.34 | 0.970 (0.00) | 1.021 (0.21) | 0.4992 | 82.8 | empata |
+| aprende_vol_corpus | 0.3662 | 87.1 | 4.36 | 0.977 (0.00) | 1.028 (0.02) | 0.5015 | 82.8 | empata |
+| aprende_vol_cruz | 0.3749 | 85.5 | 4.20 | 1.000 (0.99) | 1.052 (0.00) | 0.5091 | 87.5 | empata |
+| aprende_rango_cal | 0.3990 | 73.0 | 3.44 | 1.065 (0.12) | 1.120 (0.00) | 0.5285 | 78.1 | pierde |
+| aprende_rango_noticias | 0.4297 | 71.4 | 3.63 | 1.147 (0.03) | 1.206 (0.00) | 0.5313 | 75.0 | pierde |
+| mezcla | 0.3600 | 83.9 | 4.07 | 0.961 (0.00) | 1.011 (0.02) | 0.5112 | 81.8 | empata |
+- `cierre_ayer` necesita el tipo de cambio de cierre de la 1:30 p. m. del día del corte (BCRP, PD04646PD), que el BCRP publica con retraso.
 
-- Días con noticias del corpus: práctica 452, examen 2025 239, confirmación 2026 212.
+- Días con noticias del corpus: práctica 452, examen 2025 239, confirmación 2026 213.
 - Noticias en `aprende_vol_noticias` (examen_2025): razón 0.997 frente al mismo motor sin noticias (p 0.79); el ancho del rango cambia 6.0 % en un día típico y 15.6 % en los días de más noticias.
-- Noticias en `aprende_vol_noticias` (confirmacion_2026): razón 0.989 frente al mismo motor sin noticias (p 0.29); el ancho del rango cambia 9.0 % en un día típico y 22.0 % en los días de más noticias.
+- Noticias en `aprende_vol_noticias` (confirmacion_2026): razón 0.989 frente al mismo motor sin noticias (p 0.30); el ancho del rango cambia 9.0 % en un día típico y 21.9 % en los días de más noticias.
 - Noticias en `aprende_rango_noticias` (examen_2025): razón 1.077 frente al mismo motor sin noticias (p 0.07); el ancho del rango cambia 7.7 % en un día típico y 20.2 % en los días de más noticias.
-- Noticias en `aprende_rango_noticias` (confirmacion_2026): razón 1.005 frente al mismo motor sin noticias (p 0.95); el ancho del rango cambia 11.8 % en un día típico y 29.7 % en los días de más noticias.
+- Noticias en `aprende_rango_noticias` (confirmacion_2026): razón 1.005 frente al mismo motor sin noticias (p 0.94); el ancho del rango cambia 11.8 % en un día típico y 29.7 % en los días de más noticias.
 - Noticias en `aprende_vol_corpus` (examen_2025): razón 1.004 frente al mismo motor sin noticias (p 0.42); el ancho del rango cambia 5.0 % en un día típico y 12.7 % en los días de más noticias.
-- Noticias en `aprende_vol_corpus` (confirmacion_2026): razón 0.993 frente al mismo motor sin noticias (p 0.24); el ancho del rango cambia 4.5 % en un día típico y 10.5 % en los días de más noticias.
+- Noticias en `aprende_vol_corpus` (confirmacion_2026): razón 0.993 frente al mismo motor sin noticias (p 0.23); el ancho del rango cambia 4.5 % en un día típico y 10.4 % en los días de más noticias.
 - Noticias en `aprende_vol_cruz` (examen_2025): razón 1.028 frente al mismo motor sin noticias (p 0.04); el ancho del rango cambia 6.5 % en un día típico y 16.4 % en los días de más noticias.
-- Noticias en `aprende_vol_cruz` (confirmacion_2026): razón 1.008 frente al mismo motor sin noticias (p 0.80); el ancho del rango cambia 15.4 % en un día típico y 73.5 % en los días de más noticias.
+- Noticias en `aprende_vol_cruz` (confirmacion_2026): razón 1.008 frente al mismo motor sin noticias (p 0.80); el ancho del rango cambia 15.3 % en un día típico y 73.5 % en los días de más noticias.
 - Noticias en `analogos` (examen_2025): razón 0.996 frente al mismo motor sin noticias (p 0.51); el ancho del rango cambia 7.5 % en un día típico y 18.7 % en los días de más noticias.
-- Noticias en `analogos` (confirmacion_2026): razón 1.007 frente al mismo motor sin noticias (p 0.31); el ancho del rango cambia 9.2 % en un día típico y 16.9 % en los días de más noticias.
+- Noticias en `analogos` (confirmacion_2026): razón 1.007 frente al mismo motor sin noticias (p 0.28); el ancho del rango cambia 9.1 % en un día típico y 16.9 % en los días de más noticias.
 
 ## COBRE · 1 días hábiles
 
