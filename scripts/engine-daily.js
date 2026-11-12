@@ -389,7 +389,9 @@ const MIN_BRECHA = 20; // Mínimo de brechas previas para centrar la brecha.
  * Carga los cierres interbancarios de la 1:30 p. m. (TC_CIERRE_VENTA del BCRP)
  * y, si el BCRP todavía no publicó el cierre del último día, el dato provisional
  * que la prensa económica atribuye al BCRP.
- * Devuelve `{ cierres, fuente }` con fuente "BCRP", "prensa" o null.
+ * Si el provisional es del día hábil siguiente a `ultimaFecha`, se devuelve aparte
+ * en `siguiente` (no entra en `cierres`, porque ese día aún no tiene SBS).
+ * Devuelve `{ cierres, fuente, siguiente }` con fuente "BCRP", "prensa" o null.
  */
 export function cargarCierres(contexto, cierre1330, ultimaFecha, ultimoPrecio) {
   const cierres = {};
@@ -406,28 +408,49 @@ export function cargarCierres(contexto, cierre1330, ultimaFecha, ultimoPrecio) {
   }
 
   // El BCRP ya publicó el cierre del último día: es el dato definitivo.
-  if (cierres[ultimaFecha] !== undefined) {
-    return { cierres, fuente: "BCRP" };
-  }
+  let fuente = cierres[ultimaFecha] !== undefined ? "BCRP" : null;
+  let siguiente = null;
 
-  // Cierre provisional de prensa: solo si es del último día y no se aparta
-  // más de 3 % del último precio oficial.
+  // Cierre provisional de prensa: solo si no se aparta más de 3 % del último
+  // precio oficial. Puede ser del último día (si el BCRP aún no lo publicó) o
+  // del día hábil siguiente (cierre de la 1:30 p. m. de hoy); ambos pueden convivir.
   const provisional = cierre1330?.provisional;
   if (
     provisional &&
-    provisional.fecha === ultimaFecha &&
     typeof provisional.valor === "number" &&
     Number.isFinite(provisional.valor) &&
-    provisional.valor > 0
+    provisional.valor > 0 &&
+    Math.abs(provisional.valor / ultimoPrecio - 1) <= 0.03
   ) {
-    const desvio = Math.abs(provisional.valor / ultimoPrecio - 1);
-    if (desvio <= 0.03) {
+    const fechaSiguiente = addBusinessDays(ultimaFecha, 1);
+    if (fuente === null && provisional.fecha === ultimaFecha) {
       cierres[ultimaFecha] = provisional.valor;
-      return { cierres, fuente: "prensa" };
+      fuente = "prensa";
+    } else if (provisional.fecha === fechaSiguiente) {
+      siguiente = { fecha: fechaSiguiente, valor: provisional.valor, fuente: "prensa" };
     }
   }
 
-  return { cierres, fuente: null };
+  return { cierres, fuente, siguiente };
+}
+
+/**
+ * Añade al final de los arrays de P (log-precio, volatilidad y log-cierre) una
+ * posición para el día hábil siguiente al último SBS, cuyo SBS aún no existe.
+ * Permite llamar a rangoTarde en el último corte sin cambiar rangoTarde.
+ */
+function extenderAlSiguiente(P, valor) {
+  const n = P.lp.length;
+  const lp = new Float64Array(n + 1);
+  const s = new Float64Array(n + 1);
+  const lc = new Float64Array(n + 1);
+  lp.set(P.lp);
+  s.set(P.s);
+  lc.set(P.lc);
+  lp[n] = NaN;
+  s[n] = NaN;
+  lc[n] = Math.log(valor);
+  return { lp, s, lc };
 }
 
 /**
@@ -750,18 +773,27 @@ export function generateDailyForecasts(bcrpData, options = {}) {
     // El dólar (PEN) puede afinarse a 1 día con el cierre interbancario de
     // la 1:30 p. m. del último día, si ese dato ya se conoce.
     let cierreAfinado = null;
+    let cierreTarde = null;
     if (sym === "PEN") {
-      const { cierres, fuente } = cargarCierres(
+      const { cierres, fuente, siguiente } = cargarCierres(
         options.contexto,
         options.cierre1330,
         lastDate,
         lastClose,
       );
-      if (fuente !== null) {
+      if (fuente !== null || siguiente !== null) {
         const P = prepararCierre(serie, cierres);
-        const r = rangoConCierre(P, serie.length - 1);
-        if (r !== null) {
-          cierreAfinado = { P, r, cierres, fuente };
+        if (fuente !== null) {
+          const r = rangoConCierre(P, serie.length - 1);
+          if (r !== null) {
+            cierreAfinado = { P, r, cierres, fuente };
+          }
+        }
+        if (siguiente !== null) {
+          const r = rangoTarde(extenderAlSiguiente(P, siguiente.valor), serie.length - 1);
+          if (r !== null) {
+            cierreTarde = { P, r, siguiente };
+          }
         }
       }
     }
@@ -840,6 +872,45 @@ export function generateDailyForecasts(bcrpData, options = {}) {
           fecha: lastDate,
           cierre: cierres[lastDate],
           fuente,
+        };
+      }
+
+      // Afinado del dólar a 2 días hábiles (h2) con el cierre de la 1:30 p. m. del
+      // día hábil siguiente al último SBS (el de hoy por la tarde). Mismas claves
+      // que el afinado de h1; h1 no cambia.
+      if (h === 2 && cierreTarde) {
+        const { P, r, siguiente } = cierreTarde;
+        const fc = symEntry.pronosticos.h2;
+
+        fc.p10 = Number((lastClose * Math.exp(r.q10)).toFixed(4));
+        fc.p25 = Number((lastClose * Math.exp(r.q25)).toFixed(4));
+        fc.p50 = Number((lastClose * Math.exp(r.q50)).toFixed(4));
+        fc.p75 = Number((lastClose * Math.exp(r.q75)).toFixed(4));
+        fc.p90 = Number((lastClose * Math.exp(r.q90)).toFixed(4));
+        fc.ancho_banda_pct = Number((((fc.p90 - fc.p10) / lastClose) * 100).toFixed(2));
+
+        // El rango afinado ya está calibrado: no hay factor K que aplicar.
+        const b = backtestTarde(P, "2019-01-01");
+        fc.backtest.cobertura_80_real = b.cobertura_80;
+        fc.backtest.cobertura_80_fuera_muestra = b.cobertura_80;
+        fc.backtest.cobertura_80_k_expansivo = b.cobertura_80;
+        fc.backtest.cobertura_50_real = b.cobertura_50;
+        fc.backtest.cobertura_50_fuera_muestra = b.cobertura_50;
+        fc.backtest.cobertura_50_k_expansivo = b.cobertura_50;
+        fc.backtest.ancho_medio_pct = b.ancho_medio_pct;
+        fc.backtest.ancho_medio_pct_fuera_muestra = b.ancho_medio_pct;
+        fc.backtest.ancho_medio_pct_k_expansivo = b.ancho_medio_pct;
+        fc.backtest.mae_p50 = b.mae_p50;
+        fc.backtest.mae_fuera_muestra = b.mae_p50;
+        fc.backtest.factor_k = 1;
+        fc.backtest.factor_k_entrenamiento = 1;
+        fc.backtest.cortes_evaluados = b.cortes;
+
+        fc.afinado = {
+          metodo: "cierre_tarde",
+          fecha: siguiente.fecha,
+          cierre: siguiente.valor,
+          fuente: siguiente.fuente,
         };
       }
     }
@@ -1048,6 +1119,12 @@ export async function main() {
       ? `Dólar a 1 día afinado con el cierre de la 1:30 (${afinadoPen.fuente}): ${afinadoPen.cierre} S/ del ${afinadoPen.fecha}`
       : "Dólar a 1 día sin cierre de la 1:30 (sin afinar)",
   );
+  const afinadoTardePen = forecasts.simbolos?.PEN?.pronosticos?.h2?.afinado;
+  if (afinadoTardePen) {
+    console.log(
+      `Dólar a 2 días afinado con el cierre de la 1:30 (${afinadoTardePen.fuente}): ${afinadoTardePen.cierre} S/ del ${afinadoTardePen.fecha}`,
+    );
+  }
 
   // 3. Evaluar noticias
   const newsEval = evaluateNewsCovariate(bcrp, gdeltDaily);

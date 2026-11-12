@@ -359,3 +359,62 @@ test("generateDailyForecasts afina el dólar a 1 día sólo con el cierre de la 
   assert.deepEqual(con.simbolos.PEN.pronosticos.h2, sin.simbolos.PEN.pronosticos.h2);
   assert.deepEqual(con.simbolos.PEN.semana, sin.simbolos.PEN.semana);
 });
+
+test("generateDailyForecasts afina el dólar a 2 días con el cierre del día hábil siguiente", () => {
+  const serie = serieSinteticaPEN();
+  const cierres = cierresSinteticos(serie);
+  const bcrp = { series: { PEN: { codigo: "PEN", unidad: "S/", serie } } };
+  const hoy = "2019-06-28"; // último SBS
+  const siguiente = addBusinessDays(hoy, 1);
+  const ultimo = serie[serie.length - 1][1];
+  const sinUltimo = Object.entries(cierres).filter(([f]) => f !== hoy);
+  const contextoSinUltimo = { series: { TC_CIERRE_VENTA: { serie: sinUltimo } } };
+  const contexto = { series: { TC_CIERRE_VENTA: { serie: Object.entries(cierres) } } };
+  const provisional = (valor) => ({ provisional: { fecha: siguiente, valor, fuente: "x" } });
+  const valor = Number((ultimo * 0.999).toFixed(4));
+
+  const sin = generateDailyForecasts(bcrp, { todayInLima: hoy });
+
+  // (a) Solo hay cierre del día hábil siguiente: h2 queda afinado y más angosto; h1 no cambia.
+  const solo = generateDailyForecasts(bcrp, {
+    todayInLima: hoy,
+    contexto: contextoSinUltimo,
+    cierre1330: provisional(valor),
+  });
+  const h2 = solo.simbolos.PEN.pronosticos.h2;
+  assert.ok(h2.afinado, "h2 debe llevar la clave «afinado»");
+  assert.equal(h2.afinado.metodo, "cierre_tarde");
+  assert.equal(h2.afinado.fecha, siguiente);
+  assert.equal(h2.afinado.cierre, valor);
+  assert.equal(h2.afinado.fuente, "prensa");
+  assert.equal(h2.fecha_objetivo, addBusinessDays(hoy, 2));
+  assert.ok(h2.p10 < h2.p50 && h2.p50 < h2.p90, "El rango de dos días debe mantener el orden");
+  assert.ok(h2.ancho_banda_pct < sin.simbolos.PEN.pronosticos.h2.ancho_banda_pct, "El rango afinado debe ser más angosto");
+  assert.equal(h2.backtest.factor_k, 1);
+  assert.deepEqual(solo.simbolos.PEN.pronosticos.h1, sin.simbolos.PEN.pronosticos.h1);
+
+  // (b) Conviven: cierre BCRP del último SBS (afina h1) y provisional del día siguiente (afina h2).
+  const ambos = generateDailyForecasts(bcrp, {
+    todayInLima: siguiente,
+    contexto,
+    cierre1330: provisional(valor),
+  });
+  assert.equal(ambos.simbolos.PEN.pronosticos.h1.afinado.metodo, "cierre_1330");
+  assert.equal(ambos.simbolos.PEN.pronosticos.h2.afinado.metodo, "cierre_tarde");
+  assert.equal(ambos.simbolos.PEN.manana.horizonte, "h2");
+  assert.equal(ambos.simbolos.PEN.manana.afinado.metodo, "cierre_tarde");
+
+  // (c) Sin provisional, h2 queda igual que antes.
+  const noProv = generateDailyForecasts(bcrp, { todayInLima: hoy, contexto: contextoSinUltimo });
+  assert.equal(noProv.simbolos.PEN.pronosticos.h2.afinado, undefined);
+  assert.deepEqual(noProv.simbolos.PEN.pronosticos.h2, sin.simbolos.PEN.pronosticos.h2);
+
+  // (d) Provisional que se aparta más de 3 % del último precio se ignora.
+  const lejos = generateDailyForecasts(bcrp, {
+    todayInLima: hoy,
+    contexto: contextoSinUltimo,
+    cierre1330: provisional(Number((ultimo * 1.04).toFixed(4))),
+  });
+  assert.equal(lejos.simbolos.PEN.pronosticos.h2.afinado, undefined);
+  assert.deepEqual(lejos.simbolos.PEN.pronosticos.h2, sin.simbolos.PEN.pronosticos.h2);
+});

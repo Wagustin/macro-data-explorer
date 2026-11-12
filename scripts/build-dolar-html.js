@@ -314,7 +314,9 @@ const faqItems = [
   },
   {
     q: "¿El P50 va a ser el precio del cierre del día?",
-    a: manana.afinado
+    a: manana.afinado?.metodo === "cierre_tarde"
+      ? `No necesariamente. El P50 es la mediana de la distribución. Hoy el P50 del siguiente día hábil es ${num(mananaP50, 4)} S/, distinto del último cierre de ${num(ultimoCierre, 4)} S/ del ${fechaUltimoCierre}: el rango de mañana se corrige hacia el cierre del mercado interbancario de la 1:30 p. m. de hoy (${num(manana.afinado.cierre, 3)} S/), que en las pruebas retrospectivas mejora el pronóstico. En los demás horizontes el P50 coincide con el último cierre.`
+      : manana.afinado
       ? `No necesariamente. El P50 es la mediana de la distribución. Hoy el P50 del siguiente día hábil es ${num(mananaP50, 4)} S/, distinto del último cierre de ${num(ultimoCierre, 4)} S/ del ${fechaUltimoCierre}: el rango a un día se corrige hacia el cierre del mercado interbancario de la 1:30 p. m. (${num(manana.afinado.cierre, 3)} S/), que en las pruebas retrospectivas mejora el pronóstico. En los demás horizontes el P50 coincide con el último cierre.`
       : `No necesariamente. El P50 es la mediana de la distribución y suele coincidir con el último cierre cuando el modelo no detecta una tendencia que perdura, como en los pronósticos de corto plazo publicados hoy, donde el P50 coincide con el cierre de ${num(ultimoCierre, 4)} S/ del ${fechaUltimoCierre}. Cuando el P50 se aparta del último cierre, la separación es la señal de que el modelo detecta una deriva.`,
   },
