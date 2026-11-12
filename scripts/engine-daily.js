@@ -375,6 +375,207 @@ export function computeCurrentFHSQuantiles(serie, h, options = {}) {
   };
 }
 
+// Parámetros del rango afinado con el cierre interbancario de la 1:30 p. m.
+// (mismos valores que la referencia en handoff/cierre1330/ref_prod.py).
+const VENTANA = 756; // Ventana del residuo para los cuantiles (3 años hábiles).
+const VENTANA_BETA = 1500; // Ventana de regresión para estimar beta.
+const MIN_BETA = 250; // Mínimo de observaciones para poder estimar beta.
+const MEDIA_BRECHA = 60; // Ventana del promedio de la brecha.
+const MIN_BRECHA = 20; // Mínimo de brechas previas para centrar la brecha.
+
+/**
+ * Carga los cierres interbancarios de la 1:30 p. m. (TC_CIERRE_VENTA del BCRP)
+ * y, si el BCRP todavía no publicó el cierre del último día, el dato provisional
+ * que la prensa económica atribuye al BCRP.
+ * Devuelve `{ cierres, fuente }` con fuente "BCRP", "prensa" o null.
+ */
+export function cargarCierres(contexto, cierre1330, ultimaFecha, ultimoPrecio) {
+  const cierres = {};
+
+  const serie = contexto?.series?.TC_CIERRE_VENTA?.serie;
+  if (Array.isArray(serie)) {
+    for (const punto of serie) {
+      if (!Array.isArray(punto) || punto.length < 2) continue;
+      const [fecha, valor] = punto;
+      if (typeof fecha !== "string") continue;
+      if (typeof valor !== "number" || !Number.isFinite(valor) || valor <= 0) continue;
+      cierres[fecha] = valor;
+    }
+  }
+
+  // El BCRP ya publicó el cierre del último día: es el dato definitivo.
+  if (cierres[ultimaFecha] !== undefined) {
+    return { cierres, fuente: "BCRP" };
+  }
+
+  // Cierre provisional de prensa: solo si es del último día y no se aparta
+  // más de 3 % del último precio oficial.
+  const provisional = cierre1330?.provisional;
+  if (
+    provisional &&
+    provisional.fecha === ultimaFecha &&
+    typeof provisional.valor === "number" &&
+    Number.isFinite(provisional.valor) &&
+    provisional.valor > 0
+  ) {
+    const desvio = Math.abs(provisional.valor / ultimoPrecio - 1);
+    if (desvio <= 0.03) {
+      cierres[ultimaFecha] = provisional.valor;
+      return { cierres, fuente: "prensa" };
+    }
+  }
+
+  return { cierres, fuente: null };
+}
+
+/**
+ * Prepara las series necesarias para el rango afinado:
+ * log-precios, volatilidad EWMA diaria, brecha frente al cierre de la 1:30
+ * (centrada con su promedio reciente) y el retorno diario.
+ */
+export function prepararCierre(serie, cierres) {
+  const fechas = serie.map(p => p[0]);
+  const precios = serie.map(p => p[1]);
+  const n = precios.length;
+
+  const lp = new Float64Array(n);
+  for (let i = 0; i < n; i++) lp[i] = Math.log(precios[i]);
+
+  const { sigma } = computeEWMAVolatility(precios);
+
+  // Brecha diaria: log(cierre) - log(precio del SBS).
+  const g = new Float64Array(n);
+  for (let i = 0; i < n; i++) {
+    const cierre = cierres?.[fechas[i]];
+    g[i] = cierre === undefined || cierre === null ? NaN : Math.log(cierre) - lp[i];
+  }
+
+  // Brecha centrada: se le resta el promedio de las brechas de los últimos
+  // MEDIA_BRECHA días (sólo las finitas), si hay al menos MIN_BRECHA.
+  const gc = new Float64Array(n);
+  for (let c = 0; c < n; c++) {
+    gc[c] = NaN;
+    if (!Number.isFinite(g[c])) continue;
+    let suma = 0;
+    let cuenta = 0;
+    for (let i = Math.max(0, c - MEDIA_BRECHA); i < c; i++) {
+      if (Number.isFinite(g[i])) {
+        suma += g[i];
+        cuenta++;
+      }
+    }
+    if (cuenta >= MIN_BRECHA) gc[c] = g[c] - suma / cuenta;
+  }
+
+  // Retorno diario (el último queda como NaN).
+  const y = new Float64Array(n);
+  for (let j = 0; j < n - 1; j++) y[j] = lp[j + 1] - lp[j];
+  y[n - 1] = NaN;
+
+  return { fechas, precios, lp, s: sigma, gc, y };
+}
+
+/**
+ * Calcula el rango a 1 día corregido por la brecha con el cierre de la 1:30 p. m.
+ * para el corte `c`. Devuelve null si no hay información suficiente.
+ */
+export function rangoConCierre(P, c) {
+  const { s, gc, y } = P;
+
+  if (!Number.isFinite(gc[c])) return null;
+
+  // Muestra para estimar beta: regresión del retorno diario sobre la brecha.
+  let num = 0;
+  let den = 0;
+  let cuenta = 0;
+  for (let j = Math.max(1, c - VENTANA_BETA); j < c; j++) {
+    if (!Number.isFinite(gc[j])) continue;
+    const w = 1 / Math.max(s[j], 1e-9) ** 2;
+    num += w * gc[j] * y[j];
+    den += w * gc[j] ** 2;
+    cuenta++;
+  }
+  if (cuenta < MIN_BETA) return null;
+
+  const beta = num / den;
+
+  // Residuos escalados por la volatilidad del corte.
+  const residuos = [];
+  for (let k = Math.max(1, c - VENTANA); k < c; k++) {
+    const gcK = Number.isFinite(gc[k]) ? gc[k] : 0;
+    const razon = Math.min(5, Math.max(0.2, s[c] / s[k]));
+    residuos.push((y[k] - beta * gcK) * razon);
+  }
+  residuos.sort((a, b) => a - b);
+
+  const m = residuos.length;
+  const cuantil = q => residuos[Math.max(0, Math.ceil(m * q - 1e-12) - 1)];
+  const ajuste = beta * gc[c];
+
+  return {
+    beta,
+    brecha: gc[c],
+    q10: ajuste + cuantil(0.10),
+    q25: ajuste + cuantil(0.25),
+    q50: ajuste + cuantil(0.50),
+    q75: ajuste + cuantil(0.75),
+    q90: ajuste + cuantil(0.90),
+  };
+}
+
+/**
+ * Evalúa el rango afinado en cortes históricos desde la fecha `desde`.
+ * Mide cobertura del 80 % y del 50 %, ancho medio del banda y error absoluto
+ * de la mediana. `P` se calcula una sola vez con prepararCierre.
+ */
+export function backtestConCierre(P, desde) {
+  const { fechas, precios } = P;
+  const n = fechas.length;
+
+  let dentro80 = 0;
+  let dentro50 = 0;
+  let ancho = 0;
+  let mae = 0;
+  let cortes = 0;
+
+  for (let c = 0; c < n - 1; c++) {
+    if (fechas[c] < desde) continue;
+    const r = rangoConCierre(P, c);
+    if (r === null) continue;
+
+    const p10 = precios[c] * Math.exp(r.q10);
+    const p25 = precios[c] * Math.exp(r.q25);
+    const p50 = precios[c] * Math.exp(r.q50);
+    const p75 = precios[c] * Math.exp(r.q75);
+    const p90 = precios[c] * Math.exp(r.q90);
+    const real = precios[c + 1];
+
+    if (p10 <= real && real <= p90) dentro80++;
+    if (p25 <= real && real <= p75) dentro50++;
+    ancho += ((p90 - p10) / precios[c]) * 100;
+    mae += Math.abs(real - p50);
+    cortes++;
+  }
+
+  if (cortes === 0) {
+    return {
+      cobertura_80: 0,
+      cobertura_50: 0,
+      ancho_medio_pct: 0,
+      mae_p50: 0,
+      cortes: 0,
+    };
+  }
+
+  return {
+    cobertura_80: Number(((dentro80 / cortes) * 100).toFixed(2)),
+    cobertura_50: Number(((dentro50 / cortes) * 100).toFixed(2)),
+    ancho_medio_pct: Number((ancho / cortes).toFixed(2)),
+    mae_p50: Number((mae / cortes).toFixed(4)),
+    cortes,
+  };
+}
+
 /**
  * Genera el archivo data/daily-forecasts.json con los pronósticos h = 1..8
  * para cada símbolo en BCRP diario, más `manana` y `semana` referenciando
