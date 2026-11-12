@@ -2,15 +2,17 @@
 """Torneo del motor, ronda 2.
  
 Varios motores aprenden solo con datos anteriores a cada día y predicen, día por día, el rango del
-precio a 1, 5 y 21 días hábiles. Práctica 2021-2024 (ahí se eligen los ajustes), examen 2025 (ajustes
-congelados) y confirmación 2026 (nunca se usa para elegir nada).
+precio a 1, 5 y 21 días hábiles (a 2 días hábiles, solo para el dólar). Práctica 2021-2024 (ahí se
+eligen los ajustes), examen 2025 (ajustes congelados) y confirmación 2026 (nunca se usa para elegir nada).
  
 Regla de no hacer trampa: la predicción del corte c solo usa precios hasta c, noticias de días
 anteriores a c (las del corpus se usan hasta las 05:00 de Lima de la mañana siguiente al corte, cuando
 se arma el correo) y fechas de calendario anunciadas con antelación. --autoprueba lo comprueba.
+Los retadores de cierre usan además el cierre de la 1:30 p. m. que el BCRP publica con retraso, y solo
+el que se conoce en la tarde que dicen representar.
 
   python research/torneo/torneo.py --autoprueba
-  python research/torneo/torneo.py [--rapido] [--salida data/torneo] [--predicciones DIR]
+  python research/torneo/torneo.py [--rapido] [--activo PEN] [--plazo 2] [--salida data/torneo] [--predicciones DIR]
 """
 import argparse, bisect, csv, datetime as dt, json, math, sys
 from multiprocessing import Pool
@@ -21,6 +23,8 @@ import numpy as np
 RAIZ = Path(__file__).resolve().parents[2]
 QS = (0.10, 0.25, 0.50, 0.75, 0.90)
 HS = (1, 5, 21)
+PLAZO_TARDE = 2              # plazo extra, solo para el dólar: el retador «cierre_tarde» pronostica dos días hábiles
+HS_PEN = (1, 2, 5, 21)       # el dólar además se mide a 2 días, contra el motor actual del mismo plazo
 PERIODOS = {"practica": ("2021-01-01", "2024-12-31"), "examen_2025": ("2025-01-01", "2025-12-31"), "confirmacion_2026": ("2026-01-01", "9999-12-31")}
 INICIO_PREDICCION = "2018-01-01"   # desde aquí predicen los modelos que aprenden (calentamiento hasta 2021)
 VENTANA, MIN_K, PRIMERA_FILA = 756, 250, 300
@@ -230,6 +234,45 @@ def cierre_ayer(lp, gc, Qref, s94, h, i0):
     return out
 
 
+def cierre_siguiente(fechas, cierre):
+    """Log del cierre de la 1:30 p. m. del día hábil siguiente a cada corte (NaN si ese cierre no se conoce)."""
+    por_dia = dict(cierre)
+    out = np.full(len(fechas), np.nan)
+    for c in range(len(fechas) - 1):
+        v = por_dia.get(fechas[c + 1])
+        if v:
+            out[c] = math.log(v)
+    return out
+
+
+def cierre_tarde(lp, cl_sig, Qref, s94, i0):
+    """Rango a 2 días hábiles desde la tarde de T-1: se conoce el SBS hasta T-2 (corte c) y el cierre de la 1:30 de T-1.
+    x[c] = log(cierre de T-1) - log(SBS de T-2); objetivo y2[c] = log(SBS de T) - log(SBS de T-2).
+    Regresión ponderada (1/sigma^2, con intercepto) de y2 sobre x con los cortes cuyo resultado ya se conoce (j + 2 <= c);
+    el ancho sale de los residuos de esos cortes, reescalados por sigma. Sin x en el corte o sin cortes suficientes: fila del motor actual."""
+    n = len(lp); h = PLAZO_TARDE
+    x = cl_sig - lp
+    y2 = np.full(n, np.nan); y2[:n - h] = lp[h:] - lp[:n - h]
+    out = Qref.copy()
+    for c in range(max(i0, h), n):
+        if not np.isfinite(x[c]):
+            continue
+        j = np.arange(max(1, c - VENTANA_BETA), c - h + 1); j = j[np.isfinite(x[j]) & np.isfinite(y2[j])]
+        if len(j) < MIN_BETA:
+            continue
+        w = 1.0 / np.maximum(s94[j], 1e-9) ** 2
+        X = np.vstack([np.ones(len(j)), x[j]]).T
+        A = X.T @ (X * w[:, None]); b = X.T @ (w * y2[j])
+        try:
+            a0, beta = np.linalg.solve(A, b)
+        except np.linalg.LinAlgError:
+            continue
+        k = np.arange(max(1, c - VENTANA), c - h + 1)
+        e = (y2[k] - a0 - beta * np.where(np.isfinite(x[k]), x[k], 0.0)) * np.clip(s94[c] / s94[k], 0.2, 5.0)
+        out[c] = a0 + beta * x[c] + cuantiles(e)
+    return out
+
+
 # ---------- motores que aprenden ----------
 def aprender(X, t, h, a0, a1, cadencia, params, alfas):
     """Predice los cortes [a0, a1). Reentrena cada `cadencia` cortes con filas cuyo objetivo ya se conocía."""
@@ -301,18 +344,22 @@ def analogos(Z, y, escala, Qref, h, i0, beta):
 
 
 def correr_activo(args):
-    activo, series, tono, eventos, corpus, interv, cierre, rapido = args
+    activo, series, tono, eventos, corpus, interv, cierre, rapido, plazos = args
     serie = series[activo]
     fechas = [f for f, _ in serie]; lp = np.log(np.array([v for _, v in serie])); n = len(lp)
     i0 = bisect.bisect_left(fechas, INICIO_PREDICCION); i25 = bisect.bisect_left(fechas, PERIODOS["examen_2025"][0])
     cortes = {p: np.arange(bisect.bisect_left(fechas, a), bisect.bisect_right(fechas, b)) for p, (a, b) in PERIODOS.items()}
     salida, filas_pred = {}, []
-    for h in ((5,) if rapido else HS):
+    for h in ((5,) if rapido else plazos):
         y = np.full(n, np.nan); y[:n - h] = lp[h:] - lp[:n - h]
         Q = clasicos(lp, h, i0 - VENTANA)
         if activo == "PEN" and cierre:
-            u1 = np.zeros(n); u1[1:] = np.diff(lp)
-            Q["cierre_ayer"] = cierre_ayer(lp, brecha_cierre(fechas, lp, cierre), Q["motor_actual"], ewma(u1, 0.94), h, i0 - VENTANA)
+            u1 = np.zeros(n); u1[1:] = np.diff(lp); s94 = ewma(u1, 0.94)
+            if h == PLAZO_TARDE:
+                # el retador de la tarde se compara contra el motor actual del mismo plazo
+                Q["cierre_tarde"] = cierre_tarde(lp, cierre_siguiente(fechas, cierre), Q["motor_actual"], s94, i0 - VENTANA)
+            else:
+                Q["cierre_ayer"] = cierre_ayer(lp, brecha_cierre(fechas, lp, cierre), Q["motor_actual"], s94, h, i0 - VENTANA)
         elegidos = {}
         nombres, X, grupos = variables(fechas, lp, h, tono, eventos, corpus)
         nx, Xx = cruzadas(fechas, activo, series, interv)
@@ -324,35 +371,37 @@ def correr_activo(args):
         # motor de días parecidos: ajusta el rango del motor actual con los 25 días de noticias más parecidas
         cols_z = [nombres.index(f"c_{t}_z") for t in TEMAS_CORPUS]
         Z = X[:, cols_z]
-        if np.isfinite(Z[:, 0]).any():
-            Qref = Q["motor_actual"]; mejor = None
-            for beta in (0.5, 1.0):   # el beta se elige solo con la práctica
-                q = analogos(Z, y, escala, Qref, h, i0, beta)
-                m = metricas(q, y, cortes["practica"])
-                if m and (mejor is None or m["pinball"] < mejor[0]):
-                    mejor = (m["pinball"], beta, q)
-            if mejor is not None:
-                Q["analogos"] = mejor[2]; elegidos["analogos"] = {"beta": mejor[1]}
-        if lgb is not None:
-            col = lambda gs: [nombres.index(c) for g in gs for c in grupos[g]]
-            planes = [("aprende_vol", ("base",), t_vol, (None,)), ("aprende_vol_cal", ("base", "cal"), t_vol, (None,)), ("aprende_vol_noticias", ("base", "cal", "not"), t_vol, (None,)),
-                      ("aprende_vol_corpus", ("base", "cal", "corpus"), t_vol, (None,)), ("aprende_vol_cruz", ("base", "cal", "cruz"), t_vol, (None,)),
-                      ("aprende_rango_cal", ("base", "cal"), t_q, QS), ("aprende_rango_noticias", ("base", "cal", "not"), t_q, QS)]
-            for nombre, gs, t, alfas in planes:
-                Xc = X[:, col(gs)]; mejor = None
-                def a_bandas(pred):
-                    return bandas_vol(pred[:, 0], y, h, i0) if alfas == (None,) else np.sort(pred, axis=1) * escala[:, None]
-                for params in (REJILLA[:1] if rapido else REJILLA):   # ajustes elegidos solo con la práctica
-                    pred = aprender(Xc, t, h, i0, i25, 63, params, alfas)
-                    m = metricas(a_bandas(pred), y, cortes["practica"])
+        # a 2 días (solo dólar) compiten los motores clásicos y el retador de la tarde, con el mismo marcador
+        if h != PLAZO_TARDE:
+            if np.isfinite(Z[:, 0]).any():
+                Qref = Q["motor_actual"]; mejor = None
+                for beta in (0.5, 1.0):   # el beta se elige solo con la práctica
+                    q = analogos(Z, y, escala, Qref, h, i0, beta)
+                    m = metricas(q, y, cortes["practica"])
                     if m and (mejor is None or m["pinball"] < mejor[0]):
-                        mejor = (m["pinball"], params, pred)
-                if mejor is None:
-                    continue
-                pred = mejor[2]; nuevo = aprender(Xc, t, h, i25, n, 21, mejor[1], alfas); pred[i25:] = nuevo[i25:]
-                Q[nombre] = a_bandas(pred); elegidos[nombre] = mejor[1]
-            if "aprende_vol_cal" in Q:
-                Q["mezcla"] = (Q["motor_actual"] + Q["aprende_vol_cal"]) / 2
+                        mejor = (m["pinball"], beta, q)
+                if mejor is not None:
+                    Q["analogos"] = mejor[2]; elegidos["analogos"] = {"beta": mejor[1]}
+            if lgb is not None:
+                col = lambda gs: [nombres.index(c) for g in gs for c in grupos[g]]
+                planes = [("aprende_vol", ("base",), t_vol, (None,)), ("aprende_vol_cal", ("base", "cal"), t_vol, (None,)), ("aprende_vol_noticias", ("base", "cal", "not"), t_vol, (None,)),
+                          ("aprende_vol_corpus", ("base", "cal", "corpus"), t_vol, (None,)), ("aprende_vol_cruz", ("base", "cal", "cruz"), t_vol, (None,)),
+                          ("aprende_rango_cal", ("base", "cal"), t_q, QS), ("aprende_rango_noticias", ("base", "cal", "not"), t_q, QS)]
+                for nombre, gs, t, alfas in planes:
+                    Xc = X[:, col(gs)]; mejor = None
+                    def a_bandas(pred):
+                        return bandas_vol(pred[:, 0], y, h, i0) if alfas == (None,) else np.sort(pred, axis=1) * escala[:, None]
+                    for params in (REJILLA[:1] if rapido else REJILLA):   # ajustes elegidos solo con la práctica
+                        pred = aprender(Xc, t, h, i0, i25, 63, params, alfas)
+                        m = metricas(a_bandas(pred), y, cortes["practica"])
+                        if m and (mejor is None or m["pinball"] < mejor[0]):
+                            mejor = (m["pinball"], params, pred)
+                    if mejor is None:
+                        continue
+                    pred = mejor[2]; nuevo = aprender(Xc, t, h, i25, n, 21, mejor[1], alfas); pred[i25:] = nuevo[i25:]
+                    Q[nombre] = a_bandas(pred); elegidos[nombre] = mejor[1]
+                if "aprende_vol_cal" in Q:
+                    Q["mezcla"] = (Q["motor_actual"] + Q["aprende_vol_cal"]) / 2
         res = {}
         for nombre, q in Q.items():
             res[nombre] = {p: metricas(q, y, idx) for p, idx in cortes.items()}
@@ -411,6 +460,8 @@ def informe(marcador):
                 L.append(f"| {nombre} | {f(ex.get('pinball'), 4)} | {f(ex.get('cobertura80'), 1)} | {f(ex.get('ancho80'))} | {d(c1)} | {d(c2)} | {f(co.get('pinball'), 4)} | {f(co.get('cobertura80'), 1)} | {m.get('veredicto') or '—'} |")
             if "cierre_ayer" in bloque["motores"]:
                 L.append("- `cierre_ayer` necesita el tipo de cambio de cierre de la 1:30 p. m. del día del corte (BCRP, PD04646PD), que el BCRP publica con retraso.")
+            if "cierre_tarde" in bloque["motores"]:
+                L.append("- `cierre_tarde` representa la tarde de T-1: conoce el SBS hasta T-2 y el cierre de la 1:30 p. m. de T-1, y pronostica el SBS de T (dos días hábiles).")
             L.append("")
             dcc = bloque.get("dias_con_corpus") or {}
             L.append(f"- Días con noticias del corpus: práctica {dcc.get('practica', 0)}, examen 2025 {dcc.get('examen_2025', 0)}, confirmación 2026 {dcc.get('confirmacion_2026', 0)}.")
@@ -457,6 +508,21 @@ def autoprueba():
             q = cierre_ayer(lp, g, qa["motor_actual"], s94, h, i0 - VENTANA)
             q2 = cierre_ayer(lp[:c + 1], g2, qb["motor_actual"][:c + 1], s94[:c + 1], h, i0 - VENTANA)
             assert np.allclose(q[c], q2[c]), f"cierre_ayer con fuga h={h}"
+    if cierre:   # cierre_tarde sin fuga: en el corte c solo se conoce el SBS hasta c y el cierre de la 1:30 del día siguiente
+        h = PLAZO_TARDE
+        c2 = bisect.bisect_left(fechas, "2025-03-03")
+        cierre_c = [x for x in cierre if x[0] <= fechas[c2 + 1]]
+        u = np.zeros(len(lp)); u[1:] = np.diff(lp); s94 = ewma(u, 0.94)
+        qa = clasicos(lp, h, i0 - VENTANA)["motor_actual"]
+        qb = clasicos(lp[:c2 + 1], h, i0 - VENTANA)["motor_actual"]
+        cl_sig = cierre_siguiente(fechas, dict(cierre))
+        cl_sig2 = cierre_siguiente(fechas, dict(cierre_c))
+        assert np.allclose(cl_sig[:c2 + 1], cl_sig2[:c2 + 1], equal_nan=True), "cierre_siguiente con fuga"
+        assert np.isfinite(cl_sig[c2]), "cierre de la tarde vacío en el corte de prueba"
+        q = cierre_tarde(lp, cl_sig, qa, s94, i0 - VENTANA)
+        q2 = cierre_tarde(lp[:c2 + 1], cl_sig2[:c2 + 1], qb, s94[:c2 + 1], i0 - VENTANA)
+        assert np.allclose(q[c2], q2[c2]), "cierre_tarde con fuga"
+        assert (np.diff(q[c2]) >= 0).all(), "cierre_tarde con cuantiles desordenados"
     for h in (1, 5, 21):   # analogos sin fuga: recortado a [:c+1] con el y recalculado da la misma fila c
         y = np.full(len(lp), np.nan); y[:len(lp) - h] = lp[h:] - lp[:len(lp) - h]
         lp2 = lp[:c + 1]; y2 = np.full(c + 1, np.nan); y2[:c + 1 - h] = lp2[h:] - lp2[:c + 1 - h]
@@ -473,18 +539,33 @@ def autoprueba():
             assert np.allclose(qa[c], qb[c], equal_nan=True), f"analogos con fuga beta={beta} h={h}"
     y = np.array([0.0, 0.01, -0.02]); Q = np.tile(np.array([-0.01, -0.005, 0.0, 0.005, 0.01]), (3, 1))
     assert abs(pinball(Q, y)[0] - np.mean([0.1 * 0.01, 0.25 * 0.005, 0, 0.25 * 0.005, 0.1 * 0.01])) < 1e-12
-    print("autoprueba: sin fuga de información, cuantiles en orden, pinball correcto, corpus sin fuga, otros mercados sin fuga, cierre de ayer sin fuga")
+    print("autoprueba: sin fuga de información, cuantiles en orden, pinball correcto, corpus sin fuga, otros mercados sin fuga, cierre de ayer sin fuga, cierre de la tarde sin fuga")
+
+
+def plazos_por_activo(activo, plazo=None):
+    """Plazos con que se mide un activo. El dólar tiene además el plazo de 2 días, solo para comparar el retador «cierre_tarde»."""
+    hs = HS_PEN if activo == "PEN" else HS
+    if plazo is not None:
+        if plazo not in hs:
+            raise SystemExit(f"el plazo de {plazo} días no se mide para {activo}")
+        return (plazo,)
+    return hs
 
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--rapido", action="store_true"); ap.add_argument("--autoprueba", action="store_true")
+    ap.add_argument("--activo", help="solo este activo (p. ej. PEN)"); ap.add_argument("--plazo", type=int, help="solo este plazo en días hábiles (p. ej. 2)")
     ap.add_argument("--salida", default=str(RAIZ / "data/torneo")); ap.add_argument("--predicciones"); a = ap.parse_args()
     if a.autoprueba:
         return autoprueba()
     series, tono, eventos, corpus, interv, cierre = cargar()
     activos = ["PEN"] if a.rapido else list(series)
+    if a.activo:
+        if a.activo not in series:
+            ap.error(f"activo desconocido: {a.activo}")
+        activos = [a.activo]
     with Pool(min(4, len(activos))) as pool:
-        resultados = pool.map(correr_activo, [(k, series, tono, eventos, corpus, interv, cierre, a.rapido) for k in activos])
+        resultados = pool.map(correr_activo, [(k, series, tono, eventos, corpus, interv, cierre, a.rapido, plazos_por_activo(k, a.plazo)) for k in activos])
     marcador = {"actualizado": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "ultimo_dato": max(r[1] for r in resultados),
                 "protocolo": "practica 2021-2024, examen 2025, confirmacion 2026", "con_aprendizaje": lgb is not None, "rapido": a.rapido, "activos": {}}
     for activo, _, salida, _ in resultados:
