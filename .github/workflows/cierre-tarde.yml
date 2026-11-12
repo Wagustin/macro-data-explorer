@@ -1,0 +1,59 @@
+name: Cierre de la 1:30 p. m. (tarde)
+
+# Por la tarde del día hábil, el cierre interbancario de la 1:30 p. m. ya está en la prensa.
+# Si es nuevo, se guarda como provisional y el motor vuelve a correr: el rango del día siguiente
+# al último SBS (a dos días hábiles) se afina con él y la página del dólar se regenera.
+
+on:
+  schedule:
+    - cron: "15 19 * * 1-5"   # 14:15 en Lima: la prensa ya publicó el cierre de la 1:30
+    - cron: "30 20 * * 1-5"   # respaldo 15:30 en Lima
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: official-data
+  cancel-in-progress: false
+
+jobs:
+  cierre:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Cierre de la 1:30 p. m. (provisional, prensa)
+        continue-on-error: true
+        run: node scripts/cierre-1330.js
+      - id: cambio
+        run: git diff --quiet -- data/official/cierre-1330.json || echo "cambio=true" >> "$GITHUB_OUTPUT"
+      - name: PerData Engine diario
+        if: steps.cambio.outputs.cambio == 'true'
+        run: node scripts/engine-daily.js
+      - name: Evaluar aciertos del dólar (pronósticos publicados)
+        if: steps.cambio.outputs.cambio == 'true'
+        run: node scripts/aciertos-dolar.js
+      - name: Generar página de dólar estática
+        if: steps.cambio.outputs.cambio == 'true'
+        run: node scripts/build-dolar-html.js
+      - name: Guardar si hay cambios
+        if: steps.cambio.outputs.cambio == 'true'
+        run: |
+          git config user.name "perdata-bot"
+          git config user.email "perdata-bot@users.noreply.github.com"
+          git add data/official/bcrp-daily.json data/daily-forecasts.json data/official/pronosticos-dolar.json data/official/aciertos-dolar.json dolar.html data/official/cierre-visto.json data/official/cierre-1330.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "data(official): cierre de la 1:30 p. m. de hoy (provisional)"
+            for i in 1 2 3 4; do
+              git pull --rebase -q origin main && git push -q origin HEAD:main && break
+              [ "$i" -eq 4 ] && exit 1
+              sleep $((i*5))
+            done
+          fi
