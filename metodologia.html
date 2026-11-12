@@ -313,7 +313,7 @@
         El motor combina dos componentes en lenguaje llano: la <strong>volatilidad reciente</strong> (estimada con un filtro EWMA ponderado hacia los últimos días) y los <strong>movimientos observados durante los últimos 3 años</strong> de negociación formal en el mercado cambiario interbancario de Lima. A partir de esa distribución histórica filtrada se construyen los percentiles P10, P25, P50, P75 y P90.
       </p>
       <p class="text-ink-soft leading-relaxed" style="font-family: var(--pd-font-read); font-size:16px; line-height:1.55;">
-        El valor central (P50) es siempre el <strong>último precio de cierre oficial</strong>: en las pruebas retrospectivas, ningún ajuste de tendencia, promedio móvil ni deriva estructural mejoró el pronóstico frente a un paseo aleatorio a 1 o 5 días.
+        El valor central (P50) es el <strong>último precio de cierre oficial</strong>: en las pruebas retrospectivas, ningún ajuste de tendencia, promedio móvil ni deriva estructural mejoró el pronóstico frente a un paseo aleatorio a 1 o 5 días. Hay una sola excepción: el rango del dólar para el siguiente día hábil se corrige hacia el <strong>cierre del mercado interbancario de la 1:30 p. m.</strong> cuando ese dato ya se conoce, porque en la evaluación de 2025, con datos que el modelo no había visto, esa corrección dejó el rango cerca de 23 % más preciso y el resultado se repitió en 2026. El cierre es el que publica el BCRP; mientras su serie oficial no lo trae, se usa de forma provisional la cifra que la prensa económica atribuye al BCRP, solo si dos notas coinciden, y se reemplaza por la oficial apenas aparece.
       </p>
 
       <h3 class="text-lg font-semibold text-ink">Cobertura fuera de muestra del dólar (2024–2026)</h3>

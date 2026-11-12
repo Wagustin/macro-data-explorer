@@ -11,9 +11,39 @@ import {
   PERU_HOLIDAYS,
   runFHSBacktest,
   generateDailyForecasts,
+  cargarCierres,
+  prepararCierre,
+  rangoConCierre,
 } from "../scripts/engine-daily.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+
+// Serie sintética determinista de 900 días hábiles hacia atrás desde el
+// 28-jun-2019: un seno más una tendencia suave. No usa Math.random.
+function serieSinteticaPEN(n = 900) {
+  const fechas = [];
+  const d = new Date("2019-06-28T00:00:00Z");
+  while (fechas.length < n) {
+    const dow = d.getUTCDay();
+    if (dow !== 0 && dow !== 6) fechas.push(d.toISOString().slice(0, 10));
+    d.setUTCDate(d.getUTCDate() - 1);
+  }
+  fechas.reverse();
+  return fechas.map((f, i) => [
+    f,
+    Number((3.5 + 0.05 * Math.sin((2 * Math.PI * i) / 60) + 0.0002 * i).toFixed(4)),
+  ]);
+}
+
+// Cierres sintéticos: precio × (1 + desviación determinista y pequeña).
+function cierresSinteticos(serie) {
+  return Object.fromEntries(
+    serie.map(([f, p], i) => [
+      f,
+      Number((p * (1 + 0.001 * Math.sin((2 * Math.PI * i) / 30))).toFixed(6)),
+    ]),
+  );
+}
 
 test("empiricalQuantile calcula cuantiles correctos en array ordenado", () => {
   const xs = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
@@ -189,4 +219,104 @@ test("daily-forecasts.json existe, tiene horizontes h1..h8, manana/semana y mono
       }
     }
   }
+});
+
+test("cargarCierres elige la fuente del cierre de la 1:30 según el contexto y la prensa", () => {
+  const ULT = "2019-06-28";
+  const contexto = {
+    series: {
+      TC_CIERRE_VENTA: {
+        serie: [
+          ["2019-06-27", 3.4],
+          [ULT, 3.5],
+          ["2019-06-29", null],
+          ["2019-06-30", -1],
+        ],
+      },
+    },
+  };
+
+  // El BCRP ya publicó el cierre del último día: manda la fuente oficial.
+  let cc = cargarCierres(contexto, null, ULT, 3.5);
+  assert.equal(cc.fuente, "BCRP");
+  assert.equal(cc.cierres[ULT], 3.5);
+  assert.equal(cc.cierres["2019-06-27"], 3.4);
+
+  // Sin el cierre del BCRP, se usa el dato provisional de la prensa.
+  cc = cargarCierres(
+    { series: { TC_CIERRE_VENTA: { serie: [["2019-06-27", 3.4]] } } },
+    { provisional: { fecha: ULT, valor: 3.49 } },
+    ULT,
+    3.5,
+  );
+  assert.equal(cc.fuente, "prensa");
+  assert.equal(cc.cierres[ULT], 3.49);
+
+  // Un provisional de otra fecha no se usa.
+  cc = cargarCierres(
+    { series: { TC_CIERRE_VENTA: { serie: [["2019-06-27", 3.4]] } } },
+    { provisional: { fecha: "2019-06-27", valor: 3.49 } },
+    ULT,
+    3.5,
+  );
+  assert.equal(cc.fuente, null);
+  assert.equal(cc.cierres[ULT], undefined);
+
+  // Un provisional a más de 3 % del último precio no se usa.
+  cc = cargarCierres(
+    { series: { TC_CIERRE_VENTA: { serie: [["2019-06-27", 3.4]] } } },
+    { provisional: { fecha: ULT, valor: 3.7 } },
+    ULT,
+    3.5,
+  );
+  assert.equal(cc.fuente, null);
+  assert.equal(cc.cierres[ULT], undefined);
+
+  // Sin contexto no hay cierres.
+  cc = cargarCierres(null, null, ULT, 3.5);
+  assert.equal(cc.fuente, null);
+  assert.equal(Object.keys(cc.cierres).length, 0);
+});
+
+test("rangoConCierre exige cierres y devuelve un rango monotónico", () => {
+  const serie = serieSinteticaPEN();
+  const cierres = cierresSinteticos(serie);
+
+  // Sin cierres no hay rango.
+  assert.equal(rangoConCierre(prepararCierre(serie, {}), serie.length - 1), null);
+
+  // Con cierres el rango es monotónico y beta es finito.
+  const r = rangoConCierre(prepararCierre(serie, cierres), serie.length - 1);
+  assert.ok(r, "Con cierres suficientes debe devolver un rango");
+  assert.ok(Number.isFinite(r.beta), "beta debe ser finito");
+  assert.ok(r.q10 < r.q25 && r.q25 < r.q50 && r.q50 < r.q75 && r.q75 < r.q90, "Los cuantiles deben crecer");
+});
+
+test("generateDailyForecasts afina el dólar a 1 día sólo con el cierre de la 1:30", () => {
+  const serie = serieSinteticaPEN();
+  const cierres = cierresSinteticos(serie);
+  const bcrp = { series: { PEN: { codigo: "PEN", unidad: "S/", serie } } };
+  const hoy = "2019-06-28";
+
+  // Sin contexto ni cierre de prensa no hay refinamiento.
+  const sin = generateDailyForecasts(bcrp, { todayInLima: hoy });
+  assert.equal(sin.simbolos.PEN.pronosticos.h1.afinado, undefined);
+  assert.equal(sin.simbolos.PEN.manana.afinado, undefined);
+
+  // Con contexto BCRP y cierre provisional de prensa, el h1 queda afinado.
+  const contexto = { series: { TC_CIERRE_VENTA: { serie: Object.entries(cierres) } } };
+  const cierre1330 = { provisional: { fecha: hoy, valor: cierres[hoy] } };
+  const con = generateDailyForecasts(bcrp, { todayInLima: hoy, contexto, cierre1330 });
+
+  const h1 = con.simbolos.PEN.pronosticos.h1;
+  assert.ok(h1.afinado, "h1 debe llevar la clave «afinado»");
+  assert.equal(h1.afinado.metodo, "cierre_1330");
+  assert.equal(h1.afinado.fecha, hoy);
+  assert.equal(h1.afinado.cierre, cierres[hoy]);
+  assert.equal(h1.afinado.fuente, "BCRP");
+  assert.ok(h1.p10 < h1.p50 && h1.p50 < h1.p90, "El rango afinado debe mantener el orden de los percentiles");
+
+  // El resto de horizontes no cambia.
+  assert.deepEqual(con.simbolos.PEN.pronosticos.h2, sin.simbolos.PEN.pronosticos.h2);
+  assert.deepEqual(con.simbolos.PEN.semana, sin.simbolos.PEN.semana);
 });
