@@ -450,3 +450,50 @@ test("generateDailyForecasts expone el cierre de la 1:30 de hoy sólo si se cono
   });
   assert.equal("cierre_1330" in futuro.simbolos.PEN, false);
 });
+
+test("el cierre de ayer no se pierde cuando llega el provisional de hoy (bitácora)", () => {
+  const serie = serieSinteticaPEN();
+  const cierres = cierresSinteticos(serie);
+  const bcrp = { series: { PEN: { codigo: "PEN", unidad: "S/", serie } } };
+  const hoy = "2019-06-28"; // último SBS
+  const siguiente = addBusinessDays(hoy, 1);
+  const ultimo = serie[serie.length - 1][1];
+  const sinUltimo = { series: { TC_CIERRE_VENTA: { serie: Object.entries(cierres).filter(([f]) => f !== hoy) } } };
+  const sin = generateDailyForecasts(bcrp, { todayInLima: hoy });
+
+  // (a) Provisional de hoy (día hábil siguiente) y la bitácora con el «usado» del último SBS:
+  // h1 sigue afinado con la cifra de ayer y h2 se afina con la de hoy.
+  const valorAyer = Number((ultimo * 1.001).toFixed(4));
+  const valorHoy = Number((ultimo * 0.999).toFixed(4));
+  const cierre1330 = {
+    provisional: { fecha: siguiente, valor: valorHoy, fuentes: ["envivo", "nota"], capturado: "x" },
+    bitacora: [{ fecha: hoy, envivo: valorAyer, nota: valorAyer, andina: null, usado: valorAyer, oficial: null }],
+  };
+  const ambos = generateDailyForecasts(bcrp, { todayInLima: siguiente, contexto: sinUltimo, cierre1330 });
+  const h1 = ambos.simbolos.PEN.pronosticos.h1;
+  const h2 = ambos.simbolos.PEN.pronosticos.h2;
+  assert.equal(h1.afinado.metodo, "cierre_1330");
+  assert.equal(h1.afinado.fuente, "prensa");
+  assert.equal(h1.afinado.cierre, valorAyer);
+  assert.equal(h2.afinado.metodo, "cierre_tarde");
+  assert.equal(h2.afinado.cierre, valorHoy);
+  assert.equal(ambos.simbolos.PEN.cierre_1330.fecha, siguiente);
+
+  // (b) Fila de bitácora con «usado» null no se usa.
+  const nulo = generateDailyForecasts(bcrp, {
+    todayInLima: hoy,
+    contexto: sinUltimo,
+    cierre1330: { bitacora: [{ fecha: hoy, usado: null }] },
+  });
+  assert.equal(nulo.simbolos.PEN.pronosticos.h1.afinado, undefined);
+  assert.deepEqual(nulo.simbolos.PEN.pronosticos.h1, sin.simbolos.PEN.pronosticos.h1);
+
+  // (c) Fila de bitácora a más de 3 % del último precio se ignora.
+  const lejos = generateDailyForecasts(bcrp, {
+    todayInLima: hoy,
+    contexto: sinUltimo,
+    cierre1330: { bitacora: [{ fecha: hoy, usado: Number((ultimo * 1.04).toFixed(4)) }] },
+  });
+  assert.equal(lejos.simbolos.PEN.pronosticos.h1.afinado, undefined);
+  assert.deepEqual(lejos.simbolos.PEN.pronosticos.h1, sin.simbolos.PEN.pronosticos.h1);
+});

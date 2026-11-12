@@ -389,6 +389,7 @@ const MIN_BRECHA = 20; // Mínimo de brechas previas para centrar la brecha.
  * Carga los cierres interbancarios de la 1:30 p. m. (TC_CIERRE_VENTA del BCRP)
  * y, si el BCRP todavía no publicó el cierre del último día, el dato provisional
  * que la prensa económica atribuye al BCRP.
+ * Las cifras de prensa salen del provisional y de las filas de la bitácora con `usado`.
  * Si el provisional es del día hábil siguiente a `ultimaFecha`, se devuelve aparte
  * en `siguiente` (no entra en `cierres`, porque ese día aún no tiene SBS).
  * Devuelve `{ cierres, fuente, siguiente }` con fuente "BCRP", "prensa" o null.
@@ -407,28 +408,54 @@ export function cargarCierres(contexto, cierre1330, ultimaFecha, ultimoPrecio) {
     }
   }
 
-  // El BCRP ya publicó el cierre del último día: es el dato definitivo.
-  let fuente = cierres[ultimaFecha] !== undefined ? "BCRP" : null;
-  let siguiente = null;
-
-  // Cierre provisional de prensa: solo si no se aparta más de 3 % del último
-  // precio oficial. Puede ser del último día (si el BCRP aún no lo publicó) o
-  // del día hábil siguiente (cierre de la 1:30 p. m. de hoy); ambos pueden convivir.
+  // Cifras de prensa por fecha: el provisional y las filas de la bitácora cuyo «usado»
+  // ya pasó la regla de dos fuentes. Si ambas traen la misma fecha son equivalentes.
+  const prensa = new Map();
   const provisional = cierre1330?.provisional;
-  if (
-    provisional &&
-    typeof provisional.valor === "number" &&
-    Number.isFinite(provisional.valor) &&
-    provisional.valor > 0 &&
-    Math.abs(provisional.valor / ultimoPrecio - 1) <= 0.03
-  ) {
-    const fechaSiguiente = addBusinessDays(ultimaFecha, 1);
-    if (fuente === null && provisional.fecha === ultimaFecha) {
-      cierres[ultimaFecha] = provisional.valor;
-      fuente = "prensa";
-    } else if (provisional.fecha === fechaSiguiente) {
-      siguiente = { fecha: fechaSiguiente, valor: provisional.valor, fuente: "prensa" };
+  if (provisional && typeof provisional.fecha === "string") {
+    prensa.set(provisional.fecha, provisional.valor);
+  }
+  for (const fila of cierre1330?.bitacora || []) {
+    if (
+      fila &&
+      typeof fila.fecha === "string" &&
+      !prensa.has(fila.fecha) &&
+      typeof fila.usado === "number" &&
+      Number.isFinite(fila.usado) &&
+      fila.usado > 0
+    ) {
+      prensa.set(fila.fecha, fila.usado);
     }
+  }
+
+  // Una cifra de prensa solo vale si no se aparta más de 3 % del último precio oficial.
+  const valida = fecha => {
+    const valor = prensa.get(fecha);
+    return (
+      typeof valor === "number" &&
+      Number.isFinite(valor) &&
+      valor > 0 &&
+      Math.abs(valor / ultimoPrecio - 1) <= 0.03
+    );
+  };
+
+  // El oficial del BCRP siempre gana a la prensa en cada fecha.
+  let fuente = null;
+  if (cierres[ultimaFecha] !== undefined) {
+    fuente = "BCRP";
+  } else if (valida(ultimaFecha)) {
+    cierres[ultimaFecha] = prensa.get(ultimaFecha);
+    fuente = "prensa";
+  }
+
+  // Cierre del día hábil siguiente al último SBS (cierre de la 1:30 p. m. de hoy).
+  // No entra en `cierres`, porque ese día aún no tiene SBS.
+  let siguiente = null;
+  const fechaSiguiente = addBusinessDays(ultimaFecha, 1);
+  if (cierres[fechaSiguiente] !== undefined) {
+    siguiente = { fecha: fechaSiguiente, valor: cierres[fechaSiguiente], fuente: "BCRP" };
+  } else if (valida(fechaSiguiente)) {
+    siguiente = { fecha: fechaSiguiente, valor: prensa.get(fechaSiguiente), fuente: "prensa" };
   }
 
   return { cierres, fuente, siguiente };
