@@ -389,7 +389,10 @@ const MIN_BRECHA = 20; // Mínimo de brechas previas para centrar la brecha.
  * Carga los cierres interbancarios de la 1:30 p. m. (TC_CIERRE_VENTA del BCRP)
  * y, si el BCRP todavía no publicó el cierre del último día, el dato provisional
  * que la prensa económica atribuye al BCRP.
- * Devuelve `{ cierres, fuente }` con fuente "BCRP", "prensa" o null.
+ * Las cifras de prensa salen del provisional y de las filas de la bitácora con `usado`.
+ * Si el provisional es del día hábil siguiente a `ultimaFecha`, se devuelve aparte
+ * en `siguiente` (no entra en `cierres`, porque ese día aún no tiene SBS).
+ * Devuelve `{ cierres, fuente, siguiente }` con fuente "BCRP", "prensa" o null.
  */
 export function cargarCierres(contexto, cierre1330, ultimaFecha, ultimoPrecio) {
   const cierres = {};
@@ -405,29 +408,76 @@ export function cargarCierres(contexto, cierre1330, ultimaFecha, ultimoPrecio) {
     }
   }
 
-  // El BCRP ya publicó el cierre del último día: es el dato definitivo.
-  if (cierres[ultimaFecha] !== undefined) {
-    return { cierres, fuente: "BCRP" };
-  }
-
-  // Cierre provisional de prensa: solo si es del último día y no se aparta
-  // más de 3 % del último precio oficial.
+  // Cifras de prensa por fecha: el provisional y las filas de la bitácora cuyo «usado»
+  // ya pasó la regla de dos fuentes. Si ambas traen la misma fecha son equivalentes.
+  const prensa = new Map();
   const provisional = cierre1330?.provisional;
-  if (
-    provisional &&
-    provisional.fecha === ultimaFecha &&
-    typeof provisional.valor === "number" &&
-    Number.isFinite(provisional.valor) &&
-    provisional.valor > 0
-  ) {
-    const desvio = Math.abs(provisional.valor / ultimoPrecio - 1);
-    if (desvio <= 0.03) {
-      cierres[ultimaFecha] = provisional.valor;
-      return { cierres, fuente: "prensa" };
+  if (provisional && typeof provisional.fecha === "string") {
+    prensa.set(provisional.fecha, provisional.valor);
+  }
+  for (const fila of cierre1330?.bitacora || []) {
+    if (
+      fila &&
+      typeof fila.fecha === "string" &&
+      !prensa.has(fila.fecha) &&
+      typeof fila.usado === "number" &&
+      Number.isFinite(fila.usado) &&
+      fila.usado > 0
+    ) {
+      prensa.set(fila.fecha, fila.usado);
     }
   }
 
-  return { cierres, fuente: null };
+  // Una cifra de prensa solo vale si no se aparta más de 3 % del último precio oficial.
+  const valida = fecha => {
+    const valor = prensa.get(fecha);
+    return (
+      typeof valor === "number" &&
+      Number.isFinite(valor) &&
+      valor > 0 &&
+      Math.abs(valor / ultimoPrecio - 1) <= 0.03
+    );
+  };
+
+  // El oficial del BCRP siempre gana a la prensa en cada fecha.
+  let fuente = null;
+  if (cierres[ultimaFecha] !== undefined) {
+    fuente = "BCRP";
+  } else if (valida(ultimaFecha)) {
+    cierres[ultimaFecha] = prensa.get(ultimaFecha);
+    fuente = "prensa";
+  }
+
+  // Cierre del día hábil siguiente al último SBS (cierre de la 1:30 p. m. de hoy).
+  // No entra en `cierres`, porque ese día aún no tiene SBS.
+  let siguiente = null;
+  const fechaSiguiente = addBusinessDays(ultimaFecha, 1);
+  if (cierres[fechaSiguiente] !== undefined) {
+    siguiente = { fecha: fechaSiguiente, valor: cierres[fechaSiguiente], fuente: "BCRP" };
+  } else if (valida(fechaSiguiente)) {
+    siguiente = { fecha: fechaSiguiente, valor: prensa.get(fechaSiguiente), fuente: "prensa" };
+  }
+
+  return { cierres, fuente, siguiente };
+}
+
+/**
+ * Añade al final de los arrays de P (log-precio, volatilidad y log-cierre) una
+ * posición para el día hábil siguiente al último SBS, cuyo SBS aún no existe.
+ * Permite llamar a rangoTarde en el último corte sin cambiar rangoTarde.
+ */
+function extenderAlSiguiente(P, valor) {
+  const n = P.lp.length;
+  const lp = new Float64Array(n + 1);
+  const s = new Float64Array(n + 1);
+  const lc = new Float64Array(n + 1);
+  lp.set(P.lp);
+  s.set(P.s);
+  lc.set(P.lc);
+  lp[n] = NaN;
+  s[n] = NaN;
+  lc[n] = Math.log(valor);
+  return { lp, s, lc };
 }
 
 /**
@@ -474,7 +524,14 @@ export function prepararCierre(serie, cierres) {
   for (let j = 0; j < n - 1; j++) y[j] = lp[j + 1] - lp[j];
   y[n - 1] = NaN;
 
-  return { fechas, precios, lp, s: sigma, gc, y };
+  // Log del cierre de la 1:30 p. m. de cada día, sin centrar (NaN si no hay).
+  const lc = new Float64Array(n);
+  for (let i = 0; i < n; i++) {
+    const cierre = cierres?.[fechas[i]];
+    lc[i] = cierre === undefined || cierre === null ? NaN : Math.log(cierre);
+  }
+
+  return { fechas, precios, lp, s: sigma, gc, y, lc };
 }
 
 /**
@@ -579,6 +636,118 @@ export function backtestConCierre(P, desde) {
 }
 
 /**
+ * Rango a 2 días hábiles desde la tarde de T-1 (gemelo de cierre_tarde del torneo).
+ * En el corte c se conoce el SBS hasta c y el cierre de la 1:30 p. m. del día hábil siguiente (c + 1).
+ * x = log(cierre de c+1) - log(SBS de c), sin centrar; objetivo y2 = log(SBS de c+2) - log(SBS de c).
+ * Regresión ponderada (1/sigma^2, con intercepto) sobre los cortes j cuyo resultado ya se conoce (j + 2 <= c).
+ * Devuelve las mismas claves que rangoConCierre (q10..q90 son log-retornos desde el SBS de c)
+ * o null si falta el cierre de c + 1 o no hay historia suficiente.
+ */
+export function rangoTarde(P, c) {
+  const { lp, s, lc } = P;
+  const n = lp.length;
+
+  if (c + 1 >= n || !Number.isFinite(lc[c + 1])) return null;
+  const xc = lc[c + 1] - lp[c];
+
+  // Mínimos cuadrados ponderados con intercepto: sistema normal 2 x 2.
+  let sw = 0, swx = 0, swxx = 0, swy = 0, swxy = 0, cuenta = 0;
+  for (let j = Math.max(1, c - VENTANA_BETA); j <= c - 2; j++) {
+    const x = lc[j + 1] - lp[j];
+    if (!Number.isFinite(x)) continue;
+    const y = lp[j + 2] - lp[j];
+    const w = 1 / Math.max(s[j], 1e-9) ** 2;
+    sw += w;
+    swx += w * x;
+    swxx += w * x * x;
+    swy += w * y;
+    swxy += w * x * y;
+    cuenta++;
+  }
+  if (cuenta < MIN_BETA) return null;
+
+  const det = sw * swxx - swx * swx;
+  const alfa = (swy * swxx - swx * swxy) / det;
+  const beta = (sw * swxy - swx * swy) / det;
+
+  // Residuos escalados por la volatilidad del corte; sin x se toma 0, como en el torneo.
+  const residuos = [];
+  for (let k = Math.max(1, c - VENTANA); k <= c - 2; k++) {
+    const xk = lc[k + 1] - lp[k];
+    const y = lp[k + 2] - lp[k];
+    const razon = Math.min(5, Math.max(0.2, s[c] / s[k]));
+    residuos.push((y - alfa - beta * (Number.isFinite(xk) ? xk : 0)) * razon);
+  }
+  residuos.sort((a, b) => a - b);
+
+  const m = residuos.length;
+  const cuantil = q => residuos[Math.max(0, Math.ceil(m * q - 1e-12) - 1)];
+  const ajuste = alfa + beta * xc;
+
+  return {
+    beta,
+    brecha: xc,
+    q10: ajuste + cuantil(0.10),
+    q25: ajuste + cuantil(0.25),
+    q50: ajuste + cuantil(0.50),
+    q75: ajuste + cuantil(0.75),
+    q90: ajuste + cuantil(0.90),
+  };
+}
+
+/**
+ * Evalúa el rango de la tarde (rangoTarde) en cortes históricos desde la fecha `desde`,
+ * contra el SBS de dos días hábiles después del corte. Mismas claves que backtestConCierre.
+ */
+export function backtestTarde(P, desde) {
+  const { fechas, precios } = P;
+  const n = fechas.length;
+
+  let dentro80 = 0;
+  let dentro50 = 0;
+  let ancho = 0;
+  let mae = 0;
+  let cortes = 0;
+
+  for (let c = 0; c < n - 2; c++) {
+    if (fechas[c] < desde) continue;
+    const r = rangoTarde(P, c);
+    if (r === null) continue;
+
+    const p10 = precios[c] * Math.exp(r.q10);
+    const p25 = precios[c] * Math.exp(r.q25);
+    const p50 = precios[c] * Math.exp(r.q50);
+    const p75 = precios[c] * Math.exp(r.q75);
+    const p90 = precios[c] * Math.exp(r.q90);
+    const real = precios[c + 2];
+
+    if (p10 <= real && real <= p90) dentro80++;
+    if (p25 <= real && real <= p75) dentro50++;
+    ancho += ((p90 - p10) / precios[c]) * 100;
+    mae += Math.abs(real - p50);
+    cortes++;
+  }
+
+  if (cortes === 0) {
+    return {
+      cobertura_80: 0,
+      cobertura_50: 0,
+      ancho_medio_pct: 0,
+      mae_p50: 0,
+      cortes: 0,
+    };
+  }
+
+  return {
+    cobertura_80: Number(((dentro80 / cortes) * 100).toFixed(2)),
+    cobertura_50: Number(((dentro50 / cortes) * 100).toFixed(2)),
+    ancho_medio_pct: Number((ancho / cortes).toFixed(2)),
+    mae_p50: Number((mae / cortes).toFixed(4)),
+    cortes,
+  };
+}
+
+/**
  * Genera el archivo data/daily-forecasts.json con los pronósticos h = 1..8
  * para cada símbolo en BCRP diario, más `manana` y `semana` referenciando
  * el siguiente día hábil después de hoy en Lima y el quinto día hábil, respectivamente.
@@ -631,18 +800,39 @@ export function generateDailyForecasts(bcrpData, options = {}) {
     // El dólar (PEN) puede afinarse a 1 día con el cierre interbancario de
     // la 1:30 p. m. del último día, si ese dato ya se conoce.
     let cierreAfinado = null;
+    let cierreTarde = null;
     if (sym === "PEN") {
-      const { cierres, fuente } = cargarCierres(
+      const { cierres, fuente, siguiente } = cargarCierres(
         options.contexto,
         options.cierre1330,
         lastDate,
         lastClose,
       );
-      if (fuente !== null) {
+
+      // Cierre de la 1:30 p. m. de hoy (posterior al último SBS y no posterior a hoy en Lima):
+      // el oficial del BCRP si ya existe, o el provisional de la prensa.
+      const cierreHoy = Object.keys(cierres)
+        .filter(f => f > lastDate && f <= todayInLima)
+        .sort()
+        .pop();
+      if (cierreHoy !== undefined) {
+        symEntry.cierre_1330 = { fecha: cierreHoy, valor: cierres[cierreHoy], fuente: "BCRP" };
+      } else if (siguiente !== null && siguiente.fecha <= todayInLima) {
+        symEntry.cierre_1330 = { fecha: siguiente.fecha, valor: siguiente.valor, fuente: "prensa" };
+      }
+      if (fuente !== null || siguiente !== null) {
         const P = prepararCierre(serie, cierres);
-        const r = rangoConCierre(P, serie.length - 1);
-        if (r !== null) {
-          cierreAfinado = { P, r, cierres, fuente };
+        if (fuente !== null) {
+          const r = rangoConCierre(P, serie.length - 1);
+          if (r !== null) {
+            cierreAfinado = { P, r, cierres, fuente };
+          }
+        }
+        if (siguiente !== null) {
+          const r = rangoTarde(extenderAlSiguiente(P, siguiente.valor), serie.length - 1);
+          if (r !== null) {
+            cierreTarde = { P, r, siguiente };
+          }
         }
       }
     }
@@ -721,6 +911,45 @@ export function generateDailyForecasts(bcrpData, options = {}) {
           fecha: lastDate,
           cierre: cierres[lastDate],
           fuente,
+        };
+      }
+
+      // Afinado del dólar a 2 días hábiles (h2) con el cierre de la 1:30 p. m. del
+      // día hábil siguiente al último SBS (el de hoy por la tarde). Mismas claves
+      // que el afinado de h1; h1 no cambia.
+      if (h === 2 && cierreTarde) {
+        const { P, r, siguiente } = cierreTarde;
+        const fc = symEntry.pronosticos.h2;
+
+        fc.p10 = Number((lastClose * Math.exp(r.q10)).toFixed(4));
+        fc.p25 = Number((lastClose * Math.exp(r.q25)).toFixed(4));
+        fc.p50 = Number((lastClose * Math.exp(r.q50)).toFixed(4));
+        fc.p75 = Number((lastClose * Math.exp(r.q75)).toFixed(4));
+        fc.p90 = Number((lastClose * Math.exp(r.q90)).toFixed(4));
+        fc.ancho_banda_pct = Number((((fc.p90 - fc.p10) / lastClose) * 100).toFixed(2));
+
+        // El rango afinado ya está calibrado: no hay factor K que aplicar.
+        const b = backtestTarde(P, "2019-01-01");
+        fc.backtest.cobertura_80_real = b.cobertura_80;
+        fc.backtest.cobertura_80_fuera_muestra = b.cobertura_80;
+        fc.backtest.cobertura_80_k_expansivo = b.cobertura_80;
+        fc.backtest.cobertura_50_real = b.cobertura_50;
+        fc.backtest.cobertura_50_fuera_muestra = b.cobertura_50;
+        fc.backtest.cobertura_50_k_expansivo = b.cobertura_50;
+        fc.backtest.ancho_medio_pct = b.ancho_medio_pct;
+        fc.backtest.ancho_medio_pct_fuera_muestra = b.ancho_medio_pct;
+        fc.backtest.ancho_medio_pct_k_expansivo = b.ancho_medio_pct;
+        fc.backtest.mae_p50 = b.mae_p50;
+        fc.backtest.mae_fuera_muestra = b.mae_p50;
+        fc.backtest.factor_k = 1;
+        fc.backtest.factor_k_entrenamiento = 1;
+        fc.backtest.cortes_evaluados = b.cortes;
+
+        fc.afinado = {
+          metodo: "cierre_tarde",
+          fecha: siguiente.fecha,
+          cierre: siguiente.valor,
+          fuente: siguiente.fuente,
         };
       }
     }
@@ -929,6 +1158,12 @@ export async function main() {
       ? `Dólar a 1 día afinado con el cierre de la 1:30 (${afinadoPen.fuente}): ${afinadoPen.cierre} S/ del ${afinadoPen.fecha}`
       : "Dólar a 1 día sin cierre de la 1:30 (sin afinar)",
   );
+  const afinadoTardePen = forecasts.simbolos?.PEN?.pronosticos?.h2?.afinado;
+  if (afinadoTardePen) {
+    console.log(
+      `Dólar a 2 días afinado con el cierre de la 1:30 (${afinadoTardePen.fuente}): ${afinadoTardePen.cierre} S/ del ${afinadoTardePen.fecha}`,
+    );
+  }
 
   // 3. Evaluar noticias
   const newsEval = evaluateNewsCovariate(bcrp, gdeltDaily);

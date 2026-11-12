@@ -10,6 +10,7 @@ on:
       - Datos oficiales (BCRP, EIA, Banco Mundial, SUNAT, Reserva Federal)
       - Cotizaciones de Lima (SMV)
       - Boletín diario
+      - "Cierre de la 1:30 p. m. (tarde)"
     types: [completed]
   schedule:
     - cron: "30 23 * * 1-6"
