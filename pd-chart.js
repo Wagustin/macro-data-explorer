@@ -697,7 +697,8 @@
       // para que el dedo no la tape.
       let slot = null;
       // Also in compact charts (landing): the readout never covers the projection
-      if (isMobile && container.parentNode) {
+      const usaHueco = isMobile || (container.clientWidth || 400) < 640;
+      if (usaHueco && container.parentNode) {
         slot = container.previousElementSibling && container.previousElementSibling.classList.contains("pd-chip-slot")
           ? container.previousElementSibling : null;
         if (!slot) {
@@ -799,9 +800,6 @@
           clearTimeout(slotTimer);
           chip.style.maxWidth = "none";
           slot.style.height = (chip.offsetHeight + 8) + "px";
-        } else if (cWidth < 640) {
-          chip.style.left = Math.max(4, (cWidth - chipWidth) / 2) + "px";
-          chip.style.top = "4px";
         } else {
           chip.style.left = (xPx + chipWidth + 18 > cWidth) ? Math.max(4, xPx - chipWidth - 14) + "px" : (xPx + 14) + "px";
           chip.style.top = "12px";
@@ -812,6 +810,9 @@
         vline.style.display = "none";
         dotHalo.style.display = "none";
         if (!slot) { chip.style.display = "none"; return; }
+        // En escritorio la ficha se queda visible con el último dato: así la página no salta
+        // arriba y abajo cada vez que el cursor entra y sale del gráfico.
+        if (!isMobile) return;
         clearTimeout(slotTimer);
         slotTimer = setTimeout(() => { slot.style.height = "0px"; }, 1500);
       }
