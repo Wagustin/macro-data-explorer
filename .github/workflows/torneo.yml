@@ -33,7 +33,12 @@ jobs:
       - name: Comprobar que ningún motor ve el futuro
         run: python research/torneo/torneo.py --autoprueba
       - name: Correr el torneo
-        run: python research/torneo/torneo.py ${{ inputs.rapido && '--rapido --salida /tmp/torneo' || '' }} --predicciones /tmp/predicciones
+        env:
+          RAPIDO: ${{ inputs.rapido }}
+        run: |
+          args=()
+          if [ "$RAPIDO" = "true" ]; then args+=(--rapido --salida /tmp/torneo); fi
+          python research/torneo/torneo.py "${args[@]}" --predicciones /tmp/predicciones
       - name: Guardar el marcador
         if: ${{ !inputs.rapido }}
         run: |
