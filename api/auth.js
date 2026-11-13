@@ -328,6 +328,15 @@ async function reset(req, res, body) {
     });
     if (sbRes.ok) {
       const sbUser = await sbRes.json();
+      // Sessions issued before now stop working (session.js compares each token's iat with this date).
+      // The token returned below was issued just before this date, so it keeps working.
+      const issuedMs = tokenIssuedAtMs(accessToken);
+      const changedAt = new Date(issuedMs ? issuedMs + 1000 : Date.now() - 5000).toISOString();
+      try {
+        await updateUser(sbUser.id, { password_changed_at: changedAt });
+      } catch (e) {
+        console.error("[auth] could not record password change:", e.message);
+      }
       forgetCachedUser(sbUser.id);
       const isOwner = await isOwnerEmail(sbUser.email);
       // Display only; the real plan always comes from public.users (session.js)
@@ -454,4 +463,14 @@ async function confirm(req, res, body) {
     console.error("[auth] confirm failed:", e.message);
   }
   return invalid();
+}
+
+// Issue time (ms) from a JWT payload. No signature check: the token comes straight from Supabase.
+function tokenIssuedAtMs(token) {
+  try {
+    const iat = JSON.parse(Buffer.from(String(token).split(".")[1] || "", "base64url").toString("utf-8")).iat;
+    return typeof iat === "number" && Number.isFinite(iat) ? iat * 1000 : null;
+  } catch (e) {
+    return null;
+  }
 }
