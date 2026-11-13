@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-12T23:38:53.526Z",
+  "actualizado": "2026-11-13T02:31:33.152Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,12 +24,12 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 61
+      "items": 58
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 66
+      "items": 49
     },
     "rpp": {
       "nombre": "RPP Noticias",
@@ -44,7 +44,7 @@
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 13
+      "items": 7
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 21
+      "items": 23
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -64,11 +64,299 @@
   },
   "noticias": [
     {
+      "id": "gestion-b6769b6c17",
+      "titulo": "El Niño: pese al golpe climático, empresarios son optimistas sobre 4 indicadores",
+      "url": "https://gestion.pe/economia/el-nino-pese-al-golpe-climatico-empresarios-se-mantienen-optimistas-sobre-estos-cuatro-indicadores-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-13T02:28:53.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-1872eaa44a",
+      "titulo": "La ‘Papamanía’ llegó al Perú: helados, polos, king kones y los curiosos productos inspirados en León XIV que mueven la economía",
+      "url": "https://elcomercio.pe/economia/peru/papa-king-kones-y-papaletas-asi-se-mueve-la-economia-peruana-por-la-visita-de-leon-xiv-apuesplan-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-13T02:04:42.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-5c6696b480",
+      "titulo": "Parque La Molina: así avanza el mall de Parque Arauco a casi dos años de su apertura",
+      "url": "https://gestion.pe/economia/empresas/parque-la-molina-a-dos-anos-del-nuevo-larcomar-las-marcas-que-se-van-y-las-que-llegan-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-13T01:47:17.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-7971201cdc",
+      "titulo": "Petróleo volvió a subir: avanza el Brent 3.3% por dudas de acuerdo entre Estados Unidos e Irán",
+      "url": "https://gestion.pe/economia/petroleo-volvio-a-subir-avanza-el-brent-33-por-dudas-de-acuerdo-entre-estados-unidos-e-iran-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-13T01:45:00.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-8c9071c3b5",
+      "titulo": "Más de un año después, el Banco Central de Reserva del Perú eleva la tasa de interés de referencia a 4,50%",
+      "url": "https://www.infobae.com/peru/2026/11/13/mas-de-un-ano-despues-el-banco-central-de-reserva-del-peru-eleva-la-tasa-de-interes-de-referencia-a-450/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-13T01:42:57.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-e112e3b52e",
+      "titulo": "Entel pone a la venta su operación en Perú: ¿cuál es la empresa que podría comprarla?",
+      "url": "https://elcomercio.pe/economia/peru/entel-pone-a-la-venta-su-operacion-en-peru-la-empresa-que-podria-quedarse-con-el-negocio-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-13T01:23:58.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-58d6071059",
+      "titulo": "Salida de Huang de Nvidia sacude Silicon Valley y genera preocupación por el futuro de la IA",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/salida-de-huang-de-nvidia-sacude-silicon-valley-y-genera-preocupacion-por-el-futuro-de-la-ia/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-13T01:13:12.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-c4f83eba64",
+      "titulo": "BCR sube su tasa de interés a 4,50% por primera vez desde 2023, ¿qué efectos tendrá?",
+      "url": "https://elcomercio.pe/economia/bcr-sube-su-tasa-de-interes-a-450-por-primera-vez-desde-2023-que-efectos-tendra-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-13T01:07:32.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-ce4530f4dd",
+      "titulo": "MEF propone flexibilizar despidos de trabajadores con mejores remuneraciones y reducir aportes laborales",
+      "url": "https://larepublica.pe/economia/2026/11/09/mef-presentara-proyectos-de-reforma-laboral-y-tributaria-para-impulsar-la-formalizacion-de-las-microempresas-504270",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-13T01:06:39.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "la_republica-61911065a0",
       "titulo": "BCRP sube a 4,50% su tasa de referencia ante inflación en máximos de tres años",
       "url": "https://larepublica.pe/economia/2026/11/12/bcrp-eleva-su-tasa-de-interes-a-450-y-rompe-14-meses-de-pausa-ante-inflacion-record-en-tres-anos-hnews-271524",
       "fuente": "La República Economía",
-      "fecha_iso": "2026-11-12T23:33:55.000Z",
+      "fecha_iso": "2026-11-13T01:05:59.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-f0d6680160",
+      "titulo": "Demanda eléctrica crece más de 5%, pero la de minería cae, ¿qué “jala” ahora el aumento?",
+      "url": "https://gestion.pe/economia/demanda-electrica-crece-mas-de-5-a-octubre-pero-la-de-mineria-cae-que-jala-ahora-el-aumento-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-13T00:49:00.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-91b5d1cd27",
+      "titulo": "Áreas naturales protegidas del Perú ingresan al Top 100 de turismo sostenible",
+      "url": "https://andina.pe/agencia/noticia-areas-naturales-protegidas-del-peru-ingresan-al-top-100-turismo-sostenible-1099742.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-13T00:33:11.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "andina-3a5768d684",
+      "titulo": "BCR eleva tasa de interés de referencia a 4.50% por inflación",
+      "url": "https://andina.pe/agencia/noticia-bcr-eleva-tasa-interes-referencia-a-450-inflacion-1099738.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-13T00:11:37.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "el_comercio-1e5eb6bf89",
+      "titulo": "Papa León XIV volvió a casa: su visita movería S/300 millones y estos productos podrían estar entre los más vendidos",
+      "url": "https://elcomercio.pe/economia/peru/visita-del-papa-moveria-s300-millones-estos-productos-podrian-estar-entre-los-mas-vendidos-l-apuesplan-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-13T00:06:31.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-e9c1e63cc4",
+      "titulo": "Confiep: preocupa respuesta frente a El Niño porque nuevos alcaldes llegarán tarde a enfrentarlo",
+      "url": "https://gestion.pe/economia/confiep-sobre-el-nino-preocupa-respuesta-frente-al-fenomeno-porque-nuevos-alcaldes-llegaran-tarde-a-enfrentarlo-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-13T00:06:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-2a5a6c5940",
+      "titulo": "Remo peruano mira más allá de La Punta: el plan para ampliar su alcance",
+      "url": "https://gestion.pe/economia/empresas/remo-peruano-mira-mas-alla-de-la-punta-el-plan-para-ampliar-su-alcance-y-llegar-a-provincias-y-a-mas-patrocinadores-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-13T00:04:16.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-dcf7650021",
+      "titulo": "Tisur alista nueva grúa en puerto de Matarani como parte de inversión por US$ 598 millones",
+      "url": "https://gestion.pe/economia/empresas/puerto-de-matarani-tisur-suma-grua-konecranes-a-su-plan-de-inversion-de-us-598-millones-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-13T00:02:37.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-d46243de5e",
+      "titulo": "Industria de acero latinoamericana alista inversiones para hacerle competencia a China",
+      "url": "https://gestion.pe/economia/china-vs-la-industria-del-acero-latinoamericana-se-alistan-inversiones-para-competir-con-pais-asiatico-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-13T00:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-f621f61191",
+      "titulo": "Nuevo parque logístico en Lurín: LPA invertirá con socios tras vender Parque Lima Sur",
+      "url": "https://gestion.pe/economia/empresas/logistic-properties-tras-vender-parque-lima-sur-alista-parque-logistico-en-lurin-por-us-85-millones-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-12T23:57:05.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-953f65ef37",
+      "titulo": "Grupo de entretenimiento y hoteles va por más casinos en 2027: compras en Lima y el norte",
+      "url": "https://gestion.pe/economia/empresas/gladcon-group-duena-de-win-win-hotel-casino-alista-compras-en-el-norte-y-lima-para-2027-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-12T23:55:27.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-a546820866",
+      "titulo": "Entre minas chinas y retorno de capital de EE.UU.: el “boom” metalmecánico que asoma",
+      "url": "https://gestion.pe/economia/empresas/metalmecanicas-preven-boom-en-2027-por-mineria-reconstruccion-por-el-nino-y-demanda-de-eeuu-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-12T23:55:00.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-08f3fa6da6",
+      "titulo": "Venta de viviendas nuevas en Lima y Callao creció 26% en 2026: se comercializaron más de 23.600 unidades",
+      "url": "https://www.infobae.com/peru/2026/11/12/venta-de-viviendas-nuevas-en-lima-y-callao-crecio-26-en-2026-se-comercializaron-mas-de-23600-unidades/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-12T23:54:09.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-0a79217b94",
+      "titulo": "Feria Perú Produce por visita del papa León XIV busca dinamizar a más de 170 mypes",
+      "url": "https://elcomercio.pe/economia/peru/papa-leon-xiv-en-peru-feria-peru-produce-por-visita-del-santo-padre-busca-dinamizar-a-mas-de-170-mypes-lima-juan-carlos-requejo-apuesplan-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-12T23:54:06.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-1f64597d55",
+      "titulo": "Papa León XIV retorna a Lambayeque: economía de la región crece 9,6% en el segundo trimestre de 2026",
+      "url": "https://elcomercio.pe/economia/peru/papa-leon-xiv-retorna-a-lambayeque-economia-de-la-region-crece-96-en-el-segundo-trimestre-de-2026-apuesplan-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-12T23:53:30.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-f6830867c6",
+      "titulo": "Visita del papa León XIV daría un impulso al retail: ventas crecerían 14,5% y superarían los S/60.000 millones en 2026",
+      "url": "https://elcomercio.pe/economia/peru/visita-del-papa-leon-xiv-daria-un-impulso-al-retail-ventas-crecerian-145-y-superarian-los-s60000-millones-en-2026-apuesplan-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-12T23:53:02.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-c00fd754b3",
+      "titulo": "Universidad de SJL elige construir y no comprar: pondrá US$ 10 millones en su nuevo campus",
+      "url": "https://gestion.pe/economia/empresas/universidad-maria-auxiliadora-alista-nuevo-campus-de-us-10-millones-y-torre-para-carreras-de-salud-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-12T23:51:08.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-34f9017cde",
+      "titulo": "Este es el precio de la gasolina en Lima hoy jueves 12 de noviembre",
+      "url": "https://www.infobae.com/peru/2026/11/12/este-es-el-precio-de-la-gasolina-en-lima-hoy-jueves-12-de-noviembre/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-12T23:49:19.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-da0d635567",
+      "titulo": "Entel inicia búsqueda de compradores para su operación en Perú: Millicom está interesado",
+      "url": "https://gestion.pe/economia/empresas/entel-evalua-vender-su-operacion-en-peru-y-millicom-figura-entre-los-posibles-compradores-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-12T23:46:43.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-636afd0e91",
+      "titulo": "Noveno retiro de AFP sigue en comisión: proyecto de hasta S/22.000 espera evaluación en el Congreso",
+      "url": "https://larepublica.pe/economia/2026/11/10/noveno-retiro-de-afp-sigue-en-comision-proyecto-de-hasta-s22000-espera-evaluacion-en-el-congreso-hnews-669950",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-12T23:43:59.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-e06e985235",
+      "titulo": "México apostará \"al máximo\" por producir gas mediante fracking para reducir dependencia con EE.UU.",
+      "url": "https://www.bloomberglinea.com/latinoamerica/mexico/mexico-apostara-al-maximo-por-producir-gas-mediante-fracking-para-reducir-dependencia-con-eeuu/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-12T23:39:30.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-3c2051ff40",
+      "titulo": "Papa León XIV llegó al Perú: las mypes se llenan de fe y podrían dinamizarse hasta por S/1.200 millones, ¿qué productos del Santo Padre sorprenden?",
+      "url": "https://elcomercio.pe/economia/peru/visita-del-papa-leon-xiv-podria-movilizar-hasta-s1200-millones-y-dinamizar-el-segmento-mype-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-12T23:38:56.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-0d136dee4b",
+      "titulo": "Senace: “Tenemos certificados estudios ambientales por US$18.800 millones en lo que va del año”",
+      "url": "https://elcomercio.pe/economia/peru/mineria-senace-hemos-certificado-estudios-ambientales-por-us18800-millones-en-lo-que-va-del-ano-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-12T23:37:43.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-52780efdf8",
+      "titulo": "BCR sube la tasa de interés de referencia a 4.5% luego de 14 meses, ante repunte de la inflación",
+      "url": "https://rpp.pe/economia/economia/bcr-sube-la-tasa-de-interes-de-referencia-a-45-luego-de-14-meses-ante-repunte-de-la-inflacion-noticia-1717536",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-12T23:22:04.000Z",
       "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
@@ -82,30 +370,12 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-7971201cdc",
-      "titulo": "Petróleo volvió a subir: avanza el Brent 3.3% por dudas de acuerdo entre Estados Unidos e Irán",
-      "url": "https://gestion.pe/economia/petroleo-volvio-a-subir-avanza-el-brent-33-por-dudas-de-acuerdo-entre-estados-unidos-e-iran-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-12T23:01:05.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "bloomberg_linea-f858258eb5",
       "titulo": "Salida de Jensen Huang hunde a Nvidia: qué pasa con su CEDEAR en Argentina y qué miran los inversores",
       "url": "https://www.bloomberglinea.com/latinoamerica/argentina/salida-de-jensen-huang-hunde-a-nvidia-que-pasa-con-su-cedear-en-argentina-y-que-miran-los-inversores/",
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-12T22:59:06.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-f0d6680160",
-      "titulo": "Demanda eléctrica crece más de 5%, pero la de minería cae, ¿qué “jala” ahora el aumento?",
-      "url": "https://gestion.pe/economia/demanda-electrica-crece-mas-de-5-a-octubre-pero-la-de-mineria-cae-que-jala-ahora-el-aumento-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-12T22:49:09.000Z",
-      "categoria": "Minería y metales",
       "semaforo": "AMARILLO"
     },
     {
@@ -127,51 +397,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-1e5eb6bf89",
-      "titulo": "Papa León XIV volvió a casa: su visita movería S/300 millones y estos productos podrían estar entre los más vendidos",
-      "url": "https://elcomercio.pe/economia/peru/visita-del-papa-moveria-s300-millones-estos-productos-podrian-estar-entre-los-mas-vendidos-l-apuesplan-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T22:15:07.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-0a79217b94",
-      "titulo": "Feria Perú Produce por visita del papa León XIV busca dinamizar a más de 170 mypes",
-      "url": "https://elcomercio.pe/economia/peru/papa-leon-xiv-en-peru-feria-peru-produce-por-visita-del-santo-padre-busca-dinamizar-a-mas-de-170-mypes-lima-juan-carlos-requejo-apuesplan-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T22:14:46.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-1f64597d55",
-      "titulo": "Papa León XIV retorna a Lambayeque: economía de la región crece 9,6% en el segundo trimestre de 2026",
-      "url": "https://elcomercio.pe/economia/peru/papa-leon-xiv-retorna-a-lambayeque-economia-de-la-region-crece-96-en-el-segundo-trimestre-de-2026-apuesplan-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T22:14:28.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-f6830867c6",
-      "titulo": "Visita del papa León XIV daría un impulso al retail: ventas crecerían 14,5% y superarían los S/60.000 millones en 2026",
-      "url": "https://elcomercio.pe/economia/peru/visita-del-papa-leon-xiv-daria-un-impulso-al-retail-ventas-crecerian-145-y-superarian-los-s60000-millones-en-2026-apuesplan-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T22:14:17.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-1872eaa44a",
-      "titulo": "La ‘Papamanía’ llegó al Perú: helados, polos, king kones y los curiosos productos inspirados en León XIV que mueven la economía",
-      "url": "https://elcomercio.pe/economia/peru/papa-king-kones-y-papaletas-asi-se-mueve-la-economia-peruana-por-la-visita-de-leon-xiv-apuesplan-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T22:13:05.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "infobae-58d902eee4",
       "titulo": "Mirtha Vásquez revela que un proyecto minero opera en predio del fiscal de la Nación, cerca de una escuela y laguna",
       "url": "https://www.infobae.com/peru/2026/11/12/senadora-mirtha-vasquez-revela-que-un-proyecto-minero-opera-en-predio-del-fiscal-de-la-nacion-cerca-de-una-escuela-y-laguna/",
@@ -190,30 +415,12 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-3c2051ff40",
-      "titulo": "Papa León XIV llegó al Perú: las mypes se llenan de fe y podrían dinamizarse hasta por S/1.200 millones, ¿qué productos del Santo Padre sorprenden?",
-      "url": "https://elcomercio.pe/economia/peru/visita-del-papa-leon-xiv-podria-movilizar-hasta-s1200-millones-y-dinamizar-el-segmento-mype-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T22:06:54.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-0521d8c1b6",
       "titulo": "Crisis de Ueno Bank pone en riesgo la calificación crediticia de Paraguay: Fitch coloca nota en vigilancia negativa",
       "url": "https://elcomercio.pe/economia/mundo/crisis-de-ueno-bank-pone-en-riesgo-la-calificacion-crediticia-de-paraguay-fitch-coloca-nota-en-vigilancia-negativa-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-12T22:06:27.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-0d136dee4b",
-      "titulo": "Senace: “Tenemos certificados estudios ambientales por US$18.800 millones en lo que va del año”",
-      "url": "https://elcomercio.pe/economia/peru/mineria-senace-hemos-certificado-estudios-ambientales-por-us18800-millones-en-lo-que-va-del-ano-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T22:06:17.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -253,30 +460,12 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-b6769b6c17",
-      "titulo": "El Niño: pese al golpe climático, empresarios son optimistas sobre 4 indicadores",
-      "url": "https://gestion.pe/economia/el-nino-pese-al-golpe-climatico-empresarios-se-mantienen-optimistas-sobre-estos-cuatro-indicadores-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-12T21:34:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "bloomberg_linea-1d994122bb",
       "titulo": "Acción de Nvidia cae tras renuncia de Jensen Huang y borra cerca de US$181.000 millones en valor de mercado",
       "url": "https://www.bloomberglinea.com/mercados/las-acciones-de-nvidia-se-desploman-en-wall-street-tras-la-renuncia-de-jensen-huang/",
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-12T21:24:23.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-e9c1e63cc4",
-      "titulo": "Confiep: preocupa respuesta frente a El Niño porque nuevos alcaldes llegarán tarde a enfrentarlo",
-      "url": "https://gestion.pe/economia/confiep-sobre-el-nino-preocupa-respuesta-frente-al-fenomeno-porque-nuevos-alcaldes-llegaran-tarde-a-enfrentarlo-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-12T21:16:40.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -303,15 +492,6 @@
       "url": "https://www.infobae.com/peru/2026/11/12/diputado-harvey-colchado-llevo-una-bolsa-repleta-de-objetos-para-que-el-papa-leon-xiv-los-bendiga-en-el-teatro-nacional/",
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-12T21:05:41.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-e112e3b52e",
-      "titulo": "Entel pone a la venta su operación en Perú: ¿cuál es la empresa que podría comprarla?",
-      "url": "https://elcomercio.pe/economia/peru/entel-pone-a-la-venta-su-operacion-en-peru-la-empresa-que-podria-quedarse-con-el-negocio-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T20:58:53.000Z",
       "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
@@ -361,15 +541,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "la_republica-636afd0e91",
-      "titulo": "Noveno retiro de AFP sigue en comisión: proyecto de hasta S/22.000 espera evaluación en el Congreso",
-      "url": "https://larepublica.pe/economia/2026/11/10/noveno-retiro-de-afp-sigue-en-comision-proyecto-de-hasta-s22000-espera-evaluacion-en-el-congreso-hnews-669950",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-12T19:48:35.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-b32fbeb3a9",
       "titulo": "Precio del dólar en Perú: cierre del tipo de cambio del jueves 12 de noviembre",
       "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-2026-a-cuanto-esta-el-tipo-de-cambio-este-jueves-12-de-noviembre-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
@@ -397,51 +568,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "gestion-d46243de5e",
-      "titulo": "Industria de acero latinoamericana alista inversiones para hacerle competencia a China",
-      "url": "https://gestion.pe/economia/china-vs-la-industria-del-acero-latinoamericana-se-alistan-inversiones-para-competir-con-pais-asiatico-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-12T19:30:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-a68e6a6eb6",
-      "titulo": "ICE registra cifra récord de más de 483 mil deportaciones durante el segundo mandato de Trump",
-      "url": "https://rpp.pe/mundo/estados-unidos/eeuu-supera-las-483000-deportaciones-en-2026-la-cifra-mas-alta-en-la-historia-de-ice-noticia-1717474",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-12T19:26:19.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-c0f9c9c100",
-      "titulo": "Antamina firma nuevo contrato de estabilidad para su expansión y otros cinco acuerdos se concretarían este 2026",
-      "url": "https://elcomercio.pe/economia/peru/antamina-firma-nuevo-contrato-de-estabilidad-para-su-expansion-y-otros-cinco-acuerdos-se-concretarian-este-2026-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T19:19:11.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-edf8f8d2dd",
-      "titulo": "Paracas: Congreso presenta proyecto para prohibir por ley la pesca industrial en todas las áreas naturales protegidas",
-      "url": "https://www.infobae.com/peru/2026/11/12/paracas-congreso-presenta-proyecto-para-prohibir-por-ley-la-pesca-industrial-en-todas-las-areas-naturales-protegidas/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-12T18:57:07.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-e789a96877",
-      "titulo": "Quinua: exportadores piden eliminar IGV ante la amenaza de un nuevo competidor en el mundo",
-      "url": "https://www.infobae.com/peru/2026/11/12/quinua-exportadores-piden-eliminar-igv-ante-la-amenaza-de-un-nuevo-competidor-en-el-mundo/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-12T18:50:02.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-b4fd71de2d",
       "titulo": "Donald Trump propone que Tim Cook sustituya a Huang al frente de Nvidia tras su dimisión",
       "url": "https://elcomercio.pe/economia/mundo/donald-trump-propone-que-tim-cook-sustituya-a-huang-al-frente-de-nvidia-tras-su-dimision-l-ultimas-noticia/",
@@ -451,48 +577,12 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "rpp-de2d2584f9",
-      "titulo": "Vladímir Putin transmite a los mediadores de Donald Trump que no quiere congelar el conflicto con Ucrania",
-      "url": "https://rpp.pe/mundo/rusia/vladimir-putin-transmite-a-los-mediadores-de-donald-trump-que-no-quiere-congelar-el-conflicto-con-ucrania-noticia-1717458",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-12T18:40:50.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-102e6a3cc1",
-      "titulo": "Precio del dólar cae más hoy en Perú: Así cerró el tipo de cambio este 12 de diciembre",
-      "url": "https://www.infobae.com/peru/2026/11/11/dolar-hoy-en-peru-cotizacion-de-apertura-del-11-de-noviembre/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-12T18:38:47.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "la_republica-49878c0b6e",
       "titulo": "Psoriasis en Perú: tratamiento puede costar más de S/60.000 al año y reducir hasta 29,4% la productividad laboral",
       "url": "https://larepublica.pe/economia/2026/11/12/psoriasis-en-peru-tratamiento-puede-costar-mas-de-s60000-al-ano-y-reducir-hasta-294-la-productividad-laboral-hnews-711132",
       "fuente": "La República Economía",
       "fecha_iso": "2026-11-12T18:32:05.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-7ddb81e72d",
-      "titulo": "Retiro AFP de S/22.000: Pescadores piden debate y aprobación pronta en carta al Congreso",
-      "url": "https://www.infobae.com/peru/2026/11/12/retiro-afp-de-s22000-pescadores-piden-debate-y-aprobacion-pronta-en-carta-al-congreso/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-12T18:31:27.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-6a0fb53962",
-      "titulo": "¿Mejor me hago informal? Cerrar una pequeña empresa en Perú toma hasta 5.367 horas: dos años y medio de trabajo",
-      "url": "https://www.infobae.com/peru/2026/11/12/mejor-me-hago-informal-cerrar-una-pequena-empresa-en-peru-toma-hasta-5367-horas-dos-anos-y-medio-de-trabajo/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-12T18:23:42.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -511,69 +601,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-12T18:19:32.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-953f65ef37",
-      "titulo": "Grupo de entretenimiento y hoteles va por más casinos en 2027: compras en Lima y el norte",
-      "url": "https://gestion.pe/economia/empresas/gladcon-group-duena-de-win-win-hotel-casino-alista-compras-en-el-norte-y-lima-para-2027-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-12T18:06:24.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-f621f61191",
-      "titulo": "Nuevo parque logístico en Lurín: LPA invertirá con socios tras vender Parque Lima Sur",
-      "url": "https://gestion.pe/economia/empresas/logistic-properties-tras-vender-parque-lima-sur-alista-parque-logistico-en-lurin-por-us-85-millones-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-12T18:06:10.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-c00fd754b3",
-      "titulo": "Universidad de SJL elige construir y no comprar: pondrá US$ 10 millones en su nuevo campus",
-      "url": "https://gestion.pe/economia/empresas/universidad-maria-auxiliadora-alista-nuevo-campus-de-us-10-millones-y-torre-para-carreras-de-salud-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-12T18:05:52.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-5c6696b480",
-      "titulo": "Parque La Molina: así avanza el mall de Parque Arauco a casi dos años de su apertura",
-      "url": "https://gestion.pe/economia/empresas/parque-la-molina-a-dos-anos-del-nuevo-larcomar-las-marcas-que-se-van-y-las-que-llegan-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-12T18:05:35.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-7a0e0173fb",
-      "titulo": "Entel se alista para vender su operación en Perú y sus acciones saltan casi 9% en Chile",
-      "url": "https://www.infobae.com/peru/2026/11/12/entel-se-alista-para-vender-su-operacion-en-peru-y-sus-acciones-saltan-casi-9-en-chile/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-12T18:04:42.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-86633cfaf4",
-      "titulo": "Llaves abajo: parques eólicos y solares aceleran en Perú mientras la transmisión eléctrica queda rezagada, alerta Nexans",
-      "url": "https://www.infobae.com/peru/2026/11/12/llaves-abajo-parques-eolicos-y-solares-aceleran-en-peru-mientras-la-transmision-electrica-queda-rezagada-alerta-nexans/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-12T18:04:27.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-ce4530f4dd",
-      "titulo": "MEF propone flexibilizar despidos de trabajadores con mejores remuneraciones y reducir aportes laborales",
-      "url": "https://larepublica.pe/economia/2026/11/09/mef-presentara-proyectos-de-reforma-laboral-y-tributaria-para-impulsar-la-formalizacion-de-las-microempresas-504270",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-12T18:04:10.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -667,15 +694,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-a546820866",
-      "titulo": "Entre minas chinas y retorno de capital de EE.UU.: el “boom” metalmecánico que asoma",
-      "url": "https://gestion.pe/economia/empresas/metalmecanicas-preven-boom-en-2027-por-mineria-reconstruccion-por-el-nino-y-demanda-de-eeuu-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-12T16:17:03.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-e955798778",
       "titulo": "Perú: crece confianza de inversionistas para desarrollar proyectos minero-energéticos",
       "url": "https://andina.pe/agencia/noticia-peru-crece-confianza-inversionistas-para-desarrollar-proyectos-mineroenergeticos-1099656.aspx",
@@ -739,15 +757,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-dcf7650021",
-      "titulo": "Tisur alista nueva grúa en puerto de Matarani como parte de inversión por US$ 598 millones",
-      "url": "https://gestion.pe/economia/empresas/puerto-de-matarani-tisur-suma-grua-konecranes-a-su-plan-de-inversion-de-us-598-millones-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-12T15:17:45.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-0f64dab69e",
       "titulo": "¿Cuál es la cotización del dólar hoy jueves 12 de noviembre del 2026?",
       "url": "https://andina.pe/agencia/noticia-cual-es-cotizacion-del-dolar-hoy-jueves-12-noviembre-del-2026-1099646.aspx",
@@ -772,15 +781,6 @@
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-12T15:09:39.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-da0d635567",
-      "titulo": "Entel inicia búsqueda de compradores para su operación en Perú: Millicom está interesado",
-      "url": "https://gestion.pe/economia/empresas/entel-evalua-vender-su-operacion-en-peru-y-millicom-figura-entre-los-posibles-compradores-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-12T15:07:43.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -820,15 +820,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-2a5a6c5940",
-      "titulo": "Remo peruano mira más allá de La Punta: el plan para ampliar su alcance",
-      "url": "https://gestion.pe/economia/empresas/remo-peruano-mira-mas-alla-de-la-punta-el-plan-para-ampliar-su-alcance-y-llegar-a-provincias-y-a-mas-patrocinadores-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-12T13:50:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-b97f156c93",
       "titulo": "PromPerú impulsa oportunidades de inversiones y negocios en Alemania",
       "url": "https://andina.pe/agencia/noticia-promperu-impulsa-oportunidades-inversiones-y-negocios-alemania-1099617.aspx",
@@ -863,15 +854,6 @@
       "fecha_iso": "2026-11-12T12:35:56.000Z",
       "categoria": "Mundo",
       "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-894e211976",
-      "titulo": "Capacitar al pequeño comerciante: la clave para profesionalizar la actividad económica",
-      "url": "https://andina.pe/agencia/noticia-capacitar-al-pequeno-comerciante-clave-para-profesionalizar-actividad-economica-1099596.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-12T11:18:54.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
     },
     {
       "id": "rpp-2d762adf43",
@@ -934,6 +916,33 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-12T02:00:00.000Z",
       "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-9b094ef4b2",
+      "titulo": "Midagri se reorganiza: en diciembre se tendrá lista propuesta final, ¿qué podría incluir?",
+      "url": "https://gestion.pe/economia/ministro-vinelli-en-diciembre-se-tendra-lista-propuesta-final-para-reorganizar-al-midagri-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-12T01:45:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-5d52430196",
+      "titulo": "De los Andes a la Amazonía: ¿cómo reinventar la gastronomía peruana y adaptarse al cambio climático?",
+      "url": "https://elcomercio.pe/economia/dia-1/de-los-andes-a-la-amazonia-como-reinventar-la-gastronomia-peruana-y-adaptarse-al-cambio-climatico-the-50th-best-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-12T01:31:51.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-224fb87a11",
+      "titulo": "Comunal alcanza 34,000 m2 de coworking en Lima con nueva sede",
+      "url": "https://gestion.pe/economia/empresas/comunal-inaugura-sede-en-chacarilla-surco-y-alcanza-34000-m2-de-espacios-de-coworking-en-lima-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-12T01:30:00.000Z",
+      "categoria": "Otros",
       "semaforo": "AMARILLO"
     }
   ]
