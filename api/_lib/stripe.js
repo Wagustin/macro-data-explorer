@@ -12,7 +12,7 @@ export const PRICE_IDS = {
   month: process.env.STRIPE_PRICE_ID_MONTHLY || process.env.STRIPE_PRICE_ID || "",
   year: process.env.STRIPE_PRICE_ID_YEARLY || ""
 };
-// Boletín plan (US$2/month, US$15/year). Price ids aren't secret; env vars override them.
+// Boletín plan (US$ 1.99/month, US$ 15/year). Price ids aren't secret; env vars override them.
 export const BOLETIN_PRICE_IDS = {
   month: process.env.STRIPE_PRICE_ID_BOLETIN_MONTHLY || "price_1UUZSwPohxxHwL5eJPNVQba1",
   year: process.env.STRIPE_PRICE_ID_BOLETIN_YEARLY || "price_1UTeMjPohxxHwL5eXY6ZSQpj"

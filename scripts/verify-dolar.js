@@ -1,7 +1,9 @@
 // verify-dolar.js - checks the generated dolar.html against the K2 and K2b requirements
 import fs from "fs";
 
-const html = fs.readFileSync("/home/wagustin/macro-data-explorer/dolar.html", "utf8");
+const ROOT = new URL("..", import.meta.url);
+
+const html = fs.readFileSync(new URL("dolar.html", ROOT), "utf8");
 
 const stripBlocks = (s, tag) => s.replace(new RegExp(`<${tag}[\\s\\S]*?</${tag}>`, "g"), " ");
 const visible = stripBlocks(stripBlocks(html, "script"), "style")
@@ -9,6 +11,19 @@ const visible = stripBlocks(stripBlocks(html, "script"), "style")
   .replace(/&nbsp;/g, " ")
   .replace(/\s+/g, " ")
   .trim();
+
+// Los tokens de color viven en pd.css (la página lo enlaza), no en el HTML
+const css = fs.readFileSync(new URL("pd.css", ROOT), "utf8");
+
+// Tarjeta «Próximo mes»: P10 <= P25 <= P50 <= P75 <= P90 (los valores vienen del motor en vivo)
+const mesCard = (() => {
+  const i = html.indexOf("Próximo mes");
+  return i === -1 ? "" : html.slice(i, html.indexOf("</article>", i));
+})();
+const mesP50 = Number((mesCard.match(/pd-range-p50">S\/ ([\d.]+)/) || [])[1]);
+const mesDd = [...mesCard.matchAll(/<dd>S\/ ([\d.]+)<\/dd>/g)].map((m) => Number(m[1]));
+const mesOrdenado = mesDd.length === 4 && [mesDd[0], mesDd[1], mesP50, mesDd[2], mesDd[3]]
+  .every((v, k, a) => k === 0 || a[k - 1] <= v);
 
 const allWords = visible.split(" ").filter(Boolean);
 const proseWords = allWords.filter((w) => /[A-Za-zÁÉÍÓÚÑáéíóúñ]/.test(w));
@@ -45,20 +60,20 @@ const checks = {
   'font Libre Franklin': /Libre Franklin/.test(html),
   'font Source Serif 4': /Source Serif 4/.test(html),
   'font IBM Plex Mono': /IBM Plex Mono/.test(html),
-  'palette F5F1E8': /#F5F1E8/i.test(html),
-  'palette 141311': /#141311/i.test(html),
+  'palette F5F1E8': /#F5F1E8/i.test(css),
+  'palette 141311': /#141311/i.test(css),
   'prefers-color-scheme dark': /prefers-color-scheme:\s*dark/.test(html),
   'theme toggle checkbox': /id="themeToggle"/.test(html),
-  'localStorage theme': /localStorage\.setItem\("theme"/.test(html),
+  'localStorage theme': /localStorage\.setItem\(['"]theme['"]/.test(html),
   'no emoji scrubber script': !/createNodeWalker|FILTER_REJECT/.test(html),
-  'plus-minus kept visible': /±/.test(html),
+  'band width visible (P10-P90)': /Ancho de banda P10-P90: \d+\.\d{2}%/.test(html),
   'no hardcoded 3.5 mil millones': !/3[.,]5 mil millones/.test(html),
   'no TimesFM mentions': !/TimesFM/i.test(html),
   'no dev filler words': !/(ningún valor está hardcodeado|alta precisión predictiva|respaldado por.*calibración empírica)/i.test(html),
   'normal case headings': !/Rangos Probables de Cotización/.test(html) && /Rangos probables/.test(html),
   'next close with weekday and date': /id="pdEtiquetaCierre" data-objetivo="\d{4}-\d{2}-\d{2}">Próximo cierre<\/p>\s*<p class="pd-range-target">[a-záéíóúñ]+ · \d+ de [a-záéíóúñ]+ de \d{4}<\/p>/.test(html),
-  'monthly forecast matches api': /3\.3933/.test(html) && /3\.5438/.test(html) && /3\.4658/.test(html),
-  'short dates without dots': !/(ene|feb|mar|abr|may|jun|jul|ago|set|oct|nov|dic)\./i.test(html),
+  'monthly card quantiles ordered': mesOrdenado,
+  'short dates without dots': !/\b(ene|feb|mar|abr|may|jun|jul|ago|set|oct|nov|dic)\./i.test(html),
 };
 console.log("\n--- checks ---");
 let allPass = true;
@@ -68,5 +83,11 @@ for (const [k, v] of Object.entries(checks)) {
 }
 
 // Ensure the public copy matches
-const pub = fs.readFileSync("/home/wagustin/macro-data-explorer/public/dolar.html", "utf8");
-console.log("\npublic/dolar.html identical to root:", pub === html);
+// public/ es una copia local (ignorada por git): si no existe, no se compara
+const pubUrl = new URL("public/dolar.html", ROOT);
+if (fs.existsSync(pubUrl)) {
+  const pub = fs.readFileSync(pubUrl, "utf8");
+  console.log("\npublic/dolar.html identical to root:", pub === html);
+} else {
+  console.log("\npublic/dolar.html no existe en este checkout (copia local, ignorada por git): omitido");
+}

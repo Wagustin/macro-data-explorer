@@ -48,7 +48,7 @@ function decodeForm(body) {
 
 // Builds a fake fetch with a small in-memory PostgREST for the tables the
 // handlers touch, plus mocked Stripe and Resend endpoints.
-function installMock({ users, trialCards, usedTrialOnce } = {}) {
+function installMock({ users, trialCards, usedTrialOnce, subscriptionList, subscriptionListFails } = {}) {
   _clearUserCache();
   const stripeCalls = [];
   const emails = [];
@@ -64,6 +64,10 @@ function installMock({ users, trialCards, usedTrialOnce } = {}) {
     // Stripe API
     if (u.hostname === "api.stripe.com") {
       stripeCalls.push({ method, path: u.pathname + u.search, body: body ? decodeForm(body) : {} });
+      if (u.pathname === "/v1/subscriptions" && method === "GET") {
+        if (subscriptionListFails) return jsonResponse({ error: { message: "Stripe caído" } }, 500);
+        return jsonResponse({ object: "list", data: subscriptionList || [] });
+      }
       const isSubscriptionRead = u.pathname === "/v1/subscriptions/sub_test" && method === "GET";
       if (isSubscriptionRead && u.search.includes("default_payment_method")) {
         return jsonResponse({
@@ -304,6 +308,74 @@ function trialingSub(userId) {
     items: { data: [{ price: { id: "price_1UUZSwPohxxHwL5eJPNVQba1", recurring: { interval: "month" } }, current_period_end: periodEnd }] }
   };
 }
+
+test("suscripción past_due existente: checkout responde 409 y no crea sesión", async () => {
+  const mock = installMock({
+    users: [{ id: "user_trial_1", email: "trial@example.com", plan: "free", stripe_customer_id: "cus_test_1", stripe_subscription_id: "sub_old" }],
+    trialCards: [],
+    subscriptionList: [{ id: "sub_old", status: "past_due" }]
+  });
+  try {
+    const res = response();
+    await billingHandler(checkoutReq({ plan: "pro" }), res);
+    assert.equal(res.statusCode, 409);
+    assert.match(JSON.parse(res.body).error, /Gestionar suscripción/);
+    assert.equal(mock.stripeCalls.some((c) => c.path === "/v1/checkout/sessions"), false);
+  } finally {
+    restore();
+  }
+});
+
+test("sin suscripciones en Stripe: checkout sigue como antes", async () => {
+  const mock = installMock({
+    users: [{ id: "user_trial_1", email: "trial@example.com", plan: "free", stripe_subscription_id: null }],
+    trialCards: [],
+    subscriptionList: []
+  });
+  try {
+    const res = response();
+    await billingHandler(checkoutReq({ plan: "pro" }), res);
+    assert.equal(res.statusCode, 200);
+    assert.ok(mock.stripeCalls.some((c) => c.path === "/v1/checkout/sessions"));
+    const list = mock.stripeCalls.find((c) => c.path.startsWith("/v1/subscriptions?"));
+    assert.ok(list, "debe consultar las suscripciones antes de crear la sesión");
+    assert.match(list.path, /status=all/);
+  } finally {
+    restore();
+  }
+});
+
+test("suscripción cancelada no bloquea el checkout", async () => {
+  const mock = installMock({
+    users: [{ id: "user_trial_1", email: "trial@example.com", plan: "free", stripe_subscription_id: null }],
+    trialCards: [],
+    subscriptionList: [{ id: "sub_old", status: "canceled" }]
+  });
+  try {
+    const res = response();
+    await billingHandler(checkoutReq({ plan: "pro" }), res);
+    assert.equal(res.statusCode, 200);
+  } finally {
+    restore();
+  }
+});
+
+test("si Stripe no responde al listar suscripciones: 502 y sin sesión", async () => {
+  const mock = installMock({
+    users: [{ id: "user_trial_1", email: "trial@example.com", plan: "free", stripe_subscription_id: null }],
+    trialCards: [],
+    subscriptionListFails: true
+  });
+  try {
+    const res = response();
+    await billingHandler(checkoutReq({ plan: "pro" }), res);
+    assert.equal(res.statusCode, 502);
+    assert.equal(JSON.parse(res.body).error, "No pudimos comprobar tu suscripción. Inténtalo en unos minutos.");
+    assert.equal(mock.stripeCalls.some((c) => c.path === "/v1/checkout/sessions"), false);
+  } finally {
+    restore();
+  }
+});
 
 test("webhook new fingerprint: inserts and marks trial used", async () => {
   const mock = installMock({
