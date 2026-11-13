@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-13T20:31:29.458Z",
+  "actualizado": "2026-11-13T23:31:32.676Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,27 +24,27 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 59
+      "items": 57
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 61
+      "items": 63
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 7
+      "items": 13
     },
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 9
+      "items": 11
     },
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 11
+      "items": 9
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 16
+      "items": 18
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -64,12 +64,255 @@
   },
   "noticias": [
     {
-      "id": "bloomberg_linea-d8461788f1",
-      "titulo": "Salida de Huang de Nvidia elevaría la tensión entre EE.UU. y China por el acceso a chips de IA",
-      "url": "https://www.bloomberglinea.com/negocios/salida-de-huang-de-nvidia-elevaria-la-tension-entre-eeuu-y-china-por-el-acceso-a-chips-de-ia/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-13T20:24:12.000Z",
+      "id": "gestion-d4acf8d6ef",
+      "titulo": "“Preocupa que Perú se quede con un piso de gasto enorme que no se pueda revertir”, analiza el CF",
+      "url": "https://gestion.pe/economia/alonso-segura-del-consejo-fiscal-preocupa-que-peru-se-quede-con-un-piso-de-gasto-enorme-que-no-se-pueda-revertir-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-13T23:27:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-61911065a0",
+      "titulo": "BCRP sube a 4,50% su tasa de referencia ante inflación en máximos de tres años",
+      "url": "https://larepublica.pe/economia/2026/11/12/bcrp-eleva-su-tasa-de-interes-a-450-y-rompe-14-meses-de-pausa-ante-inflacion-record-en-tres-anos-hnews-271524",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-13T23:23:55.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-732624707c",
+      "titulo": "⁠Metropolitano “arrancaría” etapa operativa en 2027: ¿qué sucederá cuando se concrete?",
+      "url": "https://gestion.pe/economia/metropolitano-arrancaria-etapa-operativa-en-2027-que-sucedera-cuando-se-concrete-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-13T23:16:15.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-55760365ef",
+      "titulo": "EE.UU. aclara que la suspensión de vuelos aéreos en el país no se debe a un ataque terrorista",
+      "url": "https://rpp.pe/mundo/estados-unidos/eeuu-aclara-que-la-suspension-de-vuelos-aereos-en-el-pais-no-se-debe-a-un-ataque-terrorista-noticia-1717741",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-13T23:16:10.000Z",
       "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-f8cb1932c1",
+      "titulo": "Líneas 3 y 4 del Metro de Lima: contratación clave por S/ 150 millones en pausa por El Niño",
+      "url": "https://gestion.pe/economia/lineas-3-y-4-del-metro-de-lima-contratacion-clave-por-s-150-millones-en-pausa-por-el-nino-dice-la-atu-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-13T23:15:45.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-481cb9ce5f",
+      "titulo": "Entel acuerda la venta de su filial en Perú a Millicom por US$1.714 millones",
+      "url": "https://elcomercio.pe/economia/entel-acuerda-la-venta-de-su-filial-en-peru-a-millicom-por-us1714-millones-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-13T23:04:25.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-f76a044fe5",
+      "titulo": "\"Se dice mucho de la triangulación, pero no es tanto\": Sheinbaum en víspera de viaje a China",
+      "url": "https://www.bloomberglinea.com/latinoamerica/mexico/se-dice-mucho-de-la-triangulacion-pero-no-es-tanto-sheinbaum-en-vispera-de-viaje-a-china/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-13T23:03:58.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-9ffdf02e5d",
+      "titulo": "Entel vendió su operación peruana a Millicom, ¿cómo le iba en el país y qué decía su CEO hace pocos meses?",
+      "url": "https://elcomercio.pe/economia/entel-vendio-su-operacion-peruana-a-millicom-como-le-iba-en-el-pais-y-que-decia-su-ceo-hace-pocos-meses-apuesplan-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-13T22:57:50.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-7e70e10c57",
+      "titulo": "FAA ordena suspender los despegues en todos los aeropuertos de EE.UU. por \"razones de seguridad\"",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/faa-ordena-suspender-los-despegues-en-todos-los-aeropuertos-de-eeuu-por-razones-de-seguridad/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-13T22:56:39.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-c26232e7b3",
+      "titulo": "FBI investiga si una actualización de software causó la falla que afectó al tráfico aéreo en EE.UU.",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/fbi-investiga-si-una-actualizacion-de-software-causo-la-falla-que-afecto-al-trafico-aereo-en-eeuu/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-13T22:48:21.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-0430e39456",
+      "titulo": "Congreso mantendrá ahorro de S/ 450 millones en 2027 pese a implementación de la bicameralidad",
+      "url": "https://www.infobae.com/peru/2026/11/13/congreso-mantendra-ahorro-de-s-450-millones-en-2027-pese-a-implementacion-de-la-bicameralidad/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-13T22:45:26.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-e882aa3c00",
+      "titulo": "Millicom entra al Perú con la compra de Entel por US$ 1,714 millones: ¿cuáles son sus planes?",
+      "url": "https://gestion.pe/economia/empresas/millicom-llega-al-peru-con-la-compra-de-entel-por-us-1714-millones-y-apunta-a-expandir-sus-negocios-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-13T22:36:34.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-096c4787d6",
+      "titulo": "Es oficial, Entel Perú cambia de dueño: Millicom comprará la empresa con más de 10 millones de clientes",
+      "url": "https://rpp.pe/economia/economia/entel-peru-tendra-nuevo-dueno-acuerda-venta-de-sus-operaciones-a-milicon-operador-de-movistar-en-chile-por-us1700-millones-noticia-1717740",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-13T22:31:38.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-01372baa47",
+      "titulo": "Wall Street cierra mixto una semana de pérdidas en tecnológicas tras la crisis de Nvidia",
+      "url": "https://elcomercio.pe/economia/mercados/wall-street-cierra-mixto-una-semana-de-perdidas-en-tecnologicas-tras-la-crisis-de-nvidia-l-mercados-l-wall-street-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-13T22:09:19.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-f09f15ec7b",
+      "titulo": "EE.UU. ordena suspender los despegues en todo el país \"por motivos de seguridad\"",
+      "url": "https://rpp.pe/mundo/estados-unidos/eeuu-ordena-suspender-los-despegues-en-todo-el-pais-por-motivos-de-seguridad-noticia-1717731",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-13T22:00:56.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-d6662ee507",
+      "titulo": "Grupo Romero acuerda comprar el 100% de Talma y prepara su arribo al negocio aeroportuario",
+      "url": "https://rpp.pe/economia/economia/grupo-romero-acuerda-comprar-el-100-de-talma-y-prepara-su-arribo-al-negocio-aeroportuario-noticia-1717730",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-13T22:00:12.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-e36013aa88",
+      "titulo": "Lo que pasará el 17 de noviembre en EE.UU. y por qué no habrá un apagón mundial como se dice en redes",
+      "url": "https://www.bloomberglinea.com/mundo/lo-que-pasara-el-17-de-noviembre-en-eeuu-y-por-que-no-habra-un-apagon-mundial-como-se-dice-en-redes/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-13T21:56:39.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-2df9e1352e",
+      "titulo": "TUUA internacional bajaría a US$4 en el Jorge Chávez: MTC trabaja en una reducción adicional",
+      "url": "https://larepublica.pe/economia/2026/11/13/tuua-internacional-bajaria-a-us4-en-el-jorge-chavez-mtc-trabaja-en-una-reduccion-adicional-hnews-198822",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-13T21:49:51.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-ce4530f4dd",
+      "titulo": "MEF propone flexibilizar despidos de trabajadores con mejores remuneraciones y reducir aportes laborales",
+      "url": "https://larepublica.pe/economia/2026/11/09/mef-presentara-proyectos-de-reforma-laboral-y-tributaria-para-impulsar-la-formalizacion-de-las-microempresas-504270",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-13T21:49:20.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-18225c1d23",
+      "titulo": "Presupuesto 2027: sindicatos rechazan restricciones a la negociación colectiva y convocan plantón frente al Congreso",
+      "url": "https://larepublica.pe/economia/2026/11/10/presupuesto-2027-sindicatos-rechazan-restricciones-a-la-negociacion-colectiva-y-convocan-planton-frente-al-congreso-hnews-978070",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-13T21:48:48.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-dd427826a2",
+      "titulo": "Liquidación de empresas: proponen que Indecopi digitalice actas para acelerar trámites y evitar pérdidas",
+      "url": "https://larepublica.pe/economia/2026/11/13/liquidacion-de-empresas-proponen-que-indecopi-digitalice-actas-para-acelerar-tramites-y-evitar-perdidas-hnews-1293968",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-13T21:43:33.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-b3153714ba",
+      "titulo": "El dólar cierra la semana en S/3,40 tras decisión del BCR y caída del cobre",
+      "url": "https://elcomercio.pe/economia/peru/el-dolar-cierra-la-semana-en-s340-tras-decision-del-bcr-y-caida-del-cobre-l-cotizacion-del-dolar-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-13T21:42:33.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-94e639d42b",
+      "titulo": "Dólar en Perú: ¿en cuánto cerró el tipo de cambio este viernes 13 de noviembre?",
+      "url": "https://gestion.pe/economia/mercados/dolar-en-peru-en-cuanto-cerro-el-tipo-de-cambio-este-viernes-13-de-noviembre-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-13T21:34:21.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-1ce2801e1f",
+      "titulo": "TAPP: cuatro funcionalidades que las empresas podrán usar para agilizar pagos y cobranzas",
+      "url": "https://gestion.pe/economia/empresas/tapp-cuatro-funcionalidades-que-las-empresas-podran-usar-para-agilizar-pagos-y-cobranzas-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-13T20:58:36.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-d6873f5f8e",
+      "titulo": "BCRP prevé una fuerte caída de la inflación en marzo de 2027 tras impacto del fenómeno El Niño",
+      "url": "https://www.infobae.com/peru/2026/11/13/bcrp-preve-una-fuerte-caida-de-la-inflacion-en-marzo-de-2027-tras-impacto-del-fenomeno-el-nino/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-13T20:47:41.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-18bdc147d1",
+      "titulo": "Salida de Huang de Nvidia elevaría la tensión entre EE.UU. y China por el acceso a chips de IA",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/salida-de-huang-de-nvidia-elevaria-la-tension-entre-eeuu-y-china-por-el-acceso-a-chips-de-ia/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-13T20:41:40.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-302e334dfc",
+      "titulo": "Corte Suprema de EE.UU. evaluará mantener la prohibición de Trump a solicitudes de asilo en la frontera sur",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/corte-suprema-de-eeuu-evaluara-mantener-la-prohibicion-de-trump-a-solicitudes-de-asilo-en-la-frontera-sur/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-13T20:40:54.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-b607936502",
+      "titulo": "BCRP: “A partir de marzo del próximo año se vería una clara reducción en la tasa inflación”",
+      "url": "https://gestion.pe/economia/bcrp-a-partir-de-marzo-del-proximo-ano-se-veria-una-clara-reduccion-en-la-tasa-inflacion-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-13T20:32:51.000Z",
+      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -88,15 +331,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-13T20:17:00.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-b607936502",
-      "titulo": "BCRP: “A partir de marzo del próximo año se vería una clara reducción en la tasa inflación”",
-      "url": "https://gestion.pe/economia/bcrp-a-partir-de-marzo-del-proximo-ano-se-veria-una-clara-reduccion-en-la-tasa-inflacion-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-13T20:14:35.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -196,15 +430,6 @@
       "fuente": "La República Economía",
       "fecha_iso": "2026-11-13T19:36:53.000Z",
       "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-26d9aa9cb1",
-      "titulo": "Entel pone a la venta su filial en Perú, ¿cómo le va en el país y qué decía su CEO hace pocos meses?",
-      "url": "https://elcomercio.pe/economia/entel-pone-a-la-venta-su-filial-en-peru-como-va-su-operacion-en-el-pais-y-que-decia-su-ceo-hace-pocos-meses-apuesplan-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-13T19:34:00.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -316,15 +541,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "la_republica-2df9e1352e",
-      "titulo": "TUUA internacional bajaría a US$4 en el Jorge Chávez: MTC trabaja en una reducción adicional",
-      "url": "https://larepublica.pe/economia/2026/11/13/tuua-internacional-bajaria-a-us4-en-el-jorge-chavez-mtc-trabaja-en-una-reduccion-adicional-hnews-198822",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-13T17:17:31.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-ad52d817c9",
       "titulo": "inDrive busca ser aliado logístico de las pymes: la ruta más allá más movilidad",
       "url": "https://gestion.pe/economia/empresas/indrive-potenciara-logistica-para-pymes-y-explora-dos-nuevos-servicios-mas-alla-de-la-movillidad-para-el-2027-noticia/",
@@ -397,15 +613,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-d4acf8d6ef",
-      "titulo": "“Preocupa que Perú se quede con un piso de gasto enorme que no se pueda revertir”, analiza el CF",
-      "url": "https://gestion.pe/economia/alonso-segura-del-consejo-fiscal-preocupa-que-peru-se-quede-con-un-piso-de-gasto-enorme-que-no-se-pueda-revertir-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-13T16:35:47.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-82784fae99",
       "titulo": "Perú: actualización de Ley Orgánica de Hidrocarburos y reglamentos dinamizará el sector",
       "url": "https://andina.pe/agencia/noticia-peru-actualizacion-ley-organica-hidrocarburos-y-reglamentos-dinamizara-sector-1099809.aspx",
@@ -415,29 +622,11 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "la_republica-61911065a0",
-      "titulo": "BCRP sube a 4,50% su tasa de referencia ante inflación en máximos de tres años",
-      "url": "https://larepublica.pe/economia/2026/11/12/bcrp-eleva-su-tasa-de-interes-a-450-y-rompe-14-meses-de-pausa-ante-inflacion-record-en-tres-anos-hnews-271524",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-13T16:19:41.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "la_republica-636afd0e91",
       "titulo": "Noveno retiro de AFP sigue en comisión: proyecto de hasta S/22.000 espera evaluación en el Congreso",
       "url": "https://larepublica.pe/economia/2026/11/10/noveno-retiro-de-afp-sigue-en-comision-proyecto-de-hasta-s22000-espera-evaluacion-en-el-congreso-hnews-669950",
       "fuente": "La República Economía",
       "fecha_iso": "2026-11-13T16:19:12.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-ce4530f4dd",
-      "titulo": "MEF propone flexibilizar despidos de trabajadores con mejores remuneraciones y reducir aportes laborales",
-      "url": "https://larepublica.pe/economia/2026/11/09/mef-presentara-proyectos-de-reforma-laboral-y-tributaria-para-impulsar-la-formalizacion-de-las-microempresas-504270",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-13T16:18:45.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
@@ -487,15 +676,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-f8cb1932c1",
-      "titulo": "Líneas 3 y 4 del Metro de Lima: contratación clave por S/ 150 millones en pausa por El Niño",
-      "url": "https://gestion.pe/economia/lineas-3-y-4-del-metro-de-lima-contratacion-clave-por-s-150-millones-en-pausa-por-el-nino-dice-la-atu-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-13T15:19:36.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-1af9c53114",
       "titulo": "CTS: ¿Cuándo vence el plazo para que las empresas hagan el depósito de noviembre?",
       "url": "https://andina.pe/agencia/noticia-cts-cuando-vence-plazo-para-las-empresas-hagan-deposito-noviembre-1099324.aspx",
@@ -511,24 +691,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-13T15:17:18.000Z",
       "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-5a36397185",
-      "titulo": "MTC plantea reducir a US$4 la TUUA internacional en el aeropuerto Jorge Chávez: “Las aerolíneas se han comprometido a incluirla en el boleto”",
-      "url": "https://rpp.pe/economia/economia/mtc-plantea-reducir-a-us4-la-tuua-internacional-en-el-aeropuerto-jorge-chavez-las-aerolineas-se-han-comprometido-a-incluirla-en-el-boleto-noticia-1717632",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-13T15:15:22.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-732624707c",
-      "titulo": "⁠Metropolitano “arrancaría” etapa operativa en 2027: ¿qué sucederá cuando se concrete?",
-      "url": "https://gestion.pe/economia/metropolitano-arrancaria-etapa-operativa-en-2027-que-sucedera-cuando-se-concrete-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-13T15:11:00.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -569,11 +731,11 @@
     },
     {
       "id": "rpp-eb6ddc8152",
-      "titulo": "TC decidirá si mineros seguirán protegidos penalmente tras fin del Reinfo: magistrados ponen bajo la lupa argumento del Gobierno",
+      "titulo": "Tribunal Constitucional decidirá si mineros seguirán protegidos penalmente tras fin del Reinfo: magistrados ponen bajo la lupa argumento del Gobierno",
       "url": "https://rpp.pe/economia/economia/tc-decidira-si-mineros-seguiran-protegidos-penalmente-tras-el-fin-del-reinfo-magistrados-ponen-bajo-la-lupa-argumento-del-gobierno-noticia-1717534",
       "fuente": "RPP Noticias",
       "fecha_iso": "2026-11-13T14:00:59.000Z",
-      "categoria": "Dólar y BCRP",
+      "categoria": "Minería y metales",
       "semaforo": "AMARILLO"
     },
     {
@@ -582,33 +744,6 @@
       "url": "https://elcomercio.pe/economia/peru/las-mafias-de-machu-picchu-le-estan-costando-dinero-de-verdad-al-peru-segun-the-economist-l-ultimas-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-13T13:50:30.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-112d9cc517",
-      "titulo": "Hasta el 2030 no pagarás impuesto a la renta por intereses de tus ahorros en bancos",
-      "url": "https://www.infobae.com/peru/2026/11/13/hasta-el-2030-no-pagaras-impuesto-a-la-renta-por-intereses-de-tus-ahorros-en-bancos/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-13T12:54:33.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-21addef51d",
-      "titulo": "Consulta en este link el precio de la gasolina más barata y cara en Lima, hoy, 13 de noviembre",
-      "url": "https://www.infobae.com/peru/2026/11/13/consulta-en-este-link-el-precio-de-la-gasolina-mas-barata-y-cara-en-lima-hoy-13-de-noviembre/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-13T12:16:34.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-607651cc63",
-      "titulo": "Una emisión exitosa en una coyuntura retadora",
-      "url": "https://elcomercio.pe/economia/opinion/una-emision-exitosa-en-una-coyuntura-retadora-por-paul-rebolledo-cfa-opinion-tandem-finance-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-13T12:00:00.000Z",
       "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
@@ -622,21 +757,12 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "infobae-0b2dc1796a",
-      "titulo": "Precio del GNV, GLP, diésel y gasolina en Perú para hoy, viernes 13 de noviembre de 2026",
-      "url": "https://www.infobae.com/peru/2026/11/13/precio-del-gnv-glp-diesel-y-gasolina-en-peru-para-hoy-viernes-13-de-noviembre-de-2026/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-13T11:59:58.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-7ddb81e72d",
-      "titulo": "Retiro AFP de S/22.000: Pescadores afectados por el fenómeno El Niño piden aprobación al Congreso",
-      "url": "https://www.infobae.com/peru/2026/11/12/retiro-afp-de-s22000-pescadores-piden-debate-y-aprobacion-pronta-en-carta-al-congreso/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-13T11:54:03.000Z",
-      "categoria": "Economía y fiscal",
+      "id": "el_comercio-607651cc63",
+      "titulo": "Una emisión exitosa en una coyuntura retadora",
+      "url": "https://elcomercio.pe/economia/opinion/una-emision-exitosa-en-una-coyuntura-retadora-por-paul-rebolledo-cfa-opinion-tandem-finance-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-13T12:00:00.000Z",
+      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -655,6 +781,15 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-13T11:15:00.000Z",
       "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-c8be690486",
+      "titulo": "Precio del dólar Perú y tipo de cambio hoy 13 de noviembre del 2026",
+      "url": "https://rpp.pe/economia/economia/precio-del-dolar-peru-y-tipo-de-cambio-hoy-13-de-noviembre-del-2026-noticia-1717597",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-13T11:05:39.000Z",
+      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -790,177 +925,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-13T03:24:00.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-da0d635567",
-      "titulo": "Entel inicia búsqueda de compradores para su operación en Perú: Millicom está interesado",
-      "url": "https://gestion.pe/economia/empresas/entel-evalua-vender-su-operacion-en-peru-y-millicom-figura-entre-los-posibles-compradores-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-13T02:30:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-b6769b6c17",
-      "titulo": "El Niño: pese al golpe climático, empresarios son optimistas sobre 4 indicadores",
-      "url": "https://gestion.pe/economia/el-nino-pese-al-golpe-climatico-empresarios-se-mantienen-optimistas-sobre-estos-cuatro-indicadores-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-13T02:28:53.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-7971201cdc",
-      "titulo": "Petróleo volvió a subir: avanza el Brent 3.3% por dudas de acuerdo entre Estados Unidos e Irán",
-      "url": "https://gestion.pe/economia/petroleo-volvio-a-subir-avanza-el-brent-33-por-dudas-de-acuerdo-entre-estados-unidos-e-iran-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-13T01:45:00.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-58d6071059",
-      "titulo": "Salida de Huang de Nvidia sacude Silicon Valley y genera preocupación por el futuro de la IA",
-      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/salida-de-huang-de-nvidia-sacude-silicon-valley-y-genera-preocupacion-por-el-futuro-de-la-ia/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-13T01:13:12.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-c4f83eba64",
-      "titulo": "BCR sube su tasa de interés a 4,50% por primera vez desde 2023, ¿qué efectos tendrá?",
-      "url": "https://elcomercio.pe/economia/bcr-sube-su-tasa-de-interes-a-450-por-primera-vez-desde-2023-que-efectos-tendra-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-13T01:07:32.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-f0d6680160",
-      "titulo": "Demanda eléctrica crece más de 5%, pero la de minería cae, ¿qué “jala” ahora el aumento?",
-      "url": "https://gestion.pe/economia/demanda-electrica-crece-mas-de-5-a-octubre-pero-la-de-mineria-cae-que-jala-ahora-el-aumento-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-13T00:49:00.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-91b5d1cd27",
-      "titulo": "Áreas naturales protegidas del Perú ingresan al Top 100 de turismo sostenible",
-      "url": "https://andina.pe/agencia/noticia-areas-naturales-protegidas-del-peru-ingresan-al-top-100-turismo-sostenible-1099742.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-13T00:33:11.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "andina-3a5768d684",
-      "titulo": "BCR eleva tasa de interés de referencia a 4.50% por inflación",
-      "url": "https://andina.pe/agencia/noticia-bcr-eleva-tasa-interes-referencia-a-450-inflacion-1099738.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-13T00:11:37.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-d46243de5e",
-      "titulo": "Industria de acero latinoamericana alista inversiones para hacerle competencia a China",
-      "url": "https://gestion.pe/economia/china-vs-la-industria-del-acero-latinoamericana-se-alistan-inversiones-para-competir-con-pais-asiatico-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-13T00:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-0a79217b94",
-      "titulo": "Feria Perú Produce por visita del papa León XIV busca dinamizar a más de 170 mypes",
-      "url": "https://elcomercio.pe/economia/peru/papa-leon-xiv-en-peru-feria-peru-produce-por-visita-del-santo-padre-busca-dinamizar-a-mas-de-170-mypes-lima-juan-carlos-requejo-apuesplan-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T23:54:06.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-f6830867c6",
-      "titulo": "Visita del papa León XIV daría un impulso al retail: ventas crecerían 14,5% y superarían los S/60.000 millones en 2026",
-      "url": "https://elcomercio.pe/economia/peru/visita-del-papa-leon-xiv-daria-un-impulso-al-retail-ventas-crecerian-145-y-superarian-los-s60000-millones-en-2026-apuesplan-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T23:53:02.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-3c2051ff40",
-      "titulo": "Papa León XIV llegó al Perú: las mypes se llenan de fe y podrían dinamizarse hasta por S/1.200 millones, ¿qué productos del Santo Padre sorprenden?",
-      "url": "https://elcomercio.pe/economia/peru/visita-del-papa-leon-xiv-podria-movilizar-hasta-s1200-millones-y-dinamizar-el-segmento-mype-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T23:38:56.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-0d136dee4b",
-      "titulo": "Senace: “Tenemos certificados estudios ambientales por US$18.800 millones en lo que va del año”",
-      "url": "https://elcomercio.pe/economia/peru/mineria-senace-hemos-certificado-estudios-ambientales-por-us18800-millones-en-lo-que-va-del-ano-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T23:37:43.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-154120fb7c",
-      "titulo": "Minem brindó asistencia sobre formalización minera a comunidad campesina de Ispacas",
-      "url": "https://andina.pe/agencia/noticia-minem-brindo-asistencia-sobre-formalizacion-minera-a-comunidad-campesina-ispacas-1099721.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-12T22:30:00.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "el_comercio-152f72a26b",
-      "titulo": "Wall Street cierra en rojo tras escándalo en Nvidia y la subida del precio del petróleo",
-      "url": "https://elcomercio.pe/economia/mercados/wall-street-cierra-en-rojo-tras-escandalo-en-nvidia-y-la-subida-del-precio-del-petroleo-l-mercados-l-wall-street-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T22:07:13.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-0521d8c1b6",
-      "titulo": "Crisis de Ueno Bank pone en riesgo la calificación crediticia de Paraguay: Fitch coloca nota en vigilancia negativa",
-      "url": "https://elcomercio.pe/economia/mundo/crisis-de-ueno-bank-pone-en-riesgo-la-calificacion-crediticia-de-paraguay-fitch-coloca-nota-en-vigilancia-negativa-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T22:06:27.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-4410b28c46",
-      "titulo": "Mypes textiles y calzado de Arequipa se preparan para conquistar nuevos mercados externos",
-      "url": "https://andina.pe/agencia/noticia-mypes-textiles-y-calzado-arequipa-se-preparan-para-conquistar-nuevos-mercados-externos-1099715.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-12T21:50:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "el_comercio-1d8414d1d0",
-      "titulo": "El dólar cierra en S/3,40 pese al fortalecimiento de la divisa estadounidense y alza del petróleo",
-      "url": "https://elcomercio.pe/economia/peru/el-dolar-cierra-en-s340-pese-al-fortalecimiento-de-la-divisa-estadounidense-y-alza-del-petroleo-l-cotizacion-del-dolar-l-dolar-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-12T21:39:36.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-1d994122bb",
-      "titulo": "Acción de Nvidia cae tras renuncia de Jensen Huang y borra cerca de US$181.000 millones en valor de mercado",
-      "url": "https://www.bloomberglinea.com/mercados/las-acciones-de-nvidia-se-desploman-en-wall-street-tras-la-renuncia-de-jensen-huang/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-12T21:24:23.000Z",
-      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     }
   ]
