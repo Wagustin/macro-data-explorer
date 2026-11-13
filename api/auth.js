@@ -18,7 +18,7 @@ import crypto from "crypto";
 import { findUserByEmail, findUserByResetHash, findUserById, insertUser, updateUser, publicUser, IS_PRODUCTION } from "./_lib/users.js";
 import { EMAIL_ENABLED, sendEmail, passwordResetEmail } from "./_lib/email.js";
 import {
-  hashPassword, signSession, getAuthUser, isOwnerEmail,
+  hashPassword, signSession, getAuthUser, isOwnerEmail, forgetCachedUser,
   sendJson, securityHeaders, readJsonBody, rateLimited, clientIp
 } from "./_lib/session.js";
 
@@ -316,6 +316,7 @@ async function reset(req, res, body) {
     });
     if (sbRes.ok) {
       const sbUser = await sbRes.json();
+      forgetCachedUser(sbUser.id);
       const isOwner = await isOwnerEmail(sbUser.email);
       // Display only; the real plan always comes from public.users (session.js)
       const plan = isOwner ? "pro" : (sbUser.app_metadata?.plan === "pro" ? "pro" : "free");

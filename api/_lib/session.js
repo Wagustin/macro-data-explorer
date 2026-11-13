@@ -205,6 +205,14 @@ const USER_CACHE_TTL_MS = 5 * 60 * 1000;
 /** Test-only hook: clears the cached user profiles. */
 export function _clearUserCache() { userProfileCache.clear(); }
 
+/** Drops one user's cached profile, e.g. right after a password change. */
+export function forgetCachedUser(id) { userProfileCache.delete(id); }
+
+/** A token issued before the last password change is revoked (1 s clock tolerance). */
+function isRevoked(claims, passwordChangedAt) {
+  return !!passwordChangedAt && claims.iat * 1000 < Date.parse(passwordChangedAt) - 1000;
+}
+
 /**
  * Resolves the signed-in user from the Authorization header using Web Crypto.
  * Ensures the owner account is permanently Pro.
@@ -225,15 +233,17 @@ export async function getAuthUser(req) {
   // Check cache or store
   const cached = userProfileCache.get(claims.sub);
   if (cached && Date.now() - cached.cachedAt < USER_CACHE_TTL_MS) {
-    return cached.user;
+    return isRevoked(claims, cached.passwordChangedAt) ? null : cached.user;
   }
 
+  let passwordChangedAt = null;
   try {
     const dbUser = (await findUserById(claims.sub)) || (email ? await findUserByEmail(email) : null);
     if (dbUser) {
-      if (dbUser.password_changed_at && claims.iat * 1000 < Date.parse(dbUser.password_changed_at) - 1000) {
+      if (isRevoked(claims, dbUser.password_changed_at)) {
         return null;
       }
+      passwordChangedAt = dbUser.password_changed_at || null;
       if (dbUser.plan) plan = isOwner ? "pro" : dbUser.plan;
       if (dbUser.name) name = dbUser.name;
     }
@@ -249,7 +259,7 @@ export async function getAuthUser(req) {
     role: isOwner ? "pro" : (claims.role || "user")
   };
 
-  userProfileCache.set(claims.sub, { user, cachedAt: Date.now() });
+  userProfileCache.set(claims.sub, { user, cachedAt: Date.now(), passwordChangedAt });
   return user;
 }
 
