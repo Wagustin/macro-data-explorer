@@ -143,11 +143,14 @@ let inMemoryCache = {
 // Singleton promise to coalesce concurrent incoming requests
 let activeFetchPromise = null;
 
+// Only real tags (letter, "/" or "!" right after "<"), so "PBI < 3 %" keeps its "<"
+function stripTags(text) {
+  return text.replace(/<\/?[a-zA-Z!][^>]*>/g, "");
+}
+
 export function decodeHtml(html) {
   if (!html) return "";
-  return html
-    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
-    .replace(/<[^>]+>/g, "")
+  const text = stripTags(html.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1"))
     .replace(/&quot;/g, "\"")
     .replace(/&apos;/g, "'")
     .replace(/&#39;/g, "'")
@@ -156,9 +159,16 @@ export function decodeHtml(html) {
     .replace(/&gt;/g, ">")
     .replace(/&nbsp;/g, " ")
     .replace(/&#x2018;|&#x2019;/g, "'")
-    .replace(/&#x201c;|&#x201d;/g, "\"")
+    .replace(/&#x201c;|&#x201d;/g, "\"");
+  // Entities can hide tags (&lt;img ...&gt;): strip them again after decoding
+  return stripTags(text)
     .replace(/\s+/g, " ")
     .trim();
+}
+
+// Only http(s) links are kept; anything else (javascript:, data:, empty) becomes ""
+export function safeUrl(url) {
+  return /^https?:\/\//i.test(url || "") ? url : "";
 }
 
 export function detectSymbol(title, defaultSymbol) {
@@ -201,7 +211,7 @@ export function parseItems(xmlText, feed) {
   const rawItems = xmlText.match(/<item>[\s\S]*?<\/item>/g) || [];
   return rawItems.slice(0, 5).map((it, idx) => {
     let headline = decodeHtml((it.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || "");
-    const url = decodeHtml((it.match(/<link>([\s\S]*?)<\/link>/) || [])[1] || "");
+    const url = safeUrl(decodeHtml((it.match(/<link>([\s\S]*?)<\/link>/) || [])[1] || ""));
     const rawPubDate = decodeHtml((it.match(/<pubDate>([\s\S]*?)<\/pubDate>/) || [])[1] || "");
     let source = decodeHtml((it.match(/<source[^>]*>([\s\S]*?)<\/source>/) || [])[1] || "");
 
@@ -493,7 +503,7 @@ async function ownFeed() {
       const empresas = Array.isArray(analysis?.empresas)
         ? analysis.empresas.filter((symbol) => typeof symbol === "string" && /^[A-Z0-9.-]{1,20}$/.test(symbol))
         : [];
-      return { id: n.id, title: n.titulo, source: n.fuente, url: n.url, timestamp: ts, time: agoLabel(ts), category: n.categoria, impact: n.categoria, impactColor: "emerald", sentimiento, empresas };
+      return { id: n.id, title: n.titulo, source: n.fuente, url: safeUrl(n.url), timestamp: ts, time: agoLabel(ts), category: n.categoria, impact: n.categoria, impactColor: "emerald", sentimiento, empresas };
     });
     const value = news.length ? { news, updatedAt: d.actualizado } : null;
     feedCache = { at: Date.now(), value };
