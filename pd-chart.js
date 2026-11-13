@@ -170,6 +170,8 @@
       const labels = [...seriesLabels];
       // Fecha que muestra la ficha en cada hueco futuro (nunca la del último cierre)
       const futureChip = [];
+      // true si el hueco futuro es un mes devuelto por el pronóstico (hito), false si es intermedio
+      const futureEsHito = [];
       const histPadded = [...seriesData];
       for (let s = 0; s < nFutureSlots; s++) histPadded.push(null);
 
@@ -261,6 +263,7 @@
 
           const esHito = Math.abs(prog - m1.prog) < 1e-9;
           const mesDe = (d) => String(d).substring(0, 7);
+          futureEsHito[idx] = esHito;
           futureChip[idx] = esHito
             ? formatChipDate(mesDe(m1.date))
             : rangoChip(mesDe(m0.date), mesDe(m1.date));
@@ -852,7 +855,9 @@
             const col = ch >= 0 ? "var(--pd-pos)" : "var(--pd-neg)";
             html += `<div style="display:flex;justify-content:space-between;gap:14px;margin-top:3px;color:${tokens.inkSoft};"><span>Frente a hoy</span><span style="font-family:var(--pd-font-mono,monospace);font-variant-numeric:tabular-nums;font-weight:700;color:${col};">${ch >= 0 ? "+" : ""}${ch.toLocaleString("es-PE", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %</span></div>`;
           }
-          html += `<div style="margin-top:5px;font-size:11px;color:${tokens.inkSoft};">Entre meses proyectados el valor se interpola.</div>`;
+          if (futureEsHito[idx] === false) {
+            html += `<div style="margin-top:5px;font-size:11px;color:${tokens.inkSoft};">Entre meses proyectados el valor se interpola.</div>`;
+          }
         }
         chip.innerHTML = html;
         chip.style.display = "block";
