@@ -7,6 +7,7 @@ import { candidatosComercio, candidatosAndina, actualizarEstado } from "../scrip
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const COMERCIO = fs.readFileSync(path.join(ROOT, "test", "fixtures", "cierre-1330-comercio.xml"), "utf8");
+const COMERCIO_12NOV = fs.readFileSync(path.join(ROOT, "test", "fixtures", "cierre-1330-comercio-12nov.xml"), "utf8");
 const ANDINA = fs.readFileSync(path.join(ROOT, "test", "fixtures", "cierre-1330-andina.xml"), "utf8");
 
 const clave = (lista) => [...new Set(lista.map((c) => `${c.fecha}|${c.tipo}|${c.valor}`))].sort();
@@ -32,6 +33,12 @@ test("candidatos: las dos muestras dan exactamente los candidatos esperados", ()
 test("candidatos: texto vacío o que no es RSS devuelve un arreglo vacío", () => {
   assert.deepEqual(candidatosComercio(""), []);
   assert.deepEqual(candidatosAndina("<html>no es rss</html>"), []);
+});
+
+test("candidatos: el cierre del 12-nov sale de la nota y del en vivo (4 decimales y título con espacio)", () => {
+  const comercio = candidatosComercio(COMERCIO_12NOV);
+  assert.deepEqual(clave(comercio), ["2026-11-12|envivo|3.404", "2026-11-12|nota|3.404"]);
+  assert.ok(comercio.every((c) => c.url.startsWith("https://")));
 });
 
 // --- actualizarEstado -------------------------------------------------------

@@ -17,8 +17,11 @@ const USER_AGENT = "PerDataBot/1.0 (+https://perdata.site)";
 const DIAS = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 
-const RE_NOTA = /El precio del dólar cerró este (lunes|martes|miércoles|jueves|viernes) en S\/\s?(\d[.,]\d{3,4}) en el mercado interbancario/i;
-const RE_ENVIVO = /cerró el (lunes|martes|miércoles|jueves|viernes) (\d{1,2}) de (enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre) en (\d[.,]\d{3,4}), con una apertura de \d[.,]\d{3,4}, según lo dio a conocer el Banco Central/gi;
+// La nota dice "mercado cambiario peruano" (12-nov) o "mercado interbancario peruano" (11-nov).
+const RE_NOTA = /El precio del dólar cerró este (lunes|martes|miércoles|jueves|viernes) en S\/\s?(\d[.,]\d{3,4}) en el mercado (?:interbancario|cambiario)(?: peruano)?/i;
+// El vivo llega con <b> alrededor de las cifras: tras quitar las etiquetas quedan espacios
+// antes de las comas ("en 3,4040 , con una apertura de 3,4170 , según...").
+const RE_ENVIVO = /cerró el (lunes|martes|miércoles|jueves|viernes) (\d{1,2}) de (enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre) en\s+(\d[.,]\d{3,4})\s*,\s*con una apertura de\s+\d[.,]\d{3,4}\s*,\s*según lo dio a conocer el Banco Central/gi;
 const RE_ANDINA_TITULO = /^Dólar cierra\b.* en S\/ ?(\d\.\d{3})\b/;
 const RE_ANDINA_DESC = /cerró este (lunes|martes|miércoles|jueves|viernes) en (\d\.\d{3,4}) soles en el mercado interbancario/i;
 
@@ -58,6 +61,7 @@ function decodificar(texto) {
 
 /**
  * Extrae un campo de un <item> del RSS: quita el CDATA y decodifica entidades.
+ * El texto se recorta porque algunos <title> llegan con un espacio inicial.
  * Devuelve "" si el campo no existe.
  */
 function campo(item, nombre) {
@@ -65,7 +69,7 @@ function campo(item, nombre) {
   if (!m) return "";
   const bruto = m[1].trim();
   const cdata = /^<!\[CDATA\[([\s\S]*)\]\]>$/.exec(bruto);
-  return decodificar(cdata ? cdata[1] : bruto);
+  return decodificar((cdata ? cdata[1] : bruto).trim());
 }
 
 /**
