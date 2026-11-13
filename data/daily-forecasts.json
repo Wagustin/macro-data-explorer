@@ -1,6 +1,6 @@
 {
   "version": "PerData Engine diario v1",
-  "actualizado": "2026-11-12T22:03:47.007Z",
+  "actualizado": "2026-11-13T00:33:50.383Z",
   "metodo": "Simulacion Historica Filtrada (FHS) + Volatilidad EWMA (lambda=0.94)",
   "p50_criterio": "Paseo aleatorio (ultimo cierre) respaldado por backtest",
   "referencia_lima": {
@@ -52,28 +52,34 @@
         "h2": {
           "horizonte_dias_habiles": 2,
           "fecha_objetivo": "2026-11-13",
-          "p10": 3.3951,
-          "p25": 3.4042,
-          "p50": 3.414,
-          "p75": 3.4232,
-          "p90": 3.4312,
-          "ancho_banda_pct": 1.06,
+          "p10": 3.3977,
+          "p25": 3.402,
+          "p50": 3.4067,
+          "p75": 3.411,
+          "p90": 3.415,
+          "ancho_banda_pct": 0.51,
           "backtest": {
-            "cobertura_80_real": 80.05,
-            "cobertura_50_real": 51.68,
-            "mae_p50": 0.0155,
+            "cobertura_80_real": 80.1,
+            "cobertura_50_real": 50.36,
+            "mae_p50": 0.0077,
             "mae_drift": 0.016,
-            "ancho_medio_pct": 1.39,
-            "factor_k": 1.0276,
+            "ancho_medio_pct": 0.67,
+            "factor_k": 1,
             "cortes_evaluados": 1960,
-            "cobertura_80_fuera_muestra": 80.99,
-            "cobertura_50_fuera_muestra": 53.33,
-            "ancho_medio_pct_fuera_muestra": 1.29,
-            "mae_fuera_muestra": 0.0138,
-            "factor_k_entrenamiento": 1.0326,
-            "cobertura_80_k_expansivo": 81.13,
-            "cobertura_50_k_expansivo": 53.33,
-            "ancho_medio_pct_k_expansivo": 1.3
+            "cobertura_80_fuera_muestra": 80.1,
+            "cobertura_50_fuera_muestra": 50.36,
+            "ancho_medio_pct_fuera_muestra": 0.67,
+            "mae_fuera_muestra": 0.0077,
+            "factor_k_entrenamiento": 1,
+            "cobertura_80_k_expansivo": 80.1,
+            "cobertura_50_k_expansivo": 50.36,
+            "ancho_medio_pct_k_expansivo": 0.67
+          },
+          "afinado": {
+            "metodo": "cierre_tarde",
+            "fecha": "2026-11-12",
+            "cierre": 3.404,
+            "fuente": "prensa"
           }
         },
         "h3": {
@@ -239,32 +245,43 @@
           }
         }
       },
+      "cierre_1330": {
+        "fecha": "2026-11-12",
+        "valor": 3.404,
+        "fuente": "prensa"
+      },
       "manana": {
         "horizonte": "h2",
         "fecha_objetivo": "2026-11-13",
         "horizonte_dias_habiles": 2,
-        "p10": 3.3951,
-        "p25": 3.4042,
-        "p50": 3.414,
-        "p75": 3.4232,
-        "p90": 3.4312,
-        "ancho_banda_pct": 1.06,
+        "p10": 3.3977,
+        "p25": 3.402,
+        "p50": 3.4067,
+        "p75": 3.411,
+        "p90": 3.415,
+        "ancho_banda_pct": 0.51,
         "backtest": {
-          "cobertura_80_real": 80.05,
-          "cobertura_50_real": 51.68,
-          "mae_p50": 0.0155,
+          "cobertura_80_real": 80.1,
+          "cobertura_50_real": 50.36,
+          "mae_p50": 0.0077,
           "mae_drift": 0.016,
-          "ancho_medio_pct": 1.39,
-          "factor_k": 1.0276,
+          "ancho_medio_pct": 0.67,
+          "factor_k": 1,
           "cortes_evaluados": 1960,
-          "cobertura_80_fuera_muestra": 80.99,
-          "cobertura_50_fuera_muestra": 53.33,
-          "ancho_medio_pct_fuera_muestra": 1.29,
-          "mae_fuera_muestra": 0.0138,
-          "factor_k_entrenamiento": 1.0326,
-          "cobertura_80_k_expansivo": 81.13,
-          "cobertura_50_k_expansivo": 53.33,
-          "ancho_medio_pct_k_expansivo": 1.3
+          "cobertura_80_fuera_muestra": 80.1,
+          "cobertura_50_fuera_muestra": 50.36,
+          "ancho_medio_pct_fuera_muestra": 0.67,
+          "mae_fuera_muestra": 0.0077,
+          "factor_k_entrenamiento": 1,
+          "cobertura_80_k_expansivo": 80.1,
+          "cobertura_50_k_expansivo": 50.36,
+          "ancho_medio_pct_k_expansivo": 0.67
+        },
+        "afinado": {
+          "metodo": "cierre_tarde",
+          "fecha": "2026-11-12",
+          "cierre": 3.404,
+          "fuente": "prensa"
         }
       },
       "semana": {
