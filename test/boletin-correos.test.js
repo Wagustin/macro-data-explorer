@@ -367,9 +367,15 @@ test("correos: la cabecera precede a toda lectura y cada título de sección lle
     const html = generar(plan);
     const cabecera = html.indexOf("Boletín diario");
     assert.ok(cabecera !== -1, `${plan}: sin cabecera «Boletín diario»`);
-    const presionar = html.indexOf("Podría presionar al dólar");
-    assert.ok(presionar !== -1, `${plan}: sin «Podría presionar al dólar»`);
-    assert.ok(cabecera < presionar, `${plan}: la lectura del dólar sale antes que la cabecera`);
+    const seccionPresion = html.indexOf("Qué podría presionar al dólar");
+    const hayFactores = /Podría presionar al dólar al (?:alza|baja)|>Contexto</.test(html);
+    if (hayFactores) {
+      assert.ok(seccionPresion !== -1, `${plan}: hay factores sin la sección «Qué podría presionar al dólar»`);
+      assert.ok(cabecera < seccionPresion, `${plan}: la lectura del dólar sale antes que la cabecera`);
+    } else {
+      assert.equal(seccionPresion, -1, `${plan}: la sección del dólar queda sin factores`);
+      assert.ok(!/Podría presionar al dólar al (?:alza|baja)|>Contexto</.test(html), `${plan}: quedan rótulos sin factores`);
+    }
     for (const lectura of ["Rango probable", "Lo importante de hoy", "Tus empresas"]) {
       const i = html.indexOf(lectura);
       if (i === -1) continue;
