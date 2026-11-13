@@ -37,6 +37,22 @@ export function passwordResetEmail(name, link) {
   };
 }
 
+// Link that activates a new account. `link` already carries the token.
+export function confirmEmailEmail(name, link) {
+  const greeting = name ? `Hola, ${name}:` : "Hola:";
+  return {
+    subject: "Confirma tu correo de PerData",
+    text: `${greeting}\n\nPara activar tu cuenta de PerData, confirma que este correo es tuyo. El enlace vence en 24 horas:\n\n${link}\n\nSi no creaste esta cuenta, ignora este correo.\n\nPerData`,
+    html: `<div style="background:#F5F1E8;padding:28px 16px"><div style="max-width:480px;margin:0 auto;font-family:Helvetica,Arial,sans-serif;color:#1B1916">
+  <p style="font-family:Georgia,serif;font-style:italic;font-weight:600;font-size:26px;margin:0 0 20px">PerData</p>
+  <p style="margin:0 0 12px;font-size:16px">${greeting.replace(/</g, "&lt;")}</p>
+  <p style="margin:0 0 20px;font-size:16px;line-height:1.5">Para activar tu cuenta de PerData, confirma que este correo es tuyo. El enlace vence en 24 horas.</p>
+  <p style="margin:0 0 24px"><a href="${link}" style="display:inline-block;background:#1B1916;color:#F5F1E8;text-decoration:none;font-weight:600;padding:13px 24px">Confirmar mi correo</a></p>
+  <p style="margin:0;color:#5E584E;font-size:13px;line-height:1.5">Si no creaste esta cuenta, ignora este correo.<br>Equipo de PerData</p>
+</div></div>`
+  };
+}
+
 // Advance notice before the 7-day Boletín trial ends. The caller fills the
 // end date; the charge is the Boletín price for the interval bought.
 export function trialEndingEmail(name, endDate, interval) {

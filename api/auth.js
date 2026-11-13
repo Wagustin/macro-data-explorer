@@ -6,6 +6,7 @@
  *   POST /api/auth {action:"signout"}
  *   POST /api/auth {action:"forgot", email}            -> sends recovery link via Supabase Auth
  *   POST /api/auth {action:"reset", token, password}   -> sets new password
+ *   POST /api/auth {action:"confirm", token}           -> exchanges a sign-up confirmation link for a session
  *   GET  /api/auth?action=providers                    -> {google: bool}, whether Google sign-in is on
  *   GET  /api/auth?action=google&next=/path            -> redirect to Google through Supabase Auth;
  *        Supabase sends the user back to /path with the session in the URL hash (auth.js reads it)
@@ -16,7 +17,7 @@
 
 import crypto from "crypto";
 import { findUserByEmail, findUserByResetHash, findUserById, insertUser, updateUser, publicUser, IS_PRODUCTION } from "./_lib/users.js";
-import { EMAIL_ENABLED, sendEmail, passwordResetEmail } from "./_lib/email.js";
+import { EMAIL_ENABLED, sendEmail, passwordResetEmail, confirmEmailEmail } from "./_lib/email.js";
 import {
   hashPassword, signSession, getAuthUser, isOwnerEmail, forgetCachedUser,
   sendJson, securityHeaders, readJsonBody, rateLimited, clientIp
@@ -27,6 +28,8 @@ const MIN_PASSWORD = 8;
 
 const SUPABASE_URL = (process.env.SUPABASE_URL || "https://hhutoitkkomfzkmakwts.supabase.co").replace(/\/+$/, "");
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || "";
+const NOT_CONFIRMED_ERROR = "Aún no confirmas tu correo. Abre el enlace que te enviamos (revisa spam). Si no te llegó, regístrate de nuevo con el mismo correo y te enviamos otro.";
+const CONFIRM_SEND_ERROR = "No pudimos enviarte el correo de confirmación. Inténtalo de nuevo en unos minutos.";
 
 export default async function handler(req, res) {
   securityHeaders(res, "GET, POST, OPTIONS", req);
@@ -47,6 +50,7 @@ export default async function handler(req, res) {
     if (action === "signout") return sendJson(res, 200, { success: true });
     if (action === "forgot") return await forgot(req, res, body);
     if (action === "reset") return await reset(req, res, body);
+    if (action === "confirm") return await confirm(req, res, body);
     if (action === "providers") return await providers(res);
     if (action === "google") return await google(req, res);
   } catch (e) {
@@ -70,6 +74,8 @@ async function signup(req, res, body) {
   if (password.length < MIN_PASSWORD || password.length > 200) {
     return sendJson(res, 400, { success: false, error: `La contraseña debe tener al menos ${MIN_PASSWORD} caracteres.` });
   }
+
+  if (EMAIL_ENABLED) return signupWithConfirmation(req, res, { email, password, name });
 
   // 1. Create the account with the admin API, already confirmed: no email from Supabase's limited
   //    mailer, and the user gets a normal Supabase session right away (password grant below).
@@ -163,12 +169,18 @@ async function signin(req, res, body) {
 
     const sbData = await sbRes.json();
     if (!sbRes.ok) {
+      const notConfirmed = sbData.error_code === "email_not_confirmed" || /not confirmed/i.test(sbData.msg || sbData.message || sbData.error_description || "");
+      if (notConfirmed) return sendJson(res, 403, { success: false, code: "email_not_confirmed", error: NOT_CONFIRMED_ERROR });
       // Accounts from before the move to Supabase Auth set a new password with "¿Olvidaste tu contraseña?"
       // (checking the old PBKDF2 hashes costs ~150 ms of CPU, far above the Worker's free limit)
       return sendJson(res, 401, { success: false, error: "Correo o contraseña incorrectos. Si tu cuenta es anterior al 26 de octubre de 2026, crea una contraseña nueva con «¿Olvidaste tu contraseña?»." });
     }
 
     const sbUser = sbData.user;
+    // Only an explicit null/empty value blocks; a missing field (undefined) does not
+    if (sbUser.email_confirmed_at === null || sbUser.email_confirmed_at === "") {
+      return sendJson(res, 403, { success: false, code: "email_not_confirmed", error: NOT_CONFIRMED_ERROR });
+    }
     const isOwner = await isOwnerEmail(email);
     // The plan comes from public.users; app_metadata only as a fallback (users can't write it)
     let plan = isOwner ? "pro" : (sbUser.app_metadata?.plan === "pro" ? "pro" : "free");
@@ -334,4 +346,112 @@ async function reset(req, res, body) {
   }
 
   return sendJson(res, 400, { success: false, error: "El enlace no es válido o ya venció. Solicita uno nuevo." });
+}
+
+// Sign-up when email is on: the account stays unconfirmed until the person opens the link we send.
+// Nothing is logged in here; the "confirm" action exchanges the link's token for a session.
+async function signupWithConfirmation(req, res, { email, password, name }) {
+  if (await rateLimited(`confirm:${email}`, 3, 10 * 60 * 1000)) {
+    return sendJson(res, 429, { success: false, error: "Ya te enviamos un correo de confirmación. Revisa tu bandeja y la carpeta de spam, o inténtalo en unos minutos." });
+  }
+  const displayName = name || email.split("@")[0];
+  const headers = { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`, "Content-Type": "application/json" };
+  try {
+    // generate_link creates the unconfirmed account with this password and returns the link token
+    const gl = await fetch(`${SUPABASE_URL}/auth/v1/admin/generate_link`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ type: "signup", email, password, data: { name: displayName } })
+    });
+    const data = await gl.json().catch(() => ({}));
+    if (!gl.ok) {
+      if (gl.status === 422 || /already|registered|exists|duplicate/i.test(data.msg || data.message || data.error_description || "")) {
+        return sendJson(res, 409, { success: false, error: "Ya existe una cuenta con este correo. Inicia sesión." });
+      }
+      return sendJson(res, 400, { success: false, error: "No pudimos crear la cuenta. Revisa los datos e inténtalo de nuevo." });
+    }
+
+    const sbUser = data.user || data;
+    if (sbUser.email_confirmed_at) {
+      return sendJson(res, 409, { success: false, error: "Ya existe una cuenta con este correo. Inicia sesión." });
+    }
+
+    // An account created more than 30 minutes ago and still unconfirmed takes the newest password (last sign-up wins).
+    // Within 30 minutes the password is kept, so someone registering a third party's address
+    // can't change the password of an account that is still waiting for its owner to confirm.
+    const createdMs = Date.parse(sbUser.created_at || "");
+    const existed = Number.isFinite(createdMs) && Date.now() - createdMs > 30 * 60 * 1000;
+    if (existed && sbUser.id) {
+      const up = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${encodeURIComponent(sbUser.id)}`, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({ password })
+      });
+      if (!up.ok) throw new Error(`update password HTTP ${up.status}`);
+    }
+
+    insertUser({
+      id: sbUser.id,
+      email,
+      name: displayName,
+      role: "user",
+      plan: "free",
+      created_at: new Date().toISOString()
+    }).catch(() => {});
+
+    const hashed = data.hashed_token || data.properties?.hashed_token;
+    if (!hashed) return sendJson(res, 502, { success: false, error: CONFIRM_SEND_ERROR });
+    try {
+      const msg = confirmEmailEmail(displayName, `${appUrl(req)}/entrar?confirmar=${encodeURIComponent(hashed)}`);
+      await sendEmail({ to: email, ...msg });
+    } catch (e) {
+      console.error("[auth] confirmation email failed:", e.message);
+      return sendJson(res, 502, { success: false, error: CONFIRM_SEND_ERROR });
+    }
+
+    return sendJson(res, 200, {
+      success: true,
+      pendingConfirmation: true,
+      message: `Te enviamos un correo a ${email}. Abre el enlace para activar tu cuenta. Si no lo ves, revisa la carpeta de spam.`
+    });
+  } catch (err) {
+    console.error("[auth] signup confirmation failed:", err.message);
+    return sendJson(res, 503, { success: false, error: "Servicio de autenticación no disponible." });
+  }
+}
+
+// Exchanges the one-time token from the confirmation link for a session. Nothing is granted before this.
+async function confirm(req, res, body) {
+  const token = String(body.token || "");
+  if (await rateLimited(`confirm-ip:${clientIp(req)}`, 20)) {
+    return sendJson(res, 429, { success: false, error: "Demasiados intentos. Espera unos minutos." });
+  }
+  const invalid = () => sendJson(res, 400, { success: false, error: "El enlace no es válido o ya venció. Regístrate de nuevo con el mismo correo y te enviamos otro." });
+  if (!/^[A-Za-z0-9_-]{20,200}$/.test(token)) return invalid();
+
+  try {
+    const vr = await fetch(`${SUPABASE_URL}/auth/v1/verify`, {
+      method: "POST",
+      headers: { apikey: SUPABASE_SERVICE_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "signup", token_hash: token })
+    });
+    const session = vr.ok ? await vr.json() : null;
+    if (!session?.access_token) return invalid();
+
+    const sbUser = session.user || {};
+    const email = String(sbUser.email || "");
+    const isOwner = await isOwnerEmail(email);
+    const plan = isOwner ? "pro" : (sbUser.app_metadata?.plan === "pro" ? "pro" : "free");
+    const userObj = {
+      id: sbUser.id,
+      email,
+      name: sbUser.user_metadata?.name || email.split("@")[0],
+      plan,
+      role: isOwner ? "pro" : "user"
+    };
+    return sendJson(res, 200, { success: true, user: publicUser(userObj), token: session.access_token });
+  } catch (e) {
+    console.error("[auth] confirm failed:", e.message);
+  }
+  return invalid();
 }
