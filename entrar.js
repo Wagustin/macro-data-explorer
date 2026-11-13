@@ -199,6 +199,35 @@
       });
   }
 
+  // Link from the sign-up email: /entrar?confirmar=<token>. Exchanges it for a session, like a sign-in.
+  async function confirmSignupLink(token) {
+    setStatus('Confirmando tu correo…');
+    try {
+      const r = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'confirm', token })
+      });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok || !d.success || !d.token) {
+        setStatus(d.error || 'El enlace no es válido o ya venció. Regístrate de nuevo con el mismo correo y te enviamos otro.', 'error');
+        return;
+      }
+      const auth = window.PDAuth || window.MacroAuth || window.MDE_Auth;
+      if (auth && auth.setSession) {
+        auth.setSession({ user: d.user, access_token: d.token });
+      } else {
+        localStorage.setItem('mde_auth_session', JSON.stringify({ user: d.user, access_token: d.token }));
+      }
+      setStatus('Correo confirmado. Entrando…', 'ok');
+      setTimeout(() => {
+        window.location.href = volver;
+      }, 300);
+    } catch (err) {
+      setStatus('Error de conexión al confirmar tu correo. Intenta de nuevo.', 'error');
+    }
+  }
+
   function setupGoogle() {
     const wrap = document.getElementById('pdGoogleWrap');
     const btn = document.getElementById('pdGoogleBtn');
@@ -243,9 +272,18 @@
     // Consume OAuth hash return if present
     consumeOAuthReturn();
 
+    // Sign-up confirmation link: handled at the end of init, after the page is wired up
+    const confirmToken = params.get('confirmar') || '';
+    if (confirmToken) {
+      const p = new URLSearchParams(window.location.search);
+      p.delete('confirmar');
+      const qs = p.toString();
+      window.history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : '') + window.location.hash);
+    }
+
     // If user is already authenticated and not handling OAuth return, redirect
     const auth = window.PDAuth || window.MacroAuth || window.MDE_Auth;
-    if (auth && auth.isAuthenticated && auth.isAuthenticated() && !window.location.hash) {
+    if (auth && auth.isAuthenticated && auth.isAuthenticated() && !window.location.hash && !confirmToken) {
       window.location.replace(volver);
       return;
     }
@@ -349,6 +387,7 @@
               });
               const d = await r.json().catch(() => ({}));
               if (!r.ok || !d.success) res = { success: false, error: d.error || 'No se pudo crear la cuenta.' };
+              else if (d.pendingConfirmation) res = { success: true, pendingConfirmation: true, message: d.message };
               else res = { success: true, user: d.user, token: d.token };
             } catch (err) {
               res = { success: false, error: 'No hay conexión con el servidor.' };
@@ -357,6 +396,11 @@
           if (submit) submit.disabled = false;
           if (!res.success) {
             setStatus(res.error || 'No se pudo crear la cuenta.', 'error');
+            return;
+          }
+          if (res.pendingConfirmation) {
+            // No session yet: the person must open the link we emailed
+            setStatus(res.message || 'Te enviamos un correo para confirmar tu cuenta.', 'ok');
             return;
           }
           setStatus('Cuenta creada. ¡Bienvenido!', 'ok');
@@ -408,6 +452,8 @@
       const first = document.getElementById(currentMode === 'signup' ? 'pdAuthName' : 'pdAuthEmail');
       if (first) first.focus();
     }, 60);
+
+    if (confirmToken) confirmSignupLink(confirmToken);
   }
 
   if (typeof document !== 'undefined' && typeof document.getElementById === 'function') {

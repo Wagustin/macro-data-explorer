@@ -416,6 +416,8 @@
       if (!res.ok || !data.success) {
         return { success: false, error: data.error || "No se pudo completar el acceso." };
       }
+      // New accounts must open the confirmation link first: no session yet
+      if (data.pendingConfirmation) return { success: true, pendingConfirmation: true, message: data.message };
       Auth.setSession({ user: data.user, access_token: data.token });
       return { success: true, user: data.user };
     } catch (err) {
