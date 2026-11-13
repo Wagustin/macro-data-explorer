@@ -12,6 +12,7 @@ import crypto from "crypto";
 import EMPRESAS from "../data/empresas.json" with { type: "json" };
 import { applyCors, handleRateLimit } from "./_lib/ratelimit.js";
 import { sendEmail, EMAIL_ENABLED } from "./_lib/email.js";
+import { rateLimited } from "./_lib/session.js";
 
 const TABLE = "boletin_suscriptores";
 const SITE = process.env.APP_URL || "https://perdata.site";
@@ -26,6 +27,12 @@ function tickers() {
 const mask = (email) => email.replace(/^(.)(.*)(@.*)$/, (m, a, b, c) => a + "•".repeat(Math.min(6, b.length)) + c);
 
 const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,190}\.[a-z]{2,24}$/i;
+
+// At most 1 confirmation email per address every 10 minutes and 3 per day (in memory, as in api/auth.js)
+export function puedeEnviarConfirmacion(email) {
+  if (rateLimited(`boletin-confirm-10m:${email}`, 1, 10 * 60 * 1000)) return false;
+  return !rateLimited(`boletin-confirm-dia:${email}`, 3, 24 * 60 * 60 * 1000);
+}
 
 function db(path, init = {}) {
   const base = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
@@ -129,6 +136,8 @@ export default async function handler(req, res) {
   const found = await db(`?email=eq.${encodeURIComponent(email)}&select=estado,token`);
   const existing = found.ok ? (await found.json())[0] : null;
   if (existing?.estado === "activo") return send(res, 200, generic);
+  // Over the limit: same answer, and the link already sent stays valid
+  if (!puedeEnviarConfirmacion(email)) return send(res, 200, generic);
 
   const newToken = crypto.randomBytes(24).toString("hex");
   const row = { email, estado: "pendiente", token: newToken, origen: String(body.origen || "").slice(0, 60) || null, baja: null };

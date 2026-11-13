@@ -10,6 +10,9 @@ on:
         type: boolean
         default: true
 
+permissions:
+  contents: read
+
 concurrency:
   group: alertas
   cancel-in-progress: false
@@ -29,4 +32,8 @@ jobs:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
-        run: node scripts/alertas.js ${{ inputs.dry && '--dry' || '' }}
+          DRY: ${{ inputs.dry }}
+        run: |
+          args=()
+          if [ "$DRY" = "true" ]; then args+=(--dry); fi
+          node scripts/alertas.js "${args[@]}"

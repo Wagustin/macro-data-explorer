@@ -13,6 +13,9 @@ import { handleRateLimit } from "./_lib/ratelimit.js";
 
 const priceCache = {};
 
+// Stripe subscription statuses that count as a subscription in progress or pending payment.
+const BLOCKING_STATUSES = new Set(["active", "trialing", "past_due", "unpaid", "incomplete"]);
+
 async function loadPrices(ids = PRICE_IDS, key = "pro") {
   if (!STRIPE_ENABLED) return [];
   if (priceCache[key] && Date.now() - priceCache[key].at < 10 * 60 * 1000) return priceCache[key].prices;
@@ -91,6 +94,17 @@ export default async function handler(req, res) {
       const ids = wanted === "boletin" ? BOLETIN_PRICE_IDS : PRICE_IDS;
       const interval = body.interval === "year" && ids.year ? "year" : "month";
       const customerId = await ensureCustomer(user);
+      // users.plan is not enough: past_due or incomplete subscriptions leave it as free.
+      let subs;
+      try {
+        subs = await stripe("GET", "/subscriptions", { customer: customerId, status: "all", limit: 20 });
+      } catch (e) {
+        console.error("[billing] subscription list failed:", e.message);
+        return sendJson(res, 502, { success: false, error: "No pudimos comprobar tu suscripción. Inténtalo en unos minutos." });
+      }
+      if ((subs.data || []).some((sub) => BLOCKING_STATUSES.has(sub.status))) {
+        return sendJson(res, 409, { success: false, error: "Ya tienes una suscripción con un pago pendiente o en curso. Revísala en Mi cuenta, en «Gestionar suscripción», antes de contratar otra." });
+      }
       // 7-day free trial with a card on file, only for Boletín and only once per
       // account. A failed trial_usado read offers no trial: better not to give
       // away a trial than to give it away without a limit.
