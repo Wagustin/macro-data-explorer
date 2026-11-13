@@ -61,7 +61,7 @@ async function signup(req, res, body) {
   const password = String(body.password || "");
   const name = String(body.name || "").trim().slice(0, 80);
 
-  if (rateLimited(`signup:${clientIp(req)}`, 8)) {
+  if (await rateLimited(`signup:${clientIp(req)}`, 8)) {
     return sendJson(res, 429, { success: false, error: "Demasiados intentos. Espera unos minutos." });
   }
   if (!EMAIL_RE.test(email) || email.length > 254) {
@@ -146,7 +146,7 @@ async function signin(req, res, body) {
   if (!email || !password) {
     return sendJson(res, 400, { success: false, error: "Ingresa tu correo y contraseña." });
   }
-  if (rateLimited(`signin:${clientIp(req)}`, 20) || rateLimited(`signin:${email}`, 8)) {
+  if (await rateLimited(`signin:${clientIp(req)}`, 20) || await rateLimited(`signin:${email}`, 8)) {
     return sendJson(res, 429, { success: false, error: "Demasiados intentos. Espera 15 minutos e intenta de nuevo." });
   }
 
@@ -249,7 +249,7 @@ async function forgot(req, res, body) {
   if (!EMAIL_RE.test(email)) {
     return sendJson(res, 400, { success: false, error: "Ingresa un correo electrónico válido." });
   }
-  if (rateLimited(`forgot:${clientIp(req)}`, 5) || rateLimited(`forgot:${email}`, 3)) {
+  if (await rateLimited(`forgot:${clientIp(req)}`, 5) || await rateLimited(`forgot:${email}`, 3)) {
     return sendJson(res, 429, { success: false, error: "Demasiadas solicitudes. Espera unos minutos." });
   }
 
@@ -285,7 +285,7 @@ async function forgot(req, res, body) {
 async function reset(req, res, body) {
   const token = String(body.token || "");
   const password = String(body.password || "");
-  if (rateLimited(`reset:${clientIp(req)}`, 10)) {
+  if (await rateLimited(`reset:${clientIp(req)}`, 10)) {
     return sendJson(res, 429, { success: false, error: "Demasiados intentos. Espera unos minutos." });
   }
   if (password.length < MIN_PASSWORD || password.length > 200) {

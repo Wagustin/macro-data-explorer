@@ -29,9 +29,9 @@ const mask = (email) => email.replace(/^(.)(.*)(@.*)$/, (m, a, b, c) => a + "•
 const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,190}\.[a-z]{2,24}$/i;
 
 // At most 1 confirmation email per address every 10 minutes and 3 per day (in memory, as in api/auth.js)
-export function puedeEnviarConfirmacion(email) {
-  if (rateLimited(`boletin-confirm-10m:${email}`, 1, 10 * 60 * 1000)) return false;
-  return !rateLimited(`boletin-confirm-dia:${email}`, 3, 24 * 60 * 60 * 1000);
+export async function puedeEnviarConfirmacion(email) {
+  if (await rateLimited(`boletin-confirm-10m:${email}`, 1, 10 * 60 * 1000)) return false;
+  return !(await rateLimited(`boletin-confirm-dia:${email}`, 3, 24 * 60 * 60 * 1000));
 }
 
 function db(path, init = {}) {
@@ -137,7 +137,7 @@ export default async function handler(req, res) {
   const existing = found.ok ? (await found.json())[0] : null;
   if (existing?.estado === "activo") return send(res, 200, generic);
   // Over the limit: same answer, and the link already sent stays valid
-  if (!puedeEnviarConfirmacion(email)) return send(res, 200, generic);
+  if (!(await puedeEnviarConfirmacion(email))) return send(res, 200, generic);
 
   const newToken = crypto.randomBytes(24).toString("hex");
   const row = { email, estado: "pendiente", token: newToken, origen: String(body.origen || "").slice(0, 60) || null, baja: null };
