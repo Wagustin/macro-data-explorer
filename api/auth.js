@@ -18,7 +18,7 @@ import crypto from "crypto";
 import { findUserByEmail, findUserByResetHash, findUserById, insertUser, updateUser, publicUser, IS_PRODUCTION } from "./_lib/users.js";
 import { EMAIL_ENABLED, sendEmail, passwordResetEmail } from "./_lib/email.js";
 import {
-  hashPassword, signSession, getAuthUser,
+  hashPassword, signSession, getAuthUser, isOwnerEmail,
   sendJson, securityHeaders, readJsonBody, rateLimited, clientIp
 } from "./_lib/session.js";
 
@@ -169,14 +169,14 @@ async function signin(req, res, body) {
     }
 
     const sbUser = sbData.user;
-    const isAgustin = email === "venturasaldanaa@gmail.com";
+    const isOwner = await isOwnerEmail(email);
     // The plan comes from public.users; app_metadata only as a fallback (users can't write it)
-    let plan = isAgustin ? "pro" : (sbUser.app_metadata?.plan === "pro" ? "pro" : "free");
+    let plan = isOwner ? "pro" : (sbUser.app_metadata?.plan === "pro" ? "pro" : "free");
     let name = sbUser.user_metadata?.name || email.split("@")[0];
 
     try {
       const dbUser = (await findUserById(sbUser.id)) || (await findUserByEmail(email));
-      if (dbUser && dbUser.plan) plan = isAgustin ? "pro" : dbUser.plan;
+      if (dbUser && dbUser.plan) plan = isOwner ? "pro" : dbUser.plan;
       if (dbUser && dbUser.name) name = dbUser.name;
     } catch (e) {}
 
@@ -185,7 +185,7 @@ async function signin(req, res, body) {
       email,
       name,
       plan,
-      role: isAgustin ? "pro" : "user"
+      role: isOwner ? "pro" : "user"
     };
 
     return sendJson(res, 200, {
@@ -316,15 +316,15 @@ async function reset(req, res, body) {
     });
     if (sbRes.ok) {
       const sbUser = await sbRes.json();
-      const isAgustin = sbUser.email?.toLowerCase() === "venturasaldanaa@gmail.com";
+      const isOwner = await isOwnerEmail(sbUser.email);
       // Display only; the real plan always comes from public.users (session.js)
-      const plan = isAgustin ? "pro" : (sbUser.app_metadata?.plan === "pro" ? "pro" : "free");
+      const plan = isOwner ? "pro" : (sbUser.app_metadata?.plan === "pro" ? "pro" : "free");
       const userObj = {
         id: sbUser.id,
         email: sbUser.email,
         name: sbUser.user_metadata?.name || sbUser.email.split("@")[0],
         plan,
-        role: isAgustin ? "pro" : "user"
+        role: isOwner ? "pro" : "user"
       };
       return sendJson(res, 200, { success: true, user: publicUser(userObj), token: accessToken });
     }

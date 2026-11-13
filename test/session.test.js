@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import crypto from "node:crypto";
 
 process.env.JWT_SECRET = "session-test-secret";
-const { verifySession } = await import("../api/_lib/session.js");
+const { verifySession, isOwnerEmail } = await import("../api/_lib/session.js");
 
 function token(claims) {
   const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url");
@@ -24,4 +24,10 @@ test("verifySession rejects missing or expired exp and incorrect issuer or audie
   ]) {
     assert.equal(await verifySession(token(claims)), null);
   }
+});
+
+test("isOwnerEmail is false for other addresses and empty input", async () => {
+  assert.equal(await isOwnerEmail("otro@ejemplo.com"), false);
+  assert.equal(await isOwnerEmail(""), false);
+  assert.equal(await isOwnerEmail(undefined), false);
 });

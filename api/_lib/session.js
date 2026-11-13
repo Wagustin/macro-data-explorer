@@ -186,6 +186,18 @@ export function extractToken(req) {
   return match ? match[1].trim() : null;
 }
 
+// SHA-256 (hex) of the owner account email, lowercase. The address itself stays out of the public repo.
+const OWNER_EMAIL_SHA256 = "ccf3b3f632ab9cff2f6a1a05316165ad9c5771f2dd55692459f85a2694c681c1";
+
+/** True when the email belongs to the owner account (permanent Pro). */
+export async function isOwnerEmail(email) {
+  const normalized = String(email ?? "").trim().toLowerCase();
+  if (!normalized) return false;
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(normalized));
+  const hex = [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, "0")).join("");
+  return hex === OWNER_EMAIL_SHA256;
+}
+
 // In-memory cache for user plan lookups (TTL 5 minutes)
 const userProfileCache = new Map();
 const USER_CACHE_TTL_MS = 5 * 60 * 1000;
@@ -195,7 +207,7 @@ export function _clearUserCache() { userProfileCache.clear(); }
 
 /**
  * Resolves the signed-in user from the Authorization header using Web Crypto.
- * Ensures venturasaldanaa@gmail.com is permanently Pro.
+ * Ensures the owner account is permanently Pro.
  */
 export async function getAuthUser(req) {
   const token = extractToken(req);
@@ -205,9 +217,9 @@ export async function getAuthUser(req) {
   if (!claims) return null;
 
   const email = String(claims.email || "").toLowerCase();
-  const isAgustin = email === "venturasaldanaa@gmail.com";
+  const isOwner = await isOwnerEmail(email);
   // user_metadata is writable by the user, so it never grants a plan; public.users is the source of truth.
-  let plan = isAgustin ? "pro" : (claims.app_metadata?.plan === "pro" ? "pro" : "free");
+  let plan = isOwner ? "pro" : (claims.app_metadata?.plan === "pro" ? "pro" : "free");
   let name = claims.user_metadata?.name || (email ? email.split("@")[0] : "Usuario");
 
   // Check cache or store
@@ -222,7 +234,7 @@ export async function getAuthUser(req) {
       if (dbUser.password_changed_at && claims.iat * 1000 < Date.parse(dbUser.password_changed_at) - 1000) {
         return null;
       }
-      if (dbUser.plan) plan = isAgustin ? "pro" : dbUser.plan;
+      if (dbUser.plan) plan = isOwner ? "pro" : dbUser.plan;
       if (dbUser.name) name = dbUser.name;
     }
   } catch (e) {
@@ -234,7 +246,7 @@ export async function getAuthUser(req) {
     email,
     name,
     plan,
-    role: isAgustin ? "pro" : (claims.role || "user")
+    role: isOwner ? "pro" : (claims.role || "user")
   };
 
   userProfileCache.set(claims.sub, { user, cachedAt: Date.now() });
