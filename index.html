@@ -1570,9 +1570,15 @@
           if (newsBlock && newsList) {
             if (bcrpNews.length > 0) {
               var topNews = bcrpNews.slice(0, 3);
+              var escHtml = function (v) {
+                return String(v == null ? '' : v).replace(/[&<>"']/g, function (ch) {
+                  return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+                });
+              };
               newsList.innerHTML = topNews.map(function (it) {
-                var src = it.source ? ' <span class="text-ink-soft">· ' + it.source + '</span>' : '';
-                return '<li class="text-xs leading-snug"><a href="' + (it.url || '#') + '" target="_blank" rel="noopener noreferrer" class="text-ink font-medium hover:underline">' + (it.title || '') + '</a>' + src + '</li>';
+                var src = it.source ? ' <span class="text-ink-soft">· ' + escHtml(it.source) + '</span>' : '';
+                var href = /^https?:\/\//i.test(it.url || '') ? escHtml(it.url) : '#';
+                return '<li class="text-xs leading-snug"><a href="' + href + '" target="_blank" rel="noopener noreferrer" class="text-ink font-medium hover:underline">' + escHtml(it.title) + '</a>' + src + '</li>';
               }).join('');
               newsBlock.classList.remove('hidden');
             } else {
