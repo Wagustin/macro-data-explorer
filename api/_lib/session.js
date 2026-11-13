@@ -284,8 +284,6 @@ export function securityHeaders(res, methods = "GET, POST, OPTIONS", req = null)
     const origin = req.headers?.origin;
     const allowed = [
       /^https:\/\/(www\.)?perdata\.site$/i,
-      /^https:\/\/[a-z0-9\-]+(\.[a-z0-9\-]+)*\.vercel\.app$/i,
-      /^https:\/\/[a-z0-9\-]+(\.[a-z0-9\-]+)*\.workers\.dev$/i,
       /^https?:\/\/(localhost|127\.0\.0\.1)(:[0-9]+)?$/i
     ];
     if (origin && allowed.some(pat => pat.test(origin))) {

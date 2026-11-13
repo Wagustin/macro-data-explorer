@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import crypto from "node:crypto";
 
 process.env.JWT_SECRET = "session-test-secret";
-const { verifySession, isOwnerEmail } = await import("../api/_lib/session.js");
+const { verifySession, isOwnerEmail, securityHeaders } = await import("../api/_lib/session.js");
 
 function token(claims) {
   const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url");
@@ -31,3 +31,18 @@ test("isOwnerEmail is false for other addresses and empty input", async () => {
   assert.equal(await isOwnerEmail(""), false);
   assert.equal(await isOwnerEmail(undefined), false);
 });
+
+test("securityHeaders echoes only the production site and local origins in CORS", () => {
+  const allowedOrigin = (origin) => {
+    const res = { headers: {}, setHeader(k, v) { this.headers[k] = v; }, getHeader(k) { return this.headers[k]; } };
+    securityHeaders(res, "GET, OPTIONS", { headers: { origin } });
+    return res.headers["Access-Control-Allow-Origin"] ?? null;
+  };
+  for (const origin of ["https://perdata.site", "https://www.perdata.site", "http://localhost:3000", "http://127.0.0.1:8080"]) {
+    assert.equal(allowedOrigin(origin), origin);
+  }
+  for (const origin of ["https://evil.vercel.app", "https://otro.workers.dev", "https://perdata.site.evil.com", "http://perdata.site"]) {
+    assert.equal(allowedOrigin(origin), null);
+  }
+});
+
