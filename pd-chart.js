@@ -839,7 +839,7 @@
           if (p10[idx] != null && p90[idx] != null) html += row("Rango 80 % (P10–P90)", fmt3(p10[idx]) + " – " + fmt3(p90[idx]));
           if (p25[idx] != null && p75[idx] != null) html += row("Rango 50 % (P25–P75)", fmt3(p25[idx]) + " – " + fmt3(p75[idx]));
           if (hoyOpt.cierre1330 && hoyOpt.cierre1330.fuente === "prensa") {
-            html += `<div style="margin-top:5px;font-size:11px;color:${tokens.inkSoft};">Cierre interbancario según El Comercio y Andina; el BCRP lo confirma al día siguiente.</div>`;
+            html += `<div style="margin-top:5px;font-size:11px;color:${tokens.inkSoft};">Cierre interbancario tomado de la prensa; el BCRP lo confirma al día siguiente.</div>`;
           }
         } else if (isFuture && p != null && !isNaN(p)) {
           html += row("Lo más probable (P50)", fmt(p), true);
