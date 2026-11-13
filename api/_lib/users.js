@@ -23,6 +23,10 @@ export const IS_PRODUCTION = process.env.VERCEL_ENV === "production" || process.
 const BASE_COLUMNS = ["id", "email", "name", "role", "salt", "hash", "iterations", "provider", "created_at"];
 const USER_SELECT_COLUMNS = "id,email,name,role,salt,hash,iterations,provider,created_at,plan,stripe_customer_id,stripe_subscription_id,subscription_status,cancel_at_period_end,current_period_end,updated_at,reset_token_hash,reset_expires_at,password_changed_at";
 const USER_SELECT_COLUMNS_TRIAL = `${USER_SELECT_COLUMNS},trial_usado,trial_hasta`;
+// Migration 0015 (trial_interval). Tried first; if it is not applied yet the
+// lookup falls back to the trial list above, so it never breaks user reads.
+const USER_SELECT_COLUMNS_INTERVAL = `${USER_SELECT_COLUMNS_TRIAL},trial_interval`;
+let intervalColumnMissing = false;
 
 async function supabase(method, query, body) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}${query}`, {
@@ -83,7 +87,13 @@ async function findOne(field, value) {
   if (USE_SUPABASE) {
     // Prefer the trial columns (migration 0014); if the migration is not
     // applied yet the extended select fails and we fall back to the base list.
-    let rows = await supabase("GET", `?${field}=eq.${encodeURIComponent(value)}&select=${USER_SELECT_COLUMNS_TRIAL}&limit=1`).catch(() => null);
+    let rows = intervalColumnMissing ? null : await supabase("GET", `?${field}=eq.${encodeURIComponent(value)}&select=${USER_SELECT_COLUMNS_INTERVAL}&limit=1`).catch(() => null);
+    if (!rows) {
+      rows = await supabase("GET", `?${field}=eq.${encodeURIComponent(value)}&select=${USER_SELECT_COLUMNS_TRIAL}&limit=1`).catch(() => null);
+      // The narrower select worked, so the column is what is missing: stop
+      // paying for the failed query until this instance is recycled.
+      if (rows) intervalColumnMissing = true;
+    }
     if (!rows) rows = await supabase("GET", `?${field}=eq.${encodeURIComponent(value)}&select=${USER_SELECT_COLUMNS}&limit=1`).catch(() => ({}));
     if (!Array.isArray(rows)) return null;
     return rows.length ? rows[0] : null;

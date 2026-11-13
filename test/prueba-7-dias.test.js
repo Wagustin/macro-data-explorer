@@ -48,13 +48,14 @@ function decodeForm(body) {
 
 // Builds a fake fetch with a small in-memory PostgREST for the tables the
 // handlers touch, plus mocked Stripe and Resend endpoints.
-function installMock({ users, trialCards, usedTrialOnce, subscriptionList, subscriptionListFails } = {}) {
+function installMock({ users, trialCards, usedTrialOnce, subscriptionList, subscriptionListFails, trialIntervalMissing } = {}) {
   _clearUserCache();
   const stripeCalls = [];
   const emails = [];
   const trialTarjetas = new Map((trialCards || []).map((r) => [r.fingerprint, r]));
   const usersById = new Map((users || []).map((u) => [u.id, { ...u }]));
   const usedOnce = usedTrialOnce || new Set();
+  const patches = [];
 
   globalThis.fetch = async (url, init = {}) => {
     const u = new URL(String(url));
@@ -125,6 +126,9 @@ function installMock({ users, trialCards, usedTrialOnce, subscriptionList, subsc
       if (email) rows = rows.filter((r) => r.email === decodeURIComponent(email));
       if (customer) rows = rows.filter((r) => r.stripe_customer_id === decodeURIComponent(customer));
       if (method === "GET") {
+        if (trialIntervalMissing && select.includes("trial_interval")) {
+          return jsonResponse({ message: "column users.trial_interval does not exist" }, 400);
+        }
         if (select.includes("trial_usado")) {
           if (usedOnce.has("__error__")) throw new Error("column trial_usado does not exist");
           const mapped = rows.map((r) => ({
@@ -138,6 +142,10 @@ function installMock({ users, trialCards, usedTrialOnce, subscriptionList, subsc
       }
       if (method === "PATCH") {
         const patch = JSON.parse(body || "{}");
+        patches.push(patch);
+        if (trialIntervalMissing && "trial_interval" in patch) {
+          return jsonResponse({ message: "column users.trial_interval does not exist" }, 400);
+        }
         const target = usersById.get(decodeURIComponent(id));
         if (target) Object.assign(target, patch);
         return jsonResponse(target ? [target] : []);
@@ -163,7 +171,7 @@ function installMock({ users, trialCards, usedTrialOnce, subscriptionList, subsc
     return jsonResponse({ error: "not mocked" }, 404);
   };
 
-  return { stripeCalls, emails, trialTarjetas, usersById };
+  return { stripeCalls, emails, trialTarjetas, usersById, patches };
 }
 
 function restore() {
@@ -532,4 +540,74 @@ test("ops doc explains the manual steps", async () => {
   const doc = fs.readFileSync(new URL("../docs/PRUEBA_7_DIAS.md", import.meta.url), "utf8");
   assert.match(doc, /0014/);
   assert.match(doc, /trial_will_end/);
+});
+
+test("webhook trialing annual: stores trial_interval in a separate update after the main one", async () => {
+  const mock = installMock({
+    users: [{ id: "user_trial_1", email: "trial@example.com", plan: "free", stripe_subscription_id: null, stripe_customer_id: "cus_test_1" }],
+    trialCards: []
+  });
+  try {
+    const sub = trialingSub("user_trial_1");
+    sub.items.data[0].price.recurring.interval = "year";
+    const res = response();
+    await webhookHandler(webhookReq("customer.subscription.created", sub), res);
+    assert.equal(res.statusCode, 200);
+    const mainIdx = mock.patches.findIndex((p) => "plan" in p);
+    const intervalIdx = mock.patches.findIndex((p) => "trial_interval" in p);
+    assert.ok(mainIdx >= 0 && intervalIdx > mainIdx, "trial_interval must go in its own update after the main one");
+    assert.equal("trial_interval" in mock.patches[mainIdx], false);
+    assert.equal(mock.patches[intervalIdx].trial_interval, "year");
+    assert.equal(mock.usersById.get("user_trial_1").subscription_status, "trialing");
+  } finally {
+    restore();
+  }
+});
+
+test("webhook: if trial_interval update fails (migration 0015 not applied), plan and status are still saved", async () => {
+  const mock = installMock({
+    users: [{ id: "user_trial_1", email: "trial@example.com", plan: "free", stripe_subscription_id: null, stripe_customer_id: "cus_test_1" }],
+    trialCards: [],
+    trialIntervalMissing: true
+  });
+  const errors = [];
+  const originalError = console.error;
+  console.error = (...args) => errors.push(args.join(" "));
+  try {
+    const res = response();
+    await webhookHandler(webhookReq("customer.subscription.created", trialingSub("user_trial_1")), res);
+    assert.equal(res.statusCode, 200);
+    const updated = mock.usersById.get("user_trial_1");
+    assert.equal(updated.subscription_status, "trialing");
+    assert.equal(updated.trial_usado, true);
+    assert.equal(updated.plan, "boletin");
+    assert.equal(updated.trial_interval, undefined);
+    assert.ok(errors.some((e) => e.includes("trial_interval update failed")));
+  } finally {
+    console.error = originalError;
+    restore();
+  }
+});
+
+test("users: reads still work when trial_interval column is missing", async () => {
+  const mock = installMock({
+    users: [{ id: "user_trial_1", email: "trial@example.com", plan: "boletin", subscription_status: "trialing", trial_hasta: "2026-11-16T00:00:00.000Z", stripe_customer_id: "cus_x" }],
+    trialCards: [],
+    trialIntervalMissing: true
+  });
+  try {
+    const users = await import("../api/_lib/users.js");
+    const user = await users.findUserById("user_trial_1");
+    assert.ok(user, "user must be found even without trial_interval");
+    assert.equal(user.email, "trial@example.com");
+    assert.equal(users.publicUser(user).trialInterval, "month");
+  } finally {
+    restore();
+  }
+});
+
+test("migration 0015 adds trial_interval idempotently", async () => {
+  const fs = await import("node:fs");
+  const sql = fs.readFileSync(new URL("../supabase/migrations/0015_trial_interval.sql", import.meta.url), "utf8");
+  assert.match(sql, /alter table public\.users add column if not exists trial_interval text;/);
 });

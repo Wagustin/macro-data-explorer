@@ -73,6 +73,15 @@ async function applySubscription(sub, userIdHint, eventType) {
     current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
     ...(sub.status === "trialing" ? { trial_usado: true, trial_hasta: periodEnd ? new Date(periodEnd * 1000).toISOString() : null } : {})
   });
+  // Kept apart from the update above: if migration 0015 is not applied yet only
+  // this column fails, while the plan and the status are already saved.
+  if (sub.status === "trialing") {
+    try {
+      await updateUser(user.id, { trial_interval: sub.items?.data?.[0]?.price?.recurring?.interval || null });
+    } catch (e) {
+      console.error("[stripe-webhook] trial_interval update failed:", e.message);
+    }
+  }
   // One trial per card: register the default payment method fingerprint. A
   // fingerprint already tied to another user ends the trial immediately.
   // Only the creation events register the card; later updates must not insert again.

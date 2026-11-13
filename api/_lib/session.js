@@ -316,8 +316,19 @@ export async function readJsonBody(req) {
   try { return JSON.parse(await readRawBody(req)); } catch (e) { return {}; }
 }
 
+// Attempt counters live in D1 (globalThis.PERDATA_DB, set by worker.js) so every
+// Cloudflare server shares them. Without D1, or if a D1 step fails, the in-memory Map is used.
 const attempts = new Map();
-export function rateLimited(key, limit = 10, windowMs = 15 * 60 * 1000) {
+let rateTableReady = null;
+let rateFallbackLogged = false;
+const RATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS rate_limits (k TEXT PRIMARY KEY, start INTEGER NOT NULL, count INTEGER NOT NULL)";
+const RATE_COUNT_SQL = `INSERT INTO rate_limits (k, start, count) VALUES (?1, ?2, 1)
+  ON CONFLICT(k) DO UPDATE SET
+    count = CASE WHEN ?2 - start > ?3 THEN 1 ELSE count + 1 END,
+    start = CASE WHEN ?2 - start > ?3 THEN ?2 ELSE start END
+  RETURNING count`;
+
+function rateLimitedInMemory(key, limit, windowMs) {
   const now = Date.now();
   const entry = attempts.get(key);
   if (!entry || now - entry.start > windowMs) {
@@ -326,6 +337,40 @@ export function rateLimited(key, limit = 10, windowMs = 15 * 60 * 1000) {
   }
   entry.count += 1;
   return entry.count > limit;
+}
+
+async function rateLimitedInD1(db, key, limit, windowMs) {
+  const now = Date.now();
+  if (!rateTableReady) rateTableReady = db.prepare(RATE_TABLE_SQL).run();
+  await rateTableReady;
+  const data = new TextEncoder().encode(key);
+  const hash = [...new Uint8Array(await crypto.subtle.digest("SHA-256", data))]
+    .map((b) => b.toString(16).padStart(2, "0")).join("");
+  // Cheap cleanup: about 1 call in 100 removes rows untouched for 2 days
+  if (Math.random() < 0.01) {
+    Promise.resolve()
+      .then(() => db.prepare("DELETE FROM rate_limits WHERE start < ?").bind(now - 2 * 24 * 60 * 60 * 1000).run())
+      .catch(() => {});
+  }
+  const row = await db.prepare(RATE_COUNT_SQL).bind(hash, now, windowMs).first();
+  if (!row || typeof row.count !== "number") throw new Error("rate_limits: sin contador");
+  return row.count > limit;
+}
+
+export async function rateLimited(key, limit = 10, windowMs = 15 * 60 * 1000) {
+  const db = globalThis.PERDATA_DB;
+  if (db) {
+    try {
+      return await rateLimitedInD1(db, key, limit, windowMs);
+    } catch (err) {
+      rateTableReady = null;
+      if (!rateFallbackLogged) {
+        rateFallbackLogged = true;
+        console.error("rateLimited: D1 no disponible, uso memoria local:", err);
+      }
+    }
+  }
+  return rateLimitedInMemory(key, limit, windowMs);
 }
 
 export function clientIp(req) {
