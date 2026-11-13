@@ -310,7 +310,7 @@ const faqItems = [
   },
   {
     q: "¿Qué significa exactamente la cobertura del 80% fuera de muestra?",
-    a: "Que, al probar el modelo con períodos que no usó para ajustarse, el intervalo entre P10 y P90 contuvo el cierre real en cerca del 80% de los cortes evaluados. Es una medida honesta de error, distinta de la cobertura sobre los mismos datos con los que se calibró el modelo.",
+    a: "Significa que, al probar el modelo con períodos que no usó para ajustarse, el intervalo entre P10 y P90 contuvo el cierre real en cerca del 80% de los cortes evaluados. Es una medida honesta de error, distinta de la cobertura sobre los mismos datos con los que se calibró el modelo.",
   },
   {
     q: "¿El P50 va a ser el precio del cierre del día?",
@@ -336,15 +336,15 @@ const faqHtml = faqItems
 
 const textoExplicativo = `
         <section class="pd-prose">
-          <h2>Que mueve el dolar en el Peru</h2>
+          <h2>Qué mueve el dólar en el Perú</h2>
           <p>
             El tipo de cambio del sol peruano se mueve, en el corto plazo, por cuatro fuerzas que se
             empujan entre si. La primera es el precio del cobre. Peru es uno de los mayores exportadores
             de metal rojo del mundo y, por eso, cada movimiento del cobre en Londres se traslada al
-            mercado local: cuando el cobre sube, los exportadoresryth receive mas dolares por libra y
-            la oferta de divisas en el mercado interbancario aumenta, lo que tiende a<void depreciar el sol.
+            mercado local: cuando el cobre sube, los exportadores reciben más dólares por libra y
+            la oferta de divisas en el mercado interbancario aumenta, lo que tiende a apreciar el sol.
             La segunda son los terminos de intercambio, que miden el precio de nuestras exportaciones
-           相对于 los precios de nuestras importaciones. Con los terminos de intercambioGrowing ${pct(terminosVar12m ? terminosVar12m.valor : 0, 2)} en los doce meses hasta ${escapeHtml(fechaLarga(terminosVar12m ? terminosVar12m.fecha : ''))} y el cobre de exportacion en
+           frente a los precios de nuestras importaciones. Con una variación de ${pct(terminosVar12m ? terminosVar12m.valor : 0, 2)} en los doce meses hasta ${escapeHtml(fechaLarga(terminosVar12m ? terminosVar12m.fecha : ''))} y el cobre de exportacion en
             ${escapeHtml(valorIndicador(cobreExportacion))}, el pais exporta mas valor real por cada
             unidad que importa, y esa diferencia sostiene la posicion competitiva del sol.
           </p>
@@ -358,13 +358,13 @@ const textoExplicativo = `
             ajusta con anos, no con semanas.
           </p>
 
-          <h2>Como interviene el BCRP</h2>
+          <h2>Cómo interviene el BCRP</h2>
           <p>
-            Peru tiene un regimen de flotacion administrada. El Banco Central de Reserva del Peru no fija
+            Perú tiene un régimen de flotación administrada. El Banco Central de Reserva del Peru no fija
             un tipo de cambio, pero acepta que el mercado estable y con liquidez es una condicion
             necessaria para el buen funcionamiento de la politica monetaria. Para ello dispone de
             reservas internacionales netas de ${escapeHtml(num(rin ? rin.valor : 0, 2))} millones de dolares
-            (${escapeHtml(rin ? rin.fecha : 's/d')}), que funcionan como colchon de seguridad y como
+            (${escapeHtml(rin ? rin.fecha : 's/d')}), que funcionan como colchón de seguridad y como
             respaldo de la credibilidad cambiaria del pais. Ademas, su posicion de cambio asciende a
             ${escapeHtml(num(posicionCambio ? posicionCambio.valor : 0, 2))} millones de dolares
             (${escapeHtml(posicionCambio ? posicionCambio.fecha : 's/d')}).
@@ -383,20 +383,20 @@ const textoExplicativo = `
             emitido de ${escapeHtml(num(cdrEmitido ? cdrEmitido.valor : 0, 2))} millones. Los CDR
             (certificados de deposito reajustables) captan soles del sistema bancario para drenar
             liquidez, y los swaps hace lo mismo pero con dolares como underlying. En conjunto, estas
-            herramientas permiten que el BCRP modere la volatilidad sin abandonar el浮动 cambiario.
+            herramientas permiten que el BCRP modere la volatilidad sin abandonar la flotación cambiaria.
           </p>
 
-          <h2>Como leer un rango probable</h2>
+          <h2>Cómo leer un rango probable</h2>
           <p>
             Un rango probable no es un precio objetivo: es una distribucion. El P10 es el percentil 10,
             es decir el valor que el cierre supera en ocho de cada diez observaciones comparables; el P50
             es la mediana, el valor con la mayor densidad de probabilidad; el P90 es el percentil 90, el
             valor que el cierre no supera en ocho de cada diez observaciones. Por eso el intervalo P10-P90
-            esta calibrado para cubrir cerca del 80% de los casos, no el 100%.
+            está calibrado para cubrir cerca del 80% de los casos, no el 100%.
           </p>
           <p>
             La validacion importa mas que el numero. El motor se evalua con cortes fuera de muestra:
-            cortes de tiempo que nunca vio durante el calibracion. Para el horizonte de un dia la cobertura
+            cortes de tiempo que nunca vio durante la calibración. Para el horizonte de un dia la cobertura
             empirica fue de ${pct(mananaCoberturaFuera, 2)} sobre ${num(mananaCortes, 0)} cortes; para la
             semana, ${pct(semanaCoberturaFuera, 2)} sobre ${num(semanaCortes, 0)} cortes; y el motor
             mensual entrega una cobertura de calibracion de ${pct(mesCobertura, 2)} sobre ${num(mesN, 0)}
@@ -407,7 +407,7 @@ const textoExplicativo = `
             monotona.
           </p>
 
-          <h2>Que no es una proyeccion</h2>
+          <h2>Qué no es una proyección</h2>
           <p>
             Esta pagina no es asesoria financiera y no es una recomendacion de compra o venta. Un rango
             probable describe una frecuencia historica, no una promesa: el cierre real puede quedar fuera
@@ -848,6 +848,12 @@ const ACENTOS = {
   credito: 'crédito', cotizacion: 'cotización', evolucion: 'evolución', despues: 'después', tecnica: 'técnica',
   util: 'útil', segun: 'según', informacion: 'información', region: 'región', decision: 'decisión',
   decisiones: 'decisiones', minima: 'mínima', maxima: 'máxima', limite: 'límite', facil: 'fácil',
+  deficit: 'déficit', superavit: 'superávit', economia: 'economía', presion: 'presión', pagina: 'página',
+  asesoria: 'asesoría', recomendacion: 'recomendación', codigo: 'código', validacion: 'validación',
+  distribucion: 'distribución', regimen: 'régimen', negociacion: 'negociación', exportacion: 'exportación',
+  observacion: 'observación', macroeconomicas: 'macroeconómicas', resumenes: 'resúmenes', quienes: 'quiénes',
+  centimos: 'céntimos', flotacion: 'flotación', colchon: 'colchón', pais: 'país', evalua: 'evalúa',
+  monotona: 'monótona', definicion: 'definición', precision: 'precisión', necessaria: 'necesaria',
   podria: 'podría', movidas: 'movería'
 };
 const conAcentos = (txt) => txt.replace(/[A-Za-z]+/g, (w) => {
