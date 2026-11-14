@@ -48,7 +48,7 @@ function decodeForm(body) {
 
 // Builds a fake fetch with a small in-memory PostgREST for the tables the
 // handlers touch, plus mocked Stripe and Resend endpoints.
-function installMock({ users, trialCards, usedTrialOnce, subscriptionList, subscriptionListFails, trialIntervalMissing } = {}) {
+function installMock({ users, trialCards, usedTrialOnce, subscriptionList, subscriptionListFails, trialIntervalMissing, subscriptionInterval = "month" } = {}) {
   _clearUserCache();
   const stripeCalls = [];
   const emails = [];
@@ -95,7 +95,7 @@ function installMock({ users, trialCards, usedTrialOnce, subscriptionList, subsc
           current_period_end: periodEnd,
           trial_end: periodEnd,
           cancel_at_period_end: false,
-          items: { data: [{ price: { id: "price_1UUZSwPohxxHwL5eJPNVQba1", recurring: { interval: "month" } }, current_period_end: periodEnd }] }
+          items: { data: [{ price: { id: "price_1UUZSwPohxxHwL5eJPNVQba1", recurring: { interval: subscriptionInterval } }, current_period_end: periodEnd }] }
         });
       }
       if (u.pathname.startsWith("/v1/subscriptions/sub_test") && method === "POST") {
@@ -545,7 +545,8 @@ test("ops doc explains the manual steps", async () => {
 test("webhook trialing annual: stores trial_interval in a separate update after the main one", async () => {
   const mock = installMock({
     users: [{ id: "user_trial_1", email: "trial@example.com", plan: "free", stripe_subscription_id: null, stripe_customer_id: "cus_test_1" }],
-    trialCards: []
+    trialCards: [],
+    subscriptionInterval: "year"
   });
   try {
     const sub = trialingSub("user_trial_1");
@@ -610,4 +611,23 @@ test("migration 0015 adds trial_interval idempotently", async () => {
   const fs = await import("node:fs");
   const sql = fs.readFileSync(new URL("../supabase/migrations/0015_trial_interval.sql", import.meta.url), "utf8");
   assert.match(sql, /alter table public\.users add column if not exists trial_interval text;/);
+});
+
+test("webhook: un evento viejo de suscripción no pisa el estado actual (se relee de Stripe)", async () => {
+  const mock = installMock({
+    users: [{ id: "user_trial_1", email: "trial@example.com", plan: "free", stripe_subscription_id: null, stripe_customer_id: "cus_test_1" }],
+    trialCards: []
+  });
+  try {
+    // El aviso llega con un estado viejo («canceled»), pero en Stripe la suscripción sigue en prueba
+    const viejo = { ...trialingSub("user_trial_1"), status: "canceled" };
+    const res = response();
+    await webhookHandler(webhookReq("customer.subscription.updated", viejo), res);
+    assert.equal(res.statusCode, 200);
+    assert.ok(mock.stripeCalls.some((c) => c.method === "GET" && c.path.startsWith("/v1/subscriptions/sub_test")), "relee la suscripción en Stripe");
+    assert.equal(mock.usersById.get("user_trial_1").subscription_status, "trialing");
+    assert.notEqual(mock.usersById.get("user_trial_1").plan, "free");
+  } finally {
+    restore();
+  }
 });

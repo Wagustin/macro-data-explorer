@@ -39,7 +39,10 @@ export default async function handler(req, res) {
     } else if (event.type === "customer.subscription.trial_will_end") {
       await trialWillEnd(obj, obj.metadata && obj.metadata.user_id);
     } else if (event.type.startsWith("customer.subscription.")) {
-      await applySubscription(obj, obj.metadata && obj.metadata.user_id, event.type);
+      // Same as above: Stripe can deliver these out of order or retry an old one, so the
+      // event snapshot could overwrite a newer state. Read the subscription as it is now.
+      const sub = await stripe("GET", `/subscriptions/${obj.id}`);
+      await applySubscription(sub, (obj.metadata && obj.metadata.user_id) || (sub.metadata && sub.metadata.user_id), event.type);
     }
   } catch (e) {
     console.error(`[stripe-webhook] ${event.type} failed:`, e.message);
