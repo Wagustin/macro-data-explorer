@@ -229,7 +229,9 @@ function cacheBustHtml(content) {
     }
     const cleanUrl = url.split("?")[0].split("#")[0];
     const hash = assetHashes.get(cleanUrl) || assetHashes.get(cleanUrl.startsWith("/") ? cleanUrl.slice(1) : `/${cleanUrl}`);
-    if (hash && /\.(?:css|js|woff2)$/i.test(cleanUrl)) {
+    // Fonts keep their plain URL: pd.css loads them as /fonts/x.woff2, so a versioned preload
+    // would be a second download and the real one would arrive late (layout shift on mobile)
+    if (hash && /\.(?:css|js)$/i.test(cleanUrl)) {
       return `${attr}=${quote}${cleanUrl}?v=${hash}${quote}`;
     }
     return match;
