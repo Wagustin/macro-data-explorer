@@ -407,7 +407,7 @@
 
   // Cloudflare Turnstile (antibots) para el registro y el boletín. Sin clave de sitio no hace nada
   // y los formularios siguen funcionando igual. Solo se muestra si Cloudflare pide interacción.
-  const TURNSTILE_SITE_KEY = "";
+  const TURNSTILE_SITE_KEY = "0x4AAAAAAGAi25tSJchYKKT4";
   function turnstileToken() {
     if (!TURNSTILE_SITE_KEY) return Promise.resolve("");
     return new Promise((resolve) => {
