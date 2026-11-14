@@ -239,7 +239,7 @@
       </h1>
       
       <p class="text-sm sm:text-base text-ink-soft leading-relaxed">
-        Las condiciones de uso de PerData, los límites de nuestra responsabilidad y cómo funcionan los modelos que usamos. Última actualización: 11 de noviembre de 2026.
+        Las condiciones de uso de PerData, los límites de nuestra responsabilidad y cómo funcionan los modelos que usamos. Última actualización: 14 de noviembre de 2026.
       </p>
     </section>
 
@@ -265,7 +265,7 @@
       </h2>
 
       <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
-        Las cotizaciones de instrumentos de renta variable de la Bolsa de Valores de Lima, los contratos de futuros de materias primas (Cobre COMEX, Oro, Plata, Petróleo) y los tipos de cambio soberanos (USD/PEN) están sujetos a volatilidades extremas, shocks geopolíticos, cambios regulatorios, factores climáticos y eventos de cola (*black swans*). El rendimiento histórico y las proyecciones probabilísticas no garantizan resultados futuros.
+        Las cotizaciones de instrumentos de renta variable de la Bolsa de Valores de Lima, los precios internacionales de materias primas (cobre, oro, plata, zinc y petróleo) y los tipos de cambio soberanos (USD/PEN) están sujetos a volatilidades extremas, shocks geopolíticos, cambios regulatorios, factores climáticos y eventos de cola (*black swans*). El rendimiento histórico y las proyecciones probabilísticas no garantizan resultados futuros.
       </p>
     </section>
 
@@ -286,7 +286,7 @@
       <div class="py-4 border-t border-rule space-y-2">
         <h3 class="font-bold text-ink text-sm">A. Modelo de proyección de PerData</h3>
         <p class="text-xs text-ink-soft leading-relaxed">
-          Las proyecciones (P10, P25, P50, P75, P90) se calculan con un modelo estadístico propio: tendencia reciente amortiguada, reversión gradual al nivel de largo plazo de cada serie y estacionalidad. La banda de incertidumbre se modela como un proceso que crece con el horizonte y se estabiliza. No hay ajustes manuales sobre los resultados.
+          Las proyecciones (P10, P25, P50, P75, P90) se calculan con modelos estadísticos propios. Los rangos de corto plazo (del próximo día hábil a un mes) parten del último cierre oficial y miden la incertidumbre con una simulación histórica filtrada: los movimientos de los últimos años, reescalados a la volatilidad reciente y calibrados para que el rango amplio contenga el cierre real cerca de 8 de cada 10 veces. Los horizontes mensuales y largos usan un modelo de tendencia amortiguada, reversión gradual al nivel de largo plazo y estacionalidad, con una banda que crece con el horizonte. No hay ajustes manuales sobre los resultados. El detalle está en la página de <a href="/metodologia" class="underline">Metodología</a>.
         </p>
       </div>
       <div class="py-4 border-t border-rule space-y-2">
@@ -304,7 +304,7 @@
       </h2>
 
       <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
-        El registro con correo electrónico se utiliza exclusivamente para gestionar tu sesión y el plan contratado. Las contraseñas se almacenan cifradas con un algoritmo de derivación de claves (PBKDF2) y nunca en texto plano. Los datos personales nunca se comercializan a terceros. El diseño visual, la formulación matemática y el código propietario de la terminal están protegidos por leyes internacionales de propiedad intelectual.
+        El registro con correo electrónico se utiliza exclusivamente para gestionar tu sesión y el plan contratado. Las contraseñas las gestiona nuestro proveedor de autenticación, que solo guarda un hash cifrado y nunca el texto plano. Los datos personales nunca se comercializan a terceros. El diseño visual, la formulación matemática y el código propietario de la terminal están protegidos por leyes internacionales de propiedad intelectual.
       </p>
     </section>
 
@@ -330,21 +330,21 @@
       </h2>
 
       <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
-        Las cotizaciones pueden presentar desfases de 15 minutos o más respecto al mercado en vivo; el sello temporal de cada serie indica la última observación oficial registrada. El pipeline de noticias se actualiza de manera automatizada cada 20 minutos. La plataforma se provee "tal cual" y "según disponibilidad", sin garantía de continuidad ininterrumpida: eventos de mantenimiento, fallas de proveedores externos o contingencias de infraestructura serverless pueden degradar temporalmente la experiencia sin que ello genere responsabilidad contractual para PerData.
+        Las cifras se basan en cierres oficiales publicados por sus fuentes, que llegan con retraso respecto al mercado en vivo (en general, del día hábil anterior); cada serie indica la fecha de su última observación oficial. Las noticias se actualizan de forma automática varias veces al día. La plataforma se provee "tal cual" y "según disponibilidad", sin garantía de continuidad ininterrumpida: eventos de mantenimiento, fallas de proveedores externos o contingencias de infraestructura serverless pueden degradar temporalmente la experiencia sin que ello genere responsabilidad contractual para PerData.
       </p>
     </section>
 
     <!-- SECTION 7: SUSCRIPCIONES Y PAGOS -->
     <section id="suscripciones" class="py-6 border-t border-rule space-y-3.5">
       <h2 class="text-lg sm:text-xl font-semibold text-black dark:text-white">
-        7. Plan Pro, Suscripciones y Pagos
+        7. Planes de pago, suscripciones y pagos
       </h2>
 
       <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
-        El plan Pro es una suscripción de renovación automática al precio y con la periodicidad indicados en la página de <a href="/precios" class="underline">Precios</a> al momento de contratar. Los pagos se procesan a través de Stripe; PerData no almacena los datos de tu tarjeta. Recibirás un recibo por correo electrónico en cada cobro.
+        Los planes Boletín y Pro son suscripciones de renovación automática al precio y con la periodicidad indicados en la página de <a href="/precios" class="underline">Precios</a> al momento de contratar. Los pagos se procesan a través de Stripe; PerData no almacena los datos de tu tarjeta. Recibirás un recibo por correo electrónico en cada cobro.
       </p>
       <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
-        Puedes cancelar en cualquier momento desde <a href="/cuenta" class="underline">Mi cuenta</a>. La cancelación detiene las renovaciones futuras y conservas el acceso Pro hasta el final del periodo ya pagado. Los periodos ya cobrados no son reembolsables, ni total ni parcialmente, salvo en los casos en que la legislación aplicable disponga lo contrario. Si un cobro no puede completarse, la cuenta vuelve al plan Gratis hasta que se regularice el método de pago. Cualquier cambio de precio se comunicará con anticipación y solo aplicará a partir del siguiente periodo de facturación.
+        Puedes cancelar en cualquier momento desde <a href="/cuenta" class="underline">Mi cuenta</a>. La cancelación detiene las renovaciones futuras y conservas el acceso de tu plan hasta el final del periodo ya pagado. Los periodos ya cobrados no son reembolsables, ni total ni parcialmente, salvo en los casos en que la legislación aplicable disponga lo contrario. Si un cobro no puede completarse, la cuenta vuelve al plan Gratis hasta que se regularice el método de pago. Cualquier cambio de precio se comunicará con anticipación y solo aplicará a partir del siguiente periodo de facturación.
       </p>
     </section>
 
@@ -384,7 +384,7 @@
       </p>
 
       <p class="text-xs sm:text-sm text-ink-soft leading-relaxed">
-        La versión del 9 de noviembre de 2026 añadió las reglas de la prueba gratuita del plan Boletín; la del 11 de noviembre de 2026 incorpora este canal de reclamos.
+        La versión del 9 de noviembre de 2026 añadió las reglas de la prueba gratuita del plan Boletín; la del 11 de noviembre de 2026 incorpora este canal de reclamos; la del 14 de noviembre de 2026 corrige la descripción de los modelos, de la frecuencia de los datos y de los planes de pago.
       </p>
     </section>
 
