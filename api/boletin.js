@@ -13,6 +13,7 @@ import EMPRESAS from "../data/empresas.json" with { type: "json" };
 import { applyCors, handleRateLimit } from "./_lib/ratelimit.js";
 import { sendEmail, EMAIL_ENABLED } from "./_lib/email.js";
 import { rateLimited } from "./_lib/session.js";
+import { turnstileOk } from "./_lib/turnstile.js";
 
 const TABLE = "boletin_suscriptores";
 const SITE = process.env.APP_URL || "https://perdata.site";
@@ -131,6 +132,7 @@ export default async function handler(req, res) {
   const body = await readBody(req);
   const email = String(body.email || "").trim().toLowerCase();
   if (!EMAIL_RE.test(email)) return send(res, 400, { error: "Escribe un correo válido." });
+  if (!(await turnstileOk(body.turnstile, req.headers?.["cf-connecting-ip"]))) return send(res, 403, { error: "No pudimos comprobar que no eres un robot. Recarga la página e inténtalo de nuevo." });
   const generic = { ok: true, mensaje: "Te enviamos un correo para confirmar. Revisa tu bandeja de entrada (y la de spam)." };
 
   const found = await db(`?email=eq.${encodeURIComponent(email)}&select=estado,token`);

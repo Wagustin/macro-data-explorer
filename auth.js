@@ -405,8 +405,39 @@
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
 
+  // Cloudflare Turnstile (antibots) para el registro y el boletín. Sin clave de sitio no hace nada
+  // y los formularios siguen funcionando igual. Solo se muestra si Cloudflare pide interacción.
+  const TURNSTILE_SITE_KEY = "";
+  function turnstileToken() {
+    if (!TURNSTILE_SITE_KEY) return Promise.resolve("");
+    return new Promise((resolve) => {
+      let box = null;
+      const done = (t) => { clearTimeout(timer); if (box) setTimeout(() => box.remove(), 0); resolve(t || ""); };
+      const timer = setTimeout(() => done(""), 10000);
+      const run = () => {
+        box = document.createElement("div");
+        box.style.cssText = "position:fixed;right:16px;bottom:16px;z-index:2147483000";
+        document.body.appendChild(box);
+        window.turnstile.render(box, {
+          sitekey: TURNSTILE_SITE_KEY, appearance: "interaction-only", language: "es",
+          callback: done, "error-callback": () => done(""),
+          "before-interactive-callback": () => clearTimeout(timer),
+        });
+      };
+      if (window.turnstile) return run();
+      const s = document.createElement("script");
+      s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      s.async = true;
+      s.onload = run;
+      s.onerror = () => done("");
+      document.head.appendChild(s);
+    });
+  }
+  window.pdTurnstile = turnstileToken;
+
   async function submitCredentials(payload) {
     try {
+      if (payload.action === "signup") payload.turnstile = await turnstileToken();
       const res = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -531,7 +531,7 @@
       e.preventDefault();
       var btn = form.querySelector("button");
       btn.disabled = true;
-      fetch("/api/boletin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: input.value, origen: "boletin" }) })
+      (window.pdTurnstile ? window.pdTurnstile() : Promise.resolve("")).then(function (t) { return fetch("/api/boletin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: input.value, origen: "boletin", turnstile: t }) }); })
         .then(function (r) { return r.json(); })
         .then(function (d) { show(d.mensaje || d.error || "Algo salió mal. Inténtalo más tarde."); if (d.ok) form.reset(); })
         .catch(function () { show("No pudimos conectar. Inténtalo más tarde."); })

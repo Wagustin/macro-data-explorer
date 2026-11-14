@@ -16,6 +16,7 @@
  */
 
 import crypto from "crypto";
+import { turnstileOk } from "./_lib/turnstile.js";
 import { findUserByEmail, findUserByResetHash, findUserById, insertUser, updateUser, publicUser, IS_PRODUCTION } from "./_lib/users.js";
 import { EMAIL_ENABLED, sendEmail, passwordResetEmail, confirmEmailEmail } from "./_lib/email.js";
 import {
@@ -70,6 +71,9 @@ async function signup(req, res, body) {
   }
   if (!EMAIL_RE.test(email) || email.length > 254) {
     return sendJson(res, 400, { success: false, error: "Ingresa un correo electrónico válido." });
+  }
+  if (!(await turnstileOk(body.turnstile, clientIp(req)))) {
+    return sendJson(res, 403, { success: false, error: "No pudimos comprobar que no eres un robot. Recarga la página e inténtalo de nuevo." });
   }
   if (password.length < MIN_PASSWORD || password.length > 200) {
     return sendJson(res, 400, { success: false, error: `La contraseña debe tener al menos ${MIN_PASSWORD} caracteres.` });

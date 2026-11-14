@@ -1753,7 +1753,7 @@
         e.preventDefault();
         var btn = form.querySelector("button");
         if (btn) btn.disabled = true;
-        fetch("/api/boletin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: input.value, origen: "portada" }) })
+        (window.pdTurnstile ? window.pdTurnstile() : Promise.resolve("")).then(function (t) { return fetch("/api/boletin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: input.value, origen: "portada", turnstile: t }) }); })
           .then(function (r) { return r.json(); })
           .then(function (d) { msg.textContent = d.mensaje || d.error || "Algo salió mal. Inténtalo más tarde."; if (d.ok) form.reset(); })
           .catch(function () { msg.textContent = "No pudimos conectar. Inténtalo más tarde."; })
