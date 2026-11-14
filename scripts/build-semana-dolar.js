@@ -304,10 +304,11 @@ const SCRIPTS_HTML = `  <script>
   <script src="/consent.js" defer></script>
   <script src="/auth.js" defer></script>`;
 
-const CABECERA_PAGINA = (titulo, descripcion, canonica, robots = 'index, follow') => `<!DOCTYPE html>
+// conAnuncios: solo las notas (contenido propio) llevan espacio de publicidad, no el índice
+const CABECERA_PAGINA = (titulo, descripcion, canonica, robots = 'index, follow', conAnuncios = false) => `<!DOCTYPE html>
 <html lang="es-PE" class="light">
 <head>
-  <meta name="pd-geo" content="otro">
+${conAnuncios ? '  <meta name="pd-ads" content="1">\n' : ''}  <meta name="pd-geo" content="otro">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="${robots}">
@@ -373,7 +374,7 @@ const paginaNota = (nota) => {
   const titulo = `El dólar esta semana: del ${fechaCorta(m.inicio.fecha)} al ${fechaCorta(m.fin.fecha)}`;
   const descripcion = `Cierre del dólar en Perú del ${fechaCorta(m.inicio.fecha)} al ${fechaCorta(m.fin.fecha)} de ${fechaIso(m.fin.fecha).getUTCFullYear()}: variación, máximo, mínimo, intervención del BCRP y rango probable para los próximos días hábiles.`;
 
-  return `${CABECERA_PAGINA(titulo, descripcion, `https://perdata.site/semana/${nota.semana}`)}
+  return `${CABECERA_PAGINA(titulo, descripcion, `https://perdata.site/semana/${nota.semana}`, 'index, follow', true)}
 ${CABECERA_HTML}
 
   <main class="pd-data-main max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 w-full">
@@ -433,6 +434,8 @@ ${CABECERA_HTML}
       <p class="pd-fineprint">Nota generada automáticamente por PerData Engine el ${escapeHtml(nota.generado.slice(0, 10))}. Fuentes: ${escapeHtml(nota.fuente_cierres.fuente)} (serie ${escapeHtml(nota.fuente_cierres.codigo)}) y ${escapeHtml(nota.fuente_contexto.fuente)} (series ${escapeHtml(interv ? interv.codigo : 's/d')}, ${escapeHtml(swaps ? swaps.codigo : 's/d')}).</p>
     </section>
 
+    <div class="pd-ad" data-ad-kind="display"></div>
+
     <section class="mt-12">
       <p class="pd-fineprint">Nota redactada por el equipo de PerData. <a href="/semana" class="hover:text-ink transition no-underline">Todas las notas semanales</a> · <a href="/dolar" class="hover:text-ink transition no-underline">Dólar hoy</a> · <a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a></p>
     </section>
@@ -441,6 +444,7 @@ ${CABECERA_HTML}
 ${PIE_HTML}
 
 ${SCRIPTS_HTML}
+<script defer src="/ads.js"></script>
 ${CIERRE_PAGINA}`;
 };
 
