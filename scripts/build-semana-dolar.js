@@ -258,11 +258,11 @@ const CABECERA_HTML = `  <header class="border-b border-rule bg-card sticky top-
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
       <div class="flex items-center space-x-6">
         <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline"><span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Peru"><b></b><b></b><b></b></span></span></a>
-        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft" aria-label="Navegacion principal">
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft" aria-label="Navegación principal">
           <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a><a href="/empresas" class="hover:text-ink transition no-underline">Empresas</a><a href="/dolar" class="hover:text-ink transition no-underline">Dólar</a><a href="/mercado" class="hover:text-ink transition no-underline">Mercado</a><a href="/noticias" class="hover:text-ink transition no-underline">Noticias</a><a href="/metodologia" class="hover:text-ink transition no-underline">Metodología</a><a href="/guia" class="hover:text-ink transition no-underline">Guía</a><a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
         </nav>
       </div>
-      <div class="flex items-center space-x-2 sm:space-x-3"><div id="navbarAuthContainer"></div><label class="ui-switch" title="Alternar modo claro / oscuro"><input id="themeToggle" type="checkbox" aria-label="Modo oscuro" /><div class="slider"><div class="circle"></div></div></label><button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menu" aria-expanded="false"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      <div class="flex items-center space-x-2 sm:space-x-3"><div id="navbarAuthContainer"></div><label class="ui-switch" title="Alternar modo claro / oscuro"><input id="themeToggle" type="checkbox" aria-label="Modo oscuro" /><div class="slider"><div class="circle"></div></div></label><button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menú" aria-expanded="false"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
     </div>
     <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors"><nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft" aria-label="Menú móvil"><a href="/explorer" class="hover:text-ink py-1 no-underline">Terminal</a><a href="/empresas" class="hover:text-ink py-1 no-underline">Empresas</a><a href="/dolar" class="hover:text-ink py-1 no-underline">Dólar</a><a href="/mercado" class="hover:text-ink py-1 no-underline">Mercado</a><a href="/noticias" class="hover:text-ink py-1 no-underline">Noticias</a><a href="/metodologia" class="hover:text-ink py-1 no-underline">Metodología</a><a href="/guia" class="hover:text-ink py-1 no-underline">Guía</a><a href="/precios" class="hover:text-ink py-1 no-underline">Precios</a></nav></div>
   </header>`;
@@ -270,7 +270,7 @@ const CABECERA_HTML = `  <header class="border-b border-rule bg-card sticky top-
 const PIE_HTML = `  <footer class="border-t border-rule bg-card py-8 px-4">
     <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs text-ink-soft">
       <a href="/" class="pd-wordmark no-underline">PerData<span class="pd-flag" aria-hidden="true"><b></b><b></b><b></b></span></a>
-      <nav class="flex flex-wrap gap-5" aria-label="Navegacion secundaria">
+      <nav class="flex flex-wrap gap-5" aria-label="Navegación secundaria">
         <a href="/noticias">Noticias</a><a href="/resumenes">Archivo de resúmenes</a><a href="/mercado">Mercado</a><a href="/dolar">Dólar</a><a href="/semana">Notas semanales</a><a href="/estado">Estado</a><a href="/nosotros" class="hover:text-ink transition no-underline">Quiénes somos</a>
           <a href="/privacidad">Privacidad</a>
           <a href="/contacto">Contacto</a>

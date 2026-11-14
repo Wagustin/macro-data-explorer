@@ -339,7 +339,7 @@ const textoExplicativo = `
           <h2>Qué mueve el dólar en el Perú</h2>
           <p>
             El tipo de cambio del sol peruano se mueve, en el corto plazo, por cuatro fuerzas que se
-            empujan entre si. La primera es el precio del cobre. Peru es uno de los mayores exportadores
+            empujan entre sí. La primera es el precio del cobre. Peru es uno de los mayores exportadores
             de metal rojo del mundo y, por eso, cada movimiento del cobre en Londres se traslada al
             mercado local: cuando el cobre sube, los exportadores reciben más dólares por libra y
             la oferta de divisas en el mercado interbancario aumenta, lo que tiende a apreciar el sol.
@@ -361,7 +361,7 @@ const textoExplicativo = `
           <h2>Cómo interviene el BCRP</h2>
           <p>
             Perú tiene un régimen de flotación administrada. El Banco Central de Reserva del Peru no fija
-            un tipo de cambio, pero acepta que el mercado estable y con liquidez es una condicion
+            un tipo de cambio, pero acepta que el mercado estable y con liquidez es una condición
             necessaria para el buen funcionamiento de la politica monetaria. Para ello dispone de
             reservas internacionales netas de ${escapeHtml(num(rin ? rin.valor : 0, 2))} millones de dolares
             (${escapeHtml(rin ? rin.fecha : 's/d')}), que funcionan como colchón de seguridad y como
@@ -608,7 +608,7 @@ let htmlGenerado = `<!DOCTYPE html>
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between relative">
       <div class="flex items-center space-x-6">
         <a href="/" class="flex items-center space-x-2.5 text-inherit no-underline"><span class="pd-wordmark">PerData<span class="pd-flag" role="img" aria-label="Peru"><b></b><b></b><b></b></span></span></a>
-        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft" aria-label="Navegacion principal">
+        <nav class="hidden md:flex items-center space-x-5 text-xs font-medium text-ink-soft" aria-label="Navegación principal">
           <a href="/dolar" class="text-ink font-semibold border-b border-ink pb-0.5 no-underline" aria-current="page">Dolar</a>
           <a href="/explorer" class="hover:text-ink transition no-underline">Terminal</a>
           <a href="/empresas" class="hover:text-ink transition no-underline">Empresas</a>
@@ -620,9 +620,9 @@ let htmlGenerado = `<!DOCTYPE html>
           <a href="/precios" class="hover:text-ink transition no-underline">Precios</a>
         </nav>
       </div>
-      <div class="flex items-center space-x-2 sm:space-x-3"><div id="navbarAuthContainer"></div><label class="ui-switch" title="Alternar modo claro / oscuro"><input id="themeToggle" type="checkbox" aria-label="Modo oscuro" /><div class="slider"><div class="circle"></div></div></label><button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menu" aria-expanded="false"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      <div class="flex items-center space-x-2 sm:space-x-3"><div id="navbarAuthContainer"></div><label class="ui-switch" title="Alternar modo claro / oscuro"><input id="themeToggle" type="checkbox" aria-label="Modo oscuro" /><div class="slider"><div class="circle"></div></div></label><button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded border border-rule text-ink-soft hover:text-ink transition" aria-label="Abrir menú" aria-expanded="false"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
     </div>
-    <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors"><nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft" aria-label="Menu movil">
+    <div id="mobileMenu" class="hidden md:hidden border-t border-rule bg-card px-4 py-3 transition-colors"><nav class="flex flex-col py-2 text-xs font-medium space-y-2 text-ink-soft" aria-label="Menú móvil">
           <a href="/dolar" class="text-ink font-semibold py-1 no-underline" aria-current="page">Dolar</a>
           <a href="/explorer" class="hover:text-ink py-1 no-underline">Terminal</a>
           <a href="/empresas" class="hover:text-ink py-1 no-underline">Empresas</a>
@@ -729,7 +729,7 @@ let htmlGenerado = `<!DOCTYPE html>
   <footer class="border-t border-rule bg-card py-8 px-4">
     <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs text-ink-soft">
       <a href="/" class="pd-wordmark no-underline">PerData<span class="pd-flag" aria-hidden="true"><b></b><b></b><b></b></span></a>
-      <nav class="flex flex-wrap gap-5" aria-label="Navegacion secundaria">
+      <nav class="flex flex-wrap gap-5" aria-label="Navegación secundaria">
         <a href="/noticias">Noticias</a><a href="/resumenes">Archivo de resumenes</a><a href="/mercado">Mercado</a><a href="/dolar">Dolar</a><a href="/semana">Notas semanales</a><a href="/estado">Estado</a><a href="/nosotros" class="hover:text-ink transition no-underline">Quienes somos</a>
           <a href="/privacidad">Privacidad</a>
           <a href="/contacto">Contacto</a>

@@ -15,7 +15,8 @@ const TABLE = process.env.SUPABASE_USERS_TABLE || "users";
 const LOCAL_PATH = process.env.PERDATA_LOCAL_USERS || path.join(os.tmpdir(), "perdata-dev-users.json");
 
 export const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_KEY);
-export const IS_PRODUCTION = process.env.VERCEL_ENV === "production" || process.env.NODE_ENV === "production";
+// ENVIRONMENT viene de wrangler.jsonc: si alguien borrara NODE_ENV, producción sigue sin usar la clave de desarrollo
+export const IS_PRODUCTION = process.env.VERCEL_ENV === "production" || process.env.NODE_ENV === "production" || process.env.ENVIRONMENT === "production";
 
 // Columns every deployment has (migration 0001). Billing columns come from 0002
 // and are only written by billing code paths. Trial columns come from 0014;

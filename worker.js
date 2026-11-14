@@ -558,7 +558,7 @@ export default {
     if (pathname === "/resumenes" || pathname === "/resumenes/") {
       const index = await env.ASSETS.fetch(new Request(new URL("/data/resumenes/index.json", request.url)));
       if (!index.ok) return notFound(env, request);
-      const res = await env.ASSETS.fetch(new Request(new URL("/resumen.html", request.url), request));
+      const res = await env.ASSETS.fetch(new Request(new URL("/resumen", request.url), request));
       const headers = new Headers(res.headers);
       headers.set("Cache-Control", "no-cache");
       headers.set("X-Robots-Tag", "noindex, follow");
@@ -570,7 +570,7 @@ export default {
       if (!dataResponse.ok) return notFound(env, request);
       let digest;
       try { digest = await dataResponse.json(); } catch { return notFound(env, request); }
-      const page = await env.ASSETS.fetch(new Request(new URL("/resumen.html", request.url), request));
+      const page = await env.ASSETS.fetch(new Request(new URL("/resumen", request.url), request));
       const title = `Resumen del día, ${new Intl.DateTimeFormat("es-PE", { timeZone: "UTC", day: "numeric", month: "long", year: "numeric" }).format(new Date(`${date}T12:00:00Z`))}`;
       const article = {
         "@context": "https://schema.org",
