@@ -46,7 +46,9 @@ const etiquetaHorizonte = (fecha) => {
   const diff = Math.round((new Date(`${String(fecha).slice(0, 10)}T12:00:00Z`) - new Date(`${hoyLima}T12:00:00Z`)) / 864e5);
   if (diff === 0) return `Hoy, ${diaCorta(fecha)}`;
   if (diff === 1) return `Mañana, ${diaCorta(fecha)}`;
-  return diaCorta(fecha);
+  // Más allá de mañana (fines de semana) el correo pone la fecha con mayúscula inicial.
+  const d = diaCorta(fecha);
+  return d.charAt(0).toUpperCase() + d.slice(1);
 };
 const fila = (a, b) => `${fmt3(a)} – ${fmt3(b)}`;
 
