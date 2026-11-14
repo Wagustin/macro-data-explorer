@@ -413,15 +413,16 @@
     return new Promise((resolve) => {
       let box = null;
       const done = (t) => { clearTimeout(timer); if (box) setTimeout(() => box.remove(), 0); resolve(t || ""); };
-      const timer = setTimeout(() => done(""), 10000);
+      let timer = setTimeout(() => done(""), 10000);
       const run = () => {
         box = document.createElement("div");
-        box.style.cssText = "position:fixed;right:16px;bottom:16px;z-index:2147483000";
+        box.style.cssText = "position:fixed;right:16px;bottom:96px;z-index:2147483000";
         document.body.appendChild(box);
         window.turnstile.render(box, {
           sitekey: TURNSTILE_SITE_KEY, appearance: "interaction-only", language: "es",
           callback: done, "error-callback": () => done(""),
-          "before-interactive-callback": () => clearTimeout(timer),
+          // Si Cloudflare pide marcar la casilla, damos un minuto; después el formulario sigue sin token
+          "before-interactive-callback": () => { clearTimeout(timer); timer = setTimeout(() => done(""), 60000); },
         });
       };
       if (window.turnstile) return run();
