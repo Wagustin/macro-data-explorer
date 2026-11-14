@@ -828,7 +828,9 @@ html.dark .ui-switch {
           // Keep projections disabled while checking for SMV historical quotes.
           document.getElementById("btnProyeccion").classList.add("hidden");
           document.getElementById("proyeccionDisabled").classList.toggle("hidden", !!document.querySelector("#rangoSection .rango-linea"));
-          document.getElementById("noProyeccionNotice").classList.remove("hidden");
+          // The notice waits for the SMV quotes: showing it first and hiding it when they arrive shifted the page
+          avisoSegunCotizaciones = status !== "sin_negociacion";
+          if (status === "sin_negociacion") document.getElementById("noProyeccionNotice").classList.remove("hidden");
           if (status === "sin_negociacion") {
             document.getElementById("noMarketCopy").textContent = "Esta empresa no tiene precio de mercado: sus acciones no se negocian en bolsa. Mostramos lo que sí es público: accionistas, hechos de importancia y noticias.";
             document.getElementById("priceMain").textContent = "Sin precio de mercado";
@@ -866,6 +868,8 @@ html.dark .ui-switch {
         select(initial);
       }
 
+      // Only for companies without a projection: their notice waits until we know whether the SMV has quotes
+      var avisoSegunCotizaciones; // set by the loader above; no initial value so it is not reset
       async function fetchHistorical(symbol, defaultMoneda, smvFallback = false, chosenRange = "1y") {
         try {
           const range = smvFallback ? chosenRange : "3mo";
@@ -873,6 +877,7 @@ html.dark .ui-switch {
           const res = await fetch(`/api/historical?symbol=${encodeURIComponent(symbol)}&range=${range}&interval=${interval}`);
           if (!res.ok) {
             if (smvFallback) {
+              if (avisoSegunCotizaciones) document.getElementById("noProyeccionNotice").classList.remove("hidden");
               const empty = document.getElementById("chartEmptyText");
               document.getElementById("chartPolyline").setAttribute("points", "");
               empty.textContent = "Sin cotizaciones en este rango. Prueba un rango mayor.";
@@ -892,6 +897,7 @@ html.dark .ui-switch {
               : Number.isFinite(lastClose) && lastClose > 0 && lastStatusDate
                 ? [{ date: lastStatusDate, close: lastClose }]
                 : [];
+            if (avisoSegunCotizaciones) document.getElementById("noProyeccionNotice").classList.toggle("hidden", quotePoints.length > 0);
             if (quotePoints.length) {
               const lastPt = quotePoints[quotePoints.length - 1];
               const previousPt = quotePoints.length > 1 ? quotePoints[quotePoints.length - 2] : null;
@@ -964,6 +970,7 @@ html.dark .ui-switch {
             renderChart(data.series);
           }
         } catch (e) {
+          if (smvFallback && avisoSegunCotizaciones) document.getElementById("noProyeccionNotice").classList.remove("hidden");
           console.warn("Historical fetch error:", e);
         }
       }

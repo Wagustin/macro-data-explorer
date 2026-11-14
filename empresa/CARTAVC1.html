@@ -580,7 +580,7 @@ html.dark .ui-switch {
             <p class="mb-3">En el ámbito de renta variable, el emisor tiene inscritos en la BVL los siguientes instrumentos: CARTAVC1 (S/, segmento RV1, valor principal de seguimiento). El capital social negociable en rueda de bolsa está centralizado en el nemónico CARTAVC1, a través del cual los inversionistas institucionales y particulares ejecutan sus posturas de compra y venta en moneda S/.</p>
             <p class="mb-3">En cuanto a su estructura de control societario, el registro de la SMV identifica a los siguientes accionistas con participaciones superiores al 4% del capital social: CORPORACION AZUCARERA DEL PERU SOCIEDAD ANONIMA - COAZUCAR DEL PERU S.A. (de PERU, con 86.92% de participación, declarada desde 2023-11-03). En conjunto, estos accionistas representativos acumulan el 86.92% del capital con derecho a voto reportado en la plataforma de datos abiertos de la Superintendencia del Mercado de Valores (SMV), bajo licencia ODC-BY.</p>
             <p class="mb-3">Durante el ciclo de seguimiento reciente no se han registrado nuevos hechos de importancia específicos para los nemónicos de esta firma en el registro automatizado de la SMV, manteniéndose vigentes las comunicaciones institucionales ordinarias y estados financieros depositados formalmente ante el regulador bursátil.</p>
-            <p class="mb-3">En los últimos 12 meses, la acción CARTAVC1 computó un total de 111 operaciones en rueda de bolsa, marcando su último cierre oficial de negociación en S/ 30.88 con fecha 2026-11-09.</p>
+            <p class="mb-3">En el transcurso de los últimos doce meses de negociación, el precio mensual de cierre de CARTAVC1 evolucionó desde S/ 38.00 (2025-10-01) hasta situarse en S/ 32.29 (2026-10-01), registrando una variación neta de -15.03% en el mercado.</p>
             <p class="mb-3">Esta compañía cuenta con cobertura estadística y proyección cuantitativa en el motor analítico de PerData Engine bajo el identificador de serie CARTAVC1.LM, lo que permite modelar rangos probables de precio a diferentes horizontes mediante distribución empírica y calibración probabilística sin supuestos arbitrarios.</p></div>
         </div>
 
@@ -828,7 +828,9 @@ html.dark .ui-switch {
           // Keep projections disabled while checking for SMV historical quotes.
           document.getElementById("btnProyeccion").classList.add("hidden");
           document.getElementById("proyeccionDisabled").classList.toggle("hidden", !!document.querySelector("#rangoSection .rango-linea"));
-          document.getElementById("noProyeccionNotice").classList.remove("hidden");
+          // The notice waits for the SMV quotes: showing it first and hiding it when they arrive shifted the page
+          avisoSegunCotizaciones = status !== "sin_negociacion";
+          if (status === "sin_negociacion") document.getElementById("noProyeccionNotice").classList.remove("hidden");
           if (status === "sin_negociacion") {
             document.getElementById("noMarketCopy").textContent = "Esta empresa no tiene precio de mercado: sus acciones no se negocian en bolsa. Mostramos lo que sí es público: accionistas, hechos de importancia y noticias.";
             document.getElementById("priceMain").textContent = "Sin precio de mercado";
@@ -866,6 +868,8 @@ html.dark .ui-switch {
         select(initial);
       }
 
+      // Only for companies without a projection: their notice waits until we know whether the SMV has quotes
+      var avisoSegunCotizaciones; // set by the loader above; no initial value so it is not reset
       async function fetchHistorical(symbol, defaultMoneda, smvFallback = false, chosenRange = "1y") {
         try {
           const range = smvFallback ? chosenRange : "3mo";
@@ -873,6 +877,7 @@ html.dark .ui-switch {
           const res = await fetch(`/api/historical?symbol=${encodeURIComponent(symbol)}&range=${range}&interval=${interval}`);
           if (!res.ok) {
             if (smvFallback) {
+              if (avisoSegunCotizaciones) document.getElementById("noProyeccionNotice").classList.remove("hidden");
               const empty = document.getElementById("chartEmptyText");
               document.getElementById("chartPolyline").setAttribute("points", "");
               empty.textContent = "Sin cotizaciones en este rango. Prueba un rango mayor.";
@@ -892,6 +897,7 @@ html.dark .ui-switch {
               : Number.isFinite(lastClose) && lastClose > 0 && lastStatusDate
                 ? [{ date: lastStatusDate, close: lastClose }]
                 : [];
+            if (avisoSegunCotizaciones) document.getElementById("noProyeccionNotice").classList.toggle("hidden", quotePoints.length > 0);
             if (quotePoints.length) {
               const lastPt = quotePoints[quotePoints.length - 1];
               const previousPt = quotePoints.length > 1 ? quotePoints[quotePoints.length - 2] : null;
@@ -964,6 +970,7 @@ html.dark .ui-switch {
             renderChart(data.series);
           }
         } catch (e) {
+          if (smvFallback && avisoSegunCotizaciones) document.getElementById("noProyeccionNotice").classList.remove("hidden");
           console.warn("Historical fetch error:", e);
         }
       }
