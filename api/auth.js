@@ -159,6 +159,9 @@ async function signin(req, res, body) {
   if (await rateLimited(`signin:${clientIp(req)}`, 20) || await rateLimited(`signin:${email}`, 8)) {
     return sendJson(res, 429, { success: false, error: "Demasiados intentos. Espera 15 minutos e intenta de nuevo." });
   }
+  if (!(await turnstileOk(body.turnstile, clientIp(req)))) {
+    return sendJson(res, 403, { success: false, error: "No pudimos comprobar que no eres un robot. Recarga la página e inténtalo de nuevo." });
+  }
 
   // 1. Delegar verificación a Supabase Auth GoTrue (0 ms CPU en Worker)
   try {

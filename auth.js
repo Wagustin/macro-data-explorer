@@ -405,7 +405,7 @@
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
 
-  // Cloudflare Turnstile (antibots) para el registro y el boletín. Sin clave de sitio no hace nada
+  // Cloudflare Turnstile (antibots) solo para iniciar sesión y crear cuenta. Sin clave de sitio no hace nada
   // y los formularios siguen funcionando igual. Solo se muestra si Cloudflare pide interacción.
   const TURNSTILE_SITE_KEY = "0x4AAAAAAGAi25tSJchYKKT4";
   function turnstileToken() {
@@ -438,7 +438,7 @@
 
   async function submitCredentials(payload) {
     try {
-      if (payload.action === "signup") payload.turnstile = await turnstileToken();
+      if (payload.action === "signup" || payload.action === "signin") payload.turnstile = await turnstileToken();
       const res = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

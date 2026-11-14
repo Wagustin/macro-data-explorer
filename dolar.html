@@ -668,11 +668,10 @@
         status.textContent = '';
         status.className = 'pd-boletin-status';
         try {
-          const turnstile = window.pdTurnstile ? await window.pdTurnstile() : '';
           const res = await fetch('/api/boletin', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email.value.trim(), origen: 'dolar', turnstile }),
+            body: JSON.stringify({ email: email.value.trim(), origen: 'dolar' }),
           });
           const json = await res.json().catch(() => ({}));
           if (res.ok && json.ok) {
