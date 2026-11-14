@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-14T15:31:36.151Z",
+  "actualizado": "2026-11-14T15:49:05.981Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 56
+      "items": 53
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -48,8 +48,8 @@
     },
     "semana_economica": {
       "nombre": "Semana Económica",
-      "ok": true,
-      "items": 15
+      "ok": false,
+      "items": 0
     },
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
@@ -523,15 +523,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "semana_economica-fb05b8abb5",
-      "titulo": "Scotiabank estructuró financiamiento sindicado de US$122 millones para expansión de ON Empresas",
-      "url": "https://www.semanaeconomica.com/que-esta-pasando/articulos/",
-      "fuente": "Semana Económica",
-      "fecha_iso": "2026-11-13T23:47:40.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "la_republica-04691c3ae5",
       "titulo": "Sueldo mínimo de S/1.230 queda S/618 por debajo de la canasta básica para una familia de cuatro personas",
       "url": "https://larepublica.pe/economia/2026/11/13/sueldo-minimo-de-s1230-queda-s618-por-debajo-de-la-canasta-basica-para-una-familia-de-cuatro-personas-hnews-600405",
@@ -600,15 +591,6 @@
       "url": "https://gestion.pe/economia/empresas/millicom-llega-al-peru-con-la-compra-de-entel-por-us-1714-millones-y-apunta-a-expandir-sus-negocios-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-13T22:36:34.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "semana_economica-48c424a3d1",
-      "titulo": "Millicom cerró acuerdo con chilena Entel para adquirir su filial peruana por US$1,714 millones",
-      "url": "https://www.semanaeconomica.com/sectores-empresas/telecomunicaciones/",
-      "fuente": "Semana Económica",
-      "fecha_iso": "2026-11-13T22:22:28.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
@@ -980,6 +962,24 @@
       "fecha_iso": "2026-11-13T15:32:00.000Z",
       "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-3ac234ac2f",
+      "titulo": "El dólar abre a la baja en S/3,39 tras incremento de tasas del BCR y superávit comercial peruano",
+      "url": "https://elcomercio.pe/economia/peru/el-dolar-abre-a-la-baja-en-s339-tras-incremento-de-tasas-del-bcr-y-superavit-comercial-peruano-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-13T15:17:18.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-512db6ba5a",
+      "titulo": "Bolsa de Valores de Lima presenta ganancias mientras Wall Street inicia con índices mixtos",
+      "url": "https://andina.pe/agencia/noticia-bolsa-valores-lima-presenta-ganancias-mientras-wall-street-inicia-indices-mixtos-1099797.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-13T14:45:26.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "VERDE"
     }
   ]
 }
