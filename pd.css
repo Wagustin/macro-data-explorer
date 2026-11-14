@@ -418,6 +418,11 @@ header a span.text-ink {
   color: #F5F1E8 !important;
 }
 
+/* Header always uses the brand font, even on pages that override body */
+header, header nav a, header .pd-wordmark {
+  font-family: var(--pd-font-ui) !important;
+}
+
 /* Header nav links */
 header nav a {
   color: rgba(245, 241, 232, 0.78) !important;
@@ -433,6 +438,60 @@ header nav a.active {
   text-decoration-color: var(--pd-peru) !important;
   text-decoration-thickness: 2px !important;
   text-underline-offset: 4px !important;
+}
+
+/* Base theme switch (copied from index.html, scoped to .ui-switch) */
+.ui-switch {
+  --switch-bg: rgb(229, 229, 234);
+  --switch-checked-bg: rgb(0, 0, 0);
+  --circle-diameter: 18px;
+  --circle-bg: #FFFFFF;
+  --circle-inset: 2px;
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+  flex-shrink: 0;
+}
+html.dark .ui-switch {
+  --switch-bg: rgb(44, 44, 46);
+  --switch-checked-bg: rgb(255, 255, 255);
+  --circle-bg: #0D0D0E;
+}
+.ui-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.ui-switch .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--switch-bg);
+  -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 9999px;
+}
+.ui-switch .slider .circle {
+  top: var(--circle-inset);
+  left: var(--circle-inset);
+  width: var(--circle-diameter);
+  height: var(--circle-diameter);
+  position: absolute;
+  background: var(--circle-bg);
+  border-radius: inherit;
+  -webkit-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.ui-switch input:checked + .slider {
+  background-color: var(--switch-checked-bg);
+}
+.ui-switch input:checked + .slider .circle {
+  left: calc(100% - var(--circle-diameter) - var(--circle-inset));
 }
 
 /* Header theme toggle */
