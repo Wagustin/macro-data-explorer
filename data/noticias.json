@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-14T12:31:30.298Z",
+  "actualizado": "2026-11-14T15:31:36.151Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,17 +24,17 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 55
+      "items": 56
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 51
+      "items": 48
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 9
+      "items": 6
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -44,17 +44,17 @@
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 12
+      "items": 9
     },
     "semana_economica": {
       "nombre": "Semana Económica",
-      "ok": false,
-      "items": 0
+      "ok": true,
+      "items": 15
     },
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 22
+      "items": 23
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -64,12 +64,84 @@
   },
   "noticias": [
     {
+      "id": "bloomberg_linea-236c058a66",
+      "titulo": "Aerolíneas de EE.UU. intentan normalizar operaciones tras suspensión de vuelos: miles siguen cancelados y retrasados",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/aerolineas-de-eeuu-intentan-normalizar-operaciones-tras-suspension-de-vuelos-miles-siguen-cancelados-y-retrasados/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-14T15:24:46.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-ea2324d26a",
+      "titulo": "EE.UU. y China se disputan un proyecto hidroeléctrico clave para el futuro energético de Guyana",
+      "url": "https://www.bloomberglinea.com/latinoamerica/eeuu-y-china-se-disputan-un-proyecto-hidroelectrico-clave-para-el-futuro-energetico-de-guyana/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-14T14:59:07.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-ec4c706e24",
+      "titulo": "Tipo de cambio cayó esta semana en Perú y la próxima se podría generar “mayor oferta de dólares”",
+      "url": "https://www.infobae.com/peru/2026/11/14/tipo-de-cambio-cayo-esta-semana-en-peru-y-la-proxima-se-podria-generar-mayor-oferta-de-dolares/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-14T14:41:34.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-4fa8938a60",
+      "titulo": "Alza de la tasa de referencia del BCRP a 4,5%: ¿cómo impactará en los créditos, ahorros y precios en Perú?",
+      "url": "https://rpp.pe/economia/economia/alza-de-la-tasa-de-referencia-del-bcrp-a-45-como-impactara-en-los-creditos-ahorros-y-precios-en-peru-noticia-1717754",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-14T14:31:20.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-dd0a3ad8da",
+      "titulo": "Precio del dólar del sábado 14 de noviembre: cuál es el tipo de cambio para hoy",
+      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-a-cuanto-esta-doalr-este-sabado-14-de-noviembre-2026-tipo-de-cambio-segun-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-14T14:08:04.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-20a594ae74",
+      "titulo": "Sector pesca se expandió en setiembre después de cuatro meses de retrocesos",
+      "url": "https://andina.pe/agencia/noticia-sector-pesca-se-expandio-setiembre-despues-cuatro-meses-retrocesos-1099931.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-14T13:45:46.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
       "id": "la_republica-11723eb73f",
       "titulo": "Precio del dólar hoy en Perú, sábado 14 noviembre: consulta el tipo de cambio para compra y venta",
       "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/14/precio-del-dolar-hoy-en-peru-sabado-14-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-1194297",
       "fuente": "La República Economía",
-      "fecha_iso": "2026-11-14T12:25:56.000Z",
+      "fecha_iso": "2026-11-14T13:42:09.000Z",
       "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-76e9e5feff",
+      "titulo": "¿Por qué Santo Toribio de Mogrovejo es tan importante para la Iglesia Católica? Su historia, trabajo pastoral y legado",
+      "url": "https://www.infobae.com/peru/2026/11/14/por-que-santo-toribio-de-mogrovejo-es-tan-importante-para-la-iglesia-catolica-su-historia-trabajo-pastoral-y-legado/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-14T12:59:06.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-68200b4102",
+      "titulo": "Precio del GNV, GLP, diésel y gasolina en Perú para hoy, sábado 14 de noviembre de 2026",
+      "url": "https://www.infobae.com/peru/2026/11/14/precio-del-gnv-glp-diesel-y-gasolina-en-peru-para-hoy-sabado-14-de-noviembre-de-2026/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-14T12:32:00.000Z",
+      "categoria": "Energía",
       "semaforo": "AMARILLO"
     },
     {
@@ -154,15 +226,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-dd0a3ad8da",
-      "titulo": "Precio del dólar en Perú: cotización en compra y venta del sábado 14 de noviembre",
-      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-a-cuanto-esta-doalr-este-sabado-14-de-noviembre-2026-tipo-de-cambio-segun-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-14T11:00:01.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-59ae11bb98",
       "titulo": "Rolando Arellano: “El Perú tiene oportunidades para ser la estrella del continente, pero necesitamos trabajar juntos”",
       "url": "https://elcomercio.pe/economia/peru/rolando-arellano-el-peru-tiene-oportunidades-para-ser-la-estrella-del-continente-pero-necesitamos-trabajar-juntos-cade-ejecutivos-2026-noticia/",
@@ -223,6 +286,15 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-14T10:25:00.000Z",
       "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-2988da459f",
+      "titulo": "Grupo Carsa: la expansión que alista en Lima tras su cambio de dueño y unificar sus marcas",
+      "url": "https://gestion.pe/economia/empresas/grupo-carsa-con-nuevo-dueno-y-una-sola-marca-va-por-mas-tiendas-en-lima-cuanto-crecera-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-14T10:20:00.000Z",
+      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -451,6 +523,15 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "semana_economica-fb05b8abb5",
+      "titulo": "Scotiabank estructuró financiamiento sindicado de US$122 millones para expansión de ON Empresas",
+      "url": "https://www.semanaeconomica.com/que-esta-pasando/articulos/",
+      "fuente": "Semana Económica",
+      "fecha_iso": "2026-11-13T23:47:40.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "la_republica-04691c3ae5",
       "titulo": "Sueldo mínimo de S/1.230 queda S/618 por debajo de la canasta básica para una familia de cuatro personas",
       "url": "https://larepublica.pe/economia/2026/11/13/sueldo-minimo-de-s1230-queda-s618-por-debajo-de-la-canasta-basica-para-una-familia-de-cuatro-personas-hnews-600405",
@@ -475,15 +556,6 @@
       "fuente": "La República Economía",
       "fecha_iso": "2026-11-13T23:23:55.000Z",
       "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-55760365ef",
-      "titulo": "EE.UU. aclara que la suspensión de vuelos aéreos en el país no se debe a un ataque terrorista",
-      "url": "https://rpp.pe/mundo/estados-unidos/eeuu-aclara-que-la-suspension-de-vuelos-aereos-en-el-pais-no-se-debe-a-un-ataque-terrorista-noticia-1717741",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-13T23:16:10.000Z",
-      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     },
     {
@@ -532,12 +604,12 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "rpp-096c4787d6",
-      "titulo": "Es oficial, Entel Perú cambia de dueño: Millicom comprará la empresa con más de 10 millones de clientes",
-      "url": "https://rpp.pe/economia/economia/entel-peru-tendra-nuevo-dueno-acuerda-venta-de-sus-operaciones-a-milicon-operador-de-movistar-en-chile-por-us1700-millones-noticia-1717740",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-13T22:31:38.000Z",
-      "categoria": "Bolsa y empresas",
+      "id": "semana_economica-48c424a3d1",
+      "titulo": "Millicom cerró acuerdo con chilena Entel para adquirir su filial peruana por US$1,714 millones",
+      "url": "https://www.semanaeconomica.com/sectores-empresas/telecomunicaciones/",
+      "fuente": "Semana Económica",
+      "fecha_iso": "2026-11-13T22:22:28.000Z",
+      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -547,15 +619,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-13T22:09:19.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-d6662ee507",
-      "titulo": "Grupo Romero acuerda comprar el 100% de Talma y prepara su arribo al negocio aeroportuario",
-      "url": "https://rpp.pe/economia/economia/grupo-romero-acuerda-comprar-el-100-de-talma-y-prepara-su-arribo-al-negocio-aeroportuario-noticia-1717730",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-13T22:00:12.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -628,15 +691,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-13T20:58:36.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-d6873f5f8e",
-      "titulo": "BCRP prevé una fuerte caída de la inflación en marzo de 2027 tras impacto del fenómeno El Niño",
-      "url": "https://www.infobae.com/peru/2026/11/13/bcrp-preve-una-fuerte-caida-de-la-inflacion-en-marzo-de-2027-tras-impacto-del-fenomeno-el-nino/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-13T20:47:41.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -772,33 +826,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-13T19:11:00.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-9c21c6979c",
-      "titulo": "¿A cuánto está el precio del dólar hoy en Perú? Así cerró el tipo de cambio este 13 de diciembre",
-      "url": "https://www.infobae.com/peru/2026/11/13/dolar-hoy-en-peru-cotizacion-de-apertura-del-13-de-noviembre/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-13T19:00:23.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-ccc4dd0abf",
-      "titulo": "¿No te pagaron tu monto correcto de CTS? Tu empresa puede ser multada con hasta S/143 mil",
-      "url": "https://www.infobae.com/peru/2026/11/13/no-te-pagaron-tu-monto-correcto-de-cts-tu-empresa-puede-ser-multada-con-hasta-s143-mil/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-13T18:56:15.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-81df78a56c",
-      "titulo": "Medallas conmemorativas por visita del papa León XVI del BCRP se agotaron",
-      "url": "https://www.infobae.com/peru/2026/11/13/medallas-conmemorativas-por-visita-del-papa-leon-xvi-del-bcrp-se-agotaron/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-13T18:30:31.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -952,33 +979,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-13T15:32:00.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-3ac234ac2f",
-      "titulo": "El dólar abre a la baja en S/3,39 tras incremento de tasas del BCR y superávit comercial peruano",
-      "url": "https://elcomercio.pe/economia/peru/el-dolar-abre-a-la-baja-en-s339-tras-incremento-de-tasas-del-bcr-y-superavit-comercial-peruano-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-13T15:17:18.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-512db6ba5a",
-      "titulo": "Bolsa de Valores de Lima presenta ganancias mientras Wall Street inicia con índices mixtos",
-      "url": "https://andina.pe/agencia/noticia-bolsa-valores-lima-presenta-ganancias-mientras-wall-street-inicia-indices-mixtos-1099797.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-13T14:45:26.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "bloomberg_linea-989aba6b71",
-      "titulo": "Precios al productor en EE.UU. aceleran su alza anual al 6,5% y alcanzan su mayor ritmo desde 2022",
-      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/precios-al-productor-en-eeuu-aceleran-su-alza-anual-al-65-y-alcanzan-su-mayor-ritmo-desde-2022/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-13T14:12:13.000Z",
-      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     }
   ]

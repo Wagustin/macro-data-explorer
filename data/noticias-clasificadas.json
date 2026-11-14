@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-14T12:32:15.338Z",
+ "actualizado": "2026-11-14T15:31:45.801Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "items": {
   "el_comercio-1872eaa44a": {
@@ -147,35 +147,9 @@
    "sentimiento": "NEUTRO",
    "empresas": []
   },
-  "el_comercio-3ac234ac2f": {
-   "relevancia": "ALTA",
-   "tema": "Dólar y BCRP",
-   "sentimiento": "POSITIVO",
-   "empresas": []
-  },
   "gestion-ebeafc6074": {
    "relevancia": "ALTA",
    "tema": "Bolsa y empresas",
-   "sentimiento": "POSITIVO",
-   "empresas": []
-  },
-  "andina-512db6ba5a": {
-   "relevancia": "ALTA",
-   "tema": "Bolsa y empresas",
-   "sentimiento": "POSITIVO",
-   "empresas": [
-    "BVLC1"
-   ]
-  },
-  "bloomberg_linea-989aba6b71": {
-   "relevancia": "ALTA",
-   "tema": "Mundo",
-   "sentimiento": "NEGATIVO",
-   "empresas": []
-  },
-  "infobae-9c21c6979c": {
-   "relevancia": "ALTA",
-   "tema": "Dólar y BCRP",
    "sentimiento": "POSITIVO",
    "empresas": []
   },
@@ -263,18 +237,6 @@
    "sentimiento": "NEGATIVO",
    "empresas": []
   },
-  "infobae-ccc4dd0abf": {
-   "relevancia": "ALTA",
-   "tema": "Economía y fiscal",
-   "sentimiento": "NEGATIVO",
-   "empresas": []
-  },
-  "infobae-81df78a56c": {
-   "relevancia": "ALTA",
-   "tema": "Minería y metales",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
   "la_republica-88d0a62348": {
    "relevancia": "ALTA",
    "tema": "Dólar y BCRP",
@@ -307,12 +269,6 @@
   "andina-82784fae99": {
    "relevancia": "BAJA",
    "tema": "Dólar y BCRP",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
-  "rpp-55760365ef": {
-   "relevancia": "NINGUNA",
-   "tema": "Mundo",
    "sentimiento": "NEUTRO",
    "empresas": []
   },
@@ -358,22 +314,10 @@
    "sentimiento": "NEUTRO",
    "empresas": []
   },
-  "rpp-096c4787d6": {
-   "relevancia": "ALTA",
-   "tema": "Bolsa y empresas",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
   "el_comercio-01372baa47": {
    "relevancia": "ALTA",
    "tema": "Mundo",
    "sentimiento": "NEGATIVO",
-   "empresas": []
-  },
-  "rpp-d6662ee507": {
-   "relevancia": "ALTA",
-   "tema": "Bolsa y empresas",
-   "sentimiento": "NEUTRO",
    "empresas": []
   },
   "bloomberg_linea-e36013aa88": {
@@ -410,12 +354,6 @@
    "relevancia": "BAJA",
    "tema": "Bolsa y empresas",
    "sentimiento": "NEUTRO",
-   "empresas": []
-  },
-  "infobae-d6873f5f8e": {
-   "relevancia": "ALTA",
-   "tema": "Dólar y BCRP",
-   "sentimiento": "POSITIVO",
    "empresas": []
   },
   "bloomberg_linea-18bdc147d1": {
@@ -630,6 +568,68 @@
    "relevancia": "BAJA",
    "tema": "Bolsa y empresas",
    "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "bloomberg_linea-236c058a66": {
+   "relevancia": "BAJA",
+   "tema": "Mundo",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "bloomberg_linea-ea2324d26a": {
+   "relevancia": "BAJA",
+   "tema": "Mundo",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "infobae-ec4c706e24": {
+   "relevancia": "ALTA",
+   "tema": "Dólar y BCRP",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "rpp-4fa8938a60": {
+   "relevancia": "ALTA",
+   "tema": "Dólar y BCRP",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "andina-20a594ae74": {
+   "relevancia": "MEDIA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "POSITIVO",
+   "empresas": []
+  },
+  "infobae-76e9e5feff": {
+   "relevancia": "BAJA",
+   "tema": "Energía",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "infobae-68200b4102": {
+   "relevancia": "BAJA",
+   "tema": "Bolsa y empresas",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "gestion-2988da459f": {
+   "relevancia": "MEDIA",
+   "tema": "Bolsa y empresas",
+   "sentimiento": "POSITIVO",
+   "empresas": [
+    "SCOTIAC1"
+   ]
+  },
+  "semana_economica-fb05b8abb5": {
+   "relevancia": "ALTA",
+   "tema": "Bolsa y empresas",
+   "sentimiento": "POSITIVO",
+   "empresas": []
+  },
+  "semana_economica-48c424a3d1": {
+   "relevancia": "ALTA",
+   "tema": "Dólar y BCRP",
+   "sentimiento": "POSITIVO",
    "empresas": []
   }
  },
@@ -951,6 +951,9 @@
   "rpp-c7622d5b86",
   "bloomberg_linea-8e18f2cf25",
   "infobae-4a91f53911",
-  "gestion-34bebfa2ab"
+  "gestion-34bebfa2ab",
+  "andina-c00916f8c2",
+  "rpp-c881b5c879",
+  "gestion-f7e7b1027e"
  ]
 }
