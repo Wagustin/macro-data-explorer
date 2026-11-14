@@ -129,6 +129,18 @@
       background-color: var(--switch-checked-bg);
     }
 
+    .pd-soon {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 3px 6px 2px;
+      border: 1px solid currentColor;
+      font: 700 9px/1.2 var(--pd-font-ui, system-ui, sans-serif);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      vertical-align: middle;
+      color: var(--pd-ink-soft, #6e6e73);
+    }
+
     .ui-switch input:checked + .slider .circle {
       left: calc(100% - var(--circle-diameter) - var(--circle-inset));
     }
@@ -232,7 +244,7 @@
     <section class="pd-page-head max-w-6xl mx-auto px-4 sm:px-6 w-full">
       <h1 class="pd-page-title">Empieza gratis. Sigue tus empresas o pasa a Pro.</h1>
       <p class="pd-page-lede font-serif">El correo gratis llega cada mañana de lunes a sábado con el dólar para el próximo día hábil, su rango probable, tres noticias y una lectura de qué podría moverlo. El plan <strong>Boletín + tus empresas</strong> (US$ 1.99 al mes o 15 al año) es el correo completo, con el dólar a una semana y a un mes, cobre, oro, petróleo, hechos de la SMV, todas las noticias del día y tus propias empresas; <strong>Pro</strong> suma diez años de historia, horizontes largos y exportación.</p>
-      <p id="pdCheckoutNotice" class="pd-notice" hidden>No se realizó ningún cobro. Puedes suscribirte cuando quieras.</p>
+      <p id="pdCheckoutNotice" class="pd-notice" hidden>No se realizó ningún cobro.</p>
     </section>
 
     <section class="max-w-6xl mx-auto px-4 sm:px-6 w-full">
@@ -263,11 +275,9 @@
 
         <article class="pd-plan" data-reveal>
           <div class="pd-plan-head">
-            <h2 class="pd-plan-name">Boletín + tus empresas</h2>
+            <h2 class="pd-plan-name">Boletín + tus empresas <span class="pd-soon">Próximamente</span></h2>
             <p class="pd-plan-price"><span id="pdBolAmount" class="pd-plan-amount font-mono tnum">—</span><span id="pdBolPer" class="pd-plan-per"></span></p>
             <p class="pd-plan-desc">Para quien sigue el mercado cada mañana: el correo completo con sus empresas. Es el correo gratis más el resto del mercado y tu sección personal.</p>
-            <p class="pd-plan-trial"><strong>Prueba de 7 días gratis</strong> · se pide tarjeta</p>
-            <p id="pdBolTrial" class="pd-plan-trial-note">Se pide tarjeta. Si no cancelas antes del día 8, se cobra US$ 1.99 al mes (o US$ 15 al año).</p>
           </div>
           <ul class="pd-perks">
             <li><span>Todo lo del plan Gratis</span></li>
@@ -278,14 +288,13 @@
             <li><span>Cancela cuando quieras desde tu cuenta</span></li>
           </ul>
           <div class="pd-plan-cta">
-            <button type="button" id="pdBolCta" class="pd-btn pd-btn-ghost pd-btn-block" disabled>Cargando…</button>
-            <p id="pdBolStatus" class="pd-form-status" role="status"></p>
+            <a id="pdBolCta" class="pd-btn pd-btn-ghost pd-btn-block" href="#acceso-anticipado">Unirme al acceso anticipado</a>
           </div>
         </article>
 
         <article class="pd-plan pd-plan-featured" data-reveal>
           <div class="pd-plan-head">
-            <h2 class="pd-plan-name">Pro</h2>
+            <h2 class="pd-plan-name">Pro <span class="pd-soon">Próximamente</span></h2>
             <p class="pd-plan-price"><span id="pdProAmount" class="pd-plan-amount font-mono tnum">—</span><span id="pdProPer" class="pd-plan-per"></span></p>
             <p class="pd-plan-desc">Para quien construye su propia tesis: historia larga, horizontes largos y datos exportables.</p>
           </div>
@@ -298,12 +307,24 @@
             <li><span>Cancela cuando quieras desde tu cuenta</span></li>
           </ul>
           <div class="pd-plan-cta">
-            <button type="button" id="pdProCta" class="pd-btn pd-btn-primary pd-btn-block" disabled>Cargando…</button>
-            <p id="pdProStatus" class="pd-form-status" role="status"></p>
+            <a id="pdProCta" class="pd-btn pd-btn-primary pd-btn-block" href="#acceso-anticipado">Unirme al acceso anticipado</a>
           </div>
         </article>
       </div>
       <p class="pd-fineprint">Pagos procesados por Stripe. PerData no almacena los datos de tu tarjeta.</p>
+    </section>
+
+    <section id="acceso-anticipado" class="max-w-6xl mx-auto px-4 sm:px-6 pd-faq w-full">
+      <div class="max-w-3xl">
+        <h2 class="pd-section-title">Acceso anticipado</h2>
+        <p class="pd-page-lede">Los planes de pago abrirán pronto. Déjanos tu correo: recibirás el boletín gratis cada mañana y te avisaremos primero cuando abran.</p>
+        <form id="pdWaitlistForm" class="pdl-boletin-form" novalidate>
+          <label for="pdWaitlistEmail" class="sr-only">Tu correo</label>
+          <input id="pdWaitlistEmail" class="pdl-boletin-input" type="email" required autocomplete="email" placeholder="tu@correo.com" />
+          <button type="submit" class="pdl-btn pdl-btn-primary">Unirme</button>
+        </form>
+        <p id="pdWaitlistMsg" class="pdl-boletin-msg" role="status">Te enviaremos un correo para confirmar.</p>
+      </div>
     </section>
 
     <section class="max-w-6xl mx-auto px-4 sm:px-6 pd-faq w-full" data-reveal>
@@ -402,7 +423,6 @@
         var user = A.getUser();
         var amount = document.getElementById("pdProAmount");
         var per = document.getElementById("pdProPer");
-        var cta = document.getElementById("pdProCta");
         var hasYear = billing.prices.some(function (p) { return p.interval === "year"; });
         document.getElementById("pdIntervalSwitch").hidden = !hasYear;
 
@@ -430,31 +450,14 @@
         var bolPer = bolPrice ? (interval === "year" ? "al año" : "al mes") : (billing.enabled ? "" : "muy pronto");
         if (interval === "year" && bolYear) { try { bolPer = "al año · " + A.formatMoney(Math.round(bolYear.amount / 12), bolYear.currency) + " al mes"; } catch (e) {} }
         document.getElementById("pdBolPer").textContent = bolPer;
-        // The 7-day trial disclosure stays visible next to the price.
-        // It is the same sentence before and after the switch so switching
-        // the period never hides it.
-        document.getElementById("pdBolTrial").textContent =
-          "Se pide tarjeta. Si no cancelas antes del día 8, se cobra US$ 1.99 al mes (o US$ 15 al año).";
-        var bolCta = document.getElementById("pdBolCta");
-        if (user && (user.plan === "boletin" || user.plan === "pro")) {
-          bolCta.disabled = user.plan === "pro";
-          bolCta.textContent = user.plan === "pro" ? "Incluido en tu plan Pro" : "Gestionar suscripción";
-          bolCta.dataset.action = user.plan === "pro" ? "" : "portal";
-        } else if (!billing.enabled || !bolPrice) {
-          bolCta.disabled = true; bolCta.textContent = "Disponible muy pronto"; bolCta.dataset.action = "";
-        } else {
-          // La prueba gratuita de 7 días con tarjeta es solo del plan Boletín,
-          // y solo para quien aún no la usó. Sin eligibilidad se mantiene el
-          // texto de suscripción pago. publicUser todavía no expone esa
-          // elegibilidad, así que mientras tanto se mantiene visible el
-          // botón de prueba y Stripe decide el corte real al pagar.
-          var trialUsed = user && (user.trialUsed === true || (user.trialPrice && user.trialPrice.trialUsed === true));
-          bolCta.disabled = false;
-          bolCta.textContent = trialUsed
-            ? (user ? "Suscribirme al Boletín" : "Crear cuenta y suscribirme")
-            : (user ? "Probar 7 días gratis" : "Crear cuenta y probar 7 días gratis");
-          bolCta.dataset.action = "checkout";
-        }
+        // Planes de pago en pausa: el botón lleva a la lista de acceso anticipado.
+        // Quien ya tiene un plan (no debería haber ninguno) gestiona desde Mi cuenta.
+        var paid = !!(user && (user.plan === "boletin" || user.plan === "pro"));
+        ["pdBolCta", "pdProCta"].forEach(function (id) {
+          var a = document.getElementById(id);
+          a.href = paid ? "/cuenta" : "#acceso-anticipado";
+          a.textContent = paid ? "Gestionar en Mi cuenta" : "Unirme al acceso anticipado";
+        });
 
         var freeCta = document.getElementById("pdFreeCta");
         if (user) {
@@ -463,53 +466,20 @@
             : '<button type="button" class="pd-btn pd-btn-ghost pd-btn-block" disabled>Tu plan actual</button>';
         }
 
-        if (user && user.plan === "boletin") {
-          cta.disabled = false;
-          cta.textContent = "Pasar a Pro";
-          cta.dataset.action = "checkout";
-        } else if (user && user.plan === "pro") {
-          cta.disabled = false;
-          cta.textContent = "Gestionar suscripción";
-          cta.dataset.action = "portal";
-        } else if (!billing.enabled) {
-          cta.disabled = true;
-          cta.textContent = "Disponible muy pronto";
-          cta.dataset.action = "";
-        } else {
-          cta.disabled = false;
-          cta.textContent = user ? "Mejorar a Pro" : "Crear cuenta y suscribirme";
-          cta.dataset.action = "checkout";
-        }
       }
 
-      document.getElementById("pdBolCta").addEventListener("click", async function (e) {
-        var btn = e.currentTarget;
-        var status = document.getElementById("pdBolStatus");
-        var action = btn.dataset.action;
-        if (!action) return;
+      document.getElementById("pdWaitlistForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var form = e.currentTarget;
+        var input = document.getElementById("pdWaitlistEmail");
+        var msg = document.getElementById("pdWaitlistMsg");
+        var btn = form.querySelector("button");
         btn.disabled = true;
-        btn.textContent = "Abriendo pago seguro…";
-        status.textContent = "";
-        var r = action === "portal" ? await window.MDE_Auth.openPortal() : await window.MDE_Auth.startCheckout(interval, "boletin");
-        if (!r.success) {
-          if (r.error) { status.textContent = r.error; status.className = "pd-form-status is-error"; }
-          render();
-        }
-      });
-
-      document.getElementById("pdProCta").addEventListener("click", async function (e) {
-        var btn = e.currentTarget;
-        var status = document.getElementById("pdProStatus");
-        var action = btn.dataset.action;
-        if (!action) return;
-        btn.disabled = true;
-        btn.textContent = "Abriendo pago seguro…";
-        status.textContent = "";
-        var r = action === "portal" ? await window.MDE_Auth.openPortal() : await window.MDE_Auth.startCheckout(interval);
-        if (!r.success) {
-          if (r.error) { status.textContent = r.error; status.className = "pd-form-status is-error"; }
-          render();
-        }
+        fetch("/api/boletin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: input.value, origen: "acceso-anticipado" }) })
+          .then(function (r) { return r.json(); })
+          .then(function (d) { msg.textContent = d.mensaje || d.error || "Algo salió mal. Inténtalo más tarde."; if (d.ok) form.reset(); })
+          .catch(function () { msg.textContent = "No pudimos conectar. Inténtalo más tarde."; })
+          .finally(function () { btn.disabled = false; });
       });
 
       document.querySelectorAll("#pdIntervalSwitch [data-interval]").forEach(function (b) {

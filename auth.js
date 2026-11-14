@@ -150,7 +150,7 @@
           .then(r => r.json())
           .then(cfg => {
             if (cfg && cfg.plans) PLANS = cfg.plans;
-            billing = { enabled: !!(cfg && cfg.enabled), prices: (cfg && cfg.prices) || [], boletinPrices: (cfg && cfg.boletinPrices) || [] };
+            billing = { enabled: !!(cfg && cfg.enabled), paymentsEnabled: cfg ? cfg.paymentsEnabled : undefined, prices: (cfg && cfg.prices) || [], boletinPrices: (cfg && cfg.boletinPrices) || [] };
             window.dispatchEvent(new CustomEvent("mde:billing-loaded", { detail: billing }));
             this.render();
             return billing;
@@ -212,6 +212,11 @@
 
     // ---------- Billing actions ----------
     async startCheckout(interval, plan) {
+      // Payments paused: no request to the server, go to the early-access list instead.
+      if (billing.paymentsEnabled === false) {
+        window.location.href = "/precios#acceso-anticipado";
+        return { success: false, paused: true };
+      }
       if (!this.isAuthenticated()) {
         this.openModal("Crea tu cuenta o inicia sesión para suscribirte a Pro.", "signup", "checkout");
         return { success: false };
@@ -227,6 +232,11 @@
         if (data.url) {
           window.location.href = data.url;
           return { success: true };
+        }
+        if (data.code === "payments_paused") {
+          billing.paymentsEnabled = false;
+          window.location.href = "/precios#acceso-anticipado";
+          return { success: false, paused: true };
         }
         return { success: false, error: data.error || "No se pudo iniciar el pago." };
       } catch (e) {
@@ -483,6 +493,10 @@
   function renderUpgradeCta() {
     const box = document.getElementById("pdUpgradeCta");
     if (!box) return;
+    if (billing.paymentsEnabled === false) {
+      box.innerHTML = '<a class="pd-btn pd-btn-accent pd-btn-block" href="/precios#acceso-anticipado">Unirme al acceso anticipado</a>';
+      return;
+    }
     if (!billing.enabled) {
       box.innerHTML = '<button type="button" class="pd-btn pd-btn-primary pd-btn-block" disabled>Disponible muy pronto</button>';
       return;

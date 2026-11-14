@@ -100,7 +100,8 @@ test("correo gratis: tabla de rangos con un solo horizonte (hoy) y valores de da
   assert.match(html, /Qué podría presionar al dólar/);
   assert.equal((html.match(/Qué podría presionar al dólar/g) || []).length, 1);
   assert.match(html, /<!-- plan-boletin -->/);
-  assert.match(html, /1\.99 al mes, 7 días de prueba con tarjeta/);
+  assert.match(html, /1\.99 al mes o US\$&nbsp;15 al año/);
+  assert.doesNotMatch(html, /7 días de prueba/);
   assert.match(html, /Darme de baja/);
   assert.match(html, /Elegir mis empresas/);
   assert.match(html, /El rango es estadístico; los factores son contexto, no una predicción de dirección/);

@@ -436,6 +436,10 @@
           primary.textContent = "Gestionar suscripción y facturas";
           primary.dataset.action = "portal";
           primary.disabled = false;
+        } else if (billing.paymentsEnabled === false) {
+          primary.textContent = "Unirme al acceso anticipado";
+          primary.dataset.action = "waitlist";
+          primary.disabled = false;
         } else if (billing.enabled) {
           var price = A.priceLabel("month");
           primary.textContent = "Mejorar a Pro" + (price ? " · " + price + "/mes" : "");
@@ -478,6 +482,7 @@
         var btn = e.currentTarget;
         var action = btn.dataset.action;
         if (!action) return;
+        if (action === "waitlist") { window.location.href = "/precios#acceso-anticipado"; return; }
         var status = document.getElementById("pdAcctStatus");
         btn.disabled = true;
         btn.textContent = "Abriendo…";

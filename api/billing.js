@@ -38,6 +38,9 @@ async function loadPrices(ids = PRICE_IDS, key = "pro") {
   return prices;
 }
 
+// Payments stay paused until PAYMENTS_ENABLED="1". Read per request so tests and deploys see the current value.
+const paymentsOn = () => process.env.PAYMENTS_ENABLED === "1";
+
 function appUrl(req) {
   if (process.env.APP_URL) return process.env.APP_URL.replace(/\/+$/, "");
   const proto = req.headers["x-forwarded-proto"] || "http";
@@ -55,6 +58,7 @@ export default async function handler(req, res) {
   if (action === "config") {
     return sendJson(res, 200, {
       enabled: STRIPE_ENABLED,
+      paymentsEnabled: paymentsOn(),
       plans: PLANS,
       prices: await loadPrices(),
       boletinPrices: await loadPrices(BOLETIN_PRICE_IDS, "boletin")
@@ -63,6 +67,9 @@ export default async function handler(req, res) {
 
   if (handleRateLimit(req, res)) return;
   if (req.method !== "POST") return sendJson(res, 405, { success: false, error: "Método no permitido." });
+  if (action === "checkout" && !paymentsOn()) {
+    return sendJson(res, 503, { success: false, code: "payments_paused", error: "Los planes de pago abren pronto. Apúntate al acceso anticipado en /precios." });
+  }
   if (!STRIPE_ENABLED) {
     return sendJson(res, 503, { success: false, error: "Los pagos aún no están habilitados. Vuelve pronto." });
   }

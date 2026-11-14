@@ -11,6 +11,8 @@ process.env.SUPABASE_SERVICE_KEY = "service-key-test";
 process.env.RESEND_API_KEY = "re_test_key";
 process.env.EMAIL_FROM = "PerData <no-reply@perdata.site>";
 process.env.JWT_SECRET = "trial-test-secret";
+// Los tests de checkout siguen el flujo de Stripe: con pagos en pausa el handler corta antes (ver al final).
+process.env.PAYMENTS_ENABLED = "1";
 
 const billingHandler = (await import("../api/billing.js")).default;
 const webhookHandler = (await import("../api/stripe-webhook.js")).default;
@@ -489,23 +491,68 @@ test("cuenta muestra US$ 15 al año para la prueba anual", async () => {
   assert.match(html, /US\$ 15 al año/);
 });
 
-test("precios y boletin muestran la divulgación de la prueba; Pro no promete prueba", async () => {
+test("pagos en pausa: precios y boletin no prometen prueba y llevan al acceso anticipado", async () => {
   const fs = await import("node:fs");
   const precios = fs.readFileSync(new URL("../precios.html", import.meta.url), "utf8");
   const boletin = fs.readFileSync(new URL("../boletin.html", import.meta.url), "utf8");
   const terms = fs.readFileSync(new URL("../terms.html", import.meta.url), "utf8");
-  const disclosure = /Se pide tarjeta\. Si no cancelas antes del día 8, se cobra US\$ 1\.99 al mes \(o US\$ 15 al año\)\./;
-  assert.match(precios, disclosure);
-  assert.match(precios, /Probar 7 días gratis/);
-  assert.match(boletin, disclosure);
-  assert.match(boletin, /Prueba de 7 días gratis/);
+  for (const html of [precios, boletin]) {
+    assert.doesNotMatch(html, /Se pide tarjeta/);
+    assert.doesNotMatch(html, /Probar 7 días gratis|Prueba de 7 días gratis/);
+  }
+  assert.match(precios, /id="acceso-anticipado"/);
+  assert.match(precios, /Unirme al acceso anticipado/);
+  assert.match(precios, /origen: "acceso-anticipado"/);
+  assert.match(boletin, /\/precios#acceso-anticipado/);
+  // Los precios siguen visibles como referencia
+  assert.match(precios, /US\$ 1\.99 al mes o 15 al año/);
+  // Los términos aún describen la prueba: se revisan aparte antes de reabrir los pagos
   assert.match(terms, /Prueba gratuita del plan Boletín/);
   assert.match(terms, /una sola vez por cuenta y por tarjeta/);
-  assert.match(terms, /3 días antes/);
-  assert.match(terms, /9 de noviembre de 2026/);
-  // La tarjeta Pro no promete prueba: solo la copia del plan Boletín la lleva.
-  const proCard = precios.slice(precios.indexOf('<h2 class="pd-plan-name">Pro</h2>'));
+  // La tarjeta Pro no promete prueba
+  const proCard = precios.slice(precios.indexOf('<h2 class="pd-plan-name">Pro'));
   assert.doesNotMatch(proCard.slice(0, proCard.indexOf("</article>")), /Probar 7 días|prueba gratuita|Prueba de 7 días/);
+});
+
+test("pagos en pausa: checkout responde 503 payments_paused y no llama a Stripe", async () => {
+  process.env.PAYMENTS_ENABLED = "0";
+  const mock = installMock({
+    users: [{ id: "user_trial_1", email: "trial@example.com", plan: "free", stripe_subscription_id: null }],
+    trialCards: []
+  });
+  try {
+    for (const plan of ["boletin", "pro"]) {
+      const res = response();
+      await billingHandler(checkoutReq({ plan }), res);
+      assert.equal(res.statusCode, 503);
+      const body = JSON.parse(res.body);
+      assert.equal(body.success, false);
+      assert.equal(body.code, "payments_paused");
+      assert.equal(body.error, "Los planes de pago abren pronto. Apúntate al acceso anticipado en /precios.");
+    }
+    assert.equal(mock.stripeCalls.length, 0, "con pagos en pausa no se llama a Stripe");
+  } finally {
+    restore();
+    process.env.PAYMENTS_ENABLED = "1";
+  }
+});
+
+test("config informa paymentsEnabled según PAYMENTS_ENABLED", async () => {
+  installMock({ users: [] });
+  try {
+    const config = async () => {
+      const res = response();
+      await billingHandler({ method: "GET", headers: { host: "localhost" }, query: { action: "config" } }, res);
+      assert.equal(res.statusCode, 200);
+      return JSON.parse(res.body);
+    };
+    process.env.PAYMENTS_ENABLED = "0";
+    assert.equal((await config()).paymentsEnabled, false);
+    process.env.PAYMENTS_ENABLED = "1";
+    assert.equal((await config()).paymentsEnabled, true);
+  } finally {
+    restore();
+  }
 });
 
 test("publicUser expone trialInterval para la prueba del Boletín", async () => {

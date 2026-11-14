@@ -840,13 +840,13 @@ function renderGratis(f, dateLabel, lectura, img) {
   const plan = `<!-- plan-boletin -->
   <tr><td style="padding:24px 0 0">
     <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;background:${C.card};border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule}" width="100%"><tr><td style="padding:20px 4px">
-      <div style="font-family:${UI_F};font-size:14px;line-height:1.55;color:${C.ink};margin-bottom:12px">Con el plan Boletín (US$&nbsp;1.99 al mes, 7 días de prueba con tarjeta) recibes:</div>
+      <div style="font-family:${UI_F};font-size:14px;line-height:1.55;color:${C.ink};margin-bottom:12px">Próximamente, el plan Boletín (US$&nbsp;1.99 al mes o US$&nbsp;15 al año) incluirá:</div>
       <ul style="margin:0;padding-left:20px;font-family:${SERIF_F};font-size:15px;line-height:1.6;color:${C.ink}">
         <li style="margin-bottom:8px">Dólar a una semana y a un mes, cada uno con su rango y lectura</li>
         <li style="margin-bottom:8px">Cobre, oro y petróleo con variación y gráficos</li>
         <li>Tus empresas (hasta 15) con precio, proyección, hechos y noticias</li>
       </ul>
-      <div style="margin-top:16px"><a href="${SITE}/precios" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${UI_F};font-size:14px;font-weight:600;text-decoration:none;padding:12px 24px;border-radius:4px">Ver los planes</a></div>
+      <div style="margin-top:16px"><a href="${SITE}/precios#acceso-anticipado" style="display:inline-block;background:${C.ink};color:${C.paper};font-family:${UI_F};font-size:14px;font-weight:600;text-decoration:none;padding:12px 24px;border-radius:4px">Unirme al acceso anticipado</a></div>
     </td></tr></table>
   </td></tr>
   <!-- /plan-boletin -->`;
