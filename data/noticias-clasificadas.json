@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-14T22:23:26.220Z",
+ "actualizado": "2026-11-15T01:31:38.435Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "items": {
   "gestion-c00fd754b3": {
@@ -355,28 +355,10 @@
    "sentimiento": "NEUTRO",
    "empresas": []
   },
-  "infobae-ec4c706e24": {
-   "relevancia": "ALTA",
-   "tema": "Dólar y BCRP",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
-  "rpp-4fa8938a60": {
-   "relevancia": "ALTA",
-   "tema": "Dólar y BCRP",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
   "andina-20a594ae74": {
    "relevancia": "MEDIA",
    "tema": "Economía y fiscal",
    "sentimiento": "POSITIVO",
-   "empresas": []
-  },
-  "infobae-76e9e5feff": {
-   "relevancia": "BAJA",
-   "tema": "Energía",
-   "sentimiento": "NEUTRO",
    "empresas": []
   },
   "gestion-2988da459f": {
@@ -624,11 +606,37 @@
     "BVLC1"
    ]
   },
-  "gestion-640a861f76": {
-   "relevancia": "BAJA",
-   "tema": "Bolsa y empresas",
+  "bloomberg_linea-3bf529711c": {
+   "relevancia": "MEDIA",
+   "tema": "Mundo",
    "sentimiento": "NEUTRO",
    "empresas": []
+  },
+  "rpp-a9c75c2139": {
+   "relevancia": "ALTA",
+   "tema": "Mundo",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "infobae-795a2d5b8e": {
+   "relevancia": "BAJA",
+   "tema": "Energía",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "la_republica-636afd0e91": {
+   "relevancia": "ALTA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "NEGATIVO",
+   "empresas": []
+  },
+  "infobae-4fe9cc5aef": {
+   "relevancia": "MEDIA",
+   "tema": "Bolsa y empresas",
+   "sentimiento": "NEUTRO",
+   "empresas": [
+    "INRETC1"
+   ]
   }
  },
  "descartados": [
@@ -955,6 +963,7 @@
   "gestion-f7e7b1027e",
   "inei-b3e5ef7861",
   "rpp-61ad638f13",
-  "andina-e75725454c"
+  "andina-e75725454c",
+  "rpp-ca97754c20"
  ]
 }
