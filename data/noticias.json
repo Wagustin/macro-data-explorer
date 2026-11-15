@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-15T15:31:29.909Z",
+  "actualizado": "2026-11-15T16:21:06.076Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,27 +24,27 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 45
+      "items": 46
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 27
+      "items": 26
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 8
+      "items": 7
     },
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 14
+      "items": 15
     },
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 13
+      "items": 15
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 27
+      "items": 26
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -64,9 +64,90 @@
   },
   "noticias": [
     {
-      "id": "andina-db6bb1a8e5",
-      "titulo": "INEI: economía peruana creció 2.43% en setiembre y acumula expansión de 3.18% en 2026",
-      "url": "https://andina.pe/agencia/noticia-inei-economia-peruana-crecio-243-setiembre-y-acumula-expansion-318-2026-1100080.aspx",
+      "id": "gestion-e486d9eb76",
+      "titulo": "Pretensiones salariales suben a S/ 3,583 al mes: ¿qué puestos son los más “aclamados”?",
+      "url": "https://gestion.pe/economia/management-empleo/sueldo-pretensiones-salariales-suben-a-s-3583-al-mes-que-puestos-son-los-mas-aclamados-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-15T16:19:05.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-9a6153cbb4",
+      "titulo": "Población ocupada en Lima Metropolitana aumentó 6.2% entre agosto y octubre de 2026",
+      "url": "https://andina.pe/agencia/noticia-poblacion-ocupada-lima-metropolitana-aumento-62-entre-agosto-y-octubre-2026-1100088.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-15T16:15:47.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "la_republica-956f73912c",
+      "titulo": "Bolsa de Valores de Lima: ¿el impuesto a las ganancias bursátiles le resta competitividad frente a Chile y Colombia?",
+      "url": "https://larepublica.pe/economia/2026/11/13/bolsa-de-valores-de-lima-el-impuesto-a-las-ganancias-bursatiles-le-resta-competitividad-frente-a-chile-y-colombia-143338",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-15T16:12:27.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-e662c0af4f",
+      "titulo": "Machu Picchu: turistas ingresarán gratis hasta fin de año y estos serán los precios en 2027",
+      "url": "https://gestion.pe/economia/machu-picchu-turistas-ingresaran-gratis-hasta-fin-de-ano-y-estos-seran-los-precios-en-2027-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-15T16:11:15.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-0b46e91dc8",
+      "titulo": "¿Puede quebrar un banco en Perú realmente? Esto es lo que pasaría con tu dinero si sucede",
+      "url": "https://www.infobae.com/peru/2026/11/15/puede-quebrar-un-banco-en-peru-realmente-esto-es-lo-que-pasaria-con-tu-dinero-si-sucede/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-15T16:08:20.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-ccb4351ba4",
+      "titulo": "Economía peruana creció 2.43% en septiembre, pero hay 3 sectores que no pudieron “celebrar”",
+      "url": "https://gestion.pe/economia/economia-peruana-crece-243-en-septiembre-pero-hay-3-sectores-que-no-pudieron-celebrar-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-15T16:07:22.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-0fe37865e7",
+      "titulo": "Precio del dólar hoy en Perú, domingo 15 noviembre: consulta el tipo de cambio para compra y venta",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/14/precio-del-dolar-hoy-en-peru-domingo-15-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-1319066",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-15T16:03:59.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-fe941cfbec",
+      "titulo": "Contrataciones públicas bajo la lupa: Gobierno somete al OECE a una reorganización",
+      "url": "https://gestion.pe/economia/contrataciones-publicas-de-peru-bajo-la-lupa-gobierno-somete-al-oece-a-una-reorganizacion-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-15T15:47:28.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-3bd4f12895",
+      "titulo": "GLP ante El Niño: las rutas alternas para abastecer a las regiones si se cierran las vías",
+      "url": "https://gestion.pe/peru/glp-ante-el-nino-las-rutas-alternas-para-abastecer-a-las-regiones-si-se-cierran-las-vias-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-15T15:30:00.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-58a349c3fd",
+      "titulo": "Economía peruana creció 2.43% en setiembre y acumula expansión de 3.18% en 2026",
+      "url": "https://andina.pe/agencia/noticia-economia-peruana-crecio-243-setiembre-y-acumula-expansion-318-2026-1100080.aspx",
       "fuente": "Agencia Andina",
       "fecha_iso": "2026-11-15T15:18:07.000Z",
       "categoria": "Economía y fiscal",
@@ -97,15 +178,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-15T15:05:00.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-0fe37865e7",
-      "titulo": "Precio del dólar hoy en Perú, domingo 15 noviembre: consulta el tipo de cambio para compra y venta",
-      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/14/precio-del-dolar-hoy-en-peru-domingo-15-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-1319066",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-15T15:02:27.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -190,21 +262,21 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "andina-d82c3f33ee",
+      "titulo": "MEF declara en reorganización el Organismo para las Contrataciones Públicas Eficientes",
+      "url": "https://andina.pe/agencia/noticia-mef-declara-reorganizacion-organismo-para-las-contrataciones-publicas-eficientes-1100061.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-15T13:04:20.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
       "id": "gestion-732624707c",
       "titulo": "⁠Metropolitano “arrancaría” etapa operativa en 2027: ¿qué sucederá cuando se concrete?",
       "url": "https://gestion.pe/economia/metropolitano-arrancaria-etapa-operativa-en-2027-que-sucedera-cuando-se-concrete-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-15T12:36:08.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-3bd4f12895",
-      "titulo": "GLP ante El Niño: las rutas alternas para abastecer a las regiones si se cierran las vías",
-      "url": "https://gestion.pe/peru/glp-ante-el-nino-las-rutas-alternas-para-abastecer-a-las-regiones-si-se-cierran-las-vias-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-15T12:30:27.000Z",
-      "categoria": "Energía",
       "semaforo": "AMARILLO"
     },
     {
@@ -334,21 +406,21 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "gestion-1a208b7135",
-      "titulo": "Cade Ejecutivos: de Paracas a Cusco, la historia y lemas del foro empresarial",
-      "url": "https://gestion.pe/g-de-gestion/reportaje/cade-ejecutivos-de-paracas-a-cusco-en-el-2026-la-historia-del-foro-empresarial-y-los-retos-pendientes-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-15T10:00:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-da805185d4",
       "titulo": "Minería informal: queda al voto en el TC decidir si es inconstitucional prórroga del Reinfo",
       "url": "https://gestion.pe/economia/mineria-informal-queda-al-voto-en-el-tc-decidir-si-es-inconstitucional-prorroga-del-reinfo-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-15T10:00:00.000Z",
       "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-1a208b7135",
+      "titulo": "Cade Ejecutivos: de Paracas a Cusco, la historia y lemas del foro empresarial",
+      "url": "https://gestion.pe/g-de-gestion/reportaje/cade-ejecutivos-de-paracas-a-cusco-en-el-2026-la-historia-del-foro-empresarial-y-los-retos-pendientes-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-15T10:00:00.000Z",
+      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -403,15 +475,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-15T00:50:11.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-e486d9eb76",
-      "titulo": "Pretensiones salariales suben a S/ 3,583 al mes: ¿qué puestos son los más “aclamados”?",
-      "url": "https://gestion.pe/economia/management-empleo/sueldo-pretensiones-salariales-suben-a-s-3583-al-mes-que-puestos-son-los-mas-aclamados-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-15T00:47:00.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -520,15 +583,6 @@
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-14T21:47:16.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-86d26b1333",
-      "titulo": "\"Por más que ahorre no consigo vivir sola\": miles de personan marchan en Portugal contra el encarecimiento de la vivienda",
-      "url": "https://rpp.pe/mundo/actualidad/miles-de-personan-marchan-en-portugal-contra-el-encarecimiento-de-la-vivienda-noticia-1717830",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-14T21:47:09.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -784,15 +838,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-5867679790",
-      "titulo": "Transfieren S/250 millones al Fondo para la Estabilización de Precios de los Combustibles",
-      "url": "https://andina.pe/agencia/noticia-transfieren-s250-millones-al-fondo-para-estabilizacion-precios-los-combustibles-1099904.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-14T02:01:33.000Z",
-      "categoria": "Energía",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "el_comercio-9ffdf02e5d",
       "titulo": "Entel vendió su operación peruana a Millicom, ¿cómo le iba en el país y qué decía su CEO hace pocos meses?",
       "url": "https://elcomercio.pe/economia/entel-vendio-su-operacion-peruana-a-millicom-como-le-iba-en-el-pais-y-que-decia-su-ceo-hace-pocos-meses-apuesplan-noticia/",
@@ -925,51 +970,6 @@
       "fuente": "La República Economía",
       "fecha_iso": "2026-11-13T21:49:20.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-18225c1d23",
-      "titulo": "Presupuesto 2027: sindicatos rechazan restricciones a la negociación colectiva y convocan plantón frente al Congreso",
-      "url": "https://larepublica.pe/economia/2026/11/10/presupuesto-2027-sindicatos-rechazan-restricciones-a-la-negociacion-colectiva-y-convocan-planton-frente-al-congreso-hnews-978070",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-13T21:48:48.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-dd427826a2",
-      "titulo": "Liquidación de empresas: proponen que Indecopi digitalice actas para acelerar trámites y evitar pérdidas",
-      "url": "https://larepublica.pe/economia/2026/11/13/liquidacion-de-empresas-proponen-que-indecopi-digitalice-actas-para-acelerar-tramites-y-evitar-perdidas-hnews-1293968",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-13T21:43:33.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-b3153714ba",
-      "titulo": "El dólar cierra la semana en S/3,40 tras decisión del BCR y caída del cobre",
-      "url": "https://elcomercio.pe/economia/peru/el-dolar-cierra-la-semana-en-s340-tras-decision-del-bcr-y-caida-del-cobre-l-cotizacion-del-dolar-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-13T21:42:33.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-94e639d42b",
-      "titulo": "Dólar en Perú: ¿en cuánto cerró el tipo de cambio este viernes 13 de noviembre?",
-      "url": "https://gestion.pe/economia/mercados/dolar-en-peru-en-cuanto-cerro-el-tipo-de-cambio-este-viernes-13-de-noviembre-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-13T21:34:21.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-1ce2801e1f",
-      "titulo": "TAPP: cuatro funcionalidades que las empresas podrán usar para agilizar pagos y cobranzas",
-      "url": "https://gestion.pe/economia/empresas/tapp-cuatro-funcionalidades-que-las-empresas-podran-usar-para-agilizar-pagos-y-cobranzas-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-13T20:58:36.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     }
   ]
