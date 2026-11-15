@@ -64,4 +64,13 @@ jobs:
           git config user.name "perdata-bot"
           git config user.email "perdata-bot@users.noreply.github.com"
           git add data/boletin-last.json 2>/dev/null || true
-          git diff --cached --quiet || (git commit -m "data(boletin): enviado $(date -u +%F)" && git pull --rebase -q && git push)
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "data(boletin): enviado $(date -u +%F)"
+            for i in 1 2 3 4; do
+              git pull --rebase -q origin main && git push -q origin HEAD:main && break
+              [ "$i" -eq 4 ] && exit 1
+              sleep $((i*5))
+            done
+          fi
