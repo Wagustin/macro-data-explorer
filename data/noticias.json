@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-15T19:31:34.066Z",
+  "actualizado": "2026-11-15T19:43:25.513Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 42
+      "items": 41
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -39,7 +39,7 @@
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 16
+      "items": 15
     },
     "infobae": {
       "nombre": "Infobae Perú",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 29
+      "items": 30
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,24 @@
     }
   },
   "noticias": [
+    {
+      "id": "gestion-52b60fd15d",
+      "titulo": "El Niño: 3 productos de agroexportación enfrentarían riesgo alto hasta enero 2027",
+      "url": "https://gestion.pe/economia/el-nino-tres-productos-de-agroexportacion-de-peru-enfrentarian-riesgo-alto-hasta-enero-2027-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-15T19:38:02.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-58c29b406d",
+      "titulo": "Una nueva historia del teléfono tiene una lección para la inteligencia artificial",
+      "url": "https://www.bloomberglinea.com/tecnologia/una-nueva-historia-del-telefono-tiene-una-leccion-para-la-inteligencia-artificial/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-15T19:31:41.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "andina-529d7ac380",
       "titulo": "CCL: gremios y gobierno articulan acciones para mejorar acceso de productos a EE.UU.",
@@ -631,15 +649,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-52b60fd15d",
-      "titulo": "El Niño: 3 productos de agroexportación enfrentarían riesgo alto hasta enero 2027",
-      "url": "https://gestion.pe/economia/el-nino-tres-productos-de-agroexportacion-de-peru-enfrentarian-riesgo-alto-hasta-enero-2027-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-15T10:02:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-8c5b41882e",
       "titulo": "Papa León XIV recorre Perú: turismo en Cusco aún se recupera y Ucayali acelera crecimiento",
       "url": "https://andina.pe/agencia/noticia-papa-leon-xiv-recorre-peru-turismo-cusco-aun-se-recupera-y-ucayali-acelera-crecimiento-1100010.aspx",
@@ -988,15 +997,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-14T01:27:00.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-576ae01bce",
-      "titulo": "Donald Trump se reunirá con Xi Jinping y Putin el 19 de noviembre en China",
-      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/donald-trump-se-reunira-con-xi-jinping-y-putin-el-19-de-noviembre-en-china/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-14T00:53:49.000Z",
-      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     }
   ]
