@@ -1,14 +1,32 @@
 {
- "actualizado": "2026-11-16T05:08:46.148Z",
- "modelo": "Gemini models/gemini-flash-lite-latest",
+ "actualizado": "2026-11-16T06:30:31.006Z",
+ "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "La economía peruana creció dos con cuarenta y tres por ciento",
-   "nota": "La producción nacional avanzó durante septiembre impulsada por diversos sectores, aunque la caída en minería y agricultura limitó un mayor despegue económico. El acumulado anual refleja una tendencia positiva sostenida.",
+   "titulo": "Economía peruana crece 2,43% en setiembre",
+   "nota": "El PBI avanzó 2,43% en setiembre y acumula 3,18% en el año, aunque minería y agro cayeron. El empleo en Lima subió 6,2% en el trimestre agosto-octubre y el ingreso promedio creció 7,2% en doce meses.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
+    {
+     "titulo": "INEI: Producción nacional creció 2,43% en setiembre de 2026",
+     "fuente": "Instituto Nacional de Estadística e Informática",
+     "url": "https://www.gob.pe/institucion/inei/noticias/1473910-inei-produccion-nacional-crecio-2-43-en-setiembre-de-2026",
+     "fecha": "2026-11-16T06:27:00.027Z"
+    },
+    {
+     "titulo": "INEI: Población ocupada de Lima Metropolitana aumentó 6,2% entre agosto y octubre de 2026",
+     "fuente": "Instituto Nacional de Estadística e Informática",
+     "url": "https://www.gob.pe/institucion/inei/noticias/1473911-inei-poblacion-ocupada-de-lima-metropolitana-aumento-6-2-entre-agosto-y-octubre-de-2026",
+     "fecha": "2026-11-16T06:27:00.027Z"
+    },
+    {
+     "titulo": "Población ocupada en Lima Metropolitana aumentó en 6,0% en el tercer trimestre 2026",
+     "fuente": "Instituto Nacional de Estadística e Informática",
+     "url": "https://www.gob.pe/institucion/inei/noticias/1457077-poblacion-ocupada-en-lima-metropolitana-aumento-en-6-0-en-el-tercer-trimestre-2026",
+     "fecha": "2026-11-16T06:27:00.027Z"
+    },
     {
      "titulo": "Economía peruana creció 2.43% en septiembre, pero hay 3 sectores que no pudieron “celebrar”",
      "fuente": "Gestión",
@@ -28,16 +46,16 @@
      "fecha": "2026-11-15T19:58:24.000Z"
     },
     {
+     "titulo": "INEI: ingreso promedio mensual aumentó 7.2% en los últimos doce meses",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-inei-ingreso-promedio-mensual-aumento-72-los-ultimos-doce-meses-1100096.aspx",
+     "fecha": "2026-11-15T17:44:20.000Z"
+    },
+    {
      "titulo": "Economía peruana creció 2.43% en setiembre y acumula expansión de 3.18% en 2026",
      "fuente": "Agencia Andina",
      "url": "https://andina.pe/agencia/noticia-economia-peruana-crecio-243-setiembre-y-acumula-expansion-318-2026-1100080.aspx",
      "fecha": "2026-11-15T15:18:07.000Z"
-    },
-    {
-     "titulo": "INEI: Producción nacional creció 2,43% en setiembre de 2026",
-     "fuente": "Instituto Nacional de Estadística e Informática",
-     "url": "https://www.gob.pe/institucion/inei/noticias/1473910-inei-produccion-nacional-crecio-2-43-en-setiembre-de-2026",
-     "fecha": "2026-11-15T15:00:00.000Z"
     }
    ],
    "revision": {
@@ -47,9 +65,28 @@
    }
   },
   {
-   "titulo": "Entel acordó la venta de su operación peruana",
-   "nota": "La compañía telefónica decidió dejar el mercado nacional tras concretar la transacción por un monto superior a los mil millones de dólares.",
+   "titulo": "Inflación de Lima sube 0,57% en octubre",
+   "nota": "Los precios al consumidor en Lima Metropolitana aumentaron 0,57% en octubre, acumulando presión inflacionaria reciente.",
    "tema": "Economía y fiscal",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "INEI: Precios al consumidor de Lima Metropolitana subieron 0,57% en octubre de 2026",
+     "fuente": "Instituto Nacional de Estadística e Informática",
+     "url": "https://www.gob.pe/institucion/inei/noticias/1466754-inei-precios-al-consumidor-de-lima-metropolitana-subieron-0-57-en-octubre-de-2026",
+     "fecha": "2026-11-16T06:27:00.027Z"
+    }
+   ],
+   "revision": {
+    "modelo": null,
+    "ok": null,
+    "motivo": "revisor no disponible"
+   }
+  },
+  {
+   "titulo": "Entel vende operación peruana por US$1.714 millones",
+   "nota": "Entel acordó la venta de su operación en Perú por US$1.714 millones y saldrá del mercado local.",
+   "tema": "Bolsa y empresas",
    "empresas": [],
    "fuentes": [
     {
@@ -66,8 +103,27 @@
    }
   },
   {
-   "titulo": "El Gobierno reactivó el proyecto gasífero para el sur",
-   "nota": "Las autoridades impulsan nuevamente la iniciativa energética orientada a llevar gas hacia las regiones sureñas con una inversión millonaria.",
+   "titulo": "Minería informal: TC decidirá sobre prórroga del Reinfo",
+   "nota": "El Tribunal Constitucional tiene al voto la constitucionalidad de la prórroga del Reinfo, clave para la minería informal.",
+   "tema": "Minería y metales",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Minería informal: queda al voto en el TC decidir si es inconstitucional prórroga del Reinfo",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/mineria-informal-queda-al-voto-en-el-tc-decidir-si-es-inconstitucional-prorroga-del-reinfo-noticia/",
+     "fecha": "2026-11-16T04:30:00.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": null,
+    "ok": null,
+    "motivo": "revisor no disponible"
+   }
+  },
+  {
+   "titulo": "Gobierno reactiva megaproyecto SITGAS de USD 4.321 millones",
+   "nota": "El MEF y Minem reactivan SITGAS para llevar gas natural al sur peruano con inversión de USD 4.321 millones.",
    "tema": "Energía",
    "empresas": [],
    "fuentes": [
@@ -91,53 +147,16 @@
    }
   },
   {
-   "titulo": "La Sunat otorgó facilidades tributarias por El Niño",
-   "nota": "Se postergó el pago del impuesto correspondiente hasta el próximo año y se ampliaron los plazos para deudas fiscales en sectores afectados.",
-   "tema": "Economía y fiscal",
+   "titulo": "Crédito a pequeñas empresas se triplica y lidera expansión",
+   "nota": "El financiamiento a pequeñas empresas se triplicó, encabezando el crecimiento del crédito empresarial.",
+   "tema": "Bolsa y empresas",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Sunat posterga pago del ITAN hasta abril de 2027 y amplía plazo para pagar deudas tributarias por El Niño",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/2026/11/15/sunat-posterga-pago-del-itan-hasta-abril-de-2027-y-amplia-plazo-para-pagar-deudas-tributarias-por-el-nino-hnews-918495",
-     "fecha": "2026-11-15T22:28:09.000Z"
-    },
-    {
-     "titulo": "SUNAT posterga hasta abril de 2027 cuotas del ITAN para pesca y textiles afectados por El Niño",
-     "fuente": "Infobae Perú",
-     "url": "https://www.infobae.com/peru/2026/11/15/sunat-posterga-hasta-abril-de-2027-cuotas-del-itan-para-pesca-y-textiles-afectados-por-el-nino/",
-     "fecha": "2026-11-15T14:29:20.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": null,
-    "ok": null,
-    "motivo": "revisor no disponible"
-   }
-  },
-  {
-   "titulo": "El empleo en Lima Metropolitana registró un aumento",
-   "nota": "La población ocupada en la capital creció durante los últimos meses, reflejando una mayor actividad en el mercado laboral local según las cifras oficiales.",
-   "tema": "Economía y fiscal",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Población ocupada en Lima Metropolitana aumentó 6.2% en últimos tres meses",
+     "titulo": "Crédito a pequeñas empresas se triplica y lidera expansión del financiamiento empresarial",
      "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-poblacion-ocupada-lima-metropolitana-aumento-62-ultimos-tres-meses-1100088.aspx",
-     "fecha": "2026-11-15T16:15:47.000Z"
-    },
-    {
-     "titulo": "INEI: Población ocupada de Lima Metropolitana aumentó 6,2% entre agosto y octubre de 2026",
-     "fuente": "Instituto Nacional de Estadística e Informática",
-     "url": "https://www.gob.pe/institucion/inei/noticias/1473911-inei-poblacion-ocupada-de-lima-metropolitana-aumento-6-2-entre-agosto-y-octubre-de-2026",
-     "fecha": "2026-11-15T15:00:00.000Z"
-    },
-    {
-     "titulo": "INEI: En el tercer trimestre 2026 la población ocupada del país totalizó 17 millones 973 mil 200 personas",
-     "fuente": "Instituto Nacional de Estadística e Informática",
-     "url": "https://www.gob.pe/institucion/inei/noticias/1473912-inei-en-el-tercer-trimestre-2026-la-poblacion-ocupada-del-pais-totalizo-17-millones-973-mil-200-personas",
-     "fecha": "2026-11-15T15:00:00.000Z"
+     "url": "https://andina.pe/agencia/noticia-credito-a-pequenas-empresas-se-triplica-y-lidera-expansion-del-financiamiento-empresarial-1100017.aspx",
+     "fecha": "2026-11-15T12:00:00.000Z"
     }
    ],
    "revision": {
