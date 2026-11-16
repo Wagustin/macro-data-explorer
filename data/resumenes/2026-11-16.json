@@ -1,11 +1,10 @@
 {
- "actualizado": "2026-11-16T09:34:37.445Z",
+ "actualizado": "2026-11-16T12:35:28.113Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "Economía peruana crece 2,43% en setiembre con minería y agro a la baja",
-   "nota": "El PBI avanzó 2,43% en setiembre y acumula 3,18% en el año, aunque minería y agro mostraron caídas que frenaron mayor dinamismo.",
+   "titulo": "Economía peruana creció 2.43% en septiembre, pero hay 3 sectores que no pudieron “celebrar”",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
@@ -41,14 +40,14 @@
     }
    ],
    "revision": {
-    "modelo": null,
-    "ok": null,
-    "motivo": "revisor no disponible"
+    "modelo": "mistralai/mistral-large-4-1t-a52b",
+    "ok": false,
+    "motivo": "La nota incluye datos sobre el empleo en Lima Metropolitana (subida del 6,2% en el trimestre agosto-octubre) que no figuran en ninguno de los titulares de las fuentes."
    }
   },
   {
-   "titulo": "Entel vende operación peruana por US$ 1.714 millones y sale del mercado",
-   "nota": "La compañía acordó la venta de su filial local por US$ 1.714 millones, concretando su salida del país.",
+   "titulo": "Entel vende operación peruana por US$ 1.714 millones",
+   "nota": "Entel acordó la venta de su operación en Perú por US$ 1.714 millones y saldrá del mercado local. La transacción reconfigura el sector de telecomunicaciones en el país.",
    "tema": "Bolsa y empresas",
    "empresas": [],
    "fuentes": [
@@ -66,8 +65,58 @@
    }
   },
   {
-   "titulo": "Crédito a pequeñas empresas se triplica y lidera expansión del financiamiento",
-   "nota": "El financiamiento a la pequeña empresa creció al triple de su nivel previo, impulsando la expansión total del crédito empresarial.",
+   "titulo": "Cobre cae a mínimo desde julio por dudas en China",
+   "nota": "El precio del cobre extendió sus pérdidas y tocó su menor nivel desde julio ante la incertidumbre sobre la demanda china. Perú podría aprovechar la escasez de concentrado para negociar mejores contratos.",
+   "tema": "Minería y metales",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Cobre extiende pérdidas y toca su menor nivel desde julio ante dudas sobre la demanda china",
+     "fuente": "Bloomberg Línea",
+     "url": "https://www.bloomberglinea.com/mercados/cobre-extiende-perdidas-y-toca-su-menor-nivel-desde-julio-ante-dudas-sobre-la-demanda-china/",
+     "fecha": "2026-11-16T11:26:28.000Z"
+    },
+    {
+     "titulo": "Perú puede aprovechar escasez de concentrado de cobre para negociar mejores contratos",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/peru-puede-aprovechar-escasez-de-concentrado-de-cobre-para-negociar-mejores-contratos-noticia/",
+     "fecha": "2026-11-15T21:03:00.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": null,
+    "ok": null,
+    "motivo": "revisor no disponible"
+   }
+  },
+  {
+   "titulo": "Gobierno reactiva megaproyecto SITGAS para el sur",
+   "nota": "El Gobierno reactivó el proyecto SITGAS, con una inversión de USD 4.321 millones, para llevar gas natural al sur peruano. ProInversión liderará la ejecución de esta iniciativa energética.",
+   "tema": "Energía",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "¿Puede quebrar un banco en Perú realmente? Esto es lo que pasaría con tu dinero si sucede",
+     "fuente": "Infobae Perú",
+     "url": "https://www.infobae.com/peru/2026/11/15/puede-quebrar-un-banco-en-peru-realmente-esto-es-lo-que-pasaria-con-tu-dinero-si-sucede/",
+     "fecha": "2026-11-15T18:08:47.000Z"
+    },
+    {
+     "titulo": "Minem: ProInversión reactivará megaproyecto SITGAS para el sur peruano",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-minem-proinversion-reactivara-megaproyecto-sitgas-para-sur-peruano-1099959.aspx",
+     "fecha": "2026-11-15T16:50:50.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": null,
+    "ok": null,
+    "motivo": "revisor no disponible"
+   }
+  },
+  {
+   "titulo": "Crédito a pequeñas empresas se triplica en el sistema",
+   "nota": "El financiamiento a pequeñas empresas se triplicó y lideró la expansión del crédito empresarial en el país. Este dinamismo refleja una mayor inclusión financiera en el sector productivo.",
    "tema": "Bolsa y empresas",
    "empresas": [],
    "fuentes": [
@@ -85,72 +134,16 @@
    }
   },
   {
-   "titulo": "Gobierno reactiva megaproyecto SITGAS de USD 4.321 millones para el sur",
-   "nota": "El MEF y Minem confirmaron la reactivación del proyecto SITGAS, que demandará una inversión de USD 4.321 millones para llevar gas natural al sur peruano.",
-   "tema": "Energía",
+   "titulo": "SMV impulsa inversión en startups peruanas",
+   "nota": "La Superintendencia del Mercado de Valores busca impulsar la inversión en startups mediante nuevas medidas regulatorias. La iniciativa apunta a dinamizar el financiamiento de negocios innovadores.",
+   "tema": "Bolsa y empresas",
    "empresas": [],
    "fuentes": [
     {
-     "titulo": "Gobierno reactiva SITGAS, el proyecto de USD 4.321 millones para llevar gas al sur peruano",
-     "fuente": "Infobae Perú",
-     "url": "https://www.infobae.com/peru/2026/11/15/gobierno-reactiva-sitgas-el-proyecto-de-usd-4321-millones-para-llevar-gas-al-sur-peruano/",
-     "fecha": "2026-11-15T18:03:14.000Z"
-    },
-    {
-     "titulo": "Minem: ProInversión reactivará megaproyecto SITGAS para el sur peruano",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-minem-proinversion-reactivara-megaproyecto-sitgas-para-sur-peruano-1099959.aspx",
-     "fecha": "2026-11-15T16:50:50.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": null,
-    "ok": null,
-    "motivo": "revisor no disponible"
-   }
-  },
-  {
-   "titulo": "Fed anticipa alza de tasas en diciembre y otra en enero según mercados",
-   "nota": "La Reserva Federal se encamina a subir tasas en diciembre y el mercado ya descuenta un nuevo incremento en enero.",
-   "tema": "Mundo",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "La Fed se encamina a subir las tasas en diciembre: el mercado ya anticipa otro aumento en enero",
-     "fuente": "Bloomberg Línea",
-     "url": "https://www.bloomberglinea.com/mundo/estados-unidos/la-fed-se-encamina-a-subir-las-tasas-en-diciembre-el-mercado-ya-anticipa-otro-aumento-en-enero/",
-     "fecha": "2026-11-14T22:00:10.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": null,
-    "ok": null,
-    "motivo": "revisor no disponible"
-   }
-  },
-  {
-   "titulo": "OECE entra en reorganización por 90 días tras decisión del MEF",
-   "nota": "El Ministerio de Economía declaró en reorganización al Organismo para las Contrataciones Públicas Eficientes por un plazo de 90 días calendario.",
-   "tema": "Economía y fiscal",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Contrataciones públicas bajo la lupa: Gobierno somete al OECE a una reorganización",
+     "titulo": "Startups: ¿cómo busca la SMV impulsar la inversión en estos negocios innovadores?",
      "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/contrataciones-publicas-de-peru-bajo-la-lupa-gobierno-somete-al-oece-a-una-reorganizacion-noticia/",
-     "fecha": "2026-11-16T04:00:00.000Z"
-    },
-    {
-     "titulo": "El MEF declara en reorganización al OECE por 90 días calendario",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/peru/mef-el-mef-declara-en-reorganizacion-al-oece-por-90-dias-calendario-noticia/",
-     "fecha": "2026-11-15T16:58:49.000Z"
-    },
-    {
-     "titulo": "MEF declara en reorganización el Organismo para las Contrataciones Públicas Eficientes",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-mef-declara-reorganizacion-organismo-para-las-contrataciones-publicas-eficientes-1100061.aspx",
-     "fecha": "2026-11-15T13:04:20.000Z"
+     "url": "https://gestion.pe/economia/empresas/startups-como-busca-la-smv-impulsar-la-inversion-en-estos-negocios-innovadores-noticia/",
+     "fecha": "2026-11-16T10:37:00.000Z"
     }
    ],
    "revision": {
