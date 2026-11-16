@@ -419,8 +419,12 @@ header a span.text-ink {
 }
 
 /* Header always uses the brand font, even on pages that override body */
-header, header nav a, header .pd-wordmark {
+header, header nav a {
   font-family: var(--pd-font-ui) !important;
+}
+/* ... except the logo, which keeps its italic serif signature */
+header .pd-wordmark {
+  font-family: var(--pd-font-read, 'Source Serif 4', Georgia, serif) !important;
 }
 
 /* Header nav links */
