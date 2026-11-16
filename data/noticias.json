@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-15T22:47:55.668Z",
+  "actualizado": "2026-11-16T02:01:30.965Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,27 +24,27 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 34
+      "items": 32
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 16
+      "items": 14
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 7
+      "items": 6
     },
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 13
+      "items": 11
     },
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 20
+      "items": 19
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 32
+      "items": 33
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,69 @@
     }
   },
   "noticias": [
+    {
+      "id": "gestion-5d9c49a715",
+      "titulo": "Informalidad cae a 69.1% en Perú, pero aún 8 de cada 10 jóvenes no salen de esta situación",
+      "url": "https://gestion.pe/economia/management-empleo/informalidad-cae-a-691-en-peru-pero-aun-8-de-cada-10-jovenes-no-salen-de-esta-situacion-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T01:51:52.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-957d120ae6",
+      "titulo": "Economía peruana creció 2,43% en septiembre, pero caída de minería y agro frenó el avance",
+      "url": "https://larepublica.pe/economia/2026/11/15/economia-peruana-crecio-243-en-septiembre-pero-caida-de-mineria-y-agro-freno-el-avance-419865",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-15T23:55:16.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-0f3bb2186a",
+      "titulo": "Entel dejará el mercado peruano tras acordar la venta de su operación por US$1.714 millones",
+      "url": "https://larepublica.pe/economia/2026/11/13/entel-acuerda-vender-su-operacion-en-peru-a-millicom-por-us1714-millones-668798",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-15T23:51:22.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-23e453e253",
+      "titulo": "InRetail adelanta compras por El Niño: Plaza Vea, Makro e Inkafarma se preparan",
+      "url": "https://gestion.pe/economia/empresas/dueno-de-plaza-vea-adelanta-compras-ante-el-nino-y-espera-mantener-crecimiento-en-locales-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-15T23:30:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-0092fbe05c",
+      "titulo": "Las bolsas asiáticas se preparan para la presión de la IA y la avalancha de datos",
+      "url": "https://www.bloomberglinea.com/mercados/las-bolsas-asiaticas-se-preparan-para-la-presion-de-la-ia-y-la-avalancha-de-datos/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-15T23:15:01.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-479e6056c4",
+      "titulo": "CTS: errores en el cálculo pueden generar multas de hasta S/ 143,660 a empresas",
+      "url": "https://andina.pe/agencia/noticia-cts-errores-el-calculo-pueden-generar-multas-hasta-s-143660-a-empresas-1100127.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-15T23:13:21.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-d4acf8d6ef",
+      "titulo": "“Preocupa que Perú se quede con un piso de gasto enorme que no se pueda revertir”, analiza el CF",
+      "url": "https://gestion.pe/economia/alonso-segura-del-consejo-fiscal-preocupa-que-peru-se-quede-con-un-piso-de-gasto-enorme-que-no-se-pueda-revertir-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-15T22:45:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "gestion-732624707c",
       "titulo": "⁠Metropolitano “arrancaría” etapa operativa en 2027: ¿qué sucederá cuando se concrete?",
@@ -133,15 +196,6 @@
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-15T21:34:32.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-5d9c49a715",
-      "titulo": "Informalidad cae a 69.1% en Perú, pero aún 8 de cada 10 jóvenes no salen de esta situación",
-      "url": "https://gestion.pe/economia/management-empleo/informalidad-cae-a-691-en-peru-pero-aun-8-de-cada-10-jovenes-no-salen-de-esta-situacion-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-15T21:30:27.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -253,15 +307,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "la_republica-957d120ae6",
-      "titulo": "Economía peruana creció 2,43% en septiembre, pero caída de minería y agro frenó el avance",
-      "url": "https://larepublica.pe/economia/2026/11/15/economia-peruana-crecio-243-en-septiembre-pero-caida-de-mineria-y-agro-freno-el-avance-419865",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-15T18:52:00.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "bloomberg_linea-324bbf70f1",
       "titulo": "El argumento con el que EE.UU. rechazo medicamento de origen chino contra el cáncer de pulmón",
       "url": "https://www.bloomberglinea.com/salud/ee-uu-rechaza-medicamento-contra-el-cancer-de-pulmon-de-origen-chino-este-es-el-argumento/",
@@ -286,15 +331,6 @@
       "fuente": "La República Economía",
       "fecha_iso": "2026-11-15T18:47:10.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-0f3bb2186a",
-      "titulo": "Entel dejará el mercado peruano tras acordar la venta de su operación por US$1.714 millones",
-      "url": "https://larepublica.pe/economia/2026/11/13/entel-acuerda-vender-su-operacion-en-peru-a-millicom-por-us1714-millones-668798",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-15T18:45:57.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -433,15 +469,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "rpp-a4ffd0cfba",
-      "titulo": "\"Las acciones hostiles tienen consecuencias\": Estonia anuncia el cierre de su frontera con Rusia",
-      "url": "https://rpp.pe/mundo/actualidad/estonia-cerrara-su-frontera-con-rusia-el-1-de-diciembre-tras-un-presunto-acto-de-sabotaje-noticia-1717894",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-15T16:57:28.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-1837868270",
       "titulo": "Minem: ProInversión reactivará megaproyecto SITGAS para el sur peruano",
       "url": "https://andina.pe/agencia/noticia-minem-proinversion-reactivara-megaproyecto-sitgas-para-sur-peruano-1099959.aspx",
@@ -487,15 +514,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "rpp-5d551fef20",
-      "titulo": "Economía peruana se desacelera por segundo mes consecutivo: caída de la minería y el agro le pasan factura, según el INEI",
-      "url": "https://rpp.pe/economia/economia/economia-peruana-se-desacelera-por-segundo-mes-consecutivo-caida-de-la-mineria-y-el-agro-le-pasan-factura-segun-el-inei-noticia-1717893",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-15T16:15:33.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-fe941cfbec",
       "titulo": "Contrataciones públicas bajo la lupa: Gobierno somete al OECE a una reorganización",
       "url": "https://gestion.pe/economia/contrataciones-publicas-de-peru-bajo-la-lupa-gobierno-somete-al-oece-a-una-reorganizacion-noticia/",
@@ -511,6 +529,15 @@
       "fuente": "Agencia Andina",
       "fecha_iso": "2026-11-15T15:18:07.000Z",
       "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "andina-89a110cc93",
+      "titulo": "Libre Comercio con Tailandia: funcionario del Mincetur viaja a China para firma de acuerdo",
+      "url": "https://andina.pe/agencia/noticia-libre-comercio-tailandia-funcionario-del-mincetur-viaja-a-china-para-firma-acuerdo-1100079.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-15T15:12:08.000Z",
+      "categoria": "Bolsa y empresas",
       "semaforo": "VERDE"
     },
     {
@@ -969,15 +996,6 @@
       "url": "https://elcomercio.pe/economia/peru/rolando-arellano-el-peru-tiene-oportunidades-para-ser-la-estrella-del-continente-pero-necesitamos-trabajar-juntos-cade-ejecutivos-2026-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-14T11:00:01.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-23e453e253",
-      "titulo": "InRetail adelanta compras por El Niño: Plaza Vea, Makro e Inkafarma se preparan",
-      "url": "https://gestion.pe/economia/empresas/dueno-de-plaza-vea-adelanta-compras-ante-el-nino-y-espera-mantener-crecimiento-en-locales-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-14T10:30:00.000Z",
       "categoria": "Otros",
       "semaforo": "AMARILLO"
     }
