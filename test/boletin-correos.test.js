@@ -110,7 +110,8 @@ test("correo gratis: tabla de rangos con un solo horizonte (hoy) y valores de da
 
 test("correo gratis: no trae empresas ni secciones de pago", () => {
   const html = generar("gratis");
-  const sinPlan = stripPlanBlock(html);
+  // Las noticias del día pueden nombrar el cobre o el petróleo: se quitan antes de buscar secciones de pago.
+  const sinPlan = stripPlanBlock(html).replace(/Lo importante de hoy[\s\S]*?cada enlace lleva al medio original\./, "");
   for (const empresa of ["ALICORC1", "BVN", "CVERDEC1", "Ver ficha"]) {
     assert.ok(!html.includes(empresa), `el gratis no trae «${empresa}»`);
   }
