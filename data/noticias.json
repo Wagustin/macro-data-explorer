@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-16T18:31:31.446Z",
+  "actualizado": "2026-11-16T19:35:55.181Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -29,17 +29,17 @@
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 21
+      "items": 22
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 4
+      "items": 6
     },
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 10
+      "items": 11
     },
     "infobae": {
       "nombre": "Infobae Perú",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 33
+      "items": 34
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -64,11 +64,110 @@
   },
   "noticias": [
     {
-      "id": "el_comercio-15c4d1bec8",
-      "titulo": "Donald Trump se muestra a favor de que Jensen Huang vuelva dirigir Nvidia",
-      "url": "https://elcomercio.pe/economia/mundo/donald-trump-se-muestra-a-favor-de-que-jensen-huang-vuelva-dirigir-nvidia-l-ultimas-noticia/",
+      "id": "el_comercio-4b663263c1",
+      "titulo": "Scott Bessent pide respuestas a Nvidia y urge elegir a nuevo CEO externo",
+      "url": "https://elcomercio.pe/economia/mundo/scott-bessent-pide-respuestas-a-nvidia-y-urge-elegir-a-nuevo-ceo-externo-l-ultimas-noticia/",
       "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-16T18:20:53.000Z",
+      "fecha_iso": "2026-11-16T19:28:50.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-bedd946681",
+      "titulo": "Ingreso de trabajadores rurales equivale a solo el 47,9% del urbano",
+      "url": "https://larepublica.pe/economia/2026/11/16/ingreso-de-trabajadores-rurales-equivale-a-solo-el-479-del-urbano-hnews-1387552",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-16T19:15:58.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-804d95575f",
+      "titulo": "Julio Velarde suma un nuevo reconocimiento: Premio honorífico de influencia hispana",
+      "url": "https://gestion.pe/economia/bcrp-julio-velarde-suma-un-nuevo-reconocimiento-premio-honorifico-de-influencia-hispana-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T19:15:00.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-7290f1e156",
+      "titulo": "Precio del dólar del lunes 16 de noviembre: tipo de cambio en Perú hoy",
+      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-2026-a-cuanto-esta-el-tipo-de-cambio-este-lunes-16-de-noviembre-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-16T19:03:28.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-15f7c076d5",
+      "titulo": "El empleo en Perú siente el embate de El Niño: agricultura, pesca, manufactura y minería pierden más de 210 mil puestos en un año, según INEI",
+      "url": "https://rpp.pe/economia/economia/el-empleo-en-peru-siente-el-embate-de-el-nino-agricultura-pesca-manufactura-y-mineria-pierden-mas-de-210-mil-puestos-en-un-ano-segun-inei-noticia-1718012",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-16T19:00:25.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-a9fe3ecd8f",
+      "titulo": "EE.UU. busca limitar el acceso remoto de China a chips avanzados de IA desde terceros países",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/eeuu-busca-limitar-el-acceso-remoto-de-china-a-chips-avanzados-de-ia-desde-terceros-paises/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-16T18:52:04.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-00e6a4b124",
+      "titulo": "Tipo de cambio sube hoy en Perú: ¿en cuánto cerró el dólar este lunes 16 de noviembre?",
+      "url": "https://gestion.pe/economia/mercados/tipo-de-cambio-dolar-hoy-en-peru-cuanto-esta-el-precio-del-dolar-este-lunes-16-de-noviembre-dolares-a-soles-compra-y-venta-bcrp-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T18:47:36.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-441aab2e00",
+      "titulo": "CTS: ¿qué pasa si una empresa no tiene actualizada la información de sus trabajadores?",
+      "url": "https://andina.pe/agencia/noticia-cts-pasa-si-una-empresa-no-tiene-actualizada-informacion-sus-trabajadores-1098047.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-16T18:42:18.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "la_republica-957d120ae6",
+      "titulo": "Economía peruana creció 2,43% en septiembre, pero caída de minería y agro frenó el avance",
+      "url": "https://larepublica.pe/economia/2026/11/15/economia-peruana-crecio-243-en-septiembre-pero-caida-de-mineria-y-agro-freno-el-avance-419865",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-16T18:37:50.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-0f3bb2186a",
+      "titulo": "Entel dejará el mercado peruano tras acordar la venta de su operación por US$1.714 millones",
+      "url": "https://larepublica.pe/economia/2026/11/13/entel-acuerda-vender-su-operacion-en-peru-a-millicom-por-us1714-millones-668798",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-16T18:37:24.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-4f10e4249f",
+      "titulo": "Donald Trump se muestra a favor de que Jensen Huang vuelva a dirigir Nvidia",
+      "url": "https://elcomercio.pe/economia/mundo/donald-trump-se-muestra-a-favor-de-que-jensen-huang-vuelva-a-dirigir-nvidia-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-16T18:34:53.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-a72f27d37e",
+      "titulo": "Rusia y Corea del Norte afianzan vínculos: Dmitri Medvédev se reunió con estrecho colaborador de Kim Jong-un [FOTOS]",
+      "url": "https://rpp.pe/mundo/rusia/rusia-y-corea-del-norte-afianzan-vinculos-dmitri-medvedev-se-reunio-con-estrecho-colaborador-de-kim-jong-un-fotos-noticia-1718050",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-16T18:30:29.000Z",
       "categoria": "Mundo",
       "semaforo": "AMARILLO"
     },
@@ -79,15 +178,6 @@
       "fuente": "RPP Noticias",
       "fecha_iso": "2026-11-16T18:13:32.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-804d95575f",
-      "titulo": "Julio Velarde suma un nuevo reconocimiento: Premio honorífico de influencia hispana",
-      "url": "https://gestion.pe/economia/bcrp-julio-velarde-suma-un-nuevo-reconocimiento-premio-honorifico-de-influencia-hispana-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T18:12:25.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -235,15 +325,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-7290f1e156",
-      "titulo": "Precio del dólar del lunes 16 de noviembre: tipo de cambio en Perú hoy",
-      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-2026-a-cuanto-esta-el-tipo-de-cambio-este-lunes-16-de-noviembre-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-16T16:48:55.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "infobae-220e4b2f6c",
       "titulo": "Precio del dólar hoy en Perú: Así va la cotización del tipo de cambio del 16 de noviembre",
       "url": "https://www.infobae.com/peru/2026/11/16/precio-del-dolar-hoy-en-peru-cotizacion-de-apertura-del-16-de-noviembre/",
@@ -349,15 +430,6 @@
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-16T15:47:25.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-00e6a4b124",
-      "titulo": "Tipo de cambio hoy en Perú: ¿cuánto está el dólar este lunes 16 de noviembre?",
-      "url": "https://gestion.pe/economia/mercados/tipo-de-cambio-dolar-hoy-en-peru-cuanto-esta-el-precio-del-dolar-este-lunes-16-de-noviembre-dolares-a-soles-compra-y-venta-bcrp-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T15:40:44.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -541,15 +613,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "rpp-b9b2883664",
-      "titulo": "Cumbre ASEAN en Filipinas: detienen a más de 200 manifestantes en protestas contra Donald Trump en Manila [FOTOS]",
-      "url": "https://rpp.pe/mundo/asia/cumbre-asean-en-filipinas-detienen-a-mas-de-200-manifestantes-en-protestas-contra-donald-trump-en-manila-fotos-noticia-1717985",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-16T12:15:47.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-e662c0af4f",
       "titulo": "Machu Picchu: turistas ingresarán gratis hasta fin de año y estos serán los precios en 2027",
       "url": "https://gestion.pe/economia/machu-picchu-turistas-ingresaran-gratis-hasta-fin-de-ano-y-estos-seran-los-precios-en-2027-noticia/",
@@ -592,6 +655,15 @@
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-16T11:26:28.000Z",
       "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-977fb12a1c",
+      "titulo": "Precio del dólar Perú y tipo de cambio hoy 16 de noviembre del 2026",
+      "url": "https://rpp.pe/economia/economia/precio-del-dolar-peru-y-tipo-de-cambio-hoy-16-de-noviembre-del-2026-noticia-1717977",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-16T11:05:39.000Z",
+      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -654,24 +726,6 @@
       "url": "https://gestion.pe/economia/economia-peruana-crece-243-en-septiembre-pero-hay-3-sectores-que-no-pudieron-celebrar-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-16T03:30:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-957d120ae6",
-      "titulo": "Economía peruana creció 2,43% en septiembre, pero caída de minería y agro frenó el avance",
-      "url": "https://larepublica.pe/economia/2026/11/15/economia-peruana-crecio-243-en-septiembre-pero-caida-de-mineria-y-agro-freno-el-avance-419865",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-15T23:55:16.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-0f3bb2186a",
-      "titulo": "Entel dejará el mercado peruano tras acordar la venta de su operación por US$1.714 millones",
-      "url": "https://larepublica.pe/economia/2026/11/13/entel-acuerda-vender-su-operacion-en-peru-a-millicom-por-us1714-millones-668798",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-15T23:51:22.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
@@ -874,15 +928,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-1837868270",
-      "titulo": "Minem: ProInversión reactivará megaproyecto SITGAS para el sur peruano",
-      "url": "https://andina.pe/agencia/noticia-minem-proinversion-reactivara-megaproyecto-sitgas-para-sur-peruano-1099959.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-15T16:50:50.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "bloomberg_linea-9f59d8251b",
       "titulo": "Mythos, la IA de Anthropic que busca fallos cibernéticos en los sistemas energéticos",
       "url": "https://www.bloomberglinea.com/tecnologia/mythos-la-ia-de-anthropic-que-busca-fallos-ciberneticos-en-los-sistemas-energeticos/",
@@ -988,42 +1033,6 @@
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-15T01:00:00.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-c00fd754b3",
-      "titulo": "Universidad de SJL invertirá US$ 10 millones en su nuevo campus y sumará nuevas carreras",
-      "url": "https://gestion.pe/economia/empresas/universidad-maria-auxiliadora-alista-nuevo-campus-de-us-10-millones-y-torre-para-carreras-de-salud-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-15T00:50:11.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-2df9e1352e",
-      "titulo": "TUUA internacional en el Jorge Chávez podría bajar a US$4: MTC busca ampliar el descuento de LAP",
-      "url": "https://larepublica.pe/economia/2026/11/13/tuua-internacional-bajaria-a-us4-en-el-jorge-chavez-mtc-trabaja-en-una-reduccion-adicional-hnews-198822",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-15T00:29:16.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-636afd0e91",
-      "titulo": "Noveno retiro de AFP sigue en comisión: proyecto de hasta S/22.000 espera evaluación en el Congreso",
-      "url": "https://larepublica.pe/economia/2026/11/10/noveno-retiro-de-afp-sigue-en-comision-proyecto-de-hasta-s22000-espera-evaluacion-en-el-congreso-hnews-669950",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-15T00:28:44.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-f8a6aa7491",
-      "titulo": "Industria de acero peruano crecería este año, mientras empresas sufren las presiones chinas",
-      "url": "https://gestion.pe/economia/industria-de-acero-peruano-creceria-este-ano-mientras-empresas-sufren-las-presiones-chinas-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-14T23:06:00.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     }
   ]
