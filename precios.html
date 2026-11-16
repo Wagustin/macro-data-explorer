@@ -288,7 +288,7 @@
             <li><span>Cancela cuando quieras desde tu cuenta</span></li>
           </ul>
           <div class="pd-plan-cta">
-            <a id="pdBolCta" class="pd-btn pd-btn-ghost pd-btn-block" href="#acceso-anticipado">Unirme al acceso anticipado</a>
+            <a id="pdBolCta" class="pd-btn pd-btn-ghost pd-btn-block" href="#acceso-anticipado" data-plan="boletin">Me interesa el Boletín</a>
           </div>
         </article>
 
@@ -307,7 +307,7 @@
             <li><span>Cancela cuando quieras desde tu cuenta</span></li>
           </ul>
           <div class="pd-plan-cta">
-            <a id="pdProCta" class="pd-btn pd-btn-primary pd-btn-block" href="#acceso-anticipado">Unirme al acceso anticipado</a>
+            <a id="pdProCta" class="pd-btn pd-btn-primary pd-btn-block" href="#acceso-anticipado" data-plan="pro">Me interesa Pro</a>
           </div>
         </article>
       </div>
@@ -318,11 +318,24 @@
       <div class="max-w-3xl">
         <h2 class="pd-section-title">Acceso anticipado</h2>
         <p class="pd-page-lede">Los planes de pago abrirán pronto. Déjanos tu correo: recibirás el boletín gratis cada mañana y te avisaremos primero cuando abran.</p>
+        <p id="pdWaitlistPlanMsg" class="pd-page-lede" style="display:none;"></p>
         <form id="pdWaitlistForm" class="pdl-boletin-form" novalidate>
           <label for="pdWaitlistEmail" class="sr-only">Tu correo</label>
           <input id="pdWaitlistEmail" class="pdl-boletin-input" type="email" required autocomplete="email" placeholder="tu@correo.com" />
           <button type="submit" class="pdl-btn pdl-btn-primary">Unirme</button>
+          <input type="text" name="web" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden;" />
         </form>
+        <fieldset id="pdInteres" style="border:none;margin:1.5rem 0 0;padding:0;">
+          <legend style="font-weight:600;padding:0;margin-bottom:.4rem;">Lo que viene</legend>
+          <p class="pd-page-lede" style="font-size:.95rem;margin-bottom:.8rem;">¿Qué quieres que construyamos después? Marca lo que usarías.</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.6rem 1rem;">
+            <label style="display:flex;gap:.5rem;align-items:center;font-size:.95rem;cursor:pointer;"><input type="checkbox" name="funciones" value="alertas" /> <span>Alertas cuando una empresa sale de su rango</span></label>
+            <label style="display:flex;gap:.5rem;align-items:center;font-size:.95rem;cursor:pointer;"><input type="checkbox" name="funciones" value="mas_empresas" /> <span>Seguir más empresas</span></label>
+            <label style="display:flex;gap:.5rem;align-items:center;font-size:.95rem;cursor:pointer;"><input type="checkbox" name="funciones" value="excel" /> <span>Descarga en Excel</span></label>
+            <label style="display:flex;gap:.5rem;align-items:center;font-size:.95rem;cursor:pointer;"><input type="checkbox" name="funciones" value="whatsapp" /> <span>Boletín por WhatsApp</span></label>
+            <label style="display:flex;gap:.5rem;align-items:center;font-size:.95rem;cursor:pointer;"><input type="checkbox" name="funciones" value="api" /> <span>API para desarrolladores</span></label>
+          </div>
+        </fieldset>
         <p id="pdWaitlistMsg" class="pdl-boletin-msg" role="status">Te enviaremos un correo para confirmar.</p>
       </div>
     </section>
@@ -456,7 +469,7 @@
         ["pdBolCta", "pdProCta"].forEach(function (id) {
           var a = document.getElementById(id);
           a.href = paid ? "/cuenta" : "#acceso-anticipado";
-          a.textContent = paid ? "Gestionar en Mi cuenta" : "Unirme al acceso anticipado";
+          a.textContent = paid ? "Gestionar en Mi cuenta" : (id === "pdBolCta" ? "Me interesa el Boletín" : "Me interesa Pro");
         });
 
         var freeCta = document.getElementById("pdFreeCta");
@@ -468,16 +481,53 @@
 
       }
 
+      // Plan elegido en los botones de interés: se guarda y se indica en el formulario
+      var ORIGEN_PLAN = { boletin: "interes-boletin", pro: "interes-pro" };
+      var planElegido = "";
+      var planMsg = document.getElementById("pdWaitlistPlanMsg");
+      ["pdBolCta", "pdProCta"].forEach(function (id) {
+        document.getElementById(id).addEventListener("click", function () {
+          if (this.getAttribute("href") !== "#acceso-anticipado") return;
+          planElegido = this.dataset.plan;
+          planMsg.textContent = "Te avisaremos cuando abra el plan " + (planElegido === "boletin" ? "Boletín" : "Pro") + ".";
+          planMsg.style.display = "";
+        });
+      });
+
       document.getElementById("pdWaitlistForm").addEventListener("submit", function (e) {
         e.preventDefault();
         var form = e.currentTarget;
         var input = document.getElementById("pdWaitlistEmail");
         var msg = document.getElementById("pdWaitlistMsg");
         var btn = form.querySelector("button");
+        var funciones = Array.prototype.map.call(document.querySelectorAll('input[name="funciones"]:checked'), function (cb) { return cb.value; });
+        var datos = { email: input.value, origen: "acceso-anticipado" };
+        if (planElegido) datos.origen = ORIGEN_PLAN[planElegido];
+        var web = form.elements.web.value;
+        var cabeceras = { "Content-Type": "application/json" };
+        function alTerminar() {
+          form.reset();
+          planElegido = "";
+          planMsg.style.display = "none";
+        }
         btn.disabled = true;
-        fetch("/api/boletin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: input.value, origen: "acceso-anticipado" }) })
+        fetch("/api/boletin", { method: "POST", headers: cabeceras, body: JSON.stringify(datos) })
           .then(function (r) { return r.json(); })
-          .then(function (d) { msg.textContent = d.mensaje || d.error || "Algo salió mal. Inténtalo más tarde."; if (d.ok) form.reset(); })
+          .then(function (d) {
+            msg.textContent = d.mensaje || d.error || "Algo salió mal. Inténtalo más tarde.";
+            if (!d.ok) return;
+            if (funciones.length === 0) { alTerminar(); return; }
+            return fetch("/api/interes", { method: "POST", headers: cabeceras, body: JSON.stringify({ email: input.value, funciones: funciones, web: web }) })
+              .then(function (r) { return r.json(); })
+              .then(function (d2) {
+                if (d2.ok) {
+                  msg.textContent = (d.mensaje || "") + " Guardamos también lo que marcaste.";
+                  alTerminar();
+                } else {
+                  msg.textContent = d2.error || "No pudimos guardar lo que marcaste. Inténtalo más tarde.";
+                }
+              });
+          })
           .catch(function () { msg.textContent = "No pudimos conectar. Inténtalo más tarde."; })
           .finally(function () { btn.disabled = false; });
       });

@@ -9,6 +9,7 @@ import billingHandler from "./api/billing.js";
 import stripeWebhookHandler from "./api/stripe-webhook.js";
 import statusHandler from "./api/status.js";
 import boletinHandler from "./api/boletin.js";
+import interesHandler from "./api/interes.js";
 import syncHandler from "./api/sync.js";
 import mercadoHandler from "./api/mercado.js";
 import seguimientoHandler from "./api/seguimiento.js";
@@ -169,6 +170,7 @@ const routes = {
   "/api/stripe-webhook": adaptNodeHandler(stripeWebhookHandler),
   "/api/status": adaptNodeHandler(statusHandler),
   "/api/boletin": adaptNodeHandler(boletinHandler),
+  "/api/interes": adaptNodeHandler(interesHandler),
   "/api/mercado": adaptNodeHandler(mercadoHandler),
   "/api/seguimiento": adaptNodeHandler(seguimientoHandler),
   "/api/internal/sync": adaptNodeHandler(syncHandler)

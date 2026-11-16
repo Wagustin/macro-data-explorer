@@ -14,6 +14,7 @@ export const SCHEMA = [
     maximo real, minimo real, monto real, fin_de_mes integer not null default 0, primary key (nemonico, fecha))`,
   `create index if not exists cotizaciones_smv_fecha on cotizaciones_smv (fecha)`,
   `create table if not exists interpretaciones (symbol text primary key, texto text not null, actualizado text not null)`,
+  `create table if not exists interes_funciones (email text not null, funcion text not null, creado text not null, primary key (email, funcion))`,
 ];
 
 let ready = null;

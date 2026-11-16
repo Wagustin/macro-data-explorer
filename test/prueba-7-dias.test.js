@@ -501,7 +501,8 @@ test("pagos en pausa: precios y boletin no prometen prueba y llevan al acceso an
     assert.doesNotMatch(html, /Probar 7 días gratis|Prueba de 7 días gratis/);
   }
   assert.match(precios, /id="acceso-anticipado"/);
-  assert.match(precios, /Unirme al acceso anticipado/);
+  assert.match(precios, /Me interesa el Boletín/);
+  assert.match(precios, /Me interesa Pro/);
   assert.match(precios, /origen: "acceso-anticipado"/);
   assert.match(boletin, /\/precios#acceso-anticipado/);
   // Los precios siguen visibles como referencia

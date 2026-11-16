@@ -10,6 +10,7 @@ import newsHandler from "./api/news.js";
 import diarioHandler from "./api/diario.js";
 import statusHandler from "./api/status.js";
 import boletinHandler from "./api/boletin.js";
+import interesHandler from "./api/interes.js";
 import mercadoHandler from "./api/mercado.js";
 import seguimientoHandler from "./api/seguimiento.js";
 import authHandler from "./api/auth.js";
@@ -130,6 +131,9 @@ const server = http.createServer(async (req, res) => {
   }
   if (pathname === "/api/boletin") {
     return boletinHandler(req, res);
+  }
+  if (pathname === "/api/interes") {
+    return interesHandler(req, res);
   }
   if (pathname === "/api/mercado") {
     return mercadoHandler(req, res);
