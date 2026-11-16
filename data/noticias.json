@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-16T19:35:55.181Z",
+  "actualizado": "2026-11-16T22:31:33.751Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,27 +24,27 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 47
+      "items": 48
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 22
+      "items": 27
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 6
+      "items": 11
     },
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 11
+      "items": 9
     },
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 8
+      "items": 10
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 34
+      "items": 33
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,339 @@
     }
   },
   "noticias": [
+    {
+      "id": "andina-e7b8dd360e",
+      "titulo": "Patrimonio de fondos mutuos supera los S/ 65,800 millones y crece 15.47%",
+      "url": "https://andina.pe/agencia/noticia-patrimonio-fondos-mutuos-supera-los-s-65800-millones-y-crece-1547-1100235.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-16T22:25:37.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "el_comercio-509f53f39c",
+      "titulo": "Keiko Fujimori en APEC 2026: conoce la agenda oficial que cumplirá en China y Japón",
+      "url": "https://elcomercio.pe/economia/keiko-fujimori-en-apec-2026-conoce-la-agenda-oficial-que-cumplira-en-china-y-japon-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-16T22:19:59.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-2988da459f",
+      "titulo": "Grupo Carsa: la expansión que alista en Lima tras su cambio de dueño y unificar sus marcas",
+      "url": "https://gestion.pe/economia/empresas/grupo-carsa-con-nuevo-dueno-y-una-sola-marca-va-por-mas-tiendas-en-lima-cuanto-crecera-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T22:15:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-b3495208d4",
+      "titulo": "De desarrollar tecnología para Xiaomi a marca propia: los planes de Cuktech en Perú",
+      "url": "https://gestion.pe/economia/empresas/de-fabricar-para-xiaomi-a-marca-propia-los-planes-de-cuktech-en-peru-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T22:15:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-9fe8d959fb",
+      "titulo": "Wall Street cierra en rojo pendiente de la crisis de Nvidia",
+      "url": "https://elcomercio.pe/economia/mercados/wall-street-cierra-en-rojo-pendiente-de-la-crisis-de-nvidia-l-mercados-l-wall-street-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-16T22:11:54.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-a64280cf9f",
+      "titulo": "Moody’s: crecimiento del PBI será “estable, lento y diferenciado” en estas economías, ¿y Perú?",
+      "url": "https://gestion.pe/economia/moodys-crecimiento-del-pbi-sera-estable-lento-y-diferenciado-en-estas-economias-y-peru-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T22:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-7af04a3580",
+      "titulo": "Bernie Navarro, embajador de EEUU en Perú, revela su fugaz encuentro con el papa León XIV: “Sin palabras”",
+      "url": "https://www.infobae.com/peru/2026/11/16/bernie-navarro-embajador-de-eeuu-en-peru-revela-su-fugaz-encuentro-con-el-papa-leon-xiv-sin-palabras/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-16T21:52:03.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-b68c50e699",
+      "titulo": "Obras públicas: Uruguay se interesa en modelo peruano de prevención de desastres",
+      "url": "https://gestion.pe/economia/obras-publicas-uruguay-se-interesa-en-modelo-peruano-de-prevencion-de-desastres-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T21:45:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-74b0886585",
+      "titulo": "El dólar cierra en S/3,41 ante fortalecimiento global de la divisa y caída del cobre",
+      "url": "https://elcomercio.pe/economia/peru/el-dolar-cierra-en-s341-ante-fortalecimiento-global-de-la-divisa-y-caida-del-cobre-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-16T21:43:42.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-7290f1e156",
+      "titulo": "Precio del dólar del lunes 16 de noviembre: tipo de cambio en Perú hoy",
+      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-2026-a-cuanto-esta-el-tipo-de-cambio-este-lunes-16-de-noviembre-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-16T21:40:21.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-789d156a13",
+      "titulo": "Minem ejecuta evaluación del Reinfo en Pataz en estricto acatamiento a orden judicial",
+      "url": "https://andina.pe/agencia/noticia-minem-ejecuta-evaluacion-del-reinfo-pataz-estricto-acatamiento-a-orden-judicial-1100270.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-16T21:30:52.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "rpp-1ea5b411e8",
+      "titulo": "Principales bancos de Estados Unidos registran fallas en sus servicios digitales: usuarios tienen problemas para entrar a sus cuentas",
+      "url": "https://rpp.pe/economia/economia/principales-bancos-de-estados-unidos-registran-fallas-en-sus-servicios-digitales-usuarios-tienen-problemas-para-entrar-a-sus-cuentas-noticia-1718071",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-16T21:30:06.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-f9b02d0365",
+      "titulo": "Empleo formal: regiones, fechas y horarios de las ferias con más de 8,800 vacantes",
+      "url": "https://gestion.pe/economia/management-empleo/empleo-formal-regiones-fechas-y-horarios-de-las-ferias-del-mtpe-con-mas-de-8800-vacantes-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T21:28:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-2196db2b90",
+      "titulo": "Wall Street extiende las pérdidas tecnológicas mientras espera los resultados de Nvidia y la OPI de Anthropic",
+      "url": "https://www.bloomberglinea.com/mercados/acciones-tecnologicas-caen-mientras-wall-street-espera-resultados-de-nvidia-y-salida-a-bolsa-de-anthropic/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-16T21:18:39.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-8de958a22b",
+      "titulo": "Nvidia enfrenta presión de EE.UU. por sus ventas de chips de IA a China y la salida de Huang",
+      "url": "https://www.bloomberglinea.com/negocios/nvidia-enfrenta-presion-de-eeuu-por-sus-ventas-de-chips-de-ia-a-china-y-la-salida-de-huang/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-16T21:15:30.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-8ec1c80752",
+      "titulo": "Usuarios denuncian problemas de acceso a Chase, Bank of America y Wells Fargo",
+      "url": "https://elcomercio.pe/economia/mercados/usuarios-denuncian-problemas-de-acceso-a-chase-bank-of-america-y-wells-fargo-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-16T21:15:10.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-24fa5238de",
+      "titulo": "Cobre en Perú: Latin Explore levanta US$ 1.7 millones y alista perforación cerca de Lima",
+      "url": "https://gestion.pe/economia/latin-explore-capta-us-17-millones-y-alista-primera-perforacion-en-su-proyecto-de-cobre-para-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T21:15:00.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-ac0dc1ba77",
+      "titulo": "Startups: ¿cómo busca la SMV impulsar la inversión en estos negocios innovadores?",
+      "url": "https://gestion.pe/economia/empresas/startups-como-busca-la-smv-impulsar-la-inversion-en-estos-negocios-innovadores-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T21:03:11.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-c875af1fc3",
+      "titulo": "Alltech, gigante de nutrición animal, reformula operación en Perú: nueva estrategia y negocios",
+      "url": "https://gestion.pe/economia/empresas/nutricion-animal-en-peru-alltech-apuesta-por-porcicultura-y-agroindustria-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T21:02:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-9f55f0a69d",
+      "titulo": "Data center: con Grupo Romero como socio, GTD alista inversiones de hasta US$ 17 millones en Perú",
+      "url": "https://gestion.pe/economia/empresas/gtd-peru-alista-inversiones-de-hasta-us17-millones-en-2027-que-proyectos-tiene-en-cartera-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T21:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-012378575a",
+      "titulo": "Minem ejecuta evaluación del Reinfo en Pataz en acatamiento de orden judicial",
+      "url": "https://gestion.pe/economia/minem-ejecuta-evaluacion-del-reinfo-en-pataz-en-acatamiento-de-orden-judicial-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T20:59:25.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-e40c814969",
+      "titulo": "Capacitación o despido: 40% de ejecutivos senior estudia para seguir en mundo corporativo",
+      "url": "https://gestion.pe/economia/empresas/blindaje-laboral-4-de-cada-10-empleados-mayores-en-peru-se-capacita-como-estrategia-ante-despidos-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T20:45:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-2add046fce",
+      "titulo": "Visita del papa León XIV al Perú movilizó a 1.5 millones de turistas y benefició a más de un millón de mypes",
+      "url": "https://www.infobae.com/peru/2026/11/16/visita-del-papa-leon-xiv-al-peru-movilizo-a-15-millones-de-turistas-y-beneficio-a-mas-de-un-millon-de-mypes/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-16T20:39:15.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-e49043b94c",
+      "titulo": "Eólicas y solares: Minem alista propuesta de reglamento, pero esto preocupa a empresarios",
+      "url": "https://gestion.pe/economia/eolicas-y-solares-minem-alista-propuesta-de-reglamento-para-energias-renovables-pero-esto-preocupa-a-empresarios-en-peru-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T20:30:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-116360c29a",
+      "titulo": "Estados Unidos: reportan problemas de acceso a Chase, Bank of America y Wells Fargo",
+      "url": "https://rpp.pe/mundo/estados-unidos/estados-unidos-reportan-problemas-de-acceso-a-chase-bank-of-america-y-wells-fargo-noticia-1718065",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-16T20:29:06.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-81b7c1195d",
+      "titulo": "Millicom, que opera con la marca Tigo, será la nueva dueña de Entel en Perú, ¿qué planes tiene en nuestro país?",
+      "url": "https://elcomercio.pe/economia/millicom-que-opera-con-la-marca-tigo-sera-la-nueva-duena-de-entel-en-peru-que-planes-tiene-en-nuestro-pais-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-16T20:25:27.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-fbdca073de",
+      "titulo": "Julio Velarde recibió el premio honorífico de influencia hispana en España",
+      "url": "https://andina.pe/agencia/noticia-julio-velarde-recibio-premio-honorifico-influencia-hispana-espana-1100233.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-16T20:24:53.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "bloomberg_linea-24d6e34b8f",
+      "titulo": "Problemas técnicos afectan a JPMorgan, Bank of America y Wells Fargo en EE.UU.: lo que se sabe",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/problemas-tecnicos-afectan-a-jpmorgan-bank-of-america-y-wells-fargo-en-eeuu-lo-que-se-sabe/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-16T20:23:51.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-1a208b7135",
+      "titulo": "Cade Ejecutivos: de Paracas a Cusco, la historia y lemas del foro empresarial",
+      "url": "https://gestion.pe/g-de-gestion/reportaje/cade-ejecutivos-de-paracas-a-cusco-en-el-2026-la-historia-del-foro-empresarial-y-los-retos-pendientes-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T20:16:35.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-4622dfbd3e",
+      "titulo": "Peruana Creditex invierte más de S/ 10.8 millones para modernizar sus plantas",
+      "url": "https://gestion.pe/economia/empresas/creditex-destina-mas-de-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T20:15:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-b607936502",
+      "titulo": "BCRP: “A partir de marzo del próximo año se vería una clara reducción en la tasa inflación”",
+      "url": "https://gestion.pe/economia/bcrp-a-partir-de-marzo-del-proximo-ano-se-veria-una-clara-reduccion-en-la-tasa-inflacion-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T20:00:00.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-e8b5e693f1",
+      "titulo": "Julio Velarde, presidente del BCR, recibe premio honorífico de influencia hispana en España",
+      "url": "https://elcomercio.pe/economia/peru/julio-velarde-presidente-del-bcr-recibe-premio-honorifico-de-influencia-hispana-en-espana-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-16T19:52:48.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-43a021f24e",
+      "titulo": "Presupuesto 2027: Minsa advierte que reducción de recursos afectaría compra de equipos para detectar y tratar el cáncer",
+      "url": "https://rpp.pe/peru/actualidad/presupuesto-2027-minsa-advierte-que-reduccion-de-recursos-afectaria-compra-de-equipos-para-detectar-y-tratar-el-cancer-noticia-1717509",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-16T19:51:45.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-b85b694ed5",
+      "titulo": "Mercados e indicadores – Hoy lunes 16 de noviembre",
+      "url": "https://gestion.pe/economia/mercados/mercados-e-indicadores-hoy-lunes-16-de-noviembre-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-16T19:47:16.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-957d120ae6",
+      "titulo": "Economía peruana creció 2,43% en septiembre, pero caída de minería y agro frenó el avance",
+      "url": "https://larepublica.pe/economia/2026/11/15/economia-peruana-crecio-243-en-septiembre-pero-caida-de-mineria-y-agro-freno-el-avance-419865",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-16T19:42:46.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-0f3bb2186a",
+      "titulo": "Entel dejará el mercado peruano tras acordar la venta de su operación por US$1.714 millones",
+      "url": "https://larepublica.pe/economia/2026/11/13/entel-acuerda-vender-su-operacion-en-peru-a-millicom-por-us1714-millones-668798",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-16T19:39:39.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-11178b3822",
+      "titulo": "León XIV: visita al Perú habría beneficiado a 1.2 millones de micro y pequeñas empresas",
+      "url": "https://andina.pe/agencia/noticia-leon-xiv-visita-al-peru-habria-beneficiado-a-12-millones-micro-y-pequenas-empresas-1100259.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-16T19:39:28.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "VERDE"
+    },
     {
       "id": "el_comercio-4b663263c1",
       "titulo": "Scott Bessent pide respuestas a Nvidia y urge elegir a nuevo CEO externo",
@@ -87,15 +420,6 @@
       "url": "https://gestion.pe/economia/bcrp-julio-velarde-suma-un-nuevo-reconocimiento-premio-honorifico-de-influencia-hispana-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-16T19:15:00.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-7290f1e156",
-      "titulo": "Precio del dólar del lunes 16 de noviembre: tipo de cambio en Perú hoy",
-      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-2026-a-cuanto-esta-el-tipo-de-cambio-este-lunes-16-de-noviembre-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-16T19:03:28.000Z",
       "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
@@ -136,24 +460,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "la_republica-957d120ae6",
-      "titulo": "Economía peruana creció 2,43% en septiembre, pero caída de minería y agro frenó el avance",
-      "url": "https://larepublica.pe/economia/2026/11/15/economia-peruana-crecio-243-en-septiembre-pero-caida-de-mineria-y-agro-freno-el-avance-419865",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-16T18:37:50.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-0f3bb2186a",
-      "titulo": "Entel dejará el mercado peruano tras acordar la venta de su operación por US$1.714 millones",
-      "url": "https://larepublica.pe/economia/2026/11/13/entel-acuerda-vender-su-operacion-en-peru-a-millicom-por-us1714-millones-668798",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-16T18:37:24.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-4f10e4249f",
       "titulo": "Donald Trump se muestra a favor de que Jensen Huang vuelva a dirigir Nvidia",
       "url": "https://elcomercio.pe/economia/mundo/donald-trump-se-muestra-a-favor-de-que-jensen-huang-vuelva-a-dirigir-nvidia-l-ultimas-noticia/",
@@ -178,15 +484,6 @@
       "fuente": "RPP Noticias",
       "fecha_iso": "2026-11-16T18:13:32.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-ac0dc1ba77",
-      "titulo": "Startups: ¿cómo busca la SMV impulsar la inversión en estos negocios innovadores?",
-      "url": "https://gestion.pe/economia/empresas/startups-como-busca-la-smv-impulsar-la-inversion-en-estos-negocios-innovadores-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T18:07:01.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -217,15 +514,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-b3495208d4",
-      "titulo": "De desarrollar tecnología para Xiaomi a marca propia: los planes de Cuktech en Perú",
-      "url": "https://gestion.pe/economia/empresas/de-fabricar-para-xiaomi-a-marca-propia-los-planes-de-cuktech-en-peru-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T17:44:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-f279cfed18",
       "titulo": "SBS supervisó y acompañó a las 225 cooperativas del país de acuerdo a su perfil de riesgo",
       "url": "https://andina.pe/agencia/noticia-sbs-superviso-y-acompano-a-las-225-cooperativas-del-pais-acuerdo-a-su-perfil-riesgo-1100224.aspx",
@@ -235,38 +523,11 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "gestion-f9b02d0365",
-      "titulo": "Empleo formal: regiones, fechas y horarios de las ferias con más de 8,800 vacantes",
-      "url": "https://gestion.pe/economia/management-empleo/empleo-formal-regiones-fechas-y-horarios-de-las-ferias-del-mtpe-con-mas-de-8800-vacantes-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T17:26:21.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-2988da459f",
-      "titulo": "Grupo Carsa: la expansión que alista en Lima tras su cambio de dueño y unificar sus marcas",
-      "url": "https://gestion.pe/economia/empresas/grupo-carsa-con-nuevo-dueno-y-una-sola-marca-va-por-mas-tiendas-en-lima-cuanto-crecera-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T17:25:11.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-227f2d6c43",
       "titulo": "La Sociedad Nacional de Construcción e Infraestructura organiza cena solidaria ante El Niño",
       "url": "https://elcomercio.pe/economia/la-snci-organiza-cena-solidaria-ante-el-nino-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-16T17:17:43.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-a64280cf9f",
-      "titulo": "Moody’s: crecimiento del PBI será “estable, lento y diferenciado” en estas economías, ¿y Perú?",
-      "url": "https://gestion.pe/economia/moodys-crecimiento-del-pbi-sera-estable-lento-y-diferenciado-en-estas-economias-y-peru-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T17:16:25.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
@@ -289,57 +550,12 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "gestion-b68c50e699",
-      "titulo": "Obras públicas: Uruguay se interesa en modelo peruano de prevención de desastres",
-      "url": "https://gestion.pe/economia/obras-publicas-uruguay-se-interesa-en-modelo-peruano-de-prevencion-de-desastres-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T16:59:46.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-c875af1fc3",
-      "titulo": "Gigante de nutrición animal cierra planta en Ate: la nueva estrategia y negocios en Perú",
-      "url": "https://gestion.pe/economia/empresas/nutricion-animal-en-peru-alltech-apuesta-por-porcicultura-y-agroindustria-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T16:53:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-24fa5238de",
-      "titulo": "Cobre en Perú: Latin Explore levanta US$ 1.7 millones y alista perforación cerca de Lima",
-      "url": "https://gestion.pe/economia/latin-explore-capta-us-17-millones-y-alista-primera-perforacion-en-su-proyecto-de-cobre-para-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T16:51:37.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-ecbeecd684",
-      "titulo": "Donald Trump asegura que podría reunirse con Kim Jong-un en la ciudad china de Shenzhen",
-      "url": "https://rpp.pe/mundo/estados-unidos/donald-trump-asegura-que-podria-reunirse-con-kim-jong-un-en-la-ciudad-china-de-shenzhen-noticia-1718015",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-16T16:50:01.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "infobae-220e4b2f6c",
       "titulo": "Precio del dólar hoy en Perú: Así va la cotización del tipo de cambio del 16 de noviembre",
       "url": "https://www.infobae.com/peru/2026/11/16/precio-del-dolar-hoy-en-peru-cotizacion-de-apertura-del-16-de-noviembre/",
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-16T16:48:34.000Z",
       "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-1a208b7135",
-      "titulo": "Cade Ejecutivos: de Paracas a Cusco, la historia y lemas del foro empresarial",
-      "url": "https://gestion.pe/g-de-gestion/reportaje/cade-ejecutivos-de-paracas-a-cusco-en-el-2026-la-historia-del-foro-empresarial-y-los-retos-pendientes-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T16:41:57.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -358,15 +574,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-16T16:34:57.000Z",
       "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-9f55f0a69d",
-      "titulo": "Data center: con Grupo Romero como socio, GTD alista inversiones de hasta US$ 17 millones en Perú",
-      "url": "https://gestion.pe/economia/empresas/gtd-peru-alista-inversiones-de-hasta-us17-millones-en-2027-que-proyectos-tiene-en-cartera-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T16:33:46.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -394,15 +601,6 @@
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-16T16:24:36.000Z",
       "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-e40c814969",
-      "titulo": "Capacitación o despido: 40% de ejecutivos senior estudia para seguir en mundo corporativo",
-      "url": "https://gestion.pe/economia/empresas/blindaje-laboral-4-de-cada-10-empleados-mayores-en-peru-se-capacita-como-estrategia-ante-despidos-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T16:22:00.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -532,39 +730,12 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "gestion-e49043b94c",
-      "titulo": "Eólicas y solares: Minem alista propuesta de reglamento, pero esto preocupa a empresarios",
-      "url": "https://gestion.pe/economia/eolicas-y-solares-minem-alista-propuesta-de-reglamento-para-energias-renovables-pero-esto-preocupa-a-empresarios-en-peru-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T14:19:43.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-4622dfbd3e",
-      "titulo": "Peruana Creditex invierte más de S/ 10.8 millones para modernizar sus plantas",
-      "url": "https://gestion.pe/economia/empresas/creditex-destina-mas-de-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T14:02:21.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-752555be12",
       "titulo": "MTC plantea reducir la TUUA internacional a US$4 en el aeropuerto Jorge Chávez",
       "url": "https://elcomercio.pe/economia/peru/mtc-plantea-reducir-la-tuua-internacional-a-us4-en-el-aeropuerto-jorge-chavez-l-ultimas-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-16T14:00:26.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-b607936502",
-      "titulo": "BCRP: “A partir de marzo del próximo año se vería una clara reducción en la tasa inflación”",
-      "url": "https://gestion.pe/economia/bcrp-a-partir-de-marzo-del-proximo-ano-se-veria-una-clara-reduccion-en-la-tasa-inflacion-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T13:51:13.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -583,15 +754,6 @@
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-16T13:01:32.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-b85b694ed5",
-      "titulo": "Mercados e indicadores – Hoy lunes 16 de noviembre",
-      "url": "https://gestion.pe/economia/mercados/mercados-e-indicadores-hoy-lunes-16-de-noviembre-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T12:32:48.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -856,15 +1018,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-529d7ac380",
-      "titulo": "CCL: gremios y gobierno articulan acciones para mejorar acceso de productos a EE.UU.",
-      "url": "https://andina.pe/agencia/noticia-ccl-gremios-y-gobierno-articulan-acciones-para-mejorar-acceso-productos-a-eeuu-1100109.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-15T19:30:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "bloomberg_linea-324bbf70f1",
       "titulo": "El argumento con el que EE.UU. rechazo medicamento de origen chino contra el cáncer de pulmón",
       "url": "https://www.bloomberglinea.com/salud/ee-uu-rechaza-medicamento-contra-el-cancer-de-pulmon-de-origen-chino-este-es-el-argumento/",
@@ -892,24 +1045,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-02eed37a3b",
-      "titulo": "INEI: ingreso promedio mensual aumentó 7.2% en los últimos doce meses",
-      "url": "https://andina.pe/agencia/noticia-inei-ingreso-promedio-mensual-aumento-72-los-ultimos-doce-meses-1100096.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-15T17:44:20.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "andina-39f3c900eb",
-      "titulo": "Sunat otorga facilidades tributarias para sector textil y confecciones por El Niño",
-      "url": "https://andina.pe/agencia/noticia-sunat-otorga-facilidades-tributarias-para-sector-textil-y-confecciones-por-nino-1100091.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-15T17:13:41.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "bloomberg_linea-10e22824a5",
       "titulo": "Nvidia necesita una \"reestructuración drástica\" tras la renuncia de Huang: Scott Bessent",
       "url": "https://www.bloomberglinea.com/tecnologia/nvidia-necesita-una-reestructuracion-drastica-tras-la-renuncia-de-huang-scott-bessent/",
@@ -925,114 +1060,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-15T16:58:49.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-9f59d8251b",
-      "titulo": "Mythos, la IA de Anthropic que busca fallos cibernéticos en los sistemas energéticos",
-      "url": "https://www.bloomberglinea.com/tecnologia/mythos-la-ia-de-anthropic-que-busca-fallos-ciberneticos-en-los-sistemas-energeticos/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-15T16:23:03.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-e486d9eb76",
-      "titulo": "Pretensiones salariales suben a S/ 3,583 al mes: ¿qué puestos son los más “aclamados”?",
-      "url": "https://gestion.pe/economia/management-empleo/sueldo-pretensiones-salariales-suben-a-s-3583-al-mes-que-puestos-son-los-mas-aclamados-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-15T16:19:05.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-a0e6846924",
-      "titulo": "La siembra de los principales cultivos como maíz y papa cayó 22%: ¿qué pasa con los otros productos y cuál es el impacto en los hogares?",
-      "url": "https://elcomercio.pe/economia/la-siembra-de-los-principales-cultivos-como-maiz-y-papa-cayo-22-que-pasa-con-los-otros-productos-y-cual-es-el-impacto-en-los-hogares-apuesplan-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-15T15:05:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "inei-4ac23bcd7e",
-      "titulo": "INEI: Producción nacional creció 2,43% en setiembre de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1473910-inei-produccion-nacional-crecio-2-43-en-setiembre-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-15T15:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-967f32b2b6",
-      "titulo": "INEI: Población ocupada de Lima Metropolitana aumentó 6,2% entre agosto y octubre de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1473911-inei-poblacion-ocupada-de-lima-metropolitana-aumento-6-2-entre-agosto-y-octubre-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-15T15:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-dc1c9fe6cb",
-      "titulo": "INEI: En el tercer trimestre 2026 la población ocupada del país totalizó 17 millones 973 mil 200 personas",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1473912-inei-en-el-tercer-trimestre-2026-la-poblacion-ocupada-del-pais-totalizo-17-millones-973-mil-200-personas",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-15T15:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-a056337a3d",
-      "titulo": "Productos de Perú hacia EE. UU.: gremios y Gobierno apuestan por esta nueva estrategia",
-      "url": "https://gestion.pe/economia/productos-de-peru-hacia-estados-unidos-gremios-y-gobierno-apuestan-por-esta-nueva-estrategia-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-15T14:34:18.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-3334f35c8c",
-      "titulo": "El empleo juvenil cae mientras la economía crece: ¿qué está pasando?",
-      "url": "https://elcomercio.pe/economia/opinion/el-empleo-juvenil-cae-mientras-la-economia-crece-que-esta-pasando-por-jose-carlos-saavedra-opinion-apoyo-consultoria-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-15T12:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-f621f61191",
-      "titulo": "LPA alista parque logístico de US$ 85 millones en Lurín tras vender Parque Lima Sur",
-      "url": "https://gestion.pe/economia/empresas/logistic-properties-tras-vender-parque-lima-sur-alista-parque-logistico-en-lurin-por-us-85-millones-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-15T11:30:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-a47920d2bc",
-      "titulo": "Agenda de la semana: PIB de Colombia y Chile, minutas de la Fed y resultados de Nvidia",
-      "url": "https://www.bloomberglinea.com/economia/agenda-de-la-semana-pib-de-colombia-y-chile-minutas-de-la-fed-y-resultados-de-nvidia/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-15T11:00:08.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-953f65ef37",
-      "titulo": "Operador de casinos y hoteles invierte más de S/ 7 mlls. en Chiclayo y alista compras en 2027",
-      "url": "https://gestion.pe/economia/empresas/gladcon-group-duena-de-win-win-hotel-casino-alista-compras-en-el-norte-y-lima-para-2027-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-15T11:00:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-3bf529711c",
-      "titulo": "México teme que Stephen Miller complique el acuerdo comercial con EE.UU. por sus exigencias migratorias",
-      "url": "https://www.bloomberglinea.com/latinoamerica/mexico/mexico-teme-que-stephen-miller-complique-el-acuerdo-comercial-con-eeuu-por-sus-exigencias-migratorias/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-15T01:00:00.000Z",
-      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     }
   ]
