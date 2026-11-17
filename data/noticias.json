@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-17T07:01:31.366Z",
+  "actualizado": "2026-11-17T10:01:37.853Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 47
+      "items": 48
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -44,17 +44,17 @@
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 10
+      "items": 11
     },
     "semana_economica": {
       "nombre": "Semana Económica",
-      "ok": false,
-      "items": 0
+      "ok": true,
+      "items": 15
     },
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 36
+      "items": 31
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,69 @@
     }
   },
   "noticias": [
+    {
+      "id": "gestion-349ba24e8d",
+      "titulo": "¿Buscas cambiar de empleo en el 2027? Las habilidades que ganan peso en las empresas",
+      "url": "https://gestion.pe/economia/management-empleo/mercado-laboral-2027-que-habilidades-necesitaran-los-profesionales-para-cambiar-o-mantener-su-empleo-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-17T09:48:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-ee57cc79c5",
+      "titulo": "Mineras negocian alianzas entre Chile y Argentina para impulsar el cobre argentino",
+      "url": "https://www.bloomberglinea.com/latinoamerica/argentina/mineras-negocian-alianzas-entre-chile-y-argentina-para-impulsar-el-cobre-argentino/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-17T09:40:50.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-27dc9d01d0",
+      "titulo": "Aerolíneas de EE.UU. se preparan para impacto de más de US$1.000 millones por la reciente suspensión de vuelos",
+      "url": "https://www.bloomberglinea.com/negocios/aerolineas-de-eeuu-se-preparan-para-impacto-de-mas-de-us1000-millones-por-la-reciente-suspension-de-vuelos/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-17T08:17:05.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-1007fa210b",
+      "titulo": "¿Buscando qué estudiar? El Ministerio de Trabajo te orienta para elegir una carrera",
+      "url": "https://andina.pe/agencia/noticia-buscando-estudiar-ministerio-trabajo-te-orienta-para-elegir-una-carrera-1100211.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-17T08:00:01.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-5d9c49a715",
+      "titulo": "Informalidad cae a 69.1% en Perú, pero aumenta en estas 9 ciudades",
+      "url": "https://gestion.pe/economia/management-empleo/informalidad-cae-a-691-en-peru-pero-aun-8-de-cada-10-jovenes-no-salen-de-esta-situacion-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-17T08:00:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-2e1714a0bf",
+      "titulo": "Cancillería admite fallas en la última misa del papa León XIV tras contratos por más de S/11 millones: “Determinar las responsabilidades”",
+      "url": "https://www.infobae.com/peru/2026/11/17/cancilleria-admite-fallas-en-la-ultima-misa-del-papa-leon-xiv-tras-contratos-por-mas-de-s11-millones-empresas-deberan-responder/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-17T07:57:40.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-166e20161e",
+      "titulo": "Perú optimiza su TLC con China de cara a APEC: estas son las 5 novedades del acuerdo",
+      "url": "https://www.bloomberglinea.com/latinoamerica/peru/peru-optimiza-su-tlc-con-china-de-cara-a-apec-estas-son-las-5-novedades-del-acuerdo/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-17T07:00:02.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "bloomberg_linea-404381a3e9",
       "titulo": "Apuestas contra Nvidia generan ganancias por US$24.000 millones tras caída de la acción",
@@ -91,6 +154,15 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "semana_economica-fb05b8abb5",
+      "titulo": "Grupo Falabella anuncia histórico plan de inversiones por más de US$1,100 millones para 2027",
+      "url": "https://www.semanaeconomica.com/que-esta-pasando/articulos/",
+      "fuente": "Semana Económica",
+      "fecha_iso": "2026-11-17T04:19:05.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "bloomberg_linea-61379244d9",
       "titulo": "China difícilmente cumplirá su compromiso de comprar US$17.000 millones en productos agrícolas de EE.UU.",
       "url": "https://www.bloomberglinea.com/mundo/estados-unidos/china-dificilmente-cumplira-su-compromiso-de-comprar-us17000-millones-en-productos-agricolas-de-eeuu/",
@@ -115,15 +187,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-17T04:00:00.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-5d9c49a715",
-      "titulo": "Informalidad cae a 69.1% en Perú, pero aumenta en estas 9 ciudades",
-      "url": "https://gestion.pe/economia/management-empleo/informalidad-cae-a-691-en-peru-pero-aun-8-de-cada-10-jovenes-no-salen-de-esta-situacion-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-17T03:56:12.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -204,6 +267,15 @@
       "url": "https://larepublica.pe/economia/2026/11/10/noveno-retiro-de-afp-sigue-en-comision-proyecto-de-hasta-s22000-espera-evaluacion-en-el-congreso-hnews-669950",
       "fuente": "La República Economía",
       "fecha_iso": "2026-11-17T02:12:36.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "semana_economica-0504dd3f0b",
+      "titulo": "Siderúrgicas latinoamericanas proyectan invertir más de US$13,600 millones para el siguiente quinquenio",
+      "url": "https://www.semanaeconomica.com/sectores-empresas/industria/",
+      "fuente": "Semana Económica",
+      "fecha_iso": "2026-11-17T02:08:28.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
@@ -289,15 +361,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "bloomberg_linea-8285dbb3a4",
-      "titulo": "Mercados asiáticos extienden las pérdidas tecnológicas de Wall Street antes de los resultados de Nvidia",
-      "url": "https://www.bloomberglinea.com/mercados/mercados-asiaticos-extienden-las-perdidas-tecnologicas-de-wall-street-antes-de-los-resultados-de-nvidia/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-17T00:49:44.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "bloomberg_linea-e4a85a6860",
       "titulo": "Trump buscará reafirmar su liderazgo ante Xi y Putin tras las derrotas electorales en EE.UU.",
       "url": "https://www.bloomberglinea.com/mundo/estados-unidos/trump-buscara-reafirmar-su-liderazgo-ante-xi-y-putin-tras-las-derrotas-electorales-en-eeuu/",
@@ -349,6 +412,15 @@
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-16T23:30:52.000Z",
       "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "semana_economica-8cd2608b0d",
+      "titulo": "Gobierno declara en reorganización al OECE por 90 días ante debilidades en contrataciones públicas",
+      "url": "https://www.semanaeconomica.com/legal-politica/marco-legal/",
+      "fuente": "Semana Económica",
+      "fecha_iso": "2026-11-16T23:10:30.000Z",
+      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -406,18 +478,18 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "gestion-2988da459f",
-      "titulo": "Grupo Carsa: la expansión que alista en Lima tras su cambio de dueño y unificar sus marcas",
-      "url": "https://gestion.pe/economia/empresas/grupo-carsa-con-nuevo-dueno-y-una-sola-marca-va-por-mas-tiendas-en-lima-cuanto-crecera-noticia/",
+      "id": "gestion-b3495208d4",
+      "titulo": "De desarrollar tecnología para Xiaomi a marca propia: los planes de Cuktech en Perú",
+      "url": "https://gestion.pe/economia/empresas/de-fabricar-para-xiaomi-a-marca-propia-los-planes-de-cuktech-en-peru-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-16T22:15:00.000Z",
       "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-b3495208d4",
-      "titulo": "De desarrollar tecnología para Xiaomi a marca propia: los planes de Cuktech en Perú",
-      "url": "https://gestion.pe/economia/empresas/de-fabricar-para-xiaomi-a-marca-propia-los-planes-de-cuktech-en-peru-noticia/",
+      "id": "gestion-2988da459f",
+      "titulo": "Grupo Carsa: la expansión que alista en Lima tras su cambio de dueño y unificar sus marcas",
+      "url": "https://gestion.pe/economia/empresas/grupo-carsa-con-nuevo-dueno-y-una-sola-marca-va-por-mas-tiendas-en-lima-cuanto-crecera-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-16T22:15:00.000Z",
       "categoria": "Bolsa y empresas",
@@ -637,6 +709,15 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-16T19:15:00.000Z",
       "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "semana_economica-f90c0488ac",
+      "titulo": "Economía peruana continúa desaceleración en setiembre y crece solo 2.43%",
+      "url": "https://www.semanaeconomica.com/economia-finanzas/macroeconomia/",
+      "fuente": "Semana Económica",
+      "fecha_iso": "2026-11-16T19:00:43.000Z",
+      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -961,87 +1042,6 @@
       "fuente": "RPP Noticias",
       "fecha_iso": "2026-11-16T10:59:39.000Z",
       "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-771b3a2cd7",
-      "titulo": "Tasa de desempleo se sitúa en 4.4% en últimos tres meses y muestra nuevo descenso",
-      "url": "https://andina.pe/agencia/noticia-tasa-desempleo-se-situa-44-ultimos-tres-meses-y-muestra-nuevo-descenso-1100139.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-16T10:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-da805185d4",
-      "titulo": "Minería informal: queda al voto en el TC decidir si es inconstitucional prórroga del Reinfo",
-      "url": "https://gestion.pe/economia/mineria-informal-queda-al-voto-en-el-tc-decidir-si-es-inconstitucional-prorroga-del-reinfo-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T04:30:00.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-fe941cfbec",
-      "titulo": "Contrataciones públicas bajo la lupa: Gobierno somete al OECE a una reorganización",
-      "url": "https://gestion.pe/economia/contrataciones-publicas-de-peru-bajo-la-lupa-gobierno-somete-al-oece-a-una-reorganizacion-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T04:00:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-ccb4351ba4",
-      "titulo": "Economía peruana creció 2.43% en septiembre, pero hay 3 sectores que no pudieron “celebrar”",
-      "url": "https://gestion.pe/economia/economia-peruana-crece-243-en-septiembre-pero-hay-3-sectores-que-no-pudieron-celebrar-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-16T03:30:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-23e453e253",
-      "titulo": "InRetail adelanta compras por El Niño: Plaza Vea, Makro e Inkafarma se preparan",
-      "url": "https://gestion.pe/economia/empresas/dueno-de-plaza-vea-adelanta-compras-ante-el-nino-y-espera-mantener-crecimiento-en-locales-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-15T23:30:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-0092fbe05c",
-      "titulo": "Las bolsas asiáticas se preparan para la presión de la IA y la avalancha de datos",
-      "url": "https://www.bloomberglinea.com/mercados/las-bolsas-asiaticas-se-preparan-para-la-presion-de-la-ia-y-la-avalancha-de-datos/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-15T23:15:01.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-d4acf8d6ef",
-      "titulo": "“Preocupa que Perú se quede con un piso de gasto enorme que no se pueda revertir”, analiza el CF",
-      "url": "https://gestion.pe/economia/alonso-segura-del-consejo-fiscal-preocupa-que-peru-se-quede-con-un-piso-de-gasto-enorme-que-no-se-pueda-revertir-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-15T22:45:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-732624707c",
-      "titulo": "⁠Metropolitano “arrancaría” etapa operativa en 2027: ¿qué sucederá cuando se concrete?",
-      "url": "https://gestion.pe/economia/metropolitano-arrancaria-etapa-operativa-en-2027-que-sucedera-cuando-se-concrete-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-15T22:30:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-f8cb1932c1",
-      "titulo": "Líneas 3 y 4 del Metro de Lima: contratación clave por S/ 150 millones en pausa por El Niño",
-      "url": "https://gestion.pe/economia/lineas-3-y-4-del-metro-de-lima-contratacion-clave-por-s-150-millones-en-pausa-por-el-nino-dice-la-atu-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-15T21:45:00.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     }
   ]
