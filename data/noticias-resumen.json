@@ -1,11 +1,11 @@
 {
- "actualizado": "2026-11-17T01:34:29.235Z",
+ "actualizado": "2026-11-17T03:55:52.826Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
-   "titulo": "Dólar sube a S/3,41 por fortaleza global y cobre",
-   "nota": "El tipo de cambio cerró en S/3,41 impulsado por el fortalecimiento global de la divisa y la caída del precio del cobre. El BCRP proyecta una clara reducción de la tasa de inflación a partir de marzo del próximo año.",
+   "titulo": "Dólar sube a S/3,41 por fortaleza global y caída del cobre",
+   "nota": "El tipo de cambio cerró en S/3,41 impulsado por el fortalecimiento global de la divisa estadounidense y la baja del precio del cobre. Durante la jornada el dólar abrió en S/3,40 presionado también por pagos de CTS en el mercado local.",
    "tema": "Dólar y BCRP",
    "empresas": [],
    "fuentes": [
@@ -13,7 +13,7 @@
      "titulo": "Precio del dólar en Perú: cuál fue el tipo de cambio del lunes 16 de noviembre",
      "fuente": "El Comercio Economía",
      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-2026-a-cuanto-esta-el-tipo-de-cambio-este-lunes-16-de-noviembre-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
-     "fecha": "2026-11-17T01:05:15.000Z"
+     "fecha": "2026-11-17T02:14:06.000Z"
     },
     {
      "titulo": "Precio del dólar hoy sube en Perú: Así cerró el tipo de cambio del 16 de noviembre",
@@ -28,12 +28,6 @@
      "fecha": "2026-11-16T21:43:42.000Z"
     },
     {
-     "titulo": "BCRP: “A partir de marzo del próximo año se vería una clara reducción en la tasa inflación”",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/bcrp-a-partir-de-marzo-del-proximo-ano-se-veria-una-clara-reduccion-en-la-tasa-inflacion-noticia/",
-     "fecha": "2026-11-16T20:00:00.000Z"
-    },
-    {
      "titulo": "Tipo de cambio sube hoy en Perú: ¿en cuánto cerró el dólar este lunes 16 de noviembre?",
      "fuente": "Gestión",
      "url": "https://gestion.pe/economia/mercados/tipo-de-cambio-dolar-hoy-en-peru-cuanto-esta-el-precio-del-dolar-este-lunes-16-de-noviembre-dolares-a-soles-compra-y-venta-bcrp-noticia/",
@@ -44,6 +38,12 @@
      "fuente": "El Comercio Economía",
      "url": "https://elcomercio.pe/economia/peru/el-dolar-abre-en-s340-ante-fortaleza-global-de-la-divisa-y-pagos-de-cts-en-peru-l-dolar-l-tipo-de-cambio-l-ultimas-noticia/",
      "fecha": "2026-11-16T16:34:57.000Z"
+    },
+    {
+     "titulo": "¿Cuál es la cotización del dólar hoy lunes 16 de noviembre de 2026?",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-cual-es-cotizacion-del-dolar-hoy-lunes-16-noviembre-2026-1100198.aspx",
+     "fecha": "2026-11-16T14:30:45.000Z"
     }
    ],
    "revision": {
@@ -53,30 +53,109 @@
    }
   },
   {
-   "titulo": "Economía crece 2,43% en setiembre frenada por minería y agro",
-   "nota": "El PBI peruano avanzó 2,43% en setiembre, aunque la contracción de la minería y la agricultura limitó el crecimiento. Las agroexportaciones acumularon US$ 9.898 millones entre enero y setiembre.",
-   "tema": "Economía y fiscal",
-   "empresas": [
-    "PACIFIC1"
-   ],
+   "titulo": "BCRP prevé reducción clara de la inflación desde marzo próximo",
+   "nota": "El banco central estimó que a partir de marzo del próximo año se observaría una clara reducción en la tasa de inflación. Julio Velarde recibió en España el premio honorífico de influencia hispana.",
+   "tema": "Dólar y BCRP",
+   "empresas": [],
    "fuentes": [
+    {
+     "titulo": "BCRP: “A partir de marzo del próximo año se vería una clara reducción en la tasa inflación”",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/bcrp-a-partir-de-marzo-del-proximo-ano-se-veria-una-clara-reduccion-en-la-tasa-inflacion-noticia/",
+     "fecha": "2026-11-16T20:00:00.000Z"
+    },
+    {
+     "titulo": "Julio Velarde, presidente del BCR, recibe premio honorífico de influencia hispana en España",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/economia/peru/julio-velarde-presidente-del-bcr-recibe-premio-honorifico-de-influencia-hispana-en-espana-l-ultimas-noticia/",
+     "fecha": "2026-11-16T19:52:48.000Z"
+    },
+    {
+     "titulo": "León XIV: visita al Perú habría beneficiado a 1.2 millones de micro y pequeñas empresas",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-leon-xiv-visita-al-peru-habria-beneficiado-a-12-millones-micro-y-pequenas-empresas-1100259.aspx",
+     "fecha": "2026-11-16T19:39:28.000Z"
+    },
+    {
+     "titulo": "Julio Velarde suma un nuevo reconocimiento: Premio honorífico de influencia hispana",
+     "fuente": "Gestión",
+     "url": "https://gestion.pe/economia/bcrp-julio-velarde-suma-un-nuevo-reconocimiento-premio-honorifico-de-influencia-hispana-noticia/",
+     "fecha": "2026-11-16T19:15:00.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": null,
+    "ok": null,
+    "motivo": "revisor no disponible"
+   }
+  },
+  {
+   "titulo": "Entel Perú se vende a Millicom por US$1.714 millones",
+   "nota": "Entel acordó la venta de su operación peruana a Millicom, dueña de la marca Tigo, por US$1.714 millones. La transacción marca la salida de Entel del mercado local.",
+   "tema": "Bolsa y empresas",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Entel dejará el mercado peruano tras acordar la venta de su operación por US$1.714 millones",
+     "fuente": "La República Economía",
+     "url": "https://larepublica.pe/economia/2026/11/13/entel-acuerda-vender-su-operacion-en-peru-a-millicom-por-us1714-millones-668798",
+     "fecha": "2026-11-17T02:13:34.000Z"
+    },
+    {
+     "titulo": "Millicom, que opera con la marca Tigo, será la nueva dueña de Entel en Perú, ¿qué planes tiene en nuestro país?",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/economia/millicom-que-opera-con-la-marca-tigo-sera-la-nueva-duena-de-entel-en-peru-que-planes-tiene-en-nuestro-pais-noticia/",
+     "fecha": "2026-11-17T01:16:00.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": null,
+    "ok": null,
+    "motivo": "revisor no disponible"
+   }
+  },
+  {
+   "titulo": "Economía crece 2,43% en septiembre pese a caída minera y agro",
+   "nota": "El PBI peruano avanzó 2,43% en septiembre, aunque el retroceso de la minería y la agricultura frenó un mayor dinamismo. El empleo sintió el embate de El Niño con pérdida de más de 210 mil puestos en un año.",
+   "tema": "Economía y fiscal",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Economía peruana creció 2,43% en septiembre, pero caída de minería y agro frenó el avance",
+     "fuente": "La República Economía",
+     "url": "https://larepublica.pe/economia/2026/11/15/economia-peruana-crecio-243-en-septiembre-pero-caida-de-mineria-y-agro-freno-el-avance-419865",
+     "fecha": "2026-11-17T02:20:59.000Z"
+    },
+    {
+     "titulo": "El empleo en Perú siente el embate de El Niño: agricultura, pesca, manufactura y minería pierden más de 210 mil puestos en un año, según INEI",
+     "fuente": "RPP Noticias",
+     "url": "https://rpp.pe/economia/economia/el-empleo-en-peru-siente-el-embate-de-el-nino-agricultura-pesca-manufactura-y-mineria-pierden-mas-de-210-mil-puestos-en-un-ano-segun-inei-noticia-1718012",
+     "fecha": "2026-11-16T19:00:25.000Z"
+    }
+   ],
+   "revision": {
+    "modelo": null,
+    "ok": null,
+    "motivo": "revisor no disponible"
+   }
+  },
+  {
+   "titulo": "Exportaciones agrarias suman US$9.898 millones hasta septiembre",
+   "nota": "Las agroexportaciones peruanas alcanzaron US$9.898 millones entre enero y septiembre de 2026. Midagri proyecta que bordearían los US$15.000 millones al cierre del año.",
+   "tema": "Economía y fiscal",
+   "empresas": [],
+   "fuentes": [
+    {
+     "titulo": "Midagri: exportaciones agrarias bordearían los US$ 15,000 millones al cierre de 2026",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-midagri-exportaciones-agrarias-bordearian-los-15000-millones-al-cierre-2026-1100295.aspx",
+     "fecha": "2026-11-17T02:39:36.000Z"
+    },
     {
      "titulo": "Agroexportaciones peruanas alcanzan los US$ 9 898 millones entre enero y septiembre del 2026",
      "fuente": "RPP Noticias",
      "url": "https://rpp.pe/economia/economia/agroexportaciones-peruanas-alcanzan-los-us-9-898-millones-entre-enero-y-septiembre-del-2026-noticia-1718098",
      "fecha": "2026-11-17T00:19:43.000Z"
-    },
-    {
-     "titulo": "Economía peruana creció 2,43% en septiembre, pero caída de minería y agro frenó el avance",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/2026/11/15/economia-peruana-crecio-243-en-septiembre-pero-caida-de-mineria-y-agro-freno-el-avance-419865",
-     "fecha": "2026-11-16T23:04:51.000Z"
-    },
-    {
-     "titulo": "Economía peruana continúa desaceleración en setiembre y crece solo 2.43%",
-     "fuente": "Semana Económica",
-     "url": "https://www.semanaeconomica.com/economia-finanzas/macroeconomia/",
-     "fecha": "2026-11-16T19:00:43.000Z"
     },
     {
      "titulo": "Agroexportaciones peruanas sumaron US$ 9,898 millones en alimentos para el mundo",
@@ -92,91 +171,8 @@
    }
   },
   {
-   "titulo": "Falabella invertirá US$1.100 millones en Perú durante 2027",
-   "nota": "Grupo Falabella anunció un plan histórico de inversiones por más de US$1.100 millones para 2027, destinados a diversos negocios en el país. El Premium Outlet del Jockey Plaza abrirá esta semana con marcas anunciadas.",
-   "tema": "Bolsa y empresas",
-   "empresas": [
-    "SAGAC1"
-   ],
-   "fuentes": [
-    {
-     "titulo": "Grupo Falabella invertirá más de US$1,100 millones en 2027: ¿qué negocios recibirán el capital?",
-     "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/empresas/grupo-falabella-invertira-us1100-millones-en-2027-en-que-negocios-noticia/",
-     "fecha": "2026-11-17T00:05:56.000Z"
-    },
-    {
-     "titulo": "El Premium Outlet del Jockey Plaza abrirá esta semana: conoce las marcas anunciadas",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/jockey-plaza-abre-su-outlet-esta-semana-y-estas-son-las-marcas-anunciadas-noticia/",
-     "fecha": "2026-11-16T23:16:29.000Z"
-    },
-    {
-     "titulo": "Grupo Falabella anuncia histórico plan de inversiones por más de US$1,100 millones para 2027",
-     "fuente": "Semana Económica",
-     "url": "https://www.semanaeconomica.com/que-esta-pasando/articulos/",
-     "fecha": "2026-11-16T22:31:50.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": null,
-    "ok": null,
-    "motivo": "revisor no disponible"
-   }
-  },
-  {
-   "titulo": "OECE en reorganización por debilidades en contrataciones públicas",
-   "nota": "El Gobierno declaró en reorganización al OECE por 90 días tras detectar problemas en compras públicas por más de S/5.520 millones. La medida busca corregir las debilidades en los procesos de contratación.",
-   "tema": "Economía y fiscal",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "OECE advirtió problemas en compras públicas por más de S/5.520 millones antes de su reorganización",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/2026/11/16/oece-advirtio-problemas-en-compras-publicas-por-mas-de-s5520-millones-antes-de-su-reorganizacion-hnews-1056592",
-     "fecha": "2026-11-17T00:20:11.000Z"
-    },
-    {
-     "titulo": "Gobierno declara en reorganización al OECE por 90 días ante debilidades en contrataciones públicas",
-     "fuente": "Semana Económica",
-     "url": "https://www.semanaeconomica.com/legal-politica/marco-legal/",
-     "fecha": "2026-11-16T23:10:30.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": null,
-    "ok": null,
-    "motivo": "revisor no disponible"
-   }
-  },
-  {
-   "titulo": "Entel vende su operación peruana a Millicom por US$1.714 millones",
-   "nota": "Entel acordó la venta de su operación en Perú a Millicom, dueña de la marca Tigo, por US$1.714 millones. La transacción marca la salida de Entel del mercado peruano de telecomunicaciones.",
-   "tema": "Bolsa y empresas",
-   "empresas": [],
-   "fuentes": [
-    {
-     "titulo": "Millicom, que opera con la marca Tigo, será la nueva dueña de Entel en Perú, ¿qué planes tiene en nuestro país?",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/economia/millicom-que-opera-con-la-marca-tigo-sera-la-nueva-duena-de-entel-en-peru-que-planes-tiene-en-nuestro-pais-noticia/",
-     "fecha": "2026-11-17T01:16:00.000Z"
-    },
-    {
-     "titulo": "Entel dejará el mercado peruano tras acordar la venta de su operación por US$1.714 millones",
-     "fuente": "La República Economía",
-     "url": "https://larepublica.pe/economia/2026/11/13/entel-acuerda-vender-su-operacion-en-peru-a-millicom-por-us1714-millones-668798",
-     "fecha": "2026-11-16T22:51:58.000Z"
-    }
-   ],
-   "revision": {
-    "modelo": null,
-    "ok": null,
-    "motivo": "revisor no disponible"
-   }
-  },
-  {
    "titulo": "Wall Street cae arrastrado por tecnología y crisis de Nvidia",
-   "nota": "Los mercados estadounidenses extendieron las pérdidas del sector tecnológico mientras esperan los resultados de Nvidia. Trump se mostró a favor de que Jensen Huang vuelva a dirigir la empresa.",
+   "nota": "Los mercados estadounidenses extendieron pérdidas tecnológicas mientras esperan resultados de Nvidia y la OPI de Anthropic. Trump apoya el regreso de Jensen Huang a la dirección de la empresa.",
    "tema": "Mundo",
    "empresas": [],
    "fuentes": [
@@ -199,10 +195,22 @@
      "fecha": "2026-11-16T21:18:39.000Z"
     },
     {
+     "titulo": "Nvidia enfrenta presión de EE.UU. por sus ventas de chips de IA a China y la salida de Huang",
+     "fuente": "Bloomberg Línea",
+     "url": "https://www.bloomberglinea.com/negocios/nvidia-enfrenta-presion-de-eeuu-por-sus-ventas-de-chips-de-ia-a-china-y-la-salida-de-huang/",
+     "fecha": "2026-11-16T21:15:30.000Z"
+    },
+    {
      "titulo": "Donald Trump se muestra a favor de que Jensen Huang vuelva a dirigir Nvidia",
      "fuente": "El Comercio Economía",
      "url": "https://elcomercio.pe/economia/mundo/donald-trump-se-muestra-a-favor-de-que-jensen-huang-vuelva-a-dirigir-nvidia-l-ultimas-noticia/",
      "fecha": "2026-11-16T18:34:53.000Z"
+    },
+    {
+     "titulo": "Wall Street abre en rojo arrastrado por el sector tecnológico y la crisis de Nvidia",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/economia/mercados/wall-street-abre-en-rojo-arrastrado-por-el-sector-tecnologico-y-la-crisis-de-nvidia-l-mercados-l-wall-street-l-ultimas-noticia/",
+     "fecha": "2026-11-16T17:02:36.000Z"
     },
     {
      "titulo": "Trump apoya las peticiones para que Huang vuelva a dirigir Nvidia y minimiza los riesgos de seguridad",
