@@ -1,18 +1,18 @@
 {
-  "actualizado": "2026-11-17T19:51:20.946Z",
+  "actualizado": "2026-11-18T11:28:39.615Z",
   "timesfm": {
     "ok": true,
     "error": null
   },
   "model": "perdata-engine-v6",
   "filas": 7584,
-  "validas": 7413,
-  "descartadas": 171,
-  "pct_descartadas": 2.25,
+  "validas": 7412,
+  "descartadas": 172,
+  "pct_descartadas": 2.27,
   "sospechosas": 0,
   "simbolos_sin_datos": 0,
   "simbolos_totales": 158,
-  "tiempo_ms": 39,
+  "tiempo_ms": 46,
   "cobertura_ok": true,
   "frescura_ok": true,
   "exito": true,
@@ -102,137 +102,144 @@
       "width": 17175
     },
     {
+      "index": 604,
+      "symbol": "ATACOBC1.LM",
+      "horizon": 29,
+      "reason": "absurd_width",
+      "width": 41.789625360230545
+    },
+    {
       "index": 605,
       "symbol": "ATACOBC1.LM",
       "horizon": 30,
       "reason": "absurd_width",
-      "width": 42.238888888888894
+      "width": 47.932307692307695
     },
     {
       "index": 606,
       "symbol": "ATACOBC1.LM",
       "horizon": 31,
       "reason": "absurd_width",
-      "width": 41.14248021108179
+      "width": 44.53781512605042
     },
     {
       "index": 607,
       "symbol": "ATACOBC1.LM",
       "horizon": 32,
       "reason": "absurd_width",
-      "width": 43.19847328244275
+      "width": 45.204188481675395
     },
     {
       "index": 608,
       "symbol": "ATACOBC1.LM",
       "horizon": 33,
       "reason": "absurd_width",
-      "width": 40.74709976798144
+      "width": 41.94613583138173
     },
     {
       "index": 609,
       "symbol": "ATACOBC1.LM",
       "horizon": 34,
       "reason": "absurd_width",
-      "width": 57.339506172839506
+      "width": 59.090625
     },
     {
       "index": 610,
       "symbol": "ATACOBC1.LM",
       "horizon": 35,
       "reason": "absurd_width",
-      "width": 54.40173410404625
+      "width": 54.43266475644699
     },
     {
       "index": 611,
       "symbol": "ATACOBC1.LM",
       "horizon": 36,
       "reason": "absurd_width",
-      "width": 59.7746913580247
+      "width": 61.48275862068966
     },
     {
       "index": 612,
       "symbol": "ATACOBC1.LM",
       "horizon": 37,
       "reason": "absurd_width",
-      "width": 68.31399317406142
+      "width": 71.92553191489363
     },
     {
       "index": 613,
       "symbol": "ATACOBC1.LM",
       "horizon": 38,
       "reason": "absurd_width",
-      "width": 74.55782312925172
+      "width": 77.89824561403509
     },
     {
       "index": 614,
       "symbol": "ATACOBC1.LM",
       "horizon": 39,
       "reason": "absurd_width",
-      "width": 79.98561151079136
+      "width": 83.17777777777778
     },
     {
       "index": 615,
       "symbol": "ATACOBC1.LM",
       "horizon": 40,
       "reason": "absurd_width",
-      "width": 62.64819944598338
+      "width": 62.98337950138504
     },
     {
       "index": 616,
       "symbol": "ATACOBC1.LM",
       "horizon": 41,
       "reason": "absurd_width",
-      "width": 60.475578406169674
+      "width": 60.092071611253196
     },
     {
       "index": 617,
       "symbol": "ATACOBC1.LM",
       "horizon": 42,
       "reason": "absurd_width",
-      "width": 61.11547911547912
+      "width": 59.52038369304557
     },
     {
       "index": 618,
       "symbol": "ATACOBC1.LM",
       "horizon": 43,
       "reason": "absurd_width",
-      "width": 62.56490384615385
+      "width": 61.847255369928405
     },
     {
       "index": 619,
       "symbol": "ATACOBC1.LM",
       "horizon": 44,
       "reason": "absurd_width",
-      "width": 65.76119402985076
+      "width": 64.76412776412776
     },
     {
       "index": 620,
       "symbol": "ATACOBC1.LM",
       "horizon": 45,
       "reason": "absurd_width",
-      "width": 87.5672131147541
+      "width": 84.2063492063492
     },
     {
       "index": 621,
       "symbol": "ATACOBC1.LM",
       "horizon": 46,
       "reason": "absurd_width",
-      "width": 70.16497461928934
+      "width": 67.30637254901961
     },
     {
       "index": 622,
       "symbol": "ATACOBC1.LM",
       "horizon": 47,
       "reason": "absurd_width",
-      "width": 97.33783783783784
+      "width": 93.93421052631578
     },
     {
       "index": 623,
       "symbol": "ATACOBC1.LM",
       "horizon": 48,
       "reason": "absurd_width",
-      "width": 92.94753086419753
+      "width": 88.32047477744807
     },
     {
       "index": 1860,
@@ -359,13 +366,6 @@
       "horizon": 38,
       "reason": "absurd_width",
       "width": 104.03144654088051
-    },
-    {
-      "index": 2246,
-      "symbol": "MOROCOC1.LM",
-      "horizon": 39,
-      "reason": "absurd_width",
-      "width": 96.97109826589595
     }
   ],
   "detalles_sospechosas": [],
