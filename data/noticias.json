@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-19T05:31:40.896Z",
+  "actualizado": "2026-11-19T08:31:56.396Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -13,8 +13,8 @@
     },
     "inei": {
       "nombre": "Instituto Nacional de Estadística e Informática",
-      "ok": true,
-      "items": 25
+      "ok": false,
+      "items": 0
     },
     "bcrp": {
       "nombre": "Banco Central de Reserva del Perú",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 68
+      "items": 67
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 34
+      "items": 35
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -64,157 +64,58 @@
   },
   "noticias": [
     {
-      "id": "inei-4ac23bcd7e",
-      "titulo": "INEI: Producción nacional creció 2,43% en setiembre de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1473910-inei-produccion-nacional-crecio-2-43-en-setiembre-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-19T05:31:20.452Z",
-      "categoria": "Economía y fiscal",
+      "id": "bloomberg_linea-8f3e35470e",
+      "titulo": "El oro ronda mínimos de 14 meses ante señales de nuevas subidas de tasas de la Fed",
+      "url": "https://www.bloomberglinea.com/mercados/el-oro-ronda-minimos-de-14-meses-ante-senales-de-nuevas-subidas-de-tasas-de-la-fed/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-19T08:18:46.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-7cf959a889",
+      "titulo": "Mujer emprendedora: cuatro claves para organizar un negocio desde casa",
+      "url": "https://andina.pe/agencia/noticia-mujer-emprendedora-cuatro-claves-para-organizar-un-negocio-desde-casa-1100607.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-19T08:00:01.000Z",
+      "categoria": "Bolsa y empresas",
       "semaforo": "VERDE"
     },
     {
-      "id": "inei-967f32b2b6",
-      "titulo": "INEI: Población ocupada de Lima Metropolitana aumentó 6,2% entre agosto y octubre de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1473911-inei-poblacion-ocupada-de-lima-metropolitana-aumento-6-2-entre-agosto-y-octubre-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-19T05:31:20.452Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
+      "id": "bloomberg_linea-e548f8a401",
+      "titulo": "Precio del cobre: la IA gana terreno frente a China como factor clave, según XTB",
+      "url": "https://www.bloomberglinea.com/mercados/precio-del-cobre-la-ia-gana-terreno-frente-a-china-como-factor-clave-segun-xtb/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-19T08:00:01.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
     },
     {
-      "id": "inei-dc1c9fe6cb",
-      "titulo": "INEI: En el tercer trimestre 2026 la población ocupada del país totalizó 17 millones 973 mil 200 personas",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1473912-inei-en-el-tercer-trimestre-2026-la-poblacion-ocupada-del-pais-totalizo-17-millones-973-mil-200-personas",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-19T05:31:20.452Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
+      "id": "bloomberg_linea-c06a7f8001",
+      "titulo": "Xi y Trump se muestran cordiales durante su reunión mientras restricciones a chips ponen a prueba la tregua",
+      "url": "https://www.bloomberglinea.com/mundo/xi-y-trump-se-muestran-cordiales-durante-su-reunion-mientras-restricciones-a-chips-ponen-a-prueba-la-tregua/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-19T07:30:15.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
     },
     {
-      "id": "inei-2e24b4346c",
-      "titulo": "INEI: Importaciones crecieron 7,3% y exportaciones disminuyeron 8,0% en setiembre de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1472937-inei-importaciones-crecieron-7-3-y-exportaciones-disminuyeron-8-0-en-setiembre-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-19T05:31:20.452Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
+      "id": "bloomberg_linea-830f5ade5b",
+      "titulo": "Trump se reúne con su \"amigo\" Putin en China por primera vez en más de un año y hablan sobre Ucrania",
+      "url": "https://www.bloomberglinea.com/mundo/trump-se-reune-con-su-amigo-putin-en-china-por-primera-vez-en-mas-de-un-ano-y-hablan-sobre-ucrania/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-19T07:13:20.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
     },
     {
-      "id": "inei-65a8cef473",
-      "titulo": "54 de cada 100 municipalidades provinciales y distritales del país tienen conformado el Centro de Operaciones de Emergencia Local",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1472369-54-de-cada-100-municipalidades-provinciales-y-distritales-del-pais-tienen-conformado-el-centro-de-operaciones-de-emergencia-local",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-19T05:31:20.452Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-c24fb02492",
-      "titulo": "INEI: Precios al consumidor de Lima Metropolitana subieron 0,57% en octubre de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1466754-inei-precios-al-consumidor-de-lima-metropolitana-subieron-0-57-en-octubre-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-19T05:31:20.452Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-0d4444e1c2",
-      "titulo": "Consumo interno de cemento subió 12,22% en setiembre 2026 y en el periodo enero-setiembre en 11,96%",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1466755-consumo-interno-de-cemento-subio-12-22-en-setiembre-2026-y-en-el-periodo-enero-setiembre-en-11-96",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-19T05:31:20.452Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-7e1824fb47",
-      "titulo": "Producción de arándanos en Ica, Piura, Lima, Áncash y La Libertad concentró el 81,6% del total nacional en agosto de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1464747-produccion-de-arandanos-en-ica-piura-lima-ancash-y-la-libertad-concentro-el-81-6-del-total-nacional-en-agosto-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-19T05:31:20.452Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-bca4467f68",
-      "titulo": "Producción de agua potable en Lima Metropolitana aumentó 3,8% en setiembre de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1462449-produccion-de-agua-potable-en-lima-metropolitana-aumento-3-8-en-setiembre-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-19T05:31:20.452Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-9da8da02aa",
-      "titulo": "Tráfico vehicular en garitas de peajes a nivel nacional creció 2,7% en agosto de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1460705-trafico-vehicular-en-garitas-de-peajes-a-nivel-nacional-crecio-2-7-en-agosto-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-19T05:31:20.452Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-925fae2aba",
-      "titulo": "Sector comercio creció 6,89% durante agosto 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1460688-sector-comercio-crecio-6-89-durante-agosto-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-19T05:31:20.452Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-365fc49b7a",
-      "titulo": "Actividad de restaurantes reportó alza de 1,13% en agosto de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1460686-actividad-de-restaurantes-reporto-alza-de-1-13-en-agosto-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-19T05:31:20.452Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-832d1011ec",
-      "titulo": "Censos Nacionales 2025: Población de Pasco continúa en descenso",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1459066-censos-nacionales-2025-poblacion-de-pasco-continua-en-descenso",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-19T05:31:20.452Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-7027a3e8f9",
-      "titulo": "Censos Nacionales 2025: Moquegua es la segunda región más envejecida del Perú con un índice de 86,9",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1457276-censos-nacionales-2025-moquegua-es-la-segunda-region-mas-envejecida-del-peru-con-un-indice-de-86-9",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-19T05:31:20.452Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-5f10bfd390",
-      "titulo": "Población ocupada en Lima Metropolitana aumentó en 6,0% en el tercer trimestre 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1457077-poblacion-ocupada-en-lima-metropolitana-aumento-en-6-0-en-el-tercer-trimestre-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-19T05:31:20.452Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-a3e46e0f5d",
-      "titulo": "INEI: Tacna tiene una población más envejecida que el promedio nacional",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1456676-inei-tacna-tiene-una-poblacion-mas-envejecida-que-el-promedio-nacional",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-19T05:31:20.452Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-d4a2729b98",
-      "titulo": "Volumen total exportado subió 17,7% en agosto de 2026 impulsado por mayores envíos tradicionales",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1456078-volumen-total-exportado-subio-17-7-en-agosto-de-2026-impulsado-por-mayores-envios-tradicionales",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-19T05:31:20.452Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
+      "id": "rpp-5b43450cc7",
+      "titulo": "Trump se reúne en privado con su \"amigo\" Putin antes de la trilateral con China",
+      "url": "https://rpp.pe/mundo/estados-unidos/trump-se-reune-en-privado-con-su-amigo-putin-antes-de-la-trilateral-con-china-noticia-1718492",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-19T05:29:21.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
     },
     {
       "id": "bloomberg_linea-91fdbf4917",
@@ -415,15 +316,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "bloomberg_linea-b6e1df4829",
-      "titulo": "Futuros de Wall Street avanzan tras la histórica OPI de Anthropic; el cobre y el oro caen",
-      "url": "https://www.bloomberglinea.com/mercados/futuros-de-wall-street-avanzan-tras-la-historica-opi-de-anthropic-el-cobre-y-el-oro-caen/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-19T01:30:34.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-11f276c1a1",
       "titulo": "Minem adopta medidas para garantizar abastecimiento de combustibles ante fenómeno El Niño",
       "url": "https://andina.pe/agencia/noticia-minem-adopta-medidas-para-garantizar-abastecimiento-combustibles-ante-fenomeno-nino-1100595.aspx",
@@ -586,18 +478,18 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-8f92b8c3e2",
-      "titulo": "Fenómeno El Niño y su implicancia en los precios de los alimentos y transporte",
-      "url": "https://andina.pe/agencia/noticia-fenomeno-nino-y-su-implicancia-los-precios-los-alimentos-y-transporte-1100529.aspx",
+      "id": "andina-0a4efd3b27",
+      "titulo": "MEF impulsa digitalización de la inversión pública con metodología BIM",
+      "url": "https://andina.pe/agencia/noticia-mef-impulsa-digitalizacion-de-inversion-publica-metodologia-bim-1100589.aspx",
       "fuente": "Agencia Andina",
       "fecha_iso": "2026-11-18T23:30:00.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
     },
     {
-      "id": "andina-0a4efd3b27",
-      "titulo": "MEF impulsa digitalización de la inversión pública con metodología BIM",
-      "url": "https://andina.pe/agencia/noticia-mef-impulsa-digitalizacion-de-inversion-publica-metodologia-bim-1100589.aspx",
+      "id": "andina-8f92b8c3e2",
+      "titulo": "Fenómeno El Niño y su implicancia en los precios de los alimentos y transporte",
+      "url": "https://andina.pe/agencia/noticia-fenomeno-nino-y-su-implicancia-los-precios-los-alimentos-y-transporte-1100529.aspx",
       "fuente": "Agencia Andina",
       "fecha_iso": "2026-11-18T23:30:00.000Z",
       "categoria": "Economía y fiscal",
@@ -987,6 +879,159 @@
       "url": "https://gestion.pe/economia/mercados/tipo-de-cambio-dolar-hoy-en-peru-cuanto-esta-el-precio-del-dolar-este-miercoles-18-de-noviembre-dolares-a-soles-compra-y-venta-bcrp-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-18T20:14:42.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-0f15e16e4f",
+      "titulo": "El dólar cierra en S/3,43 ante la caída del cobre y expectativas de nuevas alzas de tasas en EE. UU.",
+      "url": "https://elcomercio.pe/economia/peru/el-dolar-cierra-en-s343-ante-la-caida-del-cobre-y-expectativas-de-nuevas-alzas-de-tasas-en-ee-uu-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-18T20:08:20.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-87413182b5",
+      "titulo": "APEC: se abrirá nueva era en las relaciones bilaterales con China [entrevista]",
+      "url": "https://andina.pe/agencia/noticia-apec-se-abrira-nueva-era-las-relaciones-bilaterales-china-entrevista-1100523.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-18T20:05:04.000Z",
+      "categoria": "Mundo",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "el_comercio-eb0138e289",
+      "titulo": "Petro-Perú demandará a Altamesa Energy, su ex socio en el desarrollo del lote 192",
+      "url": "https://elcomercio.pe/economia/peru/petroleo-loreto-petro-peru-demandara-a-altamesa-energy-su-ex-socio-en-el-desarrollo-del-lote-192-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-18T19:54:58.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-f801e2c9c8",
+      "titulo": "Inversión minera sumaría US$ 5,100 millones el próximo año, ¿pierde ritmo?",
+      "url": "https://gestion.pe/economia/inversion-minera-en-peru-sumaria-us-5100-millones-el-proximo-ano-pierde-ritmo-esto-dijo-el-sector-energia-y-minas-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-18T19:54:06.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-cc81e1e38e",
+      "titulo": "Agroexportaciones peruanas podrían caer a USD 14.500 millones en 2026 y reducir su ventaja sobre Chile",
+      "url": "https://www.infobae.com/peru/2026/11/18/agroexportaciones-peruanas-podrian-caer-a-usd-14500-millones-en-2026-y-reducir-su-ventaja-sobre-chile/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-18T19:50:47.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-e916675f43",
+      "titulo": "HBO Max anuncia producción de Sodalicio: Duelo al Vaticano: serie documental será dirigida por Salvador del Solar",
+      "url": "https://www.infobae.com/peru/2026/11/18/hbo-max-anuncia-produccion-de-sodalicio-duelo-al-vaticano-serie-documental-sera-dirigida-por-salvador-del-solar/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-18T19:34:39.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-1ce376e782",
+      "titulo": "Minsa proyecta reducir la anemia al 30.9% con menos presupuesto en 2027: la propuesta",
+      "url": "https://gestion.pe/peru/minsa-proyecta-reducir-la-anemia-al-309-con-un-presupuesto-menor-en-2027-que-planteo-ministro-luis-dyer-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-18T19:30:33.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-16fc7d378e",
+      "titulo": "Interior elevará su presupuesto a S/14,270 millones en 2027: el detalle de las inversiones",
+      "url": "https://gestion.pe/peru/sector-interior-elevara-su-presupuesto-a-s14270-millones-en-2027-el-detalle-de-las-inversiones-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-18T19:24:57.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-01ecb7f4e3",
+      "titulo": "Ministro de Trabajo: Japón es un aliado importante en transferencia tecnológica",
+      "url": "https://andina.pe/agencia/noticia-ministro-trabajo-japon-es-un-aliado-importante-transferencia-tecnologica-1100494.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-18T19:23:16.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "la_republica-bc41cc2a24",
+      "titulo": "GMoney avanza en su proceso de integración a TAPP para sumar un nuevo riel de cobro",
+      "url": "https://larepublica.pe/economia/2026/11/18/gmoney-avanza-en-su-proceso-de-integracion-a-tapp-para-sumar-un-nuevo-riel-de-cobro-1237050",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-18T19:23:05.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-6f0cacc037",
+      "titulo": "SBS establece nuevas disposiciones para la oferta de servicios financieros empaquetados y el retiro de efectivo sin costo",
+      "url": "https://elcomercio.pe/economia/peru/sbs-establece-nuevas-disposiciones-para-la-oferta-de-servicios-financieros-empaquetados-y-el-retiro-de-efectivo-sin-costo-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-18T19:22:47.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-3a8a368e20",
+      "titulo": "Precio del dólar hoy en Perú, miércoles 18 de noviembre: consulta el tipo de cambio para compra y venta",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/18/precio-del-dolar-hoy-en-peru-miercoles-18-de-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-284716",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-18T19:00:00.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-a5e0ef60fd",
+      "titulo": "Kremlin anticipa varios encuentros entre Putin y Trump durante la cumbre en China",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/kremlin-anticipa-varios-encuentros-entre-putin-y-trump-durante-la-cumbre-en-china/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-18T18:45:02.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-16b049a156",
+      "titulo": "Keiko Fujimori se reúne con primer ministro de Singapur para impulsar la cooperación en educación y desarrollo de zonas económicas especiales",
+      "url": "https://elcomercio.pe/economia/peru/keiko-fujimori-se-reune-con-primer-ministro-de-singapur-para-impulsar-la-cooperacion-en-educacion-y-desarrollo-de-zonas-economicas-especiales-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-18T18:31:31.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-d893a44962",
+      "titulo": "APEC 2026: Keiko Fujimori inicia su participación en la 33ª Reunión de Líderes Económicos en China",
+      "url": "https://elcomercio.pe/economia/keiko-fujimori-inicia-su-participacion-en-la-33-reunion-de-lideres-economicos-de-apec-en-china-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-18T18:26:16.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-c959d2d8e5",
+      "titulo": "PBI de Chile cae un 1,1% en el tercer trimestre lastrado por la minería",
+      "url": "https://elcomercio.pe/economia/chile-pbi-cae-un-11-en-el-tercer-trimestre-lastrado-por-la-mineria-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-18T18:23:57.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-7e40a53d89",
+      "titulo": "Julio Velarde sobre el rol de los bancos centrales: “debemos aprender a no solo buscar la estabilidad de precios, sino buscar evitar crisis”",
+      "url": "https://rpp.pe/economia/economia/julio-velarde-y-su-mensaje-a-los-bancos-centrales-debemos-aprender-a-no-solo-buscar-la-estabilidad-de-precios-sino-buscar-evitar-crisis-noticia-1718409",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-18T18:23:21.000Z",
       "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     }
