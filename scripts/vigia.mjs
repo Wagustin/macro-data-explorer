@@ -39,6 +39,9 @@ const DUENO = {
 const LATIDO = new Set([
   "timesfm.yml", "noticias-dia.yml", "news.yml", "smv.yml", "smv-precios.yml", "official-data.yml",
   "cierre-ayer.yml", "cierre-tarde.yml", "boletin.yml", "alertas.yml", "d1-backfill.yml",
+  // watchdog.yml corre cada hora (cron de GitHub y relanzado por el Worker): sin él, de noche
+  // news.yml puede pasar más de 4 h sin correr por retrasos de GitHub y daría falsas alarmas.
+  "watchdog.yml",
 ]);
 const CODIGOS_NEMOTRON = ["SMV_BLOQUEO", "CHOQUE_PUSH", "RED_PASAJERA", "DESCONOCIDO"];
 const PREFIJOS_RUNS = ["SMV_BLOQUEO", "CHOQUE_PUSH", "RED_PASAJERA", "WATCHDOG_SMOKE", "CI_ROJO", "DESCONOCIDO"];

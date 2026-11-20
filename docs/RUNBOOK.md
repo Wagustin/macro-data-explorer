@@ -166,7 +166,7 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
 
 ### SIN_LATIDO
 
-- **Detección**: `/api/status` no responde, o el último run de cualquier workflow de datos (`timesfm`, `noticias-dia`, `news`, `smv`, `smv-precios`, `official-data`, `cierre-ayer`, `cierre-tarde`, `boletin`, `alertas`, `d1-backfill`) es de hace más de 4 h.
+- **Detección**: `/api/status` no responde, o el último run de cualquier workflow de datos (`timesfm`, `noticias-dia`, `news`, `smv`, `smv-precios`, `official-data`, `cierre-ayer`, `cierre-tarde`, `boletin`, `alertas`, `d1-backfill`, `watchdog`) es de hace más de 4 h. El watchdog corre cada hora, así que sin él de noche `news` podría parecer parado por retrasos de GitHub.
 - **Qué significa**: el servidor de casa, que dispara parte de los relanzamientos (`scripts/dispatch-backup.sh`), no está corriendo, o el Worker no responde. Los workflows de GitHub con cron siguen su curso, así que el aviso también llega cuando solo se ha caído `/api/status`.
 - **Comprobar a mano**:
   ```bash

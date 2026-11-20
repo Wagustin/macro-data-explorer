@@ -341,4 +341,7 @@ test("SIN_LATIDO: último run de datos de hace más de 4 h, o /api/status caído
   assert.equal(evaluarLatido({ runs: [run("ci.yml", 0.1)], ahora }).codigo, "SIN_LATIDO"); // ci.yml no es de datos
   assert.equal(evaluarLatido({ runs: null, statusFallo: true, ahora }).codigo, "SIN_LATIDO");
   assert.equal(evaluarLatido({ runs: [run("alertas.yml", 0.2)], statusFallo: false, ahora }), null);
+  // watchdog.yml cuenta como latido: con watchdog reciente y news de hace 5 h no hay alarma
+  assert.equal(evaluarLatido({ runs: [run("watchdog.yml", 0.3), run("news.yml", 5)], ahora }), null);
+  assert.equal(evaluarLatido({ runs: [run("watchdog.yml", 5)], ahora }).codigo, "SIN_LATIDO");
 });
