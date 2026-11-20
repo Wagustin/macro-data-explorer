@@ -56,7 +56,16 @@ jobs:
           else
             git commit -m "data(news): feeds y clasificaciones actualizados $(date -u +'%Y-%m-%d %H:%M UTC')"
             for i in 1 2 3 4; do
-              git pull --rebase -q origin main && git push -q origin HEAD:main && break
+              if git pull --rebase -q origin main; then
+                git push -q origin HEAD:main && break
+              else
+                if [ -n "$(git diff --name-only --diff-filter=U)" ]; then
+                  git rebase --abort 2>/dev/null || true
+                  echo "::notice::Otra ejecución de noticias ya publicó datos; se descarta esta para no pisarlos."
+                  exit 0
+                fi
+                git rebase --abort 2>/dev/null || true
+              fi
               [ "$i" -eq 4 ] && exit 1
               sleep $((i*5))
             done
