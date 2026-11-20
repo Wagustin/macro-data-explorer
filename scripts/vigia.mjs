@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 // El vigía de PerData: una pasada por cron (cada 30 min) que mira el estado del sitio y de los
 // procesos diarios, clasifica los incidentes con el catálogo (handoff/vigia-catalogo.md) y aplica
-// SOLO las acciones de ese catálogo. Nunca edita archivos del repo, ni hace commits, ni toca
-// variables, DNS o cuentas. Nemotron solo devuelve un código para los fallos DESCONOCIDO.
+// SOLO las acciones de ese catálogo. Corre en una máquina aparte, sin copia del repo y sin
+// credenciales de Cloudflare: el único retroceso posible es disparar rollback.yml en GitHub Actions.
+// Nunca edita archivos del repo, ni hace commits, ni toca variables, DNS o cuentas. Nemotron solo
+// devuelve un código para los fallos DESCONOCIDO.
 // Uso: node scripts/vigia.mjs [--seco]   (ver docs/VIGIA.md)
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
@@ -15,7 +17,6 @@ const execFileAsync = promisify(execFile);
 
 const REPO = "Wagustin/macro-data-explorer";
 const BASE = "https://perdata.site";
-const REPO_DIR = process.env.VIGIA_REPO_DIR || path.join(os.homedir(), "macro-data-explorer");
 const ESTADO = path.join(os.homedir(), ".local", "state");
 const MEMORIA_FILE = path.join(ESTADO, "perdata-vigia.json");
 const LOG_FILE = path.join(ESTADO, "perdata-vigia.log");
@@ -24,15 +25,27 @@ const NIM = "https://integrate.api.nvidia.com/v1";
 
 const MIN = 60e3;
 const H = 36e5;
+const TG_MAX = 3500;
+const LATIDO_H = 4;
+const RESUMEN_HORA = 8;
 const SMV = new Set(["smv.yml", "smv-precios.yml"]);
 const RED_RE = /ECONNRESET|ETIMEDOUT|socket hang up|\b50[234]\b|rate limit|fetch failed/i;
 const DUENO = {
   forecasts: "timesfm.yml", news: "news.yml", smv: "smv-precios.yml", bcrp: "official-data.yml",
   eia: "official-data.yml", d1Sync: "d1-backfill.yml",
 };
+// Workflows de datos que corren solo (cron de GitHub o relanzados). Si el último run de cualquiera
+// es de hace más de LATIDO_H horas, el servidor de casa ha dejado de latir.
+const LATIDO = new Set([
+  "timesfm.yml", "noticias-dia.yml", "news.yml", "smv.yml", "smv-precios.yml", "official-data.yml",
+  "cierre-ayer.yml", "cierre-tarde.yml", "boletin.yml", "alertas.yml", "d1-backfill.yml",
+]);
 const CODIGOS_NEMOTRON = ["SMV_BLOQUEO", "CHOQUE_PUSH", "RED_PASAJERA", "DESCONOCIDO"];
 const PREFIJOS_RUNS = ["SMV_BLOQUEO", "CHOQUE_PUSH", "RED_PASAJERA", "WATCHDOG_SMOKE", "CI_ROJO", "DESCONOCIDO"];
 const CAMPOS_RUNS = "name,workflowName,workflowDatabaseId,conclusion,status,createdAt,databaseId";
+
+// Token de gh: se pasa solo en el entorno del proceso hijo, nunca en los argumentos.
+const ghConfig = { token: null };
 
 const nombreArchivo = (p = "") => path.posix.basename(String(p));
 const esFallo = (run) => run?.status === "completed" && ["failure", "timed_out", "startup_failure"].includes(run.conclusion);
@@ -95,6 +108,25 @@ export function boletinPendiente(commits, ahora = new Date()) {
   return !(commits || []).some((c) => String(c?.commit?.message ?? c?.message ?? "").startsWith(prefijo));
 }
 
+// Latido del servidor de casa: falla si /api/status no responde o si el último run de cualquier
+// workflow de datos es de hace más de LATIDO_H horas. Solo avisa (SIN_LATIDO).
+export function evaluarLatido({ runs = null, statusFallo = false, ahora = new Date() } = {}) {
+  const instante = new Date(ahora);
+  const motivos = [];
+  if (statusFallo) motivos.push("/api/status no responde");
+  if (Array.isArray(runs)) {
+    const ultimo = runs
+      .filter((r) => LATIDO.has(r.wf))
+      .reduce((mejor, r) => (!mejor || Date.parse(r.createdAt) > Date.parse(mejor.createdAt) ? r : mejor), null);
+    if (!ultimo) motivos.push("ningún run reciente de los workflows de datos");
+    else if (instante - Date.parse(ultimo.createdAt) > LATIDO_H * H) {
+      motivos.push(`el último run de datos (${ultimo.wf}) es de hace ${Math.round((instante - Date.parse(ultimo.createdAt)) / H)} h`);
+    }
+  }
+  if (!motivos.length) return null;
+  return { codigo: "SIN_LATIDO", clave: "SIN_LATIDO", workflow: null, motivo: `sin latido del servidor: ${motivos.join("; ")}`, logTail: "" };
+}
+
 // ---------- Nemotron (solo para DESCONOCIDO; nunca decide acciones) ----------
 
 export function elegirModelo(ids) {
@@ -122,7 +154,7 @@ export async function clasificarConNemotron({ workflow, paso, logTail }, { apiKe
   const t0 = Date.now();
   const cabeceras = { Authorization: `Bearer ${apiKey}`, Accept: "application/json" };
   try {
-    let id = modelo || process.env.VIGIA_MODELO || null;
+    let id = modelo || null;
     if (!id) {
       const r = await fetchImpl(`${NIM}/models`, { headers: cabeceras, signal: AbortSignal.timeout(30000) });
       if (!r.ok) return null;
@@ -157,8 +189,14 @@ export async function clasificarConNemotron({ workflow, paso, logTail }, { apiKe
 
 const memoriaVacia = () => ({
   dia: null, contadores: { relanzar: {}, desplegar: 0, volverAtras: 0 }, fallos: {},
-  incidentes: {}, runsVistos: {}, avisos: {}, despliegues: [],
+  incidentes: {}, runsVistos: {}, avisos: {}, despliegues: [], historial: [], resumenDia: null,
 });
+
+// Anota una acción ejecutada para el resumen diario. Guarda 48 h y, como mucho, 200 entradas.
+function anotar(m, iso, tipo, detalle) {
+  const corte = Date.parse(iso) - 48 * H;
+  m.historial = [...(m.historial || []), { fecha: iso, tipo, detalle }].filter((h) => Date.parse(h.fecha) >= corte).slice(-200);
+}
 
 // Devuelve una copia de la memoria con los contadores del día, las pasadas de cada incidente y los
 // fallos de red nuevos. Los incidentes que ya no aparecen se borran, salvo los de fuentes omitidas.
@@ -209,12 +247,12 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
   const estados = mem.incidentes || {};
   const relanzosHoy = { ...(contadores.relanzar || {}) };
   let desplegosHoy = contadores.desplegar || 0;
-  const volverHoy = contadores.volverAtras || 0;
+  let volverHoy = contadores.volverAtras || 0;
   const acciones = [];
   const hayCI = incidentes.some((i) => i.codigo === "CI_ROJO");
   const datoViejoDe = (wf) => incidentes.some((i) => i.codigo === "DATO_VIEJO" && i.workflow === wf);
 
-  const aviso = (inc, motivo) => acciones.push({ tipo: "AVISAR", codigo: inc.codigo, motivo, incidente: inc, claves: [inc.clave] });
+  const aviso = (inc, motivo, accion = null) => acciones.push({ tipo: "AVISAR", codigo: inc.codigo, motivo, accion, incidente: inc, claves: [inc.clave] });
 
   function relanzar(inc, wf, motivo) {
     if (enCurso.has(wf)) return;
@@ -237,7 +275,8 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
   function volverAtras(inc, motivo) {
     if (volverHoy >= 1) return aviso(inc, `${motivo}; límite de 1 VOLVER_ATRAS por día alcanzado`);
     acciones.push({ tipo: "VOLVER_ATRAS", codigo: inc.codigo, motivo, incidente: inc, claves: [inc.clave] });
-    aviso(inc, `${motivo}; se intenta volver a la versión anterior del Worker`);
+    volverHoy += 1;
+    aviso(inc, `${motivo}; se intenta volver a la versión anterior del Worker`, "VOLVER_ATRAS (rollback.yml en GitHub Actions)");
   }
 
   for (const inc of incidentes) {
@@ -295,6 +334,9 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
       case "PAGOS_ABIERTOS":
         aviso(inc, "los pagos aparecen abiertos durante la pausa");
         break;
+      case "SIN_LATIDO":
+        aviso(inc, inc.motivo);
+        break;
       default:
         aviso(inc, inc.motivo || "fallo sin clasificar");
     }
@@ -311,9 +353,61 @@ export function redactar(texto, secretos = []) {
     .replace(/re_[A-Za-z0-9_]{12,}/g, "[oculto]")
     .replace(/nvapi-[A-Za-z0-9_-]{10,}/g, "[oculto]")
     .replace(/gh[pousr]_[A-Za-z0-9]{20,}/g, "[oculto]")
+    .replace(/github_pat_[A-Za-z0-9_]{20,}/g, "[oculto]")
+    .replace(/\b\d{6,}:[A-Za-z0-9_-]{25,}/g, "[oculto]")
     .replace(/sk_(live|test)_[A-Za-z0-9]{10,}/g, "[oculto]")
     .replace(/eyJ[A-Za-z0-9._-]{20,}/g, "[oculto]")
     .replace(/((?:KEY|TOKEN|SECRET|PASSWORD)\s*[=:]\s*)\S+/gi, "$1[oculto]");
+}
+
+export function secretosDe(cfg) {
+  return [cfg.apiKey, cfg.resendKey, cfg.ghToken, cfg.telegramToken];
+}
+
+// Argumentos de gh para VOLVER_ATRAS: el workflow rollback.yml, con el código como motivo.
+export function argumentosVolverAtras(codigo) {
+  return ["workflow", "run", "rollback.yml", "-R", REPO, "-f", `motivo=${codigo}`];
+}
+
+// Texto del aviso (Telegram y correo): diagnóstico, acción y final del log, redactado y de 3500 caracteres como mucho.
+export function textoAviso(a, secretos = [], ahora = new Date()) {
+  const inc = a.incidente || {};
+  const lineas = [
+    `PerData vigía · ${a.codigo}`,
+    `Diagnóstico: ${a.motivo}`,
+    `Acción: ${a.accion || "ninguna, solo aviso"}`,
+    `Momento: ${new Date(ahora).toISOString()} (UTC)`,
+    inc.workflow ? `Workflow: ${inc.workflow}` : null,
+    inc.runId ? `Ejecución: ${inc.runId} (gh run view ${inc.runId} -R ${REPO})` : null,
+    inc.paso ? `Paso fallido: ${inc.paso}` : null,
+    "",
+    "Final del log:",
+    inc.logTail ? cola(inc.logTail, 40) : "(sin log disponible)",
+  ].filter((l) => l !== null);
+  return redactar(lineas.join("\n"), secretos).slice(0, TG_MAX);
+}
+
+// Resumen diario: una sola línea con lo del último día.
+export function textoResumen({ fecha, runs, fallos, historial = [], ahora = new Date(), web, pagos }) {
+  const desde = new Date(ahora).getTime() - 24 * H;
+  const cuentas = {};
+  for (const h of historial) if (Date.parse(h.fecha) >= desde) cuentas[h.tipo] = (cuentas[h.tipo] || 0) + 1;
+  const acciones = Object.entries(cuentas).map(([tipo, n]) => `${tipo} ${n}`).join(", ") || "ninguna";
+  return `PerData · ${fecha}: ${runs} runs en 24 h, ${fallos} fallos, acciones del vigía: ${acciones}, ${web}, pagos en pausa ${pagos}`;
+}
+
+export function estadoWeb(status, ahora = new Date()) {
+  if (!status) return "/api/status no responde";
+  const viejos = evaluarStatus(status, ahora).map((i) => i.bloque);
+  return viejos.length ? `datos viejos en ${viejos.join(", ")}` : "/api/status OK";
+}
+
+// True si toca enviar el resumen: con VIGIA_ACTUAR=1 o VIGIA_RESUMEN=1, a partir de las 08:00 de Lima
+// y una sola vez por día.
+export function debeEnviarResumen(memoria, ahora, cfg) {
+  if (!(cfg.actuar === "1" || cfg.resumen === "1")) return false;
+  const { fecha, hora } = limaParts(new Date(ahora));
+  return hora >= RESUMEN_HORA && memoria?.resumenDia !== fecha;
 }
 
 function construirCorreo(a) {
@@ -322,18 +416,69 @@ function construirCorreo(a) {
     `Código: ${a.codigo}`,
     `Momento: ${new Date().toISOString()} (UTC)`,
     `Diagnóstico: ${a.motivo}`,
+    `Acción: ${a.accion || "ninguna, solo aviso"}`,
     inc.workflow ? `Workflow: ${inc.workflow}` : null,
     inc.runId ? `Ejecución: ${inc.runId} (gh run view ${inc.runId} -R ${REPO})` : null,
     inc.paso ? `Paso fallido: ${inc.paso}` : null,
     "",
     "Final del log:",
-    inc.logTail ? redactar(cola(inc.logTail, 40)) : "(sin log disponible)",
+    inc.logTail ? cola(inc.logTail, 40) : "(sin log disponible)",
   ].filter((l) => l !== null);
   return cuerpo.join("\n");
 }
 
+// Envía un mensaje de texto plano por Telegram. Lanza error si Telegram no responde 200.
+export async function enviarTelegram(texto, { token, chatId, fetchImpl = fetch } = {}) {
+  const r = await fetchImpl(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: chatId, text: String(texto).slice(0, TG_MAX), disable_web_page_preview: true }),
+    signal: AbortSignal.timeout(30000),
+  });
+  if (!r.ok) throw new Error(`Telegram respondió ${r.status}`);
+  return "enviado";
+}
+
+async function enviarCorreo(a, cfg, secretos) {
+  const r = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${cfg.resendKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      from: cfg.emailFrom, to: [cfg.email], subject: `[PerData vigía] ${a.codigo}`,
+      text: redactar(construirCorreo(a), secretos),
+    }),
+    signal: AbortSignal.timeout(30000),
+  });
+  if (!r.ok) throw new Error(`Resend respondió ${r.status}`);
+  return "enviado";
+}
+
+// Canales configurados, por orden de preferencia: Telegram y después correo.
+export function canalesAviso(cfg) {
+  const canales = [];
+  if (cfg.telegramToken && cfg.telegramChat) canales.push("telegram");
+  if (cfg.email && cfg.resendKey && cfg.emailFrom) canales.push("correo");
+  return canales;
+}
+
+// Envía el aviso por el primer canal que funcione. Si no hay ninguno, devuelve canal null (queda en el log).
+export async function avisar(a, cfg, { secretos = [], ahora = new Date(), telegram = enviarTelegram, correo = enviarCorreo } = {}) {
+  const fallos = [];
+  for (const canal of canalesAviso(cfg)) {
+    try {
+      if (canal === "telegram") await telegram(textoAviso(a, secretos, ahora), { token: cfg.telegramToken, chatId: cfg.telegramChat });
+      else await correo(a, cfg, secretos);
+      return { canal, detalle: "" };
+    } catch (e) {
+      fallos.push(`${canal}: ${redactar(e.message, secretos).split("\n")[0].slice(0, 120)}`);
+    }
+  }
+  return { canal: null, detalle: fallos.join("; ") || "sin Telegram ni correo configurados" };
+}
+
 // Ejecuta las acciones. En modo seco solo registra lo que haría. Devuelve las notas para el log.
-export async function ejecutar(acciones, memoria, { seco, ahora = new Date(), gh, rollback, correo, secretos = [] }) {
+// `avisar` recibe la acción y devuelve { canal, detalle } (ver avisar()).
+export async function ejecutar(acciones, memoria, { seco, ahora = new Date(), gh, avisar: enviarAviso, secretos = [] }) {
   const notas = [];
   const m = memoria;
   const iso = new Date(ahora).toISOString();
@@ -347,6 +492,7 @@ export async function ejecutar(acciones, memoria, { seco, ahora = new Date(), gh
         await gh(["workflow", "run", a.workflow, "-R", REPO]);
         m.contadores.relanzar[a.workflow] = (m.contadores.relanzar[a.workflow] || 0) + 1;
         for (const c of a.claves) if (m.incidentes[c]) m.incidentes[c].relanzadoEn = iso;
+        anotar(m, iso, "RELANZAR", a.workflow);
         notas.push(`RELANZAR ${a.workflow}`);
       } catch (e) {
         notas.push(`RELANZAR ${a.workflow} fallido: ${errorTexto(e)}`);
@@ -358,31 +504,29 @@ export async function ejecutar(acciones, memoria, { seco, ahora = new Date(), gh
         m.contadores.desplegar += 1;
         for (const c of a.claves) if (m.incidentes[c]) { m.incidentes[c].desplegadoEn = iso; m.incidentes[c].trasDespliegue = 0; }
         m.despliegues = [...m.despliegues, { fecha: iso, motivo: a.motivo }].slice(-20);
+        anotar(m, iso, "DESPLEGAR", "deploy.yml");
         notas.push("DESPLEGAR deploy.yml");
       } catch (e) {
         notas.push(`DESPLEGAR fallido: ${errorTexto(e)}`);
       }
     } else if (a.tipo === "VOLVER_ATRAS") {
-      if (seco) { notas.push("[seco] VOLVER_ATRAS"); continue; }
+      if (seco) { notas.push(`[seco] VOLVER_ATRAS (rollback.yml, motivo ${a.codigo})`); continue; }
       try {
-        await rollback();
+        await gh(argumentosVolverAtras(a.codigo));
         m.contadores.volverAtras += 1;
-        notas.push("VOLVER_ATRAS aplicado");
+        anotar(m, iso, "VOLVER_ATRAS", a.codigo);
+        notas.push("VOLVER_ATRAS disparado (rollback.yml)");
       } catch (e) {
         notas.push(`VOLVER_ATRAS fallido: ${errorTexto(e)}`);
-        pendientes.unshift({ tipo: "AVISAR", codigo: a.codigo, motivo: `el rollback ha fallado (${errorTexto(e)})`, incidente: a.incidente, claves: a.claves });
+        pendientes.unshift({ tipo: "AVISAR", codigo: a.codigo, motivo: `el rollback ha fallado (${errorTexto(e)})`, accion: "VOLVER_ATRAS fallido", incidente: a.incidente, claves: a.claves });
       }
     } else if (a.tipo === "AVISAR") {
       const previo = m.avisos[a.codigo];
       if (previo && new Date(ahora) - Date.parse(previo) < 6 * H) { notas.push(`AVISAR ${a.codigo} suprimido (ya se avisó en 6 h)`); continue; }
       if (seco) { notas.push(`[seco] AVISAR ${a.codigo}: ${a.motivo}`); continue; }
-      try {
-        const estado = await correo(a);
-        if (estado === "enviado") { m.avisos[a.codigo] = iso; notas.push(`correo ${a.codigo} enviado`); }
-        else notas.push(`AVISAR ${a.codigo} sin correo (${estado}); queda en el log: ${a.motivo}`);
-      } catch (e) {
-        notas.push(`correo ${a.codigo} fallido: ${errorTexto(e)}`);
-      }
+      const r = await enviarAviso(a);
+      if (r.canal) { m.avisos[a.codigo] = iso; notas.push(`aviso ${a.codigo} por ${r.canal}`); }
+      else notas.push(`AVISAR ${a.codigo} sin canal (${r.detalle}); queda en el log: ${a.motivo}`);
     }
   }
   return notas;
@@ -390,24 +534,40 @@ export async function ejecutar(acciones, memoria, { seco, ahora = new Date(), gh
 
 // ---------- Entorno, bloqueo y memoria en disco ----------
 
-function leerEnvFile(file) {
+// Lee líneas CLAVE=valor. Ignora comentarios (#), líneas vacías y claves mal escritas. Las comillas
+// simples o dobles que envuelven el valor se quitan; en valores sin comillas, un espacio y # final es comentario.
+export function parsearEnv(texto) {
   const out = {};
-  try {
-    for (const linea of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
-      const m = linea.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/);
-      if (m) out[m[1]] = m[2].replace(/^["']|["']$/g, "");
-    }
-  } catch { /* sin .env: solo variables del entorno */ }
+  for (const linea of String(texto ?? "").split(/\r?\n/)) {
+    const m = linea.match(/^\s*(?:export\s+)?([A-Z_][A-Z0-9_]*)\s*=\s*(.*?)\s*$/);
+    if (!m) continue;
+    const comillas = m[2].match(/^(["'])(.*)\1$/);
+    out[m[1]] = comillas ? comillas[2] : m[2].replace(/\s+#.*$/, "").trim();
+  }
   return out;
 }
 
-function cargarConfig() {
-  const fichero = leerEnvFile(path.join(REPO_DIR, ".env"));
-  const propio = leerEnvFile(path.join(os.homedir(), ".config", "perdata-vigia", "env"));
-  const pick = (k) => process.env[k] ?? fichero[k];
+// Archivo de entorno: VIGIA_ENV_FILE; si no, ~/perdata-vigia/env; si no existe, ~/.config/perdata-vigia/env.
+export function rutaEnv(env = process.env, home = os.homedir(), existe = fs.existsSync) {
+  if (env.VIGIA_ENV_FILE) return env.VIGIA_ENV_FILE;
+  const principal = path.join(home, "perdata-vigia", "env");
+  if (existe(principal)) return principal;
+  return path.join(home, ".config", "perdata-vigia", "env");
+}
+
+function leerTexto(file) {
+  try { return fs.readFileSync(file, "utf8"); } catch { return ""; }
+}
+
+// Las variables del entorno del proceso mandan sobre el archivo de entorno.
+export function cargarConfig({ env = process.env, home = os.homedir(), leer = leerTexto } = {}) {
+  const fichero = parsearEnv(leer(rutaEnv(env, home)));
+  const pick = (k) => env[k] || fichero[k] || undefined;
   return {
-    apiKey: process.env.VIGIA_NVIDIA_API_KEY ?? propio.VIGIA_NVIDIA_API_KEY, resendKey: pick("RESEND_API_KEY"), emailFrom: pick("EMAIL_FROM"),
-    email: pick("VIGIA_EMAIL"), actuar: pick("VIGIA_ACTUAR"),
+    apiKey: pick("VIGIA_NVIDIA_API_KEY"), modelo: pick("VIGIA_MODELO"), ghToken: pick("GH_TOKEN"),
+    telegramToken: pick("TELEGRAM_BOT_TOKEN"), telegramChat: pick("TELEGRAM_CHAT_ID"),
+    actuar: pick("VIGIA_ACTUAR"), resumen: pick("VIGIA_RESUMEN"), email: pick("VIGIA_EMAIL"),
+    resendKey: pick("RESEND_API_KEY"), emailFrom: pick("EMAIL_FROM"),
   };
 }
 
@@ -453,7 +613,8 @@ function guardarMemoria(m) {
 // ---------- Recogida de estado ----------
 
 async function gh(args) {
-  const { stdout } = await execFileAsync("gh", args, { maxBuffer: 64 * 1024 * 1024, timeout: 120000 });
+  const env = ghConfig.token ? { ...process.env, GH_TOKEN: ghConfig.token } : process.env;
+  const { stdout } = await execFileAsync("gh", args, { env, maxBuffer: 64 * 1024 * 1024, timeout: 120000 });
   return stdout;
 }
 
@@ -488,7 +649,7 @@ export function analizarRuns(runs, ahora = new Date()) {
   const wd = runs.filter((r) => r.wf === "watchdog.yml" && r.status === "completed").sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
   let fallosSeguidos = 0;
   for (const r of wd) { if (!esFallo(r)) break; fallosSeguidos += 1; }
-  return { enCurso, ultimos, fallosSeguidos, watchdogFallidos: wd.filter(esFallo) };
+  return { recientes, enCurso, ultimos, fallosSeguidos, watchdogFallidos: wd.filter(esFallo) };
 }
 
 async function detalleFallo(run) {
@@ -503,8 +664,9 @@ async function detalleFallo(run) {
 
 async function pasada(ahora, { seco, cfg }) {
   const fallidas = [];
+  const secretos = secretosDe(cfg);
   const intentar = async (nombre, fn) => {
-    try { return await fn(); } catch (e) { fallidas.push(`${nombre} (${redactar(e.message, [cfg.apiKey, cfg.resendKey]).split("\n")[0].slice(0, 120)})`); return null; }
+    try { return await fn(); } catch (e) { fallidas.push(`${nombre} (${redactar(e.message, secretos).split("\n")[0].slice(0, 120)})`); return null; }
   };
 
   const [runsRaw, workflows, status, billing, paginas, commits] = await Promise.all([
@@ -532,7 +694,7 @@ async function pasada(ahora, { seco, cfg }) {
     let codigo = clasificarFallo({ workflowPath: wf, stepName: detalle.paso, logTail: detalle.logTail });
     let via = "reglas";
     if (codigo === "DESCONOCIDO" && cfg.apiKey) {
-      const r = await clasificarConNemotron({ workflow: wf, paso: detalle.paso, logTail: detalle.logTail }, { apiKey: cfg.apiKey, modelo: cfg.modeloEnv });
+      const r = await clasificarConNemotron({ workflow: wf, paso: detalle.paso, logTail: detalle.logTail }, { apiKey: cfg.apiKey, modelo: cfg.modelo });
       if (r) { codigo = r.codigo; via = `Nemotron ${r.modelo} (${r.ms} ms, confianza ${r.confianza ?? 0})`; }
     }
     const base = { codigo, workflow: wf, runId: run.databaseId, desde: run.createdAt, paso: detalle.paso, logTail: detalle.logTail };
@@ -565,6 +727,8 @@ async function pasada(ahora, { seco, cfg }) {
     const hoy = ahora.toISOString().slice(0, 10);
     incidentes.push({ codigo: "BOLETIN_NO_SALIO", clave: `BOLETIN_NO_SALIO:${hoy}`, workflow: "boletin.yml", motivo: `no hay commit «data(boletin): enviado ${hoy}» en main`, logTail: "" });
   }
+  const latido = evaluarLatido({ runs: runsRaw && workflows ? runs : null, statusFallo: status === null, ahora });
+  if (latido) incidentes.push(latido);
 
   const omitidos = [
     ...(runsRaw ? [] : PREFIJOS_RUNS),
@@ -576,13 +740,32 @@ async function pasada(ahora, { seco, cfg }) {
   const acciones = decidir(incidentes, memoria, ahora, analisis.enCurso);
   const iso = ahora.toISOString();
 
-  const secretos = [cfg.apiKey, cfg.resendKey];
   const notas = await ejecutar(acciones, memoria, {
-    seco, ahora, secretos,
-    gh,
-    rollback: () => execFileAsync("npx", ["wrangler", "rollback", "--message", "vigia"], { cwd: REPO_DIR, timeout: 300000, maxBuffer: 16 * 1024 * 1024 }),
-    correo: (a) => enviarCorreo(a, cfg, secretos),
+    seco, ahora, secretos, gh,
+    avisar: (a) => avisar(a, cfg, { secretos, ahora }),
   });
+
+  const hoy = limaParts(ahora).fecha;
+  if (debeEnviarResumen(memoria, ahora, cfg)) {
+    const texto = textoResumen({
+      fecha: hoy,
+      runs: runsRaw ? analisis.recientes.length : "?",
+      fallos: runsRaw ? analisis.recientes.filter(esFallo).length : "?",
+      historial: memoria.historial, ahora,
+      web: estadoWeb(status, ahora),
+      pagos: billing ? (billing.paymentsEnabled === false ? "sí" : "no") : "no comprobado",
+    });
+    if (seco) notas.push(`[seco] resumen diario: ${texto}`);
+    else if (cfg.telegramToken && cfg.telegramChat) {
+      try {
+        await enviarTelegram(texto, { token: cfg.telegramToken, chatId: cfg.telegramChat });
+        memoria.resumenDia = hoy;
+        notas.push("resumen diario enviado por Telegram");
+      } catch (e) {
+        notas.push(`resumen diario fallido: ${redactar(e.message, secretos).split("\n")[0].slice(0, 120)}`);
+      }
+    } else notas.push("resumen diario sin Telegram configurado");
+  }
   if (!seco) guardarMemoria(memoria);
 
   const etiqueta = (i) => `${i.codigo}${i.workflow ? `@${i.workflow}` : ""}`;
@@ -595,26 +778,11 @@ async function pasada(ahora, { seco, cfg }) {
   return resumen;
 }
 
-async function enviarCorreo(a, cfg, secretos) {
-  if (!cfg.email) return "sin VIGIA_EMAIL";
-  if (!cfg.resendKey || !cfg.emailFrom) return "falta RESEND_API_KEY o EMAIL_FROM";
-  const r = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${cfg.resendKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      from: cfg.emailFrom, to: [cfg.email], subject: `[PerData vigía] ${a.codigo}`,
-      text: redactar(construirCorreo(a), secretos),
-    }),
-    signal: AbortSignal.timeout(30000),
-  });
-  if (!r.ok) throw new Error(`Resend respondió ${r.status}`);
-  return "enviado";
-}
-
 export async function main(argv = process.argv.slice(2)) {
   fs.mkdirSync(ESTADO, { recursive: true });
   const ahora = new Date();
   const cfg = cargarConfig();
+  ghConfig.token = cfg.ghToken ?? null;
   const seco = argv.includes("--seco") || cfg.actuar !== "1";
   if (!adquirirLock()) {
     fs.appendFileSync(LOG_FILE, `${ahora.toISOString()} omitida: otra pasada en marcha\n`);
@@ -626,7 +794,7 @@ export async function main(argv = process.argv.slice(2)) {
     console.log(linea);
     return 0;
   } catch (e) {
-    const linea = `${ahora.toISOString()} ERROR ${redactar(e.message, [cfg.apiKey, cfg.resendKey]).split("\n")[0].slice(0, 300)}`;
+    const linea = `${ahora.toISOString()} ERROR ${redactar(e.message, secretosDe(cfg)).split("\n")[0].slice(0, 300)}`;
     fs.appendFileSync(LOG_FILE, `${linea}\n`);
     console.error(linea);
     return 1;
@@ -639,4 +807,3 @@ const esPrincipal = process.argv[1] && pathToFileURL(path.resolve(process.argv[1
 if (esPrincipal) {
   main().then((codigo) => { process.exitCode = codigo; });
 }
-

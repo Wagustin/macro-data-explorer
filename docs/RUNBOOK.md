@@ -17,8 +17,8 @@ Acciones permitidas:
 - **RELANZAR `<workflow.yml>`**: `gh workflow run <archivo> -R Wagustin/macro-data-explorer`.
 - **ESPERAR**: no hacer nada en esta pasada y volver a mirar en la siguiente (cada 30 min).
 - **DESPLEGAR**: `gh workflow run deploy.yml` (despliega origin/main, que ya pasó CI) y comprobar el smoke en la siguiente pasada.
-- **VOLVER_ATRAS**: `npx wrangler rollback` a la versión anterior del Worker, solo si el smoke de producción falla dos pasadas seguidas DESPUÉS de un DESPLEGAR.
-- **AVISAR**: correo a Agustín con el diagnóstico (y nada más).
+- **VOLVER_ATRAS**: `gh workflow run rollback.yml -f motivo=<código>`, que ejecuta `npx wrangler rollback` a la versión anterior del Worker dentro de GitHub Actions. Solo si el smoke de producción falla dos pasadas seguidas DESPUÉS de un DESPLEGAR.
+- **AVISAR**: Telegram a Agustín con el diagnóstico (y nada más); si Telegram no está configurado o falla, correo con Resend.
 
 Límites: como mucho 2 RELANZAR por workflow y día; 1 DESPLEGAR y 1 VOLVER_ATRAS por día. Al pasar el límite, AVISAR. Nunca actuar si el mismo workflow está en curso (status `in_progress` o `queued`).
 
@@ -48,7 +48,7 @@ Límites: como mucho 2 RELANZAR por workflow y día; 1 DESPLEGAR y 1 VOLVER_ATRA
 
 `scripts/watchdog.js`, que ejecuta `watchdog.yml`, lee `/api/status`, comprueba las páginas y abre una incidencia de GitHub o envía correo con Resend.
 
-**Despliegue**: `deploy.yml` ejecuta `npx wrangler deploy` y luego `node scripts/smoke.js --base https://perdata.site`.
+**Despliegue**: `deploy.yml` ejecuta `npx wrangler deploy` y luego `node scripts/smoke.js --base https://perdata.site`. `rollback.yml` (manual, o disparado por el vigía con `-f motivo=<código>`) ejecuta `npx wrangler rollback --yes`, espera 20 s y pasa el mismo smoke. Comparte el grupo de concurrencia `deploy`.
 
 ## 3. Catálogo de incidentes
 
@@ -164,6 +164,17 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
   ```
 - **Directiva**: si no está seguro, AVISAR con el final del log.
 
+### SIN_LATIDO
+
+- **Detección**: `/api/status` no responde, o el último run de cualquier workflow de datos (`timesfm`, `noticias-dia`, `news`, `smv`, `smv-precios`, `official-data`, `cierre-ayer`, `cierre-tarde`, `boletin`, `alertas`, `d1-backfill`) es de hace más de 4 h.
+- **Qué significa**: el servidor de casa, que dispara parte de los relanzamientos (`scripts/dispatch-backup.sh`), no está corriendo, o el Worker no responde. Los workflows de GitHub con cron siguen su curso, así que el aviso también llega cuando solo se ha caído `/api/status`.
+- **Comprobar a mano**:
+  ```bash
+  gh run list -R Wagustin/macro-data-explorer --limit 20 --json workflowName,createdAt,status,conclusion
+  curl -s -o /dev/null -w '%{http_code}\n' https://perdata.site/api/status
+  ```
+- **Directiva**: solo AVISAR. El vigía no relanza nada por esta causa; lo mira Claude o Agustín.
+
 ## 4. Comandos útiles
 
 - **Fallos de las últimas 24 h**:
@@ -186,11 +197,12 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
   gh workflow run deploy.yml -R Wagustin/macro-data-explorer
   gh run list -R Wagustin/macro-data-explorer --workflow deploy.yml --limit 1
   ```
-- **Volver atrás**: listar las versiones y volver a la anterior. Wrangler no está en `devDependencies`; `npx` lo descarga y necesita las credenciales de Cloudflare del servidor.
+- **Volver atrás**: el workflow `rollback.yml` vuelve a la versión anterior del Worker y pasa el smoke. Las credenciales de Cloudflare solo están en los secretos de GitHub; el servidor del vigía no las tiene.
   ```bash
-  npx wrangler deployments list
-  npx wrangler rollback [version-id]
+  gh workflow run rollback.yml -R Wagustin/macro-data-explorer -f motivo="motivo breve"
+  gh run list -R Wagustin/macro-data-explorer --workflow rollback.yml --limit 1
   ```
+  Para elegir una versión concreta hay que hacerlo con Wrangler en un equipo con las credenciales de Cloudflare (`npx wrangler deployments list` y `npx wrangler rollback <version-id>`).
 - **Comprobar producción**:
   ```bash
   curl -s https://perdata.site/api/status | jq
