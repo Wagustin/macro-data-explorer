@@ -81,14 +81,14 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
 ### RED_PASAJERA
 
 - **Detección**: fallo con «ECONNRESET», «ETIMEDOUT», «socket hang up», «502», «503», «504», «rate limit» o «fetch failed», fuera de SMV.
-- **Síntomas**: `Error: read ECONNRESET` y `TypeError: fetch failed` en un fallo de red. El caso del 20-nov-2026, 20:42 UTC (run 44813708750, smoke del watchdog) tiene ese mensaje, pero por su paso cae en WATCHDOG_SMOKE (ver nota de desempate más abajo).
+- **Síntomas**: `Error: read ECONNRESET` y `TypeError: fetch failed` en un fallo de red. El caso del 20-nov-2026, 20:42 UTC (run 44813708750, smoke del watchdog) tiene ese mensaje, pero es WATCHDOG_SMOKE (ver precedencia más abajo).
 - **Comprobar a mano**:
   ```bash
   gh api repos/Wagustin/macro-data-explorer/actions/jobs/<job-id>/logs | grep -E "ECONNRESET|ETIMEDOUT|socket hang up|502|503|504|rate limit|fetch failed"
   ```
 - **Directiva**: RELANZAR una vez tras 30 min. Si vuelve a fallar con lo mismo, ESPERAR; al tercer fallo del día, AVISAR.
 
-> **Nota de desempate**: un fallo en el paso «Comprobar la web y los procesos diarios» de `watchdog.yml` es WATCHDOG_SMOKE aunque el mensaje sea de red. RED_PASAJERA aplica a los workflows de datos.
+> **Precedencia**: un fallo de `watchdog.yml` en «Comprobar la web…» es siempre WATCHDOG_SMOKE, aunque el log diga ECONNRESET. RED_PASAJERA aplica a los workflows de datos.
 
 ### WATCHDOG_SMOKE
 
