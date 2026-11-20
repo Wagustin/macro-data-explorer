@@ -44,7 +44,7 @@ Límites: como mucho 2 RELANZAR por workflow y día; 1 DESPLEGAR y 1 VOLVER_ATRA
 - `smv` (`cotizaciones_smv`, 96 h) → `smv-precios.yml`.
 - `bcrp` (96 h) y `eia` (240 h) → `official-data.yml`.
 - `d1Sync` (`sync_meta` en D1, 30 h) → `d1-backfill.yml`.
-- `backup` (campos `fecha`, `bytes`, `edadHoras`) → copia diaria del Worker; `backup.yml` es manual (ver nota en DATO_VIEJO).
+- `backup` (campos `fecha`, `bytes`, `edadHoras`) → copia diaria del Worker; `backup.yml` es manual y el vigía no lo relanza.
 
 `scripts/watchdog.js`, que ejecuta `watchdog.yml`, lee `/api/status`, comprueba las páginas y abre una incidencia de GitHub o envía correo con Resend.
 
@@ -103,14 +103,14 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
 
 ### BOLETIN_NO_SALIO
 
-- **Detección**: de lunes a sábado, después de las 09:00 (hora de Lima), no hay commit «data(boletin): enviado `<hoy Lima>`» en `origin/main`.
+- **Detección**: lunes a sábado, después de las 09:00 de Lima, no hay commit «data(boletin): enviado `<hoy Lima>`» en `origin/main`.
 - **Síntomas**: no sale el boletín de la mañana; `data/boletin-last.json` no tiene la fecha de hoy.
 - **Comprobar a mano**:
   ```bash
   gh api "repos/Wagustin/macro-data-explorer/commits?sha=main&per_page=40" --jq '.[].commit.message' | grep -F "data(boletin): enviado $(TZ=America/Lima date +%F)"
   curl -s https://raw.githubusercontent.com/Wagustin/macro-data-explorer/main/data/boletin-last.json
   ```
-  El workflow escribe la fecha en UTC (`date -u +%F`). Entre las 09:00 y las 19:00 de Lima coincide con la fecha de Lima, así que la comprobación es válida en la ventana de la alerta.
+  El commit usa la fecha UTC (`date -u +%F`). La comprobación vale de lunes a sábado entre las 09:00 y las 19:00 de Lima, cuando la fecha UTC coincide con la de Lima.
 - **Directiva**: RELANZAR `boletin.yml` (es seguro: el script solo envía una vez al día). Si a las 11:00 sigue sin salir, AVISAR.
 
 ### DATO_VIEJO
@@ -122,9 +122,8 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
   curl -s https://perdata.site/api/status | jq 'map_values({ageHours, staleAfterHours, error, fecha, edadHoras})'
   date -u +%F
   ```
-- **Relación bloque → workflow**: `forecasts` → `timesfm.yml`; `news` → `news.yml`; `smv` → `smv-precios.yml`; `bcrp` y `eia` → `official-data.yml`; `d1Sync` → `d1-backfill.yml`; `backup` → `backup.yml`.
-  > **Nota**: el catálogo asigna `backup` a `backup.yml`, pero la copia diaria la hace el Worker (`runBackup`) y `backup.yml` es manual (`workflow_dispatch`). Si `backup.fecha` sigue viejo, RELANZAR `backup.yml` cumple el catálogo, pero no arregla la copia diaria: AVISAR a Agustín o a Claude para revisar el Worker.
-- **Directiva**: RELANZAR el workflow dueño. Si sigue viejo 6 h después, AVISAR.
+- **Relación bloque → workflow**: `forecasts` → `timesfm.yml`; `news` → `news.yml`; `smv` → `smv-precios.yml`; `bcrp` y `eia` → `official-data.yml`; `d1Sync` → `d1-backfill.yml`.
+- **Directiva**: RELANZAR el workflow dueño. Si sigue viejo 6 h después, AVISAR. Backup viejo (`backup.fecha`): solo AVISAR, porque la copia diaria la hace el Worker (`runBackup`) y relanzar `backup.yml` no la arregla.
 
 ### PAGINA_CAIDA
 
