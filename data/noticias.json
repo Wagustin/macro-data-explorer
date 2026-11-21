@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-21T10:59:47.412Z",
+  "actualizado": "2026-11-21T14:01:31.375Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,17 +24,17 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 71
+      "items": 68
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 53
+      "items": 56
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 11
+      "items": 6
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -44,7 +44,7 @@
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 13
+      "items": 14
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -63,6 +63,159 @@
     }
   },
   "noticias": [
+    {
+      "id": "andina-f8ce5074ef",
+      "titulo": "Cuatro de cada 10 peruanos tiene una fuente de ingreso extra a su empleo principal",
+      "url": "https://andina.pe/agencia/noticia-cuatro-cada-10-peruanos-tiene-una-fuente-ingreso-extra-a-su-empleo-principal-1100780.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-21T14:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-612186abdf",
+      "titulo": "Mia Beauty Bar, de Intercorp, ingresó al Jockey Plaza y este es su agresivo plan de expansión",
+      "url": "https://gestion.pe/economia/empresas/mia-beauty-bar-de-la-duena-de-inkafarma-apuesta-por-el-k-beauty-y-alista-nuevas-tiendas-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T13:30:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-ac6daab606",
+      "titulo": "Inversión privada crece por quinto trimestre a doble dígito, pero esta vez a menor ritmo",
+      "url": "https://gestion.pe/economia/inversion-privada-crece-por-quinto-trimestre-a-doble-digito-pero-esta-vez-a-menor-ritmo-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T13:28:58.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-e403b78875",
+      "titulo": "Precio del dólar hoy en Perú, sábado 21 de noviembre: revisa el tipo de cambio en bancos y casas de cambio",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/20/precio-del-dolar-hoy-en-peru-sabado-21-de-noviembre-tipo-de-cambio-en-bancos-y-casas-de-cambio-en-compra-y-venta-1815280",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-21T13:15:24.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-496d7bb4ec",
+      "titulo": "Precio del dólar en Perú de HOY, sábado 21 de noviembre: a cuánto abrió el tipo de cambio",
+      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-2026-cuanto-esta-el-dolar-este-sabado-21-de-noviembre-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-21T13:01:04.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-27efeb9abc",
+      "titulo": "Black Friday moverá más de US$ 12 millones y tendrá ticket promedio de S/ 350 por persona",
+      "url": "https://andina.pe/agencia/noticia-black-friday-movera-mas-12-millones-y-tendra-ticket-promedio-s-350-persona-1100785.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-21T13:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-7d661a9608",
+      "titulo": "Mia Beauty Bar, de Intercorp, busca competir con Aruma y llega a 10 tiendas en su primer año",
+      "url": "https://gestion.pe/economia/empresas/mia-beauty-bar-entra-al-jockey-plaza-la-apuesta-de-la-duena-de-inkafarma-en-belleza-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T13:00:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-70de0f7ec9",
+      "titulo": "Dueño de Boticas Perú y Kio va por más tras Pastipan: los negocios que evalúa comprar",
+      "url": "https://gestion.pe/economia/empresas/dueno-de-boticas-peru-y-kio-mueve-fichas-en-pastipan-y-ya-evalua-su-proxima-compra-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T13:00:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-1afca03aee",
+      "titulo": "Las razones de la salida de Entel de Perú: “No era fácil seguir creando más valor”, afirma su CEO",
+      "url": "https://gestion.pe/economia/empresas/entel-explica-las-razones-de-su-salida-del-peru-no-era-facil-seguir-creando-mas-valor-afirma-su-ceo-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T12:48:48.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-7b6bb3cd70",
+      "titulo": "Precio del GNV, GLP, diésel y gasolina en Perú para hoy, sábado 21 de noviembre de 2026",
+      "url": "https://www.infobae.com/peru/2026/11/21/precio-del-gnv-glp-diesel-y-gasolina-en-peru-para-hoy-sabado-21-de-noviembre-de-2026/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-21T12:40:22.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-c1d6cf6d4a",
+      "titulo": "¿Subirá la gasolina en Perú?: Cuánto cuestan la gasolina, el diésel y el gas tras la declaratoria de emergencia del gobierno",
+      "url": "https://www.infobae.com/peru/2026/11/21/subira-la-gasolina-en-peru-cuanto-cuestan-la-gasolina-el-diesel-y-el-gas-tras-la-declaratoria-de-emergencia-del-gobierno/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-21T12:38:20.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-68200b4102",
+      "titulo": "Precio del GNV, GLP, diésel y gasolina en Perú para hoy, sábado 14 de noviembre de 2026",
+      "url": "https://www.infobae.com/peru/2026/11/14/precio-del-gnv-glp-diesel-y-gasolina-en-peru-para-hoy-sabado-14-de-noviembre-de-2026/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-21T12:28:42.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-a89c9febdb",
+      "titulo": "Congreso aprobó Ley del Presupuesto Público con S/266.506 millones 316 mil 735: Las prioridades",
+      "url": "https://www.infobae.com/peru/2026/11/21/congreso-aprobo-ley-del-presupuesto-publico-con-s266506-millones-316-mil-735-las-prioridades/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-21T12:20:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-6ecbe40ab6",
+      "titulo": "Empleo: ¿Incumplir un descanso médico es causal de despido?",
+      "url": "https://andina.pe/agencia/noticia-empleo-incumplir-un-descanso-medico-es-causal-despido-1100821.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-21T12:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-12cc3d8b25",
+      "titulo": "Casa 18 alista US$ 39 millones para cinco proyectos en Miraflores y entra a Lima Moderna",
+      "url": "https://gestion.pe/economia/empresas/casa-18-va-por-us-30-mlls-en-ventas-en-2027-y-entra-a-lima-moderna-con-nueva-marca-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T12:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-28218853a4",
+      "titulo": "Caso “Los Herméticos del Caudal”: Fiscalía allana SBS y Sucamec por presunto favorecimiento a empresas de transporte de caudales",
+      "url": "https://elcomercio.pe/economia/peru/caso-los-hermeticos-del-caudal-fiscalia-allana-sbs-y-sucamec-por-presunto-favorecimiento-a-empresas-de-transporte-de-caudales-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-21T11:27:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-01bd1e621a",
+      "titulo": "Hay obras paralizadas por S/4.407 millones en 436 distritos declarados en emergencia",
+      "url": "https://elcomercio.pe/economia/hay-obras-paralizadas-por-s4407-millones-en-436-distritos-declarados-en-emergencia-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-21T11:12:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "gestion-3c60190d4d",
       "titulo": "Oftalmosalud ‘pone el ojo’ en Arequipa y Tarapoto: el plan tras llegar al tope en San Isidro",
@@ -88,15 +241,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-21T10:06:00.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-e403b78875",
-      "titulo": "Precio del dólar hoy en Perú, sábado 21 de noviembre: revisa el tipo de cambio en bancos y casas de cambio",
-      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/20/precio-del-dolar-hoy-en-peru-sabado-21-de-noviembre-tipo-de-cambio-en-bancos-y-casas-de-cambio-en-compra-y-venta-1815280",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-21T09:30:00.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -151,15 +295,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-21T02:59:53.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-70de0f7ec9",
-      "titulo": "Dueño de Boticas Perú y Kio va por más tras Pastipan: los negocios que evalúa comprar",
-      "url": "https://gestion.pe/economia/empresas/dueno-de-boticas-peru-y-kio-mueve-fichas-en-pastipan-y-ya-evalua-su-proxima-compra-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-21T02:49:42.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -253,15 +388,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-7d661a9608",
-      "titulo": "Mia Beauty Bar, de Intercorp, busca competir con Aruma y llega a 10 tiendas en su primer año",
-      "url": "https://gestion.pe/economia/empresas/mia-beauty-bar-entra-al-jockey-plaza-la-apuesta-de-la-duena-de-inkafarma-en-belleza-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-21T00:19:15.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-0875f03456",
       "titulo": "Deutsche Pharma: el laboratorio peruano detrás de Hirudoid que prepara su expansión a México",
       "url": "https://gestion.pe/economia/empresas/deutsche-pharma-alista-almacen-al-sur-de-lima-y-va-por-mexico-argentina-y-medio-oriente-noticia/",
@@ -280,30 +406,12 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "rpp-1081183fe9",
-      "titulo": "Estudiantes de la UCV culminan su formación en Italia y se incorporan al mercado laboral europeo",
-      "url": "https://rpp.pe/campanas/publirreportaje/estudiantes-de-la-ucv-culminan-su-formacion-en-italia-y-se-incorporan-al-mercado-laboral-europeo-noticia-1718921",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-20T23:57:35.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-d82f1239b1",
       "titulo": "Actividad de hidrocarburos en estado de emergencia por el fenómeno de El Niño: ¿qué significa?",
       "url": "https://elcomercio.pe/economia/actividad-de-hidrocarburos-en-estado-de-emergencia-que-significa-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-20T23:17:51.000Z",
       "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-86146cd9f5",
-      "titulo": "Transporte de mercancías: los riesgos que enfrentan las empresas durante la campaña navideña",
-      "url": "https://rpp.pe/economia/economia/transporte-de-mercancias-los-riesgos-que-enfrentan-las-empresas-durante-la-campana-navidena-noticia-1718917",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-20T23:15:32.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -343,15 +451,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "rpp-1256fa6c32",
-      "titulo": "Empresas que Transforman 2026 reconoce 30 iniciativas empresariales en inclusión financiera, salud y economía circular",
-      "url": "https://rpp.pe/economia/economia/empresas-que-transforman-2026-reconoce-30-iniciativas-empresariales-en-inclusion-financiera-salud-y-economia-circular-noticia-1718901",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-20T22:45:59.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-708c2f58be",
       "titulo": "Beneficiario final: ¿qué empresas deben presentar su declaración ante Sunat en diciembre?",
       "url": "https://gestion.pe/peru/beneficiario-final-que-empresas-deben-presentar-su-declaracion-ante-sunat-en-diciembre-noticia/",
@@ -375,15 +474,6 @@
       "url": "https://www.infobae.com/peru/2026/11/20/el-turismo-no-vive-solo-de-turistas/",
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-20T22:09:56.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-2587ab4cef",
-      "titulo": "Banco Mundial: América Latina y el Caribe necesitan una respuesta integrada ante los efectos del fenómeno El Niño",
-      "url": "https://rpp.pe/mundo/latinoamerica/banco-mundial-america-latina-y-el-caribe-necesitan-una-respuesta-integrada-ante-los-efectos-del-fenomeno-de-el-nino-noticia-1718895",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-20T22:08:39.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
@@ -412,15 +502,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-20T22:01:43.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-248df206f7",
-      "titulo": "ANGR denuncia recorte de S/ 2 800 millones en presupuesto de inversiones de los gobiernos regionales para 2027",
-      "url": "https://rpp.pe/peru/actualidad/angr-denuncia-recorte-de-s-2-800-millones-en-presupuesto-de-inversiones-de-los-gobiernos-regionales-para-2027-noticia-1718890",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-20T21:59:59.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -547,15 +628,6 @@
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-20T19:35:00.000Z",
       "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-1afca03aee",
-      "titulo": "Las razones de la salida de Entel de Perú: “No era fácil seguir creando más valor”, afirma su CEO",
-      "url": "https://gestion.pe/economia/empresas/entel-explica-las-razones-de-su-salida-del-peru-no-era-facil-seguir-creando-mas-valor-afirma-su-ceo-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-20T19:33:46.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -703,15 +775,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "infobae-c6e364a6d9",
-      "titulo": "Camisea: Osinergmin reporta nueva fuga de gas natural en el ducto que opera TGP en Ayacucho",
-      "url": "https://www.infobae.com/peru/2026/11/20/camisea-osinergmin-reporta-nueva-fuga-de-gas-natural-en-el-ducto-que-opera-tgp-en-ayacucho/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-20T17:59:05.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-8cf6afc185",
       "titulo": "Perú presenta su VI Examen de las Políticas Comerciales ante la OMC",
       "url": "https://andina.pe/agencia/noticia-peru-presenta-su-vi-examen-las-politicas-comerciales-ante-omc-1100835.aspx",
@@ -719,15 +782,6 @@
       "fecha_iso": "2026-11-20T17:47:19.000Z",
       "categoria": "Otros",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "infobae-f5b20d3eaf",
-      "titulo": "Incluso peruanos con posgrado recurren a más de un empleo: El 20% no llega a fin de mes",
-      "url": "https://www.infobae.com/peru/2026/11/20/incluso-peruanos-con-posgrado-recurren-a-mas-de-un-empleo-el-20-no-llega-a-fin-de-mes/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-20T17:47:14.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "el_comercio-91a5cd2f81",
@@ -835,15 +889,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-20T16:28:30.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-d1835e7209",
-      "titulo": "“Los Herméticos del Caudal”: ¿De qué trata el caso que involucra a la SBS, empresas de transporte de dinero y una consultora?",
-      "url": "https://www.infobae.com/peru/2026/11/20/los-hermeticos-del-caudal-de-que-trata-el-caso-que-involucra-a-la-sbs-empresas-de-transporte-de-dinero-y-una-consultora/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-20T16:22:25.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -978,69 +1023,6 @@
       "url": "https://www.gob.pe/institucion/inei/noticias/1475963-inei-actividad-de-restaurantes-aumento-2-94-en-setiembre-2026",
       "fuente": "Instituto Nacional de Estadística e Informática",
       "fecha_iso": "2026-11-20T14:49:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "andina-3329010d38",
-      "titulo": "Bolsa de Valores de Lima abre sesión con indicadores negativos",
-      "url": "https://andina.pe/agencia/noticia-bolsa-valores-lima-abre-sesion-indicadores-negativos-1100789.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-20T14:45:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "andina-dc98c63695",
-      "titulo": "¿Cuál es la cotización del dólar hoy viernes 20 de noviembre del 2026?",
-      "url": "https://andina.pe/agencia/noticia-cual-es-cotizacion-del-dolar-hoy-viernes-20-noviembre-del-2026-1100787.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-20T14:30:00.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-ac6daab606",
-      "titulo": "Inversión privada crece por quinto trimestre a doble dígito, pero esta vez a menor ritmo",
-      "url": "https://gestion.pe/economia/inversion-privada-crece-por-quinto-trimestre-a-doble-digito-pero-esta-vez-a-menor-ritmo-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-20T14:27:25.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-6cbfdc3414",
-      "titulo": "Cobre sufre una de sus peores semanas de la última década: las razones",
-      "url": "https://gestion.pe/mundo/internacional/caida-del-cobre-se-agrava-por-liquidacion-de-la-ia-y-escepticismo-sobre-la-demanda-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-20T14:21:10.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "inei-299e5a8bad",
-      "titulo": "Movimiento de vehículos a nivel nacional creció 3,2% en setiembre 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1475947-movimiento-de-vehiculos-a-nivel-nacional-crecio-3-2-en-setiembre-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-20T14:21:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "andina-6a083c5055",
-      "titulo": "Mypes afectadas por El Niño podrán ampliar hasta 12 meses sus créditos de Impulso Myperú",
-      "url": "https://andina.pe/agencia/noticia-mypes-afectadas-por-nino-podran-ampliar-hasta-12-meses-sus-creditos-impulso-myperu-1100797.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-20T14:12:45.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "andina-c7568e78f7",
-      "titulo": "MEF aprueba garantías de hasta 95% para créditos de mypes afectadas por fenómeno El Niño",
-      "url": "https://andina.pe/agencia/noticia-mef-aprueba-garantias-hasta-95-para-creditos-mypes-afectadas-fenomeno-nino-1100796.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-20T13:49:51.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
     }
