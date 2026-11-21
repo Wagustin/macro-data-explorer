@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-21T02:13:08.047Z",
+  "actualizado": "2026-11-21T05:31:31.302Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -8,13 +8,13 @@
     },
     "mef": {
       "nombre": "Ministerio de Economía y Finanzas",
-      "ok": false,
-      "items": 0
+      "ok": true,
+      "items": 24
     },
     "inei": {
       "nombre": "Instituto Nacional de Estadística e Informática",
-      "ok": false,
-      "items": 0
+      "ok": true,
+      "items": 25
     },
     "bcrp": {
       "nombre": "Banco Central de Reserva del Perú",
@@ -24,17 +24,17 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 76
+      "items": 70
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 52
+      "items": 53
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 14
+      "items": 15
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -64,6 +64,78 @@
   },
   "noticias": [
     {
+      "id": "el_comercio-35b0ca01da",
+      "titulo": "Congreso aprueba Presupuesto Público 2027 por más de S/266 mil millones",
+      "url": "https://elcomercio.pe/economia/congreso-aprueba-presupuesto-publico-2027-por-mas-de-s266-mil-millones-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-21T04:16:11.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "mef-4b0bec3479",
+      "titulo": "Diálogo y coordinación entre el Ejecutivo y el Congreso hacen posible un hito histórico en la aprobación del Presupuesto Público 2027",
+      "url": "https://www.gob.pe/institucion/mef/noticias/1477800-dialogo-y-coordinacion-entre-el-ejecutivo-y-el-congreso-hacen-posible-un-hito-historico-en-la-aprobacion-del-presupuesto-publico-2027",
+      "fuente": "Ministerio de Economía y Finanzas",
+      "fecha_iso": "2026-11-21T03:25:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-f2cabe081b",
+      "titulo": "El Niño: negocios podrán reprogramar pago de créditos de Impulso Myperú hasta por 12 meses",
+      "url": "https://gestion.pe/economia/el-nino-negocios-podran-reprogramar-pago-de-creditos-de-impulso-myperu-hasta-por-12-meses-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T03:22:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-b8d290388e",
+      "titulo": "Madre de Dios busca atraer inversiones para impulsar negocios sostenibles en la Amazonía",
+      "url": "https://andina.pe/agencia/noticia-madre-dios-busca-atraer-inversiones-para-impulsar-negocios-sostenibles-la-amazonia-1100898.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-21T03:00:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-466ff6dcdf",
+      "titulo": "Fiscalía allana sedes de SBS y Sucamec",
+      "url": "https://gestion.pe/peru/fiscalia-allana-sedes-de-sbs-y-sucamec-que-gestion-cubre-el-ministerio-publico-hoy-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T02:59:53.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-70de0f7ec9",
+      "titulo": "Dueño de Boticas Perú y Kio va por más tras Pastipan: los negocios que evalúa comprar",
+      "url": "https://gestion.pe/economia/empresas/dueno-de-boticas-peru-y-kio-mueve-fichas-en-pastipan-y-ya-evalua-su-proxima-compra-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T02:49:42.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-d109337a6e",
+      "titulo": "Gamarra mira nuevos mercados para afrontar el impacto de El Niño en sus ventas",
+      "url": "https://gestion.pe/economia/gamarra-mira-nuevos-mercados-para-afrontar-el-impacto-del-fenomeno-de-el-nino-en-sus-ventas-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T02:34:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-15064dcd1a",
+      "titulo": "Kallpa respalda licitaciones abiertas mientras el COES alerta por falta de firmeza eléctrica",
+      "url": "https://www.infobae.com/peru/2026/11/20/kallpa-hace-votos-por-no-privilegiar-eolicas-y-solares-mientras-coes-anticipa-falta-de-firmeza-en-el-sistema/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-21T02:21:35.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "bloomberg_linea-995c749756",
       "titulo": "Cofundador de Anthropic planea hacer una donación a las Cuentas Trump, dice Scott Bessent",
       "url": "https://www.bloomberglinea.com/mundo/estados-unidos/cofundador-de-anthropic-planea-hacer-una-donacion-a-las-cuentas-trump-dice-scott-bessent/",
@@ -79,15 +151,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-21T01:32:55.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-f2cabe081b",
-      "titulo": "El Niño: negocios podrán reprogramar pago de créditos de Impulso Myperú hasta por 12 meses",
-      "url": "https://gestion.pe/economia/el-nino-negocios-podran-reprogramar-pago-de-creditos-de-impulso-myperu-hasta-por-12-meses-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-21T01:24:39.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -151,15 +214,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-21T00:19:15.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-70de0f7ec9",
-      "titulo": "Dueño de Boticas Perú y Kio tras comprar Pastipan: su plan de tiendas y el ‘pan para Kio’",
-      "url": "https://gestion.pe/economia/empresas/dueno-de-boticas-peru-y-kio-mueve-fichas-en-pastipan-y-ya-evalua-su-proxima-compra-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-21T00:19:12.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -241,15 +295,6 @@
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-20T22:59:00.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-d109337a6e",
-      "titulo": "Gamarra mira nuevos mercados para afrontar el impacto de El Niño en sus ventas",
-      "url": "https://gestion.pe/economia/gamarra-mira-nuevos-mercados-para-afrontar-el-impacto-del-fenomeno-de-el-nino-en-sus-ventas-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-20T22:55:00.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -375,15 +420,6 @@
       "url": "https://rpp.pe/mundo/estados-unidos/donald-trump-vuelve-a-alabar-a-jensen-huang-y-dice-que-merece-una-segunda-oportunidad-en-nvidia-noticia-1718880",
       "fuente": "RPP Noticias",
       "fecha_iso": "2026-11-20T21:25:22.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-db3741b394",
-      "titulo": "Donald Trump dice que los apagones informáticos de EE.UU. no estuvieron relacionados entre sí",
-      "url": "https://rpp.pe/mundo/estados-unidos/donald-trump-dice-que-los-apagones-informaticos-de-eeuu-no-estuvieron-relacionados-entre-si-noticia-1718876",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-20T21:24:21.000Z",
       "categoria": "Mundo",
       "semaforo": "AMARILLO"
     },
@@ -530,15 +566,6 @@
       "fecha_iso": "2026-11-20T19:32:13.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-466ff6dcdf",
-      "titulo": "Fiscalía allana sedes de SBS y Sucamec",
-      "url": "https://gestion.pe/peru/fiscalia-allana-sedes-de-sbs-y-sucamec-que-gestion-cubre-el-ministerio-publico-hoy-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-20T19:31:59.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "bloomberg_linea-e56763bc04",
@@ -919,6 +946,33 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "inei-eee7f7dd02",
+      "titulo": "INEI: Sector servicios prestados a empresas aumentó 3,47% en setiembre 2026",
+      "url": "https://www.gob.pe/institucion/inei/noticias/1475965-inei-sector-servicios-prestados-a-empresas-aumento-3-47-en-setiembre-2026",
+      "fuente": "Instituto Nacional de Estadística e Informática",
+      "fecha_iso": "2026-11-20T14:53:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "inei-c345d49340",
+      "titulo": "INEI: Actividad comercial creció 6,29% en setiembre de 2026",
+      "url": "https://www.gob.pe/institucion/inei/noticias/1475964-inei-actividad-comercial-crecio-6-29-en-setiembre-de-2026",
+      "fuente": "Instituto Nacional de Estadística e Informática",
+      "fecha_iso": "2026-11-20T14:52:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "inei-108a149475",
+      "titulo": "INEI: Actividad de restaurantes aumentó 2,94% en setiembre 2026",
+      "url": "https://www.gob.pe/institucion/inei/noticias/1475963-inei-actividad-de-restaurantes-aumento-2-94-en-setiembre-2026",
+      "fuente": "Instituto Nacional de Estadística e Informática",
+      "fecha_iso": "2026-11-20T14:49:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
       "id": "andina-3329010d38",
       "titulo": "Bolsa de Valores de Lima abre sesión con indicadores negativos",
       "url": "https://andina.pe/agencia/noticia-bolsa-valores-lima-abre-sesion-indicadores-negativos-1100789.aspx",
@@ -955,6 +1009,15 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "inei-299e5a8bad",
+      "titulo": "Movimiento de vehículos a nivel nacional creció 3,2% en setiembre 2026",
+      "url": "https://www.gob.pe/institucion/inei/noticias/1475947-movimiento-de-vehiculos-a-nivel-nacional-crecio-3-2-en-setiembre-2026",
+      "fuente": "Instituto Nacional de Estadística e Informática",
+      "fecha_iso": "2026-11-20T14:21:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
+    {
       "id": "andina-6a083c5055",
       "titulo": "Mypes afectadas por El Niño podrán ampliar hasta 12 meses sus créditos de Impulso Myperú",
       "url": "https://andina.pe/agencia/noticia-mypes-afectadas-por-nino-podran-ampliar-hasta-12-meses-sus-creditos-impulso-myperu-1100797.aspx",
@@ -962,24 +1025,6 @@
       "fecha_iso": "2026-11-20T14:12:45.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "infobae-3c580c8c62",
-      "titulo": "Allanan la SBS por supuesta concertación entre funcionarios y empresas privadas en caso Los Herméticos del Caudal",
-      "url": "https://www.infobae.com/peru/2026/11/20/allanan-la-sbs-por-supuesta-concertacion-entre-funcionarios-y-empresas-privadas-en-caso-los-hermeticos-del-caudal/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-20T13:56:26.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-c6740409a4",
-      "titulo": "BCRP autoriza a las AFP a invertir más de la mitad de los ahorros para jubilación de los peruanos en el extranjero",
-      "url": "https://www.infobae.com/peru/2026/11/20/bcrp-autoriza-a-las-afp-a-invertir-mas-de-la-mitad-de-los-ahorros-para-jubilacion-de-los-peruanos-en-el-extranjero/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-20T13:49:58.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "andina-c7568e78f7",
@@ -997,78 +1042,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-20T13:37:36.000Z",
       "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-daf0474af6",
-      "titulo": "“Los Herméticos del Caudal”: Ministerio Público y PNP allanan 15 inmuebles incluyendo oficinas de SBS y Sucamec",
-      "url": "https://elcomercio.pe/economia/peru/los-hermeticos-del-caudal-ministerio-publico-y-pnp-allanan-15-inmuebles-incluyendo-oficinas-de-sbs-y-sucamec-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-20T13:30:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-7f8d941767",
-      "titulo": "Pobreza energética se sitúa en 27% en zonas urbanas y en rurales alcanza el 92.2%",
-      "url": "https://andina.pe/agencia/noticia-pobreza-energetica-se-situa-27-zonas-urbanas-y-rurales-alcanza-922-1100690.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-20T13:04:17.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-692e54f122",
-      "titulo": "Inti Punku, la cadena hotelera que entra a ciudad del Cusco: inversión y más destinos",
-      "url": "https://gestion.pe/economia/empresas/cusco-recibe-nueva-cadena-hotelera-en-centro-historico-inti-punku-enfrenta-a-marcas-globales-y-mira-corredor-sur-peruano-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-20T12:39:14.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-8fc1f038ca",
-      "titulo": "Gobierno aprueba operación de endeudamiento por S/ 5,700 millones",
-      "url": "https://andina.pe/agencia/noticia-gobierno-aprueba-operacion-endeudamiento-s-5700-millones-1100781.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-20T12:36:23.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "bloomberg_linea-c19e559141",
-      "titulo": "Del entusiasmo de Wall Street a los proyectos en Colombia: las trabas que debe superar la inversión",
-      "url": "https://www.bloomberglinea.com/latinoamerica/colombia/del-entusiasmo-de-wall-street-a-los-proyectos-en-colombia-las-trabas-que-debe-superar-la-inversion/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-20T12:11:53.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-b62585cd62",
-      "titulo": "El Niño: logística, agro y pymes se alistan para un verano crítico, una mirada de 4 actores",
-      "url": "https://gestion.pe/economia/el-nino-logistica-agro-y-pymes-se-alistan-para-un-verano-critico-una-mirada-de-4-actores-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-20T12:03:38.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-2a5138c923",
-      "titulo": "Impulsar la conectividad: la primera tarea de las nuevas autoridades regionales y locales",
-      "url": "https://elcomercio.pe/economia/opinion/impulsar-la-conectividad-la-primera-tarea-de-las-nuevas-autoridades-regionales-y-locales-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-20T12:00:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-4bb82d823a",
-      "titulo": "Precio del dólar Perú y tipo de cambio hoy 20 de noviembre del 2026",
-      "url": "https://rpp.pe/economia/economia/precio-del-dolar-peru-y-tipo-de-cambio-hoy-20-de-noviembre-del-2026-noticia-1718731",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-20T11:05:39.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     }
   ]
