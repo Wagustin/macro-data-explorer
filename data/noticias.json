@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-20T23:31:38.390Z",
+  "actualizado": "2026-11-21T02:13:08.047Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -8,13 +8,13 @@
     },
     "mef": {
       "nombre": "Ministerio de Economía y Finanzas",
-      "ok": true,
-      "items": 24
+      "ok": false,
+      "items": 0
     },
     "inei": {
       "nombre": "Instituto Nacional de Estadística e Informática",
-      "ok": true,
-      "items": 25
+      "ok": false,
+      "items": 0
     },
     "bcrp": {
       "nombre": "Banco Central de Reserva del Perú",
@@ -24,27 +24,27 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 80
+      "items": 76
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 71
+      "items": 52
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 16
+      "items": 14
     },
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 13
+      "items": 12
     },
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 16
+      "items": 13
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 18
+      "items": 17
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,132 @@
     }
   },
   "noticias": [
+    {
+      "id": "bloomberg_linea-995c749756",
+      "titulo": "Cofundador de Anthropic planea hacer una donación a las Cuentas Trump, dice Scott Bessent",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/cofundador-de-anthropic-planea-hacer-una-donacion-a-las-cuentas-trump-dice-scott-bessent/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-21T01:34:30.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-5b8a6da6ce",
+      "titulo": "Kiko Milano, la gigante italiana de la belleza, llegó al Perú, ¿cuánto invertirá y qué otras tiendas planea abrir?",
+      "url": "https://elcomercio.pe/economia/peru/kiko-milano-la-gigante-italiana-de-la-belleza-llego-al-peru-cuanto-invertira-y-que-otras-tiendas-planea-abrir-mercado-de-belleza-dbs-beauty-store-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-21T01:32:55.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-f2cabe081b",
+      "titulo": "El Niño: negocios podrán reprogramar pago de créditos de Impulso Myperú hasta por 12 meses",
+      "url": "https://gestion.pe/economia/el-nino-negocios-podran-reprogramar-pago-de-creditos-de-impulso-myperu-hasta-por-12-meses-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T01:24:39.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-09359aa8aa",
+      "titulo": "El 79% de los “pobres energéticos” está fuera de Lima: ¿qué más revela estudio de Promigas?",
+      "url": "https://gestion.pe/economia/el-79-de-los-pobres-energeticos-esta-fuera-de-lima-que-mas-revela-estudio-de-promigas-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T01:07:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-18acb37871",
+      "titulo": "MEF aprueba endeudamiento por S/ 5,700 millones para financiar proyecto de la Fuerza Aérea",
+      "url": "https://gestion.pe/economia/empresas/mef-aprueba-endeudamiento-por-s-5700-millones-para-financiar-proyecto-de-la-fuerza-aerea-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T01:00:06.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-983d917de2",
+      "titulo": "Evalúan financiamiento para proyectos de agua y saneamiento",
+      "url": "https://andina.pe/agencia/noticia-evaluan-financiamiento-para-proyectos-agua-y-saneamiento-1100889.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-21T01:00:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "el_comercio-46031d3838",
+      "titulo": "Erick García sobre abastecimiento de combustibles: “Si Osinergmin actúa de manera preventiva, no debería haber una afectación al bolsillo del peruano”",
+      "url": "https://elcomercio.pe/economia/peru/erick-garcia-sobre-abastecimiento-de-combustibles-si-osinergmin-actua-de-manera-preventiva-no-deberia-haber-una-afectacion-al-bolsillo-del-peruano-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-21T00:50:56.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-d7a53a691e",
+      "titulo": "Hermes y Prosegur responden a cuestionamientos y garantiza la continuidad de sus operaciones",
+      "url": "https://elcomercio.pe/lima/policiales/hermes-responde-a-cuestionamientos-y-garantiza-la-continuidad-de-sus-operaciones-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-21T00:48:35.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-d42cac5c79",
+      "titulo": "Falleció Mayu Hume, miembro del directorio de El Comercio",
+      "url": "https://elcomercio.pe/economia/peru/fallecio-mayu-hume-miembro-del-directorio-de-el-comercio-pucp-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-21T00:44:47.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-7d661a9608",
+      "titulo": "Mia Beauty Bar, de Intercorp, busca competir con Aruma y llega a 10 tiendas en su primer año",
+      "url": "https://gestion.pe/economia/empresas/mia-beauty-bar-entra-al-jockey-plaza-la-apuesta-de-la-duena-de-inkafarma-en-belleza-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T00:19:15.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-70de0f7ec9",
+      "titulo": "Dueño de Boticas Perú y Kio tras comprar Pastipan: su plan de tiendas y el ‘pan para Kio’",
+      "url": "https://gestion.pe/economia/empresas/dueno-de-boticas-peru-y-kio-mueve-fichas-en-pastipan-y-ya-evalua-su-proxima-compra-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T00:19:12.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-0875f03456",
+      "titulo": "Deutsche Pharma: el laboratorio peruano detrás de Hirudoid que prepara su expansión a México",
+      "url": "https://gestion.pe/economia/empresas/deutsche-pharma-alista-almacen-al-sur-de-lima-y-va-por-mexico-argentina-y-medio-oriente-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T00:19:09.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-a6ae0df0f1",
+      "titulo": "Produce facilita créditos y amplía plazos de pago para las Mype ante fenómeno El Niño",
+      "url": "https://andina.pe/agencia/noticia-produce-facilita-creditos-y-amplia-plazos-pago-para-las-mype-ante-fenomeno-nino-1100885.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-21T00:08:21.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "rpp-1081183fe9",
+      "titulo": "Estudiantes de la UCV culminan su formación en Italia y se incorporan al mercado laboral europeo",
+      "url": "https://rpp.pe/campanas/publirreportaje/estudiantes-de-la-ucv-culminan-su-formacion-en-italia-y-se-incorporan-al-mercado-laboral-europeo-noticia-1718921",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-20T23:57:35.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "el_comercio-d82f1239b1",
       "titulo": "Actividad de hidrocarburos en estado de emergencia por el fenómeno de El Niño: ¿qué significa?",
@@ -73,20 +199,20 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "rpp-86146cd9f5",
+      "titulo": "Transporte de mercancías: los riesgos que enfrentan las empresas durante la campaña navideña",
+      "url": "https://rpp.pe/economia/economia/transporte-de-mercancias-los-riesgos-que-enfrentan-las-empresas-durante-la-campana-navidena-noticia-1718917",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-20T23:15:32.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "el_comercio-a36cc92092",
       "titulo": "Siderperú sobre “Fuego por juego”: “Hemos fundido más de 110.000 armas y beneficiado a más de 65.000 personas”",
       "url": "https://elcomercio.pe/economia/peru/siderperu-sobre-fuego-por-juego-hemos-fundido-mas-de-110000-armas-y-beneficiado-a-mas-de-65000-personas-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-20T23:12:25.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-09359aa8aa",
-      "titulo": "El 79% de los “pobres energéticos” está fuera de Lima: ¿qué más revela estudio de Promigas?",
-      "url": "https://gestion.pe/economia/el-79-de-los-pobres-energeticos-esta-fuera-de-lima-que-mas-revela-estudio-de-promigas-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-20T23:11:51.000Z",
       "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
@@ -100,15 +226,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-5b8a6da6ce",
-      "titulo": "Kiko Milano, la gigante italiana de la belleza, llegó al Perú, ¿cuánto invertirá y qué otras tiendas planea abrir?",
-      "url": "https://elcomercio.pe/economia/peru/kiko-milano-la-gigante-italiana-de-la-belleza-llego-al-peru-cuanto-invertira-y-que-otras-tiendas-planea-abrir-mercado-de-belleza-dbs-beauty-store-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-20T23:05:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-0d6cdfe711",
       "titulo": "Produce presenta recetario de madres de comedores populares para mejorar alimentación",
       "url": "https://andina.pe/agencia/noticia-produce-presenta-recetario-madres-comedores-populares-para-mejorar-alimentacion-1100880.aspx",
@@ -116,15 +233,6 @@
       "fecha_iso": "2026-11-20T23:02:51.000Z",
       "categoria": "Otros",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "el_comercio-46031d3838",
-      "titulo": "Erick García sobre abastecimiento de combustibles: “Si Osinergmin actúa de manera preventiva, no debería haber una afectación al bolsillo del peruano”",
-      "url": "https://elcomercio.pe/economia/peru/erick-garcia-sobre-abastecimiento-de-combustibles-si-osinergmin-actua-de-manera-preventiva-no-deberia-haber-una-afectacion-al-bolsillo-del-peruano-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-20T23:01:59.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "infobae-1d44cc7b2e",
@@ -307,6 +415,15 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "andina-a49f0da469",
+      "titulo": "Unen esfuerzos contra plaga que amenaza al 95.3% del ganado",
+      "url": "https://andina.pe/agencia/noticia-unen-esfuerzos-contra-plaga-amenaza-al-953-del-ganado-1100859.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-20T20:48:23.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
+    {
       "id": "la_republica-dbd3fb7dbf",
       "titulo": "Precio del dólar hoy en Perú, viernes 20 de noviembre: consulta el tipo de cambio para compra y venta",
       "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/19/precio-del-dolar-hoy-en-peru-viernes-20-de-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-793592",
@@ -322,15 +439,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-20T20:15:17.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-70de0f7ec9",
-      "titulo": "Dueño de Boticas Perú y Kio tras comprar Pastipan: su plan de tiendas y el ‘pan para Kio’",
-      "url": "https://gestion.pe/economia/empresas/dueno-de-boticas-peru-y-kio-mueve-fichas-en-pastipan-y-ya-evalua-su-proxima-compra-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-20T20:09:20.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -385,15 +493,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-20T19:46:00.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-7d661a9608",
-      "titulo": "Intercorp en competencia con Aruma: Mia Beauty Bar llega al Jockey Plaza",
-      "url": "https://gestion.pe/economia/empresas/mia-beauty-bar-entra-al-jockey-plaza-la-apuesta-de-la-duena-de-inkafarma-en-belleza-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-20T19:41:23.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -496,15 +595,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "rpp-bd11c8b41c",
-      "titulo": "Buque Hospital que enviará EE.UU. para atender emergencias durante El Niño llegará al Perú en enero, confirma embajador",
-      "url": "https://rpp.pe/peru/actualidad/buque-hospital-que-enviara-eeuu-para-atender-emergencias-durante-el-nino-llegara-al-peru-en-enero-confirma-embajador-noticia-1718845",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-20T19:04:20.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "bloomberg_linea-dd93a881a7",
       "titulo": "YouTube negocia un acuerdo millonario con escuelas de EE.UU. por demandas de adicción",
       "url": "https://www.bloomberglinea.com/negocios/youtube-negocia-un-acuerdo-millonario-con-escuelas-de-eeuu-por-demandas-de-adiccion/",
@@ -541,15 +631,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "rpp-c8da4b83fe",
-      "titulo": "Allanamiento a la SBS: entre la concentración del mercado de transporte de dinero y su oposición a que el Banco de la Nación realice este servicio",
-      "url": "https://rpp.pe/economia/economia/allanamiento-a-la-sbs-entre-la-concentracion-del-mercado-de-transporte-de-dinero-y-su-oposicion-a-que-el-banco-de-la-nacion-realice-este-servicio-noticia-1718847",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-20T18:38:06.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-b16ed09dd3",
       "titulo": "Gobierno presenta proyectos para fortalecer conectividad y competitividad del país al 2031",
       "url": "https://andina.pe/agencia/noticia-gobierno-presenta-proyectos-para-fortalecer-conectividad-y-competitividad-del-pais-al-2031-1100839.aspx",
@@ -557,15 +638,6 @@
       "fecha_iso": "2026-11-20T18:35:33.000Z",
       "categoria": "Otros",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "rpp-1ea478a72d",
-      "titulo": "Osinergmin reporta fuga de gas natural en ducto operado por TGP en Ayacucho, ocho meses después de la emergencia en Cusco",
-      "url": "https://rpp.pe/economia/economia/osinergmin-reporta-fuga-de-gas-natural-en-ducto-operado-por-tgp-en-ayacucho-ocho-meses-despues-de-la-emergencia-en-cusco-noticia-1718835",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-20T18:30:09.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "el_comercio-ac542b5597",
@@ -649,21 +721,21 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "rpp-548e65f48d",
+      "titulo": "GRUPORPP premió iniciativas de proyectos con inteligencia artificial entre sus colaboradores",
+      "url": "https://rpp.pe/videos/actualidad/grupo-rpp-premia-iniciativas-de-proyectos-con-inteligencia-artificial-entre-sus-colaboradores-noticia-1718813",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-20T17:35:44.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "la_republica-6cbf32e511",
       "titulo": "Campaña navideña: retrasos en el transporte de mercancías podrían generar pérdidas a empresas",
       "url": "https://larepublica.pe/economia/2026/11/20/campana-navidena-retrasos-en-el-transporte-de-mercancias-podrian-generar-perdidas-a-empresas-hnews-1664840",
       "fuente": "La República Economía",
       "fecha_iso": "2026-11-20T17:33:13.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-c2c42539b9",
-      "titulo": "Conductores de aplicativos se multiplicaron por seis en cinco años: mercado ya mueve S/6.100 millones",
-      "url": "https://rpp.pe/economia/economia/conductores-de-aplicativos-se-multiplicaron-por-seis-en-cinco-anos-mercado-ya-mueve-s-6100-millones-noticia-1718815",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-20T17:29:16.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -683,15 +755,6 @@
       "fecha_iso": "2026-11-20T17:22:44.000Z",
       "categoria": "Otros",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-0875f03456",
-      "titulo": "Deutsche Pharma: el laboratorio peruano detrás de Hirudoid que prepara su expansión a México",
-      "url": "https://gestion.pe/economia/empresas/deutsche-pharma-alista-almacen-al-sur-de-lima-y-va-por-mexico-argentina-y-medio-oriente-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-20T17:21:35.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "el_comercio-0e045539c6",
@@ -856,33 +919,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "inei-eee7f7dd02",
-      "titulo": "INEI: Sector servicios prestados a empresas aumentó 3,47% en setiembre 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1475965-inei-sector-servicios-prestados-a-empresas-aumento-3-47-en-setiembre-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-20T14:53:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-c345d49340",
-      "titulo": "INEI: Actividad comercial creció 6,29% en setiembre de 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1475964-inei-actividad-comercial-crecio-6-29-en-setiembre-de-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-20T14:52:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "inei-108a149475",
-      "titulo": "INEI: Actividad de restaurantes aumentó 2,94% en setiembre 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1475963-inei-actividad-de-restaurantes-aumento-2-94-en-setiembre-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-20T14:49:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "andina-3329010d38",
       "titulo": "Bolsa de Valores de Lima abre sesión con indicadores negativos",
       "url": "https://andina.pe/agencia/noticia-bolsa-valores-lima-abre-sesion-indicadores-negativos-1100789.aspx",
@@ -917,15 +953,6 @@
       "fecha_iso": "2026-11-20T14:21:10.000Z",
       "categoria": "Minería y metales",
       "semaforo": "AMARILLO"
-    },
-    {
-      "id": "inei-299e5a8bad",
-      "titulo": "Movimiento de vehículos a nivel nacional creció 3,2% en setiembre 2026",
-      "url": "https://www.gob.pe/institucion/inei/noticias/1475947-movimiento-de-vehiculos-a-nivel-nacional-crecio-3-2-en-setiembre-2026",
-      "fuente": "Instituto Nacional de Estadística e Informática",
-      "fecha_iso": "2026-11-20T14:21:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
     },
     {
       "id": "andina-6a083c5055",
@@ -982,15 +1009,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "infobae-8e2505a8ae",
-      "titulo": "“Mi día, mis derechos”: el desafío de garantizar presupuesto y educación para la primera infancia",
-      "url": "https://www.infobae.com/peru/2026/11/20/mi-dia-mis-derechos-el-desafio-de-garantizar-presupuesto-y-educacion-para-la-primera-infancia/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-20T13:07:54.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-7f8d941767",
       "titulo": "Pobreza energética se sitúa en 27% en zonas urbanas y en rurales alcanza el 92.2%",
       "url": "https://andina.pe/agencia/noticia-pobreza-energetica-se-situa-27-zonas-urbanas-y-rurales-alcanza-922-1100690.aspx",
@@ -998,15 +1016,6 @@
       "fecha_iso": "2026-11-20T13:04:17.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "infobae-2bf48c9461",
-      "titulo": "MYPE afectadas por El Niño recibirán créditos de hasta S/300.000 con garantía del Estado y reprogramarán deudas con Impulso MyPerú",
-      "url": "https://www.infobae.com/peru/2026/11/20/mype-afectadas-por-el-nino-recibiran-creditos-de-hasta-s300000-con-garantia-del-estado-y-reprogramaran-deudas-con-impulso-myperu/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-20T12:48:46.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "gestion-692e54f122",
@@ -1027,15 +1036,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "infobae-82a40553bf",
-      "titulo": "Consulta en este link el precio de la gasolina más barata y cara en Lima, hoy, 20 de noviembre",
-      "url": "https://www.infobae.com/peru/2026/11/20/consulta-en-este-link-el-precio-de-la-gasolina-mas-barata-y-cara-en-lima-hoy-20-de-noviembre/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-20T12:16:59.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "bloomberg_linea-c19e559141",
       "titulo": "Del entusiasmo de Wall Street a los proyectos en Colombia: las trabas que debe superar la inversión",
       "url": "https://www.bloomberglinea.com/latinoamerica/colombia/del-entusiasmo-de-wall-street-a-los-proyectos-en-colombia-las-trabas-que-debe-superar-la-inversion/",
@@ -1051,6 +1051,24 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-20T12:03:38.000Z",
       "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-2a5138c923",
+      "titulo": "Impulsar la conectividad: la primera tarea de las nuevas autoridades regionales y locales",
+      "url": "https://elcomercio.pe/economia/opinion/impulsar-la-conectividad-la-primera-tarea-de-las-nuevas-autoridades-regionales-y-locales-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-20T12:00:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-4bb82d823a",
+      "titulo": "Precio del dólar Perú y tipo de cambio hoy 20 de noviembre del 2026",
+      "url": "https://rpp.pe/economia/economia/precio-del-dolar-peru-y-tipo-de-cambio-hoy-20-de-noviembre-del-2026-noticia-1718731",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-20T11:05:39.000Z",
+      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     }
   ]
