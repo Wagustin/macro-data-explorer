@@ -65,7 +65,7 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
   gh api repos/Wagustin/macro-data-explorer/actions/jobs/<job-id>/logs | grep -E "HTTP 418|HTTP 403|fetch failed|respuesta inesperada"
   curl -s https://perdata.site/api/status | jq '.smv.ageHours'
   ```
-- **Directiva**: ESPERAR 2 h y RELANZAR (máx. 2/día). Si `/api/status` marca `smv` con `ageHours` > 72, AVISAR. El plan B (descargar desde el servidor) lo hace Claude, no el vigía: ver sección 6.
+- **Directiva**: ESPERAR 2 h y RELANZAR (máx. 2/día). Si `/api/status` marca `smv` con `ageHours` > 72, AVISAR. El plan B (descargar desde el servidor) ya es automático: ver sección 6. El vigía no lo ejecuta.
 
 ### CHOQUE_PUSH
 
@@ -223,14 +223,19 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
 
 ## 6. Plan B de la SMV
 
-Es una acción manual de Claude, no del vigía. Se usa cuando la SMV bloquea a GitHub (SMV_BLOQUEO con `smv.ageHours` > 72) o cuando Agustín lo pide.
+Ahora es automático. El cron del servidor ejecuta `scripts/smv-plan-b.sh` a las 02:40 UTC de martes a sábado (21:40 de Lima). El script:
 
-1. Comprobar que el bloqueo sigue: último log de `smv-precios.yml` y `curl -s https://perdata.site/api/status | jq .smv`.
-2. En el servidor, desde el clon `~/macro-data-explorer` (tiene el `.env`; el worktree solo tiene `.env.example`), con Node 22 como en el workflow:
-   ```bash
-   node --env-file=.env scripts/fetch-smv-precios.js
-   ```
-   Necesita `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `SYNC_SECRET` y `APP_URL` en el `.env`. Con unos 221 valores y una petición cada 3 s, tarda unos 11 minutos.
-3. Recalcular lo que recalcula `smv-precios.yml` después de la descarga: `node scripts/build-empresas-estado.js`, `node scripts/engine-acciones.js` y `node scripts/build-empresas-html.js`.
-4. Si cambian `data/empresas-estado.json`, `empresas.html`, `empresa/` o `data/acciones-rangos.json`, los confirma Claude. El vigía no hace commits.
-5. Verificar con `curl -s https://perdata.site/api/status | jq .smv.ageHours`.
+1. Actualiza el clon `~/macro-data-explorer` (`git pull --ff-only`).
+2. Si hay un run de «Cotizaciones de Lima (SMV)» con éxito en las últimas 20 h, o uno en curso, sale sin hacer nada.
+3. Si no, descarga las cotizaciones desde el servidor (`scripts/fetch-smv-precios.js`, con el `.env` del clon; unos 11 minutos). Si guarda filas, lanza `smv-precios.yml` con `saltar_descarga=1`, que recalcula y publica sin volver a bajar de la SMV. Si el `.env` no tiene `SYNC_SECRET`, lanza también `d1-backfill.yml`.
+4. Anota una línea por ejecución en `~/.local/state/smv-plan-b.log` (fecha UTC, decisión y filas).
+
+Para lanzarlo a mano desde el worktree o desde el clon:
+```bash
+bash scripts/smv-plan-b.sh
+```
+Variables útiles: `PLANB_SECO=1` no lanza ningún workflow; `PLANB_FORZAR=1` salta el chequeo de runs recientes.
+
+Si hace falta recalcular a mano (por ejemplo, si el workflow falla tras la descarga), el orden es el de `smv-precios.yml`: `node scripts/build-empresas-estado.js`, `node scripts/engine-acciones.js` y `node scripts/build-empresas-html.js`. Los cambios en `data/empresas-estado.json`, `empresas.html`, `empresa/` o `data/acciones-rangos.json` los confirma Claude; el vigía no hace commits.
+
+Verificar con `curl -s https://perdata.site/api/status | jq .smv.ageHours`.

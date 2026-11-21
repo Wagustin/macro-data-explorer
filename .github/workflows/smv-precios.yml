@@ -7,6 +7,12 @@ on:
   schedule:
     - cron: "23 1 * * 2-6"   # 20:23 en Lima, de lunes a viernes
   workflow_dispatch:
+    inputs:
+      saltar_descarga:
+        description: "1 = no descargar de la SMV (el plan B del servidor ya dejó las cotizaciones en Supabase)"
+        type: choice
+        options: ["0", "1"]
+        default: "0"
 
 permissions:
   contents: write
@@ -29,6 +35,7 @@ jobs:
         with:
           node-version: 22
       - name: Cierres de los últimos dos meses
+        if: ${{ github.event.inputs.saltar_descarga != '1' }}
         run: node scripts/fetch-smv-precios.js
       - name: Calcular estado de los emisores
         run: node scripts/build-empresas-estado.js
