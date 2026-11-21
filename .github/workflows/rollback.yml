@@ -32,7 +32,7 @@ jobs:
             echo "Falta el secreto CLOUDFLARE_API_TOKEN: no se puede volver atrás" >&2
             exit 1
           fi
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: main
           fetch-depth: 1
