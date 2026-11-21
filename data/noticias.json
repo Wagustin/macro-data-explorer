@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-21T08:31:35.779Z",
+  "actualizado": "2026-11-21T10:59:47.412Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 69
+      "items": 71
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -34,12 +34,12 @@
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 15
+      "items": 11
     },
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 12
+      "items": 13
     },
     "infobae": {
       "nombre": "Infobae Perú",
@@ -63,6 +63,42 @@
     }
   },
   "noticias": [
+    {
+      "id": "gestion-3c60190d4d",
+      "titulo": "Oftalmosalud ‘pone el ojo’ en Arequipa y Tarapoto: el plan tras llegar al tope en San Isidro",
+      "url": "https://gestion.pe/economia/empresas/oftalmosalud-levantara-dos-torres-en-san-isidro-y-abrira-otra-sede-en-arequipa-en-2027-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T10:30:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-f4146a4027",
+      "titulo": "Scott, Kleenex y Suave, los frentes de Arbex para ganar mercado en Perú",
+      "url": "https://gestion.pe/economia/empresas/scott-kleenex-y-suave-bajo-la-estrategia-de-arbex-para-ganar-terreno-en-peru-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T10:30:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-ace12af519",
+      "titulo": "El Niño: ¿cómo podrán las mypes reprogramar sus créditos y qué impacto tendrá en sus finanzas?",
+      "url": "https://gestion.pe/economia/empresas/el-nino-como-podran-las-mypes-reprogramar-sus-creditos-y-que-impacto-tendra-en-sus-finanzas-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-21T10:06:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-e403b78875",
+      "titulo": "Precio del dólar hoy en Perú, sábado 21 de noviembre: revisa el tipo de cambio en bancos y casas de cambio",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/20/precio-del-dolar-hoy-en-peru-sabado-21-de-noviembre-tipo-de-cambio-en-bancos-y-casas-de-cambio-en-compra-y-venta-1815280",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-21T09:30:00.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "rpp-c4e6f62caf",
       "titulo": "Congreso aprueba presupuesto público de S/266 506 millones para el 2027",
@@ -385,33 +421,6 @@
       "fuente": "RPP Noticias",
       "fecha_iso": "2026-11-20T21:59:59.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-92a2b9e3dc",
-      "titulo": "Delcy Rodríguez ordenó gestionar el desbloqueo de plataformas de inteligencia artificial en Venezuela",
-      "url": "https://rpp.pe/mundo/venezuela/delcy-rodriguez-ordena-gestionar-el-desbloqueo-de-plataformas-de-ia-en-venezuela-noticia-1718882",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-20T21:48:37.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-f716096f36",
-      "titulo": "Donald Trump asegura que su Gobierno no permitirá un ataque iraní con \"bomba sucia\" en Washington",
-      "url": "https://rpp.pe/mundo/estados-unidos/donald-trump-asegura-que-su-gobierno-no-permitira-un-ataque-irani-con-bomba-sucia-en-washington-noticia-1718884",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-20T21:39:42.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-8a81e5b523",
-      "titulo": "Ataque masivo ruso provoca cortes de luz en Kiev y tres regiones del oeste de Ucrania",
-      "url": "https://rpp.pe/mundo/actualidad/ataque-masivo-ruso-provoca-cortes-de-luz-en-kiev-y-tres-regiones-del-oeste-de-ucrania-noticia-1718889",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-20T21:39:12.000Z",
-      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     },
     {
@@ -1034,15 +1043,6 @@
       "fecha_iso": "2026-11-20T13:49:51.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "el_comercio-0c3dc60bbb",
-      "titulo": "Precio del cobre se encamina a su peor semana en una década por ola de ventas en los mercados y dudas sobre la inteligencia artificial",
-      "url": "https://elcomercio.pe/economia/mercados/precio-del-cobre-se-encamina-a-su-peor-semana-en-una-decada-por-ola-de-ventas-en-los-mercados-y-dudas-sobre-la-inteligencia-artificial-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-20T13:37:36.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
     }
   ]
 }
