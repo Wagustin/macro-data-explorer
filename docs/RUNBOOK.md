@@ -65,7 +65,7 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
   gh api repos/Wagustin/macro-data-explorer/actions/jobs/<job-id>/logs | grep -E "HTTP 418|HTTP 403|fetch failed|respuesta inesperada"
   curl -s https://perdata.site/api/status | jq '.smv.ageHours'
   ```
-- **Directiva**: ESPERAR 2 h y RELANZAR (máx. 2/día). Si `/api/status` marca `smv` con `ageHours` > 72, AVISAR. El plan B (descargar desde el servidor) ya es automático: ver sección 6. El vigía no lo ejecuta.
+- **Directiva**: ESPERAR 2 h y RELANZAR (máx. 2/día). Si `/api/status` marca `smv` con `ageHours` > 72, AVISAR. El plan B (descargar desde el servidor) ya es automático para cotizaciones y hechos de importancia: ver sección 6. El vigía no lo ejecuta.
 
 ### CHOQUE_PUSH
 
@@ -237,5 +237,13 @@ bash scripts/smv-plan-b.sh
 Variables útiles: `PLANB_SECO=1` no lanza ningún workflow; `PLANB_FORZAR=1` salta el chequeo de runs recientes.
 
 Si hace falta recalcular a mano (por ejemplo, si el workflow falla tras la descarga), el orden es el de `smv-precios.yml`: `node scripts/build-empresas-estado.js`, `node scripts/engine-acciones.js` y `node scripts/build-empresas-html.js`. Los cambios en `data/empresas-estado.json`, `empresas.html`, `empresa/` o `data/acciones-rangos.json` los confirma Claude; el vigía no hace commits.
+
+Hechos de importancia (`smv.yml`): mismo problema con el HTTP 418. `scripts/smv-plan-b-hechos.sh` descarga `scripts/fetch-smv.js` en el worktree propio `~/kathy_workspace/wt-planb-data` (se crea la primera vez; en cada ejecución queda igual que `origin/main`) y, si `actualizado` de `data/smv-hechos.json` cambia, hace commit como `perdata-bot` y push a `main`. Si `actualizado` tiene menos de 20 h, sale sin hacer nada. Usa su propio lock (`~/.local/state/smv-plan-b-hechos.lock`) y escribe en el mismo log con prefijo `hechos:`. Variables: `PLANB_SECO=1` descarga pero no hace commit ni push; `PLANB_FORZAR=1` salta el chequeo de 20 h; `DATA_WT` cambia la ruta del worktree.
+
+Para lanzarlo a mano:
+```bash
+bash scripts/smv-plan-b-hechos.sh
+```
+Cron propuesto (no instalado; el crontab se cambia a mano): `20 6,14 * * * /home/wagustin/macro-data-explorer/scripts/smv-plan-b-hechos.sh >/dev/null 2>&1`
 
 Verificar con `curl -s https://perdata.site/api/status | jq .smv.ageHours`.
