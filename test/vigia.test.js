@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import {
-  clasificarFallo, evaluarStatus, boletinPendiente, decidir, registrarPasada,
+  clasificarFallo, clasificarWatchdog, evaluarStatus, boletinPendiente, decidir, registrarPasada,
   clasificarConNemotron, interpretarRespuesta, elegirModelo, redactar, ejecutar,
   argumentosVolverAtras, parsearEnv, rutaEnv, cargarConfig, canalesAviso, avisar, textoAviso,
   debeEnviarResumen, textoResumen, evaluarLatido, enviarTelegram,
@@ -20,9 +20,56 @@ test("clasificarFallo con mensajes reales del catálogo", () => {
   assert.equal(clasificarFallo({ workflowPath: "timesfm.yml", stepName: "Instalar", logTail: "cosas raras" }), "DESCONOCIDO");
 });
 
-test("el watchdog en el paso de la web es WATCHDOG_SMOKE aunque el log diga ECONNRESET", () => {
-  assert.equal(clasificarFallo({ workflowPath: ".github/workflows/watchdog.yml", stepName: "Comprobar la web y los procesos diarios", logTail: "read ECONNRESET" }), "WATCHDOG_SMOKE");
-  assert.equal(clasificarFallo({ workflowPath: "watchdog.yml", stepName: "Comprobar la web y los procesos diarios", logTail: "HTTP 503" }), "WATCHDOG_SMOKE");
+const LOG_HECHOS = [
+  "OK     Portada: 120 ms",
+  "FALLA  Hechos de importancia (SMV): última lectura hace 34 h (2026-11-21T02:31:30.130Z)",
+  "OK     Pruebas completas (smoke): TOTAL: 165 pruebas | 165 OK | 0 FAIL",
+].join("\n");
+const PASO_WATCHDOG = "Comprobar la web y los procesos diarios";
+
+test("watchdog: el log real (solo falla Hechos, smoke OK) es SMV_BLOQUEO y nunca DESPLEGAR", () => {
+  const cod = clasificarFallo({ workflowPath: ".github/workflows/watchdog.yml", stepName: PASO_WATCHDOG, logTail: LOG_HECHOS });
+  assert.equal(cod, "SMV_BLOQUEO");
+  const [inc] = clasificarWatchdog(LOG_HECHOS);
+  assert.equal(inc.workflow, "smv.yml");
+  assert.equal(inc.ageHoras, 34);
+  assert.equal(inc.umbralHoras, 48);
+  const acc = decidir([{ ...inc, origen: "watchdog", desde: "2026-11-22T10:00:00Z", motivo: "x" }], {}, ahora);
+  assert.ok(!acc.some((a) => a.tipo === "DESPLEGAR"));
+  assert.deepEqual(acc.filter((a) => a.tipo === "RELANZAR"), []);
+});
+
+test("watchdog: SMV del watchdog espera y avisa solo por encima de 48 h (hechos)", () => {
+  const base = { codigo: "SMV_BLOQUEO", origen: "watchdog", umbralHoras: 48, proceso: "Hechos de importancia (SMV)", clave: "k", motivo: "x" };
+  assert.deepEqual(decidir([{ ...base, ageHoras: 47 }], {}, ahora), []);
+  assert.deepEqual(decidir([{ ...base, ageHoras: 49 }], {}, ahora).map((a) => a.tipo), ["AVISAR"]);
+});
+
+test("watchdog: un fallo de proceso con «hace N h» es DATO_VIEJO con el workflow dueño", () => {
+  const log = "FALLA  Noticias: actualizadas hace 40 h\nOK     Pruebas completas (smoke): TOTAL: 165 pruebas | 165 OK | 0 FAIL";
+  const [inc] = clasificarWatchdog(log);
+  assert.equal(inc.codigo, "DATO_VIEJO");
+  assert.equal(inc.workflow, "news.yml");
+  const acc = decidir([inc], {}, ahora);
+  assert.deepEqual(acc.map((a) => [a.tipo, a.workflow]), [["RELANZAR", "news.yml"]]);
+  assert.ok(!acc.some((a) => a.tipo === "DESPLEGAR"));
+});
+
+test("watchdog: FALLA del smoke es WATCHDOG_SMOKE aunque también falle un proceso", () => {
+  const log = "FALLA  Hechos de importancia (SMV): última lectura hace 34 h (x)\nFALLA  Pruebas completas (smoke): Command failed: node scripts/smoke.js";
+  assert.equal(clasificarFallo({ workflowPath: "watchdog.yml", stepName: PASO_WATCHDOG, logTail: log }), "WATCHDOG_SMOKE");
+  assert.equal(clasificarWatchdog(log)[0].codigo, "WATCHDOG_SMOKE");
+});
+
+test("watchdog: «Error fatal en smoke test» cuenta como fallo del smoke aunque el log diga ECONNRESET", () => {
+  const log = "Error fatal en smoke test: TypeError: fetch failed\n  [cause]: Error: read ECONNRESET";
+  assert.equal(clasificarFallo({ workflowPath: "watchdog.yml", stepName: PASO_WATCHDOG, logTail: log }), "WATCHDOG_SMOKE");
+});
+
+test("watchdog: proceso sin dueño o sin edad, o log sin FALLA, es DESCONOCIDO", () => {
+  assert.equal(clasificarWatchdog("FALLA  Copia de seguridad: última copia de 2026-11-20, hace 40 h")[0].codigo, "DESCONOCIDO");
+  assert.equal(clasificarWatchdog("FALLA  Motor: descartadas: 7.0% (70/1000)")[0].codigo, "DESCONOCIDO");
+  assert.equal(clasificarWatchdog("read ECONNRESET")[0].codigo, "DESCONOCIDO");
 });
 
 test("evaluarStatus: estado viejo y estado al día", () => {

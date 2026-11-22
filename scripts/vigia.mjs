@@ -46,6 +46,20 @@ const LATIDO = new Set([
 const CODIGOS_NEMOTRON = ["SMV_BLOQUEO", "CHOQUE_PUSH", "RED_PASAJERA", "DESCONOCIDO"];
 const PREFIJOS_RUNS = ["SMV_BLOQUEO", "CHOQUE_PUSH", "RED_PASAJERA", "WATCHDOG_SMOKE", "CI_ROJO", "DESCONOCIDO"];
 const CAMPOS_RUNS = "name,workflowName,workflowDatabaseId,conclusion,status,createdAt,databaseId";
+// Procesos del watchdog (nombre del check en scripts/watchdog.js) -> workflow que los reparte.
+// Sin entrada, el proceso no tiene dueño y su fallo se avisa (DESCONOCIDO). La copia de seguridad
+// no tiene dueño a propósito: la hace el Worker, relanzar backup.yml no la arregla.
+const PROCESO_DUENO = [
+  [/^Hechos de importancia \(SMV\)/, "smv.yml"],
+  [/^Cotizaciones de Lima \(SMV\)/, "smv-precios.yml"],
+  [/^Proyecciones diarias/, "timesfm.yml"],
+  [/^Motor:/, "timesfm.yml"],
+  [/^Noticias$/, "news.yml"],
+  [/^Resumen de noticias/, "news.yml"],
+  [/^Datos oficiales/, "official-data.yml"],
+];
+const SMOKE_RE = /FALLA\s+Pruebas completas \(smoke\)|Error fatal en smoke test/;
+const HACE_RE = /hace (\d+(?:[.,]\d+)?) (h|días?)\b/i;
 
 // Token de gh: se pasa solo en el entorno del proceso hijo, nunca en los argumentos.
 const ghConfig = { token: null };
@@ -65,11 +79,48 @@ export function limaParts(instante) {
 
 // ---------- Clasificación determinista (catálogo, sección «Cómo se detecta») ----------
 
+function horasDe(detalle) {
+  const m = String(detalle).match(HACE_RE);
+  if (!m) return null;
+  const n = Number(m[1].replace(",", "."));
+  return /^d/i.test(m[2]) ? n * 24 : n;
+}
+
+// Un fallo del watchdog es WATCHDOG_SMOKE solo si falla el smoke. Si no, cada línea «FALLA  <proceso>: <detalle>»
+// se clasifica por su nombre: SMV -> SMV_BLOQUEO (espera), proceso con dueño y «hace N h» -> DATO_VIEJO,
+// el resto -> DESCONOCIDO. Devuelve una lista (un incidente por proceso que falla).
+export function clasificarWatchdog(logTail) {
+  const lineas = String(logTail ?? "").split(/\r?\n/);
+  if (lineas.some((l) => SMOKE_RE.test(l))) return [{ codigo: "WATCHDOG_SMOKE", clave: "WATCHDOG_SMOKE" }];
+  const procesos = [];
+  for (const l of lineas) {
+    const m = l.match(/FALLA\s+(.+?):\s*(.*)$/);
+    if (m) procesos.push({ proceso: m[1].trim(), detalle: m[2].trim() });
+  }
+  if (!procesos.length) return [{ codigo: "DESCONOCIDO", clave: "DESCONOCIDO:watchdog" }];
+  return procesos.map(({ proceso, detalle }) => {
+    const workflow = PROCESO_DUENO.find(([re]) => re.test(proceso))?.[1];
+    const motivo = `${proceso}: ${detalle}`;
+    if (/SMV/.test(proceso)) {
+      return {
+        codigo: "SMV_BLOQUEO", proceso, workflow, origen: "watchdog", motivo,
+        ageHoras: horasDe(detalle), umbralHoras: /Hechos/.test(proceso) ? 48 : 72,
+        clave: `SMV_BLOQUEO:watchdog:${proceso}`,
+      };
+    }
+    const horas = horasDe(detalle);
+    if (workflow && horas !== null) {
+      return { codigo: "DATO_VIEJO", proceso, workflow, origen: "watchdog", motivo, ageHoras: horas, clave: `DATO_VIEJO:${workflow}` };
+    }
+    return { codigo: "DESCONOCIDO", proceso, motivo, clave: `DESCONOCIDO:watchdog:${proceso}` };
+  });
+}
+
 export function clasificarFallo({ workflowPath = "", stepName = "", logTail = "" } = {}) {
   const wf = nombreArchivo(workflowPath);
   const paso = String(stepName);
   const log = String(logTail);
-  if (wf === "watchdog.yml" && /Comprobar la web/i.test(paso)) return "WATCHDOG_SMOKE";
+  if (wf === "watchdog.yml" && /Comprobar la web/i.test(paso)) return clasificarWatchdog(log)[0].codigo;
   if (wf === "ci.yml") return "CI_ROJO";
   if (/^Guardar/i.test(paso) && /CONFLICT|rejected|non-fast-forward|could not apply/i.test(log)) return "CHOQUE_PUSH";
   if (SMV.has(wf) && /HTTP 418|HTTP 403|fetch failed|respuesta inesperada de la SMV/i.test(log)) return "SMV_BLOQUEO";
@@ -286,10 +337,13 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
     const est = estados[inc.clave] || {};
     switch (inc.codigo) {
       case "SMV_BLOQUEO": {
-        if (typeof inc.ageHoras === "number" && inc.ageHoras > 72) {
-          aviso(inc, `la SMV lleva ${inc.ageHoras} h sin datos (más de 72 h)`);
+        const umbral = inc.umbralHoras ?? 72;
+        if (typeof inc.ageHoras === "number" && inc.ageHoras > umbral) {
+          aviso(inc, `${inc.proceso ?? "la SMV"} lleva ${inc.ageHoras} h sin datos (más de ${umbral} h)`);
           break;
         }
+        // Detectado por el watchdog: ESPERAR. El plan B del servidor descarga los datos.
+        if (inc.origen === "watchdog") break;
         if (est.relanzadoEn || instante - Date.parse(inc.desde) < 2 * H) break;
         relanzar(inc, inc.workflow, inc.motivo);
         break;
@@ -650,9 +704,34 @@ export function analizarRuns(runs, ahora = new Date()) {
   const ultimos = new Map();
   for (const r of recientes) if (!ultimos.has(r.wf)) ultimos.set(r.wf, r);
   const wd = runs.filter((r) => r.wf === "watchdog.yml" && r.status === "completed").sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
-  let fallosSeguidos = 0;
-  for (const r of wd) { if (!esFallo(r)) break; fallosSeguidos += 1; }
-  return { recientes, enCurso, ultimos, fallosSeguidos, watchdogFallidos: wd.filter(esFallo) };
+  return { recientes, enCurso, ultimos, watchdogCompletados: wd, watchdogFallidos: wd.filter(esFallo) };
+}
+
+// True si la ejecución fallida del watchdog falló en el smoke (y no solo en un proceso).
+async function esFalloDeSmoke(run) {
+  try {
+    const d = await detalleFallo(run);
+    return clasificarWatchdog(d.logTail)[0].codigo === "WATCHDOG_SMOKE";
+  } catch {
+    return false; // ante la duda, no contar: no se despliega ni se vuelve atrás por esto
+  }
+}
+
+// Fallos seguidos del smoke, contando desde la ejecución más nueva (máximo `max` comprobaciones).
+async function smokeSeguidos(corridas, max = 2) {
+  let n = 0;
+  for (const r of corridas.slice(0, max)) {
+    if (!esFallo(r) || !(await esFalloDeSmoke(r))) break;
+    n += 1;
+  }
+  return n;
+}
+
+// Fallos del smoke entre las ejecuciones fallidas dadas (máximo `max` comprobaciones).
+async function contarSmoke(fallidas, max = 6) {
+  let n = 0;
+  for (const r of fallidas.slice(0, max)) if (await esFalloDeSmoke(r)) n += 1;
+  return n;
 }
 
 async function detalleFallo(run) {
@@ -690,31 +769,47 @@ async function pasada(ahora, { seco, cfg }) {
   const analisis = analizarRuns(runs, ahora);
   const incidentes = [];
 
+  const memoriaPrevia = cargarMemoria();
   for (const [wf, run] of analisis.ultimos) {
     if (!esFallo(run)) continue;
     let detalle = { paso: "", jobName: "", logTail: "" };
     try { detalle = await detalleFallo(run); } catch (e) { fallidas.push(`log de ${wf}`); }
+    const motivoBase = `${wf} falló en «${detalle.paso || "paso desconocido"}» (ejecución ${run.databaseId})`;
+
+    if (wf === "watchdog.yml" && /Comprobar la web/i.test(detalle.paso)) {
+      // El watchdog se clasifica por el smoke o por el proceso que falla, nunca por el paso entero.
+      for (const d of clasificarWatchdog(detalle.logTail)) {
+        const ageHoras = d.ageHoras ?? (d.codigo === "SMV_BLOQUEO" && /Cotizaciones/.test(d.proceso) ? status?.smv?.ageHours : undefined);
+        incidentes.push({
+          ...d, ageHoras, workflow: d.workflow, runId: run.databaseId, desde: run.createdAt,
+          paso: detalle.paso, logTail: detalle.logTail, via: "reglas",
+          motivo: d.motivo ? `${d.motivo} (watchdog, ejecución ${run.databaseId})` : `${motivoBase}; smoke`,
+        });
+      }
+      continue;
+    }
+
     let codigo = clasificarFallo({ workflowPath: wf, stepName: detalle.paso, logTail: detalle.logTail });
     let via = "reglas";
     if (codigo === "DESCONOCIDO" && cfg.apiKey) {
       const r = await clasificarConNemotron({ workflow: wf, paso: detalle.paso, logTail: detalle.logTail }, { apiKey: cfg.apiKey, modelo: cfg.modelo });
       if (r) { codigo = r.codigo; via = `Nemotron ${r.modelo} (${r.ms} ms, confianza ${r.confianza ?? 0})`; }
     }
-    const base = { codigo, workflow: wf, runId: run.databaseId, desde: run.createdAt, paso: detalle.paso, logTail: detalle.logTail };
-    const clave = codigo === "WATCHDOG_SMOKE" ? "WATCHDOG_SMOKE" : `${codigo}:${wf}:${run.databaseId}`;
+    const clave = `${codigo}:${wf}:${run.databaseId}`;
     incidentes.push({
-      ...base, clave, via,
-      motivo: `${wf} falló en «${detalle.paso || "paso desconocido"}» (ejecución ${run.databaseId}); clasificado por ${via}`,
+      codigo, workflow: wf, runId: run.databaseId, desde: run.createdAt, paso: detalle.paso, logTail: detalle.logTail,
+      clave, via, motivo: `${motivoBase}; clasificado por ${via}`,
       ...(codigo === "SMV_BLOQUEO" ? { ageHoras: status?.smv?.ageHours } : {}),
-      ...(codigo === "WATCHDOG_SMOKE" ? { fallosSeguidos: analisis.fallosSeguidos } : {}),
     });
   }
 
-  const memoriaPrevia = cargarMemoria();
-  if (incidentes.some((i) => i.codigo === "WATCHDOG_SMOKE")) {
+  const smoke = incidentes.find((i) => i.codigo === "WATCHDOG_SMOKE");
+  if (smoke) {
+    smoke.fallosSeguidos = await smokeSeguidos(analisis.watchdogCompletados);
     const desde = memoriaPrevia.incidentes?.WATCHDOG_SMOKE?.desplegadoEn;
-    const inc = incidentes.find((i) => i.codigo === "WATCHDOG_SMOKE");
-    inc.fallosTrasDespliegue = desde ? analisis.watchdogFallidos.filter((r) => Date.parse(r.createdAt) > Date.parse(desde)).length : 0;
+    smoke.fallosTrasDespliegue = desde
+      ? await contarSmoke(analisis.watchdogFallidos.filter((r) => Date.parse(r.createdAt) > Date.parse(desde)))
+      : 0;
   }
 
   if (status) {

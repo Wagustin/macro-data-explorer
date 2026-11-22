@@ -65,7 +65,9 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
   gh api repos/Wagustin/macro-data-explorer/actions/jobs/<job-id>/logs | grep -E "HTTP 418|HTTP 403|fetch failed|respuesta inesperada"
   curl -s https://perdata.site/api/status | jq '.smv.ageHours'
   ```
-- **Directiva**: ESPERAR 2 h y RELANZAR (máx. 2/día). Si `/api/status` marca `smv` con `ageHours` > 72, AVISAR. El plan B (descargar desde el servidor) ya es automático para cotizaciones y hechos de importancia: ver sección 6. El vigía no lo ejecuta.
+- **Directiva**: si el origen es `smv.yml` o `smv-precios.yml` (log del propio workflow): ESPERAR 2 h y RELANZAR (máx. 2/día). Si `/api/status` marca `smv` con `ageHours` > 72, AVISAR.
+- **Origen watchdog** (`FALLA  Hechos de importancia (SMV): última lectura hace 34 h`): ESPERAR, no relanzar. AVISAR solo si el dato pasa de 48 h (hechos) o de 72 h (cotizaciones).
+- El plan B (descargar desde el servidor) ya es automático para cotizaciones (`scripts/smv-plan-b.sh`) y hechos de importancia (`scripts/smv-plan-b-hechos.sh`): ver sección 6. El vigía no lo ejecuta.
 
 ### CHOQUE_PUSH
 
@@ -88,11 +90,12 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
   ```
 - **Directiva**: RELANZAR una vez tras 30 min. Si vuelve a fallar con lo mismo, ESPERAR; al tercer fallo del día, AVISAR.
 
-> **Precedencia**: un fallo de `watchdog.yml` en «Comprobar la web…» es siempre WATCHDOG_SMOKE, aunque el log diga ECONNRESET. RED_PASAJERA aplica a los workflows de datos.
+> **Precedencia**: si el log del watchdog trae «FALLA  Pruebas completas (smoke)» o «Error fatal en smoke test», es WATCHDOG_SMOKE aunque también falle un proceso o el log diga ECONNRESET. Si no, cada «FALLA  <proceso>» se clasifica por el proceso (SMV_BLOQUEO o DATO_VIEJO, ver abajo). RED_PASAJERA aplica a los workflows de datos.
 
 ### WATCHDOG_SMOKE
 
-- **Detección**: `watchdog.yml` falla en el paso «Comprobar la web y los procesos diarios» (el catálogo lo nombra «Comprobar la web…»).
+- **Detección**: `watchdog.yml` falla en el paso «Comprobar la web y los procesos diarios» y el log trae `FALLA  Pruebas completas (smoke)` o `Error fatal en smoke test`. Solo cuando falla el smoke; si falla un proceso, se clasifica por el proceso.
+- **No es WATCHDOG_SMOKE**: `FALLA  Hechos de importancia (SMV): última lectura hace 34 h` con `OK     Pruebas completas (smoke): TOTAL: 165 pruebas | 165 OK | 0 FAIL`. Eso es SMV_BLOQUEO (ver arriba) y nunca DESPLEGAR.
 - **Síntomas**: el 20-nov-2026, 20:42 UTC (run 44813708750): `FALLA Pruebas completas (smoke): Command failed: node scripts/smoke.js --base https://perdata.site` y `Error fatal en smoke test: TypeError: fetch failed` con `[cause]: Error: read ECONNRESET`.
 - **Comprobar a mano**:
   ```bash
@@ -123,6 +126,7 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
   date -u +%F
   ```
 - **Relación bloque → workflow**: `forecasts` → `timesfm.yml`; `news` → `news.yml`; `smv` → `smv-precios.yml`; `bcrp` y `eia` → `official-data.yml`; `d1Sync` → `d1-backfill.yml`.
+- **Procesos del watchdog** (`FALLA  <proceso>: … hace N h`): «Proyecciones diarias» y «Motor» → `timesfm.yml`; «Noticias» y «Resumen de noticias (IA)» → `news.yml`; «Datos oficiales» → `official-data.yml`; «Hechos de importancia (SMV)» → `smv.yml` (SMV_BLOQUEO, ver arriba). «Copia de seguridad», «Boletín» y el resto no tienen dueño: solo AVISAR.
 - **Directiva**: RELANZAR el workflow dueño. Si sigue viejo 6 h después, AVISAR. Backup viejo (`backup.fecha`): solo AVISAR, porque la copia diaria la hace el Worker (`runBackup`) y relanzar `backup.yml` no la arregla.
 
 ### PAGINA_CAIDA
