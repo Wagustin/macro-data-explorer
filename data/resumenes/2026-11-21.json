@@ -1,11 +1,11 @@
 {
- "actualizado": "2026-11-22T01:28:20.031Z",
+ "actualizado": "2026-11-22T04:41:43.325Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "nota": "Notas redactadas por PerData Engine con ayuda de IA a partir de titulares públicos",
  "historias": [
   {
    "titulo": "BCRP eleva límite de inversión de AFP en el exterior",
-   "nota": "El Banco Central de Reserva aumentó el techo que permite a las administradoras de fondos de pensiones colocar recursos fuera del país. La medida busca diversificar las carteras y mejorar la rentabilidad de los aportes.",
+   "nota": "El Banco Central de Reserva aumentó el tope que pueden destinar las administradoras de fondos de pensiones a activos fuera del país. La medida busca diversificar las carteras y reducir la concentración en instrumentos locales.",
    "tema": "Dólar y BCRP",
    "empresas": [],
    "fuentes": [
@@ -13,7 +13,7 @@
      "titulo": "BCRP elevó el límite de inversión de las AFP en el exterior",
      "fuente": "Gestión",
      "url": "https://gestion.pe/peru/bcrp-elevo-a-515-el-limite-de-inversion-de-las-afp-en-el-exterior-noticia/",
-     "fecha": "2026-11-21T21:32:53.000Z"
+     "fecha": "2026-11-22T02:32:00.000Z"
     }
    ],
    "revision": {
@@ -23,8 +23,8 @@
    }
   },
   {
-   "titulo": "Inversión privada crece por quinto trimestre a doble dígito",
-   "nota": "La formación bruta de capital fijo privado se expandió 13,6 % en el tercer trimestre de 2026, aunque a menor ritmo que en periodos anteriores. El dato confirma la recuperación sostenida del gasto empresarial.",
+   "titulo": "Inversión privada crece 13,6% en tercer trimestre de 2026",
+   "nota": "El BCR reportó que la formación bruta de capital fijo privado se expandió a doble dígito por quinto trimestre consecutivo, aunque a menor ritmo que periodos anteriores. El dato refleja dinamismo pese a la incertidumbre macroeconómica.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
@@ -48,9 +48,9 @@
    }
   },
   {
-   "titulo": "Exportaciones peruanas suben 11,2 % en setiembre",
-   "nota": "Los envíos al exterior acumularon un alza interanual de dos dígitos impulsada por mayores volúmenes de minerales y productos agroindustriales. El resultado refuerza el superávit comercial.",
-   "tema": "Economía y fiscal",
+   "titulo": "Exportaciones peruanas suben 11,2% en setiembre según BCR",
+   "nota": "El ente emisor informó que los envíos al exterior acumularon un alza interanual de dos dígitos en el noveno mes del año. El resultado fue impulsado por mayores volúmenes y precios de productos tradicionales.",
+   "tema": "Dólar y BCRP",
    "empresas": [],
    "fuentes": [
     {
@@ -67,22 +67,24 @@
    }
   },
   {
-   "titulo": "MEF aprueba endeudamiento por S/ 5.700 millones para la Fuerza Aérea",
-   "nota": "El Ministerio de Economía autorizó la emisión de bonos soberanos por ese monto para financiar un proyecto de modernización de la Fuerza Aérea del Perú.",
+   "titulo": "ProInversión subasta nueve terrenos de Petroperú por US$ 9,6 millones",
+   "nota": "La agencia de promoción de la inversión privada lanzó la tercera licitación de inmuebles de la petrolera estatal en Piura. Los recursos obtenidos se destinarán a reducir el endeudamiento de la empresa.",
    "tema": "Economía y fiscal",
-   "empresas": [],
+   "empresas": [
+    "PETROBC1"
+   ],
    "fuentes": [
     {
-     "titulo": "MEF aprueba endeudamiento por S/ 5,700 millones para financiar proyecto de la Fuerza Aérea",
+     "titulo": "ProInversión subastará nueve terrenos de Petroperú valorizados en US$ 9.6 millones",
      "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/empresas/mef-aprueba-endeudamiento-por-s-5700-millones-para-financiar-proyecto-de-la-fuerza-aerea-noticia/",
-     "fecha": "2026-11-21T21:22:59.000Z"
+     "url": "https://gestion.pe/economia/empresas/proinversion-subastara-nueve-terrenos-de-petroperu-valorizados-en-us-96-millones-noticia/",
+     "fecha": "2026-11-21T22:15:10.000Z"
     },
     {
-     "titulo": "Gobierno aprueba emisión de bonos soberanos por S/ 5,700 millones para financiar proyecto de la Fuerza Aérea del Perú",
-     "fuente": "El Comercio Economía",
-     "url": "https://elcomercio.pe/politica/actualidad/gobierno-aprueba-emision-de-bonos-soberanos-por-s-5700-millones-para-financiar-proyecto-de-la-fuerza-aerea-del-peru-ultimas-noticia/",
-     "fecha": "2026-11-20T20:51:36.000Z"
+     "titulo": "Lanzan tercera subasta de Petroperú sobre 9 inmuebles en Piura por US$ 9.6 millones",
+     "fuente": "Agencia Andina",
+     "url": "https://andina.pe/agencia/noticia-lanzan-tercera-subasta-petroperu-sobre-9-inmuebles-piura-96-millones-1100932.aspx",
+     "fecha": "2026-11-21T16:25:31.000Z"
     }
    ],
    "revision": {
@@ -92,17 +94,11 @@
    }
   },
   {
-   "titulo": "Congreso aprueba Presupuesto Público 2027 por S/ 266.506 millones",
-   "nota": "El Parlamento dio luz verde al plan de gasto para el próximo año, que prioriza salud, educación y reactivación económica. La aprobación se logró tras acuerdos entre el Ejecutivo y el Legislativo.",
+   "titulo": "Congreso aprueba Presupuesto Público 2027 por más de S/ 266 mil millones",
+   "nota": "El Parlamento dio luz verde al plan de gasto para el próximo ejercicio fiscal tras un acuerdo entre el Ejecutivo y el Legislativo. La cifra representa un incremento respecto al presupuesto vigente y prioriza inversión en infraestructura y programas sociales.",
    "tema": "Economía y fiscal",
    "empresas": [],
    "fuentes": [
-    {
-     "titulo": "Congreso aprobó Ley del Presupuesto Público con S/266.506 millones 316 mil 735: Las prioridades",
-     "fuente": "Infobae Perú",
-     "url": "https://www.infobae.com/peru/2026/11/21/congreso-aprobo-ley-del-presupuesto-publico-con-s266506-millones-316-mil-735-las-prioridades/",
-     "fecha": "2026-11-21T12:20:00.000Z"
-    },
     {
      "titulo": "Congreso aprueba Presupuesto Público 2027 por más de S/266 mil millones",
      "fuente": "El Comercio Economía",
@@ -123,24 +119,22 @@
    }
   },
   {
-   "titulo": "ProInversión subastará nueve terrenos de Petroperú por US$ 9,6 millones",
-   "nota": "La agencia de promoción de la inversión lanzó la tercera subasta de inmuebles de la petrolera estatal en Piura, valorizados en casi diez millones de dólares. Los recursos se destinarán a reducir el endeudamiento de la empresa.",
-   "tema": "Bolsa y empresas",
-   "empresas": [
-    "PETROBC1"
-   ],
+   "titulo": "MEF autoriza endeudamiento de S/ 5.700 millones para proyecto de la Fuerza Aérea",
+   "nota": "El Ministerio de Economía aprobó la emisión de bonos soberanos para financiar la adquisición de aeronaves y equipos. La operación se enmarca en la modernización de la capacidad de defensa nacional.",
+   "tema": "Economía y fiscal",
+   "empresas": [],
    "fuentes": [
     {
-     "titulo": "ProInversión subastará nueve terrenos de Petroperú valorizados en US$ 9.6 millones",
+     "titulo": "MEF aprueba endeudamiento por S/ 5,700 millones para financiar proyecto de la Fuerza Aérea",
      "fuente": "Gestión",
-     "url": "https://gestion.pe/economia/empresas/proinversion-subastara-nueve-terrenos-de-petroperu-valorizados-en-us-96-millones-noticia/",
-     "fecha": "2026-11-21T22:15:10.000Z"
+     "url": "https://gestion.pe/economia/empresas/mef-aprueba-endeudamiento-por-s-5700-millones-para-financiar-proyecto-de-la-fuerza-aerea-noticia/",
+     "fecha": "2026-11-21T21:22:59.000Z"
     },
     {
-     "titulo": "Lanzan tercera subasta de Petroperú sobre 9 inmuebles en Piura por US$ 9.6 millones",
-     "fuente": "Agencia Andina",
-     "url": "https://andina.pe/agencia/noticia-lanzan-tercera-subasta-petroperu-sobre-9-inmuebles-piura-96-millones-1100932.aspx",
-     "fecha": "2026-11-21T16:25:31.000Z"
+     "titulo": "Gobierno aprueba emisión de bonos soberanos por S/ 5,700 millones para financiar proyecto de la Fuerza Aérea del Perú",
+     "fuente": "El Comercio Economía",
+     "url": "https://elcomercio.pe/politica/actualidad/gobierno-aprueba-emision-de-bonos-soberanos-por-s-5700-millones-para-financiar-proyecto-de-la-fuerza-aerea-del-peru-ultimas-noticia/",
+     "fecha": "2026-11-20T20:51:36.000Z"
     }
    ],
    "revision": {

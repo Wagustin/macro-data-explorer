@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-22T01:18:02.769Z",
+ "actualizado": "2026-11-22T04:31:32.001Z",
  "modelo": "nvidia/nemotron-3-ultra-550b-a55b",
  "items": {
   "el_comercio-46031d3838": {
@@ -150,12 +150,6 @@
    "sentimiento": "NEUTRO",
    "empresas": []
   },
-  "andina-a433ce1335": {
-   "relevancia": "ALTA",
-   "tema": "Economía y fiscal",
-   "sentimiento": "POSITIVO",
-   "empresas": []
-  },
   "el_comercio-dfae54e1fa": {
    "relevancia": "BAJA",
    "tema": "Economía y fiscal",
@@ -171,12 +165,6 @@
   "gestion-53ba9181ff": {
    "relevancia": "ALTA",
    "tema": "Economía y fiscal",
-   "sentimiento": "POSITIVO",
-   "empresas": []
-  },
-  "andina-a4d0c70d54": {
-   "relevancia": "ALTA",
-   "tema": "Mundo",
    "sentimiento": "POSITIVO",
    "empresas": []
   },
@@ -450,30 +438,6 @@
    "sentimiento": "NEUTRO",
    "empresas": []
   },
-  "infobae-7b6bb3cd70": {
-   "relevancia": "MEDIA",
-   "tema": "Energía",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
-  "infobae-c1d6cf6d4a": {
-   "relevancia": "MEDIA",
-   "tema": "Energía",
-   "sentimiento": "NEGATIVO",
-   "empresas": []
-  },
-  "infobae-68200b4102": {
-   "relevancia": "MEDIA",
-   "tema": "Energía",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
-  "infobae-a89c9febdb": {
-   "relevancia": "BAJA",
-   "tema": "Energía",
-   "sentimiento": "NEUTRO",
-   "empresas": []
-  },
   "andina-6ecbe40ab6": {
    "relevancia": "BAJA",
    "tema": "Bolsa y empresas",
@@ -674,6 +638,32 @@
    "relevancia": "BAJA",
    "tema": "Economía y fiscal",
    "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "infobae-d21e000355": {
+   "relevancia": "BAJA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "NEUTRO",
+   "empresas": []
+  },
+  "infobae-f67761dbd1": {
+   "relevancia": "BAJA",
+   "tema": "Minería y metales",
+   "sentimiento": "NEGATIVO",
+   "empresas": []
+  },
+  "andina-16517cc124": {
+   "relevancia": "ALTA",
+   "tema": "Energía",
+   "sentimiento": "POSITIVO",
+   "empresas": [
+    "PETROBC1"
+   ]
+  },
+  "rpp-461eda57a2": {
+   "relevancia": "MEDIA",
+   "tema": "Economía y fiscal",
+   "sentimiento": "POSITIVO",
    "empresas": []
   }
  },
@@ -1110,6 +1100,7 @@
   "rpp-aea7c9214e",
   "gestion-3c8d642d43",
   "rpp-ed38030b51",
-  "el_comercio-fe02d91de7"
+  "el_comercio-fe02d91de7",
+  "andina-9bfc948233"
  ]
 }
