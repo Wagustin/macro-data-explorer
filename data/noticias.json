@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-22T17:31:32.035Z",
+  "actualizado": "2026-11-22T19:38:12.388Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,12 +24,12 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 40
+      "items": 37
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 43
+      "items": 44
     },
     "rpp": {
       "nombre": "RPP Noticias",
@@ -39,12 +39,12 @@
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 8
+      "items": 7
     },
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 13
+      "items": 17
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 16
+      "items": 14
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,177 @@
     }
   },
   "noticias": [
+    {
+      "id": "el_comercio-dfae54e1fa",
+      "titulo": "Observatorio de precios de alimentos: consulta cuánto cuesta hoy la canasta básica en Lima",
+      "url": "https://elcomercio.pe/ecdata/mercado-mayorista-canasta-basica-observatorio-de-precios-de-alimentos-mef-midagri-keiko-fujimori-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-22T19:19:22.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-267ec87c8b",
+      "titulo": "Precio del dólar hoy en Perú, domingo 22 de noviembre: revisa el tipo de cambio en bancos y casas de cambio",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/22/precio-del-dolar-hoy-en-peru-domingo-22-de-noviembre-revisa-el-tipo-de-cambio-en-bancos-y-casas-de-cambio-1220541",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-22T19:12:25.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-5ea861a613",
+      "titulo": "Agro Rural “siembra y cosecha agua” para impulsar productividad de la agricultura familiar",
+      "url": "https://andina.pe/agencia/noticia-agro-rural-siembra-y-cosecha-agua-para-impulsar-productividad-de-agricultura-familiar-1101027.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-22T19:11:02.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "infobae-65baf52bee",
+      "titulo": "Los mineros artesanales del sur del Perú convocan una movilización nacional para mañana 23 de noviembre",
+      "url": "https://www.infobae.com/peru/2026/11/22/los-mineros-artesanales-del-sur-del-peru-convocan-una-movilizacion-nacional-para-manana-23-de-noviembre/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-22T18:56:23.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-0875f03456",
+      "titulo": "Deutsche Pharma: el laboratorio peruano detrás de Hirudoid que prepara su expansión a México",
+      "url": "https://gestion.pe/economia/empresas/deutsche-pharma-alista-almacen-al-sur-de-lima-y-va-por-mexico-argentina-y-medio-oriente-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-22T18:35:12.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-612186abdf",
+      "titulo": "Mia Beauty Bar, de Intercorp, ingresó al Jockey Plaza y este es su agresivo plan de expansión",
+      "url": "https://gestion.pe/economia/empresas/mia-beauty-bar-de-la-duena-de-inkafarma-apuesta-por-el-k-beauty-y-alista-nuevas-tiendas-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-22T18:34:26.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-70de0f7ec9",
+      "titulo": "Dueño de Boticas Perú y Kio va por más tras Pastipan: los negocios que evalúa comprar",
+      "url": "https://gestion.pe/economia/empresas/dueno-de-boticas-peru-y-kio-mueve-fichas-en-pastipan-y-ya-evalua-su-proxima-compra-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-22T18:33:30.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-3c60190d4d",
+      "titulo": "Oftalmosalud ‘pone el ojo’ en Arequipa y Tarapoto: el plan tras llegar al tope en San Isidro",
+      "url": "https://gestion.pe/economia/empresas/oftalmosalud-levantara-dos-torres-en-san-isidro-y-abrira-otra-sede-en-arequipa-en-2027-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-22T18:32:40.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-5b6dd291bf",
+      "titulo": "Moody’s prevé solidez crediticia para las empresas peruanas en 2027, pero con una gran excepción",
+      "url": "https://www.infobae.com/peru/2026/11/22/moodys-preve-solidez-crediticia-para-las-empresas-peruanas-en-2027-pero-con-una-gran-excepcion/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-22T18:31:54.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-a4637e8b57",
+      "titulo": "Perú reunirá a expertos de siete países y organismos internacionales de planificación",
+      "url": "https://andina.pe/agencia/noticia-peru-reunira-a-expertos-siete-paises-y-organismos-internacionales-planificacion-1101024.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-22T18:27:56.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "la_republica-7cac82624c",
+      "titulo": "Congreso aprueba Presupuesto 2027 sin CTS completa para CAS ni pase a régimen 728",
+      "url": "https://larepublica.pe/economia/2026/11/22/congreso-aprueba-presupuesto-2027-sin-cts-completa-para-cas-ni-pase-a-regimen-728-1864346",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-22T18:26:23.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-0e9373294a",
+      "titulo": "¿Comisión por flujo o saldo? Qué deben evaluar los afiliados de las AFP antes de elegir",
+      "url": "https://www.infobae.com/peru/2026/11/22/comision-por-flujo-o-saldo-que-deben-evaluar-los-afiliados-de-las-afp-antes-de-elegir/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-22T18:16:46.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-0e942eaf93",
+      "titulo": "El intercambio entre Perú y China hasta septiembre prácticamente ha igualado todo lo comerciado en 2025",
+      "url": "https://www.infobae.com/peru/2026/11/22/el-intercambio-entre-peru-y-china-hasta-septiembre-practicamente-ha-igualado-todo-lo-comerciado-en-2025/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-22T18:15:07.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-c072ef1e1e",
+      "titulo": "Perú logra superávit anualizado de cuenta corriente de 3.9% del PBI al 3er trimestre 2026",
+      "url": "https://andina.pe/agencia/noticia-peru-logra-superavit-anualizado-cuenta-corriente-39-del-pbi-al-3er-trimestre-2026-1101021.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-22T18:02:33.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-80e324c6fc",
+      "titulo": "Los sectores podrían captar nuevos negocios de empresas extranjeras con el nearshoring",
+      "url": "https://gestion.pe/economia/empresas/nearshoring-que-sectores-podrian-captar-nuevos-negocios-de-empresas-extranjeras-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-22T17:56:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-fb6801f678",
+      "titulo": "Riesgo país de Argentina supera los 1.000 puntos después de 13 meses",
+      "url": "https://elcomercio.pe/economia/mercados/riesgo-pais-de-argentina-supera-los-1000-puntos-despues-de-13-meses-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-22T17:43:35.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-0713465006",
+      "titulo": "Un muerto, tres heridos y varios desaparecidos en ataque ruso a edificio en región de Kiev",
+      "url": "https://rpp.pe/mundo/rusia/un-muerto-tres-heridos-y-varios-desaparecidos-en-ataque-ruso-a-edificio-en-region-de-kiev-noticia-1719152",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-22T17:41:51.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-ddefbd7a84",
+      "titulo": "Mineros artesanales anuncian movilización nacional este 23 de noviembre para exigir ampliación del Reinfo",
+      "url": "https://rpp.pe/peru/actualidad/mineros-artesanales-anuncian-movilizacion-nacional-este-23-de-noviembre-para-exigir-ampliacion-del-reinfo-noticia-1719142",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-22T17:39:21.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-8e4ac260b6",
+      "titulo": "APEC 2026: ¿cómo puede el Perú diversificar sus exportaciones y ganar terreno en Asia?",
+      "url": "https://larepublica.pe/economia/2026/11/21/puerto-de-chancay-como-puede-aprovechar-el-peru-su-nueva-conexion-comercial-con-china-1340430",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-22T17:34:12.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "rpp-acf380ef78",
       "titulo": "Donald Trump dice que será \"muy difícil\" trabajar con el demócrata Schumer si recupera el liderazgo del Senado",
@@ -80,15 +251,6 @@
       "fecha_iso": "2026-11-22T17:10:10.000Z",
       "categoria": "Otros",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "la_republica-267ec87c8b",
-      "titulo": "Precio del dólar hoy en Perú, domingo 22 de noviembre: revisa el tipo de cambio en bancos y casas de cambio",
-      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/22/precio-del-dolar-hoy-en-peru-domingo-22-de-noviembre-revisa-el-tipo-de-cambio-en-bancos-y-casas-de-cambio-1220541",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-22T17:04:10.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "andina-f440e2e6b2",
@@ -227,7 +389,7 @@
     },
     {
       "id": "el_comercio-65c2070b8a",
-      "titulo": "Precio del dólar en Perú hoy, domingo 22 de noviembre: cuál es el tipo de cambio del día",
+      "titulo": "Precio del dólar en Perú hoy, domingo 22 de noviembre: ¿cuál es la cotización del día?",
       "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-2026-cuanto-esta-el-dolar-este-domingo-22-de-noviembre-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-22T13:39:56.000Z",
@@ -242,15 +404,6 @@
       "fecha_iso": "2026-11-22T13:33:48.000Z",
       "categoria": "Otros",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "infobae-5b6dd291bf",
-      "titulo": "Moody’s espera solidez crediticia en las empresas peruanas para 2027, pero con una gran excepción",
-      "url": "https://www.infobae.com/peru/2026/11/22/moodys-preve-solidez-crediticia-para-las-empresas-peruanas-en-2027-pero-con-una-gran-excepcion/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-22T13:31:40.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "el_comercio-d9a4e6e6ca",
@@ -268,24 +421,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-22T13:00:00.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-80e324c6fc",
-      "titulo": "Los sectores podrían captar nuevos negocios de empresas extranjeras con el nearshoring",
-      "url": "https://gestion.pe/economia/empresas/nearshoring-que-sectores-podrian-captar-nuevos-negocios-de-empresas-extranjeras-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-22T12:56:10.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-f74a962b41",
-      "titulo": "Papa León XIV pide a los gobernantes de países en guerra que se comprometan a encontrar la paz",
-      "url": "https://rpp.pe/mundo/actualidad/papa-leon-xiv-pide-a-los-gobernantes-de-paises-en-guerra-que-se-comprometan-a-encontrar-la-paz-noticia-1719111",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-22T12:33:16.000Z",
-      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     },
     {
@@ -325,15 +460,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-0875f03456",
-      "titulo": "Deutsche Pharma: el laboratorio peruano detrás de Hirudoid que prepara su expansión a México",
-      "url": "https://gestion.pe/economia/empresas/deutsche-pharma-alista-almacen-al-sur-de-lima-y-va-por-mexico-argentina-y-medio-oriente-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-22T11:00:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-c4476e68a4",
       "titulo": "Fenómeno El Niño impacta en agroindustria, pesca y consumo: ¿qué empresas reportan efectos?",
       "url": "https://gestion.pe/economia/empresas/el-nino-impacta-en-agroindustria-pesca-y-consumo-masivo-que-empresas-reportan-menores-ventas-noticia/",
@@ -368,15 +494,6 @@
       "fecha_iso": "2026-11-22T06:00:00.000Z",
       "categoria": "Bolsa y empresas",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "rpp-0fe7041743",
-      "titulo": "EE. UU. levanta alerta de seguridad en Sinaloa tras detención de 'El Chapo Isidro '",
-      "url": "https://rpp.pe/mundo/mexico/ee-uu-levanta-alerta-de-seguridad-en-sinaloa-tras-detencion-de-el-chapo-isidro-noticia-1719103",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-22T04:53:53.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "gestion-12cc3d8b25",
@@ -431,33 +548,6 @@
       "fecha_iso": "2026-11-22T02:00:00.000Z",
       "categoria": "Otros",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-612186abdf",
-      "titulo": "Mia Beauty Bar, de Intercorp, ingresó al Jockey Plaza y este es su agresivo plan de expansión",
-      "url": "https://gestion.pe/economia/empresas/mia-beauty-bar-de-la-duena-de-inkafarma-apuesta-por-el-k-beauty-y-alista-nuevas-tiendas-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-22T01:47:34.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-70de0f7ec9",
-      "titulo": "Dueño de Boticas Perú y Kio va por más tras Pastipan: los negocios que evalúa comprar",
-      "url": "https://gestion.pe/economia/empresas/dueno-de-boticas-peru-y-kio-mueve-fichas-en-pastipan-y-ya-evalua-su-proxima-compra-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-22T01:47:08.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-3c60190d4d",
-      "titulo": "Oftalmosalud ‘pone el ojo’ en Arequipa y Tarapoto: el plan tras llegar al tope en San Isidro",
-      "url": "https://gestion.pe/economia/empresas/oftalmosalud-levantara-dos-torres-en-san-isidro-y-abrira-otra-sede-en-arequipa-en-2027-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-22T01:46:33.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "andina-191b0e171f",
@@ -550,21 +640,21 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-c21674daa7",
-      "titulo": "Cuatro herramientas para ordenar las finanzas de tu emprendimiento",
-      "url": "https://andina.pe/agencia/noticia-cuatro-herramientas-para-ordenar-las-finanzas-tu-emprendimiento-1100948.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-21T20:00:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "andina-ba71e190ca",
       "titulo": "Proponen modelo para destrabe de proyectos de construcción y recuperar obras paralizadas",
       "url": "https://andina.pe/agencia/noticia-proponen-modelo-para-destrabe-proyectos-construccion-y-recuperar-obras-paralizadas-1100952.aspx",
       "fuente": "Agencia Andina",
       "fecha_iso": "2026-11-21T20:00:00.000Z",
       "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "andina-c21674daa7",
+      "titulo": "Cuatro herramientas para ordenar las finanzas de tu emprendimiento",
+      "url": "https://andina.pe/agencia/noticia-cuatro-herramientas-para-ordenar-las-finanzas-tu-emprendimiento-1100948.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-21T20:00:00.000Z",
+      "categoria": "Otros",
       "semaforo": "VERDE"
     },
     {
@@ -712,15 +802,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "andina-ad1e583146",
-      "titulo": "Gobierno activa nuevas garantías y facilidades de pago para proteger a mypes ante El Niño",
-      "url": "https://andina.pe/agencia/noticia-gobierno-activa-nuevas-garantias-y-facilidades-pago-para-proteger-a-mypes-ante-nino-1100929.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-21T16:00:04.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "mef-d438658482",
       "titulo": "El Gobierno pone en marcha nuevas garantías y facilidades de pago para proteger a las MYPE ante el Fenómeno El Niño",
       "url": "https://www.gob.pe/institucion/mef/noticias/1477860-el-gobierno-pone-en-marcha-nuevas-garantias-y-facilidades-de-pago-para-proteger-a-las-mype-ante-el-fenomeno-el-nino",
@@ -737,15 +818,6 @@
       "fecha_iso": "2026-11-21T15:00:00.000Z",
       "categoria": "Otros",
       "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-f8ce5074ef",
-      "titulo": "Cuatro de cada 10 peruanos tiene una fuente de ingreso extra a su empleo principal",
-      "url": "https://andina.pe/agencia/noticia-cuatro-cada-10-peruanos-tiene-una-fuente-ingreso-extra-a-su-empleo-principal-1100780.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-21T14:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
     },
     {
       "id": "gestion-7d661a9608",
@@ -934,78 +1006,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-20T20:51:36.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-dbd3fb7dbf",
-      "titulo": "Precio del dólar hoy en Perú, viernes 20 de noviembre: consulta el tipo de cambio para compra y venta",
-      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/19/precio-del-dolar-hoy-en-peru-viernes-20-de-noviembre-consulta-el-tipo-de-cambio-para-compra-y-venta-793592",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-20T20:30:15.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-1f4e59ffae",
-      "titulo": "Comisión de Economía aprueba dictamen que actualiza la priorización de Obras por Impuestos",
-      "url": "https://elcomercio.pe/economia/peru/comision-de-economia-aprueba-dictamen-que-actualiza-la-priorizacion-de-obras-por-impuestos-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-20T20:15:17.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-bd42c4a597",
-      "titulo": "Dos exempleados de Nvidia acusaron a Jensen Huang de amenazarlos e intimidarlos hace dos décadas",
-      "url": "https://www.bloomberglinea.com/negocios/dos-exempleados-de-nvidia-acusaron-a-jensen-huang-de-amenazarlos-e-intimidarlos-hace-dos-decadas/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-20T20:06:17.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-4352381606",
-      "titulo": "Precio del dólar en Perú del viernes 20 de noviembre: cuál fue el cierre del tipo de cambio",
-      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-a-cuanto-esta-el-dolar-este-viernes-20-de-noviembre-cierre-del-tipo-de-cambio-segun-el-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-20T19:50:10.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-d99c026b2d",
-      "titulo": "Anthropic llegó a Wall Street y a ByMA: las claves del CEDEAR para inversores argentinos",
-      "url": "https://www.bloomberglinea.com/latinoamerica/argentina/anthropic-llego-a-wall-street-y-a-byma-las-claves-del-cedear-para-inversores-argentinos/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-20T19:50:09.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-dfae54e1fa",
-      "titulo": "Observatorio de precios de alimentos: consulta cuánto cuesta hoy la canasta básica en Lima",
-      "url": "https://elcomercio.pe/ecdata/mercado-mayorista-canasta-basica-observatorio-de-precios-de-alimentos-mef-midagri-keiko-fujimori-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-20T19:46:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-22defe8202",
-      "titulo": "El oro se desploma un 38% desde su récord de enero y así golpea a las mineras",
-      "url": "https://www.bloomberglinea.com/mercados/el-oro-se-desploma-un-38-desde-su-record-de-enero-y-asi-golpea-a-las-mineras/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-20T19:35:00.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-53ba9181ff",
-      "titulo": "Chancay, Lima y Callao: ATU presentó plan logístico al 2046 para mejorar transporte de carga",
-      "url": "https://gestion.pe/economia/chancay-lima-y-callao-atu-presento-plan-logistico-al-2046-para-mejorar-transporte-de-carga-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-20T19:33:32.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     }
   ]
