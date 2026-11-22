@@ -587,3 +587,18 @@ test("registrarPasada cuenta las pasadas del día y los incidentes distintos", (
   assert.equal(m2.pasadasDia, 2);
   assert.deepEqual(m2.incidentesDia, { PAGINA_CAIDA: "PAGINA_CAIDA" });
 });
+
+test("de noche, un VOLVER_ATRAS que falla también se envía (la web puede seguir caída)", async () => {
+  const t = new Date("2026-11-20T07:00:00Z"); // 02:00 Lima
+  const memoria = { contadores: { relanzar: {}, desplegar: 0, volverAtras: 0 }, incidentes: {}, avisos: {}, historial: [], silencio: [] };
+  const acc = [{ tipo: "VOLVER_ATRAS", codigo: "PAGINA_CAIDA", claves: [], incidente: {} }];
+  const enviados = [];
+  const notas = await ejecutar(acc, memoria, {
+    seco: false, ahora: t, gh: async () => { throw Object.assign(new Error("HTTP 403"), { stderr: "HTTP 403" }); },
+    avisar: async (a) => { enviados.push(a.motivo); return { canal: "telegram" }; },
+  });
+  assert.ok(notas.some((n) => n.startsWith("VOLVER_ATRAS fallido")));
+  assert.equal(enviados.length, 1);
+  assert.match(enviados[0], /el rollback ha fallado/);
+  assert.deepEqual(memoria.silencio, []);
+});

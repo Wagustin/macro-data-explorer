@@ -739,7 +739,7 @@ export async function ejecutar(acciones, memoria, { seco, ahora = new Date(), gh
       } catch (e) {
         notas.push(`VOLVER_ATRAS fallido: ${errorTexto(e)}`);
         marca(a, `fallido: ${errorTexto(e)}`);
-        pendientes.unshift({ tipo: "AVISAR", codigo: a.codigo, motivo: `el rollback ha fallado (${errorTexto(e)})`, accion: "VOLVER_ATRAS fallido", incidente: a.incidente, claves: a.claves });
+        pendientes.unshift({ tipo: "AVISAR", codigo: a.codigo, motivo: `el rollback ha fallado (${errorTexto(e)})`, accion: "VOLVER_ATRAS fallido", incidente: a.incidente, claves: a.claves, critico: true });
       }
     } else if (a.tipo === "AVISAR") {
       const clave = a.avisoKey ?? a.codigo;
@@ -749,7 +749,7 @@ export async function ejecutar(acciones, memoria, { seco, ahora = new Date(), gh
         marca(a, "suprimido: ya avisado en las últimas 6 h");
         continue;
       }
-      const critico = CRITICOS_SILENCIO.has(a.codigo) || (a.vuelta && volverHecho);
+      const critico = a.critico || CRITICOS_SILENCIO.has(a.codigo) || (a.vuelta && volverHecho);
       if (!critico && enHorasSilencio(ahora)) {
         m.silencio = [...m.silencio.filter((s) => s.clave !== clave), { clave, codigo: a.codigo, motivo: a.motivo, fecha: iso }].slice(-50);
         notas.push(`AVISAR ${a.codigo} en silencio (va en el resumen de las 08:00)`);
