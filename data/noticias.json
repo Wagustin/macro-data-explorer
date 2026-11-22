@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-22T07:31:31.502Z",
+  "actualizado": "2026-11-22T10:31:34.480Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -39,7 +39,7 @@
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 8
+      "items": 9
     },
     "infobae": {
       "nombre": "Infobae Perú",
@@ -63,6 +63,33 @@
     }
   },
   "noticias": [
+    {
+      "id": "andina-f2907065c8",
+      "titulo": "BCR: Inversión privada creció 13.6% en tercer trimestre de 2026",
+      "url": "https://andina.pe/agencia/noticia-bcr-inversion-privada-crecio-136-tercer-trimestre-2026-1100946.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-22T10:30:00.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-80e324c6fc",
+      "titulo": "Los sectores podrían captar nuevos negocios de empresas extranjeras con el nearshoring",
+      "url": "https://gestion.pe/economia/empresas/nearshoring-que-sectores-podrian-captar-nuevos-negocios-de-empresas-extranjeras-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-22T10:16:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-267ec87c8b",
+      "titulo": "Precio del dólar hoy en Perú, domingo 22 de noviembre: revisa el tipo de cambio en bancos y casas de cambio",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/22/precio-del-dolar-hoy-en-peru-domingo-22-de-noviembre-revisa-el-tipo-de-cambio-en-bancos-y-casas-de-cambio-1220541",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-22T09:30:00.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "andina-3f91d1303c",
       "titulo": "Mujeres lideran más del 60% de nuevos negocios en comercio y alimentación",
@@ -271,21 +298,21 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-ba71e190ca",
-      "titulo": "Proponen modelo para destrabe de proyectos de construcción y recuperar obras paralizadas",
-      "url": "https://andina.pe/agencia/noticia-proponen-modelo-para-destrabe-proyectos-construccion-y-recuperar-obras-paralizadas-1100952.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-21T20:00:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "andina-c21674daa7",
       "titulo": "Cuatro herramientas para ordenar las finanzas de tu emprendimiento",
       "url": "https://andina.pe/agencia/noticia-cuatro-herramientas-para-ordenar-las-finanzas-tu-emprendimiento-1100948.aspx",
       "fuente": "Agencia Andina",
       "fecha_iso": "2026-11-21T20:00:00.000Z",
       "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "andina-ba71e190ca",
+      "titulo": "Proponen modelo para destrabe de proyectos de construcción y recuperar obras paralizadas",
+      "url": "https://andina.pe/agencia/noticia-proponen-modelo-para-destrabe-proyectos-construccion-y-recuperar-obras-paralizadas-1100952.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-21T20:00:00.000Z",
+      "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
     },
     {
@@ -802,15 +829,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "andina-aad32e94a0",
-      "titulo": "Aprueban 13 medidas para proteger empleo ante fenómeno El Niño",
-      "url": "https://andina.pe/agencia/noticia-aprueban-13-medidas-para-proteger-empleo-ante-fenomeno-nino-1100862.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-20T21:30:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
       "id": "el_comercio-6a335035b7",
       "titulo": "El dólar cierra la semana en S/3,45 ante caída del cobre y mayor aversión al riesgo",
       "url": "https://elcomercio.pe/economia/peru/el-dolar-cierra-la-semana-en-s345-ante-caida-del-cobre-y-mayor-aversion-al-riesgo-l-cotizacion-del-dolar-l-ultimas-noticia/",
@@ -1024,24 +1042,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-20T17:20:27.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-131ff58592",
-      "titulo": "Oro va a su peor semana desde marzo por temor a alzas de la Fed",
-      "url": "https://gestion.pe/mundo/internacional/oro-va-a-su-peor-semana-desde-marzo-por-temor-a-alzas-de-la-fed-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-20T17:19:03.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-6385760bed",
-      "titulo": "Black Friday movería US$ 12 millones en Perú y ticket promedio superaría los S/ 350",
-      "url": "https://gestion.pe/economia/empresas/black-friday-moveria-us-12-millones-en-peru-y-ticket-promedio-superaria-los-s-350-con-televisores-y-smartphones-como-principales-categorias-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-20T16:28:30.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     }
   ]
