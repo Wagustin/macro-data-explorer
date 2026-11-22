@@ -18,7 +18,7 @@ Acciones permitidas:
 - **ESPERAR**: no hacer nada en esta pasada y volver a mirar en la siguiente (cada 30 min).
 - **DESPLEGAR**: `gh workflow run deploy.yml` (despliega origin/main, que ya pasó CI) y comprobar el smoke en la siguiente pasada.
 - **VOLVER_ATRAS**: `gh workflow run rollback.yml -f motivo=<código>`, que ejecuta `npx wrangler rollback` a la versión anterior del Worker dentro de GitHub Actions. Solo si el smoke de producción falla dos pasadas seguidas DESPUÉS de un DESPLEGAR.
-- **AVISAR**: Telegram a Agustín con el diagnóstico (y nada más); si Telegram no está configurado o falla, correo con Resend.
+- **AVISAR**: Telegram a Agustín con el diagnóstico, la acción y la línea «Qué hacer a mano:» (y nada más); si Telegram no está configurado o falla, correo con Resend. De 23:00 a 07:00 (hora de Lima) solo salen de noche los críticos; ver «Horas de silencio y resumen diario» en la sección 3.
 
 Límites: como mucho 2 RELANZAR por workflow y día; 1 DESPLEGAR y 1 VOLVER_ATRAS por día. Al pasar el límite, AVISAR. Nunca actuar si el mismo workflow está en curso (status `in_progress` o `queued`).
 
@@ -67,6 +67,8 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
   ```
 - **Directiva**: si el origen es `smv.yml` o `smv-precios.yml` (log del propio workflow): ESPERAR 2 h y RELANZAR (máx. 2/día). Si `/api/status` marca `smv` con `ageHours` > 72, AVISAR.
 - **Origen watchdog** (`FALLA  Hechos de importancia (SMV): última lectura hace 34 h`): ESPERAR, no relanzar. AVISAR solo si el dato pasa de 48 h (hechos) o de 72 h (cotizaciones).
+- **Lectura directa de hechos**: en cada pasada el vigía lee `data/smv-hechos.json` (campo raíz `actualizado`) y avisa si tiene más de 48 h, aunque el watchdog no corra. Si el watchdog ya avisa de hechos por encima de 48 h, no se duplica.
+- **Regla de 72 h de cotizaciones**: el aviso por `/api/status` (`smv.ageHours` > 72) solo se evalúa cuando hay un SMV_BLOQUEO (fallo de `smv-precios.yml` o FALLA del watchdog). No hay un aviso por edad de cotizaciones sin fallo; si la edad se disparara sin fallo, lo cubre DATO_VIEJO (límite del bloque `smv`).
 - El plan B (descargar desde el servidor) ya es automático para cotizaciones (`scripts/smv-plan-b.sh`) y hechos de importancia (`scripts/smv-plan-b-hechos.sh`): ver sección 6. El vigía no lo ejecuta.
 
 ### CHOQUE_PUSH
@@ -179,6 +181,34 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
   ```
 - **Directiva**: solo AVISAR. El vigía no relanza nada por esta causa; lo mira Claude o Agustín.
 
+### SERVIDOR_CASA
+
+- **Detección**: el vigía no ve el servidor de casa (`wagus-server`, Tailscale 100.120.75.115). El par no aparece en línea en `tailscale status --json` y el puerto 22 no responde a una conexión TCP de 5 s. Dos pasadas seguidas (unos 30 min) sin respuesta. Si `tailscale` no está instalado, cuenta solo el TCP.
+- **Síntomas**: los planes B de la SMV (`scripts/smv-plan-b.sh` y `scripts/smv-plan-b-hechos.sh`) no corren; cotizaciones y hechos se quedan viejos.
+- **Comprobar a mano**:
+  ```bash
+  tailscale status | grep wagus-server
+  timeout 5 bash -c '</dev/tcp/100.120.75.115/22' && echo "puerto 22 abierto"
+  ```
+- **Directiva**: solo AVISAR, sin relanzar nada. Hay un aviso de recuperación cuando el servidor vuelve a responder.
+
+### VIGIA_ROTO
+
+- **Detección**: `gh` responde 401/403 o «Bad credentials» (token de GitHub caducado o sin permisos; un límite de peticiones no cuenta); la API de NVIDIA responde 401; o Telegram falla dos envíos seguidos.
+- **Síntomas**: el vigía deja de ver los runs (todas las fuentes de GitHub fallan), no clasifica los fallos DESCONOCIDOS, o no llegan avisos por Telegram.
+- **Comprobar a mano**:
+  ```bash
+  cd ~/perdata-vigia && set -a && . ./env && set +a && gh api user --jq .login
+  cd ~/perdata-vigia && node vigia.mjs --seco ; tail -n 5 ~/.local/state/perdata-vigia.log
+  ```
+- **Directiva**: renovar lo que indique el aviso en `~/perdata-vigia/env` (`GH_TOKEN`: token fine-grained solo de `Wagustin/macro-data-explorer`; `VIGIA_NVIDIA_API_KEY`; `TELEGRAM_BOT_TOKEN` y `TELEGRAM_CHAT_ID`). Como máximo un aviso al día. El vigía no cambia credenciales.
+
+### Horas de silencio y resumen diario
+
+- **Horas de silencio (23:00 a 07:00 de Lima)**: de noche solo salen por Telegram los avisos críticos: PAGOS_ABIERTOS, PAGINA_CAIDA, SIN_LATIDO y una VOLVER_ATRAS ya ejecutada. El resto se acumula (una entrada por código) y va en el resumen de las 08:00. Las acciones (relanzar, esperar) se hacen de noche igual.
+- **Resumen diario (08:00 de Lima, una vez al día)**: sale por Telegram también en modo seco, marcado «[modo prueba]». Contiene: pasadas del día, incidentes del día por código, acciones que el vigía haría (en seco, de la memoria simulada) o ha hecho (en real), avisos acumulados en silencio, estado de `/api/status` y pagos en pausa. Así se revisa cada mañana si el vigía decide bien.
+- **Lectura del log en seco**: cada pasada escribe una línea y, debajo, una línea «  · <código>@<origen>: <acción> — <motivo> (regla: ...)» por incidente, con el resultado al final (`simulado (seco)`, `en silencio`, `suprimido`, `enviado por telegram`...).
+
 ## 4. Comandos útiles
 
 - **Fallos de las últimas 24 h**:
@@ -251,3 +281,5 @@ bash scripts/smv-plan-b-hechos.sh
 Cron propuesto (no instalado; el crontab se cambia a mano): `20 6,14 * * * /home/wagustin/macro-data-explorer/scripts/smv-plan-b-hechos.sh >/dev/null 2>&1`
 
 Verificar con `curl -s https://perdata.site/api/status | jq .smv.ageHours`.
+
+Si el servidor de casa no responde, estos planes B no corren: ver SERVIDOR_CASA (sección 3). El vigía lo avisa tras dos pasadas seguidas.

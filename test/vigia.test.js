@@ -6,9 +6,12 @@ import {
   clasificarConNemotron, interpretarRespuesta, elegirModelo, redactar, ejecutar,
   argumentosVolverAtras, parsearEnv, rutaEnv, cargarConfig, canalesAviso, avisar, textoAviso,
   debeEnviarResumen, textoResumen, evaluarLatido, enviarTelegram,
+  enHorasSilencio, lineaVeredicto, incidenteHechos, incidenteCasa, estadoTailscale, comprobarCasa,
+  tcpAbierto, esErrorAuth, detectarVigiaRoto,
 } from "../scripts/vigia.mjs";
 
 const H = 36e5;
+const MIN = 6e4;
 const ahora = new Date("2026-11-20T15:00:00Z"); // viernes 10:00 Lima, 15:00 UTC
 
 test("clasificarFallo con mensajes reales del catálogo", () => {
@@ -247,7 +250,7 @@ test("ejecutar en modo seco no llama a gh ni a los avisos", async () => {
     memoria, { seco: true, ahora, gh, avisar: async () => { llamadas.push("aviso"); return { canal: "telegram" }; } },
   );
   assert.equal(llamadas.length, 0);
-  assert.ok(notas.every((n) => n.includes("[seco]")));
+  assert.ok(notas.every((n) => n.includes("simulado")));
 });
 
 test("VOLVER_ATRAS usa rollback.yml con el código como motivo y no toca wrangler", async () => {
@@ -329,7 +332,7 @@ test("canales de aviso: Telegram, si no correo, si no solo log", async () => {
   const llamadas = [];
   const telegram = async () => { llamadas.push("tg"); return "enviado"; };
   const correo = async () => { llamadas.push("mail"); return "enviado"; };
-  assert.deepEqual(await avisar(a, { ...tg, ...mail }, { telegram, correo }), { canal: "telegram", detalle: "" });
+  assert.deepEqual(await avisar(a, { ...tg, ...mail }, { telegram, correo }), { canal: "telegram", detalle: "", telegramFallo: false });
   assert.deepEqual(llamadas, ["tg"]);
 
   const caidoTg = async () => { throw new Error("Telegram respondió 500"); };
@@ -360,25 +363,6 @@ test("enviarTelegram: POST a sendMessage con chat_id y texto plano; error si no 
   await assert.rejects(enviarTelegram("x", { token: "T", chatId: "42", fetchImpl: fetchMal }), /401/);
 });
 
-test("resumen diario: una vez al día, desde las 08:00 de Lima, solo con VIGIA_ACTUAR=1 o VIGIA_RESUMEN=1", () => {
-  const actuar = { actuar: "1" };
-  assert.equal(debeEnviarResumen({}, new Date("2026-11-20T12:59:00Z"), actuar), false); // 07:59 Lima
-  assert.equal(debeEnviarResumen({}, new Date("2026-11-20T13:00:00Z"), actuar), true); // 08:00 Lima
-  assert.equal(debeEnviarResumen({ resumenDia: "2026-11-20" }, new Date("2026-11-20T18:00:00Z"), actuar), false);
-  assert.equal(debeEnviarResumen({ resumenDia: "2026-11-20" }, new Date("2026-11-21T13:30:00Z"), actuar), true);
-  assert.equal(debeEnviarResumen({}, new Date("2026-11-20T13:00:00Z"), {}), false);
-  assert.equal(debeEnviarResumen({}, new Date("2026-11-20T13:00:00Z"), { resumen: "1" }), true);
-});
-
-test("textoResumen: una línea con runs, fallos, acciones de 24 h, web y pagos", () => {
-  const historial = [
-    { fecha: "2026-11-20T10:00:00Z", tipo: "RELANZAR", detalle: "news.yml" },
-    { fecha: "2026-11-19T01:00:00Z", tipo: "DESPLEGAR", detalle: "deploy.yml" }, // fuera de 24 h
-  ];
-  const t = textoResumen({ fecha: "2026-11-20", runs: 12, fallos: 1, historial, ahora, web: "/api/status OK", pagos: "sí" });
-  assert.equal(t, "PerData · 2026-11-20: 12 runs en 24 h, 1 fallos, acciones del vigía: RELANZAR 1, /api/status OK, pagos en pausa sí");
-});
-
 test("SIN_LATIDO: último run de datos de hace más de 4 h, o /api/status caído", () => {
   const run = (wf, horas) => ({ wf, createdAt: new Date(ahora.getTime() - horas * H).toISOString() });
   assert.equal(evaluarLatido({ runs: [run("alertas.yml", 0.5), run("news.yml", 2)], ahora }), null);
@@ -391,4 +375,215 @@ test("SIN_LATIDO: último run de datos de hace más de 4 h, o /api/status caído
   // watchdog.yml cuenta como latido: con watchdog reciente y news de hace 5 h no hay alarma
   assert.equal(evaluarLatido({ runs: [run("watchdog.yml", 0.3), run("news.yml", 5)], ahora }), null);
   assert.equal(evaluarLatido({ runs: [run("watchdog.yml", 5)], ahora }).codigo, "SIN_LATIDO");
+});
+
+test("modo seco: la memoria simulada aplica los límites; el segundo DESPLEGAR del día no aparece", async () => {
+  const gh = async () => { throw new Error("en modo seco no se llama a gh"); };
+  const avisos = [];
+  const pasada = async (incs, mem, t) => {
+    const m = registrarPasada(mem, incs, { ahora: t });
+    const acc = decidir(incs, m, t, new Set(), []);
+    const notas = await ejecutar(acc, m, { seco: true, ahora: t, gh, avisar: async (a) => { avisos.push(a.codigo); return { canal: "telegram" }; } });
+    return { m, acc, notas };
+  };
+  const pag = [{ codigo: "PAGINA_CAIDA", clave: "PAGINA_CAIDA", workflow: "deploy.yml", paginas: ["/"], motivo: "x" }];
+  const wd = [{ codigo: "WATCHDOG_SMOKE", clave: "WATCHDOG_SMOKE", motivo: "x", fallosSeguidos: 2 }];
+  const p1 = await pasada(pag, {}, new Date("2026-11-20T15:00:00Z"));
+  assert.deepEqual(p1.acc, []);
+  const p2 = await pasada(pag, p1.m, new Date("2026-11-20T15:30:00Z"));
+  assert.deepEqual(p2.acc.map((a) => a.tipo), ["DESPLEGAR"]);
+  assert.equal(p2.m.contadores.desplegar, 1);
+  assert.deepEqual(p2.notas, ["DESPLEGAR deploy.yml (simulado)"]);
+  const p3 = await pasada(wd, p2.m, new Date("2026-11-20T16:00:00Z"));
+  assert.deepEqual(p3.acc.map((a) => a.tipo), ["AVISAR"]);
+  assert.match(p3.acc[0].motivo, /límite de 1 DESPLEGAR por día/);
+  assert.equal(p3.m.contadores.desplegar, 1);
+  assert.deepEqual(avisos, []); // en seco no sale ningún aviso real
+});
+
+test("modo seco: un DATO_VIEJO se relanza una vez y no se repite cada 30 min; queda en el historial simulado", async () => {
+  const gh = async () => { throw new Error("no"); };
+  const news = { codigo: "DATO_VIEJO", clave: "DATO_VIEJO:news", bloque: "news", workflow: "news.yml", motivo: "x" };
+  let m = {};
+  const tipos = [];
+  for (const minutos of [0, 30, 60]) {
+    const t = new Date(ahora.getTime() + minutos * MIN);
+    m = registrarPasada(m, [{ ...news }], { ahora: t });
+    const acc = decidir([{ ...news }], m, t);
+    tipos.push(acc.map((a) => a.tipo));
+    await ejecutar(acc, m, { seco: true, ahora: t, gh, avisar: async () => ({ canal: "x" }) });
+  }
+  assert.deepEqual(tipos, [["RELANZAR"], [], []]);
+  assert.equal(m.contadores.relanzar["news.yml"], 1);
+  assert.equal(m.historial.filter((h) => h.tipo === "RELANZAR").length, 1);
+});
+
+test("motivo en cada decisión: una línea por incidente con la regla aplicada", () => {
+  const incs = clasificarWatchdog(LOG_HECHOS).map((d) => ({ ...d, desde: "2026-11-22T10:00:00Z", motivo: "x" }));
+  const veredictos = [];
+  decidir(incs, {}, ahora, new Set(), veredictos);
+  assert.equal(veredictos.length, 1);
+  assert.match(lineaVeredicto(veredictos[0]), /^  · SMV_BLOQUEO@watchdog: ESPERAR — hechos 34 h < 48 h, el plan B del servidor lo cubre \(regla: .+\)$/);
+});
+
+test("motivo en cada decisión: un veredicto por incidente, con el resultado de la ejecución", async () => {
+  const incs = [
+    { codigo: "DATO_VIEJO", clave: "DATO_VIEJO:news", bloque: "news", workflow: "news.yml", motivo: "news con 40 h" },
+    { codigo: "PAGOS_ABIERTOS", clave: "PAGOS_ABIERTOS", motivo: "x" },
+    { codigo: "PAGINA_CAIDA", clave: "PAGINA_CAIDA", workflow: "deploy.yml", paginas: ["/"], motivo: "x" },
+  ];
+  const veredictos = [];
+  const acc = decidir(incs, {}, ahora, new Set(), veredictos);
+  assert.equal(veredictos.length, 3);
+  assert.deepEqual(veredictos.map((v) => v.accion), ["RELANZAR news.yml", "AVISAR", "ESPERAR"]);
+  await ejecutar(acc, { contadores: { relanzar: {}, desplegar: 0, volverAtras: 0 }, incidentes: {}, avisos: {}, historial: [] }, {
+    seco: true, ahora, gh: async () => {}, avisar: async () => ({ canal: "x" }),
+  });
+  assert.equal(veredictos[0].resultado, "simulado (seco)");
+  assert.match(lineaVeredicto(veredictos[0]), / — news con 40 h \(regla: .+\) => simulado \(seco\)$/);
+});
+
+test("SERVIDOR_CASA: avisa tras dos pasadas caídas y avisa de la recuperación", async () => {
+  const caido = incidenteCasa({ arriba: false, detalle: "Tailscale: sin dato; TCP 22: sin respuesta" }, {});
+  const m1 = registrarPasada({}, [caido], { ahora });
+  assert.deepEqual(decidir([caido], m1, ahora), []);
+  const m2 = registrarPasada(m1, [caido], { ahora: new Date(ahora.getTime() + 30 * MIN) });
+  const acc = decidir([caido], m2, new Date(ahora.getTime() + 30 * MIN));
+  assert.deepEqual(acc.map((a) => a.tipo), ["AVISAR"]);
+  assert.match(acc[0].motivo, /no responde: los planes B de la SMV no correrán/);
+
+  assert.equal(incidenteCasa({ arriba: true, detalle: "" }, m1), null); // una sola pasada caída no avisa al volver
+  const rec = incidenteCasa({ arriba: true, detalle: "" }, m2);
+  assert.equal(rec.recuperado, true);
+  const t3 = new Date(ahora.getTime() + 60 * MIN);
+  const m3 = registrarPasada(m2, [rec], { ahora: t3 });
+  const accRec = decidir([rec], m3, t3);
+  assert.deepEqual(accRec.map((a) => a.tipo), ["AVISAR"]);
+  assert.match(accRec[0].motivo, /responde de nuevo/);
+  // el aviso de recuperación no se confunde con el de caída dentro de las 6 h
+  const enviados = [];
+  await ejecutar(accRec, { contadores: { relanzar: {}, desplegar: 0, volverAtras: 0 }, incidentes: {}, avisos: { SERVIDOR_CASA: new Date(t3 - H).toISOString() }, historial: [] }, {
+    seco: false, ahora: t3, gh: async () => {}, avisar: async (a) => { enviados.push(a.codigo); return { canal: "telegram" }; },
+  });
+  assert.deepEqual(enviados, ["SERVIDOR_CASA"]);
+});
+
+test("SERVIDOR_CASA: Tailscale primero, TCP de respaldo, y sin tailscale se salta sin error", async () => {
+  assert.equal(estadoTailscale(JSON.stringify({ Peer: { a: { HostName: "wagus-server", Online: true } } })), true);
+  assert.equal(estadoTailscale(JSON.stringify({ Peer: { a: { HostName: "wagus-server", Online: false } } })), false);
+  assert.equal(estadoTailscale(JSON.stringify({ Peer: { a: { HostName: "otro", Online: true } } })), null);
+  assert.equal(estadoTailscale("no es json"), null);
+  let tcpLlamado = false;
+  const tcp = async () => { tcpLlamado = true; return false; };
+  assert.equal((await comprobarCasa({ tailscale: async () => true, tcp })).arriba, true);
+  assert.equal(tcpLlamado, false);
+  assert.equal((await comprobarCasa({ tailscale: async () => null, tcp: async () => false })).arriba, false);
+  assert.equal((await comprobarCasa({ tailscale: async () => false, tcp: async () => true })).arriba, true);
+  assert.equal(await tcpAbierto("127.0.0.1", 1, 500), false); // puerto cerrado en local: no hay red externa
+});
+
+test("hechos de la SMV: 47 h no avisa; 49 h avisa con SMV_BLOQUEO y el plan B; el watchdog no lo duplica", () => {
+  const json = (h) => ({ actualizado: new Date(ahora.getTime() - h * H).toISOString() });
+  assert.equal(incidenteHechos(json(47), ahora), null);
+  const inc = incidenteHechos(json(49), ahora);
+  assert.equal(inc.codigo, "SMV_BLOQUEO");
+  const acc = decidir([inc], {}, ahora);
+  assert.deepEqual(acc.map((a) => a.tipo), ["AVISAR"]);
+  assert.match(acc[0].motivo, /^hechos de la SMV con 49 h: revisar el plan B del servidor, scripts\/smv-plan-b-hechos\.sh, y ~\/\.local\/state\/smv-plan-b\.log$/);
+  assert.equal(incidenteHechos(json(49), ahora, [{ codigo: "SMV_BLOQUEO", proceso: "Hechos de importancia (SMV)", ageHoras: 49 }]), null);
+  assert.equal(incidenteHechos(null, ahora), null);
+});
+
+test("horas de silencio: 02:00 Lima acumula el aviso normal; PAGOS_ABIERTOS se envía", async () => {
+  const t = new Date("2026-11-20T07:00:00Z"); // 02:00 Lima
+  assert.equal(enHorasSilencio(t), true);
+  assert.equal(enHorasSilencio(new Date("2026-11-20T04:00:00Z")), true); // 23:00 Lima
+  assert.equal(enHorasSilencio(new Date("2026-11-20T03:59:00Z")), false); // 22:59 Lima
+  assert.equal(enHorasSilencio(new Date("2026-11-20T12:00:00Z")), false); // 07:00 Lima
+  const enviados = [];
+  const memoria = { contadores: { relanzar: {}, desplegar: 0, volverAtras: 0 }, incidentes: {}, avisos: {}, historial: [], silencio: [] };
+  const acc = decidir([
+    { codigo: "CI_ROJO", clave: "CI_ROJO", motivo: "CI en main en rojo" },
+    { codigo: "PAGOS_ABIERTOS", clave: "PAGOS_ABIERTOS", motivo: "paymentsEnabled distinto de false" },
+  ], memoria, t);
+  const notas = await ejecutar(acc, memoria, { seco: false, ahora: t, gh: async () => {}, avisar: async (a) => { enviados.push(a.codigo); return { canal: "telegram" }; } });
+  assert.deepEqual(enviados, ["PAGOS_ABIERTOS"]);
+  assert.deepEqual(memoria.silencio.map((s) => s.codigo), ["CI_ROJO"]);
+  assert.ok(notas.some((n) => n.startsWith("AVISAR CI_ROJO en silencio")));
+  const resumen = textoResumen({ fecha: "2026-11-20", runs: 1, fallos: 0, silencio: memoria.silencio, ahora: t, web: "/api/status OK", pagos: "no" });
+  assert.match(resumen, /Avisos acumulados en silencio: CI_ROJO \(CI en main en rojo: lo arregla Claude, no se despliega\)\./);
+});
+
+test("de noche, el aviso de una vuelta atrás ya ejecutada sí se envía", async () => {
+  const t = new Date("2026-11-20T07:00:00Z");
+  const memoria = { contadores: { relanzar: {}, desplegar: 0, volverAtras: 0 }, incidentes: { WATCHDOG_SMOKE: { pasadas: 4, desplegadoEn: "2026-11-20T06:00:00Z", trasDespliegue: 2 } }, avisos: {}, historial: [], silencio: [] };
+  const acc = decidir([{ codigo: "WATCHDOG_SMOKE", clave: "WATCHDOG_SMOKE", motivo: "x", fallosTrasDespliegue: 2 }], memoria, t);
+  assert.deepEqual(acc.map((a) => a.tipo), ["VOLVER_ATRAS", "AVISAR"]);
+  const enviados = [];
+  await ejecutar(acc, memoria, { seco: false, ahora: t, gh: async () => {}, avisar: async (a) => { enviados.push(a.codigo); return { canal: "telegram" }; } });
+  assert.deepEqual(enviados, ["WATCHDOG_SMOKE"]);
+});
+
+test("resumen diario: una vez al día desde las 08:00 de Lima, también en modo seco", () => {
+  assert.equal(debeEnviarResumen({}, new Date("2026-11-20T12:59:00Z")), false); // 07:59 Lima
+  assert.equal(debeEnviarResumen({}, new Date("2026-11-20T13:00:00Z")), true); // 08:00 Lima
+  assert.equal(debeEnviarResumen({ resumenDia: "2026-11-20" }, new Date("2026-11-20T18:00:00Z")), false);
+  assert.equal(debeEnviarResumen({ resumenDia: "2026-11-20" }, new Date("2026-11-21T13:30:00Z")), true);
+});
+
+test("resumen en seco: marcado [modo prueba], con lo que habría hecho y los incidentes del día", () => {
+  const t = textoResumen({
+    fecha: "2026-11-20", modo: "seco", runs: 12, fallos: 1, pasadas: 17,
+    incidentesDia: { a: "DATO_VIEJO", b: "DATO_VIEJO", c: "PAGINA_CAIDA" },
+    historial: [
+      { fecha: "2026-11-20T10:00:00Z", tipo: "RELANZAR", detalle: "news.yml" },
+      { fecha: "2026-11-19T01:00:00Z", tipo: "DESPLEGAR", detalle: "deploy.yml" }, // fuera de 24 h
+    ],
+    silencio: [], ahora, web: "/api/status OK", pagos: "no",
+  });
+  assert.match(t, /^\[modo prueba\] PerData · 2026-11-20/);
+  assert.match(t, /Pasadas de hoy: 17\./);
+  assert.match(t, /Incidentes de hoy por código: DATO_VIEJO 2, PAGINA_CAIDA 1\./);
+  assert.match(t, /Acciones que HABRÍA hecho \(memoria simulada, 24 h\): RELANZAR 1\./);
+  assert.match(t, /Avisos acumulados en silencio: ninguno\./);
+});
+
+test("VIGIA_ROTO: un 401 de gh o de NVIDIA se avisa, una vez al día", async () => {
+  assert.equal(esErrorAuth("HTTP 401: Bad credentials"), true);
+  assert.equal(esErrorAuth("gh: HTTP 403 Resource not accessible"), true);
+  assert.equal(esErrorAuth("API rate limit exceeded (HTTP 403)"), false);
+  assert.equal(esErrorAuth("read ECONNRESET"), false);
+  const registro = new Set();
+  const fetch401 = async () => ({ ok: false, status: 401 });
+  assert.equal(await clasificarConNemotron({ workflow: "x", paso: "", logTail: "" }, { apiKey: "k", modelo: "m", fetchImpl: fetch401, senales: registro }), null);
+  assert.ok(registro.has("nvidia-401"));
+  const incs = detectarVigiaRoto({ senales: new Set(["gh-401"]) });
+  assert.equal(incs.length, 1);
+  assert.match(incs[0].motivo, /GH_TOKEN en ~\/perdata-vigia\/env/);
+  assert.deepEqual(decidir(incs, {}, ahora).map((a) => a.tipo), ["AVISAR"]);
+  assert.deepEqual(decidir(incs, { dia: "2026-11-20", rotoDia: "2026-11-20" }, ahora), []);
+  assert.deepEqual(detectarVigiaRoto({ senales: new Set() }), []);
+});
+
+test("VIGIA_ROTO: Telegram que falla dos veces seguidas; avisar() informa del fallo de Telegram", async () => {
+  assert.deepEqual(detectarVigiaRoto({ telegramFallos: 1 }), []);
+  assert.equal(detectarVigiaRoto({ telegramFallos: 2 })[0].codigo, "VIGIA_ROTO");
+  const r = await avisar({ codigo: "CI_ROJO", motivo: "x", accion: null, incidente: {} },
+    { telegramToken: "t", telegramChat: "1", email: "a@b.c", resendKey: "re_x", emailFrom: "v@b.c" },
+    { telegram: async () => { throw new Error("Telegram respondió 500"); }, correo: async () => "enviado" });
+  assert.deepEqual(r, { canal: "correo", detalle: "", telegramFallo: true });
+});
+
+test("cada aviso lleva «Qué hacer a mano:» con el comando del RUNBOOK", () => {
+  const t = textoAviso({ codigo: "SMV_BLOQUEO", motivo: "x", incidente: {} }, [], ahora);
+  assert.match(t, /Qué hacer a mano: curl -s https:\/\/perdata\.site\/api\/status \| jq '\.smv\.ageHours'/);
+  assert.match(textoAviso({ codigo: "CODIGO_RARO", motivo: "x", incidente: {} }, [], ahora), /Qué hacer a mano: leer el final del log/);
+});
+
+test("registrarPasada cuenta las pasadas del día y los incidentes distintos", () => {
+  const inc = { codigo: "PAGINA_CAIDA", clave: "PAGINA_CAIDA" };
+  const m1 = registrarPasada({}, [inc], { ahora });
+  const m2 = registrarPasada(m1, [inc], { ahora: new Date(ahora.getTime() + 30 * MIN) });
+  assert.equal(m2.pasadasDia, 2);
+  assert.deepEqual(m2.incidentesDia, { PAGINA_CAIDA: "PAGINA_CAIDA" });
 });

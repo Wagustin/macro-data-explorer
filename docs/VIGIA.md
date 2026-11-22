@@ -1,11 +1,11 @@
 # El vigía
 
 Script que se ejecuta por cron cada 30 minutos (`scripts/vigia.mjs`). Mira el sitio (perdata.site),
-los runs de GitHub Actions de las últimas 24 h y el commit del boletín; clasifica los incidentes con
-el catálogo (`handoff/vigia-catalogo.md`, fuera de este repo) y aplica solo las acciones de ese
-catálogo: RELANZAR un workflow, DESPLEGAR, VOLVER_ATRAS o AVISAR. Nunca edita archivos del repo, no
-hace commits y no toca variables, DNS ni cuentas. Nemotron (NVIDIA NIM) solo devuelve un código para
-los fallos que las reglas no reconocen; nunca decide acciones.
+los runs de GitHub Actions de las últimas 24 h, el commit del boletín, los hechos de la SMV y el servidor
+de casa; clasifica los incidentes con el catálogo (`handoff/vigia-catalogo.md`, fuera de este repo) y aplica
+solo las acciones de ese catálogo: RELANZAR un workflow, DESPLEGAR, VOLVER_ATRAS o AVISAR. Nunca edita
+archivos del repo, no hace commits y no toca variables, DNS ni cuentas. Nemotron (NVIDIA NIM) solo devuelve
+un código para los fallos que las reglas no reconocen; nunca decide acciones.
 
 El vigía corre en una máquina de Google Cloud (Debian 13, 1 GB de RAM). Esa máquina no tiene copia
 del repo ni credenciales de Cloudflare. Todo lo hace por la API de GitHub con `gh`, y el único
@@ -48,8 +48,6 @@ retroceso posible es disparar `rollback.yml` (ver RUNBOOK). El script no lee nin
    VIGIA_EMAIL=
    # Modo: 1 = actuar de verdad. Cualquier otro valor (o nada) = modo seco.
    VIGIA_ACTUAR=0
-   # 1 = enviar también el resumen diario aunque no se actúe (en modo seco solo se escribe en el log).
-   VIGIA_RESUMEN=0
    ```
 
    ```
@@ -63,14 +61,14 @@ retroceso posible es disparar `rollback.yml` (ver RUNBOOK). El script no lee nin
    - Repository access: "Only select repositories" y solo `Wagustin/macro-data-explorer`.
    - Permisos del repositorio: Actions: Read and write; Contents: Read-only; Metadata: Read-only.
      Ningún otro permiso.
-   - Fecha de caducidad: anotarla. Al caducar, el vigía avisa de los fallos de `gh` y hay que crear otro token.
+   - Fecha de caducidad: anotarla. Al caducar, el vigía avisa (VIGIA_ROTO) y hay que crear otro token.
    - Copiar el valor a `GH_TOKEN` en `~/perdata-vigia/env`.
 
 5. Telegram (opcional, recomendado). Crear un bot con @BotFather (obtiene `TELEGRAM_BOT_TOKEN`), escribirle
    un mensaje desde la cuenta de Agustín y consultar `https://api.telegram.org/bot<TOKEN>/getUpdates`
    para leer el `chat.id`; ese número va en `TELEGRAM_CHAT_ID`.
 
-6. Prueba en seco (no ejecuta nada, solo lee y registra):
+6. Prueba en seco (no envía avisos ni dispara workflows; solo lee y simula):
 
    ```
    cd ~/perdata-vigia && node vigia.mjs --seco
@@ -93,7 +91,17 @@ Hacer falta dos cambios; con uno solo sigue en seco:
 1. En `~/perdata-vigia/env`, `VIGIA_ACTUAR=1`.
 2. En la crontab, quitar `--seco` de la línea.
 
-Conviene dejar una semana en seco y revisar `perdata-vigia.log` antes de activar.
+Conviene dejar una semana en seco y revisar cada mañana el resumen «[modo prueba]» y `perdata-vigia.log`
+antes de activar.
+
+## Modo seco
+
+En seco el vigía no dispara ningún workflow ni envía avisos, pero sí lleva una memoria simulada aparte
+(`~/.local/state/perdata-vigia.seco.json`) donde registra las acciones como si se hubieran hecho: contadores
+de RELANZAR, DESPLEGAR y VOLVER_ATRAS, límites diarios, esperas y avisos suprimidos. Así el log en seco muestra
+lo que haría en real, con sus límites. La memoria simulada no tiene nada que ver con la real.
+
+El resumen diario de las 08:00 sí se envía en seco (si hay Telegram), marcado «[modo prueba]».
 
 ## Parar el vigía
 
@@ -109,7 +117,6 @@ está definida; si no, `~/perdata-vigia/env`; si no existe, `~/.config/perdata-v
 | Variable | Para qué |
 |---|---|
 | `VIGIA_ACTUAR` | `1` activa las acciones y los avisos reales. Cualquier otro valor (o nada) = modo seco. |
-| `VIGIA_RESUMEN` | `1` envía el resumen diario aunque no se actúe; por defecto, el resumen solo sale con `VIGIA_ACTUAR=1`. |
 | `GH_TOKEN` | Token fine-grained de GitHub para `gh`. Se pasa solo al proceso `gh`, nunca por argumentos. |
 | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | Avisos y resumen diario por Telegram. |
 | `VIGIA_EMAIL`, `RESEND_API_KEY`, `EMAIL_FROM` | Avisos por correo con Resend, si Telegram no está configurado o falla. |
@@ -117,36 +124,78 @@ está definida; si no, `~/perdata-vigia/env`; si no existe, `~/.config/perdata-v
 | `VIGIA_MODELO` | Id exacto del modelo Nemotron. Si no existe, el vigía elige uno pequeño (lightning/nano) de `GET /v1/models`. |
 | `VIGIA_ENV_FILE` | Ruta alternativa del archivo de entorno. |
 
+`VIGIA_RESUMEN` ya no existe: el resumen diario sale siempre que haya Telegram configurado, actúe o no.
+
 ## Avisos
 
 - Canal: Telegram primero (texto plano, máximo 3500 caracteres). Si no hay Telegram configurado o el envío
   falla, correo con Resend. Si no hay ninguno, el aviso queda solo en el log.
-- Cada aviso lleva el código, el diagnóstico, la acción tomada y el final del log, redactado.
+- Cada aviso lleva el código, el diagnóstico, la acción tomada, una línea «Qué hacer a mano:» con el comando
+  de comprobación del RUNBOOK para ese código, y el final del log, redactado.
 - Como mucho un aviso por código cada 6 h.
+- Horas de silencio (23:00 a 07:00 de Lima): solo salen de noche PAGOS_ABIERTOS, PAGINA_CAIDA, SIN_LATIDO y la
+  vuelta atrás ya ejecutada. Lo demás se acumula y va en el resumen de las 08:00. Las acciones no cambian.
 - La redacción quita claves de Resend, NVIDIA, GitHub (`ghp_`, `gho_`, `github_pat_`, etc.), tokens de bot de
   Telegram (`NNNN:AAA...`), claves Stripe y los valores de variables tipo `KEY=`, `TOKEN=`, `SECRET=`.
 
 ## Resumen diario
 
-A partir de las 08:00 (hora de Lima), una vez al día, se envía por Telegram una línea:
+A partir de las 08:00 (hora de Lima), una vez al día, se envía por Telegram (también en modo seco, marcado
+«[modo prueba]») un mensaje de varias líneas:
 
 ```
-PerData · <fecha>: <n> runs en 24 h, <fallos> fallos, acciones del vigía: ..., /api/status OK o datos viejos, pagos en pausa sí/no
+[modo prueba] PerData · <fecha>
+Pasadas de hoy: <n>. Runs en 24 h: <n>, fallos: <n>.
+Incidentes de hoy por código: DATO_VIEJO 2, PAGINA_CAIDA 1.
+Acciones que HABRÍA hecho (memoria simulada, 24 h): RELANZAR 1.     (en real: «Acciones del vigía (24 h)»)
+Avisos acumulados en silencio: CI_ROJO (...); ninguno si no hay.
+/api/status OK. Pagos en pausa: no.
 ```
 
-Solo sale con `VIGIA_ACTUAR=1` o `VIGIA_RESUMEN=1`. Si no hay Telegram configurado, no se marca como enviado y
-se reintenta en la siguiente pasada.
+Si no hay Telegram configurado, no se marca como enviado y se reintenta en la siguiente pasada. Al enviarse,
+se vacían los avisos acumulados en silencio.
 
 ## Latido del servidor de casa (SIN_LATIDO)
 
 Cada pasada avisa (sin actuar) si `/api/status` no responde o si el último run de cualquier workflow de datos
 es de hace más de 4 h. Ver la sección SIN_LATIDO de `docs/RUNBOOK.md`.
 
+## Servidor de casa (SERVIDOR_CASA)
+
+Los planes B de la SMV corren en el servidor de casa (`wagus-server`, Tailscale, 100.120.75.115). Cada pasada
+comprueba `tailscale status --json` (campo `Online` del par cuyo `HostName` contiene `wagus-server`) y, si no
+da en línea, una conexión TCP al puerto 22 con 5 s de timeout. Si las dos fallan en dos pasadas seguidas,
+AVISA; al recuperarse, avisa de nuevo. Si `tailscale` no existe, se salta ese chequeo sin error. Ver la sección
+SERVIDOR_CASA de `docs/RUNBOOK.md`.
+
+## Hechos de la SMV
+
+En cada pasada, el vigía lee `data/smv-hechos.json` del repo (raíz `actualizado`, con `?t=` para no usar caché)
+y avisa con SMV_BLOQUEO si tiene más de 48 h, aunque el watchdog no corra. Si el watchdog ya avisa de hechos por
+encima de 48 h, no se duplica.
+
+## Autodiagnóstico (VIGIA_ROTO)
+
+Si `gh` responde 401/403 o «Bad credentials» (un límite de peticiones no cuenta), si la API de NVIDIA responde
+401, o si Telegram falla dos envíos seguidos, el vigía avisa por el canal que funcione. Como máximo un aviso de
+este tipo al día. El mensaje dice qué renovar y dónde (`~/perdata-vigia/env`). Ver VIGIA_ROTO en `docs/RUNBOOK.md`.
+
+## Log de decisiones
+
+Cada pasada escribe una línea (hora, modo, incidentes, acciones y fuentes fallidas) y, debajo, una línea por
+incidente con su decisión:
+
+```
+  · SMV_BLOQUEO@watchdog: ESPERAR — hechos 34 h < 48 h, el plan B del servidor lo cubre (regla: SMV en el watchdog: esperar, no relanzar)
+  · PAGOS_ABIERTOS: AVISAR — los pagos aparecen abiertos durante la pausa (regla: PAGOS_ABIERTOS: avisar de inmediato, nunca tocar) => enviado por telegram
+```
+
 ## Archivos de estado
 
-- `~/.local/state/perdata-vigia.json`: contadores del día, avisos recientes, despliegues, historial de acciones
-  de 48 h e incidentes en seguimiento.
-- `~/.local/state/perdata-vigia.log`: una línea por pasada (hora, modo, incidentes, acciones).
+- `~/.local/state/perdata-vigia.json`: memoria real. Contadores del día, avisos recientes, despliegues, historial
+  de acciones de 48 h, incidentes en seguimiento, avisos en silencio y fallos de Telegram.
+- `~/.local/state/perdata-vigia.seco.json`: memoria simulada del modo seco (misma forma; nunca toca la real).
+- `~/.local/state/perdata-vigia.log`: una línea por pasada más una por incidente (ver «Log de decisiones»).
 - `~/perdata-vigia/cron.log`: salida de cron (solo errores de arranque o de Node).
 
 ## Pruebas
@@ -154,5 +203,6 @@ es de hace más de 4 h. Ver la sección SIN_LATIDO de `docs/RUNBOOK.md`.
 ```
 npm test                                   # incluye test/vigia.test.js (sin red)
 node --check scripts/vigia.mjs             # sintaxis; el script debe funcionar con Node 20
+/usr/bin/node --test test/vigia.test.js    # con Node 20 del sistema
 VIGIA_ENV_FILE=<ruta-del-env> node scripts/vigia.mjs --seco   # una pasada en seco contra GitHub y perdata.site
 ```

@@ -4,11 +4,13 @@
 // SOLO las acciones de ese catálogo. Corre en una máquina aparte, sin copia del repo y sin
 // credenciales de Cloudflare: el único retroceso posible es disparar rollback.yml en GitHub Actions.
 // Nunca edita archivos del repo, ni hace commits, ni toca variables, DNS o cuentas. Nemotron solo
-// devuelve un código para los fallos DESCONOCIDO.
+// devuelve un código para los fallos DESCONOCIDO. En modo seco usa una memoria simulada aparte
+// (perdata-vigia.seco.json) donde registra lo que haría en real, con sus mismos límites.
 // Uso: node scripts/vigia.mjs [--seco]   (ver docs/VIGIA.md)
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import fs from "node:fs";
+import net from "node:net";
 import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
@@ -17,17 +19,26 @@ const execFileAsync = promisify(execFile);
 
 const REPO = "Wagustin/macro-data-explorer";
 const BASE = "https://perdata.site";
+const HECHOS_URL = `https://raw.githubusercontent.com/${REPO}/main/data/smv-hechos.json`;
 const ESTADO = path.join(os.homedir(), ".local", "state");
 const MEMORIA_FILE = path.join(ESTADO, "perdata-vigia.json");
+const MEMORIA_SECO_FILE = path.join(ESTADO, "perdata-vigia.seco.json");
 const LOG_FILE = path.join(ESTADO, "perdata-vigia.log");
 const LOCK_FILE = path.join(ESTADO, "perdata-vigia.lock");
 const NIM = "https://integrate.api.nvidia.com/v1";
+// Servidor de casa: los planes B de la SMV corren ahí. Se mira por Tailscale y, de respaldo, por TCP.
+const CASA = { nombre: "wagus-server", ip: "100.120.75.115", puerto: 22, ms: 5000 };
 
 const MIN = 60e3;
 const H = 36e5;
 const TG_MAX = 3500;
 const LATIDO_H = 4;
 const RESUMEN_HORA = 8;
+const SILENCIO_DESDE = 23;
+const SILENCIO_HASTA = 7;
+const HECHOS_UMBRAL_H = 48;
+// Avisos que se envían de noche. El resto se acumula y va en el resumen de las 08:00.
+const CRITICOS_SILENCIO = new Set(["PAGOS_ABIERTOS", "PAGINA_CAIDA", "SIN_LATIDO"]);
 const SMV = new Set(["smv.yml", "smv-precios.yml"]);
 const RED_RE = /ECONNRESET|ETIMEDOUT|socket hang up|\b50[234]\b|rate limit|fetch failed/i;
 const DUENO = {
@@ -58,15 +69,39 @@ const PROCESO_DUENO = [
   [/^Resumen de noticias/, "news.yml"],
   [/^Datos oficiales/, "official-data.yml"],
 ];
+// Comprobación a mano por código (copiada de docs/RUNBOOK.md). Va en cada aviso como «Qué hacer a mano:».
+const QUE_HACER = {
+  SMV_BLOQUEO: "curl -s https://perdata.site/api/status | jq '.smv.ageHours' ; tail -n 5 ~/.local/state/smv-plan-b.log",
+  CHOQUE_PUSH: "curl -s https://perdata.site/api/status | jq '.news.ageHours' ; gh api repos/Wagustin/macro-data-explorer/actions/jobs/<job-id>/logs | grep -E \"CONFLICT|rejected|non-fast-forward|could not apply\"",
+  RED_PASAJERA: "gh api repos/Wagustin/macro-data-explorer/actions/jobs/<job-id>/logs | grep -E \"ECONNRESET|ETIMEDOUT|socket hang up|502|503|504|rate limit|fetch failed\"",
+  WATCHDOG_SMOKE: "gh run list -R Wagustin/macro-data-explorer --workflow watchdog.yml --limit 4 --json conclusion,createdAt ; npm run smoke:prod",
+  BOLETIN_NO_SALIO: "gh api \"repos/Wagustin/macro-data-explorer/commits?sha=main&per_page=40\" --jq '.[].commit.message' | grep -F \"data(boletin): enviado $(TZ=America/Lima date +%F)\"",
+  DATO_VIEJO: "curl -s https://perdata.site/api/status | jq 'map_values({ageHours, staleAfterHours, error, fecha, edadHoras})'",
+  PAGINA_CAIDA: "for p in / /dolar /precios /boletin; do echo \"$p $(curl -s -o /dev/null -w '%{http_code}' https://perdata.site$p)\"; done",
+  PAGOS_ABIERTOS: "curl -s \"https://perdata.site/api/billing?action=config\" | jq .paymentsEnabled",
+  CI_ROJO: "gh run list -R Wagustin/macro-data-explorer --workflow ci.yml --branch main --limit 3 --json conclusion,createdAt,databaseId",
+  SIN_LATIDO: "gh run list -R Wagustin/macro-data-explorer --limit 20 --json workflowName,createdAt,status,conclusion ; curl -s -o /dev/null -w '%{http_code}\\n' https://perdata.site/api/status",
+  DESCONOCIDO: "gh api repos/Wagustin/macro-data-explorer/actions/jobs/<job-id>/logs | tail -n 100",
+  SERVIDOR_CASA: "tailscale status | grep wagus-server ; timeout 5 bash -c '</dev/tcp/100.120.75.115/22' && echo puerto 22 abierto",
+  VIGIA_ROTO: "cd ~/perdata-vigia && node vigia.mjs --seco ; tail -n 5 ~/.local/state/perdata-vigia.log",
+};
+const QUE_HACER_DEFECTO = "leer el final del log y docs/RUNBOOK.md";
 const SMOKE_RE = /FALLA\s+Pruebas completas \(smoke\)|Error fatal en smoke test/;
 const HACE_RE = /hace (\d+(?:[.,]\d+)?) (h|días?)\b/i;
 
 // Token de gh: se pasa solo en el entorno del proceso hijo, nunca en los argumentos.
 const ghConfig = { token: null };
+// Señales de credenciales rotas en esta pasada: "gh-401" y "nvidia-401".
+const senales = new Set();
 
 const nombreArchivo = (p = "") => path.posix.basename(String(p));
 const esFallo = (run) => run?.status === "completed" && ["failure", "timed_out", "startup_failure"].includes(run.conclusion);
 const cola = (texto, n) => String(texto ?? "").split(/\r?\n/).slice(-n).join("\n");
+const queHacer = (codigo) => QUE_HACER[codigo] ?? QUE_HACER_DEFECTO;
+const etiquetaDe = (inc) => {
+  const donde = inc.origen || inc.workflow || inc.bloque;
+  return donde ? `${inc.codigo}@${donde}` : inc.codigo;
+};
 
 export function limaParts(instante) {
   const partes = new Intl.DateTimeFormat("en-CA", {
@@ -75,6 +110,12 @@ export function limaParts(instante) {
   const v = Object.fromEntries(partes.map((p) => [p.type, p.value]));
   const dias = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
   return { fecha: `${v.year}-${v.month}-${v.day}`, hora: Number(v.hour), dia: dias[v.weekday] };
+}
+
+// True entre las 23:00 y las 07:00 de Lima (horas de silencio: los avisos no críticos se acumulan).
+export function enHorasSilencio(instante = new Date()) {
+  const { hora } = limaParts(new Date(instante));
+  return hora >= SILENCIO_DESDE || hora < SILENCIO_HASTA;
 }
 
 // ---------- Clasificación determinista (catálogo, sección «Cómo se detecta») ----------
@@ -181,6 +222,23 @@ export function evaluarLatido({ runs = null, statusFallo = false, ahora = new Da
   return { codigo: "SIN_LATIDO", clave: "SIN_LATIDO", workflow: null, motivo: `sin latido del servidor: ${motivos.join("; ")}`, logTail: "" };
 }
 
+// Hechos de importancia leídos directamente (data/smv-hechos.json, campo raíz «actualizado»). Si tienen más
+// de 48 h, SMV_BLOQUEO. Si el watchdog ya avisa de hechos por encima de 48 h, no se duplica.
+export function incidenteHechos(json, ahora = new Date(), previos = []) {
+  const yaAvisado = previos.some((i) => i.codigo === "SMV_BLOQUEO" && /Hechos/.test(i.proceso ?? "") && i.ageHoras > HECHOS_UMBRAL_H);
+  if (yaAvisado) return null;
+  const t = Date.parse(json?.actualizado);
+  if (Number.isNaN(t)) return null;
+  const horas = Math.floor((new Date(ahora) - t) / H);
+  if (horas <= HECHOS_UMBRAL_H) return null;
+  const motivo = `hechos de la SMV con ${horas} h: revisar el plan B del servidor, scripts/smv-plan-b-hechos.sh, y ~/.local/state/smv-plan-b.log`;
+  return {
+    codigo: "SMV_BLOQUEO", clave: "SMV_BLOQUEO:hechos", origen: "directo", workflow: "smv.yml",
+    proceso: "Hechos de importancia (SMV)", ageHoras: horas, umbralHoras: HECHOS_UMBRAL_H,
+    motivo, motivoAviso: motivo, logTail: "",
+  };
+}
+
 // ---------- Nemotron (solo para DESCONOCIDO; nunca decide acciones) ----------
 
 export function elegirModelo(ids) {
@@ -203,7 +261,7 @@ export function interpretarRespuesta(texto) {
   return { codigo, confianza, motivo };
 }
 
-export async function clasificarConNemotron({ workflow, paso, logTail }, { apiKey, modelo, fetchImpl = fetch } = {}) {
+export async function clasificarConNemotron({ workflow, paso, logTail }, { apiKey, modelo, fetchImpl = fetch, senales: registro = null } = {}) {
   if (!apiKey) return null;
   const t0 = Date.now();
   const cabeceras = { Authorization: `Bearer ${apiKey}`, Accept: "application/json" };
@@ -211,7 +269,7 @@ export async function clasificarConNemotron({ workflow, paso, logTail }, { apiKe
     let id = modelo || null;
     if (!id) {
       const r = await fetchImpl(`${NIM}/models`, { headers: cabeceras, signal: AbortSignal.timeout(30000) });
-      if (!r.ok) return null;
+      if (!r.ok) { if (r.status === 401) registro?.add("nvidia-401"); return null; }
       id = elegirModelo((await r.json()).data?.map((m) => m.id));
       if (!id) return null;
     }
@@ -231,7 +289,7 @@ export async function clasificarConNemotron({ workflow, paso, logTail }, { apiKe
       body: JSON.stringify({ model: id, messages: [{ role: "user", content: prompt }], temperature: 0, max_tokens: 400, chat_template_kwargs: { enable_thinking: false } }),
       signal: AbortSignal.timeout(30000),
     });
-    if (!r.ok) return null;
+    if (!r.ok) { if (r.status === 401) registro?.add("nvidia-401"); return null; }
     const data = await r.json();
     return { ...interpretarRespuesta(data.choices?.[0]?.message?.content), modelo: id, ms: Date.now() - t0 };
   } catch {
@@ -244,6 +302,7 @@ export async function clasificarConNemotron({ workflow, paso, logTail }, { apiKe
 const memoriaVacia = () => ({
   dia: null, contadores: { relanzar: {}, desplegar: 0, volverAtras: 0 }, fallos: {},
   incidentes: {}, runsVistos: {}, avisos: {}, despliegues: [], historial: [], resumenDia: null,
+  pasadasDia: 0, incidentesDia: {}, silencio: [], telegramFallos: 0, rotoDia: null,
 });
 
 // Anota una acción ejecutada para el resumen diario. Guarda 48 h y, como mucho, 200 entradas.
@@ -263,13 +322,18 @@ export function registrarPasada(memoria, incidentes, { ahora = new Date(), omiti
     m.dia = hoy;
     m.contadores = memoriaVacia().contadores;
     m.fallos = {};
+    m.pasadasDia = 0;
+    m.incidentesDia = {};
   }
+  m.pasadasDia = (m.pasadasDia || 0) + 1;
+  m.incidentesDia = { ...(m.incidentesDia || {}) };
   for (const inc of incidentes) {
     if (inc.runId && !m.runsVistos[inc.runId]) {
       m.runsVistos[inc.runId] = iso;
       if (inc.codigo === "RED_PASAJERA") m.fallos[inc.workflow] = (m.fallos[inc.workflow] || 0) + 1;
     }
   }
+  for (const inc of incidentes) m.incidentesDia[inc.clave] = inc.codigo;
   for (const [id, visto] of Object.entries(m.runsVistos)) {
     if (instante - Date.parse(visto) > 3 * 24 * H) delete m.runsVistos[id];
   }
@@ -292,8 +356,9 @@ export function registrarPasada(memoria, incidentes, { ahora = new Date(), omiti
 
 // ---------- Decisión (función pura) ----------
 
-// Devuelve solo acciones: RELANZAR, DESPLEGAR, VOLVER_ATRAS, AVISAR. «Esperar» no produce nada.
-export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = new Set()) {
+// Devuelve solo acciones: RELANZAR, DESPLEGAR, VOLVER_ATRAS, AVISAR. «Esperar» no produce acción, pero sí
+// deja un veredicto en `veredictos` (un objeto por incidente: etiqueta, accion, motivo y regla aplicada).
+export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = new Set(), veredictos = []) {
   const instante = new Date(ahora);
   const mem = memoria || {};
   const hoy = limaParts(instante).fecha;
@@ -302,35 +367,61 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
   const relanzosHoy = { ...(contadores.relanzar || {}) };
   let desplegosHoy = contadores.desplegar || 0;
   let volverHoy = contadores.volverAtras || 0;
+  let rotoHoy = mem.rotoDia === hoy;
   const acciones = [];
   const hayCI = incidentes.some((i) => i.codigo === "CI_ROJO");
   const datoViejoDe = (wf) => incidentes.some((i) => i.codigo === "DATO_VIEJO" && i.workflow === wf);
+  const minutos = (desde) => Math.round((instante - Date.parse(desde)) / MIN);
+  const horas = (desde) => Math.round((instante - Date.parse(desde)) / H);
 
-  const aviso = (inc, motivo, accion = null) => acciones.push({ tipo: "AVISAR", codigo: inc.codigo, motivo, accion, incidente: inc, claves: [inc.clave] });
+  const veredicto = (inc, accion, motivo, regla) => {
+    const v = { etiqueta: etiquetaDe(inc), codigo: inc.codigo, accion, motivo, regla };
+    veredictos.push(v);
+    return v;
+  };
 
-  function relanzar(inc, wf, motivo) {
-    if (enCurso.has(wf)) return;
+  function aviso(inc, motivo, regla) {
+    const v = veredicto(inc, "AVISAR", motivo, regla);
+    acciones.push({ tipo: "AVISAR", codigo: inc.codigo, motivo, accion: null, incidente: inc, claves: [inc.clave], avisoKey: inc.avisoKey, veredicto: v });
+  }
+
+  function relanzar(inc, wf, motivo, regla) {
+    if (enCurso.has(wf)) return veredicto(inc, "ESPERAR", `${wf} ya tiene una ejecución en curso`, "no relanzar con una ejecución en curso");
     const existente = acciones.find((a) => a.tipo === "RELANZAR" && a.workflow === wf);
-    if (existente) { existente.claves.push(inc.clave); return; }
-    if ((relanzosHoy[wf] || 0) >= 2) return aviso(inc, `${motivo}; límite de 2 RELANZAR de ${wf} hoy alcanzado`);
-    acciones.push({ tipo: "RELANZAR", workflow: wf, codigo: inc.codigo, motivo, claves: [inc.clave] });
+    if (existente) {
+      existente.claves.push(inc.clave);
+      return veredicto(inc, `RELANZAR ${wf}`, "ya pedido en esta pasada por otro incidente", regla);
+    }
+    if ((relanzosHoy[wf] || 0) >= 2) return aviso(inc, `${motivo}; límite de 2 RELANZAR de ${wf} hoy alcanzado`, "límite de 2 RELANZAR por workflow y día");
+    const v = veredicto(inc, `RELANZAR ${wf}`, motivo, regla);
+    acciones.push({ tipo: "RELANZAR", workflow: wf, codigo: inc.codigo, motivo, claves: [inc.clave], veredicto: v });
     relanzosHoy[wf] = (relanzosHoy[wf] || 0) + 1;
   }
 
-  function desplegar(inc, motivo) {
-    if (hayCI || enCurso.has("deploy.yml")) return;
+  function desplegar(inc, motivo, regla) {
+    if (hayCI) return veredicto(inc, "ESPERAR", "CI en main en rojo: no se despliega", "no desplegar con CI en rojo");
+    if (enCurso.has("deploy.yml")) return veredicto(inc, "ESPERAR", "deploy.yml ya tiene una ejecución en curso", "no desplegar con un despliegue en curso");
     const existente = acciones.find((a) => a.tipo === "DESPLEGAR");
-    if (existente) { existente.claves.push(inc.clave); return; }
-    if (desplegosHoy >= 1) return aviso(inc, `${motivo}; límite de 1 DESPLEGAR por día alcanzado`);
-    acciones.push({ tipo: "DESPLEGAR", workflow: "deploy.yml", codigo: inc.codigo, motivo, claves: [inc.clave] });
+    if (existente) {
+      existente.claves.push(inc.clave);
+      return veredicto(inc, "DESPLEGAR", "ya pedido en esta pasada por otro incidente", regla);
+    }
+    if (desplegosHoy >= 1) return aviso(inc, `${motivo}; límite de 1 DESPLEGAR por día alcanzado`, "límite de 1 DESPLEGAR por día");
+    const v = veredicto(inc, "DESPLEGAR", motivo, regla);
+    acciones.push({ tipo: "DESPLEGAR", workflow: "deploy.yml", codigo: inc.codigo, motivo, claves: [inc.clave], veredicto: v });
     desplegosHoy += 1;
   }
 
-  function volverAtras(inc, motivo) {
-    if (volverHoy >= 1) return aviso(inc, `${motivo}; límite de 1 VOLVER_ATRAS por día alcanzado`);
-    acciones.push({ tipo: "VOLVER_ATRAS", codigo: inc.codigo, motivo, incidente: inc, claves: [inc.clave] });
+  function volverAtras(inc, motivo, regla) {
+    if (volverHoy >= 1) return aviso(inc, `${motivo}; límite de 1 VOLVER_ATRAS por día alcanzado`, "límite de 1 VOLVER_ATRAS por día");
+    const v = veredicto(inc, "VOLVER_ATRAS", motivo, regla);
+    acciones.push({ tipo: "VOLVER_ATRAS", codigo: inc.codigo, motivo, incidente: inc, claves: [inc.clave], veredicto: v });
     volverHoy += 1;
-    aviso(inc, `${motivo}; se intenta volver a la versión anterior del Worker`, "VOLVER_ATRAS (rollback.yml en GitHub Actions)");
+    // Aviso propio de la vuelta atrás: no añade veredicto (el del incidente ya lo recoge).
+    acciones.push({
+      tipo: "AVISAR", codigo: inc.codigo, motivo: `${motivo}; se intenta volver a la versión anterior del Worker`,
+      accion: "VOLVER_ATRAS (rollback.yml en GitHub Actions)", incidente: inc, claves: [inc.clave], vuelta: true,
+    });
   }
 
   for (const inc of incidentes) {
@@ -339,66 +430,111 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
       case "SMV_BLOQUEO": {
         const umbral = inc.umbralHoras ?? 72;
         if (typeof inc.ageHoras === "number" && inc.ageHoras > umbral) {
-          aviso(inc, `${inc.proceso ?? "la SMV"} lleva ${inc.ageHoras} h sin datos (más de ${umbral} h)`);
+          aviso(inc, inc.motivoAviso ?? `${inc.proceso ?? "la SMV"} lleva ${inc.ageHoras} h sin datos (más de ${umbral} h)`,
+            inc.origen === "directo" ? "hechos de la SMV con más de 48 h (lectura directa)" : `SMV: dato con más de ${umbral} h`);
           break;
         }
         // Detectado por el watchdog: ESPERAR. El plan B del servidor descarga los datos.
-        if (inc.origen === "watchdog") break;
-        if (est.relanzadoEn || instante - Date.parse(inc.desde) < 2 * H) break;
-        relanzar(inc, inc.workflow, inc.motivo);
+        if (inc.origen === "watchdog") {
+          const dato = /Hechos/.test(inc.proceso ?? "") ? "hechos" : "cotizaciones";
+          const edad = typeof inc.ageHoras === "number" ? `${dato} ${inc.ageHoras} h < ${umbral} h` : `${dato} sin edad conocida`;
+          veredicto(inc, "ESPERAR", `${edad}, el plan B del servidor lo cubre`, "SMV en el watchdog: esperar, no relanzar");
+          break;
+        }
+        if (est.relanzadoEn) { veredicto(inc, "ESPERAR", "ya relanzado en una pasada anterior", "SMV: relanzar una sola vez"); break; }
+        if (instante - Date.parse(inc.desde) < 2 * H) {
+          veredicto(inc, "ESPERAR", `fallo hace ${horas(inc.desde)} h < 2 h`, "SMV: esperar 2 h antes de relanzar");
+          break;
+        }
+        relanzar(inc, inc.workflow, inc.motivo, "SMV: esperar 2 h y relanzar (máx. 2 al día)");
         break;
       }
       case "CHOQUE_PUSH":
-        if (datoViejoDe(inc.workflow) && !est.relanzadoEn) relanzar(inc, inc.workflow, inc.motivo);
+        if (!datoViejoDe(inc.workflow)) veredicto(inc, "ESPERAR", "los datos del workflow están al día: otra ejecución ya publicó", "CHOQUE_PUSH: relanzar solo si los datos siguen viejos");
+        else if (est.relanzadoEn) veredicto(inc, "ESPERAR", "ya relanzado una vez", "CHOQUE_PUSH: relanzar una sola vez");
+        else relanzar(inc, inc.workflow, inc.motivo, "CHOQUE_PUSH: relanzar una vez si los datos siguen viejos");
         break;
       case "RED_PASAJERA": {
         const n = (mem.fallos || {})[inc.workflow] || 0;
-        if (n >= 3) { aviso(inc, `tercer fallo de red del día en ${inc.workflow}`); break; }
-        if (n === 2 || est.relanzadoEn || instante - Date.parse(inc.desde) < 30 * MIN) break;
-        relanzar(inc, inc.workflow, inc.motivo);
+        if (n >= 3) { aviso(inc, `tercer fallo de red del día en ${inc.workflow}`, "RED_PASAJERA: al tercer fallo del día, avisar"); break; }
+        if (n === 2) { veredicto(inc, "ESPERAR", `${n} fallos de red hoy en ${inc.workflow}`, "RED_PASAJERA: con dos fallos se espera; el tercero avisa"); break; }
+        if (est.relanzadoEn) { veredicto(inc, "ESPERAR", "ya relanzado tras este fallo", "RED_PASAJERA: relanzar una vez"); break; }
+        if (instante - Date.parse(inc.desde) < 30 * MIN) {
+          veredicto(inc, "ESPERAR", `fallo hace ${minutos(inc.desde)} min < 30 min`, "RED_PASAJERA: relanzar tras 30 min");
+          break;
+        }
+        relanzar(inc, inc.workflow, inc.motivo, "RED_PASAJERA: relanzar una vez tras 30 min");
         break;
       }
       case "WATCHDOG_SMOKE":
         if (!est.desplegadoEn) {
-          if ((inc.fallosSeguidos || 0) >= 2) desplegar(inc, "el watchdog falla dos ejecuciones seguidas en la comprobación de la web");
+          const n = inc.fallosSeguidos || 0;
+          if (n >= 2) desplegar(inc, "el watchdog falla dos ejecuciones seguidas en la comprobación de la web", "WATCHDOG_SMOKE: desplegar tras dos fallos seguidos del smoke");
+          else veredicto(inc, "ESPERAR", `${n} fallo seguido del smoke: se despliega con 2`, "WATCHDOG_SMOKE: desplegar tras dos fallos seguidos");
         } else if ((inc.fallosTrasDespliegue || 0) >= 2) {
-          volverAtras(inc, "el watchdog sigue fallando tras desplegar");
+          volverAtras(inc, "el watchdog sigue fallando tras desplegar", "WATCHDOG_SMOKE: dos fallos más del smoke tras desplegar");
+        } else {
+          veredicto(inc, "ESPERAR", `${inc.fallosTrasDespliegue || 0} fallo del smoke tras desplegar: se vuelve atrás con 2`, "WATCHDOG_SMOKE: volver atrás tras dos fallos más");
         }
         break;
       case "DATO_VIEJO":
-        if (inc.bloque === "backup") { aviso(inc, `${inc.motivo}; relanzar backup.yml no lo arregla, la copia la hace el Worker`); break; }
-        if (enCurso.has(inc.workflow)) break;
+        if (inc.bloque === "backup") { aviso(inc, `${inc.motivo}; relanzar backup.yml no lo arregla, la copia la hace el Worker`, "backup: solo avisar, lo hace el Worker"); break; }
+        if (enCurso.has(inc.workflow)) { veredicto(inc, "ESPERAR", `${inc.workflow} ya tiene una ejecución en curso`, "no relanzar con el workflow en curso"); break; }
         if (est.relanzadoEn) {
-          if (est.desde && instante - Date.parse(est.desde) >= 6 * H) aviso(inc, "sigue viejo 6 h después del RELANZAR");
+          if (est.desde && instante - Date.parse(est.desde) >= 6 * H) aviso(inc, "sigue viejo 6 h después del RELANZAR", "DATO_VIEJO: sigue viejo 6 h después del RELANZAR");
+          else veredicto(inc, "ESPERAR", "ya relanzado; se mira en la siguiente pasada", "DATO_VIEJO: avisar si sigue 6 h después del RELANZAR");
           break;
         }
-        relanzar(inc, inc.workflow, inc.motivo);
+        relanzar(inc, inc.workflow, inc.motivo, "DATO_VIEJO: relanzar el workflow dueño");
         break;
       case "BOLETIN_NO_SALIO":
-        if (limaParts(instante).hora >= 11) aviso(inc, "a las 11:00 de Lima el boletín sigue sin salir");
-        else if (!est.relanzadoEn) relanzar(inc, "boletin.yml", inc.motivo);
+        if (limaParts(instante).hora >= 11) aviso(inc, "a las 11:00 de Lima el boletín sigue sin salir", "BOLETIN_NO_SALIO: a las 11:00 avisar");
+        else if (!est.relanzadoEn) relanzar(inc, "boletin.yml", inc.motivo, "BOLETIN_NO_SALIO: relanzar (es seguro, envía una vez al día)");
+        else veredicto(inc, "ESPERAR", "ya relanzado hoy", "BOLETIN_NO_SALIO: avisar a las 11:00");
         break;
       case "PAGINA_CAIDA":
         if (est.desplegadoEn) {
-          if ((est.trasDespliegue || 0) >= 2) volverAtras(inc, `páginas caídas tras desplegar: ${inc.paginas.join(", ")}`);
+          if ((est.trasDespliegue || 0) >= 2) volverAtras(inc, `páginas caídas tras desplegar: ${inc.paginas.join(", ")}`, "PAGINA_CAIDA: dos pasadas caídas tras desplegar");
+          else veredicto(inc, "ESPERAR", `caídas tras desplegar: ${est.trasDespliegue || 0} pasada(s), se vuelve atrás con 2`, "PAGINA_CAIDA: volver atrás tras dos pasadas");
         } else if ((est.pasadas || 0) >= 2) {
-          desplegar(inc, `páginas caídas dos pasadas seguidas: ${inc.paginas.join(", ")}`);
+          desplegar(inc, `páginas caídas dos pasadas seguidas: ${inc.paginas.join(", ")}`, "PAGINA_CAIDA: desplegar tras dos pasadas seguidas");
+        } else {
+          veredicto(inc, "ESPERAR", "primera pasada con páginas caídas: se espera otra", "PAGINA_CAIDA: esperar la primera vez");
         }
         break;
       case "CI_ROJO":
-        aviso(inc, "CI en main en rojo: lo arregla Claude, no se despliega");
+        aviso(inc, "CI en main en rojo: lo arregla Claude, no se despliega", "CI_ROJO: solo avisar");
         break;
       case "PAGOS_ABIERTOS":
-        aviso(inc, "los pagos aparecen abiertos durante la pausa");
+        aviso(inc, "los pagos aparecen abiertos durante la pausa", "PAGOS_ABIERTOS: avisar de inmediato, nunca tocar");
         break;
       case "SIN_LATIDO":
-        aviso(inc, inc.motivo);
+        aviso(inc, inc.motivo, "SIN_LATIDO: solo avisar");
         break;
+      case "SERVIDOR_CASA":
+        if (inc.recuperado) aviso(inc, inc.motivo, "SERVIDOR_CASA: aviso de recuperación");
+        else if ((est.pasadas || 0) >= 2) aviso(inc, inc.motivo, "SERVIDOR_CASA: dos pasadas seguidas sin respuesta");
+        else veredicto(inc, "ESPERAR", "primera pasada sin respuesta: se espera otra", "SERVIDOR_CASA: avisar con dos pasadas seguidas");
+        break;
+      case "VIGIA_ROTO":
+        if (rotoHoy) veredicto(inc, "ESPERAR", "ya se avisó hoy de un fallo del vigía", "VIGIA_ROTO: máximo un aviso al día");
+        else {
+          rotoHoy = true;
+          aviso(inc, inc.motivo, "VIGIA_ROTO: un aviso al día por el canal que funcione");
+        }
+        break;
+      case "DESCONOCIDO":
       default:
-        aviso(inc, inc.motivo || "fallo sin clasificar");
+        aviso(inc, inc.motivo || "fallo sin clasificar", "DESCONOCIDO: avisar con el final del log");
     }
   }
   return acciones;
+}
+
+// Una línea de log por incidente: «  · <etiqueta>: <acción> — <motivo> (regla: ...)», con el resultado si lo hay.
+export function lineaVeredicto(v) {
+  const base = `  · ${v.etiqueta}: ${v.accion} — ${v.motivo} (regla: ${v.regla})`;
+  return v.resultado ? `${base} => ${v.resultado}` : base;
 }
 
 // ---------- Utilidades de ejecución ----------
@@ -426,13 +562,15 @@ export function argumentosVolverAtras(codigo) {
   return ["workflow", "run", "rollback.yml", "-R", REPO, "-f", `motivo=${codigo}`];
 }
 
-// Texto del aviso (Telegram y correo): diagnóstico, acción y final del log, redactado y de 3500 caracteres como mucho.
+// Texto del aviso (Telegram y correo): diagnóstico, acción, comprobación a mano y final del log,
+// redactado y de 3500 caracteres como mucho.
 export function textoAviso(a, secretos = [], ahora = new Date()) {
   const inc = a.incidente || {};
   const lineas = [
     `PerData vigía · ${a.codigo}`,
     `Diagnóstico: ${a.motivo}`,
     `Acción: ${a.accion || "ninguna, solo aviso"}`,
+    `Qué hacer a mano: ${queHacer(a.codigo)}`,
     `Momento: ${new Date(ahora).toISOString()} (UTC)`,
     inc.workflow ? `Workflow: ${inc.workflow}` : null,
     inc.runId ? `Ejecución: ${inc.runId} (gh run view ${inc.runId} -R ${REPO})` : null,
@@ -444,13 +582,26 @@ export function textoAviso(a, secretos = [], ahora = new Date()) {
   return redactar(lineas.join("\n"), secretos).slice(0, TG_MAX);
 }
 
-// Resumen diario: una sola línea con lo del último día.
-export function textoResumen({ fecha, runs, fallos, historial = [], ahora = new Date(), web, pagos }) {
+// Resumen diario (Telegram, a las 08:00 de Lima, también en modo seco con la marca «[modo prueba]»).
+export function textoResumen({ fecha, modo = "real", runs, fallos, pasadas = "?", incidentesDia = {}, historial = [], silencio = [], ahora = new Date(), web, pagos }) {
   const desde = new Date(ahora).getTime() - 24 * H;
   const cuentas = {};
   for (const h of historial) if (Date.parse(h.fecha) >= desde) cuentas[h.tipo] = (cuentas[h.tipo] || 0) + 1;
   const acciones = Object.entries(cuentas).map(([tipo, n]) => `${tipo} ${n}`).join(", ") || "ninguna";
-  return `PerData · ${fecha}: ${runs} runs en 24 h, ${fallos} fallos, acciones del vigía: ${acciones}, ${web}, pagos en pausa ${pagos}`;
+  const porCodigo = {};
+  for (const codigo of Object.values(incidentesDia)) porCodigo[codigo] = (porCodigo[codigo] || 0) + 1;
+  const incidentes = Object.entries(porCodigo).map(([c, n]) => `${c} ${n}`).join(", ") || "ninguno";
+  const enSilencio = silencio.map((s) => `${s.codigo} (${s.motivo})`).join("; ") || "ninguno";
+  const seco = modo === "seco";
+  const lineas = [
+    `${seco ? "[modo prueba] " : ""}PerData · ${fecha}`,
+    `Pasadas de hoy: ${pasadas}. Runs en 24 h: ${runs}, fallos: ${fallos}.`,
+    `Incidentes de hoy por código: ${incidentes}.`,
+    seco ? `Acciones que HABRÍA hecho (memoria simulada, 24 h): ${acciones}.` : `Acciones del vigía (24 h): ${acciones}.`,
+    `Avisos acumulados en silencio: ${enSilencio}.`,
+    `${web}. Pagos en pausa: ${pagos}.`,
+  ];
+  return lineas.join("\n").slice(0, TG_MAX);
 }
 
 export function estadoWeb(status, ahora = new Date()) {
@@ -459,10 +610,8 @@ export function estadoWeb(status, ahora = new Date()) {
   return viejos.length ? `datos viejos en ${viejos.join(", ")}` : "/api/status OK";
 }
 
-// True si toca enviar el resumen: con VIGIA_ACTUAR=1 o VIGIA_RESUMEN=1, a partir de las 08:00 de Lima
-// y una sola vez por día.
-export function debeEnviarResumen(memoria, ahora, cfg) {
-  if (!(cfg.actuar === "1" || cfg.resumen === "1")) return false;
+// True si toca enviar el resumen: a partir de las 08:00 de Lima y una sola vez por día (con o sin modo seco).
+export function debeEnviarResumen(memoria, ahora) {
   const { fecha, hora } = limaParts(new Date(ahora));
   return hora >= RESUMEN_HORA && memoria?.resumenDia !== fecha;
 }
@@ -474,6 +623,7 @@ function construirCorreo(a) {
     `Momento: ${new Date().toISOString()} (UTC)`,
     `Diagnóstico: ${a.motivo}`,
     `Acción: ${a.accion || "ninguna, solo aviso"}`,
+    `Qué hacer a mano: ${queHacer(a.codigo)}`,
     inc.workflow ? `Workflow: ${inc.workflow}` : null,
     inc.runId ? `Ejecución: ${inc.runId} (gh run view ${inc.runId} -R ${REPO})` : null,
     inc.paso ? `Paso fallido: ${inc.paso}` : null,
@@ -518,72 +668,113 @@ export function canalesAviso(cfg) {
   return canales;
 }
 
-// Envía el aviso por el primer canal que funcione. Si no hay ninguno, devuelve canal null (queda en el log).
+// Envía el aviso por el primer canal que funcione. Si no hay ninguno, canal null (queda en el log).
+// `telegramFallo` indica que Telegram estaba configurado y falló (cuenta para VIGIA_ROTO).
 export async function avisar(a, cfg, { secretos = [], ahora = new Date(), telegram = enviarTelegram, correo = enviarCorreo } = {}) {
   const fallos = [];
+  let telegramFallo = false;
   for (const canal of canalesAviso(cfg)) {
     try {
       if (canal === "telegram") await telegram(textoAviso(a, secretos, ahora), { token: cfg.telegramToken, chatId: cfg.telegramChat });
       else await correo(a, cfg, secretos);
-      return { canal, detalle: "" };
+      return { canal, detalle: "", telegramFallo };
     } catch (e) {
+      if (canal === "telegram") telegramFallo = true;
       fallos.push(`${canal}: ${redactar(e.message, secretos).split("\n")[0].slice(0, 120)}`);
     }
   }
-  return { canal: null, detalle: fallos.join("; ") || "sin Telegram ni correo configurados" };
+  return { canal: null, detalle: fallos.join("; ") || "sin Telegram ni correo configurados", telegramFallo };
 }
 
-// Ejecuta las acciones. En modo seco solo registra lo que haría. Devuelve las notas para el log.
-// `avisar` recibe la acción y devuelve { canal, detalle } (ver avisar()).
+// Ejecuta las acciones. En modo seco no llama a gh ni envía avisos: actualiza la memoria simulada como si
+// lo hiciera, con sus mismos límites. Devuelve las notas para la cabecera del log y deja el resultado de
+// cada acción en su veredicto.
 export async function ejecutar(acciones, memoria, { seco, ahora = new Date(), gh, avisar: enviarAviso, secretos = [] }) {
   const notas = [];
   const m = memoria;
+  m.silencio = m.silencio || [];
+  m.avisos = m.avisos || {};
+  m.despliegues = m.despliegues || [];
   const iso = new Date(ahora).toISOString();
+  const hoy = limaParts(new Date(ahora)).fecha;
   const pendientes = [...acciones];
   const errorTexto = (e) => redactar(e?.stderr || e?.message || e, secretos).split("\n")[0].slice(0, 200);
+  const marca = (a, texto) => { if (a.veredicto) a.veredicto.resultado = texto; };
+  let volverHecho = false;
   while (pendientes.length) {
     const a = pendientes.shift();
     if (a.tipo === "RELANZAR") {
-      if (seco) { notas.push(`[seco] RELANZAR ${a.workflow}`); continue; }
       try {
-        await gh(["workflow", "run", a.workflow, "-R", REPO]);
+        if (!seco) await gh(["workflow", "run", a.workflow, "-R", REPO]);
         m.contadores.relanzar[a.workflow] = (m.contadores.relanzar[a.workflow] || 0) + 1;
         for (const c of a.claves) if (m.incidentes[c]) m.incidentes[c].relanzadoEn = iso;
         anotar(m, iso, "RELANZAR", a.workflow);
-        notas.push(`RELANZAR ${a.workflow}`);
+        notas.push(`RELANZAR ${a.workflow}${seco ? " (simulado)" : ""}`);
+        marca(a, seco ? "simulado (seco)" : "hecho");
       } catch (e) {
         notas.push(`RELANZAR ${a.workflow} fallido: ${errorTexto(e)}`);
+        marca(a, `fallido: ${errorTexto(e)}`);
       }
     } else if (a.tipo === "DESPLEGAR") {
-      if (seco) { notas.push("[seco] DESPLEGAR deploy.yml"); continue; }
       try {
-        await gh(["workflow", "run", "deploy.yml", "-R", REPO]);
+        if (!seco) await gh(["workflow", "run", "deploy.yml", "-R", REPO]);
         m.contadores.desplegar += 1;
         for (const c of a.claves) if (m.incidentes[c]) { m.incidentes[c].desplegadoEn = iso; m.incidentes[c].trasDespliegue = 0; }
         m.despliegues = [...m.despliegues, { fecha: iso, motivo: a.motivo }].slice(-20);
         anotar(m, iso, "DESPLEGAR", "deploy.yml");
-        notas.push("DESPLEGAR deploy.yml");
+        notas.push(`DESPLEGAR deploy.yml${seco ? " (simulado)" : ""}`);
+        marca(a, seco ? "simulado (seco)" : "hecho");
       } catch (e) {
         notas.push(`DESPLEGAR fallido: ${errorTexto(e)}`);
+        marca(a, `fallido: ${errorTexto(e)}`);
       }
     } else if (a.tipo === "VOLVER_ATRAS") {
-      if (seco) { notas.push(`[seco] VOLVER_ATRAS (rollback.yml, motivo ${a.codigo})`); continue; }
       try {
-        await gh(argumentosVolverAtras(a.codigo));
+        if (!seco) await gh(argumentosVolverAtras(a.codigo));
         m.contadores.volverAtras += 1;
+        volverHecho = true;
         anotar(m, iso, "VOLVER_ATRAS", a.codigo);
-        notas.push("VOLVER_ATRAS disparado (rollback.yml)");
+        notas.push(seco ? "VOLVER_ATRAS (simulado)" : "VOLVER_ATRAS disparado (rollback.yml)");
+        marca(a, seco ? "simulado (seco)" : "hecho");
       } catch (e) {
         notas.push(`VOLVER_ATRAS fallido: ${errorTexto(e)}`);
+        marca(a, `fallido: ${errorTexto(e)}`);
         pendientes.unshift({ tipo: "AVISAR", codigo: a.codigo, motivo: `el rollback ha fallado (${errorTexto(e)})`, accion: "VOLVER_ATRAS fallido", incidente: a.incidente, claves: a.claves });
       }
     } else if (a.tipo === "AVISAR") {
-      const previo = m.avisos[a.codigo];
-      if (previo && new Date(ahora) - Date.parse(previo) < 6 * H) { notas.push(`AVISAR ${a.codigo} suprimido (ya se avisó en 6 h)`); continue; }
-      if (seco) { notas.push(`[seco] AVISAR ${a.codigo}: ${a.motivo}`); continue; }
-      const r = await enviarAviso(a);
-      if (r.canal) { m.avisos[a.codigo] = iso; notas.push(`aviso ${a.codigo} por ${r.canal}`); }
-      else notas.push(`AVISAR ${a.codigo} sin canal (${r.detalle}); queda en el log: ${a.motivo}`);
+      const clave = a.avisoKey ?? a.codigo;
+      const previo = m.avisos[clave];
+      if (previo && new Date(ahora) - Date.parse(previo) < 6 * H) {
+        notas.push(`AVISAR ${a.codigo} suprimido (ya se avisó en 6 h)`);
+        marca(a, "suprimido: ya avisado en las últimas 6 h");
+        continue;
+      }
+      const critico = CRITICOS_SILENCIO.has(a.codigo) || (a.vuelta && volverHecho);
+      if (!critico && enHorasSilencio(ahora)) {
+        m.silencio = [...m.silencio.filter((s) => s.clave !== clave), { clave, codigo: a.codigo, motivo: a.motivo, fecha: iso }].slice(-50);
+        notas.push(`AVISAR ${a.codigo} en silencio (va en el resumen de las 08:00)`);
+        marca(a, "en silencio: va en el resumen de las 08:00");
+        if (a.codigo === "VIGIA_ROTO") m.rotoDia = hoy;
+        continue;
+      }
+      if (seco) {
+        m.avisos[clave] = iso;
+        notas.push(`AVISAR ${a.codigo} simulado (seco, no se envía)`);
+        marca(a, "simulado (seco): no enviado");
+      } else {
+        const r = await enviarAviso(a);
+        if (r.canal) {
+          m.avisos[clave] = iso;
+          notas.push(`aviso ${a.codigo} por ${r.canal}`);
+          marca(a, `enviado por ${r.canal}`);
+        } else {
+          notas.push(`AVISAR ${a.codigo} sin canal (${r.detalle}); queda en el log: ${a.motivo}`);
+          marca(a, "sin canal: queda en el log");
+        }
+        if (r.telegramFallo) m.telegramFallos = (m.telegramFallos || 0) + 1;
+        else if (r.canal === "telegram") m.telegramFallos = 0;
+      }
+      if (a.codigo === "VIGIA_ROTO") m.rotoDia = hoy;
     }
   }
   return notas;
@@ -623,7 +814,7 @@ export function cargarConfig({ env = process.env, home = os.homedir(), leer = le
   return {
     apiKey: pick("VIGIA_NVIDIA_API_KEY"), modelo: pick("VIGIA_MODELO"), ghToken: pick("GH_TOKEN"),
     telegramToken: pick("TELEGRAM_BOT_TOKEN"), telegramChat: pick("TELEGRAM_CHAT_ID"),
-    actuar: pick("VIGIA_ACTUAR"), resumen: pick("VIGIA_RESUMEN"), email: pick("VIGIA_EMAIL"),
+    actuar: pick("VIGIA_ACTUAR"), email: pick("VIGIA_EMAIL"),
     resendKey: pick("RESEND_API_KEY"), emailFrom: pick("EMAIL_FROM"),
   };
 }
@@ -653,26 +844,37 @@ function liberarLock() {
   } catch { /* ya no existe */ }
 }
 
-function cargarMemoria() {
+function cargarMemoria(file = MEMORIA_FILE) {
   try {
-    return { ...memoriaVacia(), ...JSON.parse(fs.readFileSync(MEMORIA_FILE, "utf8")) };
+    return { ...memoriaVacia(), ...JSON.parse(fs.readFileSync(file, "utf8")) };
   } catch {
     return memoriaVacia();
   }
 }
 
-function guardarMemoria(m) {
-  const tmp = `${MEMORIA_FILE}.tmp`;
+function guardarMemoria(file, m) {
+  const tmp = `${file}.tmp`;
   fs.writeFileSync(tmp, JSON.stringify(m, null, 2));
-  fs.renameSync(tmp, MEMORIA_FILE);
+  fs.renameSync(tmp, file);
 }
 
 // ---------- Recogida de estado ----------
 
+// Un 401/403 de gh (sin ser límite de peticiones) o «Bad credentials» marca el token como roto.
+export function esErrorAuth(texto) {
+  const t = String(texto ?? "");
+  return /\bHTTP 40[13]\b|Bad credentials/i.test(t) && !/rate limit/i.test(t);
+}
+
 async function gh(args) {
   const env = ghConfig.token ? { ...process.env, GH_TOKEN: ghConfig.token } : process.env;
-  const { stdout } = await execFileAsync("gh", args, { env, maxBuffer: 64 * 1024 * 1024, timeout: 120000 });
-  return stdout;
+  try {
+    const { stdout } = await execFileAsync("gh", args, { env, maxBuffer: 64 * 1024 * 1024, timeout: 120000 });
+    return stdout;
+  } catch (e) {
+    if (esErrorAuth(`${e.stderr ?? ""}\n${e.message ?? ""}`)) senales.add("gh-401");
+    throw e;
+  }
 }
 
 async function fetchJson(url) {
@@ -742,16 +944,78 @@ async function detalleFallo(run) {
   return { paso, jobName: job?.name ?? "", logTail: cola(log, 80) };
 }
 
+// Servidor de casa: Tailscale (par «wagus-server», campo Online) y, de respaldo, TCP al puerto 22.
+// Devuelve true/false si el par existe, o null si no hay tailscale o no aparece el par (se salta).
+export function estadoTailscale(texto) {
+  let datos;
+  try { datos = JSON.parse(String(texto ?? "")); } catch { return null; }
+  const par = Object.values(datos?.Peer ?? {}).find((p) => String(p?.HostName ?? "").includes(CASA.nombre));
+  return par ? par.Online === true : null;
+}
+
+async function consultarTailscale() {
+  try {
+    const { stdout } = await execFileAsync("tailscale", ["status", "--json"], { timeout: 15000, maxBuffer: 16 * 1024 * 1024 });
+    return estadoTailscale(stdout);
+  } catch {
+    return null; // sin tailscale o sin respuesta: se salta el chequeo sin error
+  }
+}
+
+export function tcpAbierto(host, puerto, ms = 5000) {
+  return new Promise((resolve) => {
+    const socket = net.connect({ host, port: puerto });
+    const fin = (ok) => { clearTimeout(timer); socket.destroy(); resolve(ok); };
+    const timer = setTimeout(() => fin(false), ms);
+    socket.once("connect", () => fin(true));
+    socket.once("error", () => fin(false));
+  });
+}
+
+export async function comprobarCasa({ tailscale = consultarTailscale, tcp = tcpAbierto } = {}) {
+  const online = await tailscale();
+  const abierto = online === true ? null : await tcp(CASA.ip, CASA.puerto, CASA.ms);
+  const arriba = online === true || abierto === true;
+  const ts = online === null ? "sin dato" : online ? "en línea" : "sin conexión";
+  const tcpTexto = abierto === null ? "no comprobado" : abierto ? "responde" : "sin respuesta";
+  return { arriba, detalle: `Tailscale: ${ts}; TCP ${CASA.puerto}: ${tcpTexto}` };
+}
+
+// Incidente SERVIDOR_CASA a partir de la comprobación: aviso si cae (dos pasadas seguidas lo decide decidir())
+// y aviso de recuperación si la pasada anterior ya había avisado de la caída.
+export function incidenteCasa(casa, memoriaPrevia = {}) {
+  if (!casa.arriba) {
+    return { codigo: "SERVIDOR_CASA", clave: "SERVIDOR_CASA", workflow: null, motivo: `el servidor de casa no responde: los planes B de la SMV no correrán (${casa.detalle})`, logTail: "" };
+  }
+  if ((memoriaPrevia.incidentes?.SERVIDOR_CASA?.pasadas || 0) >= 2) {
+    return {
+      codigo: "SERVIDOR_CASA", clave: "SERVIDOR_CASA:recuperado", avisoKey: "SERVIDOR_CASA:recuperado", recuperado: true,
+      workflow: null, motivo: "el servidor de casa responde de nuevo: los planes B de la SMV vuelven a correr", logTail: "",
+    };
+  }
+  return null;
+}
+
+// Credenciales rotas o Telegram caído dos veces: un solo aviso al día (VIGIA_ROTO). Solo avisa.
+export function detectarVigiaRoto({ senales: registro = new Set(), telegramFallos = 0 } = {}) {
+  const motivos = [];
+  if (registro.has("gh-401")) motivos.push("gh responde 401/403 o «Bad credentials»: el token de GitHub ha caducado o le faltan permisos; renovar GH_TOKEN en ~/perdata-vigia/env (fine-grained, solo Wagustin/macro-data-explorer)");
+  if (registro.has("nvidia-401")) motivos.push("la API de NVIDIA responde 401: renovar VIGIA_NVIDIA_API_KEY en ~/perdata-vigia/env");
+  if (telegramFallos >= 2) motivos.push("Telegram falla dos envíos seguidos: revisar TELEGRAM_BOT_TOKEN y TELEGRAM_CHAT_ID en ~/perdata-vigia/env");
+  if (!motivos.length) return [];
+  return [{ codigo: "VIGIA_ROTO", clave: "VIGIA_ROTO", workflow: null, motivo: motivos.join(". "), logTail: "" }];
+}
+
 // ---------- Pasada ----------
 
-async function pasada(ahora, { seco, cfg }) {
+async function pasada(ahora, { seco, cfg, memoriaFile }) {
   const fallidas = [];
   const secretos = secretosDe(cfg);
   const intentar = async (nombre, fn) => {
     try { return await fn(); } catch (e) { fallidas.push(`${nombre} (${redactar(e.message, secretos).split("\n")[0].slice(0, 120)})`); return null; }
   };
 
-  const [runsRaw, workflows, status, billing, paginas, commits] = await Promise.all([
+  const [runsRaw, workflows, status, billing, paginas, commits, hechos, casa] = await Promise.all([
     intentar("runs", async () => JSON.parse(await gh(["run", "list", "-R", REPO, "-L", "200", "--branch", "main", "--json", CAMPOS_RUNS]))),
     intentar("workflows", async () => JSON.parse(await gh(["workflow", "list", "-R", REPO, "-a", "--json", "id,name,path"]))),
     intentar("api/status", () => fetchJson(`${BASE}/api/status`)),
@@ -762,6 +1026,8 @@ async function pasada(ahora, { seco, cfg }) {
       return rutas.filter((_, i) => !oks[i]);
     }),
     intentar("commits", async () => JSON.parse(await gh(["api", `repos/${REPO}/commits?per_page=50`]))),
+    intentar("hechos de la SMV", () => fetchJson(`${HECHOS_URL}?t=${Date.now()}`)),
+    comprobarCasa(),
   ]);
 
   const rutaPorId = new Map((workflows || []).map((w) => [w.id, nombreArchivo(w.path)]));
@@ -769,7 +1035,7 @@ async function pasada(ahora, { seco, cfg }) {
   const analisis = analizarRuns(runs, ahora);
   const incidentes = [];
 
-  const memoriaPrevia = cargarMemoria();
+  const memoriaPrevia = cargarMemoria(memoriaFile);
   for (const [wf, run] of analisis.ultimos) {
     if (!esFallo(run)) continue;
     let detalle = { paso: "", jobName: "", logTail: "" };
@@ -792,7 +1058,7 @@ async function pasada(ahora, { seco, cfg }) {
     let codigo = clasificarFallo({ workflowPath: wf, stepName: detalle.paso, logTail: detalle.logTail });
     let via = "reglas";
     if (codigo === "DESCONOCIDO" && cfg.apiKey) {
-      const r = await clasificarConNemotron({ workflow: wf, paso: detalle.paso, logTail: detalle.logTail }, { apiKey: cfg.apiKey, modelo: cfg.modelo });
+      const r = await clasificarConNemotron({ workflow: wf, paso: detalle.paso, logTail: detalle.logTail }, { apiKey: cfg.apiKey, modelo: cfg.modelo, senales });
       if (r) { codigo = r.codigo; via = `Nemotron ${r.modelo} (${r.ms} ms, confianza ${r.confianza ?? 0})`; }
     }
     const clave = `${codigo}:${wf}:${run.databaseId}`;
@@ -827,6 +1093,11 @@ async function pasada(ahora, { seco, cfg }) {
   }
   const latido = evaluarLatido({ runs: runsRaw && workflows ? runs : null, statusFallo: status === null, ahora });
   if (latido) incidentes.push(latido);
+  const directo = incidenteHechos(hechos, ahora, incidentes);
+  if (directo) incidentes.push(directo);
+  const incCasa = incidenteCasa(casa, memoriaPrevia);
+  if (incCasa) incidentes.push(incCasa);
+  incidentes.push(...detectarVigiaRoto({ senales, telegramFallos: memoriaPrevia.telegramFallos || 0 }));
 
   const omitidos = [
     ...(runsRaw ? [] : PREFIJOS_RUNS),
@@ -835,45 +1106,48 @@ async function pasada(ahora, { seco, cfg }) {
     ...(billing ? [] : ["PAGOS_ABIERTOS"]),
   ];
   const memoria = registrarPasada(memoriaPrevia, incidentes, { ahora, omitidos });
-  const acciones = decidir(incidentes, memoria, ahora, analisis.enCurso);
+  const veredictos = [];
+  const acciones = decidir(incidentes, memoria, ahora, analisis.enCurso, veredictos);
   const iso = ahora.toISOString();
 
   const notas = await ejecutar(acciones, memoria, {
     seco, ahora, secretos, gh,
-    avisar: (a) => avisar(a, cfg, { secretos, ahora }),
+    avisar: (a) => (seco ? null : avisar(a, cfg, { secretos, ahora })),
   });
 
   const hoy = limaParts(ahora).fecha;
-  if (debeEnviarResumen(memoria, ahora, cfg)) {
+  if (debeEnviarResumen(memoria, ahora)) {
     const texto = textoResumen({
-      fecha: hoy,
+      fecha: hoy, modo: seco ? "seco" : "real",
       runs: runsRaw ? analisis.recientes.length : "?",
       fallos: runsRaw ? analisis.recientes.filter(esFallo).length : "?",
-      historial: memoria.historial, ahora,
+      pasadas: memoria.pasadasDia, incidentesDia: memoria.incidentesDia,
+      historial: memoria.historial, silencio: memoria.silencio, ahora,
       web: estadoWeb(status, ahora),
       pagos: billing ? (billing.paymentsEnabled === false ? "sí" : "no") : "no comprobado",
     });
-    if (seco) notas.push(`[seco] resumen diario: ${texto}`);
-    else if (cfg.telegramToken && cfg.telegramChat) {
+    if (cfg.telegramToken && cfg.telegramChat) {
       try {
         await enviarTelegram(texto, { token: cfg.telegramToken, chatId: cfg.telegramChat });
         memoria.resumenDia = hoy;
-        notas.push("resumen diario enviado por Telegram");
+        memoria.silencio = [];
+        memoria.telegramFallos = 0;
+        notas.push(`resumen diario enviado por Telegram${seco ? " [modo prueba]" : ""}`);
       } catch (e) {
+        memoria.telegramFallos = (memoria.telegramFallos || 0) + 1;
         notas.push(`resumen diario fallido: ${redactar(e.message, secretos).split("\n")[0].slice(0, 120)}`);
       }
     } else notas.push("resumen diario sin Telegram configurado");
   }
-  if (!seco) guardarMemoria(memoria);
+  guardarMemoria(memoriaFile, memoria);
 
-  const etiqueta = (i) => `${i.codigo}${i.workflow ? `@${i.workflow}` : ""}`;
-  const resumen = [
+  const cabecera = [
     `${iso} ${seco ? "seco" : "ACTUAR"}`,
-    `incidentes: ${incidentes.map(etiqueta).join(", ") || "ninguno"}`,
+    `incidentes: ${incidentes.map(etiquetaDe).join(", ") || "ninguno"}`,
     `acciones: ${notas.join("; ") || "ninguna"}`,
     fallidas.length ? `fuentes fallidas: ${fallidas.join(", ")}` : null,
   ].filter(Boolean).join(" | ");
-  return resumen;
+  return [cabecera, ...veredictos.map(lineaVeredicto)].join("\n");
 }
 
 export async function main(argv = process.argv.slice(2)) {
@@ -882,14 +1156,15 @@ export async function main(argv = process.argv.slice(2)) {
   const cfg = cargarConfig();
   ghConfig.token = cfg.ghToken ?? null;
   const seco = argv.includes("--seco") || cfg.actuar !== "1";
+  const memoriaFile = seco ? MEMORIA_SECO_FILE : MEMORIA_FILE;
   if (!adquirirLock()) {
     fs.appendFileSync(LOG_FILE, `${ahora.toISOString()} omitida: otra pasada en marcha\n`);
     return 0;
   }
   try {
-    const linea = await pasada(ahora, { seco, cfg });
-    fs.appendFileSync(LOG_FILE, `${linea}\n`);
-    console.log(linea);
+    const texto = await pasada(ahora, { seco, cfg, memoriaFile });
+    fs.appendFileSync(LOG_FILE, `${texto}\n`);
+    console.log(texto);
     return 0;
   } catch (e) {
     const linea = `${ahora.toISOString()} ERROR ${redactar(e.message, secretosDe(cfg)).split("\n")[0].slice(0, 300)}`;
