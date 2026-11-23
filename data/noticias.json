@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-23T01:31:30.990Z",
+  "actualizado": "2026-11-23T01:42:15.013Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -29,7 +29,7 @@
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 24
+      "items": 21
     },
     "rpp": {
       "nombre": "RPP Noticias",
@@ -44,7 +44,7 @@
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 14
+      "items": 13
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -64,11 +64,20 @@
   },
   "noticias": [
     {
+      "id": "gestion-d49215aaf7",
+      "titulo": "Joyería “pierde brillo”: envíos caerían este año, pero productos estrella aún resisten",
+      "url": "https://gestion.pe/economia/joyeria-de-peru-pierde-brillo-exportaciones-caerian-60-en-2026-pero-productos-estrella-aun-resisten-segun-adex-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-23T01:35:08.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "el_comercio-65c2070b8a",
       "titulo": "Precio del dólar en Perú: cuál fue el tipo de cambio del domingo 10 de noviembre",
       "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-2026-cuanto-esta-el-dolar-este-domingo-22-de-noviembre-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
       "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-23T01:11:03.000Z",
+      "fecha_iso": "2026-11-23T01:30:00.000Z",
       "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
@@ -232,15 +241,6 @@
       "fuente": "La República Economía",
       "fecha_iso": "2026-11-22T21:17:03.000Z",
       "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-d49215aaf7",
-      "titulo": "Joyería “pierde brillo”: envíos caerían este año, pero productos estrella aún resisten",
-      "url": "https://gestion.pe/economia/joyeria-de-peru-pierde-brillo-exportaciones-caerian-60-en-2026-pero-productos-estrella-aun-resisten-segun-adex-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-22T21:00:00.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -565,15 +565,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-22T13:11:57.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-ffe81f1b31",
-      "titulo": "Precio del GNV, GLP, diésel y gasolina en Perú para hoy, domingo 22 de noviembre de 2026",
-      "url": "https://www.infobae.com/peru/2026/11/22/precio-del-gnv-glp-diesel-y-gasolina-en-peru-para-hoy-domingo-22-de-noviembre-de-2026/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-22T12:30:13.000Z",
-      "categoria": "Energía",
       "semaforo": "AMARILLO"
     },
     {
@@ -946,24 +937,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-0fc14239de",
-      "titulo": "Wall Street cierra con fuertes caídas por el desplome de la IA",
-      "url": "https://elcomercio.pe/economia/mercados/wall-street-cierra-con-fuertes-caidas-por-el-desplome-de-la-ia-l-mercados-l-wall-street-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-20T22:01:43.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-6a335035b7",
-      "titulo": "El dólar cierra la semana en S/3,45 ante caída del cobre y mayor aversión al riesgo",
-      "url": "https://elcomercio.pe/economia/peru/el-dolar-cierra-la-semana-en-s345-ante-caida-del-cobre-y-mayor-aversion-al-riesgo-l-cotizacion-del-dolar-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-20T21:19:56.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "bloomberg_linea-bd42c4a597",
       "titulo": "Dos exempleados de Nvidia acusaron a Jensen Huang de amenazarlos e intimidarlos hace dos décadas",
       "url": "https://www.bloomberglinea.com/negocios/dos-exempleados-de-nvidia-acusaron-a-jensen-huang-de-amenazarlos-e-intimidarlos-hace-dos-decadas/",
@@ -1024,6 +997,51 @@
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-20T15:05:44.000Z",
       "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "inei-eee7f7dd02",
+      "titulo": "INEI: Sector servicios prestados a empresas aumentó 3,47% en setiembre 2026",
+      "url": "https://www.gob.pe/institucion/inei/noticias/1475965-inei-sector-servicios-prestados-a-empresas-aumento-3-47-en-setiembre-2026",
+      "fuente": "Instituto Nacional de Estadística e Informática",
+      "fecha_iso": "2026-11-20T14:53:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "inei-c345d49340",
+      "titulo": "INEI: Actividad comercial creció 6,29% en setiembre de 2026",
+      "url": "https://www.gob.pe/institucion/inei/noticias/1475964-inei-actividad-comercial-crecio-6-29-en-setiembre-de-2026",
+      "fuente": "Instituto Nacional de Estadística e Informática",
+      "fecha_iso": "2026-11-20T14:52:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "inei-108a149475",
+      "titulo": "INEI: Actividad de restaurantes aumentó 2,94% en setiembre 2026",
+      "url": "https://www.gob.pe/institucion/inei/noticias/1475963-inei-actividad-de-restaurantes-aumento-2-94-en-setiembre-2026",
+      "fuente": "Instituto Nacional de Estadística e Informática",
+      "fecha_iso": "2026-11-20T14:49:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "inei-299e5a8bad",
+      "titulo": "Movimiento de vehículos a nivel nacional creció 3,2% en setiembre 2026",
+      "url": "https://www.gob.pe/institucion/inei/noticias/1475947-movimiento-de-vehiculos-a-nivel-nacional-crecio-3-2-en-setiembre-2026",
+      "fuente": "Instituto Nacional de Estadística e Informática",
+      "fecha_iso": "2026-11-20T14:21:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "el_comercio-50ca8094ce",
+      "titulo": "Papa León XIV movilizó a más de 1 millón de visitantes y generó un impacto económico de S/ 680 millones",
+      "url": "https://elcomercio.pe/economia/peru/papa-leon-xiv-movilizo-a-mas-de-1-millon-de-visitantes-y-genero-un-impacto-economico-de-s-680-millones-apuesplan-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-20T02:40:18.000Z",
+      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     }
   ]
