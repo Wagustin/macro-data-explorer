@@ -6,6 +6,7 @@ import {
   clasificarConNemotron, interpretarRespuesta, elegirModelo, redactar, ejecutar,
   argumentosVolverAtras, parsearEnv, rutaEnv, cargarConfig, canalesAviso, avisar, textoAviso,
   debeEnviarResumen, textoResumen, evaluarLatido, enviarTelegram,
+  estadoBoletin, resumenActividad, rachaDeFallos, codigosDeFallo, resumenWeb, estadoPagos,
   enHorasSilencio, lineaVeredicto, incidenteHechos, incidenteCasa, estadoTailscale, comprobarCasa,
   tcpAbierto, esErrorAuth, detectarVigiaRoto,
 } from "../scripts/vigia.mjs";
@@ -510,8 +511,9 @@ test("horas de silencio: 02:00 Lima acumula el aviso normal; PAGOS_ABIERTOS se e
   assert.deepEqual(enviados, ["PAGOS_ABIERTOS"]);
   assert.deepEqual(memoria.silencio.map((s) => s.codigo), ["CI_ROJO"]);
   assert.ok(notas.some((n) => n.startsWith("AVISAR CI_ROJO en silencio")));
-  const resumen = textoResumen({ fecha: "2026-11-20", runs: 1, fallos: 0, silencio: memoria.silencio, ahora: t, web: "/api/status OK", pagos: "no" });
+  const resumen = textoResumen({ ...TODO_BIEN, ahora: t, silencio: memoria.silencio });
   assert.match(resumen, /Avisos acumulados en silencio: CI_ROJO \(CI en main en rojo: lo arregla Claude, no se despliega\)\./);
+  assert.match(resumen, /^PerData · 2026-11-20: 1 asunto$/m);
 });
 
 test("de noche, el aviso de una vuelta atrás ya ejecutada sí se envía", async () => {
@@ -531,21 +533,133 @@ test("resumen diario: una vez al día desde las 08:00 de Lima, también en modo 
   assert.equal(debeEnviarResumen({ resumenDia: "2026-11-20" }, new Date("2026-11-21T13:30:00Z")), true);
 });
 
-test("resumen en seco: marcado [modo prueba], con lo que habría hecho y los incidentes del día", () => {
+// Datos de un resumen sano; cada test cambia solo lo que prueba.
+const TODO_BIEN = {
+  fecha: "2026-11-20", ahora,
+  actividad: { runs: 84, fallos: 0, grupos: [] },
+  boletin: "enviado",
+  web: { viejos: [], hechosH: 5, smvH: 12, backupFecha: "2026-11-20" },
+  pagos: { estado: "en pausa", detalle: "" },
+  paginas: [{ ruta: "/", codigo: 200 }, { ruta: "/dolar", codigo: 200 }, { ruta: "/precios", codigo: 200 }, { ruta: "/boletin", codigo: 200 }],
+  casa: { arriba: true, detalle: "Tailscale: en línea; TCP 22: no comprobado" },
+  historial: [], silencio: [],
+};
+const corrida = (nombre, conclusion, minutos, codigos) => ({
+  workflowName: nombre, wf: "x.yml", status: "completed", conclusion,
+  createdAt: new Date(ahora.getTime() - minutos * MIN).toISOString(), codigos,
+});
+
+test("resumen: todo OK tiene veredicto OK y cada punto dice OK o su problema", () => {
+  const t = textoResumen(TODO_BIEN);
+  assert.equal(t.split("\n")[0], "PerData · 2026-11-20: OK");
+  assert.match(t, /^1\. Boletín: OK, commit «data\(boletin\): enviado 2026-11-20» en main\./m);
+  assert.match(t, /^2\. GitHub Actions 24 h: 84 runs, 0 fallos\. OK\./m);
+  assert.match(t, /^3\. \/api\/status OK: hechos SMV de hace 5 h, cotizaciones de hace 12 h, respaldo de hoy: sí\./m);
+  assert.match(t, /^4\. Pagos: en pausa .*OK\./m);
+  assert.match(t, /^5\. Páginas OK: \/ 200, \/dolar 200, \/precios 200, \/boletin 200\./m);
+  assert.match(t, /^Servidor de casa: en línea \(.*\)\. Acciones del vigía \(24 h\): ninguna\. Avisos acumulados en silencio: ninguno\.$/m);
+  assert.ok(t.length <= 3500);
+});
+
+test("resumen: domingo no toca el boletín y no cuenta como asunto", () => {
+  assert.equal(estadoBoletin([], new Date("2026-11-22T15:00:00Z")), "domingo");
+  const t = textoResumen({ ...TODO_BIEN, boletin: "domingo" });
+  assert.match(t, /^1\. Boletín: domingo, no toca\.$/m);
+  assert.equal(t.split("\n")[0], "PerData · 2026-11-20: OK");
+});
+
+test("resumen: boletín que no salió es un asunto con su texto", () => {
+  assert.equal(estadoBoletin([], new Date("2026-11-23T15:00:00Z")), "no salió");
+  assert.equal(estadoBoletin(null, new Date("2026-11-23T15:00:00Z")), "sin dato");
+  const t = textoResumen({ ...TODO_BIEN, boletin: "no salió" });
+  assert.match(t, /^1\. Boletín: NO SALIÓ, no hay commit «data\(boletin\): enviado 2026-11-20» en main\.$/m);
+  assert.equal(t.split("\n")[0], "PerData · 2026-11-20: 1 asunto");
+});
+
+test("resumen: dos o más fallos seguidos sin éxito en medio van marcados «atención»", () => {
+  const runs = [
+    corrida("Watchdog", "failure", 60, ["SMV_BLOQUEO"]),
+    corrida("Watchdog", "failure", 120, ["SMV_BLOQUEO"]),
+    corrida("Watchdog", "failure", 180, ["SMV_BLOQUEO"]),
+    corrida("Watchdog", "success", 240, undefined),
+    corrida("News", "failure", 30, ["RED_PASAJERA"]),
+    corrida("News", "success", 60, undefined),
+    corrida("News", "failure", 90, ["RED_PASAJERA"]),
+  ];
+  const act = resumenActividad(runs, ahora);
+  assert.equal(act.runs, 7);
+  assert.equal(act.fallos, 5);
+  const w = act.grupos.find((g) => g.nombre === "Watchdog");
+  assert.equal(w.total, 3);
+  assert.equal(w.seguidos, 3);
+  assert.equal(act.grupos.find((g) => g.nombre === "News").seguidos, 1);
+  const t = textoResumen({ ...TODO_BIEN, actividad: act });
+  assert.match(t, /Watchdog ×3 \(SMV_BLOQUEO\) \[atención: 3 fallos seguidos\]/);
+  assert.match(t, /News ×2 \(RED_PASAJERA\)\.$/m);
+  assert.equal(t.split("\n")[0], "PerData · 2026-11-20: 1 asunto");
+});
+
+test("resumen: rachas, códigos de watchdog y fallos sin clasificar", () => {
+  assert.equal(rachaDeFallos([corrida("A", "failure", 1), corrida("A", "cancelled", 2), corrida("A", "failure", 3), corrida("A", "success", 4)]), 2);
+  assert.deepEqual(codigosDeFallo("watchdog.yml", "Comprobar la web", "FALLA  Hechos de importancia (SMV): hace 60 h\nFALLA  Noticias: hace 2 h"), ["SMV_BLOQUEO", "DATO_VIEJO"]);
+  assert.deepEqual(codigosDeFallo("news.yml", "Instalar", "read ECONNRESET"), ["RED_PASAJERA"]);
+  const sin = resumenActividad([corrida("Noticias", "failure", 5)], ahora);
+  assert.equal(sin.grupos[0].texto, "Noticias ×1 (sin clasificar)");
+});
+
+test("resumen: pagos abiertos es un asunto; en pausa exige el 503 payments_paused", () => {
+  assert.equal(estadoPagos({ paymentsEnabled: false }, { status: 503, code: "payments_paused" }).estado, "en pausa");
+  assert.equal(estadoPagos({ paymentsEnabled: false }, { status: 200, code: null }).estado, "discrepancia");
+  assert.equal(estadoPagos({ paymentsEnabled: false }, null).estado, "sin dato");
+  assert.equal(estadoPagos({ paymentsEnabled: true }, null).estado, "abiertos");
+  const t = textoResumen({ ...TODO_BIEN, pagos: estadoPagos({ paymentsEnabled: true }, null) });
+  assert.match(t, /^4\. Pagos ABIERTOS: paymentsEnabled distinto de false\. Avisar, no tocar\.$/m);
+  assert.equal(t.split("\n")[0], "PerData · 2026-11-20: 1 asunto");
+});
+
+test("resumen: página caída con su código HTTP", () => {
+  const t = textoResumen({ ...TODO_BIEN, paginas: [{ ruta: "/", codigo: 200 }, { ruta: "/boletin", codigo: 503 }, { ruta: "/dolar", codigo: null }, { ruta: "/precios", codigo: 200 }] });
+  assert.match(t, /^5\. Páginas CAÍDAS: \/boletin 503, \/dolar sin respuesta\. Todas: \/ 200, \/boletin 503, \/dolar sin respuesta, \/precios 200\.$/m);
+  assert.equal(t.split("\n")[0], "PerData · 2026-11-20: 1 asunto");
+});
+
+test("resumen: /api/status con bloques viejos, respaldo de hoy no hecho y servidor de casa caído", () => {
+  const web = resumenWeb({
+    news: { ageHours: 7.2, staleAfterHours: 6 }, smv: { ageHours: 20, staleAfterHours: 96 },
+    bcrp: { error: "official_data_unreachable", ageHours: null, staleAfterHours: 96 },
+    backup: { fecha: "2026-11-19" },
+  }, { actualizado: "2026-11-18T13:00:00Z" }, ahora);
+  assert.deepEqual(web.viejos, ["news 7.2 h (límite 6 h)", "bcrp (error official_data_unreachable)"]);
+  assert.equal(web.hechosH, 50);
+  const t = textoResumen({ ...TODO_BIEN, web, casa: { arriba: false, detalle: "Tailscale: sin conexión; TCP 22: sin respuesta" } });
+  assert.match(t, /^3\. \/api\/status: bloques viejos: news 7\.2 h \(límite 6 h\); bcrp \(error official_data_unreachable\)\. hechos de la SMV con más de 48 h\. respaldo de hoy NO hecho \(último 2026-11-19\)\./m);
+  assert.match(t, /^Servidor de casa: CAÍDO \(Tailscale: sin conexión; TCP 22: sin respuesta\)\./m);
+  assert.equal(t.split("\n")[0], "PerData · 2026-11-20: 5 asuntos");
+});
+
+test("resumen: sin /api/status ni GitHub se dice que no responde", () => {
+  const t = textoResumen({ ...TODO_BIEN, web: null, actividad: null });
+  assert.match(t, /^3\. \/api\/status: no responde\.$/m);
+  assert.match(t, /^2\. GitHub Actions 24 h: no comprobado \(gh no responde\)\.$/m);
+});
+
+test("resumen en seco: marcado [modo prueba] y con lo que habría hecho", () => {
   const t = textoResumen({
-    fecha: "2026-11-20", modo: "seco", runs: 12, fallos: 1, pasadas: 17,
-    incidentesDia: { a: "DATO_VIEJO", b: "DATO_VIEJO", c: "PAGINA_CAIDA" },
+    ...TODO_BIEN, modo: "seco",
     historial: [
       { fecha: "2026-11-20T10:00:00Z", tipo: "RELANZAR", detalle: "news.yml" },
       { fecha: "2026-11-19T01:00:00Z", tipo: "DESPLEGAR", detalle: "deploy.yml" }, // fuera de 24 h
     ],
-    silencio: [], ahora, web: "/api/status OK", pagos: "no",
   });
-  assert.match(t, /^\[modo prueba\] PerData · 2026-11-20/);
-  assert.match(t, /Pasadas de hoy: 17\./);
-  assert.match(t, /Incidentes de hoy por código: DATO_VIEJO 2, PAGINA_CAIDA 1\./);
+  assert.match(t, /^\[modo prueba\] PerData · 2026-11-20: OK$/m);
   assert.match(t, /Acciones que HABRÍA hecho \(memoria simulada, 24 h\): RELANZAR 1\./);
-  assert.match(t, /Avisos acumulados en silencio: ninguno\./);
+});
+
+test("resumen: avisos en silencio cuentan como asuntos y se recortan a 10 en el texto", () => {
+  const silencio = Array.from({ length: 12 }, (_, i) => ({ codigo: `DESCONOCIDO${i}`, motivo: "x" }));
+  const t = textoResumen({ ...TODO_BIEN, silencio });
+  assert.match(t, /y 2 más\./);
+  assert.equal(t.split("\n")[0], "PerData · 2026-11-20: 12 asuntos");
 });
 
 test("VIGIA_ROTO: un 401 de gh o de NVIDIA se avisa, una vez al día", async () => {

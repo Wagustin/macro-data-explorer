@@ -141,19 +141,40 @@ está definida; si no, `~/perdata-vigia/env`; si no existe, `~/.config/perdata-v
 ## Resumen diario
 
 A partir de las 08:00 (hora de Lima), una vez al día, se envía por Telegram (también en modo seco, marcado
-«[modo prueba]») un mensaje de varias líneas:
+«[modo prueba]») el resumen que sustituye a la revisión diaria a mano. Son cinco puntos, cada uno con «OK» o
+con el problema concreto, más una línea final:
 
 ```
-[modo prueba] PerData · <fecha>
-Pasadas de hoy: <n>. Runs en 24 h: <n>, fallos: <n>.
-Incidentes de hoy por código: DATO_VIEJO 2, PAGINA_CAIDA 1.
-Acciones que HABRÍA hecho (memoria simulada, 24 h): RELANZAR 1.     (en real: «Acciones del vigía (24 h)»)
-Avisos acumulados en silencio: CI_ROJO (...); ninguno si no hay.
-/api/status OK. Pagos en pausa: no.
+PerData · <fecha>: OK            (o «<n> asuntos»; con <n> = 1, «1 asunto»)
+1. Boletín: OK, commit «data(boletin): enviado <fecha UTC>» en main.     (domingo: «domingo, no toca»)
+2. GitHub Actions 24 h: <runs> runs, <fallos> fallos: Watchdog ×6 (SMV_BLOQUEO) [atención: 3 fallos seguidos]; ...
+3. /api/status OK: hechos SMV de hace <h>, cotizaciones de hace <h>, respaldo de hoy: sí.
+4. Pagos: en pausa (paymentsEnabled false; checkout responde 503 payments_paused). OK.
+5. Páginas OK: / 200, /dolar 200, /precios 200, /boletin 200.
+Servidor de casa: en línea (...). Acciones del vigía (24 h): ...; Avisos acumulados en silencio: ... .
 ```
+
+Qué mira cada punto:
+
+1. Boletín: de lunes a sábado, busca en los últimos 50 commits de main el «data(boletin): enviado <fecha UTC de hoy>».
+   Domingo no toca.
+2. GitHub Actions: runs de main de las últimas 24 h y fallos, agrupados por workflow con su código del catálogo.
+   Los fallos del día se clasifican con gh (como mucho 40; el resto sale «sin clasificar»). Si un workflow
+   falló dos o más veces seguidas sin un éxito en medio, va marcado «atención» y cuenta como asunto.
+3. /api/status: bloques viejos con su edad (o su error), edad de los hechos (`data/smv-hechos.json`, campo
+   `actualizado`), edad de las cotizaciones (`smv.ageHours`) y si el respaldo es de hoy (`backup.fecha`).
+4. Pagos: se hace un POST a `/api/billing?action=checkout` con body `{}` y Content-Type JSON. Con los pagos en
+   pausa responde 503 con `code: payments_paused` y no llama a Stripe. Solo se hace en el resumen, no en cada pasada.
+5. Páginas /, /dolar, /precios y /boletin: códigos HTTP (se repite una vez al cabo de 1 min si no dan 200).
 
 Si no hay Telegram configurado, no se marca como enviado y se reintenta en la siguiente pasada. Al enviarse,
 se vacían los avisos acumulados en silencio.
+
+Para ver el resumen de ahora sin enviarlo ni actuar (solo lectura, no toca la memoria ni el log):
+
+```
+VIGIA_ENV_FILE=~/.config/perdata-vigia/env node scripts/vigia.mjs --resumen-ahora
+```
 
 ## Latido del servidor de casa (SIN_LATIDO)
 
@@ -162,9 +183,11 @@ es de hace más de 4 h. Ver la sección SIN_LATIDO de `docs/RUNBOOK.md`.
 
 ## Servidor de casa (SERVIDOR_CASA)
 
-Los planes B de la SMV corren en el servidor de casa (`wagus-server`, Tailscale, 100.120.75.115). Cada pasada
-comprueba `tailscale status --json` (campo `Online` del par cuyo `HostName` contiene `wagus-server`) y, si no
-da en línea, una conexión TCP al puerto 22 con 5 s de timeout. Si las dos fallan en dos pasadas seguidas,
+Los planes B de la SMV corren en el servidor de casa (`wagus-server`, Tailscale, 100.120.75.115). El vigía
+NUNCA ejecuta nada en ese servidor ni entra por SSH. Lo único que hace es leer el estado de Tailscale del propio
+equipo del vigía con `tailscale status --json` (campo `Online` del par cuyo `HostName` contiene `wagus-server`;
+no envía paquetes al servidor) y, si no da en línea, una conexión TCP al puerto 22 con 5 s de timeout, que se
+cierra sin autenticarse ni enviar datos. Cada pasada hace esta comprobación. Si las dos fallan en dos pasadas seguidas,
 AVISA; al recuperarse, avisa de nuevo. Si `tailscale` no existe, se salta ese chequeo sin error. Ver la sección
 SERVIDOR_CASA de `docs/RUNBOOK.md`.
 

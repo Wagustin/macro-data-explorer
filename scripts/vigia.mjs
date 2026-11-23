@@ -37,6 +37,10 @@ const RESUMEN_HORA = 8;
 const SILENCIO_DESDE = 23;
 const SILENCIO_HASTA = 7;
 const HECHOS_UMBRAL_H = 48;
+// Resumen de las 08:00: tope de fallos clasificados (cada uno cuesta dos llamadas a gh) y de líneas de silencio.
+const FALLOS_RESUMEN_MAX = 40;
+const SILENCIO_RESUMEN_MAX = 10;
+const PAGINAS_VIGIADAS = ["/", "/dolar", "/precios", "/boletin"];
 // Avisos que se envían de noche. El resto se acumula y va en el resumen de las 08:00.
 const CRITICOS_SILENCIO = new Set(["PAGOS_ABIERTOS", "PAGINA_CAIDA", "SIN_LATIDO"]);
 const SMV = new Set(["smv.yml", "smv-precios.yml"]);
@@ -193,14 +197,24 @@ export function evaluarStatus(status, ahora = new Date()) {
   return out;
 }
 
-// True si es lunes a sábado entre las 09:00 y las 19:00 de Lima y no hay commit
-// "data(boletin): enviado <fecha UTC de hoy>" (el workflow usa `date -u`).
+// True si hay un commit "data(boletin): enviado <fecha UTC de hoy>" en la lista (el workflow usa `date -u`).
+export function boletinEnviado(commits, ahora = new Date()) {
+  const prefijo = `data(boletin): enviado ${new Date(ahora).toISOString().slice(0, 10)}`;
+  return (commits || []).some((c) => String(c?.commit?.message ?? c?.message ?? "").startsWith(prefijo));
+}
+
+// True si es lunes a sábado entre las 09:00 y las 19:00 de Lima y todavía no hay commit de hoy.
 export function boletinPendiente(commits, ahora = new Date()) {
-  const instante = new Date(ahora);
-  const { hora, dia } = limaParts(instante);
+  const { hora, dia } = limaParts(new Date(ahora));
   if (dia === 0 || hora < 9 || hora >= 19) return false;
-  const prefijo = `data(boletin): enviado ${instante.toISOString().slice(0, 10)}`;
-  return !(commits || []).some((c) => String(c?.commit?.message ?? c?.message ?? "").startsWith(prefijo));
+  return !boletinEnviado(commits, ahora);
+}
+
+// Estado del boletín para el resumen de las 08:00: «domingo», «enviado», «no salió» o «sin dato» (GitHub no responde).
+export function estadoBoletin(commits, ahora = new Date()) {
+  if (limaParts(new Date(ahora)).dia === 0) return "domingo";
+  if (!Array.isArray(commits)) return "sin dato";
+  return boletinEnviado(commits, ahora) ? "enviado" : "no salió";
 }
 
 // Latido del servidor de casa: falla si /api/status no responde o si el último run de cualquier
@@ -582,32 +596,198 @@ export function textoAviso(a, secretos = [], ahora = new Date()) {
   return redactar(lineas.join("\n"), secretos).slice(0, TG_MAX);
 }
 
-// Resumen diario (Telegram, a las 08:00 de Lima, también en modo seco con la marca «[modo prueba]»).
-export function textoResumen({ fecha, modo = "real", runs, fallos, pasadas = "?", incidentesDia = {}, historial = [], silencio = [], ahora = new Date(), web, pagos }) {
+// Racha de fallos seguidos, contando desde la corrida más nueva. Un éxito la corta; lo cancelado o saltado no cuenta.
+export function rachaDeFallos(corridas) {
+  let n = 0;
+  for (const r of corridas) {
+    if (r.status !== "completed") continue;
+    if (r.conclusion === "success") break;
+    if (esFallo(r)) n += 1;
+  }
+  return n;
+}
+
+// Códigos del catálogo de una ejecución fallida. Si falló el smoke o un proceso del watchdog, puede tener varios.
+export function codigosDeFallo(workflowPath, paso, logTail) {
+  if (nombreArchivo(workflowPath) === "watchdog.yml" && /Comprobar la web/i.test(String(paso))) {
+    return [...new Set(clasificarWatchdog(logTail).map((d) => d.codigo))];
+  }
+  return [clasificarFallo({ workflowPath, stepName: paso, logTail })];
+}
+
+// Resumen de los runs de main: totales de 24 h, fallos agrupados por workflow con su código y racha seguida.
+// `runs` lleva `codigos` en los fallos del día (ver clasificarFallosDia); sin él, el fallo sale «sin clasificar».
+export function resumenActividad(runs, ahora = new Date()) {
+  const instante = new Date(ahora);
+  const todos = [...runs].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+  const recientes = todos.filter((r) => instante - Date.parse(r.createdAt) <= 24 * H);
+  const fallidos = recientes.filter(esFallo);
+  const nombreDe = (r) => r.workflowName || r.wf || "?";
+  const grupos = new Map();
+  for (const r of fallidos) {
+    const nombre = nombreDe(r);
+    const g = grupos.get(nombre) || { nombre, total: 0, codigos: new Map() };
+    g.total += 1;
+    for (const c of (r.codigos?.length ? r.codigos : ["sin clasificar"])) g.codigos.set(c, (g.codigos.get(c) || 0) + 1);
+    grupos.set(nombre, g);
+  }
+  const lista = [...grupos.values()].sort((a, b) => b.total - a.total).map((g) => {
+    const codigos = [...g.codigos].map(([c, n]) => (n === g.total ? c : `${c} ${n}`)).join(", ");
+    const seguidos = rachaDeFallos(todos.filter((r) => nombreDe(r) === g.nombre));
+    return { nombre: g.nombre, total: g.total, texto: `${g.nombre} ×${g.total} (${codigos})`, seguidos };
+  });
+  return { runs: recientes.length, fallos: fallidos.length, grupos: lista };
+}
+
+// Clasifica con gh los fallos de las últimas 24 h (como mucho FALLOS_RESUMEN_MAX; el resto, «sin clasificar»).
+export async function clasificarFallosDia(runs, ahora = new Date()) {
+  const instante = new Date(ahora);
+  const fallidos = runs.filter((r) => esFallo(r) && instante - Date.parse(r.createdAt) <= 24 * H);
+  for (const [i, r] of fallidos.entries()) {
+    if (i >= FALLOS_RESUMEN_MAX) { r.codigos = ["sin clasificar"]; continue; }
+    try {
+      const d = await detalleFallo(r);
+      r.codigos = codigosDeFallo(r.wf, d.paso, d.logTail);
+    } catch {
+      r.codigos = ["sin clasificar"];
+    }
+  }
+  return runs;
+}
+
+// Estado de los datos de /api/status: bloques viejos (con su edad o su error), hechos y cotizaciones, y el respaldo.
+export function resumenWeb(status, hechos, ahora = new Date()) {
+  if (!status) return null;
+  const viejos = [];
+  for (const nombre of Object.keys(DUENO)) {
+    const b = status[nombre];
+    if (!b) continue;
+    if (b.error) viejos.push(`${nombre} (error ${b.error})`);
+    else if (typeof b.ageHours === "number" && typeof b.staleAfterHours === "number" && b.ageHours > b.staleAfterHours) {
+      viejos.push(`${nombre} ${b.ageHours} h (límite ${b.staleAfterHours} h)`);
+    }
+  }
+  const t = Date.parse(hechos?.actualizado);
+  const hechosH = Number.isNaN(t) ? null : Math.round(((new Date(ahora) - t) / H) * 10) / 10;
+  const smvH = typeof status.smv?.ageHours === "number" ? status.smv.ageHours : null;
+  return { viejos, hechosH, smvH, backupFecha: status.backup?.fecha ?? null };
+}
+
+// Pagos: «en pausa» si paymentsEnabled es false y el checkout responde 503 payments_paused.
+export function estadoPagos(billing, checkout) {
+  if (!billing) return { estado: "sin dato", detalle: "billing no responde" };
+  if (billing.paymentsEnabled !== false) return { estado: "abiertos", detalle: "paymentsEnabled distinto de false" };
+  if (!checkout) return { estado: "sin dato", detalle: "config en pausa, checkout no responde" };
+  if (checkout.status === 503 && checkout.code === "payments_paused") return { estado: "en pausa", detalle: "" };
+  return { estado: "discrepancia", detalle: `paymentsEnabled false, pero checkout responde ${checkout.status}${checkout.code ? ` ${checkout.code}` : ""}` };
+}
+
+// Resumen diario de las 08:00 (Telegram; también en modo seco, marcado «[modo prueba]», y con --resumen-ahora).
+// Cinco puntos, cada uno «OK» o con su problema, más una línea final de casa, acciones y silencio.
+// La cabecera cuenta los asuntos: cada punto con problema y cada aviso acumulado en silencio.
+export function textoResumen({
+  fecha, modo = "real", actividad = null, boletin = "sin dato", web = null, pagos = null,
+  paginas = null, casa = null, historial = [], silencio = [], ahora = new Date(),
+}) {
+  const seco = modo === "seco";
+  const hoyUtc = new Date(ahora).toISOString().slice(0, 10);
+  const asuntos = [];
+  const lineas = [];
+  const fmt = (h) => (typeof h === "number" ? `${h} h` : "sin dato");
+
+  // 1. Boletín (lunes a sábado: commit «data(boletin): enviado <fecha UTC de hoy>» en main)
+  if (boletin === "domingo") lineas.push("1. Boletín: domingo, no toca.");
+  else if (boletin === "enviado") lineas.push(`1. Boletín: OK, commit «data(boletin): enviado ${hoyUtc}» en main.`);
+  else if (boletin === "no salió") {
+    asuntos.push("boletín");
+    lineas.push(`1. Boletín: NO SALIÓ, no hay commit «data(boletin): enviado ${hoyUtc}» en main.`);
+  } else {
+    asuntos.push("boletín");
+    lineas.push("1. Boletín: no comprobado (GitHub no responde).");
+  }
+
+  // 2. GitHub Actions 24 h
+  if (!actividad) {
+    asuntos.push("GitHub Actions");
+    lineas.push("2. GitHub Actions 24 h: no comprobado (gh no responde).");
+  } else {
+    const atencion = actividad.grupos.filter((g) => g.seguidos >= 2);
+    asuntos.push(...atencion.map((g) => `${g.nombre} con fallos seguidos`));
+    const grupos = actividad.grupos.slice(0, 10).map((g) => (g.seguidos >= 2 ? `${g.texto} [atención: ${g.seguidos} fallos seguidos]` : g.texto));
+    let texto = `2. GitHub Actions 24 h: ${actividad.runs} runs, ${actividad.fallos} ${actividad.fallos === 1 ? "fallo" : "fallos"}`;
+    if (!grupos.length) texto += ". OK.";
+    else {
+      texto += `: ${grupos.join("; ")}.`;
+      if (!atencion.length) texto += " Ningún workflow con dos fallos seguidos.";
+    }
+    lineas.push(texto);
+  }
+
+  // 3. /api/status: bloques viejos con su edad, hechos y cotizaciones, y el respaldo de hoy
+  if (!web) {
+    asuntos.push("/api/status");
+    lineas.push("3. /api/status: no responde.");
+  } else {
+    const problemas = [];
+    asuntos.push(...web.viejos);
+    if (web.viejos.length) problemas.push(`bloques viejos: ${web.viejos.join("; ")}`);
+    if (typeof web.hechosH === "number" && web.hechosH > HECHOS_UMBRAL_H) {
+      asuntos.push("hechos de la SMV");
+      problemas.push(`hechos de la SMV con más de ${HECHOS_UMBRAL_H} h`);
+    }
+    const backupHoy = web.backupFecha === hoyUtc;
+    if (!backupHoy) {
+      asuntos.push("respaldo de hoy");
+      problemas.push(`respaldo de hoy NO hecho (último ${web.backupFecha ?? "desconocido"})`);
+    }
+    const datos = `hechos SMV de hace ${fmt(web.hechosH)}, cotizaciones de hace ${fmt(web.smvH)}, respaldo de hoy: ${backupHoy ? "sí" : "no"}`;
+    lineas.push(problemas.length ? `3. /api/status: ${problemas.join(". ")}. ${datos}.` : `3. /api/status OK: ${datos}.`);
+  }
+
+  // 4. Pagos
+  if (!pagos || pagos.estado === "sin dato") {
+    asuntos.push("pagos");
+    lineas.push(`4. Pagos: no comprobados (${pagos?.detalle ?? "sin datos"}).`);
+  } else if (pagos.estado === "en pausa") {
+    lineas.push("4. Pagos: en pausa (paymentsEnabled false; checkout responde 503 payments_paused). OK.");
+  } else if (pagos.estado === "abiertos") {
+    asuntos.push("pagos abiertos");
+    lineas.push(`4. Pagos ABIERTOS: ${pagos.detalle}. Avisar, no tocar.`);
+  } else {
+    asuntos.push("pagos");
+    lineas.push(`4. Pagos: ${pagos.detalle}.`);
+  }
+
+  // 5. Páginas: códigos HTTP
+  if (!paginas) {
+    asuntos.push("páginas");
+    lineas.push("5. Páginas: no comprobadas.");
+  } else {
+    const codigo = (p) => `${p.ruta} ${p.codigo ?? "sin respuesta"}`;
+    const caidas = paginas.filter((p) => p.codigo !== 200);
+    if (caidas.length) {
+      asuntos.push("páginas caídas");
+      lineas.push(`5. Páginas CAÍDAS: ${caidas.map(codigo).join(", ")}. Todas: ${paginas.map(codigo).join(", ")}.`);
+    } else lineas.push(`5. Páginas OK: ${paginas.map(codigo).join(", ")}.`);
+  }
+
+  // Final: servidor de casa, acciones del vigía (o las que habría hecho) y avisos acumulados en silencio
+  const casaTexto = casa ? `${casa.arriba ? "en línea" : "CAÍDO"} (${casa.detalle})` : "sin dato";
+  if (casa && !casa.arriba) asuntos.push("servidor de casa");
   const desde = new Date(ahora).getTime() - 24 * H;
   const cuentas = {};
   for (const h of historial) if (Date.parse(h.fecha) >= desde) cuentas[h.tipo] = (cuentas[h.tipo] || 0) + 1;
   const acciones = Object.entries(cuentas).map(([tipo, n]) => `${tipo} ${n}`).join(", ") || "ninguna";
-  const porCodigo = {};
-  for (const codigo of Object.values(incidentesDia)) porCodigo[codigo] = (porCodigo[codigo] || 0) + 1;
-  const incidentes = Object.entries(porCodigo).map(([c, n]) => `${c} ${n}`).join(", ") || "ninguno";
-  const enSilencio = silencio.map((s) => `${s.codigo} (${s.motivo})`).join("; ") || "ninguno";
-  const seco = modo === "seco";
-  const lineas = [
-    `${seco ? "[modo prueba] " : ""}PerData · ${fecha}`,
-    `Pasadas de hoy: ${pasadas}. Runs en 24 h: ${runs}, fallos: ${fallos}.`,
-    `Incidentes de hoy por código: ${incidentes}.`,
-    seco ? `Acciones que HABRÍA hecho (memoria simulada, 24 h): ${acciones}.` : `Acciones del vigía (24 h): ${acciones}.`,
-    `Avisos acumulados en silencio: ${enSilencio}.`,
-    `${web}. Pagos en pausa: ${pagos}.`,
-  ];
-  return lineas.join("\n").slice(0, TG_MAX);
-}
+  asuntos.push(...silencio.map((s) => `aviso en silencio ${s.codigo}`));
+  const enSilencio = silencio.slice(0, SILENCIO_RESUMEN_MAX).map((s) => `${s.codigo} (${s.motivo})`);
+  if (silencio.length > SILENCIO_RESUMEN_MAX) enSilencio.push(`y ${silencio.length - SILENCIO_RESUMEN_MAX} más`);
+  lineas.push(
+    `Servidor de casa: ${casaTexto}. ${seco ? "Acciones que HABRÍA hecho (memoria simulada, 24 h)" : "Acciones del vigía (24 h)"}: ${acciones}. `
+    + `Avisos acumulados en silencio: ${enSilencio.join("; ") || "ninguno"}.`,
+  );
 
-export function estadoWeb(status, ahora = new Date()) {
-  if (!status) return "/api/status no responde";
-  const viejos = evaluarStatus(status, ahora).map((i) => i.bloque);
-  return viejos.length ? `datos viejos en ${viejos.join(", ")}` : "/api/status OK";
+  const veredicto = asuntos.length ? `${asuntos.length} ${asuntos.length === 1 ? "asunto" : "asuntos"}` : "OK";
+  return [`${seco ? "[modo prueba] " : ""}PerData · ${fecha}: ${veredicto}`, ...lineas].join("\n").slice(0, TG_MAX);
 }
 
 // True si toca enviar el resumen: a partir de las 08:00 de Lima y una sola vez por día (con o sin modo seco).
@@ -883,18 +1063,41 @@ async function fetchJson(url) {
   return r.json();
 }
 
-async function paginaOk(ruta) {
-  const intento = async () => {
-    try {
-      const r = await fetch(BASE + ruta, { headers: { "User-Agent": "PerDataVigia/1.0" }, signal: AbortSignal.timeout(20000) });
-      return r.status === 200;
-    } catch {
-      return false;
+// Código HTTP de una página, o null si no hay respuesta.
+async function codigoPagina(ruta) {
+  try {
+    const r = await fetch(BASE + ruta, { headers: { "User-Agent": "PerDataVigia/1.0" }, signal: AbortSignal.timeout(20000) });
+    return r.status;
+  } catch {
+    return null;
+  }
+}
+
+// Códigos de las páginas vigiladas. Las que no den 200 se repiten una vez al cabo de 1 min.
+async function comprobarPaginas() {
+  return Promise.all(PAGINAS_VIGIADAS.map(async (ruta) => {
+    let codigo = await codigoPagina(ruta);
+    if (codigo !== 200) {
+      await new Promise((r) => setTimeout(r, MIN));
+      codigo = await codigoPagina(ruta);
     }
-  };
-  if (await intento()) return true;
-  await new Promise((r) => setTimeout(r, MIN));
-  return intento();
+    return { ruta, codigo };
+  }));
+}
+
+// POST de comprobación de pagos: con los pagos en pausa responde 503 con code payments_paused.
+// Con body «{}» no crea nada: sin sesión, el servidor responde antes de llamar a Stripe.
+async function comprobarCheckout() {
+  const r = await fetch(`${BASE}/api/billing?action=checkout`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "User-Agent": "PerDataVigia/1.0" },
+    body: JSON.stringify({}),
+    signal: AbortSignal.timeout(20000),
+  });
+  const texto = await r.text();
+  let code = null;
+  try { code = JSON.parse(texto).code ?? null; } catch { /* respuesta no JSON */ }
+  return { status: r.status, code };
 }
 
 // Analiza los runs de main de las últimas 24 h: en curso, último run por workflow y racha del watchdog.
@@ -1008,26 +1211,28 @@ export function detectarVigiaRoto({ senales: registro = new Set(), telegramFallo
 
 // ---------- Pasada ----------
 
-async function pasada(ahora, { seco, cfg, memoriaFile }) {
+// soloResumen: solo recoge datos y devuelve el texto del resumen (--resumen-ahora). No actúa ni escribe memoria.
+async function pasada(ahora, { seco, cfg, memoriaFile, soloResumen = false }) {
   const fallidas = [];
   const secretos = secretosDe(cfg);
   const intentar = async (nombre, fn) => {
     try { return await fn(); } catch (e) { fallidas.push(`${nombre} (${redactar(e.message, secretos).split("\n")[0].slice(0, 120)})`); return null; }
   };
+  const memoriaPrevia = cargarMemoria(memoriaFile);
+  // El POST de pagos y el repaso de fallos solo se hacen en el resumen de las 08:00 (o con --resumen-ahora).
+  const conTelegram = Boolean(cfg.telegramToken && cfg.telegramChat);
+  const hacerResumen = soloResumen || (conTelegram && debeEnviarResumen(memoriaPrevia, ahora));
 
-  const [runsRaw, workflows, status, billing, paginas, commits, hechos, casa] = await Promise.all([
+  const [runsRaw, workflows, status, billing, paginas, commits, hechos, casa, checkout] = await Promise.all([
     intentar("runs", async () => JSON.parse(await gh(["run", "list", "-R", REPO, "-L", "200", "--branch", "main", "--json", CAMPOS_RUNS]))),
     intentar("workflows", async () => JSON.parse(await gh(["workflow", "list", "-R", REPO, "-a", "--json", "id,name,path"]))),
     intentar("api/status", () => fetchJson(`${BASE}/api/status`)),
     intentar("api/billing", () => fetchJson(`${BASE}/api/billing?action=config`)),
-    intentar("páginas", async () => {
-      const rutas = ["/", "/dolar", "/precios", "/boletin"];
-      const oks = await Promise.all(rutas.map((r) => paginaOk(r)));
-      return rutas.filter((_, i) => !oks[i]);
-    }),
+    intentar("páginas", comprobarPaginas),
     intentar("commits", async () => JSON.parse(await gh(["api", `repos/${REPO}/commits?per_page=50`]))),
     intentar("hechos de la SMV", () => fetchJson(`${HECHOS_URL}?t=${Date.now()}`)),
     comprobarCasa(),
+    hacerResumen ? intentar("checkout", comprobarCheckout) : null,
   ]);
 
   const rutaPorId = new Map((workflows || []).map((w) => [w.id, nombreArchivo(w.path)]));
@@ -1035,7 +1240,20 @@ async function pasada(ahora, { seco, cfg, memoriaFile }) {
   const analisis = analizarRuns(runs, ahora);
   const incidentes = [];
 
-  const memoriaPrevia = cargarMemoria(memoriaFile);
+  const construirResumen = async (memoria) => {
+    await clasificarFallosDia(runs, ahora);
+    return textoResumen({
+      fecha: limaParts(ahora).fecha, modo: seco ? "seco" : "real", ahora,
+      actividad: runsRaw ? resumenActividad(runs, ahora) : null,
+      boletin: estadoBoletin(commits, ahora),
+      web: resumenWeb(status, hechos, ahora),
+      pagos: estadoPagos(billing, checkout),
+      paginas, casa,
+      historial: memoria.historial || [], silencio: memoria.silencio || [],
+    });
+  };
+  if (soloResumen) return construirResumen(memoriaPrevia);
+
   for (const [wf, run] of analisis.ultimos) {
     if (!esFallo(run)) continue;
     let detalle = { paso: "", jobName: "", logTail: "" };
@@ -1081,8 +1299,9 @@ async function pasada(ahora, { seco, cfg, memoriaFile }) {
   if (status) {
     for (const d of evaluarStatus(status, ahora)) incidentes.push({ ...d, desde: undefined, logTail: "" });
   }
-  if (paginas?.length) {
-    incidentes.push({ codigo: "PAGINA_CAIDA", clave: "PAGINA_CAIDA", workflow: "deploy.yml", paginas, motivo: `páginas sin 200: ${paginas.join(", ")}`, logTail: "" });
+  const caidas = paginas ? paginas.filter((p) => p.codigo !== 200).map((p) => p.ruta) : null;
+  if (caidas?.length) {
+    incidentes.push({ codigo: "PAGINA_CAIDA", clave: "PAGINA_CAIDA", workflow: "deploy.yml", paginas: caidas, motivo: `páginas sin 200: ${caidas.join(", ")}`, logTail: "" });
   }
   if (billing && "paymentsEnabled" in billing && billing.paymentsEnabled !== false) {
     incidentes.push({ codigo: "PAGOS_ABIERTOS", clave: "PAGOS_ABIERTOS", workflow: null, motivo: "paymentsEnabled distinto de false", logTail: "" });
@@ -1115,29 +1334,19 @@ async function pasada(ahora, { seco, cfg, memoriaFile }) {
     avisar: (a) => (seco ? null : avisar(a, cfg, { secretos, ahora })),
   });
 
-  const hoy = limaParts(ahora).fecha;
-  if (debeEnviarResumen(memoria, ahora)) {
-    const texto = textoResumen({
-      fecha: hoy, modo: seco ? "seco" : "real",
-      runs: runsRaw ? analisis.recientes.length : "?",
-      fallos: runsRaw ? analisis.recientes.filter(esFallo).length : "?",
-      pasadas: memoria.pasadasDia, incidentesDia: memoria.incidentesDia,
-      historial: memoria.historial, silencio: memoria.silencio, ahora,
-      web: estadoWeb(status, ahora),
-      pagos: billing ? (billing.paymentsEnabled === false ? "sí" : "no") : "no comprobado",
-    });
-    if (cfg.telegramToken && cfg.telegramChat) {
-      try {
-        await enviarTelegram(texto, { token: cfg.telegramToken, chatId: cfg.telegramChat });
-        memoria.resumenDia = hoy;
-        memoria.silencio = [];
-        memoria.telegramFallos = 0;
-        notas.push(`resumen diario enviado por Telegram${seco ? " [modo prueba]" : ""}`);
-      } catch (e) {
-        memoria.telegramFallos = (memoria.telegramFallos || 0) + 1;
-        notas.push(`resumen diario fallido: ${redactar(e.message, secretos).split("\n")[0].slice(0, 120)}`);
-      }
-    } else notas.push("resumen diario sin Telegram configurado");
+  if (hacerResumen && conTelegram) {
+    const hoy = limaParts(ahora).fecha;
+    const texto = await construirResumen(memoria);
+    try {
+      await enviarTelegram(texto, { token: cfg.telegramToken, chatId: cfg.telegramChat });
+      memoria.resumenDia = hoy;
+      memoria.silencio = [];
+      memoria.telegramFallos = 0;
+      notas.push(`resumen diario enviado por Telegram${seco ? " [modo prueba]" : ""}`);
+    } catch (e) {
+      memoria.telegramFallos = (memoria.telegramFallos || 0) + 1;
+      notas.push(`resumen diario fallido: ${redactar(e.message, secretos).split("\n")[0].slice(0, 120)}`);
+    }
   }
   guardarMemoria(memoriaFile, memoria);
 
@@ -1157,6 +1366,11 @@ export async function main(argv = process.argv.slice(2)) {
   ghConfig.token = cfg.ghToken ?? null;
   const seco = argv.includes("--seco") || cfg.actuar !== "1";
   const memoriaFile = seco ? MEMORIA_SECO_FILE : MEMORIA_FILE;
+  if (argv.includes("--resumen-ahora")) {
+    // Solo lectura: imprime el resumen que se enviaría ahora, sin actuar, sin enviar y sin tocar la memoria.
+    console.log(await pasada(ahora, { seco, cfg, memoriaFile, soloResumen: true }));
+    return 0;
+  }
   if (!adquirirLock()) {
     fs.appendFileSync(LOG_FILE, `${ahora.toISOString()} omitida: otra pasada en marcha\n`);
     return 0;
