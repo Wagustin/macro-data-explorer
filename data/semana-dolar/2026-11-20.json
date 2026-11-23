@@ -1,0 +1,127 @@
+{
+  "version": "Nota semanal del dolar v1",
+  "semana": "2026-11-20",
+  "titulo": "El dolar esta semana: del 16 nov al 20 nov de 2026",
+  "generado": "2026-11-23T22:04:12.177Z",
+  "fuente_cierres": {
+    "codigo": "PD04640PD",
+    "unidad": "S/ por US$",
+    "fuente": "Banco Central de Reserva del Perú (BCRP), estadísticas diarias"
+  },
+  "fuente_contexto": {
+    "fuente": "Banco Central de Reserva del Perú (BCRP), estadísticas macroeconómicas y monetarias",
+    "url": "https://estadisticas.bcrp.gob.pe/estadisticas/series/",
+    "licencia": "Información pública del BCRP, citando la fuente"
+  },
+  "mercado": {
+    "inicio": {
+      "fecha": "2026-11-16",
+      "cierre": 3.419
+    },
+    "fin": {
+      "fecha": "2026-11-20",
+      "cierre": 3.453
+    },
+    "variacion_sol": 0.03399999999999981,
+    "variacion_pct": 0.994442819537871,
+    "maximo": {
+      "fecha": "2026-11-20",
+      "cierre": 3.453
+    },
+    "minimo": {
+      "fecha": "2026-11-17",
+      "cierre": 3.415
+    },
+    "cierres": [
+      [
+        "2026-11-16",
+        3.419
+      ],
+      [
+        "2026-11-17",
+        3.415
+      ],
+      [
+        "2026-11-18",
+        3.433
+      ],
+      [
+        "2026-11-19",
+        3.442
+      ],
+      [
+        "2026-11-20",
+        3.453
+      ]
+    ]
+  },
+  "bcrp": {
+    "intervencion": {
+      "codigo": "PD04658MD",
+      "unidad": "Millones US$",
+      "total": 25.848937,
+      "dias": 5,
+      "dias_operacion": 4,
+      "ultimo": {
+        "fecha": "2026-11-20",
+        "valor": 0.15
+      },
+      "maximo": {
+        "fecha": "2026-11-17",
+        "valor": 18.215062
+      }
+    },
+    "swaps_netos": {
+      "codigo": "PD04660MD",
+      "unidad": "Millones US$",
+      "total": 0,
+      "dias": 5,
+      "dias_operacion": 0,
+      "ultimo": {
+        "fecha": "2026-11-20",
+        "valor": 0
+      },
+      "maximo": {
+        "fecha": "2026-11-16",
+        "valor": 0
+      }
+    }
+  },
+  "rango_publicado": {
+    "p10": 3.412,
+    "p25": 3.431,
+    "p50": 3.453,
+    "p75": 3.4689,
+    "p90": 3.4861,
+    "fecha_objetivo": "2026-11-30",
+    "horizonte_dias_habiles": 6,
+    "ancho_banda_pct": 2.15,
+    "cobertura_80_fuera_muestra": 85.17,
+    "cortes_evaluados": 1963,
+    "referencia_cierre": "2026-11-20",
+    "publicado": "2026-11-23T22:03:54.090Z"
+  },
+  "comparacion_semana_anterior": {
+    "rango": {
+      "p10": 3.3672,
+      "p25": 3.3843,
+      "p50": 3.404,
+      "p75": 3.4183,
+      "p90": 3.4337,
+      "fecha_objetivo": "2026-11-23",
+      "horizonte_dias_habiles": 6,
+      "ancho_banda_pct": 1.95,
+      "cobertura_80_fuera_muestra": 85.21,
+      "cortes_evaluados": 1958,
+      "referencia_cierre": "2026-11-13",
+      "publicado": "2026-11-16T22:04:11.822Z"
+    },
+    "cierre_real": 3.453,
+    "fecha_cierre": "2026-11-20",
+    "cubre": true,
+    "dentro": false,
+    "distancia": 0.019299999999999873,
+    "borde": "superior"
+  },
+  "p50_criterio": "Paseo aleatorio (ultimo cierre) respaldado por backtest"
+}
