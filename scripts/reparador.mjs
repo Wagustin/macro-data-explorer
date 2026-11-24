@@ -568,6 +568,16 @@ Enlace al run fallido: ${enlaceRun(cfg)}`;
   const prueba = await aplicarYProbar(propuesta.diff, rama, ramaOriginal);
   if (!prueba.ok) return { ok: false, error: prueba.error, archivos };
 
+  if (cfg.seco) {
+    await limpiar(ramaOriginal, rama);
+    return {
+      ok: true,
+      seco: true,
+      archivos,
+      detalle: `Modo seco (no se publica). Motivo: ${propuesta.motivo}\nTests: superados (node --check y npm test).\n\nDiff propuesto:\n\`\`\`diff\n${propuesta.diff}\`\`\``
+    };
+  }
+
   await git(["commit", "-F", "-"], { input: `${asunto}\n\n${cuerpo}\n`, env: IDENTIDAD_BOT });
   const url = await publicar({ rama, asunto, cuerpo, cuerpoPr, ramaOriginal, cfg, gh: deps.gh });
   return { ok: true, url, archivos };
@@ -606,12 +616,18 @@ async function deshacerUltimaReparacion(cfg, sha, deps) {
     throw new Error(`el revert no supera los tests: ${redactar(e.message).slice(0, 500)}`);
   }
 
+  if (cfg.seco) {
+    await limpiar(ramaOriginal, rama);
+    return { detalle: `Modo seco (no se publica): el revert de ${sha} supera los tests.` };
+  }
+
   const asunto = "revert(auto): deshacer reparación que rompió CI [reparador]";
   const cuerpo = `Revertido commit ${sha} (reparador anterior) porque rompió CI.
 Run fallido: ${enlaceRun(cfg)}
 
 Co-Authored-By: Claude Haiku 5.5 <noreply@anthropic.com>`;
-  return publicar({ rama, asunto, cuerpo, cuerpoPr: cuerpo, ramaOriginal, cfg, gh: deps.gh });
+  const url = await publicar({ rama, asunto, cuerpo, cuerpoPr: cuerpo, ramaOriginal, cfg, gh: deps.gh });
+  return { detalle: `Reparación deshecha (revert) y fusionada: ${url}` };
 }
 
 // ---------------------------------------------------------------------------
@@ -626,8 +642,12 @@ export function leerConfig(env) {
     nvidiaKey: env.NVIDIA_API_KEY,
     ghToken: env.GH_TOKEN,
     modeloPrincipal: env.REPARADOR_MODELO || MODELO_POR_DEFECTO,
-    resumen: env.GITHUB_STEP_SUMMARY
+    resumen: env.GITHUB_STEP_SUMMARY,
+    seco: false
   };
+  const seco = env.REPARADOR_SECO || "0";
+  if (seco !== "0" && seco !== "1") throw new Error("REPARADOR_SECO debe ser 0 o 1");
+  cfg.seco = seco === "1";
   const faltan = ["codigo", "workflow", "runId", "nvidiaKey", "ghToken"].filter(k => !cfg[k]);
   if (faltan.length) throw new Error(`Faltan variables de entorno requeridas: ${faltan.join(", ")}`);
   if (!CODIGO_RE.test(cfg.codigo)) throw new Error("Código de incidente no válido");
@@ -642,21 +662,25 @@ export async function ejecutarReparador(env = process.env, deps = {}) {
   const cfg = leerConfig(env);
   registrarSecretos([cfg.nvidiaKey, cfg.ghToken]);
   const salida = msg => informar(msg, cfg.resumen);
+  const deshacer = deps.deshacer || ((c, sha, d) => deshacerUltimaReparacion(c, sha, d));
+  const aplicar = deps.aplicar || (p => aplicarPropuesta(cfg, p, { gh }));
 
-  if (await verificarLimiteDiario({ gh })) {
-    return salida("límite diario alcanzado");
-  }
-
+  // El deshacer va antes del límite diario: revertir una reparación que rompió CI es seguridad.
+  // Solo se deshace si el último commit de main es del reparador.
   if (cfg.codigo === "CI_ROJO") {
     const sha = await ultimoReparadorEnMain(gh);
     if (sha) {
       try {
-        const url = await deshacerUltimaReparacion(cfg, sha, { gh });
-        return salida(`Reparación deshecha (revert) y fusionada: ${url}`);
+        const { detalle } = await deshacer(cfg, sha, { gh });
+        return salida(detalle);
       } catch (e) {
         return salida(`sin reparación: ${e.message}`);
       }
     }
+  }
+
+  if (await verificarLimiteDiario({ gh })) {
+    return salida("límite diario alcanzado");
   }
 
   const contexto = { ...(await recogerContexto({ runId: cfg.runId, workflow: cfg.workflow, gh })), codigo: cfg.codigo, workflow: cfg.workflow, runId: cfg.runId };
@@ -672,7 +696,7 @@ export async function ejecutarReparador(env = process.env, deps = {}) {
   let errorValidacion = await validarDiff(propuesta.diff, deps);
   if (errorValidacion) return salida(`sin reparación: ${errorValidacion}`);
 
-  let resultado = await aplicarPropuesta(cfg, propuesta, { gh });
+  let resultado = await aplicar(propuesta);
   if (!resultado.ok) {
     // Una sola segunda propuesta, con el error como contexto.
     const segunda = await pedirPropuesta(contexto, { modelos, pedir, errorPrevio: resultado.error });
@@ -680,9 +704,11 @@ export async function ejecutarReparador(env = process.env, deps = {}) {
     errorValidacion = await validarDiff(segunda.diff, deps);
     if (errorValidacion) return salida(`sin reparación: ${errorValidacion}`);
     propuesta = segunda;
-    resultado = await aplicarPropuesta(cfg, propuesta, { gh });
+    resultado = await aplicar(propuesta);
     if (!resultado.ok) return salida("sin reparación: tests en rojo");
   }
+
+  if (resultado.seco) return salida(resultado.detalle);
 
   await relanzar(cfg, resultado.archivos, gh);
   return salida(`Reparación aplicada y fusionada: ${propuesta.motivo} (${resultado.url})`);

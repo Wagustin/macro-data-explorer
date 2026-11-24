@@ -15,6 +15,14 @@ on:
         description: 'ID del run fallido de GitHub Actions'
         required: true
         type: string
+      seco:
+        description: 'Modo seco: prueba todo y muestra el diff en el resumen, sin push, PR, merge ni relanzar (1 = sí)'
+        required: false
+        type: choice
+        options:
+          - '0'
+          - '1'
+        default: '0'
 
 permissions:
   contents: write
@@ -47,4 +55,5 @@ jobs:
           CODIGO: ${{ github.event.inputs.codigo }}
           WORKFLOW: ${{ github.event.inputs.workflow }}
           RUN_ID: ${{ github.event.inputs.run_id }}
+          REPARADOR_SECO: ${{ github.event.inputs.seco }}
         run: node scripts/reparador.mjs

@@ -554,15 +554,40 @@ describe("reparador - decisión de deshacer (CI_ROJO)", () => {
     assert.strictEqual(await ultimoReparadorEnMain(gh), null);
   });
 
-  it("el límite diario se comprueba antes que el deshacer", async () => {
+  it("el deshacer se ejecuta aunque el límite diario esté alcanzado", async () => {
     const gh = ghFalso([
       ["per_page=100", JSON.stringify([COMMIT_REPARADOR, COMMIT_REPARADOR])],
       ["per_page=1", JSON.stringify([COMMIT_REPARADOR])]
     ]);
+    let deshechoCon = null;
+    const deshacer = async (cfg, sha) => { deshechoCon = sha; return { detalle: "deshecho" }; };
     const env = { CODIGO: "CI_ROJO", WORKFLOW: "ci.yml", RUN_ID: "42", NVIDIA_API_KEY: "nvapi-claveprueba123", GH_TOKEN: "ghp_tokenprueba123" };
-    const salida = await ejecutarReparador(env, { gh });
-    assert.strictEqual(salida, "límite diario alcanzado");
-    assert.ok(!gh.llamadas.some(l => l.includes("per_page=1&")) && !gh.llamadas.some(l => l.endsWith("per_page=1")));
+    const salida = await ejecutarReparador(env, { gh, deshacer });
+    assert.strictEqual(salida, "deshecho");
+    assert.strictEqual(deshechoCon, "abc123");
+    assert.ok(!gh.llamadas.some(l => l.includes("per_page=100")), "no debe contar el límite antes del deshacer");
+  });
+
+  it("sin commit del reparador al final de main, el límite diario sí bloquea la reparación", async () => {
+    const gh = ghFalso([
+      ["per_page=100", JSON.stringify([COMMIT_REPARADOR, COMMIT_REPARADOR])],
+      ["per_page=1", JSON.stringify([COMMIT_NORMAL])]
+    ]);
+    const deshacer = async () => { throw new Error("no debía llamarse"); };
+    const env = { CODIGO: "CI_ROJO", WORKFLOW: "ci.yml", RUN_ID: "42", NVIDIA_API_KEY: "nvapi-claveprueba123", GH_TOKEN: "ghp_tokenprueba123" };
+    assert.strictEqual(await ejecutarReparador(env, { gh, deshacer }), "límite diario alcanzado");
+  });
+
+  it("CI_ROJO sin reparador previo y sin límite: sigue al flujo normal", async () => {
+    const gh = ghFalso([
+      ["per_page=100", "[]"],
+      ["per_page=1", JSON.stringify([COMMIT_NORMAL])],
+      ["run view", "error en scripts/x.js:1: fallo externo " + "q".repeat(120)]
+    ]);
+    const pedir = async (modelo) => ({ modelo, respuesta: "NO_REPARAR\nfallo externo" });
+    const fetchImpl = async () => ({ ok: true, json: async () => ({ data: [{ id: "nvidia/nemotron-3-ultra-550b-a55b" }] }) });
+    const env = { CODIGO: "CI_ROJO", WORKFLOW: "ci.yml", RUN_ID: "42", NVIDIA_API_KEY: "nvapi-claveprueba123", GH_TOKEN: "ghp_tokenprueba123" };
+    assert.strictEqual(await ejecutarReparador(env, { gh, pedir, fetchImpl }), "sin reparación: fallo externo");
   });
 });
 
@@ -598,6 +623,54 @@ describe("reparador - ejecutarReparador (flujo sin efectos)", () => {
   });
 });
 
+describe("reparador - modo seco y relanzado", () => {
+  const env = { CODIGO: "SMV_BLOQUEO", WORKFLOW: "smv.yml", RUN_ID: "77", NVIDIA_API_KEY: "nvapi-claveprueba123", GH_TOKEN: "ghp_tokenprueba123" };
+  const ghFlujo = () => ghFalso([
+    ["per_page=100", "[]"],
+    ["per_page=1", JSON.stringify([COMMIT_NORMAL])],
+    ["run view", "error en scripts/x.js:1: fallo " + "q".repeat(120)],
+    ["workflow run", ""]
+  ]);
+  const fetchImpl = async () => ({ ok: true, json: async () => ({ data: [{ id: "nvidia/nemotron-3-ultra-550b-a55b" }] }) });
+  const diff = diffArchivo("scripts/x.js", { añadir: ["// arreglo"] });
+  const pedir = async (modelo) => ({ modelo, respuesta: diff + "---MOTIVO---\nArreglo de prueba" });
+
+  it("sin seco: aplica, publica y relanza el workflow fallido", async () => {
+    const gh = ghFlujo();
+    const aplicar = async () => ({ ok: true, url: "https://github.com/x/pull/9", archivos: ["scripts/x.js"] });
+    const salida = await ejecutarReparador(env, { gh, pedir, fetchImpl, comprobarAplica: aplicaOk, aplicar });
+    assert.ok(salida.includes("https://github.com/x/pull/9"), salida);
+    assert.ok(gh.llamadas.some(l => l === "workflow run smv.yml"));
+  });
+
+  it("con seco: no relanza nada y devuelve el detalle del diff", async () => {
+    const gh = ghFlujo();
+    const aplicar = async () => ({ ok: true, seco: true, archivos: ["scripts/x.js"], detalle: "Modo seco (no se publica) DIFF" });
+    const salida = await ejecutarReparador({ ...env, REPARADOR_SECO: "1" }, { gh, pedir, fetchImpl, comprobarAplica: aplicaOk, aplicar });
+    assert.strictEqual(salida, "Modo seco (no se publica) DIFF");
+    assert.ok(!gh.llamadas.some(l => l.startsWith("workflow run")));
+  });
+
+  it("con seco y tests en rojo en ambos intentos: sin reparación", async () => {
+    const gh = ghFlujo();
+    const aplicar = async () => ({ ok: false, error: "npm test fallo" });
+    const salida = await ejecutarReparador({ ...env, REPARADOR_SECO: "1" }, { gh, pedir, fetchImpl, comprobarAplica: aplicaOk, aplicar });
+    assert.strictEqual(salida, "sin reparación: tests en rojo");
+  });
+
+  it("REPARADOR_SECO por defecto es 0; 1 activa el modo seco", () => {
+    const base = { CODIGO: "CI_ROJO", WORKFLOW: "ci.yml", RUN_ID: "1", NVIDIA_API_KEY: "k", GH_TOKEN: "t" };
+    assert.strictEqual(leerConfig(base).seco, false);
+    assert.strictEqual(leerConfig({ ...base, REPARADOR_SECO: "1" }).seco, true);
+    assert.strictEqual(leerConfig({ ...base, REPARADOR_SECO: "0" }).seco, false);
+  });
+
+  it("REPARADOR_SECO con otro valor se rechaza", () => {
+    const base = { CODIGO: "CI_ROJO", WORKFLOW: "ci.yml", RUN_ID: "1", NVIDIA_API_KEY: "k", GH_TOKEN: "t" };
+    assert.throws(() => leerConfig({ ...base, REPARADOR_SECO: "yes" }), /REPARADOR_SECO/);
+  });
+});
+
 describe("reparador - leerConfig", () => {
   const completo = { CODIGO: "CI_ROJO", WORKFLOW: "ci.yml", RUN_ID: "123", NVIDIA_API_KEY: "k", GH_TOKEN: "t" };
 
@@ -628,6 +701,12 @@ describe("reparador - workflow reparar.yml", () => {
     const lineasRun = yml.split("\n").filter(l => /^\s*run:/.test(l));
     assert.ok(lineasRun.length > 0);
     assert.ok(lineasRun.every(l => !l.includes("${{")));
+  });
+
+  it("expone el input seco (choice 0/1, por defecto 0) pasado por env", () => {
+    assert.ok(/seco:\n\s+description:[^\n]*\n\s+required: false\n\s+type: choice/.test(yml));
+    assert.ok(yml.includes("default: '0'"));
+    assert.ok(yml.includes("REPARADOR_SECO: ${{ github.event.inputs.seco }}"));
   });
 
   it("tiene concurrency sin cancelar y permisos de escritura", () => {
