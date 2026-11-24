@@ -16,6 +16,7 @@ import {
   parsearDiff,
   verificarLimiteDiario,
   contarReparacionesRecientes,
+  esCommitReparador,
   ultimoReparadorEnMain,
   pedirParche,
   pedirPropuesta,
@@ -541,6 +542,39 @@ describe("reparador - límite diario", () => {
     const gh = ghFalso([["commits?sha=main", new Error("API caída")]]);
     await assert.rejects(verificarLimiteDiario({ gh }));
   });
+
+  it("un feat(reparador) con [reparador] solo en el cuerpo NO cuenta", async () => {
+    const commit = { sha: "f1", commit: { message: "feat(reparador): añade modo seco\n\nCo-Authored-By: x [reparador]" } };
+    const gh = ghFalso([["commits?sha=main", JSON.stringify([commit, commit])]]);
+    assert.strictEqual(await contarReparacionesRecientes({ gh }), 0);
+    assert.strictEqual(await verificarLimiteDiario({ gh }), false);
+  });
+
+  it("fix(auto): x [reparador] sí cuenta", async () => {
+    const commit = { sha: "f2", commit: { message: "fix(auto): x [reparador]" } };
+    const gh = ghFalso([["commits?sha=main", JSON.stringify([commit])]]);
+    assert.strictEqual(await contarReparacionesRecientes({ gh }), 1);
+  });
+
+  it("revert(auto): ... [reparador] sí cuenta", async () => {
+    const commit = { sha: "f3", commit: { message: "revert(auto): deshacer reparación que rompió CI [reparador]\n\ncuerpo" } };
+    const gh = ghFalso([["commits?sha=main", JSON.stringify([commit])]]);
+    assert.strictEqual(await contarReparacionesRecientes({ gh }), 1);
+  });
+
+  it("un asunto que empieza bien pero no termina en [reparador] no cuenta", async () => {
+    const commit = { sha: "f4", commit: { message: "fix(auto): x\n\n[reparador]" } };
+    const gh = ghFalso([["commits?sha=main", JSON.stringify([commit])]]);
+    assert.strictEqual(await contarReparacionesRecientes({ gh }), 0);
+  });
+});
+
+describe("reparador - esCommitReparador", () => {
+  it("solo mira el asunto (primera línea)", () => {
+    assert.strictEqual(esCommitReparador("fix(auto): x [reparador]\ncuerpo"), true);
+    assert.strictEqual(esCommitReparador("data(news): x\n\nfix(auto): x [reparador]"), false);
+    assert.strictEqual(esCommitReparador(undefined), false);
+  });
 });
 
 describe("reparador - decisión de deshacer (CI_ROJO)", () => {
@@ -552,6 +586,28 @@ describe("reparador - decisión de deshacer (CI_ROJO)", () => {
   it("devuelve null si el último commit de main no es de reparador", async () => {
     const gh = ghFalso([["per_page=1", JSON.stringify([COMMIT_NORMAL])]]);
     assert.strictEqual(await ultimoReparadorEnMain(gh), null);
+  });
+
+  it("no deshace si [reparador] aparece solo en el cuerpo de un feat(reparador)", async () => {
+    const commit = { sha: "g1", commit: { message: "feat(reparador): modo seco\n\nlínea con [reparador]" } };
+    const gh = ghFalso([["per_page=1", JSON.stringify([commit])]]);
+    assert.strictEqual(await ultimoReparadorEnMain(gh), null);
+  });
+
+  it("el deshacer no se ejecuta con asunto válido pero sin [reparador] al final", async () => {
+    const commit = { sha: "g2", commit: { message: "fix(auto): x" } };
+    const gh = ghFalso([["per_page=1", JSON.stringify([commit])]]);
+    assert.strictEqual(await ultimoReparadorEnMain(gh), null);
+  });
+
+  it("si gh falla al contar, el resumen dice que no pudo contar (no 'límite alcanzado')", async () => {
+    const gh = ghFalso([
+      ["commits?sha=main&per_page=100", new Error("API caída")],
+      ["per_page=1", JSON.stringify([COMMIT_NORMAL])]
+    ]);
+    const env = { CODIGO: "SMV_BLOQUEO", WORKFLOW: "smv.yml", RUN_ID: "42", NVIDIA_API_KEY: "nvapi-claveprueba123", GH_TOKEN: "ghp_tokenprueba123" };
+    const salida = await ejecutarReparador(env, { gh });
+    assert.strictEqual(salida, "no pude contar las reparaciones recientes: API caída");
   });
 
   it("el deshacer se ejecuta aunque el límite diario esté alcanzado", async () => {

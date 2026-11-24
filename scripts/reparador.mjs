@@ -374,14 +374,21 @@ export async function validarDiff(diff, { comprobarAplica = comprobarAplicaReal 
 // Límite diario y modelos
 // ---------------------------------------------------------------------------
 
+// Una reparación es un commit cuyo asunto (primera línea) empieza por fix(auto): o revert(auto:)
+// y termina en [reparador]. El cuerpo no cuenta: los commits del propio reparador lo mencionan.
+export function esCommitReparador(mensaje) {
+  const asunto = (mensaje || "").split("\n")[0].trimEnd();
+  return /^(fix|revert)\(auto\):.*\[reparador\]$/.test(asunto);
+}
+
 export async function contarReparacionesRecientes({ gh = ghReal, ahora = Date.now() } = {}) {
   const desde = new Date(ahora - 24 * 3600 * 1000).toISOString();
   const json = await gh(["api", `repos/{owner}/{repo}/commits?sha=main&per_page=100&since=${encodeURIComponent(desde)}`]);
   const commits = JSON.parse(json);
-  return commits.filter(c => (c.commit?.message || "").includes("[reparador]")).length;
+  return commits.filter(c => esCommitReparador(c.commit?.message)).length;
 }
 
-// Falla cerrado: si no se puede contar, no se repara.
+// Falla cerrado: si no se puede contar, no se repara (el error se propaga al llamador).
 export async function verificarLimiteDiario(deps = {}) {
   return (await contarReparacionesRecientes(deps)) >= LIMITE_REPARACIONES_DIA;
 }
@@ -592,11 +599,11 @@ async function relanzar(cfg, archivos, gh) {
   }
 }
 
-// Busca el último commit de main; si contiene [reparador] devuelve su sha.
+// Busca el último commit de main; si su asunto es de reparación devuelve su sha.
 export async function ultimoReparadorEnMain(gh) {
   const lista = JSON.parse(await gh(["api", "repos/{owner}/{repo}/commits?sha=main&per_page=1"]));
   const ultimo = lista[0];
-  if (!ultimo || !(ultimo.commit?.message || "").includes("[reparador]")) return null;
+  if (!ultimo || !esCommitReparador(ultimo.commit?.message)) return null;
   return ultimo.sha;
 }
 
@@ -679,7 +686,13 @@ export async function ejecutarReparador(env = process.env, deps = {}) {
     }
   }
 
-  if (await verificarLimiteDiario({ gh })) {
+  let limiteAlcanzado;
+  try {
+    limiteAlcanzado = await verificarLimiteDiario({ gh });
+  } catch (e) {
+    return salida(`no pude contar las reparaciones recientes: ${redactar(e.message.split("\n")[0])}`);
+  }
+  if (limiteAlcanzado) {
     return salida("límite diario alcanzado");
   }
 
