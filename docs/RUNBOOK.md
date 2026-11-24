@@ -10,7 +10,7 @@ Este runbook describe cómo se detectan, comprueban y resuelven los incidentes d
 
 Regla de oro (del catálogo):
 
-> El vigía NUNCA cambia código, diseño, textos, datos a mano, variables, DNS ni cuentas. Solo usa estas acciones: RELANZAR, ESPERAR, DESPLEGAR, VOLVER_ATRAS y AVISAR.
+> El vigía NUNCA cambia código, diseño, textos, datos a mano, variables, DNS ni cuentas. Solo usa estas acciones: RELANZAR, ESPERAR, DESPLEGAR, VOLVER_ATRAS, REPARAR y AVISAR.
 
 Acciones permitidas:
 
@@ -18,9 +18,10 @@ Acciones permitidas:
 - **ESPERAR**: no hacer nada en esta pasada y volver a mirar en la siguiente (cada 30 min).
 - **DESPLEGAR**: `gh workflow run deploy.yml` (despliega origin/main, que ya pasó CI) y comprobar el smoke en la siguiente pasada.
 - **VOLVER_ATRAS**: `gh workflow run rollback.yml -f motivo=<código>`, que ejecuta `npx wrangler rollback` a la versión anterior del Worker dentro de GitHub Actions. Solo si el smoke de producción falla dos pasadas seguidas DESPUÉS de un DESPLEGAR.
+- **REPARAR**: `gh workflow run reparar.yml -R Wagustin/macro-data-explorer -f codigo=<código> -f workflow=<archivo> -f run_id=<id>`. Pide a un modelo un parche mínimo con barreras y tests; si tiene éxito, el propio `reparar.yml` relanza el workflow afectado (el vigía no lo relanza). Se usa con CI_ROJO (además de AVISAR) y con ERROR_CODIGO (además de AVISAR).
 - **AVISAR**: Telegram a Agustín con el diagnóstico, la acción y la línea «Qué hacer a mano:» (y nada más); si Telegram no está configurado o falla, correo con Resend. De 23:00 a 07:00 (hora de Lima) solo salen de noche los críticos; ver «Horas de silencio y resumen diario» en la sección 3.
 
-Límites: como mucho 2 RELANZAR por workflow y día; 1 DESPLEGAR y 1 VOLVER_ATRAS por día. Al pasar el límite, AVISAR. Nunca actuar si el mismo workflow está en curso (status `in_progress` o `queued`).
+Límites: como mucho 2 RELANZAR por workflow y día; 1 DESPLEGAR y 1 VOLVER_ATRAS por día; REPARAR, como mucho 1 por workflow y día y 2 al día en total, y nunca con `reparar.yml` en curso. Un gh que falla (red, rate limit, timeout) no gasta ningún límite. Al pasar el límite, AVISAR. Nunca actuar si el mismo workflow está en curso (status `in_progress` o `queued`).
 
 ## 2. Mapa del sistema
 
@@ -104,7 +105,7 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
   gh run list -R Wagustin/macro-data-explorer --workflow watchdog.yml --limit 4 --json conclusion,createdAt
   npm run smoke:prod
   ```
-- **Directiva**: si la siguiente ejecución del watchdog pasa, ignorar. Si fallan 2 seguidas, DESPLEGAR. Si tras desplegar fallan 2 más, VOLVER_ATRAS y AVISAR.
+- **Directiva**: si la siguiente ejecución del watchdog pasa, ignorar. Si fallan 2 seguidas, DESPLEGAR; si todos esos fallos son de red (ECONNRESET, 502-504, rate limit, fetch failed), hacen falta 3. Si tras desplegar fallan 2 más, VOLVER_ATRAS y AVISAR.
 
 ### BOLETIN_NO_SALIO
 
@@ -158,7 +159,13 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
   ```bash
   gh run list -R Wagustin/macro-data-explorer --workflow ci.yml --branch main --limit 3 --json conclusion,createdAt,databaseId
   ```
-- **Directiva**: solo AVISAR (es un cambio de código: lo arregla Claude). No desplegar mientras CI esté en rojo. `ci.yml` no tiene `workflow_dispatch`, así que no se puede relanzar.
+- **Directiva**: AVISAR y REPARAR `ci.yml` (una vez al día, con el límite de REPARAR). No desplegar mientras CI esté en rojo. `ci.yml` no tiene `workflow_dispatch`, así que no se puede relanzar: el parche lo pide `reparar.yml`.
+
+### ERROR_CODIGO
+
+- **Detección**: fallo de un workflow de datos (timesfm, news, smv, smv-precios, official-data, cierre-ayer, cierre-tarde, boletin, alertas, d1-backfill) cuyo log trae `TypeError`, `ReferenceError`, `SyntaxError`, `is not a function`, `Cannot read properties`, `Unexpected token` o un stack trace con una ruta del repo. No es red, SMV, choque de push ni rate limit (esos códigos tienen prioridad).
+- **Directiva**: AVISAR y REPARAR el workflow (una vez por workflow y día). El vigía no toca código.
+- **Comprobar a mano**: `gh run view <run_id> -R Wagustin/macro-data-explorer --log-failed | tail -n 60`
 
 ### DESCONOCIDO
 

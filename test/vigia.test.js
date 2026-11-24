@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import {
   clasificarFallo, clasificarWatchdog, evaluarStatus, boletinPendiente, decidir, registrarPasada,
   clasificarConNemotron, interpretarRespuesta, elegirModelo, redactar, ejecutar,
@@ -8,7 +10,8 @@ import {
   debeEnviarResumen, textoResumen, evaluarLatido, enviarTelegram,
   estadoBoletin, resumenActividad, rachaDeFallos, codigosDeFallo, resumenWeb, estadoPagos,
   enHorasSilencio, lineaVeredicto, incidenteHechos, incidenteCasa, estadoTailscale, comprobarCasa,
-  tcpAbierto, esErrorAuth, detectarVigiaRoto,
+  tcpAbierto, esErrorAuth, detectarVigiaRoto, esErrorCodigo, argumentosReparar, diagnosticoSmoke,
+  adquirirLock, liberarLock, cargarMemoria, guardarMemoria,
 } from "../scripts/vigia.mjs";
 
 const H = 36e5;
@@ -715,4 +718,157 @@ test("de noche, un VOLVER_ATRAS que falla también se envía (la web puede segui
   assert.equal(enviados.length, 1);
   assert.match(enviados[0], /el rollback ha fallado/);
   assert.deepEqual(memoria.silencio, []);
+});
+
+const cont = () => ({ relanzar: {}, desplegar: 0, volverAtras: 0, reparar: {} });
+const fallo = (runId, createdAt) => ({ databaseId: runId, status: "completed", conclusion: "failure", createdAt });
+
+test("clasificarFallo: error de código en un workflow de datos es ERROR_CODIGO; con red, no", () => {
+  assert.equal(clasificarFallo({ workflowPath: "news.yml", stepName: "Generar", logTail: "TypeError: x is not a function" }), "ERROR_CODIGO");
+  assert.equal(clasificarFallo({ workflowPath: "news.yml", stepName: "Generar", logTail: "TypeError: fetch failed\nread ECONNRESET" }), "RED_PASAJERA");
+  assert.equal(clasificarFallo({ workflowPath: "deploy.yml", stepName: "Build", logTail: "TypeError: x is not a function" }), "DESCONOCIDO");
+  assert.equal(clasificarFallo({ workflowPath: "ci.yml", stepName: "Tests", logTail: "TypeError: x" }), "CI_ROJO");
+});
+
+test("esErrorCodigo: detecta errores de código y excluye red, SMV, choque push y rate limit", () => {
+  assert.equal(esErrorCodigo("TypeError: foo is not a function\n  at routes.js:12:4"), true);
+  assert.equal(esErrorCodigo("ReferenceError: bar is not defined"), true);
+  assert.equal(esErrorCodigo("SyntaxError: Unexpected token '}'"), true);
+  assert.equal(esErrorCodigo("Cannot read properties of undefined (reading 'x')"), true);
+  assert.equal(esErrorCodigo("Error: read ECONNRESET"), false);
+  assert.equal(esErrorCodigo("TypeError: fetch failed\nread ECONNRESET"), false);
+  assert.equal(esErrorCodigo("HTTP 418 de la SMV: respuesta inesperada"), false);
+  assert.equal(esErrorCodigo("CONFLICT (content): Merge conflict in data/noticias.json"), false);
+  assert.equal(esErrorCodigo("API rate limit exceeded"), false);
+  assert.equal(esErrorCodigo("sin clasificar: algo raro"), false);
+});
+
+test("REPARAR: CI_ROJO avisa y pide REPARAR una vez; con el límite del workflow ya usado, no", () => {
+  const ci = { codigo: "CI_ROJO", clave: "CI_ROJO:ci.yml:1", workflow: "ci.yml", runId: 1, motivo: "x" };
+  const acc = decidir([ci], {}, ahora);
+  assert.deepEqual(acc.map((a) => a.tipo), ["AVISAR", "REPARAR"]);
+  assert.deepEqual(acc[1].claves, ["CI_ROJO:ci.yml:1"]);
+  assert.deepEqual(decidir([ci], { dia: "2026-11-20", contadores: { ...cont(), reparar: { "ci.yml": 1 } } }, ahora).map((a) => a.tipo), ["AVISAR"]);
+});
+
+test("REPARAR: ERROR_CODIGO una vez por workflow en la pasada; máximo 2 al día en total; nunca con reparar.yml en curso", () => {
+  const err = (wf, id) => ({ codigo: "ERROR_CODIGO", clave: `ERROR_CODIGO:${wf}:${id}`, workflow: wf, runId: id, motivo: "TypeError" });
+  const dos = decidir([err("news.yml", 5), err("news.yml", 6)], {}, ahora);
+  assert.equal(dos.filter((a) => a.tipo === "REPARAR").length, 1);
+  const total = decidir([err("timesfm.yml", 7)], { dia: "2026-11-20", contadores: { ...cont(), reparar: { "news.yml": 1, "smv.yml": 1 } } }, ahora);
+  assert.deepEqual(total.map((a) => a.tipo), ["AVISAR"]);
+  const enCurso = decidir([err("news.yml", 8)], {}, ahora, new Set(["reparar.yml"]));
+  assert.deepEqual(enCurso.map((a) => a.tipo), ["AVISAR"]);
+});
+
+test("REPARAR: el aviso de ERROR_CODIGO tiene clave por workflow y no silencia el de otro", async () => {
+  const err = (wf, id) => ({ codigo: "ERROR_CODIGO", clave: `ERROR_CODIGO:${wf}:${id}`, workflow: wf, runId: id, motivo: "TypeError" });
+  const memoria = { contadores: cont(), incidentes: {}, avisos: {}, historial: [], silencio: [] };
+  const enviados = [];
+  await ejecutar(decidir([err("news.yml", 1), err("smv.yml", 2)], memoria, ahora), memoria, {
+    seco: false, ahora, gh: async () => {}, avisar: async (a) => { enviados.push(a.avisoKey); return { canal: "telegram" }; },
+  });
+  assert.deepEqual(enviados.sort(), ["ERROR_CODIGO:news.yml", "ERROR_CODIGO:smv.yml"]);
+});
+
+test("REPARAR: argumentos de gh y contador solo si gh lo ha disparado", async () => {
+  assert.deepEqual(argumentosReparar({ codigo: "ERROR_CODIGO", workflow: "news.yml", runId: 42 }), [
+    "workflow", "run", "reparar.yml", "-R", "Wagustin/macro-data-explorer", "-f", "codigo=ERROR_CODIGO", "-f", "workflow=news.yml", "-f", "run_id=42",
+  ]);
+  const llamadas = [];
+  const memoria = { contadores: cont(), incidentes: {}, avisos: {}, historial: [], silencio: [] };
+  const acc = [{ tipo: "REPARAR", workflow: "news.yml", codigo: "ERROR_CODIGO", runId: 42, claves: [], motivo: "x" }];
+  await ejecutar(acc, memoria, { seco: false, ahora, gh: async (a) => { llamadas.push(a); }, avisar: async () => ({ canal: null }) });
+  assert.equal(llamadas.length, 1);
+  assert.equal(memoria.contadores.reparar["news.yml"], 1);
+  const memFallida = { contadores: cont(), incidentes: {}, avisos: {}, historial: [], silencio: [] };
+  const notas = await ejecutar([{ ...acc[0] }], memFallida, {
+    seco: false, ahora, gh: async () => { throw Object.assign(new Error("HTTP 403 rate limit"), { stderr: "API rate limit exceeded" }); }, avisar: async () => ({ canal: null }),
+  });
+  assert.ok(notas.some((n) => n.startsWith("REPARAR news.yml fallido")));
+  assert.equal(memFallida.contadores.reparar["news.yml"], undefined);
+});
+
+test("WATCHDOG_SMOKE: con fallos de red seguidos hacen falta 3; con uno que no es de red, 2", async () => {
+  const smokeRed = { logTail: "FALLA  Pruebas completas (smoke): read ECONNRESET" };
+  const smokeOtro = { logTail: "FALLA  Pruebas completas (smoke): HTTP 500 en /dolar" };
+  const corridas = [fallo(3, "2026-11-20T14:30:00Z"), fallo(2, "2026-11-20T14:00:00Z"), fallo(1, "2026-11-20T13:30:00Z")];
+  const todoRed = await diagnosticoSmoke(corridas, async () => smokeRed);
+  assert.deepEqual(todoRed, { fallosSeguidos: 3, todosRed: true });
+  const mixto = await diagnosticoSmoke(corridas, async (r) => (r.databaseId === 2 ? smokeOtro : smokeRed));
+  assert.deepEqual(mixto, { fallosSeguidos: 3, todosRed: false });
+  const dosRed = await diagnosticoSmoke(corridas.slice(0, 2), async () => smokeRed);
+  assert.deepEqual(dosRed, { fallosSeguidos: 2, todosRed: true });
+  const sinLog = await diagnosticoSmoke(corridas, async () => { throw new Error("gh caído"); });
+  assert.deepEqual(sinLog, { fallosSeguidos: 0, todosRed: false });
+  assert.deepEqual(decidir([{ codigo: "WATCHDOG_SMOKE", clave: "W", motivo: "x", fallosSeguidos: 2, todosRed: true }], {}, ahora).map((a) => a.tipo), []);
+  assert.deepEqual(decidir([{ codigo: "WATCHDOG_SMOKE", clave: "W", motivo: "x", fallosSeguidos: 3, todosRed: true }], {}, ahora).map((a) => a.tipo), ["DESPLEGAR"]);
+  assert.deepEqual(decidir([{ codigo: "WATCHDOG_SMOKE", clave: "W", motivo: "x", fallosSeguidos: 2, todosRed: false }], {}, ahora).map((a) => a.tipo), ["DESPLEGAR"]);
+});
+
+test("SMV_BLOQUEO de cotizaciones por encima de 72 h avisa, también con origen en el workflow", () => {
+  const inc = { codigo: "SMV_BLOQUEO", clave: "SMV_BLOQUEO:smv-precios.yml:9", workflow: "smv-precios.yml", runId: 9, desde: "2026-11-20T10:00:00Z", ageHoras: 73, motivo: "x" };
+  assert.deepEqual(decidir([inc], {}, ahora).map((a) => a.tipo), ["AVISAR"]);
+  assert.deepEqual(decidir([{ ...inc, ageHoras: 60 }], {}, ahora).map((a) => a.tipo), ["RELANZAR"]); // 60 h: no avisa, relanza el workflow dueño
+});
+
+test("lock: uno vivo y fresco bloquea; uno de más de 35 min es huérfano y se libera; uno de un pid muerto también", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "vigia-lock-"));
+  const file = path.join(dir, "lock");
+  try {
+    assert.deepEqual(adquirirLock(file), { ok: true, huerfano: null });
+    assert.equal(fs.readFileSync(file, "utf8"), String(process.pid));
+    assert.equal(adquirirLock(file).ok, false);
+    liberarLock(file);
+    assert.equal(fs.existsSync(file), false);
+
+    fs.writeFileSync(file, String(process.pid));
+    const hace40 = new Date(Date.now() - 40 * MIN);
+    fs.utimesSync(file, hace40, hace40);
+    const viejo = adquirirLock(file);
+    assert.equal(viejo.ok, true);
+    assert.match(viejo.huerfano, /lock de hace 40 min/);
+    liberarLock(file);
+
+    fs.writeFileSync(file, "99999999");
+    const muerto = adquirirLock(file);
+    assert.equal(muerto.ok, true);
+    assert.match(muerto.huerfano, /pid que ya no existe/);
+    liberarLock(file);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("memoria: archivo que falta no es corrupto; JSON roto empieza vacía y deja la señal memoria-corrupta", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "vigia-mem-"));
+  try {
+    const registro = new Set();
+    assert.equal(cargarMemoria(path.join(dir, "no.json"), registro).dia, null);
+    assert.equal(registro.size, 0);
+    const roto = path.join(dir, "roto.json");
+    fs.writeFileSync(roto, "{no es json");
+    const m = cargarMemoria(roto, registro);
+    assert.equal(m.dia, null);
+    assert.deepEqual(m.contadores, cont());
+    assert.ok(registro.has("memoria-corrupta"));
+    const avisos = detectarVigiaRoto({ senales: registro });
+    assert.equal(avisos.length, 1);
+    assert.match(avisos[0].motivo, /memoria del vigía/);
+    assert.deepEqual(detectarVigiaRoto({ senales: new Set() }), []);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("guardarMemoria escribe con .tmp y renombra; no deja el .tmp", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "vigia-guarda-"));
+  try {
+    const file = path.join(dir, "memoria.json");
+    guardarMemoria(file, { dia: "2026-11-24", contadores: cont() });
+    assert.equal(JSON.parse(fs.readFileSync(file, "utf8")).dia, "2026-11-24");
+    assert.equal(fs.existsSync(`${file}.tmp`), false);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 });

@@ -49,6 +49,20 @@ const DUENO = {
   forecasts: "timesfm.yml", news: "news.yml", smv: "smv-precios.yml", bcrp: "official-data.yml",
   eia: "official-data.yml", d1Sync: "d1-backfill.yml",
 };
+// REPARAR: reparar.yml pide un parche al modelo y, si tiene éxito, relanza el workflow afectado.
+const REPARAR_WF = "reparar.yml";
+const REPARAR_MAX_DIA = 2;
+// Workflows de datos: un fallo de código en ellos es ERROR_CODIGO (AVISAR y REPARAR).
+const WORKFLOWS_DATOS = new Set([
+  "timesfm.yml", "news.yml", "smv.yml", "smv-precios.yml", "official-data.yml", "cierre-ayer.yml",
+  "cierre-tarde.yml", "boletin.yml", "alertas.yml", "d1-backfill.yml",
+]);
+const CODIGO_LOG_RE = [
+  /TypeError:|ReferenceError:|SyntaxError:/, /is not a function/, /Cannot read propert(?:y|ies)/,
+  /Unexpected token/, /\bat .*macro-data-explorer\//,
+];
+// Un lock con más de 35 min se considera huérfano (una pasada tarda pocos minutos).
+const LOCK_HUERFANO_MIN = 35;
 // Workflows de datos que corren solo (cron de GitHub o relanzados). Si el último run de cualquiera
 // es de hace más de LATIDO_H horas, el servidor de casa ha dejado de latir.
 const LATIDO = new Set([
@@ -170,7 +184,16 @@ export function clasificarFallo({ workflowPath = "", stepName = "", logTail = ""
   if (/^Guardar/i.test(paso) && /CONFLICT|rejected|non-fast-forward|could not apply/i.test(log)) return "CHOQUE_PUSH";
   if (SMV.has(wf) && /HTTP 418|HTTP 403|fetch failed|respuesta inesperada de la SMV/i.test(log)) return "SMV_BLOQUEO";
   if (!SMV.has(wf) && RED_RE.test(log)) return "RED_PASAJERA";
+  if (WORKFLOWS_DATOS.has(wf) && esErrorCodigo(log)) return "ERROR_CODIGO";
   return "DESCONOCIDO";
+}
+
+// Error de código (TypeError, SyntaxError, stack trace del repo...) y no de red, SMV, choque de push ni rate limit.
+export function esErrorCodigo(logTail) {
+  const log = String(logTail ?? "");
+  const hayCodigo = CODIGO_LOG_RE.some((re) => re.test(log));
+  const otraCosa = /ECONNRESET|ETIMEDOUT|socket hang up|\b50[234]\b|rate limit|fetch failed|HTTP 418|HTTP 403|respuesta inesperada de la SMV|CONFLICT|rejected|non-fast-forward|could not apply/i.test(log);
+  return hayCodigo && !otraCosa;
 }
 
 // Devuelve los DATO_VIEJO (ageHours > staleAfterHours) y, después de las 12:00 UTC, el backup de hoy.
@@ -314,7 +337,7 @@ export async function clasificarConNemotron({ workflow, paso, logTail }, { apiKe
 // ---------- Memoria y pasadas ----------
 
 const memoriaVacia = () => ({
-  dia: null, contadores: { relanzar: {}, desplegar: 0, volverAtras: 0 }, fallos: {},
+  dia: null, contadores: { relanzar: {}, desplegar: 0, volverAtras: 0, reparar: {} }, fallos: {},
   incidentes: {}, runsVistos: {}, avisos: {}, despliegues: [], historial: [], resumenDia: null,
   pasadasDia: 0, incidentesDia: {}, silencio: [], telegramFallos: 0, rotoDia: null,
 });
@@ -382,6 +405,7 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
   let desplegosHoy = contadores.desplegar || 0;
   let volverHoy = contadores.volverAtras || 0;
   let rotoHoy = mem.rotoDia === hoy;
+  const repararHoy = { ...(contadores.reparar || {}) };
   const acciones = [];
   const hayCI = incidentes.some((i) => i.codigo === "CI_ROJO");
   const datoViejoDe = (wf) => incidentes.some((i) => i.codigo === "DATO_VIEJO" && i.workflow === wf);
@@ -424,6 +448,18 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
     const v = veredicto(inc, "DESPLEGAR", motivo, regla);
     acciones.push({ tipo: "DESPLEGAR", workflow: "deploy.yml", codigo: inc.codigo, motivo, claves: [inc.clave], veredicto: v });
     desplegosHoy += 1;
+  }
+
+  // REPARAR: una vez por workflow y día, máximo 2 al día en total, nunca con reparar.yml o el workflow en curso.
+  function reparar(inc, wf, motivo, regla) {
+    if (enCurso.has(REPARAR_WF)) return veredicto(inc, "ESPERAR", `${REPARAR_WF} ya tiene una ejecución en curso`, "REPARAR: nunca con reparar.yml en curso");
+    if (enCurso.has(wf)) return veredicto(inc, "ESPERAR", `${wf} tiene una ejecución en curso`, "REPARAR: nunca con el workflow en curso");
+    if (repararHoy[wf]) return veredicto(inc, "ESPERAR", `ya se pidió REPARAR de ${wf} hoy`, "REPARAR: una vez por workflow y día");
+    const total = Object.values(repararHoy).reduce((s, n) => s + n, 0);
+    if (total >= REPARAR_MAX_DIA) return veredicto(inc, "ESPERAR", `límite de ${REPARAR_MAX_DIA} REPARAR al día alcanzado`, "REPARAR: máximo 2 al día en total");
+    const v = veredicto(inc, `REPARAR ${wf}`, motivo, regla);
+    acciones.push({ tipo: "REPARAR", workflow: wf, codigo: inc.codigo, runId: inc.runId, motivo, claves: [inc.clave], veredicto: v });
+    repararHoy[wf] = 1;
   }
 
   function volverAtras(inc, motivo, regla) {
@@ -482,9 +518,11 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
       }
       case "WATCHDOG_SMOKE":
         if (!est.desplegadoEn) {
+          // Si todos los fallos seguidos del smoke son de red (ECONNRESET, 502, rate limit...), hacen falta 3.
           const n = inc.fallosSeguidos || 0;
-          if (n >= 2) desplegar(inc, "el watchdog falla dos ejecuciones seguidas en la comprobación de la web", "WATCHDOG_SMOKE: desplegar tras dos fallos seguidos del smoke");
-          else veredicto(inc, "ESPERAR", `${n} fallo seguido del smoke: se despliega con 2`, "WATCHDOG_SMOKE: desplegar tras dos fallos seguidos");
+          const umbral = inc.todosRed ? 3 : 2;
+          if (n >= umbral) desplegar(inc, `el watchdog falla ${n} ejecuciones seguidas en la comprobación de la web`, `WATCHDOG_SMOKE: desplegar tras ${umbral} fallos seguidos del smoke`);
+          else veredicto(inc, "ESPERAR", `${n} fallo seguido del smoke${inc.todosRed ? " de red" : ""}: se despliega con ${umbral}`, `WATCHDOG_SMOKE: desplegar tras ${umbral} fallos seguidos (${inc.todosRed ? "todos de red" : "no todos de red"})`);
         } else if ((inc.fallosTrasDespliegue || 0) >= 2) {
           volverAtras(inc, "el watchdog sigue fallando tras desplegar", "WATCHDOG_SMOKE: dos fallos más del smoke tras desplegar");
         } else {
@@ -517,7 +555,8 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
         }
         break;
       case "CI_ROJO":
-        aviso(inc, "CI en main en rojo: lo arregla Claude, no se despliega", "CI_ROJO: solo avisar");
+        aviso(inc, "CI en main en rojo: lo arregla Claude, no se despliega", "CI_ROJO: avisar");
+        reparar(inc, "ci.yml", "CI en main en rojo: pedir un parche a reparar.yml", "CI_ROJO: REPARAR una vez al día, además de avisar");
         break;
       case "PAGOS_ABIERTOS":
         aviso(inc, "los pagos aparecen abiertos durante la pausa", "PAGOS_ABIERTOS: avisar de inmediato, nunca tocar");
@@ -536,6 +575,11 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
           rotoHoy = true;
           aviso(inc, inc.motivo, "VIGIA_ROTO: un aviso al día por el canal que funcione");
         }
+        break;
+      case "ERROR_CODIGO":
+        // El aviso va con clave propia por workflow: un error en un workflow no silencia el de otro.
+        aviso({ ...inc, avisoKey: `ERROR_CODIGO:${inc.workflow}` }, inc.motivo, "ERROR_CODIGO: avisar");
+        reparar(inc, inc.workflow, `error de código en ${inc.workflow}: pedir un parche a reparar.yml`, "ERROR_CODIGO: REPARAR una vez por workflow y día, además de avisar");
         break;
       case "DESCONOCIDO":
       default:
@@ -574,6 +618,11 @@ export function secretosDe(cfg) {
 // Argumentos de gh para VOLVER_ATRAS: el workflow rollback.yml, con el código como motivo.
 export function argumentosVolverAtras(codigo) {
   return ["workflow", "run", "rollback.yml", "-R", REPO, "-f", `motivo=${codigo}`];
+}
+
+// Argumentos de gh para REPARAR: reparar.yml con el código, el workflow afectado y la ejecución fallida.
+export function argumentosReparar({ codigo, workflow, runId }) {
+  return ["workflow", "run", REPARAR_WF, "-R", REPO, "-f", `codigo=${codigo}`, "-f", `workflow=${workflow}`, "-f", `run_id=${runId}`];
 }
 
 // Texto del aviso (Telegram y correo): diagnóstico, acción, comprobación a mano y final del log,
@@ -875,6 +924,7 @@ export async function ejecutar(acciones, memoria, { seco, ahora = new Date(), gh
   m.silencio = m.silencio || [];
   m.avisos = m.avisos || {};
   m.despliegues = m.despliegues || [];
+  m.contadores.reparar = m.contadores.reparar || {};
   const iso = new Date(ahora).toISOString();
   const hoy = limaParts(new Date(ahora)).fecha;
   const pendientes = [...acciones];
@@ -920,6 +970,18 @@ export async function ejecutar(acciones, memoria, { seco, ahora = new Date(), gh
         notas.push(`VOLVER_ATRAS fallido: ${errorTexto(e)}`);
         marca(a, `fallido: ${errorTexto(e)}`);
         pendientes.unshift({ tipo: "AVISAR", codigo: a.codigo, motivo: `el rollback ha fallado (${errorTexto(e)})`, accion: "VOLVER_ATRAS fallido", incidente: a.incidente, claves: a.claves, critico: true });
+      }
+    } else if (a.tipo === "REPARAR") {
+      // Solo cuenta si gh ha disparado reparar.yml: un fallo (red, rate limit...) no gasta el límite del día.
+      try {
+        if (!seco) await gh(argumentosReparar(a));
+        m.contadores.reparar[a.workflow] = (m.contadores.reparar[a.workflow] || 0) + 1;
+        anotar(m, iso, "REPARAR", `${a.codigo} en ${a.workflow} (run ${a.runId})`);
+        notas.push(`REPARAR ${a.workflow} (${a.codigo})${seco ? " (simulado)" : ""}`);
+        marca(a, seco ? "simulado (seco)" : "hecho");
+      } catch (e) {
+        notas.push(`REPARAR ${a.workflow} fallido: ${errorTexto(e)}`);
+        marca(a, `fallido: ${errorTexto(e)}`);
       }
     } else if (a.tipo === "AVISAR") {
       const clave = a.avisoKey ?? a.codigo;
@@ -1003,36 +1065,57 @@ function vivo(pid) {
   try { process.kill(pid, 0); return true; } catch (e) { return e.code === "EPERM"; }
 }
 
-function adquirirLock() {
+// Devuelve { ok, huerfano }: ok false si otra pasada vive; huerfano describe el lock viejo que se ha liberado.
+// Un lock de más de LOCK_HUERFANO_MIN minutos o cuyo pid ya no existe es huérfano.
+export function adquirirLock(file = LOCK_FILE, ahora = Date.now()) {
+  let huerfano = null;
   for (let intento = 0; intento < 2; intento++) {
     try {
-      fs.writeFileSync(LOCK_FILE, String(process.pid), { flag: "wx" });
-      return true;
+      fs.writeFileSync(file, String(process.pid), { flag: "wx" });
+      return { ok: true, huerfano };
     } catch (e) {
       if (e.code !== "EEXIST") throw e;
-      const pid = Number(fs.readFileSync(LOCK_FILE, "utf8"));
-      if (pid && vivo(pid)) return false;
-      fs.rmSync(LOCK_FILE, { force: true });
+      let edadMin;
+      let pid;
+      try {
+        edadMin = (ahora - fs.statSync(file).mtimeMs) / MIN;
+        pid = Number(fs.readFileSync(file, "utf8"));
+      } catch { continue; } // el lock ha desaparecido entre medias: reintentar
+      if (edadMin <= LOCK_HUERFANO_MIN && pid && vivo(pid)) return { ok: false, huerfano: null };
+      huerfano = edadMin > LOCK_HUERFANO_MIN
+        ? `lock de hace ${Math.round(edadMin)} min (pid ${pid || "desconocido"})`
+        : `lock de un pid que ya no existe (${pid || "vacío"})`;
+      fs.rmSync(file, { force: true });
     }
   }
-  return false;
+  return { ok: false, huerfano };
 }
 
-function liberarLock() {
+export function liberarLock(file = LOCK_FILE) {
   try {
-    if (fs.readFileSync(LOCK_FILE, "utf8") === String(process.pid)) fs.rmSync(LOCK_FILE, { force: true });
+    if (fs.readFileSync(file, "utf8") === String(process.pid)) fs.rmSync(file, { force: true });
   } catch { /* ya no existe */ }
 }
 
-function cargarMemoria(file = MEMORIA_FILE) {
+// Memoria del vigía. Si el archivo existe pero no se puede leer o parsear, se empieza vacía y se
+// anota la señal «memoria-corrupta» (VIGIA_ROTO). Si no existe, es la primera pasada: sin señal.
+export function cargarMemoria(file = MEMORIA_FILE, registro = null) {
+  let texto;
   try {
-    return { ...memoriaVacia(), ...JSON.parse(fs.readFileSync(file, "utf8")) };
+    texto = fs.readFileSync(file, "utf8");
+  } catch (e) {
+    if (e.code !== "ENOENT") registro?.add("memoria-corrupta");
+    return memoriaVacia();
+  }
+  try {
+    return { ...memoriaVacia(), ...JSON.parse(texto) };
   } catch {
+    registro?.add("memoria-corrupta");
     return memoriaVacia();
   }
 }
 
-function guardarMemoria(file, m) {
+export function guardarMemoria(file, m) {
   const tmp = `${file}.tmp`;
   fs.writeFileSync(tmp, JSON.stringify(m, null, 2));
   fs.renameSync(tmp, file);
@@ -1112,30 +1195,34 @@ export function analizarRuns(runs, ahora = new Date()) {
   return { recientes, enCurso, ultimos, watchdogCompletados: wd, watchdogFallidos: wd.filter(esFallo) };
 }
 
-// True si la ejecución fallida del watchdog falló en el smoke (y no solo en un proceso).
-async function esFalloDeSmoke(run) {
+// Si la ejecución fallida del watchdog falló en el smoke (y no solo en un proceso) y si el log habla de red.
+async function infoSmoke(run, detalleDe = detalleFallo) {
   try {
-    const d = await detalleFallo(run);
-    return clasificarWatchdog(d.logTail)[0].codigo === "WATCHDOG_SMOKE";
+    const d = await detalleDe(run);
+    return { smoke: clasificarWatchdog(d.logTail)[0].codigo === "WATCHDOG_SMOKE", red: RED_RE.test(d.logTail) };
   } catch {
-    return false; // ante la duda, no contar: no se despliega ni se vuelve atrás por esto
+    return { smoke: false, red: false }; // ante la duda, no contar: no se despliega ni se vuelve atrás por esto
   }
 }
 
-// Fallos seguidos del smoke, contando desde la ejecución más nueva (máximo `max` comprobaciones).
-async function smokeSeguidos(corridas, max = 2) {
+// Fallos seguidos del smoke desde la ejecución más nueva (máximo `max`). `todosRed`: todos son de red.
+export async function diagnosticoSmoke(corridas, detalleDe = detalleFallo, max = 3) {
   let n = 0;
+  let red = 0;
   for (const r of corridas.slice(0, max)) {
-    if (!esFallo(r) || !(await esFalloDeSmoke(r))) break;
+    if (!esFallo(r)) break;
+    const info = await infoSmoke(r, detalleDe);
+    if (!info.smoke) break;
     n += 1;
+    if (info.red) red += 1;
   }
-  return n;
+  return { fallosSeguidos: n, todosRed: n > 0 && red === n };
 }
 
 // Fallos del smoke entre las ejecuciones fallidas dadas (máximo `max` comprobaciones).
 async function contarSmoke(fallidas, max = 6) {
   let n = 0;
-  for (const r of fallidas.slice(0, max)) if (await esFalloDeSmoke(r)) n += 1;
+  for (const r of fallidas.slice(0, max)) if ((await infoSmoke(r)).smoke) n += 1;
   return n;
 }
 
@@ -1204,6 +1291,7 @@ export function detectarVigiaRoto({ senales: registro = new Set(), telegramFallo
   const motivos = [];
   if (registro.has("gh-401")) motivos.push("gh responde 401/403 o «Bad credentials»: el token de GitHub ha caducado o le faltan permisos; renovar GH_TOKEN en ~/perdata-vigia/env (fine-grained, solo Wagustin/macro-data-explorer)");
   if (registro.has("nvidia-401")) motivos.push("la API de NVIDIA responde 401: renovar VIGIA_NVIDIA_API_KEY en ~/perdata-vigia/env");
+  if (registro.has("memoria-corrupta")) motivos.push("el archivo de memoria del vigía (~/.local/state/perdata-vigia*.json) no se puede leer: esta pasada empieza vacía y lo sobrescribe; revisarlo antes de borrarlo");
   if (telegramFallos >= 2) motivos.push("Telegram falla dos envíos seguidos: revisar TELEGRAM_BOT_TOKEN y TELEGRAM_CHAT_ID en ~/perdata-vigia/env");
   if (!motivos.length) return [];
   return [{ codigo: "VIGIA_ROTO", clave: "VIGIA_ROTO", workflow: null, motivo: motivos.join(". "), logTail: "" }];
@@ -1218,7 +1306,7 @@ async function pasada(ahora, { seco, cfg, memoriaFile, soloResumen = false }) {
   const intentar = async (nombre, fn) => {
     try { return await fn(); } catch (e) { fallidas.push(`${nombre} (${redactar(e.message, secretos).split("\n")[0].slice(0, 120)})`); return null; }
   };
-  const memoriaPrevia = cargarMemoria(memoriaFile);
+  const memoriaPrevia = cargarMemoria(memoriaFile, senales);
   // El POST de pagos y el repaso de fallos solo se hacen en el resumen de las 08:00 (o con --resumen-ahora).
   const conTelegram = Boolean(cfg.telegramToken && cfg.telegramChat);
   const hacerResumen = soloResumen || (conTelegram && debeEnviarResumen(memoriaPrevia, ahora));
@@ -1289,7 +1377,9 @@ async function pasada(ahora, { seco, cfg, memoriaFile, soloResumen = false }) {
 
   const smoke = incidentes.find((i) => i.codigo === "WATCHDOG_SMOKE");
   if (smoke) {
-    smoke.fallosSeguidos = await smokeSeguidos(analisis.watchdogCompletados);
+    const diag = await diagnosticoSmoke(analisis.watchdogCompletados);
+    smoke.fallosSeguidos = diag.fallosSeguidos;
+    smoke.todosRed = diag.todosRed;
     const desde = memoriaPrevia.incidentes?.WATCHDOG_SMOKE?.desplegadoEn;
     smoke.fallosTrasDespliegue = desde
       ? await contarSmoke(analisis.watchdogFallidos.filter((r) => Date.parse(r.createdAt) > Date.parse(desde)))
@@ -1359,34 +1449,49 @@ async function pasada(ahora, { seco, cfg, memoriaFile, soloResumen = false }) {
   return [cabecera, ...veredictos.map(lineaVeredicto)].join("\n");
 }
 
+// Registra un error en el log (sin secretos) y en la consola. No lanza: es el último recurso.
+function registrarError(origen, e) {
+  let secretos = [];
+  try { secretos = secretosDe(cargarConfig()); } catch { /* sin configuración: se registra sin redactar claves */ }
+  const linea = `${new Date().toISOString()} ERROR ${origen}: ${redactar(e?.message ?? e, secretos).split("\n")[0].slice(0, 300)}`;
+  try { fs.appendFileSync(LOG_FILE, `${linea}\n`); } catch { /* sin disco: queda en la consola */ }
+  console.error(linea);
+}
+
 export async function main(argv = process.argv.slice(2)) {
-  fs.mkdirSync(ESTADO, { recursive: true });
+  // Un fallo fuera de las promesas controladas no debe dejar el lock tomado ni la pasada a medias sin rastro.
+  const salirPorError = (origen) => (e) => { registrarError(origen, e); liberarLock(); process.exit(1); };
+  process.on("uncaughtException", salirPorError("uncaughtException"));
+  process.on("unhandledRejection", salirPorError("unhandledRejection"));
   const ahora = new Date();
-  const cfg = cargarConfig();
-  ghConfig.token = cfg.ghToken ?? null;
-  const seco = argv.includes("--seco") || cfg.actuar !== "1";
-  const memoriaFile = seco ? MEMORIA_SECO_FILE : MEMORIA_FILE;
-  if (argv.includes("--resumen-ahora")) {
-    // Solo lectura: imprime el resumen que se enviaría ahora, sin actuar, sin enviar y sin tocar la memoria.
-    console.log(await pasada(ahora, { seco, cfg, memoriaFile, soloResumen: true }));
-    return 0;
-  }
-  if (!adquirirLock()) {
-    fs.appendFileSync(LOG_FILE, `${ahora.toISOString()} omitida: otra pasada en marcha\n`);
-    return 0;
-  }
   try {
-    const texto = await pasada(ahora, { seco, cfg, memoriaFile });
-    fs.appendFileSync(LOG_FILE, `${texto}\n`);
-    console.log(texto);
-    return 0;
+    fs.mkdirSync(ESTADO, { recursive: true });
+    const cfg = cargarConfig();
+    ghConfig.token = cfg.ghToken ?? null;
+    const seco = argv.includes("--seco") || cfg.actuar !== "1";
+    const memoriaFile = seco ? MEMORIA_SECO_FILE : MEMORIA_FILE;
+    if (argv.includes("--resumen-ahora")) {
+      // Solo lectura: imprime el resumen que se enviaría ahora, sin actuar, sin enviar y sin tocar la memoria.
+      console.log(await pasada(ahora, { seco, cfg, memoriaFile, soloResumen: true }));
+      return 0;
+    }
+    const lock = adquirirLock();
+    if (!lock.ok) {
+      fs.appendFileSync(LOG_FILE, `${ahora.toISOString()} omitida: otra pasada en marcha\n`);
+      return 0;
+    }
+    if (lock.huerfano) fs.appendFileSync(LOG_FILE, `${ahora.toISOString()} lock huérfano liberado: ${lock.huerfano}\n`);
+    try {
+      const texto = await pasada(ahora, { seco, cfg, memoriaFile });
+      fs.appendFileSync(LOG_FILE, `${texto}\n`);
+      console.log(texto);
+      return 0;
+    } finally {
+      liberarLock();
+    }
   } catch (e) {
-    const linea = `${ahora.toISOString()} ERROR ${redactar(e.message, secretosDe(cfg)).split("\n")[0].slice(0, 300)}`;
-    fs.appendFileSync(LOG_FILE, `${linea}\n`);
-    console.error(linea);
+    registrarError("pasada", e);
     return 1;
-  } finally {
-    liberarLock();
   }
 }
 
