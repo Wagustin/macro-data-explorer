@@ -1,0 +1,50 @@
+name: Reparador automático
+
+on:
+  workflow_dispatch:
+    inputs:
+      codigo:
+        description: 'Código del catálogo de incidentes (ej. CI_ROJO, SMV_BLOQUEO, etc.)'
+        required: true
+        type: string
+      workflow:
+        description: 'Archivo .yml del workflow que falló (ej. ci.yml, smv.yml)'
+        required: true
+        type: string
+      run_id:
+        description: 'ID del run fallido de GitHub Actions'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: reparar
+  cancel-in-progress: false
+
+jobs:
+  reparar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 20
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Los inputs llegan por variables de entorno, nunca interpolados en `run:`.
+      # El script escribe su resultado en $GITHUB_STEP_SUMMARY.
+      - name: Ejecutar reparador
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+          CODIGO: ${{ github.event.inputs.codigo }}
+          WORKFLOW: ${{ github.event.inputs.workflow }}
+          RUN_ID: ${{ github.event.inputs.run_id }}
+        run: node scripts/reparador.mjs
