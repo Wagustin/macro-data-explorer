@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-24T05:31:31.168Z",
+  "actualizado": "2026-11-24T08:31:36.782Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -34,7 +34,7 @@
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 13
+      "items": 12
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 24
+      "items": 27
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -63,6 +63,51 @@
     }
   },
   "noticias": [
+    {
+      "id": "andina-2b8b2c7e24",
+      "titulo": "Campaña navideña: el 49 % de empleadores peruanos prevé aumentar sus planillas",
+      "url": "https://andina.pe/agencia/noticia-campana-navidena-49-empleadores-peruanos-preve-aumentar-sus-planillas-1101188.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-24T08:00:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "el_comercio-dfae54e1fa",
+      "titulo": "Observatorio de precios de alimentos: consulta cuánto cuesta hoy la canasta básica en Lima",
+      "url": "https://elcomercio.pe/ecdata/mercado-mayorista-canasta-basica-observatorio-de-precios-de-alimentos-mef-midagri-keiko-fujimori-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-24T07:27:58.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-c6a9fd380a",
+      "titulo": "Bolsas asiáticas registran su mayor alza desde julio tras regreso de Jensen Huang a Nvidia",
+      "url": "https://www.bloomberglinea.com/mercados/acciones-asiaticas-repuntan-tras-el-regreso-de-jensen-huang-a-nvidia-y-el-fuerte-avance-de-wall-street/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-24T07:22:57.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-7c46012816",
+      "titulo": "El cobre pierde el impulso de Nvidia y vuelve a caer ante dudas sobre la demanda y las tasas de interés",
+      "url": "https://www.bloomberglinea.com/mercados/el-cobre-pierde-el-impulso-de-nvidia-y-vuelve-a-caer-ante-dudas-sobre-la-demanda-y-las-tasas-de-interes/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-24T06:39:52.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-51a0d3b665",
+      "titulo": "Corredor Estratégico Centro Chancay-Callao-Pisco atenderá el mercado internacional",
+      "url": "https://andina.pe/agencia/noticia-corredor-estrategico-centro-chancaycallaopisco-atendera-mercado-internacional-1101189.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-24T05:38:22.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
+    },
     {
       "id": "el_comercio-57656d9666",
       "titulo": "Precio del dólar en Perú: consulta la cotización en compra y venta del martes 24 de noviembre",
@@ -285,6 +330,15 @@
       "url": "https://larepublica.pe/economia/2026/11/23/siete-de-cada-diez-empresas-que-entraron-a-concurso-de-acreedores-terminaron-en-liquidacion-2093391",
       "fuente": "La República Economía",
       "fecha_iso": "2026-11-24T00:58:53.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-da61db3525",
+      "titulo": "El Niño: avanza en el Congreso ampliar beneficios tributarios a empresas que donen bienes",
+      "url": "https://gestion.pe/economia/congreso-alista-beneficios-tributarios-para-empresas-que-donen-maquinaria-y-otros-bienes-por-el-nino-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-24T00:47:34.000Z",
       "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
@@ -793,15 +847,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-dfae54e1fa",
-      "titulo": "Observatorio de precios de alimentos: consulta cuánto cuesta hoy la canasta básica en Lima",
-      "url": "https://elcomercio.pe/ecdata/mercado-mayorista-canasta-basica-observatorio-de-precios-de-alimentos-mef-midagri-keiko-fujimori-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-23T18:05:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-74e57498b2",
       "titulo": "​Del discurso a la acción: los pendientes del Estado y compromisos de los empresarios",
       "url": "https://gestion.pe/economia/empresas/cade-ejecutivos-en-cusco-del-discurso-a-la-accion-los-pendientes-del-estado-y-compromisos-de-los-empresarios-noticia/",
@@ -970,24 +1015,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-23T16:29:02.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-97d4f9db11",
-      "titulo": "Trump revela que pidió a Nvidia restituir a Jensen Huang y demócratas exigen explicaciones",
-      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/trump-revela-que-pidio-a-nvidia-restituir-a-jensen-huang-y-democratas-exigen-explicaciones/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-23T16:18:30.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-80e324c6fc",
-      "titulo": "Los sectores podrían captar nuevos negocios de empresas extranjeras con el nearshoring",
-      "url": "https://gestion.pe/economia/empresas/nearshoring-que-sectores-podrian-captar-nuevos-negocios-de-empresas-extranjeras-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-23T16:02:27.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     }
   ]
