@@ -1,18 +1,18 @@
 {
-  "actualizado": "2026-11-24T21:10:48.313Z",
+  "actualizado": "2026-11-25T11:28:20.017Z",
   "timesfm": {
     "ok": true,
     "error": null
   },
   "model": "perdata-engine-v6",
   "filas": 7584,
-  "validas": 7409,
-  "descartadas": 175,
-  "pct_descartadas": 2.31,
+  "validas": 7398,
+  "descartadas": 186,
+  "pct_descartadas": 2.45,
   "sospechosas": 0,
   "simbolos_sin_datos": 0,
   "simbolos_totales": 158,
-  "tiempo_ms": 41,
+  "tiempo_ms": 39,
   "cobertura_ok": true,
   "frescura_ok": true,
   "exito": true,
@@ -22,210 +22,287 @@
       "symbol": "AENZAC1.LM",
       "horizon": 21,
       "reason": "absurd_width",
-      "width": 55.364532019704434
+      "width": 44.556862745098044
     },
     {
       "index": 549,
       "symbol": "AENZAC1.LM",
       "horizon": 22,
       "reason": "absurd_width",
-      "width": 98.23275862068965
+      "width": 71.42857142857143
     },
     {
       "index": 550,
       "symbol": "AENZAC1.LM",
       "horizon": 23,
       "reason": "absurd_width",
-      "width": 68.94219653179192
+      "width": 53.41777777777778
     },
     {
       "index": 551,
       "symbol": "AENZAC1.LM",
       "horizon": 24,
       "reason": "absurd_width",
-      "width": 145.4941176470588
+      "width": 99.71199999999999
     },
     {
       "index": 552,
       "symbol": "AENZAC1.LM",
       "horizon": 25,
       "reason": "absurd_width",
-      "width": 177.28
+      "width": 117.44736842105263
+    },
+    {
+      "index": 553,
+      "symbol": "AENZAC1.LM",
+      "horizon": 26,
+      "reason": "absurd_width",
+      "width": 2387.1666666666665
     },
     {
       "index": 554,
       "symbol": "AENZAC1.LM",
       "horizon": 27,
       "reason": "absurd_width",
-      "width": 226.32812499999997
+      "width": 141.35922330097088
     },
     {
       "index": 555,
       "symbol": "AENZAC1.LM",
       "horizon": 28,
       "reason": "absurd_width",
-      "width": 230.61538461538464
+      "width": 146.5242718446602
     },
     {
-      "index": 565,
+      "index": 556,
       "symbol": "AENZAC1.LM",
-      "horizon": 38,
+      "horizon": 29,
       "reason": "absurd_width",
-      "width": 41.537519142419605
+      "width": 1496.272727272727
     },
     {
       "index": 568,
       "symbol": "AENZAC1.LM",
       "horizon": 41,
       "reason": "absurd_width",
-      "width": 9078.333333333334
+      "width": 2503.727272727273
+    },
+    {
+      "index": 569,
+      "symbol": "AENZAC1.LM",
+      "horizon": 42,
+      "reason": "absurd_width",
+      "width": 7195.749999999999
+    },
+    {
+      "index": 570,
+      "symbol": "AENZAC1.LM",
+      "horizon": 43,
+      "reason": "absurd_width",
+      "width": 30405
+    },
+    {
+      "index": 571,
+      "symbol": "AENZAC1.LM",
+      "horizon": 44,
+      "reason": "absurd_width",
+      "width": 29582
     },
     {
       "index": 573,
       "symbol": "AENZAC1.LM",
       "horizon": 46,
       "reason": "absurd_width",
-      "width": 1077.0714285714287
+      "width": 658.5434782608696
     },
     {
       "index": 574,
       "symbol": "AENZAC1.LM",
       "horizon": 47,
       "reason": "absurd_width",
-      "width": 1370.8695652173913
+      "width": 812
     },
     {
       "index": 575,
       "symbol": "AENZAC1.LM",
       "horizon": 48,
       "reason": "absurd_width",
-      "width": 17175
+      "width": 4310.625
+    },
+    {
+      "index": 604,
+      "symbol": "ATACOBC1.LM",
+      "horizon": 29,
+      "reason": "absurd_width",
+      "width": 41.65129682997118
     },
     {
       "index": 605,
       "symbol": "ATACOBC1.LM",
       "horizon": 30,
       "reason": "absurd_width",
-      "width": 48.12618296529969
+      "width": 48.659375
     },
     {
       "index": 606,
       "symbol": "ATACOBC1.LM",
       "horizon": 31,
       "reason": "absurd_width",
-      "width": 42.5840220385675
+      "width": 44.29329608938548
     },
     {
       "index": 607,
       "symbol": "ATACOBC1.LM",
       "horizon": 32,
       "reason": "absurd_width",
-      "width": 41.34739454094292
+      "width": 44.17994858611825
+    },
+    {
+      "index": 608,
+      "symbol": "ATACOBC1.LM",
+      "horizon": 33,
+      "reason": "absurd_width",
+      "width": 41.27944572748268
     },
     {
       "index": 609,
       "symbol": "ATACOBC1.LM",
       "horizon": 34,
       "reason": "absurd_width",
-      "width": 53.34210526315789
+      "width": 57.55351681957186
     },
     {
       "index": 610,
       "symbol": "ATACOBC1.LM",
       "horizon": 35,
       "reason": "absurd_width",
-      "width": 47.02857142857143
+      "width": 52.1606648199446
     },
     {
       "index": 611,
       "symbol": "ATACOBC1.LM",
       "horizon": 36,
       "reason": "absurd_width",
-      "width": 55.79881656804734
+      "width": 59.97846153846154
     },
     {
       "index": 612,
       "symbol": "ATACOBC1.LM",
       "horizon": 37,
       "reason": "absurd_width",
-      "width": 64.44701986754967
+      "width": 70.21951219512195
     },
     {
       "index": 613,
       "symbol": "ATACOBC1.LM",
       "horizon": 38,
       "reason": "absurd_width",
-      "width": 70.07260726072607
+      "width": 76.0103448275862
     },
     {
       "index": 614,
       "symbol": "ATACOBC1.LM",
       "horizon": 39,
       "reason": "absurd_width",
-      "width": 74.57491289198606
+      "width": 80.67028985507247
     },
     {
       "index": 615,
       "symbol": "ATACOBC1.LM",
       "horizon": 40,
       "reason": "absurd_width",
-      "width": 56.56052631578948
+      "width": 60.921409214092144
     },
     {
       "index": 616,
       "symbol": "ATACOBC1.LM",
       "horizon": 41,
       "reason": "absurd_width",
-      "width": 53.63106796116505
+      "width": 58.10025062656642
     },
     {
       "index": 617,
       "symbol": "ATACOBC1.LM",
       "horizon": 42,
       "reason": "absurd_width",
-      "width": 52.39189189189189
+      "width": 57.30679156908665
     },
     {
       "index": 618,
       "symbol": "ATACOBC1.LM",
       "horizon": 43,
       "reason": "absurd_width",
-      "width": 55.6183908045977
+      "width": 59.887323943661976
     },
     {
       "index": 619,
       "symbol": "ATACOBC1.LM",
       "horizon": 44,
       "reason": "absurd_width",
-      "width": 57.60280373831775
+      "width": 62.40384615384616
     },
     {
       "index": 620,
       "symbol": "ATACOBC1.LM",
       "horizon": 45,
       "reason": "absurd_width",
-      "width": 72.47647058823529
+      "width": 80.20615384615384
     },
     {
       "index": 621,
       "symbol": "ATACOBC1.LM",
       "horizon": 46,
       "reason": "absurd_width",
-      "width": 59.32175925925925
+      "width": 64.6244019138756
     },
     {
       "index": 622,
       "symbol": "ATACOBC1.LM",
       "horizon": 47,
       "reason": "absurd_width",
-      "width": 82.81875
+      "width": 90.16720257234726
     },
     {
       "index": 623,
       "symbol": "ATACOBC1.LM",
       "horizon": 48,
       "reason": "absurd_width",
-      "width": 76.66666666666667
+      "width": 84.1700288184438
+    },
+    {
+      "index": 810,
+      "symbol": "CASAGRC1.LM",
+      "horizon": 43,
+      "reason": "absurd_width",
+      "width": 41.677874915938126
+    },
+    {
+      "index": 812,
+      "symbol": "CASAGRC1.LM",
+      "horizon": 45,
+      "reason": "absurd_width",
+      "width": 42.832822608103506
+    },
+    {
+      "index": 813,
+      "symbol": "CASAGRC1.LM",
+      "horizon": 46,
+      "reason": "absurd_width",
+      "width": 42.937181663837016
+    },
+    {
+      "index": 814,
+      "symbol": "CASAGRC1.LM",
+      "horizon": 47,
+      "reason": "absurd_width",
+      "width": 43.446519524618
+    },
+    {
+      "index": 815,
+      "symbol": "CASAGRC1.LM",
+      "horizon": 48,
+      "reason": "absurd_width",
+      "width": 45.28991816123977
     },
     {
       "index": 1860,
@@ -289,83 +366,6 @@
       "horizon": 45,
       "reason": "absurd_width",
       "width": 117.44927536231884
-    },
-    {
-      "index": 1869,
-      "symbol": "BPICHPC1.LM",
-      "horizon": 46,
-      "reason": "absurd_width",
-      "width": 98.89411764705882
-    },
-    {
-      "index": 1870,
-      "symbol": "BPICHPC1.LM",
-      "horizon": 47,
-      "reason": "absurd_width",
-      "width": 111.84210526315789
-    },
-    {
-      "index": 1871,
-      "symbol": "BPICHPC1.LM",
-      "horizon": 48,
-      "reason": "absurd_width",
-      "width": 131.71212121212122
-    },
-    {
-      "index": 2240,
-      "symbol": "MOROCOC1.LM",
-      "horizon": 33,
-      "reason": "absurd_width",
-      "width": 42.87250237868696
-    },
-    {
-      "index": 2241,
-      "symbol": "MOROCOC1.LM",
-      "horizon": 34,
-      "reason": "absurd_width",
-      "width": 43.40255009107469
-    },
-    {
-      "index": 2242,
-      "symbol": "MOROCOC1.LM",
-      "horizon": 35,
-      "reason": "absurd_width",
-      "width": 59.039024390243895
-    },
-    {
-      "index": 2243,
-      "symbol": "MOROCOC1.LM",
-      "horizon": 36,
-      "reason": "absurd_width",
-      "width": 68.87357954545455
-    },
-    {
-      "index": 2244,
-      "symbol": "MOROCOC1.LM",
-      "horizon": 37,
-      "reason": "absurd_width",
-      "width": 96.752417794971
-    },
-    {
-      "index": 2245,
-      "symbol": "MOROCOC1.LM",
-      "horizon": 38,
-      "reason": "absurd_width",
-      "width": 104.03144654088051
-    },
-    {
-      "index": 2246,
-      "symbol": "MOROCOC1.LM",
-      "horizon": 39,
-      "reason": "absurd_width",
-      "width": 96.97109826589595
-    },
-    {
-      "index": 2247,
-      "symbol": "MOROCOC1.LM",
-      "horizon": 40,
-      "reason": "absurd_width",
-      "width": 106.03805496828753
     }
   ],
   "detalles_sospechosas": [],
