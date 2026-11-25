@@ -452,12 +452,19 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
   }
 
   // REPARAR: una vez por workflow y día, máximo 2 al día en total, nunca con reparar.yml o el workflow en curso.
-  function reparar(inc, wf, motivo, regla) {
-    if (enCurso.has(REPARAR_WF)) return veredicto(inc, "ESPERAR", `${REPARAR_WF} ya tiene una ejecución en curso`, "REPARAR: nunca con reparar.yml en curso");
-    if (enCurso.has(wf)) return veredicto(inc, "ESPERAR", `${wf} tiene una ejecución en curso`, "REPARAR: nunca con el workflow en curso");
-    if (repararHoy[wf]) return veredicto(inc, "ESPERAR", `ya se pidió REPARAR de ${wf} hoy`, "REPARAR: una vez por workflow y día");
+  // Motivo por el que no se lanza el reparador para `wf` (o null si se puede). Lo usa el AVISAR que lo acompaña.
+  function motivoNoReparar(wf) {
+    if (enCurso.has(REPARAR_WF)) return `no se lanza el reparador: ${REPARAR_WF} en curso`;
+    if (enCurso.has(wf)) return `no se lanza el reparador: ${wf} tiene una ejecución en curso`;
     const total = Object.values(repararHoy).reduce((s, n) => s + n, 0);
-    if (total >= REPARAR_MAX_DIA) return veredicto(inc, "ESPERAR", `límite de ${REPARAR_MAX_DIA} REPARAR al día alcanzado`, "REPARAR: máximo 2 al día en total");
+    if (total >= REPARAR_MAX_DIA) return `no se lanza el reparador: límite diario alcanzado (${REPARAR_MAX_DIA} REPARAR al día)`;
+    if (repararHoy[wf]) return `no se lanza el reparador: ya se pidió REPARAR de ${wf} hoy`;
+    return null;
+  }
+
+  function reparar(inc, wf, motivo, regla) {
+    const no = motivoNoReparar(wf);
+    if (no) return veredicto(inc, "ESPERAR", no.replace("no se lanza el reparador: ", ""), regla);
     const v = veredicto(inc, `REPARAR ${wf}`, motivo, regla);
     acciones.push({ tipo: "REPARAR", workflow: wf, codigo: inc.codigo, runId: inc.runId, motivo, claves: [inc.clave], veredicto: v });
     repararHoy[wf] = 1;
@@ -556,7 +563,7 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
         }
         break;
       case "CI_ROJO":
-        aviso(inc, "CI en main en rojo: lo arregla Claude, no se despliega", "CI_ROJO: avisar");
+        aviso(inc, `CI en main en rojo: lo arregla Claude, no se despliega${motivoNoReparar("ci.yml") ? `; ${motivoNoReparar("ci.yml")}` : ""}`, "CI_ROJO: avisar");
         reparar(inc, "ci.yml", "CI en main en rojo: pedir un parche a reparar.yml", "CI_ROJO: REPARAR una vez al día, además de avisar");
         break;
       case "PAGOS_ABIERTOS":
@@ -579,7 +586,7 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
         break;
       case "ERROR_CODIGO":
         // El aviso va con clave propia por workflow: un error en un workflow no silencia el de otro.
-        aviso({ ...inc, avisoKey: `ERROR_CODIGO:${inc.workflow}` }, inc.motivo, "ERROR_CODIGO: avisar");
+        aviso({ ...inc, avisoKey: `ERROR_CODIGO:${inc.workflow}` }, `${inc.motivo}${motivoNoReparar(inc.workflow) ? `; ${motivoNoReparar(inc.workflow)}` : ""}`, "ERROR_CODIGO: avisar");
         reparar(inc, inc.workflow, `error de código en ${inc.workflow}: pedir un parche a reparar.yml`, "ERROR_CODIGO: REPARAR una vez por workflow y día, además de avisar");
         break;
       case "DESCONOCIDO":
@@ -1308,6 +1315,19 @@ export function detectarVigiaRoto({ senales: registro = new Set(), telegramFallo
 
 // ---------- Pasada ----------
 
+// Commits de main desde las 00:00 UTC de hoy (100 por página; sigue mientras una página venga llena, hasta 20 páginas).
+// Así un boletín enviado a primera hora no sale de la lista aunque haya muchos commits de datos después.
+export async function commitsDesdeHoy(g, ahora = new Date()) {
+  const since = `${new Date(ahora).toISOString().slice(0, 10)}T00:00:00Z`;
+  const todos = [];
+  for (let page = 1; page <= 20; page++) {
+    const lote = JSON.parse(await g(["api", `repos/${REPO}/commits?sha=main&since=${since}&per_page=100&page=${page}`]));
+    todos.push(...lote);
+    if (lote.length < 100) break;
+  }
+  return todos;
+}
+
 // soloResumen: solo recoge datos y devuelve el texto del resumen (--resumen-ahora). No actúa ni escribe memoria.
 export async function pasada(ahora, { seco, cfg, memoriaFile, soloResumen = false, io = {} } = {}) {
   senales.clear();
@@ -1329,7 +1349,7 @@ export async function pasada(ahora, { seco, cfg, memoriaFile, soloResumen = fals
     intentar("api/status", () => fetchJson(`${BASE}/api/status`, io.fetch)),
     intentar("api/billing", () => fetchJson(`${BASE}/api/billing?action=config`, io.fetch)),
     intentar("páginas", () => comprobarPaginas(io.fetch, io.esperar)),
-    intentar("commits", async () => JSON.parse(await G(["api", `repos/${REPO}/commits?per_page=50`]))),
+    intentar("commits", () => commitsDesdeHoy(G, ahora)),
     intentar("hechos de la SMV", () => fetchJson(`${HECHOS_URL}?t=${Date.now()}`, io.fetch)),
     comprobarCasa({ tailscale: io.tailscale, tcp: io.tcp }),
     hacerResumen ? intentar("checkout", () => comprobarCheckout(io.fetch)) : null,

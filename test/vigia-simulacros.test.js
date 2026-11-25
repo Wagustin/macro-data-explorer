@@ -64,6 +64,7 @@ class Mundo {
     this.casaArriba = true;
     this.gh401 = false;
     this.acc = [];
+    this.motivos = []; // texto de cada AVISAR enviado
     this.resumenes = [];
     this.dir = fs.mkdtempSync(path.join(os.tmpdir(), "vigia-sim-"));
     this.memoriaFile = path.join(this.dir, "perdata-vigia.json");
@@ -107,6 +108,7 @@ class Mundo {
       tcp: async () => this.casaArriba,
       avisar: async (a) => {
         this.acc.push(`AVISAR:${a.avisoKey ?? a.codigo}`);
+        this.motivos.push(a.motivo);
         return { canal: "correo", detalle: "", telegramFallo: false };
       },
       telegram: async (texto) => { this.resumenes.push(texto); },
@@ -133,7 +135,15 @@ class Mundo {
       return this.logs.get(jid - JOB_OFFSET)?.log ?? "";
     }
     if (a === "api" && b.includes("/commits")) {
-      return JSON.stringify(this.commits ?? [{ commit: { message: `data(boletin): enviado ${utcDia(this.t)}` } }]);
+      // Como la API: solo desde `since`, más recientes primero, paginado con per_page y page.
+      const url = new URL(`https://api.github.com/${b}`);
+      const desde = Date.parse(url.searchParams.get("since") ?? "1970-01-01T00:00:00Z");
+      const pagina = Number(url.searchParams.get("page") ?? 1);
+      const porPagina = Number(url.searchParams.get("per_page") ?? 30);
+      const lista = (this.commits ?? [{ commit: { message: `data(boletin): enviado ${utcDia(this.t)}`, author: { date: `${utcDia(this.t)}T13:00:00Z` } } }])
+        .filter((c) => Date.parse(c.commit.author.date) >= desde)
+        .sort((x, y) => Date.parse(y.commit.author.date) - Date.parse(x.commit.author.date));
+      return JSON.stringify(lista.slice((pagina - 1) * porPagina, pagina * porPagina));
     }
     throw new Error(`gh no previsto: ${args.join(" ")}`);
   }
@@ -349,6 +359,7 @@ test("i) ERROR_CODIGO: repara news.yml una vez al día; un tercer REPARAR del d�
   assert.deepEqual(await m.pasada(), []); // mismo fallo: ni otro aviso ni otra reparación
   m.at("2026-11-25T17:00:00Z").run("timesfm.yml", { paso: "Generar proyección", log: ERROR_CODIGO_LOG });
   assert.deepEqual(await m.pasada(), ["AVISAR:ERROR_CODIGO:timesfm.yml"]); // límite de 2 REPARAR al día
+  assert.match(m.motivos.at(-1), /no se lanza el reparador: límite diario alcanzado/);
   assert.equal(m.memoria().contadores.reparar["timesfm.yml"], undefined);
 });
 
@@ -358,6 +369,7 @@ test("i) con reparar.yml en curso no se repara, aunque el error de código sí a
   m.run("reparar.yml", { status: "in_progress" });
   m.run("news.yml", { paso: "Generar resumen", log: ERROR_CODIGO_LOG });
   assert.deepEqual(await m.pasada(), ["AVISAR:ERROR_CODIGO:news.yml"]);
+  assert.match(m.motivos.at(-1), /no se lanza el reparador: reparar\.yml en curso/);
 });
 
 // ---------- j) latido y servidor de casa ----------
@@ -422,4 +434,19 @@ test("l) aviso a las 02:00 de Lima se acumula, sale en el resumen de las 08:00 y
   m.at("2026-11-25T13:30:00Z");
   await m.pasada();
   assert.equal(m.resumenes.length, 1); // no se repite el resumen del día
+});
+
+test("g) boletín: con 120 commits de datos después del boletín no hay falso aviso; sin boletín sí relanza", async (t) => {
+  const hoy = "2026-11-25";
+  const datos = Array.from({ length: 120 }, (_, i) => ({ commit: { message: `data(news): feeds ${i}`, author: { date: `${hoy}T14:00:00Z` } } }));
+  const boletin = { commit: { message: `data(boletin): enviado ${hoy}`, author: { date: `${hoy}T13:05:00Z` } } };
+  const enviado = new Mundo("2026-11-25T17:00:00Z"); // miércoles 12:00 Lima
+  t.after(() => enviado.limpiar());
+  enviado.commits = [boletin, ...datos];
+  assert.deepEqual(await enviado.pasada(), []);
+
+  const sinBoletin = new Mundo("2026-11-25T14:30:00Z"); // 09:30 Lima
+  t.after(() => sinBoletin.limpiar());
+  sinBoletin.commits = datos;
+  assert.deepEqual(await sinBoletin.pasada(), ["RELANZAR:boletin.yml"]);
 });
