@@ -3,12 +3,22 @@
   "horizontes": {
     "manana": {
       "desde": "2026-11-04",
-      "n": 13,
+      "n": 14,
       "dentro": 9,
-      "cobertura": 69.2,
-      "error_medio_centro": 0.011,
-      "error_medio_paseo_aleatorio": 0.0118,
+      "cobertura": 64.3,
+      "error_medio_centro": 0.012,
+      "error_medio_paseo_aleatorio": 0.0126,
       "casos": [
+        {
+          "fecha_publicacion": "2026-11-24",
+          "fecha_base": "2026-11-23",
+          "fecha_objetivo": "2026-11-24",
+          "p10": 3.442,
+          "p50": 3.455,
+          "p90": 3.467,
+          "cierre": 3.479,
+          "dentro": false
+        },
         {
           "fecha_publicacion": "2026-11-21",
           "fecha_base": "2026-11-20",
@@ -143,12 +153,22 @@
     },
     "semana": {
       "desde": "2026-11-04",
-      "n": 10,
+      "n": 11,
       "dentro": 3,
-      "cobertura": 30,
-      "error_medio_centro": 0.0336,
-      "error_medio_paseo_aleatorio": 0.0336,
+      "cobertura": 27.3,
+      "error_medio_centro": 0.0364,
+      "error_medio_paseo_aleatorio": 0.0364,
       "casos": [
+        {
+          "fecha_publicacion": "2026-11-18",
+          "fecha_base": "2026-11-17",
+          "fecha_objetivo": "2026-11-24",
+          "p10": 3.382,
+          "p50": 3.415,
+          "p90": 3.442,
+          "cierre": 3.479,
+          "dentro": false
+        },
         {
           "fecha_publicacion": "2026-11-17",
           "fecha_base": "2026-11-16",
@@ -316,12 +336,12 @@
   },
   "backtest_motor": {
     "manana": {
-      "cobertura_80_k_expansivo": 80.9,
-      "cortes_evaluados": 1967
+      "cobertura_80_k_expansivo": 80.95,
+      "cortes_evaluados": 1969
     },
     "semana": {
-      "cobertura_80_k_expansivo": 83.33,
-      "cortes_evaluados": 1963
+      "cobertura_80_k_expansivo": 83.8,
+      "cortes_evaluados": 1965
     }
   }
 }
