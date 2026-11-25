@@ -1,6 +1,6 @@
 {
   "version": "PerData Engine diario v1",
-  "actualizado": "2026-11-25T05:31:15.692Z",
+  "actualizado": "2026-11-25T22:03:42.959Z",
   "metodo": "Simulacion Historica Filtrada (FHS) + Volatilidad EWMA (lambda=0.94)",
   "p50_criterio": "Paseo aleatorio (ultimo cierre) respaldado por backtest",
   "referencia_lima": {
@@ -14,33 +14,39 @@
       "unidad": "S/ por US$",
       "fecha_ultimo_cierre": "2026-11-24",
       "ultimo_cierre": 3.479,
-      "fuente_ultimo_cierre": "SUNAT",
+      "fuente_ultimo_cierre": "BCRP",
       "pronosticos": {
         "h1": {
           "horizonte_dias_habiles": 1,
           "fecha_objetivo": "2026-11-25",
-          "p10": 3.4647,
-          "p25": 3.4717,
-          "p50": 3.479,
-          "p75": 3.4855,
-          "p90": 3.4926,
-          "ancho_banda_pct": 0.8,
+          "p10": 3.4769,
+          "p25": 3.4814,
+          "p50": 3.4873,
+          "p75": 3.4925,
+          "p90": 3.4974,
+          "ancho_banda_pct": 0.59,
           "backtest": {
-            "cobertura_80_real": 80.05,
-            "cobertura_50_real": 51.42,
-            "mae_p50": 0.01,
+            "cobertura_80_real": 80.71,
+            "cobertura_50_real": 50.56,
+            "mae_p50": 0.0077,
             "mae_drift": 0.0101,
-            "ancho_medio_pct": 0.88,
-            "factor_k": 1.0183,
+            "ancho_medio_pct": 0.68,
+            "factor_k": 1,
             "cortes_evaluados": 1970,
-            "cobertura_80_fuera_muestra": 80,
-            "cobertura_50_fuera_muestra": 51.05,
-            "ancho_medio_pct_fuera_muestra": 0.82,
-            "mae_fuera_muestra": 0.0089,
-            "factor_k_entrenamiento": 1.0183,
-            "cobertura_80_k_expansivo": 80.28,
-            "cobertura_50_k_expansivo": 51.19,
-            "ancho_medio_pct_k_expansivo": 0.83
+            "cobertura_80_fuera_muestra": 80.71,
+            "cobertura_50_fuera_muestra": 50.56,
+            "ancho_medio_pct_fuera_muestra": 0.68,
+            "mae_fuera_muestra": 0.0077,
+            "factor_k_entrenamiento": 1,
+            "cobertura_80_k_expansivo": 80.71,
+            "cobertura_50_k_expansivo": 50.56,
+            "ancho_medio_pct_k_expansivo": 0.68
+          },
+          "afinado": {
+            "metodo": "cierre_1330",
+            "fecha": "2026-11-24",
+            "cierre": 3.484,
+            "fuente": "BCRP"
           }
         },
         "h2": {
