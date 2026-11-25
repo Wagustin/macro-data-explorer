@@ -872,3 +872,15 @@ test("guardarMemoria escribe con .tmp y renombra; no deja el .tmp", () => {
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test("RED_RE: los errores de red del smoke (sin distinguir mayúsculas) son RED_PASAJERA y no error de código", () => {
+  const redes = [
+    "This operation was aborted", "AbortError: The operation was aborted", "The operation was aborted due to timeout",
+    "network timeout at: https://perdata.site", "getaddrinfo EAI_AGAIN perdata.site", "getaddrinfo ENOTFOUND perdata.site",
+    "connect ECONNREFUSED 127.0.0.1:443", "UND_ERR_CONNECT_TIMEOUT", "other side closed", "this operation was ABORTED",
+  ];
+  for (const log of redes) {
+    assert.equal(clasificarFallo({ workflowPath: "news.yml", stepName: "Generar", logTail: log }), "RED_PASAJERA", log);
+    assert.equal(esErrorCodigo(`TypeError: x is not a function\n  at f (/r/macro-data-explorer/a.mjs:1:1)\n${log}`), false, log);
+  }
+});

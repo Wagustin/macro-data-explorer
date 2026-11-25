@@ -44,7 +44,8 @@ const PAGINAS_VIGIADAS = ["/", "/dolar", "/precios", "/boletin"];
 // Avisos que se envían de noche. El resto se acumula y va en el resumen de las 08:00.
 const CRITICOS_SILENCIO = new Set(["PAGOS_ABIERTOS", "PAGINA_CAIDA", "SIN_LATIDO"]);
 const SMV = new Set(["smv.yml", "smv-precios.yml"]);
-const RED_RE = /ECONNRESET|ETIMEDOUT|socket hang up|\b50[234]\b|rate limit|fetch failed/i;
+// Errores de red transitorios (también los del smoke: «This operation was aborted», AbortError...).
+const RED_RE = /ECONNRESET|ETIMEDOUT|socket hang up|\b50[234]\b|rate limit|fetch failed|This operation was aborted|AbortError|The operation was aborted due to timeout|operaci[oó]n abortada|network timeout|EAI_AGAIN|ENOTFOUND|ECONNREFUSED|UND_ERR_CONNECT_TIMEOUT|other side closed/i;
 const DUENO = {
   forecasts: "timesfm.yml", news: "news.yml", smv: "smv-precios.yml", bcrp: "official-data.yml",
   eia: "official-data.yml", d1Sync: "d1-backfill.yml",
@@ -192,7 +193,7 @@ export function clasificarFallo({ workflowPath = "", stepName = "", logTail = ""
 export function esErrorCodigo(logTail) {
   const log = String(logTail ?? "");
   const hayCodigo = CODIGO_LOG_RE.some((re) => re.test(log));
-  const otraCosa = /ECONNRESET|ETIMEDOUT|socket hang up|\b50[234]\b|rate limit|fetch failed|HTTP 418|HTTP 403|respuesta inesperada de la SMV|CONFLICT|rejected|non-fast-forward|could not apply/i.test(log);
+  const otraCosa = RED_RE.test(log) || /HTTP 418|HTTP 403|respuesta inesperada de la SMV|CONFLICT|rejected|non-fast-forward|could not apply/i.test(log);
   return hayCodigo && !otraCosa;
 }
 
@@ -546,8 +547,8 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
         break;
       case "PAGINA_CAIDA":
         if (est.desplegadoEn) {
-          if ((est.trasDespliegue || 0) >= 2) volverAtras(inc, `páginas caídas tras desplegar: ${inc.paginas.join(", ")}`, "PAGINA_CAIDA: dos pasadas caídas tras desplegar");
-          else veredicto(inc, "ESPERAR", `caídas tras desplegar: ${est.trasDespliegue || 0} pasada(s), se vuelve atrás con 2`, "PAGINA_CAIDA: volver atrás tras dos pasadas");
+          if ((est.trasDespliegue || 0) >= 1) volverAtras(inc, `páginas caídas tras desplegar: ${inc.paginas.join(", ")}`, "PAGINA_CAIDA: sigue caída tras desplegar");
+          else veredicto(inc, "ESPERAR", "caídas justo tras desplegar: se mira en la siguiente pasada", "PAGINA_CAIDA: si sigue caída tras desplegar, volver atrás");
         } else if ((est.pasadas || 0) >= 2) {
           desplegar(inc, `páginas caídas dos pasadas seguidas: ${inc.paginas.join(", ")}`, "PAGINA_CAIDA: desplegar tras dos pasadas seguidas");
         } else {
@@ -689,13 +690,13 @@ export function resumenActividad(runs, ahora = new Date()) {
 }
 
 // Clasifica con gh los fallos de las últimas 24 h (como mucho FALLOS_RESUMEN_MAX; el resto, «sin clasificar»).
-export async function clasificarFallosDia(runs, ahora = new Date()) {
+export async function clasificarFallosDia(runs, ahora = new Date(), detalle = detalleFallo) {
   const instante = new Date(ahora);
   const fallidos = runs.filter((r) => esFallo(r) && instante - Date.parse(r.createdAt) <= 24 * H);
   for (const [i, r] of fallidos.entries()) {
     if (i >= FALLOS_RESUMEN_MAX) { r.codigos = ["sin clasificar"]; continue; }
     try {
-      const d = await detalleFallo(r);
+      const d = await detalle(r);
       r.codigos = codigosDeFallo(r.wf, d.paso, d.logTail);
     } catch {
       r.codigos = ["sin clasificar"];
@@ -1129,27 +1130,35 @@ export function esErrorAuth(texto) {
   return /\bHTTP 40[13]\b|Bad credentials/i.test(t) && !/rate limit/i.test(t);
 }
 
-async function gh(args) {
+// Ejecuta gh de verdad (el token va solo en el entorno del hijo). Se inyecta en las pasadas de los tests.
+async function ghCrudo(args) {
   const env = ghConfig.token ? { ...process.env, GH_TOKEN: ghConfig.token } : process.env;
+  const { stdout } = await execFileAsync("gh", args, { env, maxBuffer: 64 * 1024 * 1024, timeout: 120000 });
+  return stdout;
+}
+
+// gh con detección de credenciales rotas (gh-401) sobre cualquier ejecutor.
+async function gh(args, crudo = ghCrudo) {
   try {
-    const { stdout } = await execFileAsync("gh", args, { env, maxBuffer: 64 * 1024 * 1024, timeout: 120000 });
-    return stdout;
+    return await crudo(args);
   } catch (e) {
     if (esErrorAuth(`${e.stderr ?? ""}\n${e.message ?? ""}`)) senales.add("gh-401");
     throw e;
   }
 }
 
-async function fetchJson(url) {
-  const r = await fetch(url, { headers: { "User-Agent": "PerDataVigia/1.0" }, signal: AbortSignal.timeout(20000) });
+const esperarMin = (ms = MIN) => new Promise((r) => setTimeout(r, ms));
+
+async function fetchJson(url, f = fetch) {
+  const r = await f(url, { headers: { "User-Agent": "PerDataVigia/1.0" }, signal: AbortSignal.timeout(20000) });
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   return r.json();
 }
 
 // Código HTTP de una página, o null si no hay respuesta.
-async function codigoPagina(ruta) {
+async function codigoPagina(ruta, f = fetch) {
   try {
-    const r = await fetch(BASE + ruta, { headers: { "User-Agent": "PerDataVigia/1.0" }, signal: AbortSignal.timeout(20000) });
+    const r = await f(BASE + ruta, { headers: { "User-Agent": "PerDataVigia/1.0" }, signal: AbortSignal.timeout(20000) });
     return r.status;
   } catch {
     return null;
@@ -1157,12 +1166,12 @@ async function codigoPagina(ruta) {
 }
 
 // Códigos de las páginas vigiladas. Las que no den 200 se repiten una vez al cabo de 1 min.
-async function comprobarPaginas() {
+async function comprobarPaginas(f = fetch, esperar = esperarMin) {
   return Promise.all(PAGINAS_VIGIADAS.map(async (ruta) => {
-    let codigo = await codigoPagina(ruta);
+    let codigo = await codigoPagina(ruta, f);
     if (codigo !== 200) {
-      await new Promise((r) => setTimeout(r, MIN));
-      codigo = await codigoPagina(ruta);
+      await esperar(MIN);
+      codigo = await codigoPagina(ruta, f);
     }
     return { ruta, codigo };
   }));
@@ -1170,8 +1179,8 @@ async function comprobarPaginas() {
 
 // POST de comprobación de pagos: con los pagos en pausa responde 503 con code payments_paused.
 // Con body «{}» no crea nada: sin sesión, el servidor responde antes de llamar a Stripe.
-async function comprobarCheckout() {
-  const r = await fetch(`${BASE}/api/billing?action=checkout`, {
+async function comprobarCheckout(f = fetch) {
+  const r = await f(`${BASE}/api/billing?action=checkout`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "User-Agent": "PerDataVigia/1.0" },
     body: JSON.stringify({}),
@@ -1220,17 +1229,17 @@ export async function diagnosticoSmoke(corridas, detalleDe = detalleFallo, max =
 }
 
 // Fallos del smoke entre las ejecuciones fallidas dadas (máximo `max` comprobaciones).
-async function contarSmoke(fallidas, max = 6) {
+async function contarSmoke(fallidas, detalleDe = detalleFallo, max = 6) {
   let n = 0;
-  for (const r of fallidas.slice(0, max)) if ((await infoSmoke(r)).smoke) n += 1;
+  for (const r of fallidas.slice(0, max)) if ((await infoSmoke(r, detalleDe)).smoke) n += 1;
   return n;
 }
 
-async function detalleFallo(run) {
-  const { jobs = [] } = JSON.parse(await gh(["run", "view", String(run.databaseId), "-R", REPO, "--json", "jobs"]));
+async function detalleFallo(run, g = gh) {
+  const { jobs = [] } = JSON.parse(await g(["run", "view", String(run.databaseId), "-R", REPO, "--json", "jobs"]));
   const job = jobs.find((j) => j.conclusion === "failure") || jobs.find((j) => j.conclusion && j.conclusion !== "success") || jobs[0];
   const paso = job?.steps?.find((s) => s.conclusion === "failure")?.name ?? "";
-  const log = job?.databaseId ? await gh(["api", `repos/${REPO}/actions/jobs/${job.databaseId}/logs`]) : "";
+  const log = job?.databaseId ? await g(["api", `repos/${REPO}/actions/jobs/${job.databaseId}/logs`]) : "";
   return { paso, jobName: job?.name ?? "", logTail: cola(log, 80) };
 }
 
@@ -1300,7 +1309,10 @@ export function detectarVigiaRoto({ senales: registro = new Set(), telegramFallo
 // ---------- Pasada ----------
 
 // soloResumen: solo recoge datos y devuelve el texto del resumen (--resumen-ahora). No actúa ni escribe memoria.
-async function pasada(ahora, { seco, cfg, memoriaFile, soloResumen = false }) {
+export async function pasada(ahora, { seco, cfg, memoriaFile, soloResumen = false, io = {} } = {}) {
+  senales.clear();
+  const G = (args) => gh(args, io.gh ?? ghCrudo);
+  const detalleDe = (run) => detalleFallo(run, G);
   const fallidas = [];
   const secretos = secretosDe(cfg);
   const intentar = async (nombre, fn) => {
@@ -1312,15 +1324,15 @@ async function pasada(ahora, { seco, cfg, memoriaFile, soloResumen = false }) {
   const hacerResumen = soloResumen || (conTelegram && debeEnviarResumen(memoriaPrevia, ahora));
 
   const [runsRaw, workflows, status, billing, paginas, commits, hechos, casa, checkout] = await Promise.all([
-    intentar("runs", async () => JSON.parse(await gh(["run", "list", "-R", REPO, "-L", "200", "--branch", "main", "--json", CAMPOS_RUNS]))),
-    intentar("workflows", async () => JSON.parse(await gh(["workflow", "list", "-R", REPO, "-a", "--json", "id,name,path"]))),
-    intentar("api/status", () => fetchJson(`${BASE}/api/status`)),
-    intentar("api/billing", () => fetchJson(`${BASE}/api/billing?action=config`)),
-    intentar("páginas", comprobarPaginas),
-    intentar("commits", async () => JSON.parse(await gh(["api", `repos/${REPO}/commits?per_page=50`]))),
-    intentar("hechos de la SMV", () => fetchJson(`${HECHOS_URL}?t=${Date.now()}`)),
-    comprobarCasa(),
-    hacerResumen ? intentar("checkout", comprobarCheckout) : null,
+    intentar("runs", async () => JSON.parse(await G(["run", "list", "-R", REPO, "-L", "200", "--branch", "main", "--json", CAMPOS_RUNS]))),
+    intentar("workflows", async () => JSON.parse(await G(["workflow", "list", "-R", REPO, "-a", "--json", "id,name,path"]))),
+    intentar("api/status", () => fetchJson(`${BASE}/api/status`, io.fetch)),
+    intentar("api/billing", () => fetchJson(`${BASE}/api/billing?action=config`, io.fetch)),
+    intentar("páginas", () => comprobarPaginas(io.fetch, io.esperar)),
+    intentar("commits", async () => JSON.parse(await G(["api", `repos/${REPO}/commits?per_page=50`]))),
+    intentar("hechos de la SMV", () => fetchJson(`${HECHOS_URL}?t=${Date.now()}`, io.fetch)),
+    comprobarCasa({ tailscale: io.tailscale, tcp: io.tcp }),
+    hacerResumen ? intentar("checkout", () => comprobarCheckout(io.fetch)) : null,
   ]);
 
   const rutaPorId = new Map((workflows || []).map((w) => [w.id, nombreArchivo(w.path)]));
@@ -1329,7 +1341,7 @@ async function pasada(ahora, { seco, cfg, memoriaFile, soloResumen = false }) {
   const incidentes = [];
 
   const construirResumen = async (memoria) => {
-    await clasificarFallosDia(runs, ahora);
+    await clasificarFallosDia(runs, ahora, detalleDe);
     return textoResumen({
       fecha: limaParts(ahora).fecha, modo: seco ? "seco" : "real", ahora,
       actividad: runsRaw ? resumenActividad(runs, ahora) : null,
@@ -1345,7 +1357,7 @@ async function pasada(ahora, { seco, cfg, memoriaFile, soloResumen = false }) {
   for (const [wf, run] of analisis.ultimos) {
     if (!esFallo(run)) continue;
     let detalle = { paso: "", jobName: "", logTail: "" };
-    try { detalle = await detalleFallo(run); } catch (e) { fallidas.push(`log de ${wf}`); }
+    try { detalle = await detalleDe(run); } catch (e) { fallidas.push(`log de ${wf}`); }
     const motivoBase = `${wf} falló en «${detalle.paso || "paso desconocido"}» (ejecución ${run.databaseId})`;
 
     if (wf === "watchdog.yml" && /Comprobar la web/i.test(detalle.paso)) {
@@ -1377,12 +1389,12 @@ async function pasada(ahora, { seco, cfg, memoriaFile, soloResumen = false }) {
 
   const smoke = incidentes.find((i) => i.codigo === "WATCHDOG_SMOKE");
   if (smoke) {
-    const diag = await diagnosticoSmoke(analisis.watchdogCompletados);
+    const diag = await diagnosticoSmoke(analisis.watchdogCompletados, detalleDe);
     smoke.fallosSeguidos = diag.fallosSeguidos;
     smoke.todosRed = diag.todosRed;
     const desde = memoriaPrevia.incidentes?.WATCHDOG_SMOKE?.desplegadoEn;
     smoke.fallosTrasDespliegue = desde
-      ? await contarSmoke(analisis.watchdogFallidos.filter((r) => Date.parse(r.createdAt) > Date.parse(desde)))
+      ? await contarSmoke(analisis.watchdogFallidos.filter((r) => Date.parse(r.createdAt) > Date.parse(desde)), detalleDe)
       : 0;
   }
 
@@ -1420,15 +1432,15 @@ async function pasada(ahora, { seco, cfg, memoriaFile, soloResumen = false }) {
   const iso = ahora.toISOString();
 
   const notas = await ejecutar(acciones, memoria, {
-    seco, ahora, secretos, gh,
-    avisar: (a) => (seco ? null : avisar(a, cfg, { secretos, ahora })),
+    seco, ahora, secretos, gh: G,
+    avisar: (a) => (seco ? null : (io.avisar ? io.avisar(a) : avisar(a, cfg, { secretos, ahora }))),
   });
 
   if (hacerResumen && conTelegram) {
     const hoy = limaParts(ahora).fecha;
     const texto = await construirResumen(memoria);
     try {
-      await enviarTelegram(texto, { token: cfg.telegramToken, chatId: cfg.telegramChat });
+      await (io.telegram ?? enviarTelegram)(texto, { token: cfg.telegramToken, chatId: cfg.telegramChat });
       memoria.resumenDia = hoy;
       memoria.silencio = [];
       memoria.telegramFallos = 0;
