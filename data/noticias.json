@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-26T06:31:29.957Z",
+  "actualizado": "2026-11-26T09:31:31.686Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 89
+      "items": 90
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -34,17 +34,17 @@
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 13
+      "items": 12
     },
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 19
+      "items": 20
     },
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 23
+      "items": 22
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -63,6 +63,60 @@
     }
   },
   "noticias": [
+    {
+      "id": "la_republica-0e03613da7",
+      "titulo": "Precio del dólar hoy en Perú, jueves 26 de noviembre: revisa el tipo de cambio en bancos y casas de cambio",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/26/precio-del-dolar-hoy-en-peru-jueves-26-de-noviembre-revisa-el-tipo-de-cambio-en-bancos-y-casas-de-cambio-2395475",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-26T09:30:00.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-87cb5216a4",
+      "titulo": "La ruta de Verónika Mendoza para Cusco: nuevos CITE, turismo descentralizado e industria verde",
+      "url": "https://gestion.pe/economia/empresas/veronika-mendoza-traza-ruta-para-cusco-en-cade-ejecutivos-nuevos-cite-turismo-descentralizado-e-industria-verde-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-26T09:22:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-f5a4094c02",
+      "titulo": "Del petróleo al oro y la soja: las materias primas con mejor y peor desempeño en lo que va de 2026",
+      "url": "https://www.bloomberglinea.com/mercados/del-petroleo-al-oro-y-la-soja-las-materias-primas-con-mejor-y-peor-desempeno-en-lo-que-va-de-2026/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-26T09:06:41.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-05005acbbe",
+      "titulo": "Gratificación 2026: ¿cómo influye el aumento del sueldo mínimo en el cálculo?",
+      "url": "https://andina.pe/agencia/noticia-gratificacion-2026-como-influye-aumento-del-sueldo-minimo-el-calculo-1101447.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-26T08:00:01.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "bloomberg_linea-9b8cb36d3d",
+      "titulo": "JPMorgan prevé auge de deuda para IA por US$450.000 millones en 2027 antes de estabilización",
+      "url": "https://www.bloomberglinea.com/mercados/jpmorgan-preve-auge-de-deuda-para-ia-por-us450000-millones-en-2027-antes-de-estabilizacion/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-26T07:39:02.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-60d7e603b7",
+      "titulo": "Empleo formal creció 3.8% en setiembre: ¿qué sectores generaron más puestos de trabajo?",
+      "url": "https://gestion.pe/peru/empleo-formal-crecio-38-en-setiembre-que-sectores-generaron-mas-puestos-de-trabajo-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-26T07:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "gestion-d522a087d7",
       "titulo": "Julio Velarde en CADE 2026: inflación alta limita al BCRP, pero hay disposición a actuar",
@@ -523,6 +577,15 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "andina-bfb6966382",
+      "titulo": "MEF: Gobierno busca reducir la informalidad laboral en el Perú del 70% al 48%",
+      "url": "https://andina.pe/agencia/noticia-mef-gobierno-busca-reducir-informalidad-laboral-el-peru-del-70-al-48-1101468.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-26T01:54:57.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
       "id": "gestion-4cc4a2e29d",
       "titulo": "Indecopi alista propuesta para cambiar cálculo de multas a empresas, ¿qué busca ajustar?",
       "url": "https://gestion.pe/economia/indecopi-alista-propuesta-para-cambiar-calculo-de-multas-a-empresas-que-busca-ajustar-la-entidad-en-perua-noticia/",
@@ -628,15 +691,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-26T00:43:41.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-f6243eda71",
-      "titulo": "Bolsas asiáticas recuperan terreno mientras la volatilidad y los temores por la IA persisten",
-      "url": "https://www.bloomberglinea.com/mercados/bolsas-asiaticas-recuperan-terreno-mientras-la-volatilidad-y-los-temores-por-la-ia-persisten/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-26T00:42:03.000Z",
-      "categoria": "Mundo",
       "semaforo": "AMARILLO"
     },
     {
@@ -763,15 +817,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-26T00:28:48.000Z",
       "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-87cb5216a4",
-      "titulo": "La ruta de Verónika Mendoza para Cusco: nuevos CITE, turismo descentralizado e industria verde",
-      "url": "https://gestion.pe/economia/empresas/veronika-mendoza-traza-ruta-para-cusco-en-cade-ejecutivos-nuevos-cite-turismo-descentralizado-e-industria-verde-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-26T00:22:45.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -1051,42 +1096,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-25T22:00:00.000Z",
       "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-8a17763235",
-      "titulo": "Julio Velarde advierte que el Fenómeno El Niño presionará el precio de los alimentos: “Va a ser fuerte”",
-      "url": "https://larepublica.pe/economia/2026/11/25/julio-velarde-en-cade-2026-sobre-el-fen-va-a-ser-fuerte-hnews-1503650",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-25T21:59:40.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-4839557199",
-      "titulo": "Colombia: así fue el operativo que permitió rescatar a todos los rehenes de un supermercado en Cartagena",
-      "url": "https://rpp.pe/mundo/actualidad/colombia-asi-fue-el-operativo-que-permitio-rescatar-a-todos-los-rehenes-de-un-supermercado-en-cartagena-noticia-1719808",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-25T21:54:15.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-b22b592f64",
-      "titulo": "El mar avanza hasta el malecón de Pimentel y golpea al turismo: comerciantes reportan pérdidas por fuerte oleaje",
-      "url": "https://www.infobae.com/peru/2026/11/25/el-mar-avanza-hasta-el-malecon-de-pimentel-y-golpea-al-turismo-comerciantes-reportan-perdidas-por-fuerte-oleaje/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-25T21:52:50.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-2999aa7825",
-      "titulo": "OEFA constató muerte de decenas de truchas e investiga posible contaminación de los ríos Apurímac y Cañipía",
-      "url": "https://rpp.pe/peru/apurimac/oefa-constato-muerte-de-decenas-de-truchas-e-investiga-posible-contaminacion-de-los-rios-apurimac-y-canipia-noticia-1719812",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-25T21:49:11.000Z",
-      "categoria": "Energía",
       "semaforo": "AMARILLO"
     }
   ]
