@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-26T09:31:31.686Z",
+  "actualizado": "2026-11-26T12:31:39.606Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,17 +24,17 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 90
+      "items": 93
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 75
+      "items": 81
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 12
+      "items": 11
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -44,17 +44,17 @@
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 22
+      "items": 21
     },
     "semana_economica": {
       "nombre": "Semana Económica",
-      "ok": false,
-      "items": 0
+      "ok": true,
+      "items": 15
     },
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 23
+      "items": 22
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -64,13 +64,292 @@
   },
   "noticias": [
     {
+      "id": "andina-a19cd7544c",
+      "titulo": "BCR emite moneda alusiva al tricentenario del Convento de Santa Rosa de Ocopa",
+      "url": "https://andina.pe/agencia/noticia-bcr-emite-moneda-alusiva-al-tricentenario-del-convento-santa-rosa-ocopa-1101498.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-26T12:28:56.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "bloomberg_linea-b3ce94248b",
+      "titulo": "Jensen Huang ya no es tan indispensable para Nvidia como antes",
+      "url": "https://www.bloomberglinea.com/opinion/jensen-huang-ya-no-es-tan-indispensable-para-nvidia-como-antes/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-26T12:25:10.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-2bcf53a68e",
+      "titulo": "Cómo ahorrar en combustible en Lima: estos son los grifos con los precios más bajos de gasolina y diésel",
+      "url": "https://www.infobae.com/peru/2026/11/26/como-ahorrar-en-combustible-en-lima-estos-son-los-grifos-con-los-precios-mas-bajos-de-gasolina-y-diesel/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-26T12:16:29.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-ac45ed0588",
+      "titulo": "Precio del dólar hoy en Perú: Así se cotiza el tipo de cambio del 26 de noviembre",
+      "url": "https://www.infobae.com/peru/2026/11/25/precio-del-dolar-hoy-en-peru-cotizacion-de-apertura-del-25-de-noviembre/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-26T12:15:15.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-712fed9482",
+      "titulo": "Campaña escolar, que empieza a alistarse desde octubre, avanza con cautela ante El Niño: el escenario para los próximos meses",
+      "url": "https://elcomercio.pe/economia/campana-escolar-avanza-con-cautela-ante-el-fenomeno-de-el-nino-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-26T12:12:20.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-465f68f309",
+      "titulo": "Cabify Perú acelera negocio corporativo y fija su ‘próxima parada’ en 2027",
+      "url": "https://gestion.pe/economia/empresas/cabify-peru-crece-40-en-corporativo-y-alista-llegada-a-una-ciudad-del-sur-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-26T12:00:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-019f47440e",
+      "titulo": "Precio del dólar en Perú hoy: a cuánto abrió el tipo de cambio del jueves 26 de noviembre",
+      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-2026-a-cuanto-esta-el-dolar-del-tipo-de-cambio-del-jueves-26-de-noviembre-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-26T12:00:00.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-b6e6551c13",
+      "titulo": "Integración y formalización para el desarrollo regional",
+      "url": "https://elcomercio.pe/economia/opinion/integracion-y-formalizacion-para-el-desarrollo-regional-por-victor-gobitz-opinion-quilla-resources-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-26T12:00:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-7fc4ee9f15",
+      "titulo": "BCRP lanza nueva moneda de plata por tricentenario de emblemático convento",
+      "url": "https://www.infobae.com/peru/2026/11/26/bcrp-lanza-nueva-moneda-de-plata-por-tricentenario-de-emblematico-convento/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-26T11:59:57.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-22b0f90638",
+      "titulo": "BBVA Perú ve repercusión en la morosidad ante El Niño: “Vamos a tener un impacto. No podemos tapar el sol con un dedo”",
+      "url": "https://elcomercio.pe/economia/bbva-peru-ve-repercusion-en-la-morosidad-ante-el-nino-vamos-a-tener-un-impacto-no-podemos-tapar-el-sol-con-un-dedo-cade-ejecutivos-2026-apuesplan-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-26T11:58:12.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-db18c4c320",
+      "titulo": "Bono de 1.500 soles: ¿Cómo saber si soy beneficiario, a quienes se les entrega, dónde y cuándo se podrá cobrar?",
+      "url": "https://www.infobae.com/peru/2026/11/26/bono-de-1500-soles-como-saber-si-soy-beneficiario-a-quienes-se-les-entrega-donde-y-cuando-se-podra-cobrar/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-26T11:55:23.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-a4d2076911",
+      "titulo": "Masificación del gas natural: cómo funcionará el proyecto para siete regiones de Perú y cuánto se podrá ahorrar",
+      "url": "https://www.infobae.com/peru/2026/11/26/masificacion-del-gas-natural-como-funcionara-el-proyecto-para-siete-regiones-de-peru-y-cuanto-se-podra-ahorrar/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-26T11:54:03.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-3888cbbc02",
+      "titulo": "¿Cómo evolucionará la economía peruana en el desarrollo de la crisis por el Fenómeno El Niño?",
+      "url": "https://www.infobae.com/peru/2026/11/26/como-evolucionara-la-economia-peruana-en-el-desarrollo-de-la-crisis-por-el-fenomeno-el-nino/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-26T11:53:44.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-f52af2099f",
+      "titulo": "Precio del GNV, GLP, diésel y gasolina en Perú para hoy, jueves 26 de noviembre de 2026",
+      "url": "https://www.infobae.com/peru/2026/11/26/precio-del-gnv-glp-diesel-y-gasolina-en-peru-para-hoy-jueves-26-de-noviembre-de-2026/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-26T11:45:06.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-15e011b3c4",
+      "titulo": "Julio Velarde advierte que El Niño presionará el precio de los alimentos en Perú: “El daño puede ser fuerte”",
+      "url": "https://www.infobae.com/peru/2026/11/26/julio-velarde-advierte-que-el-nino-presionara-el-precio-de-los-alimentos-en-peru-el-dano-puede-ser-fuerte/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-26T11:34:45.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-9226d8f932",
+      "titulo": "MEF presentará nuevo crédito suplementario en enero de 2027 para financiar colegios y programas sociales",
+      "url": "https://elcomercio.pe/economia/peru/mef-nuevo-credito-suplementario-en-enero-de-2027-para-financiar-colegios-y-programas-sociales-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-26T11:23:58.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-af2d3ff541",
+      "titulo": "CADE 2026: hoy se clausura el encuentro empresarial con foco en inversión e IA",
+      "url": "https://andina.pe/agencia/noticia-cade-2026-hoy-se-clausura-encuentro-empresarial-foco-inversion-e-ia-1101492.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-26T11:18:13.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-0b6b1cc077",
+      "titulo": "El BBVA propone un nuevo “Reactiva” para afrontar El Niño",
+      "url": "https://gestion.pe/economia/el-bbva-propone-un-nuevo-reactiva-para-afrontar-el-nino-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-26T11:15:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-89b9904e09",
+      "titulo": "El sueño peruano es en familia: el 88% confía en alcanzar el bienestar de su hogar, pero solo el 49% cree que el país lo logrará",
+      "url": "https://elcomercio.pe/economia/peru/el-sueno-peruano-es-en-familia-el-88-confia-en-alcanzar-el-bienestar-de-su-hogar-pero-solo-el-49-cree-que-el-pais-lo-lograra-cade-ejecutivos-2026-cade-ejecutivos-cade-apuesplan-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-26T11:08:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-8b9ebdd6ac",
+      "titulo": "Precio del dólar Perú y tipo de cambio hoy 26 de noviembre del 2026",
+      "url": "https://rpp.pe/economia/economia/precio-del-dolar-peru-y-tipo-de-cambio-hoy-26-de-noviembre-del-2026-noticia-1719896",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-26T11:05:39.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-d99c999aae",
+      "titulo": "Corea del Norte ha suspendido el suministro de misiles balísticos a Rusia, según Ucrania",
+      "url": "https://rpp.pe/mundo/asia/corea-del-norte-ha-suspendido-el-suministro-de-misiles-balisticos-a-rusia-segun-ucrania-noticia-1719891",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-26T11:00:39.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-e352a9a94f",
+      "titulo": "Indeco by Nexans crece a doble dígito: su plan al 2030 y las inversiones en Lima",
+      "url": "https://gestion.pe/economia/empresas/indeco-crece-a-doble-digito-planes-al-2030-y-el-rol-de-peru-en-la-ruta-de-nexans-a-eeuu-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-26T11:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-c6e787a30f",
+      "titulo": "Argentina: dólar blue hoy a cuánto cotiza este jueves 26 de noviembre",
+      "url": "https://rpp.pe/mundo/argentina/argentina-dolar-blue-hoy-a-cuanto-cotiza-este-jueves-26-de-noviembre-noticia-1719895",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-26T10:59:39.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-7c45cb1116",
+      "titulo": "Gonzalo Quijandría, SNMPE: “No puede ser que tengamos miles de plantas procesadoras [de oro ilegal] y que no las fiscalice nadie”",
+      "url": "https://elcomercio.pe/economia/cade-2026-gonzalo-quijandria-no-puede-ser-que-tengamos-miles-de-plantas-procesadoras-de-oro-ilegal-y-que-no-las-fiscalice-nadie-cade-ejecutivos-2026-cade-ejecutivos-cade-apuesplan-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-26T10:58:00.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-902c66b2a4",
+      "titulo": "CAF destinará mínimo US$ 6,000 millones al Perú en cinco años: ¿Chancay será el eje?",
+      "url": "https://gestion.pe/economia/caf-preve-destinar-entre-us-6000-millones-y-us-9000-millones-al-peru-en-cinco-anos-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-26T10:53:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "la_republica-0e03613da7",
       "titulo": "Precio del dólar hoy en Perú, jueves 26 de noviembre: revisa el tipo de cambio en bancos y casas de cambio",
       "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/26/precio-del-dolar-hoy-en-peru-jueves-26-de-noviembre-revisa-el-tipo-de-cambio-en-bancos-y-casas-de-cambio-2395475",
       "fuente": "La República Economía",
-      "fecha_iso": "2026-11-26T09:30:00.000Z",
+      "fecha_iso": "2026-11-26T10:51:31.000Z",
       "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-687987cbb4",
+      "titulo": "¿Más competencia para Backus y Heineken? Este grupo brasileño busca presencia en Perú",
+      "url": "https://gestion.pe/economia/empresas/casa-di-conti-de-brasil-apunta-a-mercado-cervecero-en-peru-mas-competencia-para-backus-y-heineken-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-26T10:46:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-ab291e2c5e",
+      "titulo": "Mercados e indicadores – Hoy jueves 26 de noviembre",
+      "url": "https://gestion.pe/economia/mercados/mercados-e-indicadores-jueves-26-de-noviembre-2026-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-26T10:30:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-e48a6ccd24",
+      "titulo": "Precios de alimentos subirían más en 2027, ¿inflación seguirá fuera de rango meta del BCRP?",
+      "url": "https://gestion.pe/economia/precios-de-alimentos-seguirian-subiendo-en-2027-no-se-frenara-la-inflacion-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-26T10:15:00.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-6db3ec5dca",
+      "titulo": "El Niño en Perú también genera crisis apícola: hay 4 cultivos en “alerta roja”",
+      "url": "https://gestion.pe/economia/el-nino-en-peru-tambien-genera-crisis-apicola-hay-4-cultivos-en-alerta-roja-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-26T10:03:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-4188a398fb",
+      "titulo": "Finanzas abiertas: la mirada de Experian sobre el impacto en las tasas de interés",
+      "url": "https://gestion.pe/economia/empresas/finanzas-abiertas-en-peru-como-podrian-mejorar-las-tasas-y-el-acceso-al-credito-la-mirada-de-experian-en-cade-2026-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-26T10:02:00.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-1a677e8a92",
+      "titulo": "¿Cómo aprovechar la campaña navideña?: 5 consejos clave para vender más",
+      "url": "https://andina.pe/agencia/noticia-como-aprovechar-campana-navidena-5-consejos-clave-para-vender-mas-1101491.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-26T10:00:00.000Z",
+      "categoria": "Otros",
+      "semaforo": "VERDE"
     },
     {
       "id": "gestion-87cb5216a4",
@@ -123,15 +402,6 @@
       "url": "https://gestion.pe/economia/julio-velarde-en-cade-2026-inflacion-alta-limita-al-bcrp-pero-hay-disposicion-a-actuar-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-26T06:00:00.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-019f47440e",
-      "titulo": "Precio del dólar en Perú hoy, 26 de noviembre: a cuánto está el tipo de cambio",
-      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-hoy-en-peru-2026-a-cuanto-esta-el-dolar-del-tipo-de-cambio-del-jueves-26-de-noviembre-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-26T05:22:58.000Z",
       "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
@@ -223,15 +493,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-26T04:00:00.000Z",
       "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-15e011b3c4",
-      "titulo": "Julio Velarde advierte que El Niño presionará el precio de los alimentos en Perú: “El daño puede ser fuerte”",
-      "url": "https://www.infobae.com/peru/2026/11/26/julio-velarde-advierte-que-el-nino-presionara-el-precio-de-los-alimentos-en-peru-el-dano-puede-ser-fuerte/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-26T03:54:11.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     },
     {
@@ -388,6 +649,15 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "semana_economica-f90c0488ac",
+      "titulo": "Elmer Cuba: “El ministro de Economía no está para ser popular, sino para hacer lo correcto por el país”",
+      "url": "https://www.semanaeconomica.com/economia-finanzas/macroeconomia/",
+      "fuente": "Semana Económica",
+      "fecha_iso": "2026-11-26T02:51:17.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "el_comercio-9a1dc3fb9e",
       "titulo": "¿Cómo generar crecimiento empresarial en las regiones? Esta es la visión de diversos empresarios",
       "url": "https://elcomercio.pe/economia/peru/cade-2026-como-generar-crecimiento-empresarial-en-las-regiones-esta-es-la-vision-de-diversos-empresarios-cade-ejecutivos-2026-cade-apuesplan-noticia/",
@@ -433,30 +703,12 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-465f68f309",
-      "titulo": "Cabify Perú acelera negocio corporativo y fija su ‘próxima parada’ en 2027",
-      "url": "https://gestion.pe/economia/empresas/cabify-peru-crece-40-en-corporativo-y-alista-llegada-a-una-ciudad-del-sur-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-26T02:41:33.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-0b3ac98b09",
       "titulo": "El ‘equipaje extra’ que pesa sobre JetSmart en Lima y nuevas rutas en el radar",
       "url": "https://gestion.pe/economia/empresas/jetsmart-alista-nuevas-rutas-y-mas-asientos-para-el-2027-que-traba-aun-frena-su-avance-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-26T02:41:07.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-e352a9a94f",
-      "titulo": "Indeco by Nexans crece a doble dígito: su plan al 2030 y las inversiones en Lima",
-      "url": "https://gestion.pe/economia/empresas/indeco-crece-a-doble-digito-planes-al-2030-y-el-rol-de-peru-en-la-ruta-de-nexans-a-eeuu-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-26T02:39:49.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -520,15 +772,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-26T02:24:00.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-0b6b1cc077",
-      "titulo": "El BBVA propone un nuevo “Reactiva” para afrontar El Niño",
-      "url": "https://gestion.pe/economia/el-bbva-propone-un-nuevo-reactiva-para-afrontar-el-nino-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-26T02:21:55.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -649,15 +892,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "gestion-902c66b2a4",
-      "titulo": "CAF destinará mínimo US$ 6,000 millones al Perú en cinco años: ¿Chancay será el eje?",
-      "url": "https://gestion.pe/economia/caf-preve-destinar-entre-us-6000-millones-y-us-9000-millones-al-peru-en-cinco-anos-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-26T00:54:44.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-ba224f7c9d",
       "titulo": "CADE Ejecutivos 2026: regiones reclaman seguridad, conectividad y energía barata",
       "url": "https://elcomercio.pe/economia/peru/cade-ejecutivos-2026-regiones-reclaman-seguridad-conectividad-y-energia-barata-cade-ejecutivos-2026-cade-ejecutivos-cade-apuesplan-noticia/",
@@ -748,6 +982,15 @@
       "semaforo": "AMARILLO"
     },
     {
+      "id": "semana_economica-9660a77f83",
+      "titulo": "CADE 2026: Southern Copper pidió reforzar la institucionalidad para acelerar inversiones mineras en el país",
+      "url": "https://www.semanaeconomica.com/sectores-empresas/mineria/",
+      "fuente": "Semana Económica",
+      "fecha_iso": "2026-11-26T00:31:12.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "el_comercio-80cd0c3339",
       "titulo": "MTC descarta concesionar el tercer grupo de aeropuertos: ¿qué pasará con su modernización?",
       "url": "https://elcomercio.pe/economia/peru/mtc-descarta-concesionar-el-tercer-grupo-de-aeropuertos-que-pasara-con-su-modernizacion-cade-ejecutivos-2026-cade-ejecutivos-cade-apuesplan-noticia/",
@@ -835,267 +1078,6 @@
       "fuente": "RPP Noticias",
       "fecha_iso": "2026-11-26T00:03:48.000Z",
       "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-a7f690d9e5",
-      "titulo": "Gremios empresariales piden acelerar obras para impulsar inversiones en regiones",
-      "url": "https://andina.pe/agencia/noticia-gremios-empresariales-piden-acelerar-obras-para-impulsar-inversiones-regiones-1101440.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-26T00:00:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "bloomberg_linea-1caf16483d",
-      "titulo": "El riesgo crediticio de CoreWeave y Nvidia alcanza máximos históricos por temor a la deuda de IA",
-      "url": "https://www.bloomberglinea.com/mercados/el-riesgo-crediticio-de-coreweave-y-nvidia-alcanza-maximos-historicos-por-temor-a-la-deuda-de-ia/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-25T23:53:40.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-512ba166c1",
-      "titulo": "Cade Ejecutivos 2026: Conoce la agenda del evento para este miércoles 25",
-      "url": "https://elcomercio.pe/economia/cade-ejecutivos-2026-conoce-la-agenda-del-evento-para-este-miercoles-cade-ejecutivos-cade-apuesplan-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-25T23:48:24.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-d9f1f439f2",
-      "titulo": "Cade Ejecutivos 2026: Segundo día del encuentro empresarial, ¿cuál es la agenda?",
-      "url": "https://elcomercio.pe/economia/peru/cade-ejecutivos-2026-vuelve-a-cusco-despues-de-tres-anos-conoce-la-agenda-del-24-al-26-de-noviembre-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-25T23:48:08.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-076991d732",
-      "titulo": "El regreso de Jensen Huang a Nvidia pone en duda los límites éticos del poder en Silicon Valley",
-      "url": "https://www.bloomberglinea.com/negocios/el-regreso-de-jensen-huang-a-nvidia-pone-en-duda-los-limites-eticos-del-poder-en-silicon-valley/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-25T23:47:54.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-21d2ac5c77",
-      "titulo": "Gobierno busca acelerar la Línea 2 del Metro tras primer pago de deuda a la concesionaria",
-      "url": "https://elcomercio.pe/economia/peru/gobierno-busca-acelerar-la-linea-2-del-metro-tras-primer-pago-de-deuda-a-la-concesionaria-cade-ejecutivos-2026-cade-ejecutivos-cade-apuesplan-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-25T23:46:33.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-7bf775ede5",
-      "titulo": "EE. UU. alerta por fuerte tormenta costera y riesgo de inundaciones a un día de Acción de Gracias",
-      "url": "https://rpp.pe/mundo/actualidad/eeuu-alerta-por-fuerte-tormenta-costera-y-riesgo-de-inundaciones-a-un-dia-de-accion-de-gracias-noticia-1719838",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-25T23:44:52.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-f104053cef",
-      "titulo": "Verónika Mendoza en CADE 2026: “El Cusco paga la energía más cara del país” a pesar de tener el gas de Camisea",
-      "url": "https://larepublica.pe/politica/2026/11/25/veronika-mendoza-en-cade-2026-el-cusco-paga-la-energia-mas-cara-del-pais-a-pesar-de-tener-el-gas-de-camisea-hnews-1971275",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-25T23:44:34.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-a121d35ee4",
-      "titulo": "Cade Ejecutivos 2026: ¿qué necesita el país para potenciar la inversión privada?",
-      "url": "https://elcomercio.pe/economia/cade-ejecutivos-2026-que-necesita-el-pais-para-potenciar-la-inversion-privada-cade-ejecutivos-cade-apuesplan-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-25T23:37:12.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-5c6e9dc713",
-      "titulo": "Verónika Mendoza pide no firmar la adenda de Cálidda y rechaza “migajas” en la oferta de conexiones",
-      "url": "https://larepublica.pe/economia/2026/11/25/veronika-mendoza-pide-no-firmar-la-adenda-con-calidda-y-rechaza-migajas-en-la-oferta-de-conexiones-hnews-1954850",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-25T23:37:06.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-64a8f15f65",
-      "titulo": "Empresarios piden estos tres resultados al Gobierno de Keiko Fujimori",
-      "url": "https://gestion.pe/economia/cade-2026-empresarios-piden-estos-tres-resultados-al-gobierno-de-keiko-fujimori-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-25T23:34:15.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-ee18de8956",
-      "titulo": "Reniec y el Banco Interamericano firman convenio por US$ 100 millones para modernización de identificación",
-      "url": "https://rpp.pe/peru/actualidad/reniec-y-el-banco-interamericano-firman-convenio-por-us-100-millones-para-modernizacion-de-identificacion-noticia-1719844",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-25T23:25:36.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-18760bd009",
-      "titulo": "Minería ilegal ya igualaría la producción de oro formal en el Perú, advierte la SNMPE",
-      "url": "https://larepublica.pe/economia/2026/11/25/mineria-ilegal-ya-igualaria-la-produccion-de-oro-formal-en-el-peru-advierte-la-snmpe-1117100",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-25T23:18:46.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-7d50722bb6",
-      "titulo": "Perú busca modernizar la gestión pública con inteligencia artificial y nuevas tecnologías: ¿qué falta para lograrlo?",
-      "url": "https://www.infobae.com/peru/2026/11/25/peru-busca-modernizar-la-gestion-publica-con-inteligencia-artificial-y-nuevas-tecnologias-que-falta-para-lograrlo/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-25T23:02:50.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-df5318897e",
-      "titulo": "CADE Ejecutivos 2026: Banco Mundial advierte que Perú acumula S/654.000 millones en inversiones pendientes de ejecución",
-      "url": "https://www.infobae.com/peru/2026/11/25/cade-ejecutivos-2026-banco-mundial-advierte-que-peru-acumula-s654000-millones-en-inversiones-pendientes-de-ejecucion/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-25T23:02:40.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-e215e4b7f5",
-      "titulo": "Produce articula medidas para apoyar a pescadores afectados por fenómeno El Niño",
-      "url": "https://andina.pe/agencia/noticia-produce-articula-medidas-para-apoyar-a-pescadores-afectados-fenomeno-nino-1101434.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-25T23:00:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "bloomberg_linea-75ec10d0bf",
-      "titulo": "Caputo detalló cómo pagará Argentina los próximos vencimientos y dijo que pidió a China uso del swap",
-      "url": "https://www.bloomberglinea.com/latinoamerica/argentina/caputo-detallo-como-pagara-argentina-los-proximos-vencimientos-y-dijo-que-pidio-a-china-uso-del-swap/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-25T22:51:45.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-c18804269a",
-      "titulo": "Inmobiliarias alistan ofertas para evitar freno de ventas de viviendas",
-      "url": "https://gestion.pe/economia/inmobiliarias-alistan-ofertas-para-evitar-freno-de-ventas-por-el-nino-y-mayor-tasa-hipotecaria-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-25T22:49:45.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-924035a052",
-      "titulo": "Julio Velarde en CADE Ejecutivos 2026: “La gestión pública no es mala, es pésima”",
-      "url": "https://rpp.pe/economia/economia/julio-velarde-en-cade-ejecutivos-2026-la-gestion-publica-no-es-mala-es-pesima-noticia-1719836",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-25T22:44:51.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-df9b88577f",
-      "titulo": "Lima recibe primer desembolso de USD 500.000 del Banco Mundial para modernizar semáforos en 26 distritos",
-      "url": "https://www.infobae.com/peru/2026/11/25/lima-recibe-primer-desembolso-de-usd-500000-del-banco-mundial-para-modernizar-semaforos-en-26-distritos/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-25T22:42:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-ff15862a25",
-      "titulo": "Profuturo: falta norma clave para iniciar la pensión por consumo en las AFP",
-      "url": "https://gestion.pe/economia/profuturo-afp-hace-falta-normativa-adicional-de-la-sbs-para-iniciar-la-pension-por-consumo-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-25T22:28:48.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-4fce2310c4",
-      "titulo": "Julio Velarde cuestiona la gestión pública en Perú en CADE 2026: “No es mala, es pésima”",
-      "url": "https://larepublica.pe/economia/2026/11/25/julio-velarde-sobre-la-gestion-publica-en-peru-no-es-mala-es-pesima-cuestiona-en-cade-2026-287775",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-25T22:18:21.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-2422c634bf",
-      "titulo": "Wall Street cae con fuerza por ventas en IA e incertidumbre sobre los aranceles de EE.UU.",
-      "url": "https://elcomercio.pe/economia/wall-street-cae-con-fuerza-por-ventas-en-ia-e-incertidumbre-sobre-los-aranceles-de-eeuu-l-mercados-l-wall-street-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-25T22:16:17.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-f475776108",
-      "titulo": "MEF recorta proyección del PBI a 3,1% para 2026: pesca caerá 40,5% por impacto de El Niño",
-      "url": "https://larepublica.pe/economia/2026/11/24/mef-recorta-proyeccion-del-pbi-a-31-para-2026-pesca-caera-405-por-impacto-de-el-nino-hnews-1967112",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-25T22:14:49.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-0f64e40019",
-      "titulo": "Producción agrícola cayó 9%, mientras el Gobierno descarta problemas de abastecimiento",
-      "url": "https://www.infobae.com/peru/2026/11/25/produccion-agricola-cayo-9-mientras-el-gobierno-descarta-problemas-de-abastecimiento/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-25T22:07:40.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-4e774c9507",
-      "titulo": "Gobierno confirma que adenda con Cálidda y reactivación del Sitgas avanzarán en paralelo para masificar el gas natural en el sur",
-      "url": "https://www.infobae.com/peru/2026/11/25/gobierno-confirma-que-adenda-con-calidda-y-reactivacion-del-sitgas-avanzaran-en-paralelo-para-masificar-el-gas-natural-en-el-sur/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-25T22:00:53.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-9d0abf4617",
-      "titulo": "Julio Velarde ve mayor estabilidad: “Ahora sacar a un presidente es altamente improbable; va a durar cinco años\"",
-      "url": "https://rpp.pe/economia/economia/julio-velarde-ve-dificil-una-salida-anticipada-de-keiko-fujimori-ahora-sacar-a-un-presidente-es-altamente-improbable-va-a-durar-cinco-anos-noticia-1719816",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-25T22:00:30.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-f2af33e810",
-      "titulo": "Dólar cierra a la baja en S/ 3.478 tras operaciones del BCR",
-      "url": "https://andina.pe/agencia/noticia-dolar-cierra-a-baja-s-3478-tras-operaciones-del-bcr-1101430.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-25T22:00:00.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-6ec485ed6d",
-      "titulo": "Un accidente laboral, varias multas: ¿cuándo pueden sancionar más de una vez a una empresa?",
-      "url": "https://gestion.pe/economia/empresas-frente-a-una-doble-sancion-los-limites-que-deben-respetar-las-entidades-fiscalizadoras-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-25T22:00:00.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     }
   ]
