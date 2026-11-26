@@ -42,8 +42,18 @@ const FALLOS_RESUMEN_MAX = 40;
 const SILENCIO_RESUMEN_MAX = 10;
 const PAGINAS_VIGIADAS = ["/", "/dolar", "/precios", "/boletin"];
 // Avisos que se envían de noche. El resto se acumula y va en el resumen de las 08:00.
-const CRITICOS_SILENCIO = new Set(["PAGOS_ABIERTOS", "PAGINA_CAIDA", "SIN_LATIDO"]);
+const CRITICOS_SILENCIO = new Set(["PAGOS_ABIERTOS", "PAGINA_CAIDA", "SIN_LATIDO", "VIGIA_ROTO"]);
 const SMV = new Set(["smv.yml", "smv-precios.yml"]);
+// Patrón determinista de SMV_BLOQUEO: el único que puede dar ese código (Nemotron no decide SMV_BLOQUEO solo).
+const SMV_PATRON_RE = /HTTP 418|HTTP 403|fetch failed|respuesta inesperada de la SMV/i;
+// FUENTE_CAMBIO: HTTP 404/410 de una fuente externa (no perdata.site ni api.github.com).
+const FUENTE_HTTP_RE = /\bHTTP (404|410)\b/;
+const FUENTE_NOMBRE_RE = /\b(SMV|BCRP|SUNAT|EIA)\b/;
+const URL_RE = /https?:\/\/[^\s'"`<>)\]]+/gi;
+const PROPIA_RE = /^https?:\/\/(?:[^/]+\.)?(?:perdata\.site|api\.github\.com)(?=[/:?#]|$)/i;
+const SCRIPT_RE = /scripts\/[\w.-]+\.(?:mjs|js|py|sh)\b/;
+// Mientras el token no tenga permiso de escritura, las acciones de escritura no se reintentan antes de 6 h.
+const PERMISO_REINTENTO_H = 6;
 // Errores de red transitorios (también los del smoke: «This operation was aborted», AbortError...).
 const RED_RE = /ECONNRESET|ETIMEDOUT|socket hang up|\b50[234]\b|rate limit|fetch failed|This operation was aborted|AbortError|The operation was aborted due to timeout|operaci[oó]n abortada|network timeout|EAI_AGAIN|ENOTFOUND|ECONNREFUSED|UND_ERR_CONNECT_TIMEOUT|other side closed/i;
 const DUENO = {
@@ -91,6 +101,7 @@ const PROCESO_DUENO = [
 // Comprobación a mano por código (copiada de docs/RUNBOOK.md). Va en cada aviso como «Qué hacer a mano:».
 const QUE_HACER = {
   SMV_BLOQUEO: "curl -s https://perdata.site/api/status | jq '.smv.ageHours' ; tail -n 5 ~/.local/state/smv-plan-b.log",
+  FUENTE_CAMBIO: "gh run view <run-id> -R Wagustin/macro-data-explorer --log-failed | grep -E 'HTTP (404|410)' ; abrir la URL de la fuente en el navegador",
   CHOQUE_PUSH: "curl -s https://perdata.site/api/status | jq '.news.ageHours' ; gh api repos/Wagustin/macro-data-explorer/actions/jobs/<job-id>/logs | grep -E \"CONFLICT|rejected|non-fast-forward|could not apply\"",
   RED_PASAJERA: "gh api repos/Wagustin/macro-data-explorer/actions/jobs/<job-id>/logs | grep -E \"ECONNRESET|ETIMEDOUT|socket hang up|502|503|504|rate limit|fetch failed\"",
   WATCHDOG_SMOKE: "gh run list -R Wagustin/macro-data-explorer --workflow watchdog.yml --limit 4 --json conclusion,createdAt ; npm run smoke:prod",
@@ -110,7 +121,7 @@ const HACE_RE = /hace (\d+(?:[.,]\d+)?) (h|días?)\b/i;
 
 // Token de gh: se pasa solo en el entorno del proceso hijo, nunca en los argumentos.
 const ghConfig = { token: null };
-// Señales de credenciales rotas en esta pasada: "gh-401" y "nvidia-401".
+// Señales de credenciales rotas en esta pasada: "gh-permiso" y "nvidia-401".
 const senales = new Set();
 
 const nombreArchivo = (p = "") => path.posix.basename(String(p));
@@ -176,6 +187,41 @@ export function clasificarWatchdog(logTail) {
   });
 }
 
+// True si el log de un workflow de SMV trae el patrón determinista de bloqueo (418, 403, fetch failed...).
+export function esPatronSMV(workflowPath, logTail) {
+  return SMV.has(nombreArchivo(workflowPath)) && SMV_PATRON_RE.test(String(logTail ?? ""));
+}
+
+// Nemotron nunca decide SMV_BLOQUEO por sí solo: sin el patrón determinista en el log, es DESCONOCIDO.
+export function aceptarCodigoNemotron(codigo, { workflow = "", logTail = "" } = {}) {
+  if (codigo === "SMV_BLOQUEO" && !esPatronSMV(workflow, logTail)) return "DESCONOCIDO";
+  return codigo;
+}
+
+// Fuente externa que responde 404/410 en el log: qué fuente, qué URL y qué script, si aparecen. Null si no hay.
+export function fuenteCambio(logTail) {
+  const log = String(logTail ?? "");
+  for (const linea of log.split(/\r?\n/)) {
+    const http = linea.match(FUENTE_HTTP_RE);
+    if (!http) continue;
+    const url = (linea.match(URL_RE) ?? []).map((u) => u.replace(/[.,;:]+$/, "")).find((u) => !PROPIA_RE.test(u)) ?? null;
+    const nombre = linea.match(FUENTE_NOMBRE_RE)?.[1] ?? null;
+    if (!url && !nombre) continue;
+    const dominio = url ? url.replace(/^https?:\/\//i, "").split(/[/:?#]/)[0] : null;
+    return { fuente: nombre ?? dominio, codigo: Number(http[1]), url, script: log.match(SCRIPT_RE)?.[0] ?? null };
+  }
+  return null;
+}
+
+export function motivoFuente(logTail) {
+  const f = fuenteCambio(logTail);
+  if (!f) return null;
+  const partes = [`fuente ${f.fuente} responde HTTP ${f.codigo}`];
+  if (f.url) partes.push(`en ${f.url}`);
+  if (f.script) partes.push(`(script ${f.script})`);
+  return `${partes.join(" ")}: no se relanza, la fuente ha cambiado su URL y relanzar no lo arregla`;
+}
+
 export function clasificarFallo({ workflowPath = "", stepName = "", logTail = "" } = {}) {
   const wf = nombreArchivo(workflowPath);
   const paso = String(stepName);
@@ -183,7 +229,8 @@ export function clasificarFallo({ workflowPath = "", stepName = "", logTail = ""
   if (wf === "watchdog.yml" && /Comprobar la web/i.test(paso)) return clasificarWatchdog(log)[0].codigo;
   if (wf === "ci.yml") return "CI_ROJO";
   if (/^Guardar/i.test(paso) && /CONFLICT|rejected|non-fast-forward|could not apply/i.test(log)) return "CHOQUE_PUSH";
-  if (SMV.has(wf) && /HTTP 418|HTTP 403|fetch failed|respuesta inesperada de la SMV/i.test(log)) return "SMV_BLOQUEO";
+  if (WORKFLOWS_DATOS.has(wf) && fuenteCambio(log)) return "FUENTE_CAMBIO";
+  if (esPatronSMV(wf, log)) return "SMV_BLOQUEO";
   if (!SMV.has(wf) && RED_RE.test(log)) return "RED_PASAJERA";
   if (WORKFLOWS_DATOS.has(wf) && esErrorCodigo(log)) return "ERROR_CODIGO";
   return "DESCONOCIDO";
@@ -313,7 +360,7 @@ export async function clasificarConNemotron({ workflow, paso, logTail }, { apiKe
     }
     const prompt = [
       "Clasifica el fallo de GitHub Actions de PerData en UNO de estos códigos:",
-      "SMV_BLOQUEO: la SMV bloquea la descarga (HTTP 418/403, fetch failed, respuesta inesperada de la SMV).",
+      "SMV_BLOQUEO: la SMV bloquea la descarga (HTTP 418/403, fetch failed, respuesta inesperada de la SMV). Solo si el log lo dice literalmente; si no, DESCONOCIDO.",
       "CHOQUE_PUSH: al guardar datos hay conflicto o push rechazado (CONFLICT, rejected, non-fast-forward).",
       "RED_PASAJERA: error de red transitorio (ECONNRESET, ETIMEDOUT, 502/503/504, rate limit).",
       "DESCONOCIDO: no encaja en ninguno.",
@@ -329,7 +376,8 @@ export async function clasificarConNemotron({ workflow, paso, logTail }, { apiKe
     });
     if (!r.ok) { if (r.status === 401) registro?.add("nvidia-401"); return null; }
     const data = await r.json();
-    return { ...interpretarRespuesta(data.choices?.[0]?.message?.content), modelo: id, ms: Date.now() - t0 };
+    const res = interpretarRespuesta(data.choices?.[0]?.message?.content);
+    return { ...res, codigo: aceptarCodigoNemotron(res.codigo, { workflow, logTail }), modelo: id, ms: Date.now() - t0 };
   } catch {
     return null;
   }
@@ -340,8 +388,15 @@ export async function clasificarConNemotron({ workflow, paso, logTail }, { apiKe
 const memoriaVacia = () => ({
   dia: null, contadores: { relanzar: {}, desplegar: 0, volverAtras: 0, reparar: {} }, fallos: {},
   incidentes: {}, runsVistos: {}, avisos: {}, despliegues: [], historial: [], resumenDia: null,
-  pasadasDia: 0, incidentesDia: {}, silencio: [], telegramFallos: 0, rotoDia: null,
+  pasadasDia: 0, incidentesDia: {}, silencio: [], telegramFallos: 0,
+  // Incidentes avisados o actuados que aún no se han cerrado (para el «Resuelto»), y el token sin permiso de escritura.
+  abiertos: {}, permisoRoto: null,
 });
+
+// True si el token no tiene permiso de escritura y el último intento fue hace menos de 6 h.
+export function permisoBloquea(permisoRoto, ahora = new Date()) {
+  return Boolean(permisoRoto) && new Date(ahora) - Date.parse(permisoRoto.ultimoIntento) < PERMISO_REINTENTO_H * H;
+}
 
 // Anota una acción ejecutada para el resumen diario. Guarda 48 h y, como mucho, 200 entradas.
 function anotar(m, iso, tipo, detalle) {
@@ -405,7 +460,6 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
   const relanzosHoy = { ...(contadores.relanzar || {}) };
   let desplegosHoy = contadores.desplegar || 0;
   let volverHoy = contadores.volverAtras || 0;
-  let rotoHoy = mem.rotoDia === hoy;
   const repararHoy = { ...(contadores.reparar || {}) };
   const acciones = [];
   const hayCI = incidentes.some((i) => i.codigo === "CI_ROJO");
@@ -424,7 +478,15 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
     acciones.push({ tipo: "AVISAR", codigo: inc.codigo, motivo, accion: null, incidente: inc, claves: [inc.clave], avisoKey: inc.avisoKey, veredicto: v });
   }
 
+  // Con el token sin permiso de escritura no se intenta ninguna acción de escritura antes de 6 h (VIGIA_ROTO ya avisa).
+  const sinPermiso = (inc, regla) => {
+    if (!permisoBloquea(mem.permisoRoto, instante)) return false;
+    veredicto(inc, "ESPERAR", "el token no tiene permiso de escritura (VIGIA_ROTO): se reintenta 6 h después del último intento", regla);
+    return true;
+  };
+
   function relanzar(inc, wf, motivo, regla) {
+    if (sinPermiso(inc, regla)) return;
     if (enCurso.has(wf)) return veredicto(inc, "ESPERAR", `${wf} ya tiene una ejecución en curso`, "no relanzar con una ejecución en curso");
     const existente = acciones.find((a) => a.tipo === "RELANZAR" && a.workflow === wf);
     if (existente) {
@@ -438,6 +500,7 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
   }
 
   function desplegar(inc, motivo, regla) {
+    if (sinPermiso(inc, regla)) return;
     if (hayCI) return veredicto(inc, "ESPERAR", "CI en main en rojo: no se despliega", "no desplegar con CI en rojo");
     if (enCurso.has("deploy.yml")) return veredicto(inc, "ESPERAR", "deploy.yml ya tiene una ejecución en curso", "no desplegar con un despliegue en curso");
     const existente = acciones.find((a) => a.tipo === "DESPLEGAR");
@@ -463,6 +526,7 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
   }
 
   function reparar(inc, wf, motivo, regla) {
+    if (sinPermiso(inc, regla)) return;
     const no = motivoNoReparar(wf);
     if (no) return veredicto(inc, "ESPERAR", no.replace("no se lanza el reparador: ", ""), regla);
     const v = veredicto(inc, `REPARAR ${wf}`, motivo, regla);
@@ -471,6 +535,7 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
   }
 
   function volverAtras(inc, motivo, regla) {
+    if (sinPermiso(inc, regla)) return;
     if (volverHoy >= 1) return aviso(inc, `${motivo}; límite de 1 VOLVER_ATRAS por día alcanzado`, "límite de 1 VOLVER_ATRAS por día");
     const v = veredicto(inc, "VOLVER_ATRAS", motivo, regla);
     acciones.push({ tipo: "VOLVER_ATRAS", codigo: inc.codigo, motivo, incidente: inc, claves: [inc.clave], veredicto: v });
@@ -578,11 +643,12 @@ export function decidir(incidentes, memoria = {}, ahora = new Date(), enCurso = 
         else veredicto(inc, "ESPERAR", "primera pasada sin respuesta: se espera otra", "SERVIDOR_CASA: avisar con dos pasadas seguidas");
         break;
       case "VIGIA_ROTO":
-        if (rotoHoy) veredicto(inc, "ESPERAR", "ya se avisó hoy de un fallo del vigía", "VIGIA_ROTO: máximo un aviso al día");
-        else {
-          rotoHoy = true;
-          aviso(inc, inc.motivo, "VIGIA_ROTO: un aviso al día por el canal que funcione");
-        }
+        // Crítico: sale de noche. Como mucho un aviso cada 6 h (lo aplica ejecutar con la memoria de avisos).
+        aviso(inc, inc.motivo, "VIGIA_ROTO: crítico, como mucho un aviso cada 6 h");
+        break;
+      case "FUENTE_CAMBIO":
+        // Relanzar no arregla una URL que cambió: solo avisar, con el script y la URL del log.
+        aviso({ ...inc, avisoKey: `FUENTE_CAMBIO:${inc.workflow}` }, inc.motivo, "FUENTE_CAMBIO: avisar, no relanzar");
         break;
       case "ERROR_CODIGO":
         // El aviso va con clave propia por workflow: un error en un workflow no silencia el de otro.
@@ -637,6 +703,7 @@ export function argumentosReparar({ codigo, workflow, runId }) {
 // redactado y de 3500 caracteres como mucho.
 export function textoAviso(a, secretos = [], ahora = new Date()) {
   const inc = a.incidente || {};
+  if (a.resuelto) return redactar([`PerData vigía · Resuelto`, a.motivo, `Momento: ${new Date(ahora).toISOString()} (UTC)`].join("\n"), secretos).slice(0, TG_MAX);
   const lineas = [
     `PerData vigía · ${a.codigo}`,
     `Diagnóstico: ${a.motivo}`,
@@ -835,7 +902,7 @@ export function textoResumen({
   const cuentas = {};
   for (const h of historial) if (Date.parse(h.fecha) >= desde) cuentas[h.tipo] = (cuentas[h.tipo] || 0) + 1;
   const acciones = Object.entries(cuentas).map(([tipo, n]) => `${tipo} ${n}`).join(", ") || "ninguna";
-  asuntos.push(...silencio.map((s) => `aviso en silencio ${s.codigo}`));
+  asuntos.push(...silencio.filter((s) => s.codigo !== "RESUELTO").map((s) => `aviso en silencio ${s.codigo}`));
   const enSilencio = silencio.slice(0, SILENCIO_RESUMEN_MAX).map((s) => `${s.codigo} (${s.motivo})`);
   if (silencio.length > SILENCIO_RESUMEN_MAX) enSilencio.push(`y ${silencio.length - SILENCIO_RESUMEN_MAX} más`);
   lineas.push(
@@ -855,6 +922,7 @@ export function debeEnviarResumen(memoria, ahora) {
 
 function construirCorreo(a) {
   const inc = a.incidente || {};
+  if (a.resuelto) return [a.motivo, `Momento: ${new Date().toISOString()} (UTC)`].join("\n");
   const cuerpo = [
     `Código: ${a.codigo}`,
     `Momento: ${new Date().toISOString()} (UTC)`,
@@ -925,7 +993,9 @@ export async function avisar(a, cfg, { secretos = [], ahora = new Date(), telegr
 
 // Ejecuta las acciones. En modo seco no llama a gh ni envía avisos: actualiza la memoria simulada como si
 // lo hiciera, con sus mismos límites. Devuelve las notas para la cabecera del log y deja el resultado de
-// cada acción en su veredicto.
+// cada acción en su veredicto. Si gh rechaza una escritura por permisos, abre VIGIA_ROTO (crítico), guarda
+// el token sin permiso en memoria y no reintenta escrituras hasta 6 h después. El aviso VIGIA_ROTO que añade
+// aquí se suma a `acciones` para que el registro de incidentes abiertos lo vea.
 export async function ejecutar(acciones, memoria, { seco, ahora = new Date(), gh, avisar: enviarAviso, secretos = [] }) {
   const notas = [];
   const m = memoria;
@@ -934,28 +1004,59 @@ export async function ejecutar(acciones, memoria, { seco, ahora = new Date(), gh
   m.despliegues = m.despliegues || [];
   m.contadores.reparar = m.contadores.reparar || {};
   const iso = new Date(ahora).toISOString();
-  const hoy = limaParts(new Date(ahora)).fecha;
   const pendientes = [...acciones];
   const errorTexto = (e) => redactar(e?.stderr || e?.message || e, secretos).split("\n")[0].slice(0, 200);
   const marca = (a, texto) => { if (a.veredicto) a.veredicto.resultado = texto; };
+  const esAuth = (e) => esErrorAuth(`${e?.stderr ?? ""}\n${e?.message ?? ""}`);
+  const ESCRITURAS = new Set(["RELANZAR", "DESPLEGAR", "VOLVER_ATRAS", "REPARAR"]);
+  const etiquetaPermiso = (a) => {
+    if (a.tipo === "RELANZAR") return `relanzar ${a.workflow}`;
+    if (a.tipo === "DESPLEGAR") return "lanzar deploy.yml";
+    if (a.tipo === "VOLVER_ATRAS") return "disparar rollback.yml";
+    return `pedir la reparación de ${a.workflow} (reparar.yml)`;
+  };
+  const exito = () => { if (!seco) m.permisoRoto = null; };
+  const falloPermiso = (a, e) => {
+    const accion = etiquetaPermiso(a);
+    m.permisoRoto = { desde: m.permisoRoto?.desde ?? iso, ultimoIntento: iso, accion };
+    const motivo = `el token de GitHub no tiene permiso para ${accion}: en GitHub, Settings → Developer settings → Fine-grained tokens, edita el token del vigía y pon Actions: Read and write`;
+    const avisoPermiso = {
+      tipo: "AVISAR", codigo: "VIGIA_ROTO", motivo, accion: null, claves: [], critico: true,
+      incidente: { codigo: "VIGIA_ROTO", clave: "VIGIA_ROTO", workflow: null, motivo, logTail: "" },
+    };
+    pendientes.unshift(avisoPermiso);
+    acciones.push(avisoPermiso);
+    notas.push(`${a.tipo} rechazado por permisos (${errorTexto(e)}): VIGIA_ROTO`);
+    marca(a, `fallido: sin permiso de escritura (${errorTexto(e)})`);
+  };
   let volverHecho = false;
   while (pendientes.length) {
     const a = pendientes.shift();
+    if (ESCRITURAS.has(a.tipo) && permisoBloquea(m.permisoRoto, ahora)) {
+      notas.push(`${a.tipo} omitido: el token no tiene permiso de escritura (VIGIA_ROTO)`);
+      marca(a, "omitido: sin permiso de escritura; se reintenta 6 h después del último intento");
+      continue;
+    }
     if (a.tipo === "RELANZAR") {
       try {
         if (!seco) await gh(["workflow", "run", a.workflow, "-R", REPO]);
+        exito();
         m.contadores.relanzar[a.workflow] = (m.contadores.relanzar[a.workflow] || 0) + 1;
         for (const c of a.claves) if (m.incidentes[c]) m.incidentes[c].relanzadoEn = iso;
         anotar(m, iso, "RELANZAR", a.workflow);
         notas.push(`RELANZAR ${a.workflow}${seco ? " (simulado)" : ""}`);
         marca(a, seco ? "simulado (seco)" : "hecho");
       } catch (e) {
-        notas.push(`RELANZAR ${a.workflow} fallido: ${errorTexto(e)}`);
-        marca(a, `fallido: ${errorTexto(e)}`);
+        if (esAuth(e)) falloPermiso(a, e);
+        else {
+          notas.push(`RELANZAR ${a.workflow} fallido: ${errorTexto(e)}`);
+          marca(a, `fallido: ${errorTexto(e)}`);
+        }
       }
     } else if (a.tipo === "DESPLEGAR") {
       try {
         if (!seco) await gh(["workflow", "run", "deploy.yml", "-R", REPO]);
+        exito();
         m.contadores.desplegar += 1;
         for (const c of a.claves) if (m.incidentes[c]) { m.incidentes[c].desplegadoEn = iso; m.incidentes[c].trasDespliegue = 0; }
         m.despliegues = [...m.despliegues, { fecha: iso, motivo: a.motivo }].slice(-20);
@@ -963,33 +1064,44 @@ export async function ejecutar(acciones, memoria, { seco, ahora = new Date(), gh
         notas.push(`DESPLEGAR deploy.yml${seco ? " (simulado)" : ""}`);
         marca(a, seco ? "simulado (seco)" : "hecho");
       } catch (e) {
-        notas.push(`DESPLEGAR fallido: ${errorTexto(e)}`);
-        marca(a, `fallido: ${errorTexto(e)}`);
+        if (esAuth(e)) falloPermiso(a, e);
+        else {
+          notas.push(`DESPLEGAR fallido: ${errorTexto(e)}`);
+          marca(a, `fallido: ${errorTexto(e)}`);
+        }
       }
     } else if (a.tipo === "VOLVER_ATRAS") {
       try {
         if (!seco) await gh(argumentosVolverAtras(a.codigo));
+        exito();
         m.contadores.volverAtras += 1;
         volverHecho = true;
         anotar(m, iso, "VOLVER_ATRAS", a.codigo);
         notas.push(seco ? "VOLVER_ATRAS (simulado)" : "VOLVER_ATRAS disparado (rollback.yml)");
         marca(a, seco ? "simulado (seco)" : "hecho");
       } catch (e) {
-        notas.push(`VOLVER_ATRAS fallido: ${errorTexto(e)}`);
-        marca(a, `fallido: ${errorTexto(e)}`);
-        pendientes.unshift({ tipo: "AVISAR", codigo: a.codigo, motivo: `el rollback ha fallado (${errorTexto(e)})`, accion: "VOLVER_ATRAS fallido", incidente: a.incidente, claves: a.claves, critico: true });
+        if (esAuth(e)) falloPermiso(a, e);
+        else {
+          notas.push(`VOLVER_ATRAS fallido: ${errorTexto(e)}`);
+          marca(a, `fallido: ${errorTexto(e)}`);
+          pendientes.unshift({ tipo: "AVISAR", codigo: a.codigo, motivo: `el rollback ha fallado (${errorTexto(e)})`, accion: "VOLVER_ATRAS fallido", incidente: a.incidente, claves: a.claves, critico: true });
+        }
       }
     } else if (a.tipo === "REPARAR") {
       // Solo cuenta si gh ha disparado reparar.yml: un fallo (red, rate limit...) no gasta el límite del día.
       try {
         if (!seco) await gh(argumentosReparar(a));
+        exito();
         m.contadores.reparar[a.workflow] = (m.contadores.reparar[a.workflow] || 0) + 1;
         anotar(m, iso, "REPARAR", `${a.codigo} en ${a.workflow} (run ${a.runId})`);
         notas.push(`REPARAR ${a.workflow} (${a.codigo})${seco ? " (simulado)" : ""}`);
         marca(a, seco ? "simulado (seco)" : "hecho");
       } catch (e) {
-        notas.push(`REPARAR ${a.workflow} fallido: ${errorTexto(e)}`);
-        marca(a, `fallido: ${errorTexto(e)}`);
+        if (esAuth(e)) falloPermiso(a, e);
+        else {
+          notas.push(`REPARAR ${a.workflow} fallido: ${errorTexto(e)}`);
+          marca(a, `fallido: ${errorTexto(e)}`);
+        }
       }
     } else if (a.tipo === "AVISAR") {
       const clave = a.avisoKey ?? a.codigo;
@@ -1004,7 +1116,6 @@ export async function ejecutar(acciones, memoria, { seco, ahora = new Date(), gh
         m.silencio = [...m.silencio.filter((s) => s.clave !== clave), { clave, codigo: a.codigo, motivo: a.motivo, fecha: iso }].slice(-50);
         notas.push(`AVISAR ${a.codigo} en silencio (va en el resumen de las 08:00)`);
         marca(a, "en silencio: va en el resumen de las 08:00");
-        if (a.codigo === "VIGIA_ROTO") m.rotoDia = hoy;
         continue;
       }
       if (seco) {
@@ -1024,10 +1135,114 @@ export async function ejecutar(acciones, memoria, { seco, ahora = new Date(), gh
         if (r.telegramFallo) m.telegramFallos = (m.telegramFallos || 0) + 1;
         else if (r.canal === "telegram") m.telegramFallos = 0;
       }
-      if (a.codigo === "VIGIA_ROTO") m.rotoDia = hoy;
     }
   }
   return notas;
+}
+
+// ---------- Resuelto: seguimiento de incidentes avisados o actuados ----------
+
+const RECURSO_ESTADO = { PAGINA_CAIDA: "perdata.site", PAGOS_ABIERTOS: "pagos (billing)", SIN_LATIDO: "servidor de casa", VIGIA_ROTO: "el vigía" };
+const ACCION_COMO = { RELANZAR: "relanzado por el vigía", DESPLEGAR: "desplegado", REPARAR: "reparador (reparar.yml)", VOLVER_ATRAS: "vuelta atrás del Worker (rollback.yml)" };
+const ACCIONES_QUE_CUENTAN = new Set(["RELANZAR", "DESPLEGAR", "REPARAR", "VOLVER_ATRAS"]);
+// Un incidente abierto que no se cierra en 7 días se borra de la memoria sin mensaje.
+const ABIERTO_MAX_DIAS = 7;
+
+// Clave estable de un incidente: el runId cambia en cada ejecución fallida, así que un fallo de workflow se sigue
+// por workflow (y proceso, si es del watchdog). Los datos viejos se siguen por su dueño.
+export function claveSeguimiento(inc) {
+  if (inc.codigo === "DATO_VIEJO") return `DATO_VIEJO:${inc.workflow}`;
+  if (inc.runId) return `${inc.codigo}:${inc.workflow ?? "watchdog.yml"}${inc.proceso ? `:${inc.proceso}` : ""}`;
+  return inc.clave;
+}
+
+// «30 min», «2 h 15 min», «3 h», «2 d 5 h».
+export function formatearDuracion(ms) {
+  const min = Math.max(0, Math.round(ms / MIN));
+  if (min < 60) return `${min} min`;
+  const h = Math.floor(min / 60);
+  if (h < 48) return min % 60 ? `${h} h ${min % 60} min` : `${h} h`;
+  const d = Math.floor(h / 24);
+  return h % 24 ? `${d} d ${h % 24} h` : `${d} d`;
+}
+
+// Anota los incidentes que el vigía ha avisado o sobre los que ha actuado (no los que solo quedan en ESPERAR).
+export function registrarAbiertos(m, acciones, incidentes, iso) {
+  m.abiertos = m.abiertos || {};
+  const porClave = new Map(incidentes.map((i) => [i.clave, i]));
+  for (const a of acciones) {
+    if (a.resuelto || /fallido|sin canal|omitido/.test(a.veredicto?.resultado ?? "")) continue;
+    const incs = a.incidente ? [a.incidente] : (a.claves || []).map((c) => porClave.get(c)).filter(Boolean);
+    for (const inc of incs) {
+      if (inc.codigo === "SERVIDOR_CASA") continue; // su aviso de recuperación ya cierra ese incidente
+      const clave = claveSeguimiento(inc);
+      const entrada = m.abiertos[clave] || {
+        codigo: inc.codigo,
+        tipo: inc.runId ? "run" : "estado",
+        workflow: inc.workflow ?? (inc.runId ? "watchdog.yml" : null),
+        bloque: inc.bloque ?? null,
+        recurso: inc.runId ? (inc.workflow ?? inc.proceso ?? "watchdog.yml") : (inc.workflow ?? inc.bloque ?? RECURSO_ESTADO[inc.codigo] ?? inc.codigo),
+        inicio: inc.desde || iso,
+        critico: CRITICOS_SILENCIO.has(inc.codigo),
+        ultimaAccion: null,
+      };
+      if (ACCIONES_QUE_CUENTAN.has(a.tipo)) entrada.ultimaAccion = { tipo: a.tipo, fecha: iso };
+      m.abiertos[clave] = entrada;
+    }
+  }
+}
+
+// Incidentes abiertos que ya no aparecen. Un fallo de workflow se cierra con el siguiente run completo del mismo
+// workflow si sale bien (y es posterior al fallo); el resto, cuando su fuente se ha mirado y está bien. Quita la entrada.
+export function resolverAbiertos(m, {
+  ahora = new Date(), runs = null, actuales = new Set(), status = null, paginas = null, billing = null,
+  commits = null, latidoOk = false, permisoRoto = null,
+} = {}) {
+  const instante = new Date(ahora);
+  const hoy = instante.toISOString().slice(0, 10);
+  const salida = [];
+  const estadoSano = (e) => {
+    switch (e.codigo) {
+      case "DATO_VIEJO": {
+        if (!status) return false;
+        if (e.bloque === "backup") return status.backup?.fecha === hoy;
+        const b = status[e.bloque];
+        return typeof b?.ageHours === "number" && typeof b.staleAfterHours === "number" && b.ageHours <= b.staleAfterHours;
+      }
+      case "PAGINA_CAIDA": return Array.isArray(paginas) && paginas.every((p) => p.codigo === 200);
+      case "PAGOS_ABIERTOS": return billing?.paymentsEnabled === false;
+      case "SIN_LATIDO": return latidoOk;
+      case "BOLETIN_NO_SALIO": return Array.isArray(commits) && boletinEnviado(commits, new Date(e.inicio));
+      case "VIGIA_ROTO": return Boolean(runs) && !permisoRoto;
+      default: return false;
+    }
+  };
+  for (const [clave, e] of Object.entries(m.abiertos || {})) {
+    if (actuales.has(clave)) continue;
+    if (instante - Date.parse(e.inicio) > ABIERTO_MAX_DIAS * 24 * H) { delete m.abiertos[clave]; continue; }
+    let cuando;
+    if (e.tipo === "run") {
+      if (!runs || !e.workflow) continue;
+      const ultima = runs
+        .filter((r) => r.wf === e.workflow && r.status === "completed")
+        .sort((x, y) => Date.parse(y.createdAt) - Date.parse(x.createdAt))[0];
+      if (!ultima || ultima.conclusion !== "success" || Date.parse(ultima.createdAt) <= Date.parse(e.inicio)) continue;
+      cuando = ultima.createdAt;
+    } else {
+      if (!estadoSano(e)) continue;
+      cuando = instante.toISOString();
+    }
+    const acc = e.ultimaAccion;
+    const efecto = acc && (e.tipo === "estado" || Date.parse(cuando) > Date.parse(acc.fecha));
+    const como = efecto ? (ACCION_COMO[acc.tipo] ?? "se resolvió solo") : "se resolvió solo";
+    const duracion = formatearDuracion(Date.parse(cuando) - Date.parse(e.inicio));
+    salida.push({
+      clave, critico: e.critico, avisoKey: `RESUELTO:${clave}:${e.inicio}`,
+      texto: `Resuelto: ${e.codigo} en ${e.recurso} — ${como}, duró ${duracion}`,
+    });
+    delete m.abiertos[clave];
+  }
+  return salida;
 }
 
 // ---------- Entorno, bloqueo y memoria en disco ----------
@@ -1131,10 +1346,13 @@ export function guardarMemoria(file, m) {
 
 // ---------- Recogida de estado ----------
 
-// Un 401/403 de gh (sin ser límite de peticiones) o «Bad credentials» marca el token como roto.
+// Error de permisos o de credenciales de gh: 401 (siempre), 403 solo con una frase de permiso, o «Bad credentials».
+// Un 403 por límite de peticiones (rate limit, secondary rate) nunca cuenta.
 export function esErrorAuth(texto) {
   const t = String(texto ?? "");
-  return /\bHTTP 40[13]\b|Bad credentials/i.test(t) && !/rate limit/i.test(t);
+  if (/rate limit/i.test(t)) return false;
+  if (/Bad credentials/i.test(t) || /\bHTTP 401\b/.test(t)) return true;
+  return /\bHTTP 403\b/.test(t) && /Resource not accessible|must have admin rights|permission/i.test(t);
 }
 
 // Ejecuta gh de verdad (el token va solo en el entorno del hijo). Se inyecta en las pasadas de los tests.
@@ -1144,12 +1362,12 @@ async function ghCrudo(args) {
   return stdout;
 }
 
-// gh con detección de credenciales rotas (gh-401) sobre cualquier ejecutor.
+// gh con detección de permisos o credenciales rotas (gh-permiso) sobre cualquier ejecutor.
 async function gh(args, crudo = ghCrudo) {
   try {
     return await crudo(args);
   } catch (e) {
-    if (esErrorAuth(`${e.stderr ?? ""}\n${e.message ?? ""}`)) senales.add("gh-401");
+    if (esErrorAuth(`${e.stderr ?? ""}\n${e.message ?? ""}`)) senales.add("gh-permiso");
     throw e;
   }
 }
@@ -1303,9 +1521,11 @@ export function incidenteCasa(casa, memoriaPrevia = {}) {
 }
 
 // Credenciales rotas o Telegram caído dos veces: un solo aviso al día (VIGIA_ROTO). Solo avisa.
-export function detectarVigiaRoto({ senales: registro = new Set(), telegramFallos = 0 } = {}) {
+export function detectarVigiaRoto({ senales: registro = new Set(), telegramFallos = 0, permisoRoto = null } = {}) {
   const motivos = [];
-  if (registro.has("gh-401")) motivos.push("gh responde 401/403 o «Bad credentials»: el token de GitHub ha caducado o le faltan permisos; renovar GH_TOKEN en ~/perdata-vigia/env (fine-grained, solo Wagustin/macro-data-explorer)");
+  const pedirPermiso = "en GitHub, Settings → Developer settings → Fine-grained tokens, edita el token del vigía y pon Actions: Read and write";
+  if (registro.has("gh-permiso")) motivos.push(`el token de GitHub no funciona o no tiene permiso (gh responde 401/403 o «Bad credentials»): ${pedirPermiso}; si ha caducado, renovar GH_TOKEN en ~/perdata-vigia/env`);
+  if (permisoRoto) motivos.push(`el token de GitHub no tiene permiso para ${permisoRoto.accion}: ${pedirPermiso}`);
   if (registro.has("nvidia-401")) motivos.push("la API de NVIDIA responde 401: renovar VIGIA_NVIDIA_API_KEY en ~/perdata-vigia/env");
   if (registro.has("memoria-corrupta")) motivos.push("el archivo de memoria del vigía (~/.local/state/perdata-vigia*.json) no se puede leer: esta pasada empieza vacía y lo sobrescribe; revisarlo antes de borrarlo");
   if (telegramFallos >= 2) motivos.push("Telegram falla dos envíos seguidos: revisar TELEGRAM_BOT_TOKEN y TELEGRAM_CHAT_ID en ~/perdata-vigia/env");
@@ -1396,13 +1616,14 @@ export async function pasada(ahora, { seco, cfg, memoriaFile, soloResumen = fals
     let codigo = clasificarFallo({ workflowPath: wf, stepName: detalle.paso, logTail: detalle.logTail });
     let via = "reglas";
     if (codigo === "DESCONOCIDO" && cfg.apiKey) {
-      const r = await clasificarConNemotron({ workflow: wf, paso: detalle.paso, logTail: detalle.logTail }, { apiKey: cfg.apiKey, modelo: cfg.modelo, senales });
+      const r = await clasificarConNemotron({ workflow: wf, paso: detalle.paso, logTail: detalle.logTail }, { apiKey: cfg.apiKey, modelo: cfg.modelo, senales, fetchImpl: io.nvidia });
       if (r) { codigo = r.codigo; via = `Nemotron ${r.modelo} (${r.ms} ms, confianza ${r.confianza ?? 0})`; }
     }
     const clave = `${codigo}:${wf}:${run.databaseId}`;
+    const fuente = codigo === "FUENTE_CAMBIO" ? motivoFuente(detalle.logTail) : null;
     incidentes.push({
       codigo, workflow: wf, runId: run.databaseId, desde: run.createdAt, paso: detalle.paso, logTail: detalle.logTail,
-      clave, via, motivo: `${motivoBase}; clasificado por ${via}`,
+      clave, via, motivo: fuente ? `${motivoBase}; ${fuente}` : `${motivoBase}; clasificado por ${via}`,
       ...(codigo === "SMV_BLOQUEO" ? { ageHoras: status?.smv?.ageHours } : {}),
     });
   }
@@ -1438,7 +1659,7 @@ export async function pasada(ahora, { seco, cfg, memoriaFile, soloResumen = fals
   if (directo) incidentes.push(directo);
   const incCasa = incidenteCasa(casa, memoriaPrevia);
   if (incCasa) incidentes.push(incCasa);
-  incidentes.push(...detectarVigiaRoto({ senales, telegramFallos: memoriaPrevia.telegramFallos || 0 }));
+  incidentes.push(...detectarVigiaRoto({ senales, telegramFallos: memoriaPrevia.telegramFallos || 0, permisoRoto: memoriaPrevia.permisoRoto }));
 
   const omitidos = [
     ...(runsRaw ? [] : PREFIJOS_RUNS),
@@ -1451,10 +1672,22 @@ export async function pasada(ahora, { seco, cfg, memoriaFile, soloResumen = fals
   const acciones = decidir(incidentes, memoria, ahora, analisis.enCurso, veredictos);
   const iso = ahora.toISOString();
 
+  // Incidentes avisados o actuados que ya no aparecen: un «Resuelto» cada uno.
+  const actuales = new Set(incidentes.map(claveSeguimiento));
+  for (const r of resolverAbiertos(memoria, {
+    ahora, runs: runsRaw ? runs : null, actuales, status, paginas, billing, commits,
+    latidoOk: Boolean(runsRaw && workflows && status), permisoRoto: memoria.permisoRoto,
+  })) {
+    const v = { etiqueta: `RESUELTO ${r.clave}`, codigo: "RESUELTO", accion: "AVISAR", motivo: r.texto, regla: "RESUELTO: aviso al cerrarse un incidente avisado o actuado" };
+    veredictos.push(v);
+    acciones.push({ tipo: "AVISAR", codigo: "RESUELTO", resuelto: true, motivo: r.texto, accion: null, claves: [], avisoKey: r.avisoKey, critico: r.critico, veredicto: v });
+  }
+
   const notas = await ejecutar(acciones, memoria, {
     seco, ahora, secretos, gh: G,
     avisar: (a) => (seco ? null : (io.avisar ? io.avisar(a) : avisar(a, cfg, { secretos, ahora }))),
   });
+  registrarAbiertos(memoria, acciones, incidentes, iso);
 
   if (hacerResumen && conTelegram) {
     const hoy = limaParts(ahora).fecha;

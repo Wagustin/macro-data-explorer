@@ -63,6 +63,10 @@ class Mundo {
     this.caidas = new Set();
     this.casaArriba = true;
     this.gh401 = false;
+    this.fallaEscritura = null; // stderr que devuelve gh al disparar un workflow (p. ej. un 403 de permisos)
+    this.intentos = []; // escrituras pedidas a gh (con o sin éxito)
+    this.nemotronRespuesta = null; // JSON que devuelve el modelo simulado
+    this.nemotronLlamadas = 0;
     this.acc = [];
     this.motivos = []; // texto de cada AVISAR enviado
     this.resumenes = [];
@@ -112,6 +116,10 @@ class Mundo {
         return { canal: "correo", detalle: "", telegramFallo: false };
       },
       telegram: async (texto) => { this.resumenes.push(texto); },
+      nvidia: async () => {
+        this.nemotronLlamadas += 1;
+        return res(200, { choices: [{ message: { content: this.nemotronRespuesta ?? "{}" } }] });
+      },
     };
   }
 
@@ -120,7 +128,12 @@ class Mundo {
     const [a, b] = args;
     if (a === "run" && b === "list") return JSON.stringify(this.runs);
     if (a === "workflow" && b === "list") return JSON.stringify(WORKFLOWS);
-    if (a === "workflow" && b === "run") { this.acc.push(accionDe(args)); return ""; }
+    if (a === "workflow" && b === "run") {
+      this.intentos.push(accionDe(args));
+      if (this.fallaEscritura) throw Object.assign(new Error(`Command failed: gh ${args.join(" ")}\n${this.fallaEscritura}`), { stderr: this.fallaEscritura });
+      this.acc.push(accionDe(args));
+      return "";
+    }
     if (a === "run" && b === "view") {
       const id = Number(args[2]);
       const r = this.runs.find((x) => x.databaseId === id);
@@ -191,7 +204,9 @@ test("a) un 4.º fallo de red el mismo día, tras recuperarse, no despliega otra
   m.at("2026-11-25T16:00:00Z").falla(SMOKE_RED);
   assert.deepEqual(await m.pasada(), ["DESPLEGAR"]);
   m.at("2026-11-25T16:30:00Z").ok();
-  assert.deepEqual(await m.pasada(), []);
+  // El smoke se ha arreglado con el DESPLEGAR: se cierra con un único «Resuelto» (30 min desde el fallo).
+  assert.deepEqual(await m.pasada(), ["AVISAR:RESUELTO:WATCHDOG_SMOKE:watchdog.yml:2026-11-25T16:00:00.000Z"]);
+  assert.match(m.motivos.at(-1), /^Resuelto: WATCHDOG_SMOKE en watchdog\.yml — desplegado, duró 30 min$/);
   m.at("2026-11-25T17:00:00Z").falla(SMOKE_RED);
   assert.deepEqual(await m.pasada(), []);
   m.at("2026-11-25T17:30:00Z").falla(SMOKE_RED);
@@ -217,6 +232,71 @@ test("b) smoke sin red: dos seguidos despliegan; dos fallos más tras desplegar 
 });
 
 // ---------- c) páginas caídas ----------
+
+// ---------- m) SMV 404: fuente cambiada, avisar y no relanzar ----------
+
+test("m) el incidente real: «SMV HTTP 404» en smv.yml es FUENTE_CAMBIO: avisa, no relanza y Nemotron no decide", async (t) => {
+  const m = new Mundo("2026-11-26T15:00:00Z", { apiKey: "nvapi-simulada", modelo: "nemotron-simulado" });
+  t.after(() => m.limpiar());
+  m.nemotronRespuesta = JSON.stringify({ codigo: "SMV_BLOQUEO", confianza: 0.95, motivo: "la SMV bloquea" });
+  m.run("smv.yml", { paso: "Descargar hechos de importancia", log: "Error: SMV HTTP 404 en https://www.smv.gob.pe/api/hechos (scripts/fetch-smv.js)" });
+  assert.deepEqual(await m.pasada(), ["AVISAR:FUENTE_CAMBIO:smv.yml"]);
+  assert.deepEqual(m.intentos, []);
+  assert.equal(m.nemotronLlamadas, 0); // el código lo da la regla determinista, no el modelo
+  assert.match(m.motivos.at(-1), /; fuente SMV responde HTTP 404 en https:\/\/www\.smv\.gob\.pe\/api\/hechos \(script scripts\/fetch-smv\.js\): no se relanza/);
+  // El mismo fallo en la pasada siguiente no repite el aviso (6 h) ni relanza.
+  m.at("2026-11-26T15:30:00Z").run("smv.yml", { paso: "Descargar hechos de importancia", log: "Error: SMV HTTP 404 en https://www.smv.gob.pe/api/hechos" });
+  assert.deepEqual(await m.pasada(), []);
+  assert.deepEqual(m.intentos, []);
+});
+
+// ---------- n) permisos del token ----------
+
+test("n) RELANZAR con 403 «Resource not accessible» avisa VIGIA_ROTO a las 02:00 de Lima y no reintenta en bucle ni repite antes de 6 h", async (t) => {
+  const m = new Mundo("2026-11-26T07:00:00Z"); // 02:00 Lima
+  t.after(() => m.limpiar());
+  m.status.news.ageHours = 7;
+  m.fallaEscritura = "could not create workflow dispatch event: HTTP 403: Resource not accessible by personal access token";
+  assert.deepEqual(await m.pasada(), ["AVISAR:VIGIA_ROTO"]);
+  assert.deepEqual(m.intentos, ["RELANZAR:news.yml"]);
+  assert.match(m.motivos.at(-1), /^el token de GitHub no tiene permiso para relanzar news\.yml: en GitHub, Settings → Developer settings → Fine-grained tokens, edita el token del vigía y pon Actions: Read and write$/);
+  // Pasada siguiente: no vuelve a pedir la escritura ni repite el aviso.
+  m.at("2026-11-26T07:30:00Z");
+  assert.deepEqual(await m.pasada(), []);
+  m.at("2026-11-26T12:00:00Z");
+  assert.deepEqual(await m.pasada(), []);
+  assert.deepEqual(m.intentos, ["RELANZAR:news.yml"]);
+  // Pasadas 6 h: se reintenta una vez y, si sigue igual, el aviso sale otra vez.
+  m.at("2026-11-26T13:00:00Z");
+  assert.deepEqual(await m.pasada(), ["AVISAR:VIGIA_ROTO"]);
+  assert.equal(m.intentos.length, 2);
+  assert.equal(m.memoria().permisoRoto.accion, "relanzar news.yml");
+});
+
+test("p) 403 por límite de peticiones no es VIGIA_ROTO", async (t) => {
+  const m = new Mundo("2026-11-26T07:00:00Z");
+  t.after(() => m.limpiar());
+  m.status.news.ageHours = 7;
+  m.fallaEscritura = "could not create workflow dispatch event: HTTP 403: You have exceeded a secondary rate limit";
+  assert.deepEqual(await m.pasada(), []);
+  assert.deepEqual(m.intentos, ["RELANZAR:news.yml"]);
+  assert.equal(m.memoria().permisoRoto, null);
+});
+
+// ---------- o) Resuelto ----------
+
+test("o) RELANZAR de news.yml por DATO_VIEJO y, en la pasada siguiente, run en éxito → un único «Resuelto» con la duración", async (t) => {
+  const m = new Mundo("2026-11-25T15:00:00Z");
+  t.after(() => m.limpiar());
+  m.status.news.ageHours = 7;
+  assert.deepEqual(await m.pasada(), ["RELANZAR:news.yml"]);
+  m.at("2026-11-25T15:30:00Z").run("news.yml", { conclusion: "success", hace: 5 });
+  m.status.news.ageHours = 0.2;
+  assert.deepEqual(await m.pasada(), ["AVISAR:RESUELTO:DATO_VIEJO:news.yml:2026-11-25T15:00:00.000Z"]);
+  assert.equal(m.motivos.at(-1), "Resuelto: DATO_VIEJO en news.yml — relanzado por el vigía, duró 30 min");
+  m.at("2026-11-25T16:00:00Z");
+  assert.deepEqual(await m.pasada(), []);
+});
 
 test("c) página caída: primera pasada espera, segunda despliega, sigue caída tras desplegar vuelve atrás y avisa", async (t) => {
   const m = new Mundo("2026-11-25T15:00:00Z");

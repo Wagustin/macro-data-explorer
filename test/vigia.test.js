@@ -12,6 +12,8 @@ import {
   enHorasSilencio, lineaVeredicto, incidenteHechos, incidenteCasa, estadoTailscale, comprobarCasa,
   tcpAbierto, esErrorAuth, detectarVigiaRoto, esErrorCodigo, argumentosReparar, diagnosticoSmoke,
   adquirirLock, liberarLock, cargarMemoria, guardarMemoria,
+  aceptarCodigoNemotron, fuenteCambio, motivoFuente, formatearDuracion, resolverAbiertos, registrarAbiertos,
+  claveSeguimiento, permisoBloquea,
 } from "../scripts/vigia.mjs";
 
 const H = 36e5;
@@ -274,7 +276,7 @@ test("VOLVER_ATRAS usa rollback.yml con el código como motivo y no toca wrangle
 });
 
 test("VOLVER_ATRAS fallido genera un AVISAR con el error", async () => {
-  const gh = async () => { throw Object.assign(new Error("HTTP 403"), { stderr: "HTTP 403: Resource not accessible" }); };
+  const gh = async () => { throw Object.assign(new Error("HTTP 500"), { stderr: "HTTP 500: Internal Server Error" }); };
   const memoria = { contadores: { relanzar: {}, desplegar: 0, volverAtras: 0 }, incidentes: {}, avisos: {}, despliegues: [], historial: [] };
   const avisados = [];
   const notas = await ejecutar([{ tipo: "VOLVER_ATRAS", codigo: "PAGINA_CAIDA", claves: [], incidente: {} }], memoria, {
@@ -283,6 +285,96 @@ test("VOLVER_ATRAS fallido genera un AVISAR con el error", async () => {
   assert.ok(notas.some((n) => n.startsWith("VOLVER_ATRAS fallido")));
   assert.ok(avisados.some((m) => m.includes("el rollback ha fallado")));
   assert.equal(memoria.contadores.volverAtras, 0);
+});
+
+test("VOLVER_ATRAS con 403 de permisos no avisa del rollback fallido: abre VIGIA_ROTO crítico y deja el token marcado", async () => {
+  const gh = async () => { throw Object.assign(new Error("HTTP 403"), { stderr: "HTTP 403: Resource not accessible by personal access token" }); };
+  const memoria = { contadores: { relanzar: {}, desplegar: 0, volverAtras: 0 }, incidentes: {}, avisos: {}, despliegues: [], historial: [] };
+  const avisados = [];
+  const acciones = [{ tipo: "VOLVER_ATRAS", codigo: "PAGINA_CAIDA", claves: [], incidente: {} }];
+  await ejecutar(acciones, memoria, {
+    seco: false, ahora, gh, avisar: async (a) => { avisados.push(a); return { canal: "telegram" }; },
+  });
+  assert.deepEqual(avisados.map((a) => a.codigo), ["VIGIA_ROTO"]);
+  assert.equal(avisados[0].critico, true);
+  assert.match(avisados[0].motivo, /no tiene permiso para disparar rollback\.yml: en GitHub, Settings → Developer settings → Fine-grained tokens, edita el token del vigía y pon Actions: Read and write/);
+  assert.equal(memoria.permisoRoto.accion, "disparar rollback.yml");
+  assert.equal(memoria.contadores.volverAtras, 0);
+});
+
+test("esErrorAuth: 401 y 403 con frase de permiso cuentan; un 403 de límite nunca", () => {
+  assert.equal(esErrorAuth("HTTP 403: Resource not accessible by personal access token"), true);
+  assert.equal(esErrorAuth("HTTP 403: Must have admin rights to Repository"), true);
+  assert.equal(esErrorAuth("HTTP 403: Permission denied"), true);
+  assert.equal(esErrorAuth("HTTP 401: Bad credentials"), true);
+  assert.equal(esErrorAuth("HTTP 403: You have exceeded a secondary rate limit"), false);
+  assert.equal(esErrorAuth("HTTP 403: Forbidden"), false);
+  assert.equal(esErrorAuth("HTTP 404: Not Found"), false);
+});
+
+test("Nemotron nunca decide SMV_BLOQUEO sin el patrón determinista en el log", async () => {
+  const conRespuesta = (codigo) => async () => ({ ok: true, status: 200, json: async () => ({ choices: [{ message: { content: JSON.stringify({ codigo, confianza: 0.95, motivo: "x" }) } }] }) });
+  const sinPatron = await clasificarConNemotron({ workflow: "smv.yml", paso: "x", logTail: "Error: algo raro" }, { apiKey: "k", modelo: "m", fetchImpl: conRespuesta("SMV_BLOQUEO") });
+  assert.equal(sinPatron.codigo, "DESCONOCIDO");
+  const otroWorkflow = await clasificarConNemotron({ workflow: "news.yml", paso: "x", logTail: "fetch failed" }, { apiKey: "k", modelo: "m", fetchImpl: conRespuesta("SMV_BLOQUEO") });
+  assert.equal(otroWorkflow.codigo, "DESCONOCIDO");
+  const conPatron = await clasificarConNemotron({ workflow: "smv.yml", paso: "x", logTail: "Error: HTTP 418 de la SMV" }, { apiKey: "k", modelo: "m", fetchImpl: conRespuesta("SMV_BLOQUEO") });
+  assert.equal(conPatron.codigo, "SMV_BLOQUEO");
+  assert.equal(aceptarCodigoNemotron("SMV_BLOQUEO", { workflow: "smv-precios.yml", logTail: "respuesta inesperada de la SMV" }), "SMV_BLOQUEO");
+});
+
+test("FUENTE_CAMBIO: 404/410 de una fuente externa con su script y URL; las URL propias no cuentan", () => {
+  const log = "Error: BCRP HTTP 410 en https://estadisticas.bcrp.gob.pe/serie/1 (scripts/fetch_official.py)";
+  assert.deepEqual(fuenteCambio(log), { fuente: "BCRP", codigo: 410, url: "https://estadisticas.bcrp.gob.pe/serie/1", script: "scripts/fetch_official.py" });
+  assert.equal(clasificarFallo({ workflowPath: "official-data.yml", stepName: "Datos", logTail: log }), "FUENTE_CAMBIO");
+  assert.equal(fuenteCambio("HTTP 404 en https://perdata.site/api/status"), null);
+  assert.equal(fuenteCambio("HTTP 404 en https://api.github.com/repos/x"), null);
+  assert.equal(fuenteCambio("Error: HTTP 500 de la SMV"), null);
+  assert.equal(clasificarFallo({ workflowPath: "smv.yml", stepName: "Leer", logTail: "Error: HTTP 500 de la SMV" }), "DESCONOCIDO");
+  assert.equal(motivoFuente("SMV HTTP 404"), "fuente SMV responde HTTP 404: no se relanza, la fuente ha cambiado su URL y relanzar no lo arregla");
+});
+
+test("permisoBloquea: 6 h desde el último intento", () => {
+  const intento = { ultimoIntento: "2026-11-26T07:00:00.000Z" };
+  assert.equal(permisoBloquea(null, ahora), false);
+  assert.equal(permisoBloquea(intento, new Date("2026-11-26T12:59:00Z")), true);
+  assert.equal(permisoBloquea(intento, new Date("2026-11-26T13:00:00Z")), false);
+});
+
+test("formatearDuracion: minutos, horas y días", () => {
+  assert.equal(formatearDuracion(30 * MIN), "30 min");
+  assert.equal(formatearDuracion(2 * H + 15 * MIN), "2 h 15 min");
+  assert.equal(formatearDuracion(3 * H), "3 h");
+  assert.equal(formatearDuracion(50 * H + 5 * H), "2 d 7 h");
+});
+
+test("Resuelto: un incidente que se cierra con el run completo del workflow, con la duración desde el fallo", () => {
+  const m = { abiertos: {} };
+  const fallo = { codigo: "RED_PASAJERA", workflow: "news.yml", runId: 7, desde: "2026-11-20T14:00:00Z", clave: "RED_PASAJERA:news.yml:7", motivo: "x" };
+  registrarAbiertos(m, [{ tipo: "AVISAR", codigo: "RED_PASAJERA", claves: [fallo.clave], veredicto: { resultado: "enviado por telegram" } }], [fallo], "2026-11-20T15:00:00Z");
+  const clave = claveSeguimiento(fallo);
+  assert.equal(clave, "RED_PASAJERA:news.yml");
+  const runs = [{ wf: "news.yml", status: "completed", conclusion: "success", createdAt: "2026-11-20T15:20:00Z" }];
+  assert.deepEqual(resolverAbiertos(m, { ahora: new Date("2026-11-20T15:30:00Z"), runs, actuales: new Set() }).map((r) => r.texto),
+    ["Resuelto: RED_PASAJERA en news.yml — se resolvió solo, duró 1 h 20 min"]);
+  assert.deepEqual(m.abiertos, {});
+});
+
+test("Resuelto de noche: va al resumen si el incidente no era crítico y sale al momento si era VIGIA_ROTO", async () => {
+  const noche = new Date("2026-11-26T07:00:00Z"); // 02:00 Lima
+  const mem = { contadores: cont(), incidentes: {}, avisos: {}, historial: [], silencio: [] };
+  const avisados = [];
+  const accion = (codigo, critico) => ({
+    tipo: "AVISAR", codigo: "RESUELTO", resuelto: true, motivo: `Resuelto: ${codigo} en x — se resolvió solo, duró 1 h`, claves: [],
+    avisoKey: `RESUELTO:${codigo}`, critico, veredicto: { etiqueta: codigo, codigo: "RESUELTO", accion: "AVISAR", motivo: "", regla: "" },
+  });
+  await ejecutar([accion("DESCONOCIDO", false), accion("VIGIA_ROTO", true)], mem, {
+    seco: false, ahora: noche, gh: async () => "", avisar: async (a) => { avisados.push(a.motivo); return { canal: "telegram" }; },
+  });
+  assert.equal(avisados.length, 1);
+  assert.match(avisados[0], /VIGIA_ROTO/);
+  assert.equal(mem.silencio.length, 1);
+  assert.equal(mem.silencio[0].codigo, "RESUELTO");
 });
 
 test("parsearEnv: comentarios, comillas, líneas vacías y claves mal escritas", () => {
@@ -674,11 +766,18 @@ test("VIGIA_ROTO: un 401 de gh o de NVIDIA se avisa, una vez al día", async () 
   const fetch401 = async () => ({ ok: false, status: 401 });
   assert.equal(await clasificarConNemotron({ workflow: "x", paso: "", logTail: "" }, { apiKey: "k", modelo: "m", fetchImpl: fetch401, senales: registro }), null);
   assert.ok(registro.has("nvidia-401"));
-  const incs = detectarVigiaRoto({ senales: new Set(["gh-401"]) });
+  const incs = detectarVigiaRoto({ senales: new Set(["gh-permiso"]) });
   assert.equal(incs.length, 1);
   assert.match(incs[0].motivo, /GH_TOKEN en ~\/perdata-vigia\/env/);
   assert.deepEqual(decidir(incs, {}, ahora).map((a) => a.tipo), ["AVISAR"]);
-  assert.deepEqual(decidir(incs, { dia: "2026-11-20", rotoDia: "2026-11-20" }, ahora), []);
+  // Como mucho un aviso cada 6 h: decidir lo propone siempre y ejecutar lo suprime dentro de la ventana.
+  const enviados = [];
+  const memoria = { contadores: cont(), incidentes: {}, avisos: { VIGIA_ROTO: new Date(ahora.getTime() - 5 * H).toISOString() }, historial: [], silencio: [] };
+  await ejecutar(decidir(incs, memoria, ahora), memoria, { seco: false, ahora, gh: async () => "", avisar: async (a) => { enviados.push(a.codigo); return { canal: "telegram" }; } });
+  assert.deepEqual(enviados, []);
+  const despues = new Date(ahora.getTime() + 2 * H);
+  await ejecutar(decidir(incs, memoria, despues), memoria, { seco: false, ahora: despues, gh: async () => "", avisar: async (a) => { enviados.push(a.codigo); return { canal: "telegram" }; } });
+  assert.deepEqual(enviados, ["VIGIA_ROTO"]);
   assert.deepEqual(detectarVigiaRoto({ senales: new Set() }), []);
 });
 

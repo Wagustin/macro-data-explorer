@@ -57,7 +57,7 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
 
 ### SMV_BLOQUEO
 
-- **Detección**: fallo de `smv.yml` o `smv-precios.yml` con «HTTP 418», «HTTP 403», «fetch failed» o «respuesta inesperada de la SMV» en el log.
+- **Detección**: fallo de `smv.yml` o `smv-precios.yml` con «HTTP 418», «HTTP 403», «fetch failed» o «respuesta inesperada de la SMV» en el log. Solo ese patrón da SMV_BLOQUEO: Nemotron nunca lo asigna por sí solo (si lo propone sin el patrón, el fallo es DESCONOCIDO). Un «HTTP 404» o «HTTP 410» de la SMV es FUENTE_CAMBIO (abajo), no SMV_BLOQUEO.
 - **Síntomas**: el 20-nov-2026, 08:51 UTC, «Cotizaciones de Lima (SMV)» (run 44704396184) terminó con `SMV: 0/221 valores consultados, 0 filas guardadas · fallos: INTEGRC1 (SMV HTTP 418), AIPC1 (SMV HTTP 418), ...`. Ese mismo día fallaron varias ejecuciones de «Hechos de importancia (SMV)» (08:31, 08:43 y 14:25 UTC).
 - **Comprobar a mano**:
   ```bash
@@ -71,6 +71,18 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
 - **Lectura directa de hechos**: en cada pasada el vigía lee `data/smv-hechos.json` (campo raíz `actualizado`) y avisa si tiene más de 48 h, aunque el watchdog no corra. Si el watchdog ya avisa de hechos por encima de 48 h, no se duplica.
 - **Regla de 72 h de cotizaciones**: el aviso por `/api/status` (`smv.ageHours` > 72) solo se evalúa cuando hay un SMV_BLOQUEO (fallo de `smv-precios.yml` o FALLA del watchdog). No hay un aviso por edad de cotizaciones sin fallo; si la edad se disparara sin fallo, lo cubre DATO_VIEJO (límite del bloque `smv`).
 - El plan B (descargar desde el servidor) ya es automático para cotizaciones (`scripts/smv-plan-b.sh`) y hechos de importancia (`scripts/smv-plan-b-hechos.sh`): ver sección 6. El vigía no lo ejecuta.
+
+### FUENTE_CAMBIO
+
+- **Detección**: fallo de un workflow de datos (`timesfm`, `news`, `smv`, `smv-precios`, `official-data`, `cierre-ayer`, `cierre-tarde`, `boletin`, `alertas`, `d1-backfill`) cuyo log trae «HTTP 404» o «HTTP 410» en una línea que nombra una fuente externa (SMV, BCRP, SUNAT, EIA) o una URL que no es `perdata.site` ni `api.github.com`.
+- **Ejemplo**: `Error: SMV HTTP 404 en https://www.smv.gob.pe/... (scripts/fetch-smv.js)`. El aviso dice qué fuente, qué URL y qué script aparecen en el log.
+- **Qué significa**: la fuente ha cambiado su URL o ha dejado de existir. Relanzar no lo arregla.
+- **Comprobar a mano**:
+  ```bash
+  gh run view <run-id> -R Wagustin/macro-data-explorer --log-failed | grep -E 'HTTP (404|410)'
+  ```
+  Abrir la URL de la fuente en el navegador y revisar el script que la llama.
+- **Directiva**: solo AVISAR, sin RELANZAR. La corrección de la URL la hace Claude o Agustín.
 
 ### CHOQUE_PUSH
 
@@ -201,18 +213,20 @@ Cada código tiene su detección, ejemplos reales, comprobación a mano y direct
 
 ### VIGIA_ROTO
 
-- **Detección**: `gh` responde 401/403 o «Bad credentials» (token de GitHub caducado o sin permisos; un límite de peticiones no cuenta); la API de NVIDIA responde 401; o Telegram falla dos envíos seguidos.
+- **Detección**: cualquier acción de `gh` responde 401, «Bad credentials», o 403 con «Resource not accessible», «must have admin rights» o «permission» (token de GitHub caducado o sin permisos; un 403 por límite de peticiones —«rate limit», «secondary rate»— no cuenta); la API de NVIDIA responde 401; o Telegram falla dos envíos seguidos. Si una escritura (relanzar, desplegar, reparar, rollback) es rechazada por permisos, el vigía no la reintenta en 6 h.
 - **Síntomas**: el vigía deja de ver los runs (todas las fuentes de GitHub fallan), no clasifica los fallos DESCONOCIDOS, o no llegan avisos por Telegram.
 - **Comprobar a mano**:
   ```bash
   cd ~/perdata-vigia && set -a && . ./env && set +a && gh api user --jq .login
   cd ~/perdata-vigia && node vigia.mjs --seco ; tail -n 5 ~/.local/state/perdata-vigia.log
   ```
-- **Directiva**: renovar lo que indique el aviso en `~/perdata-vigia/env` (`GH_TOKEN`: token fine-grained solo de `Wagustin/macro-data-explorer`; `VIGIA_NVIDIA_API_KEY`; `TELEGRAM_BOT_TOKEN` y `TELEGRAM_CHAT_ID`). Como máximo un aviso al día. El vigía no cambia credenciales.
+- **Permisos de GitHub**: en GitHub, Settings → Developer settings → Fine-grained tokens, editar el token del vigía y poner **Actions: Read and write** (el token es solo de `Wagustin/macro-data-explorer`). Si el token ha caducado, renovar `GH_TOKEN` en `~/perdata-vigia/env`.
+- **Directiva**: VIGIA_ROTO es crítico: sale también de noche, como mucho un aviso cada 6 h. Renovar lo que indique el aviso en `~/perdata-vigia/env` (`GH_TOKEN`, `VIGIA_NVIDIA_API_KEY`, `TELEGRAM_BOT_TOKEN` y `TELEGRAM_CHAT_ID`). El vigía no cambia credenciales.
 
 ### Horas de silencio y resumen diario
 
-- **Horas de silencio (23:00 a 07:00 de Lima)**: de noche solo salen por Telegram los avisos críticos: PAGOS_ABIERTOS, PAGINA_CAIDA, SIN_LATIDO y una VOLVER_ATRAS ya ejecutada. El resto se acumula (una entrada por código) y va en el resumen de las 08:00. Las acciones (relanzar, esperar) se hacen de noche igual.
+- **Horas de silencio (23:00 a 07:00 de Lima)**: de noche solo salen por Telegram los avisos críticos: PAGOS_ABIERTOS, PAGINA_CAIDA, SIN_LATIDO, VIGIA_ROTO y una VOLVER_ATRAS ya ejecutada. El resto se acumula (una entrada por código) y va en el resumen de las 08:00. Las acciones (relanzar, esperar) se hacen de noche igual.
+- **Resuelto**: cuando un incidente por el que el vigía avisó o actuó desaparece, sale un único mensaje «Resuelto: <código> en <workflow o recurso> — <cómo se resolvió>, duró <duración>». El fin se detecta así: un fallo de workflow, con el siguiente run completo del mismo workflow en éxito; un dato viejo, con el dato de nuevo en plazo; una página, con 200; pagos, con `paymentsEnabled` en false. «Cómo» es «relanzado por el vigía», «desplegado», «reparador» o «se resolvió solo». De noche va al resumen de las 08:00, salvo que el incidente fuera crítico. El servidor de casa no tiene «Resuelto»: su aviso de recuperación ya cierra ese caso.
 - **Resumen diario (08:00 de Lima, una vez al día)**: sale por Telegram también en modo seco, marcado «[modo prueba]». Contiene: pasadas del día, incidentes del día por código, acciones que el vigía haría (en seco, de la memoria simulada) o ha hecho (en real), avisos acumulados en silencio, estado de `/api/status` y pagos en pausa. Así se revisa cada mañana si el vigía decide bien.
 - **Lectura del log en seco**: cada pasada escribe una línea y, debajo, una línea «  · <código>@<origen>: <acción> — <motivo> (regla: ...)» por incidente, con el resultado al final (`simulado (seco)`, `en silencio`, `suprimido`, `enviado por telegram`...).
 
