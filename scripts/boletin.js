@@ -42,6 +42,12 @@ import { formatCierreFecha } from "../api/diario.js";
 import { lecturaDolar, hechosDolar } from "./dolar-lectura.js";
 import { lecturasEmpresas } from "./empresa-lectura.js";
 import { publicarImagenes } from "./lib/imagenes-correo.js";
+import {
+  cargarSuscriptores,
+  ordenarDestinatarios,
+  leerYaEnviados,
+  enviarLotes,
+} from "./lib/boletin-envio.js";
 
 const MONTHS_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
@@ -1320,125 +1326,134 @@ async function seguimientoDe(email) {
 
 if (!DRY && !PREVIEW) {
   if (!process.env.RESEND_API_KEY) throw new Error("Falta RESEND_API_KEY");
+  const force = process.env.FORCE === "true";
   const LAST = new URL("../data/boletin-last.json", import.meta.url);
-  if (process.env.FORCE !== "true" && fs.existsSync(LAST)) {
+  if (!force && fs.existsSync(LAST)) {
     const last = JSON.parse(fs.readFileSync(LAST, "utf8"));
     if (last.date === today) {
       console.log(`Ya se envió hoy (${last.sentAt}); no se repite`);
       process.exit(0);
     }
   }
-  const list = [];
   const base = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
-  if (base && process.env.SUPABASE_SERVICE_KEY) {
-    const r = await fetch(`${base}/rest/v1/boletin_suscriptores?estado=eq.activo&select=email,token,empresas`, {
-      headers: { apikey: process.env.SUPABASE_SERVICE_KEY, Authorization: `Bearer ${process.env.SUPABASE_SERVICE_KEY}` },
-    });
-    if (r.ok) list.push(...(await r.json()));
-    else console.error(`Suscriptores no disponibles (HTTP ${r.status}); se envía solo a BOLETIN_TO`);
-  }
-  for (const email of (process.env.BOLETIN_TO || "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean)) {
-    if (!list.some((x) => x.email === email)) list.push({ email, token: null, empresas: [] });
-  }
-  if (!list.length) throw new Error("Sin destinatarios");
+  const serviceKey = process.env.SUPABASE_SERVICE_KEY || "";
+  const suscriptores = await cargarSuscriptores({ supabaseUrl: base, supabaseKey: serviceKey, fecha: today });
+  const ownersList = (process.env.BOLETIN_TO || "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean);
+  const slots = ordenarDestinatarios(suscriptores, ownersList);
+  const activos = slots.filter((x) => x.activo);
+  if (!activos.length) throw new Error("Sin destinatarios");
 
-  const paid = new Set();
-  if (base && process.env.SUPABASE_SERVICE_KEY && list.length) {
-    const emails = list.map((x) => `"${x.email}"`).join(",");
-    const r = await fetch(`${base}/rest/v1/users?select=email,plan&plan=in.(boletin,pro)&email=in.(${encodeURIComponent(emails)})`, {
-      headers: { apikey: process.env.SUPABASE_SERVICE_KEY, Authorization: `Bearer ${process.env.SUPABASE_SERVICE_KEY}` },
-    });
-    if (r.ok) for (const u of await r.json()) paid.add(String(u.email).toLowerCase());
-  }
-  const owners = new Set((process.env.BOLETIN_TO || "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean));
-  for (const x of list) x.plan = paid.has(x.email) || owners.has(x.email) ? "boletin" : "gratis";
+  const alreadySent = force ? new Set() : await leerYaEnviados({ supabaseUrl: base, supabaseKey: serviceKey, fecha: today });
+  const list = force ? activos : activos.filter((x) => !alreadySent.has(x.email));
 
-  for (const x of list) {
-    if (x.plan !== "boletin") continue;
-    const seguidos = await seguimientoDe(x.email);
-    if (seguidos.length) x.empresas = seguidos;
-  }
-
-  const wanted = [...new Set(list.filter((x) => x.plan === "boletin").flatMap((x) => x.empresas || []))].slice(0, 15);
-  const smvLive = (await getJson(`${RAW}/smv-hechos.json`).catch(() => null))?.hechos;
-  const smvAll = smvLive || readLocal("data/smv-hechos.json", { hechos: {} }).hechos || {};
-  const cards = {};
-  for (const nemo of wanted) cards[nemo] = await companyCard(nemo, smvAll, clasif, newsById);
-  console.log(`Empresas seguidas: ${wanted.length}`);
-
-  // Company readings for the paid send (same builders as the preview, over
-  // the cards the subscribers actually see). Shared budget, never a crash.
-  let lecturas = {};
-  const paidCards = wanted.map((n) => cards[n]).filter(Boolean);
-  if (paidCards.length) {
-    const macro = macroEmpresa(f);
-    const listaDatos = paidCards.map((c) => ({
-      nemo: c.nemo, nombre: c.name, sector: c.sector,
-      precio: c.price, moneda: c.currency, fecha_precio: c.priceDate ? String(c.priceDate).slice(0, 10) : null,
-      variacion_dia: c.change ?? null,
-      rango: c.forecast ? { p10: c.forecast.p10, p50: c.forecast.p50, p90: c.forecast.p90, fecha: c.forecast.date } : null,
-      hechos_smv: (c.smv || []).map((h) => ({ fecha: String(h.fecha).slice(0, 10), titulo: h.titulo })),
-      noticias: (c.news || []).map((n) => ({ titular: n.titulo, fuente: n.fuente, fecha: String(n.fecha_iso || "").slice(0, 10), sentimiento: n.sentimiento })),
-      macro,
-    }));
-    try {
-      const left = lecturaDeadline - Date.now();
-      if (left > 5000) {
-        const map = await Promise.race([
-          lecturasEmpresas(listaDatos),
-          new Promise((_, rej) => { const t = setTimeout(() => rej(new Error("tiempo agotado")), Math.max(5000, left)); t.unref?.(); }),
-        ]);
-        for (const [nemo, lec] of map) lecturas[nemo] = lec;
-        const todosDet = listaDatos.every((d) => map.get(d.nemo)?.determinista);
-        console.log(`Lecturas de empresa: ${todosDet ? "determinista (sin LLM)" : "LLM"}`);
-      } else {
-        console.log("Lecturas de empresa omitidas: sin tiempo (se envía sin la sección)");
-      }
-    } catch (e) {
-      console.log(`Lecturas de empresa no disponibles: ${e.message} (se envía sin la sección)`);
-    }
-  }
-
-  // Imágenes del envío: manda la base ya configurada; si no hay, se publican
-  // los PNG del día y el correo los referencia. Si algo falla, el correo sale
-  // sin imágenes (el envío nunca se rompe).
-  let imgEnvSend = null;
-  if (process.env.BOLETIN_IMG_BASE) imgEnvSend = { base: process.env.BOLETIN_IMG_BASE };
-  else if (process.env.BOLETIN_IMG_CMD) imgEnvSend = await publicarGraficos(today, paidCards);
-  const htmlCompletoSend = compactar(render(f, ai, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null, imgEnvSend));
-  const htmlGratisSend = compactar(renderGratis(f, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null, imgEnvSend));
-  const nImagenes = imgEnvSend?.archivos?.size ?? (2 + paidCards.filter((c) => c.grafico).length);
-  console.log(imgEnvSend ? `Imágenes del correo: ${nImagenes} en ${imgEnvSend.base}` : "Imágenes del correo: ninguna");
-
-  const emails = list.map(({ email, token, empresas, plan }) => {
-    const baja = token ? `${SITE}/api/boletin?accion=baja&t=${token}` : `${SITE}/boletin`;
-    const prefs = token ? `${SITE}/boletin?t=${token}#empresas` : `${SITE}/boletin`;
-    const mine = (empresas || []).map((n) => cards[n]).filter(Boolean);
-    // Free version: no «Tus empresas» section, only the note about the plan
-    const personal = plan === "gratis" ? ((empresas || []).length ? upsell : "") : (mine.length ? renderPersonal(mine, lecturas, imgEnvSend) : `<tr><td style="padding:24px 0 0;font-family:${UI_F};font-size:14px;line-height:1.5;color:#5E584E">Aún no elegiste empresas. Elige hasta 15 en <a href="${SITE}/cuenta" style="color:#1B1916">/cuenta</a> y cada mañana llegará tu sección «Tus empresas».</td></tr>`);
-    const baseHtml = plan === "gratis" ? htmlGratisSend : htmlCompletoSend;
-    const msg = { 
-      from: FROM, 
-      to: [email], 
-      subject: `PerData · ${dateLabel}`, 
-      html: plan !== "gratis" && mine.length ? armarPagado(baseHtml, mine, lecturas, baja, prefs, imgEnvSend) : compactar(fill(baseHtml, personal, baja, prefs)),
-    };
-    
-    if (token) msg.headers = { "List-Unsubscribe": `<${baja}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" };
-    return msg;
-  });
   let sent = 0;
-  for (let i = 0; i < emails.length; i += 100) {
-    const r = await fetch("https://api.resend.com/emails/batch", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify(emails.slice(i, i + 100)),
+  let omitidos = activos.length - list.length;
+  let totalActivos = activos.length;
+
+  if (list.length) {
+    const paid = new Set();
+    if (base && serviceKey) {
+      const emails = list.map((x) => `"${x.email}"`).join(",");
+      const r = await fetch(`${base}/rest/v1/users?select=email,plan&plan=in.(boletin,pro)&email=in.(${encodeURIComponent(emails)})`, {
+        headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` },
+      });
+      if (r.ok) for (const u of await r.json()) paid.add(String(u.email).toLowerCase());
+    }
+    const owners = new Set(ownersList);
+    for (const x of list) x.plan = paid.has(x.email) || owners.has(x.email) ? "boletin" : "gratis";
+
+    for (const x of list) {
+      if (x.plan !== "boletin") continue;
+      const seguidos = await seguimientoDe(x.email);
+      if (seguidos.length) x.empresas = seguidos;
+    }
+
+    const wanted = [...new Set(list.filter((x) => x.plan === "boletin").flatMap((x) => x.empresas || []))].slice(0, 15);
+    const smvLive = (await getJson(`${RAW}/smv-hechos.json`).catch(() => null))?.hechos;
+    const smvAll = smvLive || readLocal("data/smv-hechos.json", { hechos: {} }).hechos || {};
+    const cards = {};
+    for (const nemo of wanted) cards[nemo] = await companyCard(nemo, smvAll, clasif, newsById);
+    console.log(`Empresas seguidas: ${wanted.length}`);
+
+    // Company readings for the paid send (same builders as the preview, over
+    // the cards the subscribers actually see). Shared budget, never a crash.
+    let lecturas = {};
+    const paidCards = wanted.map((n) => cards[n]).filter(Boolean);
+    if (paidCards.length) {
+      const macro = macroEmpresa(f);
+      const listaDatos = paidCards.map((c) => ({
+        nemo: c.nemo, nombre: c.name, sector: c.sector,
+        precio: c.price, moneda: c.currency, fecha_precio: c.priceDate ? String(c.priceDate).slice(0, 10) : null,
+        variacion_dia: c.change ?? null,
+        rango: c.forecast ? { p10: c.forecast.p10, p50: c.forecast.p50, p90: c.forecast.p90, fecha: c.forecast.date } : null,
+        hechos_smv: (c.smv || []).map((h) => ({ fecha: String(h.fecha).slice(0, 10), titulo: h.titulo })),
+        noticias: (c.news || []).map((n) => ({ titular: n.titulo, fuente: n.fuente, fecha: String(n.fecha_iso || "").slice(0, 10), sentimiento: n.sentimiento })),
+        macro,
+      }));
+      try {
+        const left = lecturaDeadline - Date.now();
+        if (left > 5000) {
+          const map = await Promise.race([
+            lecturasEmpresas(listaDatos),
+            new Promise((_, rej) => { const t = setTimeout(() => rej(new Error("tiempo agotado")), Math.max(5000, left)); t.unref?.(); }),
+          ]);
+          for (const [nemo, lec] of map) lecturas[nemo] = lec;
+          const todosDet = listaDatos.every((d) => map.get(d.nemo)?.determinista);
+          console.log(`Lecturas de empresa: ${todosDet ? "determinista (sin LLM)" : "LLM"}`);
+        } else {
+          console.log("Lecturas de empresa omitidas: sin tiempo (se envía sin la sección)");
+        }
+      } catch (e) {
+        console.log(`Lecturas de empresa no disponibles: ${e.message} (se envía sin la sección)`);
+      }
+    }
+
+    // Imágenes del envío: manda la base ya configurada; si no hay, se publican
+    // los PNG del día y el correo los referencia. Si algo falla, el correo sale
+    // sin imágenes (el envío nunca se rompe).
+    let imgEnvSend = null;
+    if (process.env.BOLETIN_IMG_BASE) imgEnvSend = { base: process.env.BOLETIN_IMG_BASE };
+    else if (process.env.BOLETIN_IMG_CMD) imgEnvSend = await publicarGraficos(today, paidCards);
+    const htmlCompletoSend = compactar(render(f, ai, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null, imgEnvSend));
+    const htmlGratisSend = compactar(renderGratis(f, dateLabel, lecturaDolarOut?.horizontes ? lecturaDolarOut : null, imgEnvSend));
+    const nImagenes = imgEnvSend?.archivos?.size ?? (2 + paidCards.filter((c) => c.grafico).length);
+    console.log(imgEnvSend ? `Imágenes del correo: ${nImagenes} en ${imgEnvSend.base}` : "Imágenes del correo: ninguna");
+
+    const buildMsg = ({ email, token, empresas, plan }) => {
+      const baja = token ? `${SITE}/api/boletin?accion=baja&t=${token}` : `${SITE}/boletin`;
+      const prefs = token ? `${SITE}/boletin?t=${token}#empresas` : `${SITE}/boletin`;
+      const mine = (empresas || []).map((n) => cards[n]).filter(Boolean);
+      // Free version: no «Tus empresas» section, only the note about the plan
+      const personal = plan === "gratis" ? ((empresas || []).length ? upsell : "") : (mine.length ? renderPersonal(mine, lecturas, imgEnvSend) : `<tr><td style="padding:24px 0 0;font-family:${UI_F};font-size:14px;line-height:1.5;color:#5E584E">Aún no elegiste empresas. Elige hasta 15 en <a href="${SITE}/cuenta" style="color:#1B1916">/cuenta</a> y cada mañana llegará tu sección «Tus empresas».</td></tr>`);
+      const baseHtml = plan === "gratis" ? htmlGratisSend : htmlCompletoSend;
+      const msg = {
+        from: FROM,
+        to: [email],
+        subject: `PerData · ${dateLabel}`,
+        html: plan !== "gratis" && mine.length ? armarPagado(baseHtml, mine, lecturas, baja, prefs, imgEnvSend) : compactar(fill(baseHtml, personal, baja, prefs)),
+      };
+      if (token) msg.headers = { "List-Unsubscribe": `<${baja}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" };
+      return msg;
+    };
+
+    const resEnvio = await enviarLotes({
+      slots,
+      fecha: today,
+      alreadySent,
+      buildMsg,
+      resendKey: process.env.RESEND_API_KEY,
+      force,
+      forceId: process.env.GITHUB_RUN_ID || "",
+      supabaseUrl: base,
+      supabaseKey: serviceKey,
     });
-    if (!r.ok) throw new Error(`Resend: HTTP ${r.status} ${await r.text()}`);
-    sent += emails.slice(i, i + 100).length;
+    sent = resEnvio.sent;
+    omitidos = resEnvio.omitidos;
+    totalActivos = resEnvio.totalActivos;
   }
-  console.log(`Enviado a ${sent} destinatario(s)`);
-  if (process.env.FORCE !== "true") fs.writeFileSync(LAST, JSON.stringify({ date: today, sentAt: new Date().toISOString(), recipients: sent }) + "\n");
+
+  console.log(`Enviado a ${sent} destinatario(s)${omitidos ? ` (${omitidos} ya enviado(s) hoy)` : ""}`);
+  if (!force) fs.writeFileSync(LAST, JSON.stringify({ date: today, sentAt: new Date().toISOString(), recipients: totalActivos }) + "\n");
 }
 
 // Self-contained smoke used in tests: no fetch, same renderers as the previews.
