@@ -347,3 +347,37 @@ test("cargarSuscriptores cae al filtro clásico si la consulta con bajas de hoy 
   assert.match(boletinSrc, /enviarLotes/);
   assert.match(boletinSrc, /ordenarDestinatarios/);
 });
+
+test("cargarSuscriptores devuelve [] sin Supabase y lanza error si Supabase está configurado y falla", async () => {
+  const sinCreds = await cargarSuscriptores({
+    supabaseUrl: "",
+    supabaseKey: "",
+    fecha: "2026-11-27",
+    fetchImpl: async () => {
+      throw new Error("no debe llamar fetch");
+    },
+  });
+  assert.deepEqual(sinCreds, []);
+
+  await assert.rejects(
+    cargarSuscriptores({
+      supabaseUrl: "https://sb.invalid",
+      supabaseKey: "k",
+      fecha: "2026-11-27",
+      fetchImpl: async () => new Response("server error", { status: 500 }),
+    }),
+    /Suscriptores no disponibles \(HTTP 500\)/
+  );
+
+  await assert.rejects(
+    cargarSuscriptores({
+      supabaseUrl: "https://sb.invalid",
+      supabaseKey: "k",
+      fecha: "2026-11-27",
+      fetchImpl: async () => {
+        throw new Error("network down");
+      },
+    }),
+    /network down/
+  );
+});

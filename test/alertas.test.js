@@ -94,7 +94,7 @@ async function captureLogs(fn) {
   }
 }
 
-test("worker.js despacha alertas.yml con inputs.dry = 'false' y el workflow conserva default true", async () => {
+test("worker.js despacha alertas.yml sin inputs.dry y el workflow conserva default true", async () => {
   const workflow = fs.readFileSync(path.join(ROOT, ".github/workflows/alertas.yml"), "utf8");
   assert.match(workflow, /dry:\s*\n[\s\S]*default:\s*true/);
 
@@ -129,7 +129,7 @@ test("worker.js despacha alertas.yml con inputs.dry = 'false' y el workflow cons
 
   const alertas = dispatches.find((d) => d.url.includes("/workflows/alertas.yml/dispatches"));
   assert.ok(alertas, "debe despachar alertas.yml");
-  assert.deepEqual(alertas.body, { ref: "main", inputs: { dry: "false" } });
+  assert.deepEqual(alertas.body, { ref: "main" });
 });
 
 test("alertas envía usando precios oficiales versionados (PEN=X) sin history-120.json ni datos personales en logs", async () => {
@@ -240,5 +240,49 @@ test("si faltan precios o son viejos, sale con código != 0, no dice '0 avisos' 
     assert.equal(output.includes("0 avisos"), false);
   } finally {
     mockStaleBase.restore();
+  }
+});
+
+test("problemas de precio en símbolos sueltos registran console.warn y salen 0; si fallan todos los envíos sale 1", async () => {
+  const mockMixed = makeFetchMock({
+    seguimiento: [
+      { user_id: "user-secret-uuid-1", simbolo: "PEN=X", alerta_arriba: 3.4 },
+      { user_id: "user-secret-uuid-1", simbolo: "ALICORC1.LM", alerta_arriba: 7.0 },
+      { user_id: "user-secret-uuid-1", simbolo: "SINPRECIO.LM", alerta_arriba: 1.0 },
+      { user_id: "user-secret-uuid-1", simbolo: "DESCONOCIDO", alerta_arriba: 1.0 }
+    ],
+    smvByNemo: { ALICORC1: { fecha: "2026-11-10", cierre: 7.5 } }
+  });
+  const warns = [];
+  const errors = [];
+  const origLog = console.log;
+  const origWarn = console.warn;
+  const origError = console.error;
+  console.log = () => {};
+  console.warn = (...a) => warns.push(a.join(" "));
+  console.error = (...a) => errors.push(a.join(" "));
+  try {
+    const resOk = await runAlertas({ dry: false, env: ENV, now: NOW });
+    assert.equal(resOk.exitCode, 0);
+    assert.equal(resOk.sent, 1);
+    assert.equal(errors.length, 0);
+    assert.equal(warns.length, 1);
+    assert.match(warns[0], /DESCONOCIDO/);
+    assert.match(warns[0], /ALICORC1\.LM/);
+    assert.match(warns[0], /SINPRECIO\.LM/);
+
+    const resAllFail = await runAlertas({
+      dry: false,
+      env: { ...ENV, RESEND_API_KEY: "" },
+      now: NOW
+    });
+    assert.equal(resAllFail.exitCode, 1);
+    assert.equal(resAllFail.sent, 0);
+    assert.equal(resAllFail.failed, 1);
+  } finally {
+    mockMixed.restore();
+    console.log = origLog;
+    console.warn = origWarn;
+    console.error = origError;
   }
 });

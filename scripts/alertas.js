@@ -475,6 +475,18 @@ export async function runAlertas({
     datasets
   });
 
+  if (prices.size === 0) {
+    const detalle = problemasPrecio.length
+      ? `: ${problemasPrecio.map((p) => `${p.simbolo} (${p.motivo})`).join(", ")}`
+      : "";
+    console.error(`Ningún símbolo seguido tiene precio${detalle}.`);
+    return { exitCode: 1, sent: 0, failed: 0, dry, problemasPrecio };
+  }
+
+  if (problemasPrecio.length > 0) {
+    console.warn(`Aviso de precios: ${problemasPrecio.map((p) => `${p.simbolo} (${p.motivo})`).join(", ")}.`);
+  }
+
   let enviadasRows = [];
   try {
     enviadasRows = await fetchAlertasEnviadas(supabaseUrl, supabaseKey);
@@ -529,12 +541,8 @@ export async function runAlertas({
   }
 
   if (toSend.length === 0) {
-    if (problemasPrecio.length > 0) {
-      console.error(`Faltan precios o son viejos: ${problemasPrecio.map((p) => `${p.simbolo} (${p.motivo})`).join(", ")}.`);
-      return { exitCode: 1, sent: 0, failed: 0, dry, problemasPrecio };
-    }
     console.log(dry ? "[DRY] Habría 0 avisos." : "0 avisos.");
-    return { exitCode: 0, sent: 0, failed: 0, dry, problemasPrecio: [] };
+    return { exitCode: 0, sent: 0, failed: 0, dry, problemasPrecio };
   }
 
   if (toSend.length > MAX_CORREOS) {
@@ -602,16 +610,11 @@ export async function runAlertas({
     console.log(`Resumen: ${successCount} enviados, ${failCount} fallidos.`);
   }
 
-  if (problemasPrecio.length > 0) {
-    console.error(`Faltan precios o son viejos: ${problemasPrecio.map((p) => `${p.simbolo} (${p.motivo})`).join(", ")}.`);
+  if (toSend.length > 0 && successCount === 0) {
     return { exitCode: 1, sent: successCount, failed: failCount, dry, problemasPrecio };
   }
 
-  if (toSend.length > 0 && successCount === 0) {
-    return { exitCode: 1, sent: successCount, failed: failCount, dry, problemasPrecio: [] };
-  }
-
-  return { exitCode: 0, sent: successCount, failed: failCount, dry, problemasPrecio: [] };
+  return { exitCode: 0, sent: successCount, failed: failCount, dry, problemasPrecio };
 }
 
 const esPrincipal = process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url;

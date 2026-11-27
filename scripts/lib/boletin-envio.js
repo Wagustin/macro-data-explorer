@@ -74,15 +74,10 @@ export async function cargarSuscriptores({ supabaseUrl, supabaseKey, fecha, fetc
   const desdeHoy = `${fecha}T00:00:00Z`;
   const conBajasDeHoy = `${base}/rest/v1/boletin_suscriptores?or=(estado.eq.activo,and(estado.eq.baja,baja.gte.${encodeURIComponent(desdeHoy)}))&select=email,token,empresas,estado,creado,confirmado&order=confirmado.asc.nullsfirst,creado.asc,email.asc`;
   const soloActivos = `${base}/rest/v1/boletin_suscriptores?estado=eq.activo&select=email,token,empresas,estado,creado,confirmado&order=confirmado.asc.nullsfirst,creado.asc,email.asc`;
-  try {
-    let r = await fetchImpl(conBajasDeHoy, { headers, signal: AbortSignal.timeout(15000) });
-    if (!r.ok) r = await fetchImpl(soloActivos, { headers, signal: AbortSignal.timeout(15000) });
-    if (r.ok) return await r.json();
-    warn(`Suscriptores no disponibles (HTTP ${r.status}); se envía solo a BOLETIN_TO`);
-  } catch (e) {
-    warn(`Suscriptores no disponibles (${e.message}); se envía solo a BOLETIN_TO`);
-  }
-  return [];
+  let r = await fetchImpl(conBajasDeHoy, { headers, signal: AbortSignal.timeout(15000) });
+  if (!r.ok) r = await fetchImpl(soloActivos, { headers, signal: AbortSignal.timeout(15000) });
+  if (!r.ok) throw new Error(`Suscriptores no disponibles (HTTP ${r.status})`);
+  return await r.json();
 }
 
 export async function leerYaEnviados({ supabaseUrl, supabaseKey, fecha, fetchImpl = fetch, warn = console.error }) {

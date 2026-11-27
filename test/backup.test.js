@@ -13,7 +13,6 @@ const EXPECTED_WORKER_TABLES = [
   "seguimiento",
   "trial_tarjetas",
   "alertas_enviadas",
-  "forecast_history",
   "etiquetas_noticias",
 ];
 
@@ -95,7 +94,7 @@ test("runBackup tolerates missing tables but aborts on real Supabase errors", as
     globalThis.fetch = async (url) => {
       const table = new URL(url).pathname.split("/").at(-1);
       if (table === "trial_tarjetas") return new Response(JSON.stringify({ code: "PGRST205" }), { status: 404 });
-      if (table === "forecast_history") return new Response('relation "public.forecast_history" does not exist', { status: 400 });
+      if (table === "etiquetas_noticias") return new Response('relation "public.etiquetas_noticias" does not exist', { status: 400 });
       return new Response(JSON.stringify([{ table }]), { status: 200 });
     };
     const env = { BACKUPS: bucket, SUPABASE_URL: "https://db.example", SUPABASE_SERVICE_KEY: "service-key", BACKUP_KEY: TEST_BACKUP_KEY };
@@ -107,7 +106,6 @@ test("runBackup tolerates missing tables but aborts on real Supabase errors", as
       "boletin_suscriptores",
       "seguimiento",
       "alertas_enviadas",
-      "etiquetas_noticias",
     ]);
 
     objects.clear();

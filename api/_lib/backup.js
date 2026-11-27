@@ -5,7 +5,6 @@ const TABLES = [
   "seguimiento",
   "trial_tarjetas",
   "alertas_enviadas",
-  "forecast_history",
   "etiquetas_noticias",
 ];
 const MISSING_TABLE_RE = /relation .* does not exist|could not find the table|PGRST205/i;

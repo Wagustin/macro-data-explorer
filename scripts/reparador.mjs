@@ -50,7 +50,9 @@ const RUTAS_PERMITIDAS = {
       "scripts/smv-plan-b*.sh",
       "scripts/build-cf.js",
       "scripts/boletin.js",
-      "scripts/alertas.js"
+      "scripts/lib/boletin-envio.js",
+      "scripts/alertas.js",
+      "scripts/alertas-reglas.js"
     ]
   },
   api: {

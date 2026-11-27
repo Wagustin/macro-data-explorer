@@ -81,9 +81,11 @@ describe("reparador - rutaPermitida", () => {
   it("deniega scripts/smv-plan-b.sh", () => assert.strictEqual(rutaPermitida("scripts/smv-plan-b.sh"), false));
   it("deniega scripts/smv-plan-b-hechos.sh", () => assert.strictEqual(rutaPermitida("scripts/smv-plan-b-hechos.sh"), false));
   it("deniega scripts/build-cf.js", () => assert.strictEqual(rutaPermitida("scripts/build-cf.js"), false));
-  it("deniega scripts/boletin.js y scripts/alertas.js", () => {
+  it("deniega scripts/boletin.js, scripts/lib/boletin-envio.js, scripts/alertas.js y scripts/alertas-reglas.js", () => {
     assert.strictEqual(rutaPermitida("scripts/boletin.js"), false);
+    assert.strictEqual(rutaPermitida("scripts/lib/boletin-envio.js"), false);
     assert.strictEqual(rutaPermitida("scripts/alertas.js"), false);
+    assert.strictEqual(rutaPermitida("scripts/alertas-reglas.js"), false);
   });
   it("permite api/forecast.js", () => assert.strictEqual(rutaPermitida("api/forecast.js"), true));
   it("permite api/_lib/otro.js", () => assert.strictEqual(rutaPermitida("api/_lib/otro.js"), true));
