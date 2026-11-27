@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-27T05:01:28.692Z",
+  "actualizado": "2026-11-27T08:01:32.084Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -34,7 +34,7 @@
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 14
+      "items": 15
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -44,7 +44,7 @@
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 18
+      "items": 17
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 18
+      "items": 19
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -64,12 +64,21 @@
   },
   "noticias": [
     {
-      "id": "gestion-902c66b2a4",
-      "titulo": "CAF destinará mínimo US$ 6,000 millones al Perú en cinco años: ¿Chancay será el eje?",
-      "url": "https://gestion.pe/economia/caf-preve-destinar-entre-us-6000-millones-y-us-9000-millones-al-peru-en-cinco-anos-noticia/",
+      "id": "andina-dc3fed0942",
+      "titulo": "Las dudas sobre la IA afectan al cobre y abren interrogantes sobre su demanda futura",
+      "url": "https://andina.pe/agencia/noticia-las-dudas-sobre-ia-afectan-al-cobre-y-abren-interrogantes-sobre-su-demanda-futura-1101643.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-27T08:00:00.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-e52220b594",
+      "titulo": "Teletrabajo: ¿te pueden despedir si cambias de lugar para laborar sin avisar a tu empleador?",
+      "url": "https://gestion.pe/economia/management-empleo/teletrabajo-te-pueden-despedir-si-cambias-de-lugar-para-laborar-sin-avisar-a-tu-empleador-noticia/",
       "fuente": "Gestión",
-      "fecha_iso": "2026-11-27T04:45:00.000Z",
-      "categoria": "Economía y fiscal",
+      "fecha_iso": "2026-11-27T08:00:00.000Z",
+      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -77,7 +86,43 @@
       "titulo": "BID “pone a disposición” del Perú US$ 10 mil millones: los 5 frentes de interés",
       "url": "https://gestion.pe/economia/bid-pone-a-disposicion-del-peru-us-10-mil-millones-los-5-frentes-de-interes-noticia/",
       "fuente": "Gestión",
-      "fecha_iso": "2026-11-27T04:30:00.000Z",
+      "fecha_iso": "2026-11-27T07:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-67c96f7a79",
+      "titulo": "Donald Trump elogia el regreso de Jensen Huang a Nvidia y defiende su \"segundo mandato\"",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/donald-trump-elogia-el-regreso-de-jensen-huang-a-nvidia-y-defiende-su-segundo-mandato/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-27T06:31:30.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-cc4ccbccab",
+      "titulo": "Gratificación de diciembre 2026: ¿cómo impactará el aumento del sueldo mínimo en su cálculo?",
+      "url": "https://gestion.pe/economia/management-empleo/gratificacion-de-diciembre-2026-como-impactara-el-aumento-del-sueldo-minimo-en-su-calculo-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-27T06:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-0948e799ff",
+      "titulo": "¿Qué tan sostenible financieramente es el boom de la inteligencia artificial?",
+      "url": "https://www.bloomberglinea.com/mercados/que-tan-sostenible-financieramente-es-el-boom-de-la-inteligencia-artificial/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-27T05:00:43.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-902c66b2a4",
+      "titulo": "CAF destinará mínimo US$ 6,000 millones al Perú en cinco años: ¿Chancay será el eje?",
+      "url": "https://gestion.pe/economia/caf-preve-destinar-entre-us-6000-millones-y-us-9000-millones-al-peru-en-cinco-anos-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-27T04:45:00.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
@@ -134,15 +179,6 @@
       "fecha_iso": "2026-11-27T03:41:17.000Z",
       "categoria": "Minería y metales",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-cc4ccbccab",
-      "titulo": "Gratificación de diciembre 2026: ¿cómo impactará el aumento del sueldo mínimo en su cálculo?",
-      "url": "https://gestion.pe/economia/management-empleo/gratificacion-de-diciembre-2026-como-impactara-el-aumento-del-sueldo-minimo-en-su-calculo-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-27T03:35:42.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "gestion-52e0c30adf",
@@ -874,15 +910,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-e52220b594",
-      "titulo": "Teletrabajo: ¿te pueden despedir si cambias de lugar para laborar sin avisar a tu empleador?",
-      "url": "https://gestion.pe/economia/management-empleo/teletrabajo-te-pueden-despedir-si-cambias-de-lugar-para-laborar-sin-avisar-a-tu-empleador-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-26T20:30:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-8cd13152ec",
       "titulo": "Snmpe pide acelerar debate de la Ley MAPE y rechaza proyectos que buscan ampliar el Reinfo",
       "url": "https://gestion.pe/economia/ley-mape-snmpe-pide-acelerar-debate-y-rechaza-ampliacion-del-reinfo-noticia/",
@@ -1023,33 +1050,6 @@
       "url": "https://www.infobae.com/peru/2026/11/26/cuatro-de-cada-diez-trabajadores-en-peru-dobletean-pero-el-74-tendria-un-solo-empleo-si-pudiera/",
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-26T19:05:30.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "la_republica-adba385f8b",
-      "titulo": "Keiko Fujimori sobre la formalización minera en CADE 2026: “Se avanzó casi nada” con el Reinfo",
-      "url": "https://larepublica.pe/economia/2026/11/26/cade-2026-keiko-fujimori-se-pronuncia-sobre-la-formalizacion-minera-y-pide-aprobar-la-ley-mape-hnews-439530",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-26T18:57:28.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-e3aaaf140e",
-      "titulo": "Tipo de cambio hoy en Perú: ¿en cuánto cerró el dólar este jueves 26 de noviembre?",
-      "url": "https://gestion.pe/economia/mercados/tipo-de-cambio-dolar-hoy-en-peru-cuanto-esta-el-precio-del-dolar-este-jueves-26-de-noviembre-dolares-a-soles-compra-y-venta-bcrp-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-26T18:49:34.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-3b3199e456",
-      "titulo": "BID anuncia financiamiento de US$ 10.000 millones a Perú: ¿a qué se destinarán estos recursos?",
-      "url": "https://rpp.pe/economia/economia/bid-habilita-financiamiento-de-us-10000-millones-a-peru-a-que-se-destinaran-estos-recursos-noticia-1719987",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-26T18:42:04.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     }
