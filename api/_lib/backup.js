@@ -1,5 +1,14 @@
 const PREFIX = "backups/";
-const TABLES = ["users", "boletin_suscriptores"];
+const TABLES = [
+  "users",
+  "boletin_suscriptores",
+  "seguimiento",
+  "trial_tarjetas",
+  "alertas_enviadas",
+  "forecast_history",
+  "etiquetas_noticias",
+];
+const MISSING_TABLE_RE = /relation .* does not exist|could not find the table|PGRST205/i;
 const PAGE_SIZE = 1000;
 const BACKUP_INFO = "perdata-backup-v2";
 const MIN_BACKUP_KEY_LENGTH = 32;
@@ -39,7 +48,11 @@ export async function fetchTable(env, table) {
       headers: { apikey: key, Authorization: `Bearer ${key}`, Range: `${offset}-${offset + PAGE_SIZE - 1}`, Prefer: "count=none" },
       signal: AbortSignal.timeout(20000),
     });
-    if (!response.ok) throw new Error(`Supabase ${table}: HTTP ${response.status}`);
+    if (!response.ok) {
+      const detail = await response.text().catch(() => "");
+      if (offset === 0 && (response.status === 404 || MISSING_TABLE_RE.test(detail))) return null;
+      throw new Error(`Supabase ${table}: HTTP ${response.status}`);
+    }
     const page = await response.json();
     if (!Array.isArray(page)) throw new Error(`Supabase ${table}: invalid response`);
     rows.push(...page);
@@ -70,7 +83,10 @@ export async function runBackup(env, now = new Date()) {
     const key = `${PREFIX}${date}.json.enc`;
     if (await bucket.head(key)) return;
     const tablas = {};
-    for (const table of TABLES) tablas[table] = await fetchTable(env, table);
+    for (const table of TABLES) {
+      const rows = await fetchTable(env, table);
+      if (rows !== null) tablas[table] = rows;
+    }
     const encrypted = await encryptBackup({ fecha: date, tablas }, env.BACKUP_KEY);
     await bucket.put(key, encrypted, { httpMetadata: { contentType: "application/json" } });
 

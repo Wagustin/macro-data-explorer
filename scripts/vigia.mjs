@@ -172,7 +172,7 @@ export function clasificarWatchdog(logTail) {
   return procesos.map(({ proceso, detalle }) => {
     const workflow = PROCESO_DUENO.find(([re]) => re.test(proceso))?.[1];
     const motivo = `${proceso}: ${detalle}`;
-    if (/SMV/.test(proceso)) {
+    if (/SMV/.test(proceso) && !/Accionistas/i.test(proceso)) {
       return {
         codigo: "SMV_BLOQUEO", proceso, workflow, origen: "watchdog", motivo,
         ageHoras: horasDe(detalle), umbralHoras: /Hechos/.test(proceso) ? 48 : 72,

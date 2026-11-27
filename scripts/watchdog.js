@@ -4,6 +4,9 @@
 // One open GitHub issue (label "watchdog") per incident: email when it opens and when it recovers,
 // never on every run.
 // Usage: node scripts/watchdog.js [--base https://perdata.site] [--full] [--dry-run]
+import path from "node:path";
+import { pathToFileURL } from "node:url";
+
 const args = process.argv.slice(2);
 const bi = args.indexOf("--base");
 const BASE = bi > -1 && args[bi + 1] ? args[bi + 1] : "https://perdata.site";
@@ -16,6 +19,7 @@ const LABEL = "watchdog";
 const MAX_FORECAST_AGE_H = 30; // daily model batch at 11:00 UTC
 const MAX_NEWS_AGE_H = 30; // daily news refresh at 05:00 UTC
 const MAX_FX_AGE_DAYS = 5; // BCRP daily series (weekends and holidays)
+export const MAX_SHAREHOLDERS_AGE_DAYS = 5; // SMV open dataset (scripts/fetch-smv-open.js exits 0 on error)
 
 async function getOnce(path, { json = false, timeout = 20000 } = {}) {
   const t0 = Date.now();
@@ -115,6 +119,7 @@ const checks = [
     if (!(age <= 30)) throw new Error(`última lectura hace ${Math.round(age)} h (${d.actualizado})`);
     return `leído hace ${Math.round(age)} h`;
   }],
+  ["Accionistas (SMV)", () => checkAccionistasSmv()],
   ["Datos oficiales (EIA, Banco Mundial, SUNAT)", async () => {
     const repo = process.env.GITHUB_REPOSITORY || "Wagustin/macro-data-explorer";
     const r = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/official/sunat-fx.json`, { signal: AbortSignal.timeout(15000) });
@@ -165,55 +170,71 @@ async function email(subject, text) {
   if (!r.ok) throw new Error(`Resend: HTTP ${r.status} ${await r.text()}`);
 }
 
+export async function checkAccionistasSmv({ repo = GITHUB_REPOSITORY || "Wagustin/macro-data-explorer", fetchImpl = fetch, now = Date.now() } = {}) {
+  const r = await fetchImpl(`https://raw.githubusercontent.com/${repo}/main/data/smv-accionistas.json?t=${now}`, { signal: AbortSignal.timeout(15000) });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  const d = await r.json();
+  const age = (now - Date.parse(d?.actualizado)) / 864e5;
+  if (!Number.isFinite(age)) throw new Error("sin fecha de actualización");
+  if (age > MAX_SHAREHOLDERS_AGE_DAYS) throw new Error(`actualizado hace ${Math.round(age)} días (${d.actualizado})`);
+  return `actualizado hace ${Math.round(age * 24)} h`;
+}
+
 // Once a day the full smoke suite (107 checks) runs as one more check
-if (args.includes("--full")) {
-  checks.push(["Pruebas completas (smoke)", async () => {
-    const { execFileSync } = await import("node:child_process");
-    try {
-      const out = execFileSync("node", ["scripts/smoke.js", "--base", BASE], { encoding: "utf8", timeout: 300000 });
-      return (out.match(/TOTAL:.*$/m) || ["ok"])[0].replace(/\x1b\[[0-9;]*m/g, "");
-    } catch (e) {
-      const out = String(e.stdout || "").replace(/\x1b\[[0-9;]*m/g, "");
-      const fails = out.split("\n").filter((l) => l.includes("FAIL")).slice(0, 6).join("; ");
-      throw new Error(fails || e.message);
-    }
-  }]);
-}
-
-if (args.includes("--test-email")) {
-  await email("PerData: prueba del vigilante", "Si lees esto, las alertas de PerData llegan bien a tu correo.\n\nNo hay que hacer nada.");
-  console.log("Correo de prueba enviado");
-  process.exit(0);
-}
-
-const results = [];
-for (const [name, fn] of checks) {
-  try {
-    results.push({ name, ok: true, info: await fn() });
-  } catch (e) {
-    results.push({ name, ok: false, info: e.name === "TimeoutError" ? "no responde (timeout)" : e.message });
+async function main() {
+  if (args.includes("--full")) {
+    checks.push(["Pruebas completas (smoke)", async () => {
+      const { execFileSync } = await import("node:child_process");
+      try {
+        const out = execFileSync("node", ["scripts/smoke.js", "--base", BASE], { encoding: "utf8", timeout: 300000 });
+        return (out.match(/TOTAL:.*$/m) || ["ok"])[0].replace(/\x1b\[[0-9;]*m/g, "");
+      } catch (e) {
+        const out = String(e.stdout || "").replace(/\x1b\[[0-9;]*m/g, "");
+        const fails = out.split("\n").filter((l) => l.includes("FAIL")).slice(0, 6).join("; ");
+        throw new Error(fails || e.message);
+      }
+    }]);
   }
+
+  if (args.includes("--test-email")) {
+    await email("PerData: prueba del vigilante", "Si lees esto, las alertas de PerData llegan bien a tu correo.\n\nNo hay que hacer nada.");
+    console.log("Correo de prueba enviado");
+    process.exit(0);
+  }
+
+  const results = [];
+  for (const [name, fn] of checks) {
+    try {
+      results.push({ name, ok: true, info: await fn() });
+    } catch (e) {
+      results.push({ name, ok: false, info: e.name === "TimeoutError" ? "no responde (timeout)" : e.message });
+    }
+  }
+  const failed = results.filter((r) => !r.ok);
+  const report = results.map((r) => `${r.ok ? "OK   " : "FALLA"}  ${r.name}: ${r.info}`).join("\n");
+  console.log(report);
+
+  if (DRY || !GITHUB_TOKEN || !GITHUB_REPOSITORY) process.exit(failed.length ? 1 : 0);
+
+  const open = await gh("GET", `/issues?state=open&labels=${LABEL}&per_page=1`);
+  const runUrl = process.env.GITHUB_RUN_ID
+    ? `https://github.com/${GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}` : "";
+
+  if (failed.length && !open.length) {
+    const title = `Incidencia: ${failed.map((f) => f.name).join(", ")}`;
+    const body = `${report}\n\nDetectado: ${new Date().toISOString()}\n${runUrl}`;
+    const issue = await gh("POST", "/issues", { title, body: "```\n" + body + "\n```", labels: [LABEL] });
+    await email(`PerData: ${title}`, `${body}\n\nIncidencia: ${issue.html_url}\n\nSe volverá a avisar cuando se recupere.`);
+  } else if (failed.length && open.length) {
+    console.log(`Incidencia ya abierta: ${open[0].html_url} (sin correo nuevo)`);
+  } else if (!failed.length && open.length) {
+    await gh("POST", `/issues/${open[0].number}/comments`, { body: "Recuperado:\n```\n" + report + "\n```" });
+    await gh("PATCH", `/issues/${open[0].number}`, { state: "closed" });
+    await email("PerData: recuperado", `Todo vuelve a funcionar.\n\n${report}\n\n${open[0].html_url}`);
+  }
+  process.exit(failed.length ? 1 : 0);
 }
-const failed = results.filter((r) => !r.ok);
-const report = results.map((r) => `${r.ok ? "OK   " : "FALLA"}  ${r.name}: ${r.info}`).join("\n");
-console.log(report);
 
-if (DRY || !GITHUB_TOKEN || !GITHUB_REPOSITORY) process.exit(failed.length ? 1 : 0);
-
-const open = await gh("GET", `/issues?state=open&labels=${LABEL}&per_page=1`);
-const runUrl = process.env.GITHUB_RUN_ID
-  ? `https://github.com/${GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}` : "";
-
-if (failed.length && !open.length) {
-  const title = `Incidencia: ${failed.map((f) => f.name).join(", ")}`;
-  const body = `${report}\n\nDetectado: ${new Date().toISOString()}\n${runUrl}`;
-  const issue = await gh("POST", "/issues", { title, body: "```\n" + body + "\n```", labels: [LABEL] });
-  await email(`PerData: ${title}`, `${body}\n\nIncidencia: ${issue.html_url}\n\nSe volverá a avisar cuando se recupere.`);
-} else if (failed.length && open.length) {
-  console.log(`Incidencia ya abierta: ${open[0].html_url} (sin correo nuevo)`);
-} else if (!failed.length && open.length) {
-  await gh("POST", `/issues/${open[0].number}/comments`, { body: "Recuperado:\n```\n" + report + "\n```" });
-  await gh("PATCH", `/issues/${open[0].number}`, { state: "closed" });
-  await email("PerData: recuperado", `Todo vuelve a funcionar.\n\n${report}\n\n${open[0].html_url}`);
+if (process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url) {
+  main();
 }
-process.exit(failed.length ? 1 : 0);

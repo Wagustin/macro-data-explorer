@@ -15,6 +15,7 @@ import {
   aceptarCodigoNemotron, fuenteCambio, motivoFuente, formatearDuracion, resolverAbiertos, registrarAbiertos,
   claveSeguimiento, permisoBloquea,
 } from "../scripts/vigia.mjs";
+import { checkAccionistasSmv } from "../scripts/watchdog.js";
 
 const H = 36e5;
 const MIN = 6e4;
@@ -982,4 +983,26 @@ test("RED_RE: los errores de red del smoke (sin distinguir mayúsculas) son RED_
     assert.equal(clasificarFallo({ workflowPath: "news.yml", stepName: "Generar", logTail: log }), "RED_PASAJERA", log);
     assert.equal(esErrorCodigo(`TypeError: x is not a function\n  at f (/r/macro-data-explorer/a.mjs:1:1)\n${log}`), false, log);
   }
+});
+
+test("smv-accionistas.json viejo (> 5 días): watchdog lo marca y vigia.mjs solo avisa (no despliega ni revierte)", async () => {
+  const t = Date.parse("2026-11-26T15:00:00Z");
+  const conFecha = (dias) => async () => new Response(JSON.stringify({ actualizado: new Date(t - dias * 864e5).toISOString() }), { status: 200 });
+  assert.match(await checkAccionistasSmv({ fetchImpl: conFecha(4.9), now: t }), /^actualizado hace \d+ h$/);
+  await assert.rejects(() => checkAccionistasSmv({ fetchImpl: conFecha(5.1), now: t }), /actualizado hace 5 días/);
+  await assert.rejects(() => checkAccionistasSmv({ fetchImpl: async () => new Response(JSON.stringify({}), { status: 200 }), now: t }), /sin fecha/);
+
+  const log = [
+    "OK     Portada: 120 ms",
+    "FALLA  Accionistas (SMV): actualizado hace 6 días (2026-11-20T15:00:00.000Z)",
+    "OK     Pruebas completas (smoke): TOTAL: 165 pruebas | 165 OK | 0 FAIL",
+  ].join("\n");
+  assert.equal(clasificarFallo({ workflowPath: "watchdog.yml", stepName: PASO_WATCHDOG, logTail: log }), "DESCONOCIDO");
+  const incs = clasificarWatchdog(log);
+  assert.equal(incs.length, 1);
+  assert.equal(incs[0].codigo, "DESCONOCIDO");
+  const acc = decidir(incs, { incidentes: { [incs[0].clave]: { pasadas: 4, desplegadoEn: "2026-11-25T15:00:00Z", trasDespliegue: 2 } } }, ahora);
+  assert.deepEqual(acc.map((a) => a.tipo), ["AVISAR"]);
+  const diag = await diagnosticoSmoke([fallo(3, "2026-11-20T14:30:00Z"), fallo(2, "2026-11-20T14:00:00Z")], async () => ({ logTail: log }));
+  assert.deepEqual(diag, { fallosSeguidos: 0, todosRed: false });
 });
