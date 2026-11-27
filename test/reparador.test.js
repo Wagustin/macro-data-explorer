@@ -18,6 +18,8 @@ import {
   contarReparacionesRecientes,
   esCommitReparador,
   ultimoReparadorEnMain,
+  deshacerUltimaReparacion,
+  workflowAdmiteDispatch,
   pedirParche,
   pedirPropuesta,
   resolverModelos,
@@ -79,10 +81,19 @@ describe("reparador - rutaPermitida", () => {
   it("deniega scripts/smv-plan-b.sh", () => assert.strictEqual(rutaPermitida("scripts/smv-plan-b.sh"), false));
   it("deniega scripts/smv-plan-b-hechos.sh", () => assert.strictEqual(rutaPermitida("scripts/smv-plan-b-hechos.sh"), false));
   it("deniega scripts/build-cf.js", () => assert.strictEqual(rutaPermitida("scripts/build-cf.js"), false));
+  it("deniega scripts/boletin.js y scripts/alertas.js", () => {
+    assert.strictEqual(rutaPermitida("scripts/boletin.js"), false);
+    assert.strictEqual(rutaPermitida("scripts/alertas.js"), false);
+  });
   it("permite api/forecast.js", () => assert.strictEqual(rutaPermitida("api/forecast.js"), true));
   it("permite api/_lib/otro.js", () => assert.strictEqual(rutaPermitida("api/_lib/otro.js"), true));
   it("deniega api/billing.js", () => assert.strictEqual(rutaPermitida("api/billing.js"), false));
   it("deniega api/auth.js", () => assert.strictEqual(rutaPermitida("api/auth.js"), false));
+  it("deniega api/sync.js, api/boletin.js, api/_lib/backup.js y api/_lib/d1.js", () => {
+    for (const r of ["api/sync.js", "api/boletin.js", "api/_lib/backup.js", "api/_lib/d1.js"]) {
+      assert.strictEqual(rutaPermitida(r), false, r);
+    }
+  });
   it("deniega api/_lib/session.js", () => assert.strictEqual(rutaPermitida("api/_lib/session.js"), false));
   it("deniega api/_lib/stripe.js", () => assert.strictEqual(rutaPermitida("api/_lib/stripe.js"), false));
   it("deniega api/_lib/mercadopago.js", () => assert.strictEqual(rutaPermitida("api/_lib/mercadopago.js"), false));
@@ -93,6 +104,11 @@ describe("reparador - rutaPermitida", () => {
   it("deniega .github/workflows/rollback.yml", () => assert.strictEqual(rutaPermitida(".github/workflows/rollback.yml"), false));
   it("deniega .github/workflows/reparar.yml", () => assert.strictEqual(rutaPermitida(".github/workflows/reparar.yml"), false));
   it("deniega .github/workflows/ci.yml", () => assert.strictEqual(rutaPermitida(".github/workflows/ci.yml"), false));
+  it("deniega workflows de boletín, alertas, backup y d1-backfill", () => {
+    for (const w of ["boletin.yml", "alertas.yml", "backup.yml", "d1-backfill.yml"]) {
+      assert.strictEqual(rutaPermitida(`.github/workflows/${w}`), false, w);
+    }
+  });
   it("permite test/nuevo.test.js (archivo nuevo en test/)", () => assert.strictEqual(rutaPermitida("test/nuevo.test.js"), true));
   it("deniega HTML en cualquier carpeta", () => {
     assert.strictEqual(rutaPermitida("index.html"), false);
@@ -645,6 +661,73 @@ describe("reparador - decisión de deshacer (CI_ROJO)", () => {
     const env = { CODIGO: "CI_ROJO", WORKFLOW: "ci.yml", RUN_ID: "42", NVIDIA_API_KEY: "nvapi-claveprueba123", GH_TOKEN: "ghp_tokenprueba123" };
     assert.strictEqual(await ejecutarReparador(env, { gh, pedir, fetchImpl }), "sin reparación: fallo externo");
   });
+
+  it("nunca revierte un revert (revert(auto)) aunque CI_ROJO persista", async () => {
+    const commitRevert = { sha: "rev123", commit: { message: "revert(auto): deshacer reparación que rompió CI [reparador]" } };
+    const gh = ghFalso([
+      ["per_page=1", JSON.stringify([commitRevert])],
+      ["per_page=100", "[]"],
+      ["run view", "error en scripts/x.js:1: fallo externo " + "q".repeat(120)]
+    ]);
+    assert.strictEqual(await ultimoReparadorEnMain(gh), null);
+    let deshizo = false;
+    const deshacer = async () => { deshizo = true; return { detalle: "deshecho" }; };
+    const pedir = async (modelo) => ({ modelo, respuesta: "NO_REPARAR\nfallo externo" });
+    const fetchImpl = async () => ({ ok: true, json: async () => ({ data: [{ id: "nvidia/nemotron-3-ultra-550b-a55b" }] }) });
+    const env = { CODIGO: "CI_ROJO", WORKFLOW: "ci.yml", RUN_ID: "43", NVIDIA_API_KEY: "nvapi-claveprueba123", GH_TOKEN: "ghp_tokenprueba123" };
+    const salida = await ejecutarReparador(env, { gh, deshacer, pedir, fetchImpl });
+    assert.strictEqual(deshizo, false);
+    assert.strictEqual(salida, "sin reparación: fallo externo");
+  });
+
+  it("deshacer una reparación que tocó api/ vuelve a lanzar deploy.yml tras fusionar", async () => {
+    const gh = ghFalso([
+      ["pr create", "https://github.com/x/pull/15"],
+      ["pr merge", ""],
+      ["workflow run deploy.yml", ""]
+    ]);
+    const gitFalso = async (args) => {
+      if (args[0] === "rev-parse" && args[1] === "HEAD") return "abc123\n";
+      if (args[0] === "rev-parse" && args[1] === "--abbrev-ref") return "main\n";
+      if (args[0] === "diff-tree") return "api/forecast.js\nscripts/x.js\n";
+      return "";
+    };
+    const cfg = { codigo: "CI_ROJO", workflow: "ci.yml", runId: "50", seco: false };
+    const res = await deshacerUltimaReparacion(cfg, "abc123", { gh, git: gitFalso, probar: async () => {} });
+    assert.ok(res.detalle.includes("https://github.com/x/pull/15"));
+    assert.ok(gh.llamadas.some(l => l === "workflow run deploy.yml"));
+  });
+
+  it("deshacer una reparación que no tocó api/ no lanza deploy.yml", async () => {
+    const gh = ghFalso([
+      ["pr create", "https://github.com/x/pull/16"],
+      ["pr merge", ""]
+    ]);
+    const gitFalso = async (args) => {
+      if (args[0] === "rev-parse" && args[1] === "HEAD") return "abc123\n";
+      if (args[0] === "rev-parse" && args[1] === "--abbrev-ref") return "main\n";
+      if (args[0] === "diff-tree") return "scripts/news.js\n";
+      return "";
+    };
+    const cfg = { codigo: "CI_ROJO", workflow: "ci.yml", runId: "51", seco: false };
+    const res = await deshacerUltimaReparacion(cfg, "abc123", { gh, git: gitFalso, probar: async () => {} });
+    assert.ok(res.detalle.includes("https://github.com/x/pull/16"));
+    assert.ok(!gh.llamadas.some(l => l.startsWith("workflow run")));
+  });
+
+  it("deshacer en modo seco no publica ni despliega aunque tocara api/", async () => {
+    const gh = ghFalso([]);
+    const gitFalso = async (args) => {
+      if (args[0] === "rev-parse" && args[1] === "HEAD") return "abc123\n";
+      if (args[0] === "rev-parse" && args[1] === "--abbrev-ref") return "main\n";
+      if (args[0] === "diff-tree") return "api/forecast.js\n";
+      return "";
+    };
+    const cfg = { codigo: "CI_ROJO", workflow: "ci.yml", runId: "52", seco: true };
+    const res = await deshacerUltimaReparacion(cfg, "abc123", { gh, git: gitFalso, probar: async () => {} });
+    assert.ok(res.detalle.startsWith("Modo seco"));
+    assert.strictEqual(gh.llamadas.length, 0);
+  });
 });
 
 describe("reparador - ejecutarReparador (flujo sin efectos)", () => {
@@ -697,6 +780,36 @@ describe("reparador - modo seco y relanzado", () => {
     const salida = await ejecutarReparador(env, { gh, pedir, fetchImpl, comprobarAplica: aplicaOk, aplicar });
     assert.ok(salida.includes("https://github.com/x/pull/9"), salida);
     assert.ok(gh.llamadas.some(l => l === "workflow run smv.yml"));
+  });
+
+  it("si el workflow no admite workflow_dispatch (ci.yml), no falla tras fusionar y sí lanza deploy si toca api/", async () => {
+    assert.strictEqual(workflowAdmiteDispatch("ci.yml"), false);
+    assert.strictEqual(workflowAdmiteDispatch("smv.yml"), true);
+    const gh = ghFalso([
+      ["per_page=100", "[]"],
+      ["per_page=1", JSON.stringify([COMMIT_NORMAL])],
+      ["run view", "error en api/forecast.js:1: fallo " + "q".repeat(120)],
+      ["workflow run deploy.yml", ""]
+    ]);
+    const diffApi = diffArchivo("api/forecast.js", { añadir: ["// arreglo"] });
+    const pedirApi = async (modelo) => ({ modelo, respuesta: diffApi + "---MOTIVO---\nArreglo api" });
+    const aplicar = async () => ({ ok: true, url: "https://github.com/x/pull/10", archivos: ["api/forecast.js"] });
+    const salida = await ejecutarReparador({ ...env, CODIGO: "CI_ROJO", WORKFLOW: "ci.yml" }, { gh, pedir: pedirApi, fetchImpl, comprobarAplica: aplicaOk, aplicar });
+    assert.ok(salida.includes("https://github.com/x/pull/10"), salida);
+    assert.ok(!gh.llamadas.some(l => l === "workflow run ci.yml"));
+    assert.ok(gh.llamadas.some(l => l === "workflow run deploy.yml"));
+  });
+
+  it("si gh workflow run falla porque el workflow no tiene workflow_dispatch, no falla tras fusionar", async () => {
+    const gh = ghFalso([
+      ["per_page=100", "[]"],
+      ["per_page=1", JSON.stringify([COMMIT_NORMAL])],
+      ["run view", "error en scripts/x.js:1: fallo " + "q".repeat(120)],
+      ["workflow run inexistente-dispatch.yml", new Error("HTTP 422: Workflow does not have 'workflow_dispatch' trigger")]
+    ]);
+    const aplicar = async () => ({ ok: true, url: "https://github.com/x/pull/11", archivos: ["scripts/x.js"] });
+    const salida = await ejecutarReparador({ ...env, WORKFLOW: "inexistente-dispatch.yml" }, { gh, pedir, fetchImpl, comprobarAplica: aplicaOk, aplicar });
+    assert.ok(salida.includes("https://github.com/x/pull/11"), salida);
   });
 
   it("con seco: no relanza nada y devuelve el detalle del diff", async () => {

@@ -48,7 +48,9 @@ const RUTAS_PERMITIDAS = {
       "scripts/vigia.mjs",
       "scripts/reparador.mjs",
       "scripts/smv-plan-b*.sh",
-      "scripts/build-cf.js"
+      "scripts/build-cf.js",
+      "scripts/boletin.js",
+      "scripts/alertas.js"
     ]
   },
   api: {
@@ -56,11 +58,15 @@ const RUTAS_PERMITIDAS = {
     deny: [
       "api/billing.js",
       "api/auth.js",
+      "api/sync.js",
+      "api/boletin.js",
       "api/_lib/session.js",
       "api/_lib/stripe.js",
       "api/_lib/mercadopago.js",
       "api/_lib/turnstile.js",
-      "api/_lib/users.js"
+      "api/_lib/users.js",
+      "api/_lib/backup.js",
+      "api/_lib/d1.js"
     ]
   },
   workflows: {
@@ -69,7 +75,11 @@ const RUTAS_PERMITIDAS = {
       ".github/workflows/deploy.yml",
       ".github/workflows/rollback.yml",
       ".github/workflows/reparar.yml",
-      ".github/workflows/ci.yml"
+      ".github/workflows/ci.yml",
+      ".github/workflows/boletin.yml",
+      ".github/workflows/alertas.yml",
+      ".github/workflows/backup.yml",
+      ".github/workflows/d1-backfill.yml"
     ]
   },
   test: {
@@ -509,11 +519,11 @@ async function npmTest() {
   }
 }
 
-async function limpiar(ramaOriginal, rama) {
-  await git(["reset", "--hard", "HEAD"]).catch(() => {});
-  await git(["clean", "-fd", "-e", "node_modules"]).catch(() => {});
-  await git(["checkout", ramaOriginal]).catch(() => {});
-  await git(["branch", "-D", rama]).catch(() => {});
+async function limpiar(ramaOriginal, rama, runGit = git) {
+  await runGit(["reset", "--hard", "HEAD"]).catch(() => {});
+  await runGit(["clean", "-fd", "-e", "node_modules"]).catch(() => {});
+  await runGit(["checkout", ramaOriginal]).catch(() => {});
+  await runGit(["branch", "-D", rama]).catch(() => {});
 }
 
 // Crea la rama, aplica el diff y ejecuta node --check y npm test. Limpia si algo falla.
@@ -536,8 +546,8 @@ async function aplicarYProbar(diff, rama, ramaOriginal) {
   }
 }
 
-async function publicar({ rama, asunto, cuerpo, cuerpoPr, ramaOriginal, cfg, gh = ghReal }) {
-  await git(["push", "origin", rama]);
+async function publicar({ rama, asunto, cuerpo, cuerpoPr, ramaOriginal, cfg, gh = ghReal, git: runGit = git }) {
+  await runGit(["push", "origin", rama]);
   const url = await gh(["pr", "create", "--title", asunto, "--body", cuerpoPr, "--head", rama, "--base", "main"]);
   const numero = url.match(/\/pull\/(\d+)/)?.[1] || url.match(/#(\d+)/)?.[1];
   if (!numero) throw new Error(`No se pudo obtener el número del PR: ${redactar(url)}`);
@@ -590,41 +600,72 @@ Enlace al run fallido: ${enlaceRun(cfg)}`;
   return { ok: true, url, archivos };
 }
 
-async function relanzar(cfg, archivos, gh) {
-  if (cfg.workflow !== "reparar.yml") {
-    await gh(["workflow", "run", cfg.workflow]);
+function requiereDespliegue(archivos) {
+  return archivos.some(a => a.startsWith("api/"));
+}
+
+export function workflowAdmiteDispatch(workflow, raiz = REPO_ROOT) {
+  const ruta = path.posix.join(".github/workflows", workflow);
+  if (!rutaSegura(ruta, raiz)) return false;
+  const completa = path.join(raiz, ruta);
+  if (!fs.existsSync(completa)) return true;
+  const yml = fs.readFileSync(completa, "utf-8");
+  const bloqueOn = yml.match(/^on:(.*(?:\r?\n(?:[ \t]+.*|\s*#.*|\s*))*)/m)?.[0] || "";
+  return /\bworkflow_dispatch\b/.test(bloqueOn.replace(/#[^\n]*/g, ""));
+}
+
+async function relanzar(cfg, archivos, gh, { raiz = REPO_ROOT } = {}) {
+  if (cfg.workflow !== "reparar.yml" && workflowAdmiteDispatch(cfg.workflow, raiz)) {
+    try {
+      await gh(["workflow", "run", cfg.workflow]);
+    } catch (e) {
+      if (!/workflow_dispatch|workflow dispatch|does not have.*trigger/i.test(e?.message || "")) throw e;
+    }
   }
-  if (archivos.some(a => a.startsWith("api/"))) {
+  if (requiereDespliegue(archivos)) {
     await gh(["workflow", "run", "deploy.yml"]);
   }
 }
 
-// Busca el último commit de main; si su asunto es de reparación devuelve su sha.
+function esRevert(mensaje) {
+  const asunto = (mensaje || "").split("\n")[0].trimStart();
+  return /^revert(\(|:|\s)/i.test(asunto);
+}
+
+// Busca el último commit de main; si su asunto es de reparación (y no es un revert) devuelve su sha.
 export async function ultimoReparadorEnMain(gh) {
   const lista = JSON.parse(await gh(["api", "repos/{owner}/{repo}/commits?sha=main&per_page=1"]));
   const ultimo = lista[0];
-  if (!ultimo || !esCommitReparador(ultimo.commit?.message)) return null;
+  const mensaje = ultimo?.commit?.message;
+  if (!ultimo || !esCommitReparador(mensaje) || esRevert(mensaje)) return null;
   return ultimo.sha;
 }
 
-async function deshacerUltimaReparacion(cfg, sha, deps) {
-  const local = (await git(["rev-parse", "HEAD"])).trim();
+export async function deshacerUltimaReparacion(cfg, sha, deps = {}) {
+  const runGit = deps.git || git;
+  const probar = deps.probar || npmTest;
+  const gh = deps.gh || ghReal;
+
+  const local = (await runGit(["rev-parse", "HEAD"])).trim();
   if (local !== sha) throw new Error("el HEAD local no coincide con el último commit de main");
+
+  const archivosSalida = await runGit(["diff-tree", "--root", "--no-commit-id", "--name-only", "-r", sha]);
+  const archivos = archivosSalida.split("\n").map(s => s.trim()).filter(Boolean);
 
   const fecha = new Date().toISOString().slice(0, 10);
   const rama = `reparar/revert-${fecha}-${cfg.runId}`;
-  const ramaOriginal = (await git(["rev-parse", "--abbrev-ref", "HEAD"])).trim();
-  await git(["checkout", "-b", rama]);
+  const ramaOriginal = (await runGit(["rev-parse", "--abbrev-ref", "HEAD"])).trim();
+  await runGit(["checkout", "-b", rama]);
   try {
-    await git(["revert", "--no-edit", sha], { env: IDENTIDAD_BOT });
-    await npmTest();
+    await runGit(["revert", "--no-edit", sha], { env: IDENTIDAD_BOT });
+    await probar();
   } catch (e) {
-    await limpiar(ramaOriginal, rama);
+    await limpiar(ramaOriginal, rama, runGit);
     throw new Error(`el revert no supera los tests: ${redactar(e.message).slice(0, 500)}`);
   }
 
   if (cfg.seco) {
-    await limpiar(ramaOriginal, rama);
+    await limpiar(ramaOriginal, rama, runGit);
     return { detalle: `Modo seco (no se publica): el revert de ${sha} supera los tests.` };
   }
 
@@ -633,7 +674,10 @@ async function deshacerUltimaReparacion(cfg, sha, deps) {
 Run fallido: ${enlaceRun(cfg)}
 
 Co-Authored-By: Claude Haiku 5.5 <noreply@anthropic.com>`;
-  const url = await publicar({ rama, asunto, cuerpo, cuerpoPr: cuerpo, ramaOriginal, cfg, gh: deps.gh });
+  const url = await publicar({ rama, asunto, cuerpo, cuerpoPr: cuerpo, ramaOriginal, cfg, gh, git: runGit });
+  if (requiereDespliegue(archivos)) {
+    await gh(["workflow", "run", "deploy.yml"]);
+  }
   return { detalle: `Reparación deshecha (revert) y fusionada: ${url}` };
 }
 
@@ -678,7 +722,7 @@ export async function ejecutarReparador(env = process.env, deps = {}) {
     const sha = await ultimoReparadorEnMain(gh);
     if (sha) {
       try {
-        const { detalle } = await deshacer(cfg, sha, { gh });
+        const { detalle } = await deshacer(cfg, sha, { gh, git: deps.git, probar: deps.probar });
         return salida(detalle);
       } catch (e) {
         return salida(`sin reparación: ${e.message}`);
@@ -723,7 +767,7 @@ export async function ejecutarReparador(env = process.env, deps = {}) {
 
   if (resultado.seco) return salida(resultado.detalle);
 
-  await relanzar(cfg, resultado.archivos, gh);
+  await relanzar(cfg, resultado.archivos, gh, { raiz: deps.raiz });
   return salida(`Reparación aplicada y fusionada: ${propuesta.motivo} (${resultado.url})`);
 }
 
