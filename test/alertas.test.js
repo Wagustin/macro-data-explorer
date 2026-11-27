@@ -94,7 +94,7 @@ async function captureLogs(fn) {
   }
 }
 
-test("worker.js despacha alertas.yml sin inputs.dry y el workflow conserva default true", async () => {
+test("worker.js despacha alertas.yml en real (dry false) y el workflow manual conserva default true", async () => {
   const workflow = fs.readFileSync(path.join(ROOT, ".github/workflows/alertas.yml"), "utf8");
   assert.match(workflow, /dry:\s*\n[\s\S]*default:\s*true/);
 
@@ -129,7 +129,7 @@ test("worker.js despacha alertas.yml sin inputs.dry y el workflow conserva defau
 
   const alertas = dispatches.find((d) => d.url.includes("/workflows/alertas.yml/dispatches"));
   assert.ok(alertas, "debe despachar alertas.yml");
-  assert.deepEqual(alertas.body, { ref: "main" });
+  assert.deepEqual(alertas.body, { ref: "main", inputs: { dry: "false" } });
 });
 
 test("alertas envía usando precios oficiales versionados (PEN=X) sin history-120.json ni datos personales en logs", async () => {

@@ -704,7 +704,7 @@ const JOBS = [
       ]);
       return sunatNuevo(texto, visto);
     } },
-  { file: "alertas.yml", minGapMin: 25, due: () => true },
+  { file: "alertas.yml", minGapMin: 25, due: () => true, inputs: { dry: "false" } },
   // Newsletter: weekdays from 05:50 Lima until noon, only if today's send isn't recorded yet
   { file: "boletin.yml", minGapMin: 25, due: (d) => {
       const lima = new Date(d.getTime() - 5 * 36e5);
