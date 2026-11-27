@@ -35,5 +35,6 @@ jobs:
           DRY: ${{ inputs.dry }}
         run: |
           args=()
-          if [ "$DRY" = "true" ]; then args+=(--dry); fi
+          # Temporal 27-nov: las programadas van en simulacion hasta revisar cuantos avisos hay pendientes
+          if [ "$DRY" = "true" ] || [ "$GITHUB_EVENT_NAME" = "schedule" ]; then args+=(--dry); fi
           node scripts/alertas.js "${args[@]}"
