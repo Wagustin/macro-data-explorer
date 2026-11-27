@@ -1,7 +1,7 @@
 /**
  * PerData - Envío de avisos de precio por correo.
  * Revisa los umbrales de alerta definidos en la tabla seguimiento
- * contra el último precio disponible en data/history-120.json.
+ * contra los precios oficiales en data/official/ y cierres SMV en Supabase/D1.
  *
  * Variables de entorno:
  *   SUPABASE_URL
@@ -13,21 +13,24 @@
  *   --dry: Modo simulación, no envía correos ni modifica la base de datos.
  */
 
-import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
+import { pathToFileURL } from "url";
 
+import { nemonicoOf, smvRows } from "../api/_lib/smv.js";
+import { SOURCES, DATASETS, sourcePoints } from "../api/_lib/sources.js";
 import { evaluarFila } from "./alertas-reglas.js";
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const DRY = process.argv.includes("--dry");
-
-const SUPABASE_URL = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || "";
-const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
-const EMAIL_FROM = process.env.EMAIL_FROM || "PerData <avisos@perdata.site>";
-
 const MAX_CORREOS = 40;
+const MAX_DATASET_AGE_DAYS = 6;
+const MAX_AGE_BY_SOURCE = {
+  bcrp: 8,
+  eia: 10,
+  fed: 14,
+  worldBank: 65,
+  smv: 7
+};
+const SMV_LOOKBACK_DAYS = 30;
+const SMV_BATCH_SIZE = 10;
 
 function formatPrice(val, symbol = "") {
   const num = Number(val);
@@ -258,51 +261,223 @@ async function sendEmail({ resendKey, from, to, subject, html, text }) {
   return res.json();
 }
 
-async function main() {
-  if (DRY) {
+function isoDaysAgo(days, now = new Date()) {
+  const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  d.setUTCDate(d.getUTCDate() - days);
+  return d.toISOString().slice(0, 10);
+}
+
+function ageDays(fecha, now = new Date()) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(fecha || ""))) return Infinity;
+  const obsMs = Date.parse(`${fecha}T00:00:00Z`);
+  const todayMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  if (!Number.isFinite(obsMs)) return Infinity;
+  return (todayMs - obsMs) / 864e5;
+}
+
+function isDatasetFresh(dataset, now = new Date()) {
+  if (!dataset || !dataset.actualizado) return false;
+  const updatedMs = Date.parse(dataset.actualizado);
+  if (!Number.isFinite(updatedMs)) return false;
+  const ageMs = now.getTime() - updatedMs;
+  return ageMs >= -864e5 && ageMs <= MAX_DATASET_AGE_DAYS * 864e5;
+}
+
+function latestOfficialPoint(simbolo, datasets = DATASETS) {
+  if (datasets === DATASETS) {
+    const pts = sourcePoints(simbolo);
+    return pts && pts.length ? pts[pts.length - 1] : null;
+  }
+  const src = SOURCES[simbolo];
+  if (!src) return null;
+  const raw = datasets?.[src.fuente]?.series?.[src.clave];
+  const values = Array.isArray(raw) ? raw : raw?.serie;
+  if (!Array.isArray(values)) return null;
+  const pts = values
+    .filter(([date, value]) => /^\d{4}-\d{2}(?:-\d{2})?$/.test(date) && Number.isFinite(Number(value)))
+    .map(([date, value]) => [date.length === 7 ? `${date}-01` : date, Number(value)]);
+  return pts.length ? pts[pts.length - 1] : null;
+}
+
+async function fetchLatestSmvDate(url, key) {
+  const res = await fetch(`${url}/rest/v1/cotizaciones_smv?select=fecha&order=fecha.desc&limit=1`, {
+    headers: { apikey: key, Authorization: `Bearer ${key}` },
+    signal: AbortSignal.timeout(10000)
+  });
+  if (!res.ok) {
+    const err = await res.text().catch(() => "");
+    throw new Error(`HTTP ${res.status} al consultar cotizaciones_smv: ${err.slice(0, 100)}`);
+  }
+  const rows = await res.json();
+  return Array.isArray(rows) && rows[0]?.fecha ? String(rows[0].fecha).slice(0, 10) : null;
+}
+
+async function fetchSmvLatest(nemo, desde, { url, key }) {
+  const envUrl = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
+  const envKey = process.env.SUPABASE_SERVICE_KEY || "";
+  if (url === envUrl && key === envKey) {
+    const rows = await smvRows(nemo, desde, { limit: 1, timeoutMs: 10000 });
+    return rows[0] || null;
+  }
+  const endpoint = `${url}/rest/v1/cotizaciones_smv?nemonico=eq.${encodeURIComponent(nemo)}&fecha=gte.${desde}&select=fecha,cierre&order=fecha.desc&limit=1`;
+  const res = await fetch(endpoint, {
+    headers: { apikey: key, Authorization: `Bearer ${key}` },
+    signal: AbortSignal.timeout(10000)
+  });
+  if (!res.ok) {
+    const err = await res.text().catch(() => "");
+    throw new Error(`HTTP ${res.status} al leer cotizaciones_smv: ${err.slice(0, 100)}`);
+  }
+  const rows = await res.json();
+  return Array.isArray(rows) && rows[0] ? { fecha: rows[0].fecha, cierre: Number(rows[0].cierre) } : null;
+}
+
+async function checkBaseSources({ url, key, now, datasets }) {
+  const errores = [];
+  if (!isDatasetFresh(datasets?.bcrp, now)) {
+    errores.push("bcrp-daily desactualizado");
+  } else {
+    const pen = latestOfficialPoint("PEN=X", datasets);
+    const penAge = pen ? ageDays(pen[0], now) : Infinity;
+    if (!pen || penAge < -1 || penAge > MAX_AGE_BY_SOURCE.bcrp) {
+      errores.push("PEN=X sin precio reciente");
+    }
+  }
+  try {
+    const latestSmv = await fetchLatestSmvDate(url, key);
+    const smvAge = ageDays(latestSmv, now);
+    if (!latestSmv || smvAge < -1 || smvAge > MAX_AGE_BY_SOURCE.smv) {
+      errores.push("cotizaciones_smv sin cierres recientes");
+    }
+  } catch (e) {
+    errores.push(`cotizaciones_smv (${e.message})`);
+  }
+  return errores;
+}
+
+async function resolvePrices(symbols, { url, key, now, datasets }) {
+  const prices = new Map();
+  const problemas = [];
+  const lmSymbols = [];
+
+  for (const simbolo of symbols) {
+    const source = SOURCES[simbolo];
+    if (source) {
+      if (!isDatasetFresh(datasets?.[source.fuente], now)) {
+        problemas.push({ simbolo, motivo: `fuente ${source.fuente} desactualizada` });
+        continue;
+      }
+      const pt = latestOfficialPoint(simbolo, datasets);
+      const precio = Number(pt?.[1]);
+      const days = pt ? ageDays(pt[0], now) : Infinity;
+      const maxDays = MAX_AGE_BY_SOURCE[source.fuente] ?? MAX_AGE_BY_SOURCE.bcrp;
+      if (!pt || !Number.isFinite(precio) || days < -1 || days > maxDays) {
+        problemas.push({ simbolo, motivo: pt ? `precio viejo (${pt[0]})` : "sin precio" });
+        continue;
+      }
+      prices.set(simbolo, precio);
+      continue;
+    }
+
+    const nemo = nemonicoOf(simbolo);
+    if (nemo) {
+      lmSymbols.push({ simbolo, nemo });
+    } else {
+      problemas.push({ simbolo, motivo: "sin fuente de precio" });
+    }
+  }
+
+  const desde = isoDaysAgo(SMV_LOOKBACK_DAYS, now);
+  for (let i = 0; i < lmSymbols.length; i += SMV_BATCH_SIZE) {
+    const batch = lmSymbols.slice(i, i + SMV_BATCH_SIZE);
+    const results = await Promise.all(
+      batch.map(async ({ simbolo, nemo }) => {
+        try {
+          const row = await fetchSmvLatest(nemo, desde, { url, key });
+          if (!row) return { simbolo, motivo: "sin precio reciente" };
+          const precio = Number(row.cierre);
+          const fecha = String(row.fecha || "").slice(0, 10);
+          const days = ageDays(fecha, now);
+          if (!Number.isFinite(precio) || precio <= 0) {
+            return { simbolo, motivo: "cierre inválido" };
+          }
+          if (days < -1 || days > MAX_AGE_BY_SOURCE.smv) {
+            return { simbolo, motivo: `precio viejo (${fecha})` };
+          }
+          return { simbolo, precio };
+        } catch (e) {
+          return { simbolo, motivo: e.message };
+        }
+      })
+    );
+    for (const r of results) {
+      if (r.motivo) problemas.push({ simbolo: r.simbolo, motivo: r.motivo });
+      else prices.set(r.simbolo, r.precio);
+    }
+  }
+
+  return { prices, problemas };
+}
+
+export async function runAlertas({
+  dry = process.argv.includes("--dry"),
+  env = process.env,
+  now = new Date(),
+  datasets = DATASETS
+} = {}) {
+  const supabaseUrl = (env.SUPABASE_URL || "").replace(/\/+$/, "");
+  const supabaseKey = env.SUPABASE_SERVICE_KEY || "";
+  const resendKey = env.RESEND_API_KEY || "";
+  const emailFrom = env.EMAIL_FROM || "PerData <avisos@perdata.site>";
+
+  if (dry) {
     console.log("Modo simulación activado (--dry).");
   }
 
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-    if (DRY) {
-      console.log("0 avisos.");
-      process.exit(0);
+  if (!supabaseUrl || !supabaseKey) {
+    if (dry) {
+      console.log("[DRY] Habría 0 avisos (faltan credenciales de Supabase).");
+      return { exitCode: 0, sent: 0, failed: 0, dry, problemasPrecio: [] };
     }
     console.error("Faltan variables SUPABASE_URL o SUPABASE_SERVICE_KEY.");
-    process.exit(1);
+    return { exitCode: 1, sent: 0, failed: 0, dry, problemasPrecio: [] };
   }
 
-  const historyPath = path.join(ROOT, "data", "history-120.json");
-  let history = {};
-  if (fs.existsSync(historyPath)) {
-    try {
-      history = JSON.parse(fs.readFileSync(historyPath, "utf8"));
-    } catch (e) {
-      console.error("Error al leer data/history-120.json:", e.message);
-    }
+  const baseErrores = await checkBaseSources({ url: supabaseUrl, key: supabaseKey, now, datasets });
+  if (baseErrores.length > 0) {
+    console.error(`Faltan precios o son viejos: ${baseErrores.join(", ")}.`);
+    return { exitCode: 1, sent: 0, failed: 0, dry, problemasPrecio: baseErrores };
   }
 
   let seguimientoRows = [];
   try {
-    seguimientoRows = await fetchSeguimiento(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+    seguimientoRows = await fetchSeguimiento(supabaseUrl, supabaseKey);
   } catch (e) {
     // La tabla puede no existir todavía (migración 0010 pendiente): no es un fallo del trabajo.
-    if (DRY || /HTTP 404|PGRST205/.test(e.message)) {
-      console.log(DRY ? "0 avisos." : "La tabla seguimiento aún no existe; no hay avisos que enviar.");
-      process.exit(0);
+    if (/HTTP 404|PGRST205/.test(e.message)) {
+      console.log("La tabla seguimiento aún no existe; no hay avisos que enviar.");
+      return { exitCode: 0, sent: 0, failed: 0, dry, problemasPrecio: [] };
     }
     console.error("Error leyendo seguimiento:", e.message);
-    process.exit(1);
+    return { exitCode: 1, sent: 0, failed: 0, dry, problemasPrecio: [] };
   }
 
   if (seguimientoRows.length === 0) {
-    console.log("0 avisos.");
-    process.exit(0);
+    console.log(dry ? "[DRY] Habría 0 avisos." : "0 avisos.");
+    return { exitCode: 0, sent: 0, failed: 0, dry, problemasPrecio: [] };
   }
+
+  const symbols = [...new Set(seguimientoRows.map((r) => r.simbolo).filter(Boolean))];
+  const { prices, problemas: problemasPrecio } = await resolvePrices(symbols, {
+    url: supabaseUrl,
+    key: supabaseKey,
+    now,
+    datasets
+  });
 
   let enviadasRows = [];
   try {
-    enviadasRows = await fetchAlertasEnviadas(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+    enviadasRows = await fetchAlertasEnviadas(supabaseUrl, supabaseKey);
   } catch (e) {
     console.warn("No se pudo cargar alertas_enviadas:", e.message);
   }
@@ -316,11 +491,8 @@ async function main() {
 
   for (const row of seguimientoRows) {
     const { user_id, simbolo } = row;
-    const series = history[simbolo];
-    if (!Array.isArray(series) || series.length === 0) continue;
-    const lastPoint = series[series.length - 1];
-    const precio = Number(lastPoint?.close);
-    if (!Number.isFinite(precio)) continue;
+    if (!prices.has(simbolo)) continue;
+    const precio = prices.get(simbolo);
 
     const { avisar, rearmar } = evaluarFila({ fila: row, precio, enviadas: enviadasSet });
 
@@ -344,21 +516,25 @@ async function main() {
   if (toRearm.length > 0) {
     console.log(`Procesando ${toRearm.length} rearmes.`);
     for (const item of toRearm) {
-      if (DRY) {
-        console.log(`[DRY] Rearme a borrar: usuario=${item.user_id}, simbolo=${item.simbolo}, tipo=${item.tipo}, nivel=${item.nivel}`);
+      if (dry) {
+        console.log(`[DRY] Rearme pendiente: ${item.simbolo} ${item.tipo}`);
       } else {
         try {
-          await deleteAlertaEnviada(SUPABASE_URL, SUPABASE_SERVICE_KEY, item);
+          await deleteAlertaEnviada(supabaseUrl, supabaseKey, item);
         } catch (e) {
-          console.warn(`Error al borrar rearme: ${e.message}`);
+          console.warn(`Error al borrar rearme (${item.simbolo} ${item.tipo}): ${e.message}`);
         }
       }
     }
   }
 
   if (toSend.length === 0) {
-    console.log("0 avisos.");
-    process.exit(0);
+    if (problemasPrecio.length > 0) {
+      console.error(`Faltan precios o son viejos: ${problemasPrecio.map((p) => `${p.simbolo} (${p.motivo})`).join(", ")}.`);
+      return { exitCode: 1, sent: 0, failed: 0, dry, problemasPrecio };
+    }
+    console.log(dry ? "[DRY] Habría 0 avisos." : "0 avisos.");
+    return { exitCode: 0, sent: 0, failed: 0, dry, problemasPrecio: [] };
   }
 
   if (toSend.length > MAX_CORREOS) {
@@ -367,7 +543,7 @@ async function main() {
   }
 
   const userIds = [...new Set(toSend.map((a) => a.user_id))];
-  const userEmails = await fetchUserEmails(SUPABASE_URL, SUPABASE_SERVICE_KEY, userIds);
+  const userEmails = await fetchUserEmails(supabaseUrl, supabaseKey, userIds);
 
   let successCount = 0;
   let failCount = 0;
@@ -375,18 +551,18 @@ async function main() {
   for (const alert of toSend) {
     const email = userEmails.get(alert.user_id);
     if (!email) {
-      console.warn(`Usuario ${alert.user_id} no tiene correo registrado; se salta.`);
+      console.warn(`Aviso sin correo registrado (${alert.simbolo}); se salta.`);
       failCount++;
       continue;
     }
 
-    if (DRY) {
-      console.log(`[DRY] Aviso a enviar a ${email}: ${alert.simbolo} ${alert.tipo} nivel=${alert.nivel} precio=${alert.precio}`);
+    if (dry) {
+      console.log(`[DRY] Aviso pendiente: ${alert.simbolo} ${alert.tipo} precio=${alert.precio}`);
       successCount++;
       continue;
     }
 
-    if (!RESEND_API_KEY) {
+    if (!resendKey) {
       console.error("Falta RESEND_API_KEY para enviar correos.");
       failCount++;
       continue;
@@ -403,31 +579,47 @@ async function main() {
       });
 
       await sendEmail({
-        resendKey: RESEND_API_KEY,
-        from: EMAIL_FROM,
+        resendKey,
+        from: emailFrom,
         to: emailPayload.to,
         subject: emailPayload.subject,
         html: emailPayload.html,
         text: emailPayload.text
       });
 
-      await insertAlertaEnviada(SUPABASE_URL, SUPABASE_SERVICE_KEY, alert);
+      await insertAlertaEnviada(supabaseUrl, supabaseKey, alert);
       successCount++;
-      console.log(`Aviso enviado a ${email}: ${alert.simbolo} ${alert.tipo} ${alert.nivel}`);
+      console.log(`Aviso enviado: ${alert.simbolo} ${alert.tipo}`);
     } catch (e) {
       failCount++;
-      console.error(`Error al enviar aviso a ${email}: ${e.message}`);
+      console.error(`Error al enviar aviso (${alert.simbolo} ${alert.tipo}): ${e.message}`);
     }
   }
 
-  console.log(`Resumen: ${successCount} enviados/simulados, ${failCount} fallidos.`);
+  if (dry) {
+    console.log(`[DRY] Habría ${successCount} avisos (${failCount} fallidos).`);
+  } else {
+    console.log(`Resumen: ${successCount} enviados, ${failCount} fallidos.`);
+  }
+
+  if (problemasPrecio.length > 0) {
+    console.error(`Faltan precios o son viejos: ${problemasPrecio.map((p) => `${p.simbolo} (${p.motivo})`).join(", ")}.`);
+    return { exitCode: 1, sent: successCount, failed: failCount, dry, problemasPrecio };
+  }
 
   if (toSend.length > 0 && successCount === 0) {
-    process.exit(1);
+    return { exitCode: 1, sent: successCount, failed: failCount, dry, problemasPrecio: [] };
   }
+
+  return { exitCode: 0, sent: successCount, failed: failCount, dry, problemasPrecio: [] };
 }
 
-main().catch((err) => {
-  console.error("Error fatal en scripts/alertas.js:", err);
-  process.exit(1);
-});
+const esPrincipal = process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url;
+if (esPrincipal) {
+  runAlertas()
+    .then((res) => process.exit(res.exitCode))
+    .catch((err) => {
+      console.error("Error fatal en scripts/alertas.js:", err);
+      process.exit(1);
+    });
+}

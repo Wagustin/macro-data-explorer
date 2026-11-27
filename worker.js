@@ -704,7 +704,7 @@ const JOBS = [
       ]);
       return sunatNuevo(texto, visto);
     } },
-  { file: "alertas.yml", minGapMin: 25, due: () => true },
+  { file: "alertas.yml", minGapMin: 25, due: () => true, inputs: { dry: "false" } },
   // Newsletter: weekdays from 05:50 Lima until noon, only if today's send isn't recorded yet
   { file: "boletin.yml", minGapMin: 25, due: (d) => {
       const lima = new Date(d.getTime() - 5 * 36e5);
@@ -743,7 +743,8 @@ async function dispatchDueWorkflows(env) {
       const last = runs.workflow_runs && runs.workflow_runs[0];
       const ageMin = last ? (now - Date.parse(last.created_at)) / 60000 : Infinity;
       if (ageMin < job.minGapMin) continue;
-      const r = await gh(`/actions/workflows/${job.file}/dispatches`, { method: "POST", body: JSON.stringify({ ref: "main" }) });
+      const payload = job.inputs ? { ref: "main", inputs: job.inputs } : { ref: "main" };
+      const r = await gh(`/actions/workflows/${job.file}/dispatches`, { method: "POST", body: JSON.stringify(payload) });
       console.log(`[cron] ${job.file}: last run ${Math.round(ageMin)} min ago -> dispatch ${r.status}`);
     } catch (e) {
       console.error(`[cron] ${job.file}: ${e.message}`);
@@ -791,5 +792,5 @@ function escapeAttr(t) {
   return String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 }
 
-export { shouldNoindex, isIndexableBody, withScriptNonce };
+export { shouldNoindex, isIndexableBody, withScriptNonce, dispatchDueWorkflows };
 
