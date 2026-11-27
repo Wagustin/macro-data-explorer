@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-27T12:17:10.899Z",
+  "actualizado": "2026-11-27T15:31:34.000Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,27 +24,27 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 96
+      "items": 98
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
       "ok": true,
-      "items": 86
+      "items": 87
     },
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 11
+      "items": 9
     },
     "la_republica": {
       "nombre": "La República Economía",
       "ok": true,
-      "items": 20
+      "items": 22
     },
     "infobae": {
       "nombre": "Infobae Perú",
       "ok": true,
-      "items": 19
+      "items": 20
     },
     "semana_economica": {
       "nombre": "Semana Económica",
@@ -54,7 +54,7 @@
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
       "ok": true,
-      "items": 20
+      "items": 23
     },
     "mining_com": {
       "nombre": "Mining.com",
@@ -64,12 +64,309 @@
   },
   "noticias": [
     {
+      "id": "gestion-bca486ee5b",
+      "titulo": "Tipo de cambio baja hoy en Perú: ¿cuánto está el dólar este viernes 27 de noviembre?",
+      "url": "https://gestion.pe/economia/mercados/tipo-de-cambio-dolar-hoy-en-peru-cuanto-esta-el-precio-del-dolar-este-viernes-27-de-noviembre-dolares-a-soles-compra-y-venta-bcrp-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-27T15:25:44.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "mef-593d7ce06f",
+      "titulo": "MEF compartió en la OCDE experiencia peruana sobre financiamiento de desarrollo sostenible",
+      "url": "https://www.gob.pe/institucion/mef/noticias/1481828-mef-compartio-en-la-ocde-experiencia-peruana-sobre-financiamiento-de-desarrollo-sostenible",
+      "fuente": "Ministerio de Economía y Finanzas",
+      "fecha_iso": "2026-11-27T15:24:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-4e5d666805",
+      "titulo": "Cobre anota mayor repunte en 10 meses ante apetito por el riesgo",
+      "url": "https://gestion.pe/mundo/internacional/cobre-anota-mayor-repunte-en-10-meses-ante-apetito-por-el-riesgo-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-27T15:16:37.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-4787cb0b0d",
+      "titulo": "¿Maquillaje coreano o colombiano? Las preferencias del consumisor que reconfiguran el mercado de belleza peruano",
+      "url": "https://elcomercio.pe/economia/peru/maquillaje-coreano-o-colombiano-las-preferencias-del-consumisor-que-reconfiguran-el-mercado-de-belleza-peruano-copecoh-kiko-milano-sephora-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-27T15:16:19.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-888adedda9",
+      "titulo": "Precio del dólar hoy en Perú, viernes 27 de noviembre: revisa el tipo de cambio en bancos y casas de cambio",
+      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/27/precio-del-dolar-hoy-en-peru-viernes-27-de-noviembre-revisa-el-tipo-de-cambio-en-bancos-y-casas-de-cambio-1577862",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-27T15:16:12.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-0cf62dbe47",
+      "titulo": "PASO 2027: por qué Milei quiere eliminar las elecciones primarias obligatorias en Argentina",
+      "url": "https://www.bloomberglinea.com/latinoamerica/argentina/paso-2027-por-que-milei-quiere-eliminar-las-elecciones-primarias-obligatorias-en-argentina/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-27T15:14:56.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-f7a2c08531",
+      "titulo": "Proyecto de gas natural “7 regiones”: primeras conexiones dependen de 4 permisos clave",
+      "url": "https://gestion.pe/economia/proyecto-7-regiones-construccion-de-planta-principal-tomara-cerca-de-dos-anos-de-ejecucion-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-27T15:14:15.000Z",
+      "categoria": "Energía",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-636f56cbe5",
+      "titulo": "El 2026 apunta a ser un año récord para las OxI: ¿qué factores impulsan su crecimiento?",
+      "url": "https://elcomercio.pe/economia/peru/el-2026-apunta-a-ser-un-ano-record-para-las-oxi-que-factores-impulsan-su-crecimiento-obras-por-impuestos-proinversion-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-27T15:13:42.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-3496a3e57b",
+      "titulo": "H&M mira Plaza Norte para 2027: ¿qué cambios prepara y qué otros planes tiene en Perú?",
+      "url": "https://gestion.pe/economia/empresas/hm-remodelara-tienda-en-2027-y-potenciara-linea-clave-que-cambios-prepara-la-cadena-en-peru-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-27T15:13:06.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-9ef555f9b2",
+      "titulo": "El dólar abre a la baja en S/3,46 ante fuerte recuperación del cobre",
+      "url": "https://elcomercio.pe/economia/peru/el-dolar-abre-a-la-baja-en-s346-ante-fuerte-recuperacion-del-cobre-l-cotizacion-del-dolar-l-dolar-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-27T15:09:55.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-adc6e5df93",
+      "titulo": "El poder de Nvidia distorsiona la estrategia de EE.UU. en inteligencia artificial",
+      "url": "https://www.bloomberglinea.com/opinion/el-poder-de-nvidia-distorsiona-la-estrategia-de-eeuu-en-inteligencia-artificial/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-27T15:07:55.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-b6ff1b3166",
+      "titulo": "SNI exige poner fin al Reinfo y cuestiona demora del Congreso para debatir la Ley MAPE",
+      "url": "https://larepublica.pe/economia/2026/11/27/sni-exige-poner-fin-al-reinfo-y-cuestiona-demora-del-congreso-para-debatir-la-ley-mape-hnews-579204",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-27T15:05:13.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
       "id": "el_comercio-3f10e9d27f",
       "titulo": "Engie: “En términos de recursos y enfoque vamos a tener que apuntar mucho a las líneas de transmisión”",
       "url": "https://elcomercio.pe/economia/cade-2026-engie-en-terminos-de-recursos-y-enfoque-vamos-a-tener-que-apuntar-mucho-a-las-lineas-de-transmision-noticia/",
       "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-27T12:05:25.000Z",
+      "fecha_iso": "2026-11-27T15:04:12.000Z",
       "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-774dbaa290",
+      "titulo": "Martín Mejía, director general de Cálidda, sobre Siete Regiones: “Si nos dejan hacer un millón de conexiones, haremos un millón”",
+      "url": "https://elcomercio.pe/economia/martin-mejia-director-general-de-calidda-sobre-siete-regiones-si-nos-dejan-hacer-un-millon-de-conexiones-haremos-un-millon-cade-ejecutivos-2026-cade-ejecutivos-cade-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-27T15:03:53.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-bd1491d667",
+      "titulo": "Inteligencia artificial en las empresas: ¿Basta su implementación para mejorar la productividad?",
+      "url": "https://elcomercio.pe/economia/dia-1/inteligencia-artificial-en-las-empresas-basta-su-implementacion-para-mejorar-la-productividad-ia-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-27T15:03:41.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-c9e3eacb22",
+      "titulo": "Black Friday: 93% de los consumidores considera relevante contrastar información antes de comprar",
+      "url": "https://elcomercio.pe/economia/peru/black-friday-93-de-los-consumidores-considera-relevante-contrastar-informacion-antes-de-comprar-l-ultimas-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-27T15:00:48.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-31bba58aea",
+      "titulo": "Bolsa de Valores de Lima presenta índices positivos en sintonía con Wall Street",
+      "url": "https://andina.pe/agencia/noticia-bolsa-valores-lima-presenta-indices-positivos-sintonia-wall-street-1101672.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-27T15:00:00.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "andina-f63b6ce136",
+      "titulo": "¿Cuál es la cotización del dólar hoy viernes 27 de noviembre del 2026?",
+      "url": "https://andina.pe/agencia/noticia-cual-es-cotizacion-del-dolar-hoy-viernes-27-noviembre-del-2026-1101670.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-27T14:49:12.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-a3f5a63fec",
+      "titulo": "Bolivia busca usar puertos peruanos para sus exportaciones: la agenda del Gabinete Binacional",
+      "url": "https://gestion.pe/economia/bolivia-busca-usar-puertos-peruanos-para-sus-exportaciones-la-agenda-del-gabinete-binacional-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-27T14:47:22.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-982545e11e",
+      "titulo": "Asalto armado en el Callao: PNP halló celulares arrojados en el acantilado e investiga si se trató de un robo de oro",
+      "url": "https://www.infobae.com/peru/2026/11/27/asalto-armado-en-el-callao-pnp-hallo-celulares-arrojados-en-el-acantilado-e-investiga-si-se-trato-de-un-robo-de-oro/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-27T14:47:13.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-3cd074fe3f",
+      "titulo": "Unión Europea impulsará economía circular con 5 ministerios en Perú: su “agenda verde”",
+      "url": "https://gestion.pe/economia/union-europea-impulsara-economia-circular-con-5-ministerios-en-peru-su-agenda-verde-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-27T14:40:54.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-d70e17ead0",
+      "titulo": "BID: el reto del Perú es aprovechar su fortaleza y las oportunidades que le ofrece el mundo",
+      "url": "https://gestion.pe/economia/bid-el-reto-del-peru-es-aprovechar-su-fortaleza-y-las-oportunidades-que-le-ofrece-el-mundo-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-27T14:40:53.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-195e82cab8",
+      "titulo": "Hackers habrían atacado la nube de la Fuerza Aérea de EE.UU. y pondrían en riesgo datos militares",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/hackers-habrian-atacado-la-nube-de-la-fuerza-aerea-de-eeuu-y-pondrian-en-riesgo-datos-militares/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-27T14:26:52.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-0fd397fda5",
+      "titulo": "\"El Reinfo actualmente es un salvoconducto para la ilegalidad\", afirmó extitular del Midis",
+      "url": "https://rpp.pe/peru/actualidad/el-reinfo-actualmente-es-un-salvoconducto-para-la-ilegalidad-afirmo-extitular-del-midis-noticia-1720105",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-27T14:25:47.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-9f1a578f8b",
+      "titulo": "Déficit comercial de EE.UU. se dispara 10,7% en octubre y alcanza máximo desde marzo de 2025",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/deficit-comercial-de-eeuu-se-dispara-107-en-octubre-y-alcanza-maximo-desde-marzo-de-2025/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-27T14:23:11.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "rpp-f94e1b3448",
+      "titulo": "Mejores casinos online en Perú: ranking, bonos y análisis en 2026",
+      "url": "https://rpp.pe/apuestas-deportivas/publirreportaje/ranking-mejores-casinos-en-linea-peru-analisis-noticia-1683018",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-27T14:00:41.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-6bfe920649",
+      "titulo": "Precio del dólar en Perú: cotización en compra y venta del viernes 27 de noviembre",
+      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-2026-a-cuanto-esta-el-dolar-este-viernes-27-de-noviembre-tipo-de-cambio-segun-el-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-27T13:52:31.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-0c269e212d",
+      "titulo": "Fenómeno El Niño restaría hasta 1,7% al crecimiento económico en 2027",
+      "url": "https://larepublica.pe/economia/2026/11/27/fenomeno-el-nino-restaria-hasta-17-al-crecimiento-economico-en-2027-hnews-296487",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-27T13:45:32.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-deb5cea39c",
+      "titulo": "Dólar hoy en Perú: cotización de apertura del 27 de noviembre",
+      "url": "https://www.infobae.com/peru/2026/11/27/dolar-hoy-en-peru-cotizacion-de-apertura-del-27-de-noviembre/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-27T13:16:10.000Z",
+      "categoria": "Dólar y BCRP",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-ce097d8987",
+      "titulo": "CCL propondrá al Congreso una ley que limite el gasto corriente de los gobiernos regionales",
+      "url": "https://gestion.pe/economia/raul-barrios-en-cade-206-ccl-propondra-al-congreso-una-ley-que-limite-el-gasto-corriente-de-los-gobiernos-regionales-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-27T13:10:46.000Z",
+      "categoria": "Otros",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "infobae-51bafde166",
+      "titulo": "Proponen que estacionamiento sea gratuito en centros comerciales y supermercados las primeras tres horas",
+      "url": "https://www.infobae.com/peru/2026/11/27/proponen-que-estacionamiento-sea-gratuito-en-centros-comerciales-y-supermercados-las-primeras-tres-horas/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-27T12:51:20.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-0301ceb1ad",
+      "titulo": "Claro lidera las inversiones en telecomunicaciones: ¿cómo les fue a Movistar, Entel y Bitel?",
+      "url": "https://gestion.pe/economia/empresas/claro-movistar-entel-y-bitel-elevan-sus-ingresos-e-inversiones-en-el-primer-semestre-de-2026-dice-osiptel-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-27T12:44:11.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-1fee1be2a0",
+      "titulo": "Telecomunicaciones: operadoras aumentaron ingresos e inversiones en primer semestre 2026",
+      "url": "https://andina.pe/agencia/noticia-telecomunicaciones-operadoras-aumentaron-ingresos-e-inversiones-primer-semestre-2026-1101650.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-27T12:27:32.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "infobae-c5208eaa46",
+      "titulo": "La gasolina más barata y más cara de Lima este 27 de noviembre",
+      "url": "https://www.infobae.com/peru/2026/11/27/la-gasolina-mas-barata-y-mas-cara-de-lima-este-27-de-noviembre/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-27T12:17:03.000Z",
+      "categoria": "Energía",
       "semaforo": "AMARILLO"
     },
     {
@@ -97,24 +394,6 @@
       "fuente": "Infobae Perú",
       "fecha_iso": "2026-11-27T11:53:15.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-195e82cab8",
-      "titulo": "Hackers habrían atacado la nube de la Fuerza Aérea de EE.UU. y pondrían en riesgo datos militares",
-      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/hackers-habrian-atacado-la-nube-de-la-fuerza-aerea-de-eeuu-y-pondrian-en-riesgo-datos-militares/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-27T11:48:34.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-4787cb0b0d",
-      "titulo": "¿Maquillaje coreano o colombiano?: las preferencias del consumisor que reconfiguran el mercado de belleza peruano",
-      "url": "https://elcomercio.pe/economia/peru/maquillaje-coreano-o-colombiano-las-preferencias-del-consumisor-que-reconfiguran-el-mercado-de-belleza-peruano-copecoh-kiko-milano-sephora-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-27T11:43:00.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -146,21 +425,12 @@
     },
     {
       "id": "andina-a98286eb52",
-      "titulo": "Gratificación diciembre 2026: ¿Cuánto recibirán los trabajadores del sector privado?",
+      "titulo": "Gratificación diciembre 2026: ¿cuánto recibirán los trabajadores del sector privado?",
       "url": "https://andina.pe/agencia/noticia-gratificacion-diciembre-2026-cuanto-recibiran-los-trabajadores-del-sector-privado-1101641.aspx",
       "fuente": "Agencia Andina",
       "fecha_iso": "2026-11-27T11:32:12.000Z",
       "categoria": "Economía y fiscal",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "el_comercio-636f56cbe5",
-      "titulo": "El 2026 apunta a ser un año récord para las OxI: ¿qué factores impulsan su crecimiento?",
-      "url": "https://elcomercio.pe/economia/peru/el-2026-apunta-a-ser-un-ano-record-para-las-oxi-que-factores-impulsan-su-crecimiento-obras-por-impuestos-proinversion-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-27T11:24:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "infobae-d73d89c167",
@@ -199,15 +469,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-6bfe920649",
-      "titulo": "Precio del dólar en Perú: cotización en compra y venta del viernes 27 de noviembre",
-      "url": "https://elcomercio.pe/economia/mercados/precio-del-dolar-en-peru-2026-a-cuanto-esta-el-dolar-este-viernes-27-de-noviembre-tipo-de-cambio-segun-el-bcrp-tasa-cotizacion-compra-y-venta-segun-bcrp-dolares-a-soles-sbs-ocona-lbposting-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-27T11:00:01.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "infobae-99f29ce6c9",
       "titulo": "El otro retorno de la inversión",
       "url": "https://www.infobae.com/peru/2026/11/27/el-otro-retorno-de-la-inversion/",
@@ -226,30 +487,12 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "la_republica-888adedda9",
-      "titulo": "Precio del dólar hoy en Perú, viernes 27 de noviembre: revisa el tipo de cambio en bancos y casas de cambio",
-      "url": "https://larepublica.pe/economia/precio-del-dolar/2026/11/27/precio-del-dolar-hoy-en-peru-viernes-27-de-noviembre-revisa-el-tipo-de-cambio-en-bancos-y-casas-de-cambio-1577862",
-      "fuente": "La República Economía",
-      "fecha_iso": "2026-11-27T10:47:07.000Z",
+      "id": "rpp-bf82d2dd9d",
+      "titulo": "Argentina: dólar blue hoy a cuánto cotiza este viernes 27 de noviembre",
+      "url": "https://rpp.pe/mundo/argentina/argentina-dolar-blue-hoy-a-cuanto-cotiza-este-viernes-27-de-noviembre-noticia-1720084",
+      "fuente": "RPP Noticias",
+      "fecha_iso": "2026-11-27T10:59:39.000Z",
       "categoria": "Dólar y BCRP",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-774dbaa290",
-      "titulo": "Martín Mejía, director general de Cálidda, sobre Siete Regiones: “Si nos dejan hacer un millón de conexiones, haremos un millón”",
-      "url": "https://elcomercio.pe/economia/martin-mejia-director-general-de-calidda-sobre-siete-regiones-si-nos-dejan-hacer-un-millon-de-conexiones-haremos-un-millon-cade-ejecutivos-2026-cade-ejecutivos-cade-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-27T10:43:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-f7a2c08531",
-      "titulo": "Proyecto de gas natural “7 regiones”: primeras conexiones dependen de 4 permisos clave",
-      "url": "https://gestion.pe/economia/proyecto-7-regiones-construccion-de-planta-principal-tomara-cerca-de-dos-anos-de-ejecucion-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-27T10:34:00.000Z",
-      "categoria": "Energía",
       "semaforo": "AMARILLO"
     },
     {
@@ -271,24 +514,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "el_comercio-bd1491d667",
-      "titulo": "Inteligencia artificial en las empresas: ¿Basta su implementación para mejorar la productividad?",
-      "url": "https://elcomercio.pe/economia/dia-1/inteligencia-artificial-en-las-empresas-basta-su-implementacion-para-mejorar-la-productividad-ia-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-27T10:24:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-3cd074fe3f",
-      "titulo": "Unión Europea impulsará economía circular con 5 ministerios en Perú: su “agenda verde”",
-      "url": "https://gestion.pe/economia/union-europea-impulsara-economia-circular-con-5-ministerios-en-peru-su-agenda-verde-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-27T10:08:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-c84f1675b6",
       "titulo": "Fin de año: toma nota de cuatro medidas para ordenar tus finanzas y planificar el 2027",
       "url": "https://andina.pe/agencia/noticia-fin-ano-toma-nota-cuatro-medidas-para-ordenar-tus-finanzas-y-planificar-2027-1101642.aspx",
@@ -296,15 +521,6 @@
       "fecha_iso": "2026-11-27T10:00:00.000Z",
       "categoria": "Otros",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-ce097d8987",
-      "titulo": "CCL propondrá al Congreso una ley que limite el gasto corriente de los gobiernos regionales",
-      "url": "https://gestion.pe/economia/raul-barrios-en-cade-206-ccl-propondra-al-congreso-una-ley-que-limite-el-gasto-corriente-de-los-gobiernos-regionales-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-27T09:30:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "bloomberg_linea-613cb5e7a1",
@@ -514,15 +730,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "gestion-a3f5a63fec",
-      "titulo": "Bolivia busca usar puertos peruanos para sus exportaciones: la agenda del Gabinete Binacional",
-      "url": "https://gestion.pe/economia/bolivia-busca-usar-puertos-peruanos-para-sus-exportaciones-la-agenda-del-gabinete-binacional-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-27T02:30:00.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "andina-23155b7cd2",
       "titulo": "ProInversión y Egasa suscriben convenio para impulsar inversiones mediante APP",
       "url": "https://andina.pe/agencia/noticia-proinversion-y-egasa-suscriben-convenio-para-impulsar-inversiones-mediante-app-1101626.aspx",
@@ -610,15 +817,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-27T00:46:59.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-ddd9181da9",
-      "titulo": "Piura: inundaciones por fuertes lluvias impidieron a peatones desplazarse a sus viviendas",
-      "url": "https://rpp.pe/peru/actualidad/piura-cerca-de-50-personas-quedan-atrapadas-en-un-centro-comercial-por-inundacion-en-las-calles-tras-fuertes-lluvias-noticia-1720050",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-27T00:42:23.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -736,15 +934,6 @@
       "fuente": "El Comercio Economía",
       "fecha_iso": "2026-11-27T00:06:27.000Z",
       "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-18b875981b",
-      "titulo": "Ley Silla: empresas deberán registrar los descansos de trabajadores que laboran de pie y organizar turnos para usar asientos",
-      "url": "https://rpp.pe/economia/economia/ley-silla-empresas-deberan-llevar-un-registro-de-los-descansos-que-utilizan-sus-trabajadores-segun-proyecto-del-mtpe-noticia-1720047",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-27T00:03:12.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -880,177 +1069,6 @@
       "fuente": "Gestión",
       "fecha_iso": "2026-11-26T23:00:00.000Z",
       "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "bloomberg_linea-6c14273259",
-      "titulo": "México y Asia ganan terreno en el mercado automotriz de Canadá en medio de guerra comercial con EE.UU.",
-      "url": "https://www.bloomberglinea.com/latinoamerica/mexico/mexico-y-asia-ganan-terreno-en-el-mercado-automotriz-de-canada-en-medio-de-guerra-comercial-con-eeuu/",
-      "fuente": "Bloomberg Línea",
-      "fecha_iso": "2026-11-26T22:56:41.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-0acec7a3df",
-      "titulo": "Grupo BID comparte recomendaciones importantes para mejorar la productividad en el Perú",
-      "url": "https://andina.pe/agencia/noticia-grupo-bid-comparte-recomendaciones-importantes-para-mejorar-productividad-el-peru-1101609.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-26T22:55:37.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "rpp-0525b56741",
-      "titulo": "Tormentas, inundaciones y nieve azotan a EE. UU. este Día de Acción de Gracias",
-      "url": "https://rpp.pe/mundo/estados-unidos/tormentas-inundaciones-y-nieve-azotan-a-ee-uu-este-dia-de-accion-de-gracias-noticia-1720033",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-26T22:50:57.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-4358e9a211",
-      "titulo": "Grupo BID incrementa en más de 50% su oferta de financiamiento al Perú para 2027-2030",
-      "url": "https://andina.pe/agencia/noticia-grupo-bid-incrementa-mas-50-su-oferta-financiamiento-al-peru-para-20272030-1101605.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-26T22:47:05.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-d4e02aa171",
-      "titulo": "CEO de Interbank estima que el crédito podría crecer hasta 10% en el 2027",
-      "url": "https://gestion.pe/economia/ceo-de-interbank-estima-que-el-credito-podria-crecer-hasta-10-en-el-2027-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-26T22:45:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-3496a3e57b",
-      "titulo": "H&M remodela tienda en Megaplaza y traza nuevos planes: ¿cuáles serán sus próximos pasos?",
-      "url": "https://gestion.pe/economia/empresas/hm-remodelara-tienda-en-2027-y-potenciara-linea-clave-que-cambios-prepara-la-cadena-en-peru-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-26T22:41:29.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-42d2a2f111",
-      "titulo": "Mincetur promueve innovación en la artesanía con seminario internacional",
-      "url": "https://andina.pe/agencia/noticia-mincetur-promueve-innovacion-la-artesania-seminario-internacional-1101593.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-26T22:30:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "rpp-b58b4d2d13",
-      "titulo": "Estados Unidos: tormentas de Acción de Gracias afectan el suministro de agua de 1,9 millones de clientes en Maryland",
-      "url": "https://rpp.pe/mundo/actualidad/estados-unidos-tormentas-de-accion-de-gracias-afectan-el-suministro-de-agua-de-19-millones-de-clientes-en-maryland-noticia-1720023",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-26T22:29:09.000Z",
-      "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "andina-6419ea268b",
-      "titulo": "El dólar registra su segunda jornada consecutiva de pérdidas al cerrar en S/ 3.474",
-      "url": "https://andina.pe/agencia/noticia-el-dolar-registra-su-segunda-jornada-consecutiva-perdidas-al-cerrar-s-3474-1101606.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-26T22:28:54.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "VERDE"
-    },
-    {
-      "id": "gestion-850283ad32",
-      "titulo": "Cobre repunta desde mínimo del año ante volatilidad y dudas sobre la IA",
-      "url": "https://gestion.pe/mundo/internacional/cobre-repunta-desde-minimo-del-ano-ante-volatilidad-y-dudas-sobre-la-ia-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-26T22:28:18.000Z",
-      "categoria": "Minería y metales",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-9226d8f932",
-      "titulo": "MEF presentará nuevo crédito suplementario en enero de 2027 para financiar colegios y programas sociales",
-      "url": "https://elcomercio.pe/economia/peru/mef-nuevo-credito-suplementario-en-enero-de-2027-para-financiar-colegios-y-programas-sociales-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-26T22:27:36.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-0b6b1cc077",
-      "titulo": "El BBVA propone un nuevo “Reactiva” para afrontar El Niño",
-      "url": "https://gestion.pe/economia/el-bbva-propone-un-nuevo-reactiva-para-afrontar-el-nino-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-26T22:15:00.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "rpp-6826f8ee93",
-      "titulo": "Pensión por consumo: desde diciembre crearán nueva cuenta a los afiliados de las AFP y ONP para registrar aportes adicionales",
-      "url": "https://rpp.pe/economia/economia/pension-por-consumo-desde-diciembre-se-creara-nueva-cuenta-a-los-afiliados-a-la-onp-y-afp-para-registrar-aportes-adicionales-noticia-1720026",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-26T22:13:17.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "el_comercio-9bce53c8d3",
-      "titulo": "Perú tardaría más de 16 años en ejecutar su cartera pendiente de inversión pública al ritmo actual, advierte AFIN",
-      "url": "https://elcomercio.pe/economia/peru/peru-tardaria-mas-de-16-anos-en-ejecutar-su-cartera-pendiente-de-inversion-publica-al-ritmo-actual-advierte-afin-l-ultimas-noticia/",
-      "fuente": "El Comercio Economía",
-      "fecha_iso": "2026-11-26T22:01:48.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-6db3ec5dca",
-      "titulo": "El Niño en Perú también genera crisis apícola: hay 4 cultivos en “alerta roja”",
-      "url": "https://gestion.pe/economia/el-nino-en-peru-tambien-genera-crisis-apicola-hay-4-cultivos-en-alerta-roja-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-26T22:00:00.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-44f018455c",
-      "titulo": "Las industrias extractivas en Perú están alistando respaldo eléctrico ante posibles impactos por El Niño",
-      "url": "https://www.infobae.com/peru/2026/11/26/las-industrias-extractivas-en-peru-estan-alistando-respaldo-electrico-ante-posibles-impactos-por-el-nino/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-26T21:59:18.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "infobae-9b1014f71f",
-      "titulo": "Fallas en el Banco de la Nación pasan factura: trabajadores piden cambio de autoridades ante problemas en canales virtuales",
-      "url": "https://www.infobae.com/peru/2026/11/26/falltas-en-el-banco-de-la-nacion-pasan-factura-trabajadores-piden-cambio-de-autoridades-ante-problemas-en-canales-virtuales/",
-      "fuente": "Infobae Perú",
-      "fecha_iso": "2026-11-26T21:53:23.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-b233067f0f",
-      "titulo": "Construcción seguirá acortando su crecimiento hasta acabar el 2026: esto prevé Capeco",
-      "url": "https://gestion.pe/economia/construccion-seguira-acortando-su-crecimiento-hasta-acabar-el-2026-esto-preve-capeco-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-26T21:46:17.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-d522a087d7",
-      "titulo": "Julio Velarde en CADE 2026: inflación alta limita al BCRP, pero hay disposición a actuar",
-      "url": "https://gestion.pe/economia/julio-velarde-en-cade-2026-inflacion-alta-limita-al-bcrp-pero-hay-disposicion-a-actuar-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-26T21:45:00.000Z",
-      "categoria": "Dólar y BCRP",
       "semaforo": "AMARILLO"
     }
   ]
