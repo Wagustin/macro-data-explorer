@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-28T03:31:33.360Z",
+  "actualizado": "2026-11-28T06:31:32.382Z",
   "fuentes": {
     "andina": {
       "nombre": "Agencia Andina",
@@ -24,7 +24,7 @@
     "gestion": {
       "nombre": "Gestión",
       "ok": true,
-      "items": 89
+      "items": 82
     },
     "el_comercio": {
       "nombre": "El Comercio Economía",
@@ -34,7 +34,7 @@
     "rpp": {
       "nombre": "RPP Noticias",
       "ok": true,
-      "items": 6
+      "items": 5
     },
     "la_republica": {
       "nombre": "La República Economía",
@@ -48,8 +48,8 @@
     },
     "semana_economica": {
       "nombre": "Semana Económica",
-      "ok": true,
-      "items": 15
+      "ok": false,
+      "items": 0
     },
     "bloomberg_linea": {
       "nombre": "Bloomberg Línea",
@@ -63,6 +63,33 @@
     }
   },
   "noticias": [
+    {
+      "id": "gestion-c69291dab0",
+      "titulo": "Perú aún es una “estrella”: cuáles podrían ser sus siguientes pasos, según Banco Mundial",
+      "url": "https://gestion.pe/economia/peru-aun-es-una-estrella-en-la-region-cuales-son-los-siguientes-pasos-segun-banco-mundial-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-28T05:58:52.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "andina-0da6675616",
+      "titulo": "Perú y Finlandia fortalecen cooperación para impulsar minería sostenible",
+      "url": "https://andina.pe/agencia/noticia-peru-y-finlandia-fortalecen-cooperacion-para-impulsar-mineria-sostenible-1101768.aspx",
+      "fuente": "Agencia Andina",
+      "fecha_iso": "2026-11-28T04:36:22.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "VERDE"
+    },
+    {
+      "id": "gestion-7e8b2332fc",
+      "titulo": "Empresas se preparan ante expectativa de alza de tasas, ¿qué medidas toman?",
+      "url": "https://gestion.pe/tu-dinero/empresas-se-preparan-ante-expectativa-de-alza-de-tasas-que-medidas-toman-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-28T04:11:44.000Z",
+      "categoria": "Bolsa y empresas",
+      "semaforo": "AMARILLO"
+    },
     {
       "id": "infobae-cc6b73f510",
       "titulo": "Presidenta Keiko Fujimori evalúa adelantar bonos para damnificados por las lluvias asociadas al Fenómeno El Niño",
@@ -96,15 +123,6 @@
       "url": "https://gestion.pe/economia/empresas/el-efecto-de-la-visita-del-papa-leon-xiv-a-peru-el-turismo-religioso-como-oportunidad-de-negocio-en-el-pais-noticia/",
       "fuente": "Gestión",
       "fecha_iso": "2026-11-28T02:30:36.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "semana_economica-b79a496528",
-      "titulo": "Sedapal: Fernando Laca renuncia a la presidencia del directorio a menos de tres meses de asumir el cargo",
-      "url": "https://www.semanaeconomica.com/legal-politica/sector-publico/",
-      "fuente": "Semana Económica",
-      "fecha_iso": "2026-11-28T02:20:37.000Z",
       "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
@@ -208,15 +226,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "semana_economica-8c78e18a06",
-      "titulo": "Andino Inversiones Global acuerda la compra de Quimgra y alista su ingreso al negocio portuario en España",
-      "url": "https://www.semanaeconomica.com/sectores-empresas/transporte/",
-      "fuente": "Semana Económica",
-      "fecha_iso": "2026-11-28T00:31:20.000Z",
-      "categoria": "Bolsa y empresas",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-c4c89ba987",
       "titulo": "Grupo Andino avanza en su expansión en España con adquisición de empresa logística y portuaria",
       "url": "https://gestion.pe/economia/empresas/grupo-andino-acuerda-adquirir-empresa-logistica-y-portuaria-en-espana-noticia/",
@@ -250,15 +259,6 @@
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-27T23:44:52.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "semana_economica-ff78b208b5",
-      "titulo": "El Niño: inundaciones por lluvias intensas golpean a miles de familias en Piura y Tumbes",
-      "url": "https://www.semanaeconomica.com/sectores-empresas/infraestructura/",
-      "fuente": "Semana Económica",
-      "fecha_iso": "2026-11-27T23:44:12.000Z",
-      "categoria": "Otros",
       "semaforo": "AMARILLO"
     },
     {
@@ -376,24 +376,6 @@
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-27T22:56:00.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "semana_economica-fb05b8abb5",
-      "titulo": "Osinergmin flexibilizó reglas de transporte y almacenamiento de combustibles por El Niño",
-      "url": "https://www.semanaeconomica.com/que-esta-pasando/articulos/",
-      "fuente": "Semana Económica",
-      "fecha_iso": "2026-11-27T22:50:24.000Z",
-      "categoria": "Energía",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "gestion-c69291dab0",
-      "titulo": "Perú aún es una “estrella”: cuáles podrían ser sus siguientes pasos, según Banco Mundial",
-      "url": "https://gestion.pe/economia/peru-aun-es-una-estrella-en-la-region-cuales-son-los-siguientes-pasos-segun-banco-mundial-noticia/",
-      "fuente": "Gestión",
-      "fecha_iso": "2026-11-27T22:42:18.000Z",
-      "categoria": "Economía y fiscal",
       "semaforo": "AMARILLO"
     },
     {
@@ -631,15 +613,6 @@
       "semaforo": "AMARILLO"
     },
     {
-      "id": "semana_economica-f90c0488ac",
-      "titulo": "Asociación Peruana de Finanzas: “Vamos a ver una recuperación importante en la economía a partir del 2T27”",
-      "url": "https://www.semanaeconomica.com/economia-finanzas/macroeconomia/",
-      "fuente": "Semana Económica",
-      "fecha_iso": "2026-11-27T19:05:31.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "el_comercio-e6ca4c1688",
       "titulo": "Final de la Copa Libertadores: pedidos por delivery crecerían cerca del 15% este sábado en Perú",
       "url": "https://elcomercio.pe/economia/peru/final-de-la-copa-libertadores-pedidos-por-delivery-crecerian-cerca-del-15-este-sabado-en-peru-l-ultimas-noticia/",
@@ -719,15 +692,6 @@
       "fecha_iso": "2026-11-27T18:00:00.000Z",
       "categoria": "Bolsa y empresas",
       "semaforo": "VERDE"
-    },
-    {
-      "id": "rpp-7f5f03a857",
-      "titulo": "SBS convoca a licitación para elegir a la AFP que administrará los fondos de nuevos afiliados desde junio de 2027",
-      "url": "https://rpp.pe/economia/economia/sbs-convoca-a-licitacion-para-elegir-a-la-afp-que-administrara-los-fondos-de-nuevos-afiliados-desde-junio-de-2027-noticia-1720153",
-      "fuente": "RPP Noticias",
-      "fecha_iso": "2026-11-27T17:57:13.000Z",
-      "categoria": "Economía y fiscal",
-      "semaforo": "AMARILLO"
     },
     {
       "id": "gestion-cb1dd628e8",
@@ -811,15 +775,6 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "semana_economica-5b4bf45b74",
-      "titulo": "Elmer Cuba sobre el riesgo de gastos no vinculados a El Niño: “¿Cómo evitarlo? Porque nosotros conducimos la política fiscal”",
-      "url": "https://www.semanaeconomica.com/economia-finanzas/politica-fiscal/",
-      "fuente": "Semana Económica",
-      "fecha_iso": "2026-11-27T16:47:36.000Z",
-      "categoria": "Otros",
-      "semaforo": "AMARILLO"
-    },
-    {
       "id": "gestion-b71c8e5e33",
       "titulo": "El Niño hace que dueño de Interbank provisione S/ 185 millones: ¿qué prevé a fin de año?",
       "url": "https://gestion.pe/economia/empresas/el-nino-hace-que-dueno-de-interbank-gane-s-87-millones-menos-que-preve-a-fin-de-ano-noticia/",
@@ -853,15 +808,6 @@
       "fuente": "Bloomberg Línea",
       "fecha_iso": "2026-11-27T16:37:55.000Z",
       "categoria": "Mundo",
-      "semaforo": "AMARILLO"
-    },
-    {
-      "id": "semana_economica-f3aa3b2fe1",
-      "titulo": "Talento técnico: ¿cómo cerrar la brecha que enfrentan las empresas peruanas?",
-      "url": "https://www.semanaeconomica.com/sectores-empresas/educacion/",
-      "fuente": "Semana Económica",
-      "fecha_iso": "2026-11-27T16:16:05.000Z",
-      "categoria": "Bolsa y empresas",
       "semaforo": "AMARILLO"
     },
     {
@@ -1000,13 +946,58 @@
       "semaforo": "VERDE"
     },
     {
-      "id": "andina-f63b6ce136",
-      "titulo": "¿Cuál es la cotización del dólar hoy viernes 27 de noviembre del 2026?",
-      "url": "https://andina.pe/agencia/noticia-cual-es-cotizacion-del-dolar-hoy-viernes-27-noviembre-del-2026-1101670.aspx",
-      "fuente": "Agencia Andina",
-      "fecha_iso": "2026-11-27T14:49:12.000Z",
-      "categoria": "Dólar y BCRP",
-      "semaforo": "VERDE"
+      "id": "infobae-982545e11e",
+      "titulo": "Asalto armado en el Callao: PNP halló celulares arrojados en el acantilado e investiga si se trató de un robo de oro",
+      "url": "https://www.infobae.com/peru/2026/11/27/asalto-armado-en-el-callao-pnp-hallo-celulares-arrojados-en-el-acantilado-e-investiga-si-se-trato-de-un-robo-de-oro/",
+      "fuente": "Infobae Perú",
+      "fecha_iso": "2026-11-27T14:47:13.000Z",
+      "categoria": "Minería y metales",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-195e82cab8",
+      "titulo": "Hackers habrían atacado la nube de la Fuerza Aérea de EE.UU. y pondrían en riesgo datos militares",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/hackers-habrian-atacado-la-nube-de-la-fuerza-aerea-de-eeuu-y-pondrian-en-riesgo-datos-militares/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-27T14:26:52.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "bloomberg_linea-9f1a578f8b",
+      "titulo": "Déficit comercial de EE.UU. se dispara 10,7% en octubre y alcanza máximo desde marzo de 2025",
+      "url": "https://www.bloomberglinea.com/mundo/estados-unidos/deficit-comercial-de-eeuu-se-dispara-107-en-octubre-y-alcanza-maximo-desde-marzo-de-2025/",
+      "fuente": "Bloomberg Línea",
+      "fecha_iso": "2026-11-27T14:23:11.000Z",
+      "categoria": "Mundo",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "la_republica-0c269e212d",
+      "titulo": "Fenómeno El Niño restaría hasta 1,7% al crecimiento económico en 2027",
+      "url": "https://larepublica.pe/economia/2026/11/27/fenomeno-el-nino-restaria-hasta-17-al-crecimiento-economico-en-2027-hnews-296487",
+      "fuente": "La República Economía",
+      "fecha_iso": "2026-11-27T13:45:32.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "gestion-0301ceb1ad",
+      "titulo": "Claro lidera las inversiones en telecomunicaciones: ¿cómo les fue a Movistar, Entel y Bitel?",
+      "url": "https://gestion.pe/economia/empresas/claro-movistar-entel-y-bitel-elevan-sus-ingresos-e-inversiones-en-el-primer-semestre-de-2026-dice-osiptel-noticia/",
+      "fuente": "Gestión",
+      "fecha_iso": "2026-11-27T12:44:11.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
+    },
+    {
+      "id": "el_comercio-445e3c0f27",
+      "titulo": "El mito de la crisis financiera global de 2008",
+      "url": "https://elcomercio.pe/economia/opinion/el-mito-de-la-crisis-financiera-global-de-2008-por-evans-avendano-opinion-aeropuerto-del-peru-noticia/",
+      "fuente": "El Comercio Economía",
+      "fecha_iso": "2026-11-27T12:00:00.000Z",
+      "categoria": "Economía y fiscal",
+      "semaforo": "AMARILLO"
     }
   ]
 }
